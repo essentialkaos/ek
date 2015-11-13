@@ -9,11 +9,12 @@ package crypto
 
 import (
 	"crypto/sha256"
-	"ek/mathutil"
 	"fmt"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/essentialkaos/ek/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

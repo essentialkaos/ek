@@ -9,13 +9,14 @@ package knf
 
 import (
 	"bufio"
-	"ek/fsutil"
 	"errors"
 	"os"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/essentialkaos/ek/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

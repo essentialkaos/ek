@@ -9,11 +9,12 @@ package timeutil
 
 import (
 	"bytes"
-	"ek/fmtutil"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/essentialkaos/ek/fmtutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
