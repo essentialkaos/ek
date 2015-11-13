@@ -1,4 +1,4 @@
-### EK
+### EK [![Travis][build-badge]][build]
 
 Auxiliary packages for Go.
 
