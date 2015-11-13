@@ -5,10 +5,6 @@ go:
   - release
   - tip
 
-os:
-  - linux
-  - osx
-
 sudo: false
 
 before_install:
@@ -16,6 +12,3 @@ before_install:
 
 script:
   - go test ./...
-
-env:
-  - TMPDIR=$HOME
