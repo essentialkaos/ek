@@ -1,0 +1,49 @@
+package easing
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+//                                                                                    //
+//                     Copyright (c) 2009-2015 Essential Kaos                         //
+//      Essential Kaos Open Source License <http://essentialkaos.com/ekol?en>         //
+//                                                                                    //
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+import (
+	"math"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ExpoIn Accelerating from zero velocity
+func ExpoIn(t, b, c, d float64) float64 {
+	if t > d {
+		t = d
+	}
+
+	return c*math.Pow(2, 10*(t/d-1)) + b
+}
+
+// ExpoOut Decelerating to zero velocity
+func ExpoOut(t, b, c, d float64) float64 {
+	if t > d {
+		t = d
+	}
+
+	return c*(-math.Pow(2, -10*t/d)+1) + b
+}
+
+// ExpoInOut Acceleration until halfway, then deceleration
+func ExpoInOut(t, b, c, d float64) float64 {
+	if t > d {
+		t = d
+	}
+
+	t /= d / 2
+
+	if t < 1 {
+		return c/2*math.Pow(2, 10*(t-1)) + b
+	}
+
+	t--
+
+	return c/2*(-math.Pow(2, -10*t)+2) + b
+}
