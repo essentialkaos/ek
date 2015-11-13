@@ -1,4 +1,4 @@
-### EK [![Travis][build-badge]][build]
+### EK [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek)
 
 Auxiliary packages for Go.
 
