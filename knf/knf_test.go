@@ -107,14 +107,19 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 }
 
 func (s *KNFSuite) SetUpTest(c *check.C) {
-	cf, e := Read(s.ConfigPath + "123")
+	cf, err := Read(s.ConfigPath + "123")
 
-	c.Assert(e, check.NotNil)
+	c.Assert(err, check.NotNil)
 
-	cf, e = Read(s.ConfigPath)
+	cf, err = Read(s.ConfigPath)
 
-	c.Assert(cf, check.NotNil)
-	c.Assert(e, check.IsNil)
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	if cf == nil {
+		c.Fatal("Config struct is nil")
+	}
 
 	s.Config = cf
 }
