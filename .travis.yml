@@ -5,6 +5,10 @@ go:
   - release
   - tip
 
+os:
+  - linux
+  - osx
+
 sudo: false
 
 before_install:
