@@ -10,6 +10,7 @@ package fsutil
 import (
 	check "gopkg.in/check.v1"
 	"os"
+	"sort"
 	"testing"
 )
 
@@ -48,57 +49,85 @@ func (fs *FSSuite) TestList(c *check.C) {
 
 	os.Mkdir(fs.TempDir+"/dir1/dir3", 0755)
 
-	c.Assert(
-		List(fs.TempDir, false),
-		check.DeepEquals,
-		[]string{".dir0", ".file0", "file1.mp3", "file2.jpg", "dir1", "dir2"},
-	)
+	listing1 := List(fs.TempDir, false)
+	listing2 := List(fs.TempDir, true)
+	listing3 := ListAll(fs.TempDir, false)
+	listing4 := ListAll(fs.TempDir, true)
+	listing5 := ListAllDirs(fs.TempDir, false)
+	listing6 := ListAllDirs(fs.TempDir, true)
+	listing7 := ListAllFiles(fs.TempDir, false)
+	listing8 := ListAllFiles(fs.TempDir, true)
+	listing9 := ListAllFiles(fs.TempDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
+	listing10 := ListAllFiles(fs.TempDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
+
+	sort.Strings(listing1)
+	sort.Strings(listing2)
+	sort.Strings(listing3)
+	sort.Strings(listing4)
+	sort.Strings(listing5)
+	sort.Strings(listing6)
+	sort.Strings(listing7)
+	sort.Strings(listing8)
+	sort.Strings(listing9)
+	sort.Strings(listing10)
 
 	c.Assert(
-		List(fs.TempDir, true),
+		listing1,
 		check.DeepEquals,
-		[]string{"dir1", "file2.jpg", "dir2", "file1.mp3"},
+		[]string{".dir0", ".file0", "dir1", "dir2", "file1.mp3", "file2.jpg"},
 	)
 
-	c.Assert(ListAll(fs.TempDir, false),
+	c.Assert(
+		listing2,
 		check.DeepEquals,
-		[]string{"dir1", "dir1/file3.mp3", "dir1/dir3", ".file0", "file2.jpg", "dir2", "dir2/file4.wav", "file1.mp3", ".dir0"},
+		[]string{"dir1", "dir2", "file1.mp3", "file2.jpg"},
 	)
 
-	c.Assert(ListAll(fs.TempDir, true),
+	c.Assert(
+		listing3,
 		check.DeepEquals,
-		[]string{"dir1", "dir1/file3.mp3", "dir1/dir3", "file2.jpg", "dir2", "dir2/file4.wav", "file1.mp3"},
+		[]string{".dir0", ".file0", "dir1", "dir1/dir3", "dir1/file3.mp3", "dir2", "dir2/file4.wav", "file1.mp3", "file2.jpg"},
 	)
 
-	c.Assert(ListAllDirs(fs.TempDir, false),
+	c.Assert(
+		listing4,
 		check.DeepEquals,
-		[]string{"dir1", "dir1/dir3", "dir2", ".dir0"},
+		[]string{"dir1", "dir1/dir3", "dir1/file3.mp3", "dir2", "dir2/file4.wav", "file1.mp3", "file2.jpg"},
 	)
 
-	c.Assert(ListAllDirs(fs.TempDir, true),
+	c.Assert(
+		listing5,
+		check.DeepEquals,
+		[]string{".dir0", "dir1", "dir1/dir3", "dir2"},
+	)
+
+	c.Assert(
+		listing6,
 		check.DeepEquals,
 		[]string{"dir1", "dir1/dir3", "dir2"},
 	)
 
-	c.Assert(ListAllFiles(fs.TempDir, false),
+	c.Assert(
+		listing7,
 		check.DeepEquals,
-		[]string{"dir1/file3.mp3", ".file0", "file2.jpg", "dir2/file4.wav", "file1.mp3"},
-	)
-
-	c.Assert(ListAllFiles(fs.TempDir, true),
-		check.DeepEquals,
-		[]string{"dir1/file3.mp3", "file2.jpg", "dir2/file4.wav", "file1.mp3"},
+		[]string{".file0", "dir1/file3.mp3", "dir2/file4.wav", "file1.mp3", "file2.jpg"},
 	)
 
 	c.Assert(
-		ListAllFiles(fs.TempDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}}),
+		listing8,
+		check.DeepEquals,
+		[]string{"dir1/file3.mp3", "dir2/file4.wav", "file1.mp3", "file2.jpg"},
+	)
+
+	c.Assert(
+		listing9,
 		check.DeepEquals,
 		[]string{"dir1/file3.mp3", "dir2/file4.wav", "file1.mp3"},
 	)
 
 	c.Assert(
-		ListAllFiles(fs.TempDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}}),
+		listing10,
 		check.DeepEquals,
-		[]string{"file2.jpg", "dir2/file4.wav"},
+		[]string{"dir2/file4.wav", "file2.jpg"},
 	)
 }
