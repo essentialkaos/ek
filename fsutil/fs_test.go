@@ -51,7 +51,7 @@ func (fs *FSSuite) TestList(c *check.C) {
 	c.Assert(
 		List(fs.TempDir, false),
 		check.DeepEquals,
-		[]string{"dir1", ".file0", "file2.jpg", "dir2", "file1.mp3", ".dir0"},
+		[]string{".dir0", ".file0", "file1.mp3", "file2.jpg", "dir1", "dir2"},
 	)
 
 	c.Assert(
