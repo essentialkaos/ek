@@ -16,3 +16,6 @@ before_install:
 
 script:
   - go test ./...
+
+env:
+  - TMPDIR=/var/tmp
