@@ -14,7 +14,6 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (f
 
 ````
 go get github.com/essentialkaos/ek
-ln -sf $GOPATH/src/ek $GOPATH/src/github.com/essentialkaos/ek
 ````
 
 ### License
