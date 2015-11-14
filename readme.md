@@ -1,4 +1,4 @@
-### EK [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek)
+### EK
 
 Auxiliary packages for Go.
 
@@ -15,6 +15,13 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (f
 ````
 go get github.com/essentialkaos/ek
 ````
+
+### Build Status
+
+| Branch | Status |
+|------------|--------|
+| Master | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek) |
+| Develop | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=develop)](https://travis-ci.org/essentialkaos/ek) |
 
 ### License
 
