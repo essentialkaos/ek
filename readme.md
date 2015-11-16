@@ -29,6 +29,10 @@ go get github.com/essentialkaos/ek
 
 ### Changelog
 
+#### r3
+
+* [system] Added method system.SetProcName for changing process name
+
 #### r2
 
 * [usage] Improved new Info struct creation
