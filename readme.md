@@ -32,6 +32,7 @@ go get github.com/essentialkaos/ek
 #### r2
 
 * [usage] Improved new Info struct creation
+* [system] Fixed bug in fs usage calculation
 
 #### r1
 
