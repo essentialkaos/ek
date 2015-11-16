@@ -1,4 +1,5 @@
 // +build !windows
+
 // Package provides methods for working with environment variables
 package env
 

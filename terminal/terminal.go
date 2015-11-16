@@ -1,4 +1,5 @@
 // +build linux, darwin, !windows
+
 // Package provides methods for working with user input
 package terminal
 

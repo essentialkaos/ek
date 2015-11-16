@@ -1,4 +1,5 @@
 // +build !windows
+
 // Package for handling signals
 package signal
 
