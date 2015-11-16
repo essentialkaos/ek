@@ -29,6 +29,10 @@ go get github.com/essentialkaos/ek
 
 ### Changelog
 
+#### r2
+
+* [usage] Improved new Info struct creation
+
 #### r1
 
 Initial public release

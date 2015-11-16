@@ -36,8 +36,8 @@ type About struct {
 
 // Info contains info about commands, options and examples
 type Info struct {
-	Name     string
-	SubArgs  string
+	name     string
+	args     string
 	spoiler  string
 	commands []*option
 	options  []*option
@@ -60,9 +60,8 @@ type example struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewInfo create new info struct
-func NewInfo(args ...string) *Info {
-	args = append(args, "", "")
-	return &Info{Name: args[0], SubArgs: args[1]}
+func NewInfo(name string, args ...string) *Info {
+	return &Info{name: name, args: strings.Join(args, " ")}
 }
 
 // AddGroup add new command group
@@ -76,16 +75,16 @@ func (info *Info) AddCommand(args ...string) {
 		return
 	}
 
-	oargs := ""
+	optArgs := ""
 
 	if len(args) >= 3 {
-		oargs = strings.Join(args[2:], " ")
+		optArgs = strings.Join(args[2:], " ")
 	}
 
 	if info.curGroup != "" {
-		info.commands = append(info.commands, &option{args[0], args[1], oargs, info.curGroup})
+		info.commands = append(info.commands, &option{args[0], args[1], optArgs, info.curGroup})
 	} else {
-		info.commands = append(info.commands, &option{args[0], args[1], oargs, "Commands"})
+		info.commands = append(info.commands, &option{args[0], args[1], optArgs, "Commands"})
 	}
 }
 
@@ -123,7 +122,7 @@ func (info *Info) AddSpoiler(spoiler string) {
 
 // Render print info to console
 func (info *Info) Render() {
-	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", info.Name)
+	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", info.name)
 
 	if len(info.commands) != 0 {
 		usageMessage += " {y}<command>{!}"
@@ -133,8 +132,8 @@ func (info *Info) Render() {
 		usageMessage += " {g}<options>{!}"
 	}
 
-	if info.SubArgs != "" {
-		usageMessage += " " + info.SubArgs
+	if info.args != "" {
+		usageMessage += " " + info.args
 	}
 
 	fmtc.Println(usageMessage)
@@ -185,6 +184,7 @@ func (about *About) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Parse option in format used by ek.arg
 func parseOption(opt string) string {
 	if opt[0:1] == "-" {
 		return opt
@@ -198,6 +198,7 @@ func parseOption(opt string) string {
 	return "--" + opt
 }
 
+// Render options
 func renderOptions(info *Info) {
 	fmtc.Println("\n{*}Options:{!}\n")
 
@@ -227,6 +228,7 @@ func renderOptions(info *Info) {
 	}
 }
 
+// Render commands
 func renderCommands(info *Info) {
 	var (
 		cmd      *option
@@ -264,13 +266,14 @@ func renderCommands(info *Info) {
 	}
 }
 
+// Render examples
 func renderExamples(info *Info) {
 	fmtc.Println("\n{*}Examples:{!}\n")
 
 	total := len(info.examples)
 
 	for index, example := range info.examples {
-		fmt.Printf("  %s %s\n", info.Name, example.cmd)
+		fmt.Printf("  %s %s\n", info.name, example.cmd)
 
 		if example.desc != "" {
 			fmtc.Printf("  {s}%s{!}\n", example.desc)
