@@ -8,11 +8,15 @@ package req
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
+	"fmt"
 	"net"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/essentialkaos/ek/env"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -43,6 +47,8 @@ const (
 	_TEST_STRING_RESP     = "Test String Response"
 )
 
+const _DEFAULT_PORT = "30000"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Test(t *testing.T) { TestingT(t) }
@@ -60,11 +66,21 @@ type TestStruct struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _ = Suite(&ReqSuite{url: "http://127.0.0.1:30000"})
+var _ = Suite(&ReqSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ReqSuite) SetUpSuite(c *C) {
+	s.url = "http://127.0.0.1:" + _DEFAULT_PORT
+
+	envVars := env.Get()
+
+	if envVars["EK_TEST_PORT"] != "" {
+		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
+	}
+
+	fmt.Println(s.url)
+
 	go runHTTPServer(s, c)
 }
 
@@ -283,7 +299,14 @@ func runHTTPServer(s *ReqSuite, c *C) {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	listener, err := net.Listen("tcp", ":30000")
+	port := _DEFAULT_PORT
+	envVars := env.Get()
+
+	if envVars["EK_TEST_PORT"] != "" {
+		port = envVars["EK_TEST_PORT"]
+	}
+
+	listener, err := net.Listen("tcp", ":"+port)
 
 	if err != nil {
 		c.Fatal(err.Error())
