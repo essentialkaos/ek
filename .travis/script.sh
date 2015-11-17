@@ -4,11 +4,10 @@
 
 main() {
   local dir="$1"
-  local pkg
 
-  if [[ ! -d $dir ]] ; then
-    exit 1
-  fi
+  [[ ! -d $dir ]] && exit 1
+
+  local pkg has_errors
 
   rm -f coverage.tmp coverage.txt &> /dev/null
 
@@ -17,11 +16,15 @@ main() {
 
     go test -coverprofile=coverage.tmp -covermode=atomic $dir/$pkg
 
+    [[ $? -ne 0 ]] && has_errors=true
+
     if [[ -f coverage.tmp ]] ; then
       cat coverage.tmp >> coverage.txt
       rm -f coverage.tmp
     fi
   done
+
+  [[ $has_errors ]] && exit 1
 }
 
 ########################################################################################
