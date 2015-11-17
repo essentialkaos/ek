@@ -8,7 +8,6 @@ package req
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"testing"
@@ -79,9 +78,9 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
 	}
 
-	fmt.Println(s.url)
-
 	go runHTTPServer(s, c)
+
+	time.Sleep(time.Second)
 }
 
 func (s *ReqSuite) TearDownSuite(c *C) {

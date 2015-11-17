@@ -94,7 +94,7 @@ func (args *Arguments) Add(name string, arg *V) error {
 	case arg == nil:
 		return ArgumentError{"--" + longName, ERROR_ARG_IS_NIL}
 	case longName == "":
-		return ArgumentError{"--" + longName, ERROR_NO_NAME}
+		return ArgumentError{"", ERROR_NO_NAME}
 	case args.full[longName] != nil:
 		return ArgumentError{"--" + longName, ERROR_DUPLICATE_LONGNAME}
 	case shortName != "" && args.short[shortName] != "":
@@ -130,17 +130,17 @@ func (args *Arguments) Add(name string, arg *V) error {
 
 // AddMap add supported arguments as map
 func (args *Arguments) AddMap(argsMap Map) []error {
-	var errors []error
+	var errs []error
 
 	for name, arg := range argsMap {
 		err := args.Add(name, arg)
 
 		if err != nil {
-			errors = append(errors, err)
+			errs = append(errs, err)
 		}
 	}
 
-	return errors
+	return errs
 }
 
 // GetS get argument value as string
@@ -283,16 +283,16 @@ func (args *Arguments) Has(name string) bool {
 
 // Parse parse arguments
 func (args *Arguments) Parse(rawArgs []string, argsMap ...Map) ([]string, []error) {
-	var errors []error
+	var errs []error
 
 	if len(argsMap) != 0 {
 		for _, amap := range argsMap {
-			errors = append(errors, args.AddMap(amap)...)
+			errs = append(errs, args.AddMap(amap)...)
 		}
 	}
 
-	if len(errors) != 0 {
-		return []string{}, errors
+	if len(errs) != 0 {
+		return []string{}, errs
 	}
 
 	return args.parseArgs(rawArgs)
@@ -330,7 +330,7 @@ func AddMap(argsMap Map) []error {
 // GetS get argument value as string
 func GetS(name string) string {
 	if global == nil || global.initialized == false {
-		global = NewArguments()
+		return ""
 	}
 
 	return global.GetS(name)
@@ -339,7 +339,7 @@ func GetS(name string) string {
 // GetI get argument value as integer
 func GetI(name string) int {
 	if global == nil || global.initialized == false {
-		global = NewArguments()
+		return -1
 	}
 
 	return global.GetI(name)
@@ -348,7 +348,7 @@ func GetI(name string) int {
 // GetB get argument value as boolean
 func GetB(name string) bool {
 	if global == nil || global.initialized == false {
-		global = NewArguments()
+		return false
 	}
 
 	return global.GetB(name)
@@ -357,7 +357,7 @@ func GetB(name string) bool {
 // GetF get argument value as floating number
 func GetF(name string) float64 {
 	if global == nil || global.initialized == false {
-		global = NewArguments()
+		return -1.0
 	}
 
 	return global.GetF(name)
@@ -366,7 +366,7 @@ func GetF(name string) float64 {
 // Has check that argument exists and set
 func Has(name string) bool {
 	if global == nil || global.initialized == false {
-		global = NewArguments()
+		return false
 	}
 
 	return global.Has(name)
@@ -461,7 +461,7 @@ func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 	errorList = append(errorList, args.getErrorsForRequiredArgs()...)
 
 	if argName != "" {
-		errorList = append(errorList, ArgumentError{argName, ERROR_EMPTY_VALUE})
+		errorList = append(errorList, ArgumentError{"--" + argName, ERROR_EMPTY_VALUE})
 	}
 
 	return argList, errorList
@@ -471,7 +471,7 @@ func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 	if strings.Contains(arg, "=") {
 		va := strings.Split(arg, "=")
 
-		if len(va) == 1 {
+		if len(va) <= 1 || va[1] == "" {
 			return "", "", ArgumentError{"--" + va[0], ERROR_WRONG_FORMAT}
 		}
 
@@ -489,14 +489,14 @@ func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 	if strings.Contains(arg, "=") {
 		va := strings.Split(arg, "=")
 
-		if len(va) == 1 {
-			return "", "", ArgumentError{va[0], ERROR_WRONG_FORMAT}
+		if len(va) <= 1 || va[1] == "" {
+			return "", "", ArgumentError{"-" + va[0], ERROR_WRONG_FORMAT}
 		}
 
 		argn := va[0]
 
 		if args.short[argn] == "" {
-			return "", "", ArgumentError{"-" + arg, ERROR_UNSUPPORTED}
+			return "", "", ArgumentError{"-" + argn, ERROR_UNSUPPORTED}
 		}
 
 		return args.short[argn], strings.Join(va[1:len(va)], "="), nil
@@ -506,13 +506,7 @@ func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 		return "", "", ArgumentError{"-" + arg, ERROR_UNSUPPORTED}
 	}
 
-	argn := args.short[arg]
-
-	if args.full[argn] != nil {
-		return argn, "", nil
-	}
-
-	return "", "", ArgumentError{"-" + arg, ERROR_UNSUPPORTED}
+	return args.short[arg], "", nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -562,7 +556,7 @@ func procValue(name string, arg *V, value string) error {
 		v, err := strconv.ParseFloat(value, 64)
 
 		if err != nil {
-			return ArgumentError{name, ERROR_WRONG_FORMAT}
+			return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
 		}
 
 		var tv float64
@@ -584,7 +578,7 @@ func procValue(name string, arg *V, value string) error {
 		v, err := strconv.Atoi(value)
 
 		if err != nil {
-			return ArgumentError{name, ERROR_WRONG_FORMAT}
+			return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
 		}
 
 		var tv int
