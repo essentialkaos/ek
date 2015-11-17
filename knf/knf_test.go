@@ -9,6 +9,7 @@ package knf
 
 import (
 	check "gopkg.in/check.v1"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -91,15 +92,7 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 
 	s.ConfigPath = tmpdir + "/" + _CONFIG_FILE_NAME
 
-	fd, err := os.OpenFile(s.ConfigPath, os.O_WRONLY|os.O_CREATE, 0644)
-
-	if err != nil {
-		c.Fatal(err.Error())
-	}
-
-	defer fd.Close()
-
-	_, err = fd.WriteString(_CONFIG_DATA)
+	err := ioutil.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())
