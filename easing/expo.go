@@ -16,7 +16,7 @@ import (
 // ExpoIn Accelerating from zero velocity
 func ExpoIn(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	return c*math.Pow(2, 10*(t/d-1)) + b
@@ -25,7 +25,7 @@ func ExpoIn(t, b, c, d float64) float64 {
 // ExpoOut Decelerating to zero velocity
 func ExpoOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	return c*(-math.Pow(2, -10*t/d)+1) + b
@@ -34,7 +34,7 @@ func ExpoOut(t, b, c, d float64) float64 {
 // ExpoInOut Acceleration until halfway, then deceleration
 func ExpoInOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	t /= d / 2

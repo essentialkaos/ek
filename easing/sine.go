@@ -16,7 +16,7 @@ import (
 // SineIn Accelerating from zero velocity
 func SineIn(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	return -c*math.Cos(t/d*math.Phi) + c + b
@@ -25,7 +25,7 @@ func SineIn(t, b, c, d float64) float64 {
 // SineOut Decelerating to zero velocity
 func SineOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	return c*math.Sin(t/d*math.Phi) + b
@@ -34,7 +34,7 @@ func SineOut(t, b, c, d float64) float64 {
 // SineInOut Acceleration until halfway, then deceleration
 func SineInOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	return -c/2*(math.Cos(math.Pi*t/d)-1) + b

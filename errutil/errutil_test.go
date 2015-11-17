@@ -46,6 +46,7 @@ func (s *ErrSuite) TestPositive(c *C) {
 			errors.New("5"),
 		},
 	)
+	c.Assert(errs.Add(nil), NotNil)
 }
 
 func (s *ErrSuite) TestNegative(c *C) {

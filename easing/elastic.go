@@ -16,7 +16,7 @@ import (
 // ElasticIn Accelerating from zero velocity
 func ElasticIn(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi
@@ -47,7 +47,7 @@ func ElasticIn(t, b, c, d float64) float64 {
 // ElasticOut Decelerating to zero velocity
 func ElasticOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi
@@ -76,7 +76,7 @@ func ElasticOut(t, b, c, d float64) float64 {
 // ElasticInOut Acceleration until halfway, then deceleration
 func ElasticInOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi

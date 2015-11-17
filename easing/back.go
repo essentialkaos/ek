@@ -16,7 +16,7 @@ import (
 // BackIn Accelerating from zero velocity
 func BackIn(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi
@@ -28,7 +28,7 @@ func BackIn(t, b, c, d float64) float64 {
 // BackOut Decelerating to zero velocity
 func BackOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi
@@ -40,7 +40,7 @@ func BackOut(t, b, c, d float64) float64 {
 // BackInOut Acceleration until halfway, then deceleration
 func BackInOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	s := math.SqrtPi * 1.525

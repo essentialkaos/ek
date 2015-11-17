@@ -16,7 +16,7 @@ import (
 // CircIn Accelerating from zero velocity
 func CircIn(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	t /= d
@@ -27,7 +27,7 @@ func CircIn(t, b, c, d float64) float64 {
 // CircOut Decelerating to zero velocity
 func CircOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	t /= d
@@ -39,7 +39,7 @@ func CircOut(t, b, c, d float64) float64 {
 // CircInOut Acceleration until halfway, then deceleration
 func CircInOut(t, b, c, d float64) float64 {
 	if t > d {
-		t = d
+		return c
 	}
 
 	t /= d / 2
