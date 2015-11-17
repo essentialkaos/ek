@@ -5,18 +5,24 @@
 main() {
   local dir="$1"
 
-  [[ ! -d $dir ]] && exit 1
+  if [[ ! -d $dir ]] ; then
+    exit 1
+  fi
 
   local pkg has_errors
 
   rm -f coverage.tmp coverage.txt &> /dev/null
 
   for pkg in $(ls -1 $dir) ; do
-    [[ ! -d $dir/$pkg ]] && continue
+    if [[ ! -d $dir/$pkg ]] ; then
+      continue
+    fi
 
     go test -coverprofile=coverage.tmp -covermode=atomic $dir/$pkg
 
-    [[ $? -ne 0 ]] && has_errors=true
+    if [[ $? -ne 0 ]] ; then
+      has_errors=true
+    fi
 
     if [[ -f coverage.tmp ]] ; then
       cat coverage.tmp >> coverage.txt
@@ -24,7 +30,9 @@ main() {
     fi
   done
 
-  [[ $has_errors ]] && exit 1
+  if [[ $has_errors ]] ; then
+    exit 1
+  fi
 }
 
 ########################################################################################
