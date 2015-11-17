@@ -14,8 +14,7 @@ before_install:
   - go get gopkg.in/check.v1
 
 script:
-  - go test ./...
-  - .cover/coverage.sh .
+  - .travis/script.sh .
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
