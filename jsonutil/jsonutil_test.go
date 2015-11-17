@@ -26,7 +26,7 @@ const _JSON_DATA = `{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type jsonTestStruct struct {
+type TestStruct struct {
 	String  string `json:"string"`
 	Integer int    `json:"integer"`
 	Boolean bool   `json:"boolean"`
@@ -59,9 +59,9 @@ func (s *JSONSuite) TestDecoding(c *C) {
 	c.Assert(crypto.FileHash(jsonFile), Equals,
 		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
 
-	testStruct := &jsonTestStruct{}
+	testStruct := &TestStruct{}
 
-	err = DecodeFile(s.TmpDir+"/file-not-exists.json", &jsonTestStruct{})
+	err = DecodeFile(s.TmpDir+"/file-not-exists.json", &TestStruct{})
 
 	c.Assert(err, NotNil)
 
@@ -76,7 +76,7 @@ func (s *JSONSuite) TestDecoding(c *C) {
 func (s *JSONSuite) TestEncoding(c *C) {
 	jsonFile := s.TmpDir + "/file2.json"
 
-	testStruct := &jsonTestStruct{
+	testStruct := &TestStruct{
 		String:  "test",
 		Integer: 912,
 		Boolean: true,

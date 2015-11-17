@@ -42,6 +42,12 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Query is a map[string]string used for query
+type Query map[string]string
+
+// Headers is a map[string]string used for headers
+type Headers map[string]string
+
 // Request is basic struct
 type Request struct {
 	Method            string            // Request method
@@ -65,8 +71,8 @@ type Response struct {
 
 // RequestError error struct
 type RequestError struct {
-	desc string
-	Type int
+	class int
+	desc  string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -87,20 +93,12 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Query build query map from args
-func Query(args ...string) map[string]string {
-	return sliceToMap(args)
-}
-
-// Headers build headers map from args
-func Headers(args ...string) map[string]string {
-	return sliceToMap(args)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Do execute request
 func (r Request) Do() (*Response, error) {
+	if r.URL == "" {
+		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	}
+
 	if r.Method == "" {
 		r.Method = GET
 	}
@@ -112,13 +110,13 @@ func (r Request) Do() (*Response, error) {
 	bodyReader, err := getBodyReader(r.Body)
 
 	if err != nil {
-		return nil, RequestError{err.Error(), ERROR_BODY_ENCODE}
+		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
 	}
 
 	req, err := http.NewRequest(r.Method, r.URL, bodyReader)
 
 	if err != nil {
-		return nil, RequestError{err.Error(), ERROR_CREATE_REQUEST}
+		return nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
 	}
 
 	if r.Headers != nil && len(r.Headers) != 0 {
@@ -132,7 +130,7 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	if r.Accept != "" {
-		req.Header.Add("Accept", r.ContentType)
+		req.Header.Add("Accept", r.Accept)
 	}
 
 	switch {
@@ -149,7 +147,7 @@ func (r Request) Do() (*Response, error) {
 	resp, err := Client.Do(req)
 
 	if err != nil {
-		return nil, RequestError{err.Error(), ERROR_SEND_REQUEST}
+		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
 	}
 
 	result := &Response{resp, r.URL}
@@ -215,7 +213,7 @@ func (r *Response) String() string {
 
 // Error show error message
 func (e RequestError) Error() string {
-	switch e.Type {
+	switch e.class {
 	case ERROR_BODY_ENCODE:
 		return fmt.Sprintf("Can't encode request body (%s)", e.desc)
 	case ERROR_CREATE_REQUEST:
