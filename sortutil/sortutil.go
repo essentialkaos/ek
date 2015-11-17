@@ -59,8 +59,6 @@ func (s versionSlice) Less(i, j int) bool {
 			return true
 		case ii > ji:
 			return false
-		default:
-			continue
 		}
 	}
 
