@@ -5,6 +5,8 @@ go:
   - release
   - tip
 
+sudo: false
+
 before_install:
   - go get gopkg.in/check.v1
 
