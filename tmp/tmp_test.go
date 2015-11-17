@@ -35,25 +35,52 @@ func (ts *TmpSuite) SetUpSuite(c *C) {
 	ts.TempDir = c.MkDir()
 }
 
+func (ts *TmpSuite) TestMk(c *C) {
+	t := NewTemp()
+
+	c.Assert(t, NotNil)
+	c.Assert(t.Dir, Equals, "/tmp")
+
+	t.Clean()
+}
+
+func (ts *TmpSuite) TestErrors(c *C) {
+	t := NewTemp("/")
+
+	c.Assert(t, NotNil)
+	c.Assert(t.Dir, Equals, "/")
+
+	tmpDir, err := t.MkDir("test")
+
+	c.Assert(tmpDir, Equals, "")
+	c.Assert(err, NotNil)
+
+	tmpFd, tmpFile, err := t.MkFile("test")
+
+	c.Assert(tmpFd, IsNil)
+	c.Assert(tmpFile, Equals, "")
+	c.Assert(err, NotNil)
+}
+
 func (ts *TmpSuite) TestMkDir(c *C) {
 	t := NewTemp(ts.TempDir)
 
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, ts.TempDir)
 
-	tn, err := t.MkDir("test")
+	tmpDir, err := t.MkDir("test")
 
-	c.Assert(tn, Not(Equals), "")
+	c.Assert(tmpDir, Not(Equals), "")
 	c.Assert(err, IsNil)
-	c.Assert(fsutil.IsExist(tn), Equals, true)
-	c.Assert(fsutil.IsDir(tn), Equals, true)
-	c.Assert(fsutil.IsReadable(tn), Equals, true)
-	c.Assert(fsutil.IsWritable(tn), Equals, true)
-	c.Assert(fsutil.GetPerm(tn), Equals, os.FileMode(0750))
+	c.Assert(fsutil.IsExist(tmpDir), Equals, true)
+	c.Assert(fsutil.IsDir(tmpDir), Equals, true)
+	c.Assert(fsutil.IsReadable(tmpDir), Equals, true)
+	c.Assert(fsutil.IsWritable(tmpDir), Equals, true)
+	c.Assert(fsutil.GetPerm(tmpDir), Equals, os.FileMode(0750))
 
 	t.Clean()
 
-	c.Assert(fsutil.IsExist(tn), Equals, false)
+	c.Assert(fsutil.IsExist(tmpDir), Equals, false)
 }
 
 func (ts *TmpSuite) TestMkFile(c *C) {
@@ -62,18 +89,32 @@ func (ts *TmpSuite) TestMkFile(c *C) {
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, ts.TempDir)
 
-	tf, tn, err := t.MkFile("test")
+	tmpFd, tmpFile, err := t.MkFile("test")
 
-	c.Assert(tf, NotNil)
+	c.Assert(tmpFd, NotNil)
 	c.Assert(err, IsNil)
-	c.Assert(tn, Not(Equals), "")
-	c.Assert(fsutil.IsExist(tn), Equals, true)
-	c.Assert(fsutil.IsRegular(tn), Equals, true)
-	c.Assert(fsutil.IsReadable(tn), Equals, true)
-	c.Assert(fsutil.IsWritable(tn), Equals, true)
-	c.Assert(fsutil.GetPerm(tn), Equals, os.FileMode(0640))
+	c.Assert(tmpFile, Not(Equals), "")
+	c.Assert(fsutil.IsExist(tmpFile), Equals, true)
+	c.Assert(fsutil.IsRegular(tmpFile), Equals, true)
+	c.Assert(fsutil.IsReadable(tmpFile), Equals, true)
+	c.Assert(fsutil.IsWritable(tmpFile), Equals, true)
+	c.Assert(fsutil.GetPerm(tmpFile), Equals, os.FileMode(0640))
 
 	t.Clean()
 
-	c.Assert(fsutil.IsExist(tn), Equals, false)
+	c.Assert(fsutil.IsExist(tmpFile), Equals, false)
+}
+
+func (ts *TmpSuite) TestMkName(c *C) {
+	t := NewTemp(ts.TempDir)
+
+	c.Assert(t, NotNil)
+	c.Assert(t.Dir, Equals, ts.TempDir)
+
+	c.Assert(t.MkName(), Not(Equals), "")
+	c.Assert(t.MkName("1234"), Not(Equals), "")
+
+	ln := len(ts.TempDir + "/_1234")
+
+	c.Assert(t.MkName("1234")[:ln], Equals, ts.TempDir+"/_1234")
 }

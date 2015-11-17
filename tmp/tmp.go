@@ -54,9 +54,11 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 	tmpDir := getTempName(t.Dir, name)
 	err := os.MkdirAll(tmpDir, 0750)
 
-	if err == nil {
-		t.targets = append(t.targets, tmpDir)
+	if err != nil {
+		return "", err
 	}
+
+	t.targets = append(t.targets, tmpDir)
 
 	return tmpDir, err
 }
@@ -73,7 +75,7 @@ func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
 	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, 0640)
 
 	if err != nil {
-		return fd, "", err
+		return nil, "", err
 	}
 
 	t.targets = append(t.targets, tmpFile)
