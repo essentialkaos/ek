@@ -261,19 +261,16 @@ func (s *ReqSuite) TestErrors(c *C) {
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Can't create request struct (URL property can't be empty and must be set)")
 
 	resp, err = Request{URL: "ABCD"}.Do()
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Can't send request (Get ABCD: unsupported protocol scheme \"\")")
 
 	resp, err = Request{URL: "http://127.0.0.1:60000"}.Do()
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Can't send request (Get http://127.0.0.1:60000: dial tcp 127.0.0.1:60000: getsockopt: connection refused)")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
