@@ -18,10 +18,10 @@ go get github.com/essentialkaos/ek
 
 ### Build Status
 
-| Branch | Status |
-|------------|--------|
-| Master | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek) |
-| Develop | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=develop)](https://travis-ci.org/essentialkaos/ek) |
+| Branch | TravisCI | CodeCov |
+|--------|----------|---------|
+| Master | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek) | [![codecov.io](https://codecov.io/github/essentialkaos/ek/coverage.svg?branch=master)](https://codecov.io/github/essentialkaos/ek?branch=master) |
+| Develop | [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=develop)](https://travis-ci.org/essentialkaos/ek) | [![codecov.io](https://codecov.io/github/essentialkaos/ek/coverage.svg?branch=develop)](https://codecov.io/github/essentialkaos/ek?branch=develop) |
 
 ### License
 
@@ -31,6 +31,7 @@ go get github.com/essentialkaos/ek
 
 #### r3
 
+* [req] Fixed bug with Accept header
 * [system] Added method system.SetProcName for changing process name
 
 #### r2
