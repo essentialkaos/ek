@@ -34,7 +34,7 @@ func Substr(s string, start int, end int) string {
 	sl := len(s)
 
 	if start > sl {
-		return s
+		return ""
 	}
 
 	if start < 0 {

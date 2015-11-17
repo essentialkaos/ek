@@ -8,8 +8,9 @@ package strutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -34,6 +35,8 @@ func (s *StrUtilSuite) TestConcat(c *C) {
 }
 
 func (s *StrUtilSuite) TestSubstr(c *C) {
+	c.Assert(Substr("", 1, 2), Equals, "")
+	c.Assert(Substr("test1234TEST", 30, 32), Equals, "")
 	c.Assert(Substr("test1234TEST", 0, 8), Equals, "test1234")
 	c.Assert(Substr("test1234TEST", 4, 8), Equals, "1234")
 	c.Assert(Substr("test1234TEST", 8, 16), Equals, "TEST")
