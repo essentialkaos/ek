@@ -7,6 +7,9 @@ go:
 
 sudo: false
 
+env:
+  - EK_TEST_PORT=8080
+
 before_install:
   - go get gopkg.in/check.v1
 
