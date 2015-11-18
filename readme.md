@@ -26,19 +26,3 @@ go get github.com/essentialkaos/ek
 ### License
 
 [EKOL](https://essentialkaos.com/ekol)
-
-### Changelog
-
-#### r3
-
-* [req] Fixed bug with Accept header
-* [system] Added method system.SetProcName for changing process name
-
-#### r2
-
-* [usage] Improved new Info struct creation
-* [system] Fixed bug in fs usage calculation
-
-#### r1
-
-Initial public release
