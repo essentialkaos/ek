@@ -53,7 +53,7 @@ func PrettyDuration(d interface{}) string {
 		return "Wrong duration value"
 	}
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 5; i++ {
 		if t >= _WEEK {
 			weeks := t / _WEEK
 			t = t % _WEEK
@@ -216,24 +216,13 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 }
 
 func getShortWeekday(d time.Weekday) string {
-	switch int(d) {
-	case 0:
-		return "Sun"
-	case 1:
-		return "Mon"
-	case 2:
-		return "Tue"
-	case 3:
-		return "Wed"
-	case 4:
-		return "Thu"
-	case 5:
-		return "Fri"
-	case 6:
-		return "Sat"
+	long := getLongWeekday(d)
+
+	if long == "" {
+		return ""
 	}
 
-	return ""
+	return long[:3]
 }
 
 func getLongWeekday(d time.Weekday) string {
@@ -258,34 +247,13 @@ func getLongWeekday(d time.Weekday) string {
 }
 
 func getShortMonth(m time.Month) string {
-	switch int(m) {
-	case 1:
-		return "Jan"
-	case 2:
-		return "Feb"
-	case 3:
-		return "Mar"
-	case 4:
-		return "Apr"
-	case 5:
-		return "May"
-	case 6:
-		return "Jun"
-	case 7:
-		return "Jul"
-	case 8:
-		return "Aug"
-	case 9:
-		return "Sep"
-	case 10:
-		return "Oct"
-	case 11:
-		return "Nov"
-	case 12:
-		return "Dec"
+	long := getLongMonth(m)
+
+	if long == "" {
+		return ""
 	}
 
-	return ""
+	return long[:3]
 }
 
 func getLongMonth(m time.Month) string {

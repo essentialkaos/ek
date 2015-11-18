@@ -26,13 +26,24 @@ var _ = Suite(&TimeUtilSuite{})
 func (s *TimeUtilSuite) TestPretyDuration(c *C) {
 	c.Assert(PrettyDuration(time.Duration(59000000000)), Equals, "59 seconds")
 	c.Assert(PrettyDuration(120), Equals, "2 minutes")
+	c.Assert(PrettyDuration(int8(120)), Equals, "2 minutes")
+	c.Assert(PrettyDuration(int16(120)), Equals, "2 minutes")
+	c.Assert(PrettyDuration(int32(120)), Equals, "2 minutes")
+	c.Assert(PrettyDuration(int64(120)), Equals, "2 minutes")
 	c.Assert(PrettyDuration(60), Equals, "1 minute")
-	c.Assert(PrettyDuration(1234567), Equals, "2 weeks 6 hours 56 minutes and 7 seconds")
+	c.Assert(PrettyDuration(1370137), Equals, "2 weeks 1 day 20 hours 35 minutes and 37 seconds")
 	c.Assert(PrettyDuration(0), Equals, "< 1 second")
+	c.Assert(PrettyDuration("string"), Equals, "Wrong duration value")
+}
+
+func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
+	c.Assert(DurationToSeconds(time.Minute), Equals, int64(60))
+	c.Assert(DurationToSeconds(time.Hour), Equals, int64(3600))
 }
 
 func (s *TimeUtilSuite) TestFormat(c *C) {
 	d := time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC)
+	d1 := time.Date(2014, 1, 15, 0, 0, 0, 0, time.UTC)
 
 	c.Assert(Format(d, "%%"), Equals, "%")
 	c.Assert(Format(d, "%a"), Equals, "Wed")
@@ -68,9 +79,11 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%Y"), Equals, "2014")
 	c.Assert(Format(d, "%z"), Equals, "+0000")
 	c.Assert(Format(d, "%Z"), Equals, "UTC")
+	c.Assert(Format(d, "%:"), Equals, "+00:00")
 	c.Assert(Format(d, "%Q"), Equals, "%Q")
 	c.Assert(Format(d, "%1234"), Equals, "%1234")
 	c.Assert(Format(d, "%SSec"), Equals, "00Sec")
+	c.Assert(Format(d1, "%e"), Equals, "15")
 }
 
 func (s *TimeUtilSuite) TestTinyDate(c *C) {
@@ -79,4 +92,75 @@ func (s *TimeUtilSuite) TestTinyDate(c *C) {
 
 	c.Assert(td.Unix(), Equals, dt.Unix())
 	c.Assert(td.Time().Unix(), Equals, dt.Unix())
+}
+
+func (s *TimeUtilSuite) TestDateNames(c *C) {
+	c.Assert(getShortWeekday(time.Sunday), Equals, "Sun")
+	c.Assert(getShortWeekday(time.Monday), Equals, "Mon")
+	c.Assert(getShortWeekday(time.Tuesday), Equals, "Tue")
+	c.Assert(getShortWeekday(time.Wednesday), Equals, "Wed")
+	c.Assert(getShortWeekday(time.Thursday), Equals, "Thu")
+	c.Assert(getShortWeekday(time.Friday), Equals, "Fri")
+	c.Assert(getShortWeekday(time.Saturday), Equals, "Sat")
+	c.Assert(getShortWeekday(time.Weekday(7)), Equals, "")
+
+	c.Assert(getLongWeekday(time.Sunday), Equals, "Sunday")
+	c.Assert(getLongWeekday(time.Monday), Equals, "Monday")
+	c.Assert(getLongWeekday(time.Tuesday), Equals, "Tuesday")
+	c.Assert(getLongWeekday(time.Wednesday), Equals, "Wednesday")
+	c.Assert(getLongWeekday(time.Thursday), Equals, "Thursday")
+	c.Assert(getLongWeekday(time.Friday), Equals, "Friday")
+	c.Assert(getLongWeekday(time.Saturday), Equals, "Saturday")
+	c.Assert(getLongWeekday(time.Weekday(7)), Equals, "")
+
+	c.Assert(getShortMonth(time.Month(0)), Equals, "")
+	c.Assert(getShortMonth(time.January), Equals, "Jan")
+	c.Assert(getShortMonth(time.February), Equals, "Feb")
+	c.Assert(getShortMonth(time.March), Equals, "Mar")
+	c.Assert(getShortMonth(time.April), Equals, "Apr")
+	c.Assert(getShortMonth(time.May), Equals, "May")
+	c.Assert(getShortMonth(time.June), Equals, "Jun")
+	c.Assert(getShortMonth(time.July), Equals, "Jul")
+	c.Assert(getShortMonth(time.August), Equals, "Aug")
+	c.Assert(getShortMonth(time.September), Equals, "Sep")
+	c.Assert(getShortMonth(time.October), Equals, "Oct")
+	c.Assert(getShortMonth(time.November), Equals, "Nov")
+	c.Assert(getShortMonth(time.December), Equals, "Dec")
+
+	c.Assert(getLongMonth(time.Month(0)), Equals, "")
+	c.Assert(getLongMonth(time.January), Equals, "January")
+	c.Assert(getLongMonth(time.February), Equals, "February")
+	c.Assert(getLongMonth(time.March), Equals, "March")
+	c.Assert(getLongMonth(time.April), Equals, "April")
+	c.Assert(getLongMonth(time.May), Equals, "May")
+	c.Assert(getLongMonth(time.June), Equals, "June")
+	c.Assert(getLongMonth(time.July), Equals, "July")
+	c.Assert(getLongMonth(time.August), Equals, "August")
+	c.Assert(getLongMonth(time.September), Equals, "September")
+	c.Assert(getLongMonth(time.October), Equals, "October")
+	c.Assert(getLongMonth(time.November), Equals, "November")
+	c.Assert(getLongMonth(time.December), Equals, "December")
+
+	c.Assert(getWeekdayNum(time.Unix(1448193600, 0)), Equals, 7)
+}
+
+func (s *TimeUtilSuite) TestAMPM(c *C) {
+	c.Assert(getAMPMHour(time.Unix(1447838100, 0).UTC()), Equals, 9)
+	c.Assert(getAMPM(time.Unix(1447838100, 0).UTC(), true), Equals, "AM")
+	c.Assert(getAMPM(time.Unix(1447838100, 0).UTC(), false), Equals, "am")
+	c.Assert(getAMPMHour(time.Unix(1447881300, 0).UTC()), Equals, 9)
+	c.Assert(getAMPM(time.Unix(1447881300, 0).UTC(), true), Equals, "PM")
+	c.Assert(getAMPM(time.Unix(1447881300, 0).UTC(), false), Equals, "pm")
+}
+
+func (s *TimeUtilSuite) TestTimezone(c *C) {
+	ny, _ := time.LoadLocation("America/New_York")
+	msk, _ := time.LoadLocation("Europe/Moscow")
+
+	t := time.Unix(1447848900, 0)
+
+	c.Assert(getTimezone(t.UTC().In(ny), false), Equals, "-0500")
+	c.Assert(getTimezone(t.UTC().In(ny), true), Equals, "-05:00")
+	c.Assert(getTimezone(t.UTC().In(msk), false), Equals, "+0300")
+	c.Assert(getTimezone(t.UTC().In(msk), true), Equals, "+03:00")
 }
