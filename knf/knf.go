@@ -59,9 +59,9 @@ var global *Config
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ReadGlobal read and parse config file
+// Global read and parse config file
 // global config will be accessable globally from any part of code
-func ReadGlobal(file string) error {
+func Global(file string) error {
 	config, err := Read(file)
 
 	if err != nil {
@@ -140,10 +140,10 @@ func Read(file string) (*Config, error) {
 	return config, nil
 }
 
-// ReloadGlobal read and parse global config file
-func ReloadGlobal() (map[string]bool, error) {
-	if global != nil {
-		return map[string]bool{}, errors.New("Global config is not loaded")
+// Reload read and parse global config file
+func Reload() (map[string]bool, error) {
+	if global == nil {
+		return nil, errors.New("Global config is not loaded")
 	}
 
 	return global.Reload()
@@ -158,7 +158,7 @@ func GetS(name string, defvals ...string) string {
 	return global.GetS(name, defvals...)
 }
 
-// GetI return config value as string
+// GetI return global config value as string
 func GetI(name string, defvals ...int) int {
 	if global == nil {
 		return 0
@@ -167,7 +167,7 @@ func GetI(name string, defvals ...int) int {
 	return global.GetI(name, defvals...)
 }
 
-// GetF return config value as floating number
+// GetF return global config value as floating number
 func GetF(name string, defvals ...float64) float64 {
 	if global == nil {
 		return 0.0
@@ -176,13 +176,22 @@ func GetF(name string, defvals ...float64) float64 {
 	return global.GetF(name, defvals...)
 }
 
-// GetB return config value as boolean
+// GetB return global config value as boolean
 func GetB(name string, defvals ...bool) bool {
 	if global == nil {
 		return false
 	}
 
 	return global.GetB(name, defvals...)
+}
+
+// GetM return global config value as file mode
+func GetM(name string, defvals ...os.FileMode) os.FileMode {
+	if global == nil {
+		return os.FileMode(0)
+	}
+
+	return global.GetM(name, defvals...)
 }
 
 // HasSection check if section exist
@@ -212,6 +221,15 @@ func Sections() []string {
 	return global.Sections()
 }
 
+// Props return slice with properties names in some section
+func Props(section string) []string {
+	if global == nil {
+		return []string{}
+	}
+
+	return global.Props(section)
+}
+
 // Validate require slice with pointers to validators and
 // return slice with validation errors
 func Validate(validators []*Validator) []error {
@@ -226,10 +244,18 @@ func Validate(validators []*Validator) []error {
 
 // Reload read and parse config file
 func (c *Config) Reload() (map[string]bool, error) {
+	if c == nil {
+		return nil, errors.New("Config is nil")
+	}
+
+	if c.file == "" {
+		return nil, errors.New("Path to config file is empty (non initialized struct?)")
+	}
+
 	nc, err := Read(c.file)
 
 	if err != nil {
-		return map[string]bool{}, err
+		return nil, err
 	}
 
 	changes := make(map[string]bool)
@@ -401,7 +427,7 @@ func (c *Config) Sections() []string {
 	return c.sections
 }
 
-// Properties return slice with properties names in some section
+// Props return slice with properties names in some section
 func (c *Config) Props(section string) []string {
 	if c == nil || !c.HasSection(section) {
 		return []string{}
@@ -429,7 +455,7 @@ func (c *Config) Props(section string) []string {
 // return slice with validation errors
 func (c *Config) Validate(validators []*Validator) []error {
 	if c == nil {
-		return []error{errors.New("Config struct is nil")}
+		return []error{errors.New("Config is nil")}
 	}
 
 	var result []error
