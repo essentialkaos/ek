@@ -10,21 +10,14 @@ package jsonutil
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"os"
-
-	"github.com/essentialkaos/ek/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // DecodeFile reads and decode json file
 func DecodeFile(file string, v interface{}) error {
-	if !fsutil.CheckPerms("FR", file) {
-		return errors.New("File " + file + " not exist or not readable")
-	}
-
 	data, err := ioutil.ReadFile(file)
 
 	if err != nil {
