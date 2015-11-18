@@ -43,4 +43,5 @@ func (s *SliceSuite) TestContains(c *C) {
 
 	c.Assert(Contains(source, "1"), Equals, true)
 	c.Assert(Contains(source, "4"), Equals, false)
+	c.Assert(Contains([]string{}, "1"), Equals, false)
 }

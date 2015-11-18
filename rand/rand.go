@@ -43,18 +43,6 @@ func Int(n int) int {
 	return rand.Intn(n)
 }
 
-// Float64 return random float64
-func Float64(n int) float64 {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Float64()
-}
-
-// Float32 return random float32
-func Float32(n int) float32 {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Float32()
-}
-
 // Slice return slice with random chars
 func Slice(length int) []string {
 	if length == 0 {
