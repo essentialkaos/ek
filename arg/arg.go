@@ -171,17 +171,17 @@ func (args *Arguments) GetI(name string) int {
 
 	switch {
 	case !ok:
-		return -1
+		return 0
 
 	case args.full[longName].Value == nil:
-		return -1
+		return 0
 
 	case arg.Type == STRING:
 		result, err := strconv.Atoi(arg.Value.(string))
 		if err == nil {
 			return result
 		}
-		return -1
+		return 0
 
 	case arg.Type == FLOAT:
 		return int(arg.Value.(float64))
@@ -190,7 +190,7 @@ func (args *Arguments) GetI(name string) int {
 		if arg.Value.(bool) {
 			return 1
 		}
-		return -1
+		return 0
 
 	default:
 		return arg.Value.(int)
@@ -239,17 +239,17 @@ func (args *Arguments) GetF(name string) float64 {
 
 	switch {
 	case !ok:
-		return -1.0
+		return 0.0
 
 	case args.full[longName].Value == nil:
-		return -1.0
+		return 0.0
 
 	case arg.Type == STRING:
 		result, err := strconv.ParseFloat(arg.Value.(string), 64)
 		if err == nil {
 			return result
 		}
-		return -1.0
+		return 0.0
 
 	case arg.Type == INT:
 		return float64(arg.Value.(int))
@@ -258,7 +258,7 @@ func (args *Arguments) GetF(name string) float64 {
 		if arg.Value.(bool) {
 			return 1.0
 		}
-		return -1.0
+		return 0.0
 
 	default:
 		return arg.Value.(float64)
@@ -339,7 +339,7 @@ func GetS(name string) string {
 // GetI get argument value as integer
 func GetI(name string) int {
 	if global == nil || global.initialized == false {
-		return -1
+		return 0
 	}
 
 	return global.GetI(name)
@@ -357,7 +357,7 @@ func GetB(name string) bool {
 // GetF get argument value as floating number
 func GetF(name string) float64 {
 	if global == nil || global.initialized == false {
-		return -1.0
+		return 0.0
 	}
 
 	return global.GetF(name)
