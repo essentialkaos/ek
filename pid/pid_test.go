@@ -9,6 +9,7 @@ package pid
 
 import (
 	. "gopkg.in/check.v1"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -17,7 +18,9 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type PidSuite struct{}
+type PidSuite struct {
+	Dir string
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -30,11 +33,62 @@ var _ = Suite(&PidSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (ps *PidSuite) SetUpSuite(c *C) {
-	Dir = c.MkDir()
+	ps.Dir = c.MkDir()
+}
+
+func (ps *PidSuite) TestErrors(c *C) {
+	Dir = "/_NOT_EXIST"
+
+	err := Create("test")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST is not exist")
+
+	Dir = os.Args[0]
+
+	err = Create("test")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, os.Args[0]+" is not directory")
+
+	Dir = "/"
+
+	err = Create("test")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Directory / is not writable")
+
+	err = Remove("test")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Directory / is not writable")
+
+	pidNum := Get("test")
+
+	c.Assert(pidNum, Equals, -1)
+
+	Dir = ps.Dir
+
+	err = Create("")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Pid file name can't be blank")
+
+	pidNum = Get("_test_")
+
+	c.Assert(pidNum, Equals, -1)
+
+	ioutil.WriteFile(ps.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
+
+	pidNum = Get("bad.pid")
+
+	c.Assert(pidNum, Equals, -1)
 }
 
 func (ps *PidSuite) TestCreate(c *C) {
-	err := Create("test")
+	Dir = ps.Dir
+
+	err := Create("test.pid")
 
 	c.Assert(err, IsNil)
 
@@ -42,9 +96,15 @@ func (ps *PidSuite) TestCreate(c *C) {
 	c.Assert(fsutil.IsReadable(Dir+"/test.pid"), Equals, true)
 	c.Assert(fsutil.IsReadable(Dir+"/test.pid"), Equals, true)
 	c.Assert(fsutil.IsNonEmpty(Dir+"/test.pid"), Equals, true)
+
+	err = Create("test")
+
+	c.Assert(err, IsNil)
 }
 
 func (ps *PidSuite) TestGet(c *C) {
+	Dir = ps.Dir
+
 	pid := Get("test")
 
 	c.Assert(pid, Not(Equals), -1)
@@ -52,6 +112,8 @@ func (ps *PidSuite) TestGet(c *C) {
 }
 
 func (ps *PidSuite) TestRemove(c *C) {
+	Dir = ps.Dir
+
 	c.Assert(fsutil.IsExist(Dir+"/test.pid"), Equals, true)
 
 	Remove("test")
