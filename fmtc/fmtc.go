@@ -241,6 +241,7 @@ LOOP:
 		output.WriteString("{")
 		output.WriteString(colorCode)
 		output.WriteString("}")
+		return true
 	} else {
 		output.WriteString(colorCode)
 	}

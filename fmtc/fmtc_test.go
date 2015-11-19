@@ -8,8 +8,11 @@ package fmtc
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
+	"bytes"
+	"errors"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -52,6 +55,7 @@ func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint("W"), Equals, "W")
 	c.Assert(Sprint("{"), Equals, "{")
 	c.Assert(Sprint("{r"), Equals, "{r")
+	c.Assert(Sprint("{J}W"), Equals, "{J}W")
 	c.Assert(Sprint("{r}W"), Equals, "\x1b[0;31;49mW\x1b[0m")
 	c.Assert(Sprint("{{r}W{!}}"), Equals, "{\x1b[0;31;49mW\x1b[0m}")
 }
@@ -94,4 +98,41 @@ func (s *FormatSuite) TestClean(c *C) {
 	c.Assert(Clean("{C}W{!}"), Equals, "W")
 	c.Assert(Clean("{S}W{!}"), Equals, "W")
 	c.Assert(Clean("{S*_}W{!}"), Equals, "W")
+}
+
+func (s *FormatSuite) TestMethods(c *C) {
+	c.Assert(Errorf("Test %s", "OK"), DeepEquals, errors.New("Test OK"))
+	c.Assert(Sprintf("Test %s", "OK"), Equals, "Test OK")
+
+	w := bytes.NewBufferString("")
+
+	Fprint(w, "TEST")
+
+	c.Assert(w.String(), Equals, "TEST")
+
+	w = bytes.NewBufferString("")
+
+	Fprintln(w, "TEST")
+
+	c.Assert(w.String(), Equals, "TEST\n")
+
+	w = bytes.NewBufferString("")
+
+	Fprintf(w, "TEST %s", "OK")
+
+	c.Assert(w.String(), Equals, "TEST OK")
+
+	Printf("TEST %s\n", "OK")
+}
+
+func (s *FormatSuite) TestAux(c *C) {
+	t := &T{}
+
+	t.Printf("TEST %s", "OK")
+	t.Printf("TEST %s", "OK")
+
+	t.Println("TEST OK")
+
+	Bell()
+	NewLine()
 }
