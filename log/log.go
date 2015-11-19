@@ -53,7 +53,7 @@ type Logger struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var globalLogger = &Logger{
+var Global = &Logger{
 	PrefixWarn:  true,
 	PrefixError: true,
 	PrefixCrit:  true,
@@ -99,57 +99,57 @@ func New(file string, perms os.FileMode) (*Logger, error) {
 // Reopen close file descriptor for global logger and open it again
 // Useful for log rotation
 func Reopen() error {
-	return globalLogger.Reopen()
+	return Global.Reopen()
 }
 
 // MinLevel defines minimal logging level for global logger (1 by default)
 func MinLevel(level int) {
-	globalLogger.MinLevel(level)
+	Global.MinLevel(level)
 }
 
 // Set change global logger output target
 func Set(file string, perms os.FileMode) error {
-	return globalLogger.Set(file, perms)
+	return Global.Set(file, perms)
 }
 
 // Flush write buffered data to file
 func Flush() error {
-	return globalLogger.Flush()
+	return Global.Flush()
 }
 
 // Print write message to global logger output
 func Print(level int, f string, a ...interface{}) (int, error) {
-	return globalLogger.Print(level, f, a...)
+	return Global.Print(level, f, a...)
 }
 
 // Debug write debug message to global logger output
 func Debug(f string, a ...interface{}) (int, error) {
-	return globalLogger.Debug(f, a...)
+	return Global.Debug(f, a...)
 }
 
 // Info write info message to global logger output
 func Info(f string, a ...interface{}) (int, error) {
-	return globalLogger.Info(f, a...)
+	return Global.Info(f, a...)
 }
 
 // Warn write warning message to global logger output
 func Warn(f string, a ...interface{}) (int, error) {
-	return globalLogger.Warn(f, a...)
+	return Global.Warn(f, a...)
 }
 
 // Error write error message to global logger output
 func Error(f string, a ...interface{}) (int, error) {
-	return globalLogger.Error(f, a...)
+	return Global.Error(f, a...)
 }
 
 // Crit write critical message to global logger output
 func Crit(f string, a ...interface{}) (int, error) {
-	return globalLogger.Crit(f, a...)
+	return Global.Crit(f, a...)
 }
 
 // Aux write unskipable message (for separators/headers)
 func Aux(f string, a ...interface{}) (int, error) {
-	return globalLogger.Aux(f, a...)
+	return Global.Aux(f, a...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -157,6 +157,10 @@ func Aux(f string, a ...interface{}) (int, error) {
 // Reopen close file descriptor and open again
 // Useful for log rotation
 func (l *Logger) Reopen() error {
+	if l == nil {
+		return errors.New("Logger is nil")
+	}
+
 	if l.fd == nil {
 		return errors.New("Output file is not set")
 	}
@@ -169,6 +173,10 @@ func (l *Logger) Reopen() error {
 
 // MinLevel defines minimal logging level for logger (1 by default)
 func (l *Logger) MinLevel(level int) {
+	if l == nil {
+		return
+	}
+
 	switch {
 	case level < DEBUG:
 		level = DEBUG
@@ -204,6 +212,10 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 
 // Print write message to logger output
 func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	if l.level > level {
 		return 0, nil
 	}
@@ -245,6 +257,10 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 
 // Flush write buffered data to file
 func (l *Logger) Flush() error {
+	if l == nil {
+		return errors.New("Logger is nil")
+	}
+
 	if l.w == nil {
 		return nil
 	}
@@ -254,31 +270,55 @@ func (l *Logger) Flush() error {
 
 // Debug write debug message to logger output
 func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(DEBUG, f, a...)
 }
 
 // Info write info message to logger output
 func (l *Logger) Info(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(INFO, f, a...)
 }
 
 // Warn write warning message to logger output
 func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(WARN, f, a...)
 }
 
 // Error write error message to logger output
 func (l *Logger) Error(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(ERROR, f, a...)
 }
 
 // Crit write critical message to logger output
 func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(CRIT, f, a...)
 }
 
 // Aux write unskipable message (for separators/headers)
 func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
+	if l == nil {
+		return -1, errors.New("Logger is nil")
+	}
+
 	return l.Print(AUX, f, a...)
 }
 
