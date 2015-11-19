@@ -9,10 +9,11 @@ package knf
 
 import (
 	"fmt"
-	check "gopkg.in/check.v1"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	check "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

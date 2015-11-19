@@ -30,9 +30,5 @@ func FileHash(file string) string {
 
 	_, err = io.Copy(hasher, fd)
 
-	if err != nil {
-		return ""
-	}
-
 	return fmt.Sprintf("%064x", hasher.Sum(nil))
 }
