@@ -15,6 +15,19 @@ import (
 	"time"
 )
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const (
+	YEARLY   = "0 0 1 1 *"
+	ANNUALLY = "0 0 1 1 *"
+	MONTHLY  = "0 0 1 * *"
+	WEEKLY   = "0 0 * * 0"
+	DAILY    = "0 0 * * *"
+	HOURLY   = "0 * * * *"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 const (
 	_SYMBOL_PERIOD   = "-"
 	_SYMBOL_INTERVAL = "/"
@@ -73,7 +86,7 @@ func Parse(expr string) (*Expr, error) {
 	exprAr := strings.Split(expr, " ")
 
 	if len(exprAr) != 5 {
-		return result, errors.New("Expression must have 5 tokens")
+		return nil, errors.New("Expression must have 5 tokens")
 	}
 
 	data := make([][]uint8, 5)
@@ -168,7 +181,7 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 							int(expr.minutes.tokens[l]),
 							0, 0, t.Location())
 
-						if d.Unix() < t.Unix() {
+						if d.Unix() <= t.Unix() {
 							continue
 						}
 
@@ -223,7 +236,7 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 							int(expr.minutes.tokens[l]),
 							0, 0, t.Location())
 
-						if d.Unix() > t.Unix() {
+						if d.Unix() >= t.Unix() {
 							continue
 						}
 
@@ -304,17 +317,17 @@ func getIntervalFromToken(t string) uint8 {
 func getAliasExpression(expr string) string {
 	switch expr {
 	case "@yearly":
-		return "0 0 1 1 *"
+		return YEARLY
 	case "@annually":
-		return "0 0 1 1 *"
+		return ANNUALLY
 	case "@monthly":
-		return "0 0 1 * *"
+		return MONTHLY
 	case "@weekly":
-		return "0 0 * * 0"
+		return WEEKLY
 	case "@daily":
-		return "0 0 * * *"
+		return DAILY
 	case "@hourly":
-		return "0 * * * *"
+		return HOURLY
 	}
 
 	return expr
