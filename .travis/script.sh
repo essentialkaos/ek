@@ -18,6 +18,12 @@ main() {
       continue
     fi
 
+    # fsutil currently is hard to test
+    # we test this package by hands
+    if [[ "$pkg" == "fsutil" ]] ; then
+      continue
+    fi
+
     go test -coverprofile=coverage.tmp -covermode=atomic $dir/$pkg
 
     if [[ $? -ne 0 ]] ; then
