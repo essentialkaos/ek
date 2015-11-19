@@ -150,7 +150,7 @@ func Wrap(text, indent string, maxLineLength int) string {
 					result += indent + line + wordSlice[0] + "\n\n"
 				}
 
-				line = wordSlice[2]
+				line = wordSlice[2] + " "
 
 				continue
 			} else {

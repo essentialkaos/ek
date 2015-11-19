@@ -26,6 +26,7 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(999), Equals, "999")
 	c.Assert(PrettyNum(1000), Equals, "1,000")
 	c.Assert(PrettyNum(1234567890), Equals, "1,234,567,890")
+	c.Assert(PrettyNum(100000), Equals, "100,000")
 	c.Assert(PrettyNum(0), Equals, "0")
 	c.Assert(PrettyNum(2500.50), Equals, "2,500.50")
 	c.Assert(PrettyNum(1.23), Equals, "1.23")
@@ -41,14 +42,24 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 	c.Assert(PrettySize(1024*1024*1024), Equals, "1GB")
 	c.Assert(PrettySize(1024*1024*1024*1024), Equals, "1TB")
 	c.Assert(PrettySize(1052500000), Equals, "1003.7MB")
+
+	c.Assert(PrettySize(int32(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(int64(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(uint(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(uint32(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(uint64(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(float32(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(float64(3000125)), Equals, "2.86MB")
 }
 
 func (s *FmtUtilSuite) TestParseSize(c *C) {
 	c.Assert(ParseSize("1 MB"), Equals, uint64(1024*1024))
+	c.Assert(ParseSize("2tb"), Equals, uint64(2*1024*1024*1024*1024))
 	c.Assert(ParseSize("5gB"), Equals, uint64(5*1024*1024*1024))
 	c.Assert(ParseSize("13kb"), Equals, uint64(13*1024))
 	c.Assert(ParseSize("512"), Equals, uint64(512))
-	c.Assert(ParseSize("0"), Equals, uint64(0))
+	c.Assert(ParseSize("kb"), Equals, uint64(0))
+	c.Assert(ParseSize("123!"), Equals, uint64(0))
 
 	c.Assert(ParseSize(PrettySize(345)), Equals, uint64(345))
 	c.Assert(ParseSize(PrettySize(1025)), Equals, uint64(1024))
@@ -64,53 +75,47 @@ func (s *FmtUtilSuite) TestFloat(c *C) {
 }
 
 func (s *FmtUtilSuite) TestWrap(c *C) {
-	input := `The attack exploited two zero-day vulnerabilities, one in Microsoft's Internet Explorer and the other in Adobe's Flash Player, 
-Invincea and iSight Partners said in their joint report released Tuesday. Adobe fixed the flaw back in December and Microsoft 
-updated Internet Explorer as part of its Patch Tuesday release.
+	input := `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam 
+voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione 
+voluptatem sequi nesciunt, cum soluta nobis est caparet.
 
-The cyber-espionage campaign appeared to last only a few days, but iSight and Invincea did not rule out the possibility of 
-the campaign lasting a longer period of time.
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci 
+velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 
-The malware infection was inside the “Thought of the Day” Flash widget which appears whenever users try to access a Forbes.com 
-page. Visitors didn't need to do anything other than to try to load Forbes.com in their browser to get infected. The 
-demographics of the typical visitor to Forbes.com—senior executives, managers, and other professionals working for major 
-corporations—indicate this campaign focused on cyber-espionage, not cybercrime, said Stephen Ward, an analyst with iSight 
-Partners. Watering hole attacks are insidious because it wouldn't occur to anyone that these sites could be infected.
+Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea 
+commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae 
+consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 `
-	result := `  The attack exploited two zero-day 
-  vulnerabilities, one in Microsoft's 
-  Internet Explorer and the other in 
-  Adobe's Flash Player, Invincea and 
-  iSight Partners said in their joint 
-  report released Tuesday. Adobe fixed 
-  the flaw back in December and 
-  Microsoft updated Internet Explorer as 
-  part of its Patch Tuesday release.
+	result := `  Sed ut perspiciatis unde omnis iste 
+  natus error sit voluptatem accusantium 
+  doloremque laudantium, totam rem 
+  aperiam, eaque ipsa quae ab illo 
+  inventore veritatis et quasi 
+  architecto beatae vitae dicta sunt 
+  explicabo. Nemo enim ipsam voluptatem 
+  quia voluptas sit aspernatur aut odit 
+  aut fugit, sed quia consequuntur magni 
+  dolores eos qui ratione voluptatem 
+  sequi nesciunt, cum soluta nobis est 
+  caparet.
 
-  Thecyber-espionage campaign appeared 
-  to last only a few days, but iSight 
-  and Invincea did not rule out the 
-  possibility of the campaign lasting a 
-  longer period of time.
+  Neque porro quisquam est, qui dolorem 
+  ipsum quia dolor sit amet, 
+  consectetur, adipisci velit, sed quia 
+  non numquam eius modi tempora incidunt 
+  ut labore et dolore magnam aliquam 
+  quaerat voluptatem.
 
-  Themalware infection was inside the 
-  “Thought of the Day” Flash widget 
-  which appears whenever users try to 
-  access a Forbes.com page. Visitors 
-  didn't need to do anything other than 
-  to try to load Forbes.com in their 
-  browser to get infected. The 
-  demographics of the typical visitor to 
-  Forbes.com—senior executives, 
-  managers, and other professionals 
-  working for major 
-  corporations—indicate this campaign 
-  focused on cyber-espionage, not 
-  cybercrime, said Stephen Ward, an 
-  analyst with iSight Partners. Watering 
-  hole attacks are insidious because it 
-  wouldn't occur to anyone that these 
-  sites could be infected.`
+  Ut enim ad minima veniam, quis nostrum 
+  exercitationem ullam corporis suscipit 
+  laboriosam, nisi ut aliquid ex ea 
+  commodi consequatur? Quis autem vel 
+  eum iure reprehenderit qui in ea 
+  voluptate velit esse quam nihil 
+  molestiae consequatur, vel illum qui 
+  dolorem eum fugiat quo voluptas nulla 
+  pariatur?`
 
 	c.Assert(Wrap(input, "  ", 40), Equals, result)
 }
@@ -119,4 +124,18 @@ func (s *FmtUtilSuite) TestPluralize(c *C) {
 	c.Assert(Pluralize(1, "test", "tests"), Equals, "1 test")
 	c.Assert(Pluralize(2, "test", "tests"), Equals, "2 tests")
 	c.Assert(Pluralize(100, "test", "tests"), Equals, "100 tests")
+}
+
+func (s *FmtUtilSuite) TestSeparator(c *C) {
+	Separator(true)
+	Separator(false)
+	Separator(true, "test")
+	Separator(false, "test")
+}
+
+func (s *FmtUtilSuite) TestTermSize(c *C) {
+	w, h := GetTermSize()
+
+	c.Assert(w, Not(Equals), 0)
+	c.Assert(h, Not(Equals), 0)
 }
