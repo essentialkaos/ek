@@ -23,11 +23,24 @@ var _ = Suite(&SpellcheckSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SpellcheckSuite) TestSpellcheck(c *C) {
-	m := Train([]string{"test", "MAGIC", "TeStInG", "", "Random"})
+	model := Train([]string{})
 
-	c.Assert(m.Correct("test"), Equals, "test")
-	c.Assert(m.Correct("tes"), Equals, "test")
-	c.Assert(m.Correct("magic"), Equals, "MAGIC")
-	c.Assert(m.Correct("testin"), Equals, "TeStInG")
-	c.Assert(m.Correct("rANDOM"), Equals, "Random")
+	c.Assert(model, NotNil)
+	c.Assert(model.Correct("test-1234"), Equals, "test-1234")
+	c.Assert(model.Suggest("test-1234", 10), DeepEquals, []string{"test-1234"})
+
+	model = Train([]string{"test", "MAGIC", "TeStInG", "", "Random"})
+
+	c.Assert(model, NotNil)
+
+	c.Assert(model.Correct("test"), Equals, "test")
+	c.Assert(model.Correct(""), Equals, "")
+	c.Assert(model.Correct("test123test123"), Equals, "test123test123")
+	c.Assert(model.Correct("tes"), Equals, "test")
+	c.Assert(model.Correct("magic"), Equals, "MAGIC")
+	c.Assert(model.Correct("testin"), Equals, "TeStInG")
+	c.Assert(model.Correct("rANDOM"), Equals, "Random")
+
+	c.Assert(model.Suggest("tes", 3), DeepEquals, []string{"test", "", "TeStInG"})
+	c.Assert(model.Suggest("tes", 1), DeepEquals, []string{"test"})
 }
