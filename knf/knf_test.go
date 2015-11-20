@@ -443,4 +443,42 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	c.Assert(errs[2].Error(), check.Equals, "Property integer:test1 can't be greater than 0")
 	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
 	c.Assert(errs[4].Error(), check.Equals, "Wrong validator for property integer:test1")
+
+	fakeConfig := &Config{
+		data: map[string]string{
+			"test:empty":   "",
+			"test:string":  "test",
+			"test:integer": "10",
+			"test:float":   "10.0",
+			"test:boolean": "false",
+		},
+	}
+
+	c.Assert(Empty(fakeConfig, "test:empty", nil), check.NotNil)
+	c.Assert(Empty(fakeConfig, "test:string", nil), check.IsNil)
+
+	c.Assert(Less(fakeConfig, "test:integer", 30), check.NotNil)
+	c.Assert(Less(fakeConfig, "test:integer", 5), check.IsNil)
+	c.Assert(Less(fakeConfig, "test:float", 30.0), check.NotNil)
+	c.Assert(Less(fakeConfig, "test:float", 5.0), check.IsNil)
+	c.Assert(Less(fakeConfig, "test:string", "30"), check.NotNil)
+
+	c.Assert(Greater(fakeConfig, "test:integer", 5), check.NotNil)
+	c.Assert(Greater(fakeConfig, "test:integer", 30), check.IsNil)
+	c.Assert(Greater(fakeConfig, "test:float", 5.0), check.NotNil)
+	c.Assert(Greater(fakeConfig, "test:float", 30.0), check.IsNil)
+	c.Assert(Greater(fakeConfig, "test:string", "30"), check.NotNil)
+
+	c.Assert(Equals(fakeConfig, "test:empty", ""), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:string", "test"), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:integer", 10), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:float", 10.0), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:boolean", false), check.NotNil)
+
+	c.Assert(Equals(fakeConfig, "test:empty", []string{}), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:empty", "1"), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:string", "testtest"), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:integer", 15), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:float", 130.0), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
 }
