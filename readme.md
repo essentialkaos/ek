@@ -16,7 +16,7 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (f
 go get github.com/essentialkaos/ek
 ````
 
-### Build & Coverage Status
+### Test & Coverage Status
 
 | Branch | TravisCI | CodeCov |
 |--------|----------|---------|
