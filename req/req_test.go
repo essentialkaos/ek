@@ -8,6 +8,7 @@ package req
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"net"
 	"net/http"
 	"testing"
@@ -35,6 +36,7 @@ const (
 	_URL_BASIC_AUTH   = "/basic-auth"
 	_URL_STRING_RESP  = "/string-response"
 	_URL_JSON_RESP    = "/json-response"
+	_URL_DISCARD      = "/discard"
 )
 
 const (
@@ -271,6 +273,63 @@ func (s *ReqSuite) TestJSONResp(c *C) {
 	c.Assert(testStruct.Boolean, Equals, true)
 }
 
+func (s *ReqSuite) TestDiscard(c *C) {
+	resp, err := Request{
+		URL: s.url + _URL_JSON_RESP,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+
+	resp.Discard()
+
+	resp, err = Request{
+		URL:         s.url + _URL_DISCARD,
+		AutoDiscard: true,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 500)
+}
+
+func (s *ReqSuite) TestEncoding(c *C) {
+	resp, err := Request{
+		URL:  s.url + "/404",
+		Body: "DEADBEAF",
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+
+	resp, err = Request{
+		URL:  s.url + "/404",
+		Body: []byte("DEADBEAF"),
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+
+	r := bytes.NewReader([]byte("DEADBEAF"))
+
+	resp, err = Request{
+		URL:  s.url + "/404",
+		Body: r,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+
+	k := struct{ t string }{"DEADBEAF"}
+
+	resp, err = Request{
+		URL:  s.url + "/404",
+		Body: k,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+}
+
 func (s *ReqSuite) TestErrors(c *C) {
 	resp, err := Request{}.Do()
 
@@ -281,11 +340,19 @@ func (s *ReqSuite) TestErrors(c *C) {
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Can't send request (Get ABCD: unsupported protocol scheme \"\")")
 
 	resp, err = Request{URL: "http://127.0.0.1:60000"}.Do()
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Can't send request (Get http://127.0.0.1:60000: dial tcp 127.0.0.1:60000: getsockopt: connection refused)")
+
+	resp, err = Request{URL: "%gh&%ij"}.Do()
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Can't create request struct (parse %gh&%ij: invalid URL escape \"%gh\")")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -327,6 +394,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_BASIC_AUTH, basicAuthRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_STRING_RESP, stringRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
 
 	err = server.Serve(listener)
 
@@ -506,6 +574,16 @@ func stringRespRequestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func jsonRespRequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(`{
+  "string": "test",
+  "integer": 912,
+  "boolean": true }`,
+	))
+}
+
+func discardRequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(500)
+
 	w.Write([]byte(`{
   "string": "test",
   "integer": 912,

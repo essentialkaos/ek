@@ -216,13 +216,11 @@ func (e RequestError) Error() string {
 	switch e.class {
 	case ERROR_BODY_ENCODE:
 		return fmt.Sprintf("Can't encode request body (%s)", e.desc)
-	case ERROR_CREATE_REQUEST:
-		return fmt.Sprintf("Can't create request struct (%s)", e.desc)
 	case ERROR_SEND_REQUEST:
 		return fmt.Sprintf("Can't send request (%s)", e.desc)
+	default:
+		return fmt.Sprintf("Can't create request struct (%s)", e.desc)
 	}
-
-	return ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -261,18 +259,4 @@ func encodeQuery(query map[string]string) string {
 	}
 
 	return result[:len(result)-1]
-}
-
-func sliceToMap(s []string) map[string]string {
-	var result = make(map[string]string)
-
-	if len(s)%2 != 0 {
-		return nil
-	}
-
-	for i := 0; i < len(s)-1; i += 2 {
-		result[s[i]] = s[i+1]
-	}
-
-	return result
 }
