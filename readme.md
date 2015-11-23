@@ -1,4 +1,4 @@
-### EK
+### EK [![GoDoc](https://godoc.org/github.com/essentialkaos/ek?status.svg)](https://godoc.org/github.com/essentialkaos/ek)
 
 Auxiliary packages for Go.
 
