@@ -63,6 +63,10 @@ type example struct {
 
 // NewInfo create new info struct
 func NewInfo(name string, args ...string) *Info {
+	if name == "" {
+		return &Info{name: filepath.Base(os.Args[0]), args: strings.Join(args, " ")}
+	}
+
 	return &Info{name: name, args: strings.Join(args, " ")}
 }
 
@@ -124,13 +128,7 @@ func (info *Info) AddSpoiler(spoiler string) {
 
 // Render print info to console
 func (info *Info) Render() {
-	name := info.name
-
-	if name == "" {
-		name = filepath.Base(os.Args[0])
-	}
-
-	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", name)
+	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", info.name)
 
 	if len(info.commands) != 0 {
 		usageMessage += " {y}<command>{!}"
