@@ -10,6 +10,8 @@ package usage
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -61,6 +63,10 @@ type example struct {
 
 // NewInfo create new info struct
 func NewInfo(name string, args ...string) *Info {
+	if name == "" {
+		return &Info{name: filepath.Base(os.Args[0]), args: strings.Join(args, " ")}
+	}
+
 	return &Info{name: name, args: strings.Join(args, " ")}
 }
 

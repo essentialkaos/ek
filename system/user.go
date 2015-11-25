@@ -29,29 +29,29 @@ const _PTS_DIR = "/dev/pts"
 
 // User contains information about user
 type User struct {
-	UID      int
-	GID      int
-	Name     string
-	Groups   []*Group
-	Comment  string
-	Shell    string
-	HomeDir  string
-	RealUID  int
-	RealGID  int
-	RealName string
+	UID      int      `json:"uid"`
+	GID      int      `json:"gid"`
+	Name     string   `json:"name"`
+	Groups   []*Group `json:"groups"`
+	Comment  string   `json:"comment"`
+	Shell    string   `json:"shell"`
+	HomeDir  string   `json:"home_dir"`
+	RealUID  int      `json:"real_uid"`
+	RealGID  int      `json:"real_gid"`
+	RealName string   `json:"real_name"`
 }
 
 // Group contains information about group
 type Group struct {
-	Name string
-	GID  int
+	Name string `json:"name"`
+	GID  int    `json:"gid"`
 }
 
 // SessionInfo contains information about all sessions
 type SessionInfo struct {
-	Name             string
-	LoginTime        time.Time
-	LastActivityTime time.Time
+	Name             string    `json:"name"`
+	LoginTime        time.Time `json:"login_time"`
+	LastActivityTime time.Time `json:"last_activity_time"`
 }
 
 type sessionsInfo []*SessionInfo

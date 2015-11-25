@@ -1,5 +1,11 @@
 ### Changelog
 
+#### r4
+
+* [system] Added json tags for User, Group and SessionInfo structs
+* [usage] Info now can use os.Args[0] for info rendering
+* [version] Added package for working with version in simver notation
+
 #### r3
 
 * [arg] Changed default fail values (int -1 → 0, float -1.0 → 0.0)
