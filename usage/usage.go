@@ -10,6 +10,8 @@ package usage
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -122,7 +124,13 @@ func (info *Info) AddSpoiler(spoiler string) {
 
 // Render print info to console
 func (info *Info) Render() {
-	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", info.name)
+	name := info.name
+
+	if name == "" {
+		name = filepath.Base(os.Args[0])
+	}
+
+	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", name)
 
 	if len(info.commands) != 0 {
 		usageMessage += " {y}<command>{!}"

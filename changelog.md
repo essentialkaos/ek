@@ -1,5 +1,10 @@
 ### Changelog
 
+#### r4
+
+* [version] Added package for wroking with version in simver notation
+* [usage] Info can use os.Args[0] for info rendering
+
 #### r3
 
 * [arg] Changed default fail values (int -1 → 0, float -1.0 → 0.0)
