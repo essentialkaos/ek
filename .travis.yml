@@ -7,6 +7,10 @@ go:
 
 sudo: false
 
+os:
+  - linux
+  - osx
+
 env:
   - EK_TEST_PORT=8080
 
