@@ -3,7 +3,7 @@
 #### r4
 
 * [version] Added package for wroking with version in simver notation
-* [usage] Info can use os.Args[0] for info rendering
+* [usage] Info now can use os.Args[0] for info rendering
 
 #### r3
 
