@@ -1,10 +1,6 @@
-### EK
+### EK [![GoDoc](https://godoc.org/github.com/essentialkaos/ek?status.svg)](https://godoc.org/github.com/essentialkaos/ek)
 
 Auxiliary packages for Go.
-
-### Status
-
-Currently code is unstable and we highly **do not** recommend use this packages for production code.
 
 ### Platform support
 
