@@ -2,9 +2,9 @@
 
 #### r4
 
-* [version] Added package for working with version in simver notation
-* [usage] Info now can use os.Args[0] for info rendering
 * [system] Added json tags for User, Group and SessionInfo structs
+* [usage] Info now can use os.Args[0] for info rendering
+* [version] Added package for working with version in simver notation
 
 #### r3
 
