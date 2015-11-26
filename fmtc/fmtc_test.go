@@ -58,6 +58,7 @@ func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint("{J}W"), Equals, "{J}W")
 	c.Assert(Sprint("{r}W"), Equals, "\x1b[0;31;49mW\x1b[0m")
 	c.Assert(Sprint("{{r}W{!}}"), Equals, "{\x1b[0;31;49mW\x1b[0m}")
+	c.Assert(Sprint("Test"+string(rune(65533))), Equals, "Test")
 }
 
 func (s *FormatSuite) TestZDisable(c *C) {

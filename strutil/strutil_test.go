@@ -41,6 +41,8 @@ func (s *StrUtilSuite) TestSubstr(c *C) {
 	c.Assert(Substr("test1234TEST", 4, 8), Equals, "1234")
 	c.Assert(Substr("test1234TEST", 8, 16), Equals, "TEST")
 	c.Assert(Substr("test1234TEST", -1, 4), Equals, "test")
+
+	c.Assert(Substr("test"+string(rune(65533))+"1234TEST", 0, 8), Equals, "test1234")
 }
 
 func (s *StrUtilSuite) TestEllipsis(c *C) {
