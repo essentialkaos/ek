@@ -1,5 +1,9 @@
 ### Changelog
 
+#### r6
+
+* [req] Increased default timeout to 10 seconds
+
 #### r5
 
 * [log] Now buffered I/O must be enabled manually
