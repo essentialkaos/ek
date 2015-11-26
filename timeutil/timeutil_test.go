@@ -8,6 +8,7 @@ package timeutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	. "gopkg.in/check.v1"
 	"testing"
 	"time"
@@ -84,6 +85,8 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%1234"), Equals, "%1234")
 	c.Assert(Format(d, "%SSec"), Equals, "00Sec")
 	c.Assert(Format(d1, "%e"), Equals, "15")
+
+	replaceDateTag(time.Now(), bytes.NewBufferString(""), bytes.NewBufferString(""))
 }
 
 func (s *TimeUtilSuite) TestTinyDate(c *C) {

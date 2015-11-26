@@ -6,9 +6,11 @@
 * [csv] Increased code coverage
 * [easing] Increased code coverage
 * [fmtc] Increased code coverage
+* [jsonutil] Increased code coverage
 * [req] Increased code coverage
 * [req] Increased default timeout to 10 seconds
 * [strutil] Increased code coverage
+* [timeutil] Increased code coverage
 
 #### r5
 
