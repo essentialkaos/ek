@@ -2,6 +2,7 @@
 
 #### r6
 
+* [csv] Increased code coverage
 * [req] Increased default timeout to 10 seconds
 
 #### r5
