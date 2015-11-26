@@ -8,8 +8,9 @@ package easing
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -105,6 +106,9 @@ func (s *EaseSuite) TestElastic(c *C) {
 	c.Assert(ElasticIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(ElasticOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(ElasticInOut(20, 0, 10, 10), Equals, 10.0)
+	c.Assert(ElasticIn(5, 0, -10, 10), Equals, 0.15625000000000044)
+	c.Assert(ElasticOut(5, 0, -10, 10), Equals, -10.15625)
+	c.Assert(ElasticInOut(5, 0, -10, 10), Equals, -5.0)
 }
 
 func (s *EaseSuite) TestBack(c *C) {
@@ -126,4 +130,5 @@ func (s *EaseSuite) TestBounce(c *C) {
 	c.Assert(BounceIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BounceOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BounceInOut(20, 0, 10, 10), Equals, 10.0)
+	c.Assert(BounceOut(9.99, 0, 10, 10), Equals, 9.993200625)
 }
