@@ -49,6 +49,7 @@ go get github.com/essentialkaos/ek
 ### Projects with EK
 
 * [ssllabs-client](https://github.com/essentialkaos/ssllabs_client) - Pretty awesome command-line client for public SSLLabs API
+* [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
 
 ### Test & Coverage Status
 
