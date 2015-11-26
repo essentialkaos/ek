@@ -350,6 +350,14 @@ func (s *ReqSuite) TestErrors(c *C) {
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+
+	e1 := RequestError{ERROR_BODY_ENCODE, "Test 1"}
+	e2 := RequestError{ERROR_CREATE_REQUEST, "Test 2"}
+	e3 := RequestError{ERROR_SEND_REQUEST, "Test 3"}
+
+	c.Assert(e1.Error(), Equals, "Can't encode request body (Test 1)")
+	c.Assert(e2.Error(), Equals, "Can't create request struct (Test 2)")
+	c.Assert(e3.Error(), Equals, "Can't send request (Test 3)")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

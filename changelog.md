@@ -4,6 +4,7 @@
 
 * [crypto] Small improvements in hash generation
 * [csv] Increased code coverage
+* [req] Increased code coverage
 * [req] Increased default timeout to 10 seconds
 
 #### r5
