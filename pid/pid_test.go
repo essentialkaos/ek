@@ -9,10 +9,11 @@ package pid
 
 import (
 	"fmt"
-	. "gopkg.in/check.v1"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	. "gopkg.in/check.v1"
 
 	"github.com/essentialkaos/ek/fsutil"
 )
