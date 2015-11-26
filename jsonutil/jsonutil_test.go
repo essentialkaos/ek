@@ -82,9 +82,13 @@ func (s *JSONSuite) TestEncoding(c *C) {
 		Boolean: true,
 	}
 
-	err := EncodeToFile(jsonFile, &testStruct)
+	err := EncodeToFile(jsonFile, testStruct)
 
 	c.Assert(err, IsNil)
 	c.Assert(crypto.FileHash(jsonFile), Equals,
 		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
+
+	err = EncodeToFile("/test.json", testStruct)
+
+	c.Assert(err, NotNil)
 }

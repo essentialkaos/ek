@@ -65,24 +65,14 @@ func CreateAuth(password string) *AuthData {
 
 // GenHash generate hash by raw password and salt
 func GenHash(password, salt string) string {
-	var err error
-
 	hasher := sha256.New()
 
-	_, err = hasher.Write([]byte(password + salt))
-
-	if err != nil {
-		return ""
-	}
+	hasher.Write([]byte(password + salt))
 
 	prehash := fmt.Sprintf("%064x", hasher.Sum(nil))
 	hasher2 := sha256.New()
 
-	_, err = hasher2.Write([]byte(salt + prehash))
-
-	if err != nil {
-		return ""
-	}
+	hasher2.Write([]byte(salt + prehash))
 
 	return fmt.Sprintf("%x", hasher.Sum(nil))
 }

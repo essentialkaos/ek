@@ -1,5 +1,19 @@
 ### Changelog
 
+#### r6
+
+* [crypto] Small improvements in hash generation
+* [csv] Increased code coverage
+* [easing] Increased code coverage
+* [fmtc] Increased code coverage
+* [httputil] Increased code coverage
+* [jsonutil] Increased code coverage
+* [pid] Increased code coverage
+* [req] Increased code coverage
+* [req] Increased default timeout to 10 seconds
+* [strutil] Increased code coverage
+* [timeutil] Increased code coverage
+
 #### r5
 
 * [log] Now buffered I/O must be enabled manually

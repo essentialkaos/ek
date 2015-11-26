@@ -50,18 +50,23 @@ func Substr(s string, start int, end int) string {
 
 	input.Next(start)
 
-	for i := 0; i < end-start; i++ {
-		r, _, err := input.ReadRune()
+	current := 0
+	max := end - start
 
-		if err != nil {
-			break
-		}
+	for {
+		r, _, _ := input.ReadRune()
 
 		if r == rune(65533) {
 			continue
 		}
 
 		output.WriteRune(r)
+
+		current++
+
+		if current == max {
+			break
+		}
 	}
 
 	return output.String()

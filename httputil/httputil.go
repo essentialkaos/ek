@@ -35,7 +35,14 @@ func GetRequestPort(r *http.Request) string {
 		return ""
 	}
 
-	return strings.Split(r.Host, ":")[1]
+	hs := strings.Split(r.Host, ":")
+
+	switch len(hs) {
+	case 2:
+		return hs[1]
+	default:
+		return "80"
+	}
 }
 
 // GetDescByCode return response code description
@@ -98,7 +105,7 @@ func GetDescByCode(code int) string {
 // IsURL check if given value is url or not
 func IsURL(url string) bool {
 	switch {
-	case len(url) < 12:
+	case len(url) < 10:
 		return false
 	case url[0:7] == "http://":
 		return true

@@ -82,7 +82,7 @@ var (
 	UserAgent = ""
 
 	// Dialer default dialer struct
-	Dialer = &net.Dialer{Timeout: 1 * time.Second}
+	Dialer = &net.Dialer{Timeout: 10 * time.Second}
 
 	// Transport is default transport struct
 	Transport = &http.Transport{Dial: Dialer.Dial, Proxy: http.ProxyFromEnvironment}
