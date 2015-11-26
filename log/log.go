@@ -44,11 +44,12 @@ type Logger struct {
 	PrefixError bool // Prefix for error messages
 	PrefixCrit  bool // Prefix for critical error messages
 
-	file  string
-	perms os.FileMode
-	fd    *os.File
-	w     *bufio.Writer
-	level int
+	file     string
+	perms    os.FileMode
+	fd       *os.File
+	w        *bufio.Writer
+	useBufIO bool
+	level    int
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -112,6 +113,11 @@ func Set(file string, perms os.FileMode) error {
 	return Global.Set(file, perms)
 }
 
+// EnableBufIO enable buffered I/O
+func EnableBufIO(interval time.Duration) {
+	Global.EnableBufIO(interval)
+}
+
 // Flush write buffered data to file
 func Flush() error {
 	return Global.Flush()
@@ -165,7 +171,10 @@ func (l *Logger) Reopen() error {
 		return errors.New("Output file is not set")
 	}
 
-	l.w.Flush()
+	if l.w != nil {
+		l.w.Flush()
+	}
+
 	l.fd.Close()
 
 	return l.Set(l.file, l.perms)
@@ -187,6 +196,17 @@ func (l *Logger) MinLevel(level int) {
 	l.level = level
 }
 
+// EnableBufIO enable buffered I/O support
+func (l *Logger) EnableBufIO(interval time.Duration) {
+	l.useBufIO = true
+
+	if l.fd != nil {
+		l.w = bufio.NewWriter(l.fd)
+	}
+
+	go l.flushDaemon(interval)
+}
+
 // Set change logger output target
 func (l *Logger) Set(file string, perms os.FileMode) error {
 	fd, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, perms)
@@ -198,14 +218,19 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 	// Flush data if writter exist
 	if l.w != nil {
 		l.w.Flush()
+		l.w = nil
 	}
 
 	if l.fd != nil {
 		l.fd.Close()
+		l.fd = nil
 	}
 
 	l.fd, l.file, l.perms = fd, file, perms
-	l.w = bufio.NewWriter(l.fd)
+
+	if l.useBufIO {
+		l.w = bufio.NewWriter(l.fd)
+	}
 
 	return nil
 }
@@ -230,7 +255,11 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 			w = os.Stdout
 		}
 	} else {
-		w = l.w
+		if l.w != nil {
+			w = l.w
+		} else {
+			w = l.fd
+		}
 	}
 
 	var showPrefixes bool
@@ -320,6 +349,14 @@ func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 	}
 
 	return l.Print(AUX, f, a...)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (l *Logger) flushDaemon(interval time.Duration) {
+	for _ = range time.NewTicker(interval).C {
+		l.Flush()
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

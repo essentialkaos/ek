@@ -1,5 +1,10 @@
 ### Changelog
 
+#### r5
+
+* [log] Now buffered I/O must be enabled manually
+* [log] Auto flushing for bufio
+
 #### r4
 
 * [system] Added json tags for User, Group and SessionInfo structs

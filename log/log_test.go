@@ -13,6 +13,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/essentialkaos/ek/fsutil"
 )
@@ -35,6 +36,16 @@ var _ = Suite(&LogSuite{})
 
 func (ls *LogSuite) SetUpSuite(c *C) {
 	ls.TempDir = c.MkDir()
+}
+
+func (ls *LogSuite) SetUpTest(c *C) {
+	Global = &Logger{
+		PrefixWarn:  true,
+		PrefixError: true,
+		PrefixCrit:  true,
+
+		level: INFO,
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -182,8 +193,6 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	l.Error("Test error %d\n", ERROR)
 	l.Crit("Test crit %d\n", CRIT)
 
-	l.Flush()
-
 	data, err := ioutil.ReadFile(logfile)
 
 	c.Assert(len(data), Not(Equals), 0)
@@ -250,7 +259,82 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	Crit("Test crit %d", CRIT)
 	Aux("Test aux %d", AUX)
 
-	Flush()
+	data, err := ioutil.ReadFile(logfile)
+
+	c.Assert(len(data), Not(Equals), 0)
+	c.Assert(err, IsNil)
+
+	dataSlice := strings.Split(string(data[:]), "\n")
+
+	c.Assert(len(dataSlice), Equals, 19)
+
+	c.Assert(dataSlice[0][28:], Equals, "[DEBUG] Test debug 0")
+	c.Assert(dataSlice[1][28:], Equals, "[INFO] Test info 1")
+	c.Assert(dataSlice[2][28:], Equals, "[WARNING] Test warn 2")
+	c.Assert(dataSlice[3][28:], Equals, "[ERROR] Test error 3")
+	c.Assert(dataSlice[4][28:], Equals, "[CRITICAL] Test crit 4")
+	c.Assert(dataSlice[5][28:], Equals, "Test aux 99")
+
+	c.Assert(dataSlice[6][28:], Equals, "[DEBUG] Test debug")
+	c.Assert(dataSlice[7][28:], Equals, "[INFO] Test info")
+	c.Assert(dataSlice[8][28:], Equals, "[WARNING] Test warn")
+	c.Assert(dataSlice[9][28:], Equals, "[ERROR] Test error")
+	c.Assert(dataSlice[10][28:], Equals, "[CRITICAL] Test crit")
+	c.Assert(dataSlice[11][28:], Equals, "Test aux")
+
+	c.Assert(dataSlice[12][28:], Equals, "[DEBUG] Test debug 0")
+	c.Assert(dataSlice[13][28:], Equals, "[INFO] Test info 1")
+	c.Assert(dataSlice[14][28:], Equals, "[WARNING] Test warn 2")
+	c.Assert(dataSlice[15][28:], Equals, "[ERROR] Test error 3")
+	c.Assert(dataSlice[16][28:], Equals, "[CRITICAL] Test crit 4")
+	c.Assert(dataSlice[17][28:], Equals, "Test aux 99")
+}
+
+func (ls *LogSuite) TestBufIODaemon(c *C) {
+	logfile := ls.TempDir + "/file3.log"
+	err := Set(logfile, 0644)
+
+	MinLevel(DEBUG)
+
+	c.Assert(Global, Not(IsNil))
+	c.Assert(err, IsNil)
+
+	Global.PrefixDebug = true
+	Global.PrefixInfo = true
+	Global.PrefixWarn = true
+	Global.PrefixError = true
+	Global.PrefixCrit = true
+
+	c.Assert(fsutil.GetPerm(logfile), Equals, os.FileMode(0644))
+
+	EnableBufIO(250 * time.Millisecond)
+
+	Print(DEBUG, "Test debug %d", DEBUG)
+	Print(INFO, "Test info %d", INFO)
+	Print(WARN, "Test warn %d", WARN)
+	Print(ERROR, "Test error %d", ERROR)
+	Print(CRIT, "Test crit %d", CRIT)
+	Print(AUX, "Test aux %d", AUX)
+
+	Print(DEBUG, "Test debug")
+	Print(INFO, "Test info")
+	Print(WARN, "Test warn")
+	Print(ERROR, "Test error")
+	Print(CRIT, "Test crit")
+	Print(AUX, "Test aux")
+
+	Debug("Test debug %d", DEBUG)
+	Info("Test info %d", INFO)
+	Warn("Test warn %d", WARN)
+	Error("Test error %d", ERROR)
+	Crit("Test crit %d", CRIT)
+	Aux("Test aux %d", AUX)
+
+	c.Assert(fsutil.GetSize(logfile), Equals, int64(0))
+
+	time.Sleep(500 * time.Millisecond)
+
+	c.Assert(fsutil.GetSize(logfile), Not(Equals), int64(0))
 
 	data, err := ioutil.ReadFile(logfile)
 
@@ -281,4 +365,36 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	c.Assert(dataSlice[15][28:], Equals, "[ERROR] Test error 3")
 	c.Assert(dataSlice[16][28:], Equals, "[CRITICAL] Test crit 4")
 	c.Assert(dataSlice[17][28:], Equals, "Test aux 99")
+}
+
+func (ls *LogSuite) TestBufIO(c *C) {
+	logfile := ls.TempDir + "/file4.log"
+	err := Set(logfile, 0644)
+
+	c.Assert(Global, Not(IsNil))
+	c.Assert(err, IsNil)
+
+	c.Assert(fsutil.GetPerm(logfile), Equals, os.FileMode(0644))
+
+	EnableBufIO(time.Minute)
+
+	Aux("Test aux %d", AUX)
+
+	fileSize := fsutil.GetSize(logfile)
+
+	c.Assert(fileSize, Equals, int64(0))
+
+	Reopen()
+
+	fileSize = fsutil.GetSize(logfile)
+
+	c.Assert(fileSize, Not(Equals), int64(0))
+
+	Aux("Test aux %d", AUX)
+
+	c.Assert(fsutil.GetSize(logfile), Equals, fileSize)
+
+	Flush()
+
+	c.Assert(fsutil.GetSize(logfile), Not(Equals), fileSize)
 }
