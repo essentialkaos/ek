@@ -1,4 +1,4 @@
-// Package provides methods for rendering info for command-line tools
+// Package usage provides methods and structs for rendering info for command-line tools
 package usage
 
 // ////////////////////////////////////////////////////////////////////////////////// //
