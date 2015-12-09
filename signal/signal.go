@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package for handling signals
+// Package signal provides methods for handling signals
 package signal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -18,6 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Signal codes
 const (
 	ABRT   = syscall.SIGABRT
 	ALRM   = syscall.SIGALRM
@@ -62,7 +63,7 @@ type Handlers map[os.Signal]func()
 func (h Handlers) Track() {
 	c := make(chan os.Signal)
 
-	for s, _ := range h {
+	for s := range h {
 		signal.Notify(c, s)
 	}
 
@@ -83,7 +84,7 @@ func (h Handlers) Track() {
 func (h Handlers) TrackAsync() {
 	c := make(chan os.Signal)
 
-	for s, _ := range h {
+	for s := range h {
 		signal.Notify(c, s)
 	}
 
