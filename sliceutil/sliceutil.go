@@ -1,4 +1,4 @@
-// Package with utils for working with slices
+// Package sliceutil provides methods for working with slices
 package sliceutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
