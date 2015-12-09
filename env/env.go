@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package provides methods for working with environment variables
+// Package env provides methods for working with environment variables
 package env
 
 // ////////////////////////////////////////////////////////////////////////////////// //
