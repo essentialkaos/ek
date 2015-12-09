@@ -1,4 +1,4 @@
-// Package with improved logger
+// Package log provides improved logger
 package log
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -45,15 +45,16 @@ type Logger struct {
 	PrefixCrit  bool // Prefix for critical error messages
 
 	file     string
-	perms    os.FileMode
 	fd       *os.File
 	w        *bufio.Writer
-	useBufIO bool
 	level    int
+	perms    os.FileMode
+	useBufIO bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Global is global logger struct
 var Global = &Logger{
 	PrefixWarn:  true,
 	PrefixError: true,
@@ -64,7 +65,7 @@ var Global = &Logger{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Map with messages prefixes
+// PrefixMap is map with messages prefixes
 var PrefixMap = map[int]string{
 	DEBUG: "[DEBUG]",
 	INFO:  "[INFO]",

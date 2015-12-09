@@ -8,12 +8,13 @@ package log
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	. "gopkg.in/check.v1"
 
 	"github.com/essentialkaos/ek/fsutil"
 )
