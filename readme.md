@@ -44,7 +44,6 @@ go get github.com/essentialkaos/ek
 * `tmp` - Package provides methods for working with temporary data
 * `usage` - Package provides methods for rendering info for command-line tools
 * `version` - Package provides methods for parsing semver version info
-* `z7` - Package provides methods for working with 7z archives (p7zip wrapper)
 
 ### Projects with EK
 
