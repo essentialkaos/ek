@@ -1,4 +1,4 @@
-// Package provides methods for parsing semver version info
+// Package version provides methods for parsing semver version info
 package version
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -16,6 +16,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Version contains version data
 type Version struct {
 	raw          string
 	versionSlice []int
@@ -29,36 +30,37 @@ var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Parse(ver string) *Version {
-	if ver == "" {
+// Parse parse version string and return version struct
+func Parse(v string) *Version {
+	if v == "" {
 		return &Version{}
 	}
 
-	result := &Version{raw: ver}
+	result := &Version{raw: v}
 
-	if strings.Contains(ver, "+") {
-		bs := strings.Split(ver, "+")
+	if strings.Contains(v, "+") {
+		bs := strings.Split(v, "+")
 
 		if bs[1] == "" {
-			ver = bs[0]
+			v = bs[0]
 		} else {
-			ver = bs[0]
+			v = bs[0]
 			result.build = bs[1]
 		}
 	}
 
-	if strings.Contains(ver, "-") {
-		ps := strings.Split(ver, "-")
+	if strings.Contains(v, "-") {
+		ps := strings.Split(v, "-")
 
 		if ps[1] == "" {
-			ver = ps[0]
+			v = ps[0]
 		} else {
-			ver = ps[0]
+			v = ps[0]
 			result.preRelease = ps[1]
 		}
 	}
 
-	for _, version := range strings.Split(ver, ".") {
+	for _, version := range strings.Split(v, ".") {
 		iv, err := strconv.Atoi(version)
 
 		if err != nil {
