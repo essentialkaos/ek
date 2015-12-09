@@ -1,4 +1,4 @@
-// Package provides utils for working with strings
+// Package strutil provides methods for working with strings
 package strutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
