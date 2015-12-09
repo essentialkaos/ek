@@ -1,6 +1,6 @@
 ### Changelog
 
-#### r6
+#### v1.2.1
 
 * [crypto] Small improvements in hash generation
 * [csv] Increased code coverage
@@ -14,18 +14,18 @@
 * [strutil] Increased code coverage
 * [timeutil] Increased code coverage
 
-#### r5
+#### v1.2
 
 * [log] Now buffered I/O must be enabled manually
 * [log] Auto flushing for bufio
 
-#### r4
+#### v1.1.1
 
 * [system] Added json tags for User, Group and SessionInfo structs
 * [usage] Info now can use os.Args[0] for info rendering
 * [version] Added package for working with version in simver notation
 
-#### r3
+#### v1.1
 
 * [arg] Changed default fail values (int -1 → 0, float -1.0 → 0.0)
 * [arg] Increased code coverage
@@ -56,11 +56,11 @@
 * [timeutil] Increased code coverage
 * [tmp] Increased code coverage
 
-#### r2
+#### v1.0.1
 
 * [system] Fixed bug in fs usage calculation
 * [usage] Improved new Info struct creation
 
-#### r1
+#### v1
 
 Initial public release
