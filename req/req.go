@@ -1,4 +1,4 @@
-// Package for working with http request
+// Package req for working with http request
 package req
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -165,31 +165,31 @@ func (r Request) Get() (*Response, error) {
 	return r.Do()
 }
 
-// Get execute as POST request
+// Post execute as POST request
 func (r Request) Post() (*Response, error) {
 	r.Method = POST
 	return r.Do()
 }
 
-// Get execute as PUT request
+// Put execute as PUT request
 func (r Request) Put() (*Response, error) {
 	r.Method = PUT
 	return r.Do()
 }
 
-// Get execute as HEAD request
+// Head execute as HEAD request
 func (r Request) Head() (*Response, error) {
 	r.Method = HEAD
 	return r.Do()
 }
 
-// Get execute as PATCH request
+// Patch execute as PATCH request
 func (r Request) Patch() (*Response, error) {
 	r.Method = PATCH
 	return r.Do()
 }
 
-// Get execute as DELETE request
+// Delete execute as DELETE request
 func (r Request) Delete() (*Response, error) {
 	r.Method = DELETE
 	return r.Do()
