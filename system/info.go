@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package provides methods for working with system data (metrics/users)
+// Package system provides methods for working with system data (metrics/users)
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
