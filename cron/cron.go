@@ -1,4 +1,4 @@
-// Package provides methods for working with cron expressions
+// Package cron provides methods for working with cron expressions
 package cron
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -17,6 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Aliases
 const (
 	YEARLY   = "0 0 1 1 *"
 	ANNUALLY = "0 0 1 1 *"

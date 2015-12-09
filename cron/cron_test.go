@@ -118,6 +118,9 @@ func (s *CronSuite) TestParsing(c *C) {
 
 	e10, err := Parse("0 12 1 1 Wed")
 
+	c.Assert(err, IsNil)
+	c.Assert(e10, NotNil)
+
 	c.Assert(
 		e10.Next(time.Date(2015, 6, 1, 0, 0, 0, 0, time.Local)),
 		Equals,
