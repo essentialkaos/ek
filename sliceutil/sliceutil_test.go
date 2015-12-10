@@ -45,3 +45,11 @@ func (s *SliceSuite) TestContains(c *C) {
 	c.Assert(Contains(source, "4"), Equals, false)
 	c.Assert(Contains([]string{}, "1"), Equals, false)
 }
+
+func (s *SliceSuite) TestExclude(c *C) {
+	source := []string{"1", "2", "3", "4", "5", "6"}
+
+	c.Assert(Exclude(source, []string{"1"}), DeepEquals, []string{"2", "3", "4", "5", "6"})
+	c.Assert(Exclude(source, []string{"1", "3", "6"}), DeepEquals, []string{"2", "4", "5"})
+	c.Assert(Exclude(source, []string{"1", "2", "3", "4", "5", "6"}), DeepEquals, []string{})
+}

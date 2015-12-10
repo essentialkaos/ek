@@ -78,6 +78,22 @@ func (s *VersionSuite) TestString(c *C) {
 	c.Assert(Parse("6.12.1-beta2+exp.sha.5114f85").String(), Equals, "6.12.1-beta2+exp.sha.5114f85")
 }
 
+func (s *VersionSuite) TestValidation(c *C) {
+	var v1 *Version
+	var v2 = &Version{}
+
+	c.Assert(v1.Valid(), Equals, false)
+	c.Assert(v2.Valid(), Equals, false)
+	c.Assert(Parse("A").Valid(), Equals, false)
+	c.Assert(Parse("").Valid(), Equals, false)
+
+	c.Assert(Parse("1").Valid(), Equals, true)
+	c.Assert(Parse("2.1").Valid(), Equals, true)
+	c.Assert(Parse("3.4.5").Valid(), Equals, true)
+	c.Assert(Parse("5-beta1+sha:5114f85").Valid(), Equals, true)
+	c.Assert(Parse("6.12.1-beta2+exp.sha.5114f85").Valid(), Equals, true)
+}
+
 func (s *VersionSuite) TestErrors(c *C) {
 	var v1 *Version
 	var v2 = &Version{}

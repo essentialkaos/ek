@@ -44,3 +44,21 @@ func Contains(slice []string, value string) bool {
 
 	return false
 }
+
+// Exclude return slice without items in second given slice
+func Exclude(slice []string, items []string) []string {
+	var result = make([]string, 0)
+
+LOOP:
+	for _, i := range slice {
+		for _, j := range items {
+			if i == j {
+				continue LOOP
+			}
+		}
+
+		result = append(result, i)
+	}
+
+	return result
+}

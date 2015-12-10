@@ -224,6 +224,15 @@ func (v *Version) Contains(version *Version) bool {
 	return false
 }
 
+// Valid return true if version struct is valid
+func (v *Version) Valid() bool {
+	if v == nil {
+		return false
+	}
+
+	return len(v.versionSlice) != 0
+}
+
 // String return version as string
 func (v *Version) String() string {
 	if v == nil {
