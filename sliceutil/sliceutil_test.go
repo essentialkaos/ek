@@ -8,8 +8,10 @@ package sliceutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
+	"errors"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,6 +38,30 @@ func (s *SliceSuite) TestInt2Interface(c *C) {
 	result := IntToInterface(source)
 
 	c.Assert(result, DeepEquals, []interface{}{1, 2, 3})
+}
+
+func (s *SliceSuite) TestString2Error(c *C) {
+	source := []string{"A", "B", "C"}
+	result := StringToError(source)
+
+	c.Assert(result, DeepEquals,
+		[]error{
+			errors.New("A"),
+			errors.New("B"),
+			errors.New("C"),
+		})
+}
+
+func (s *SliceSuite) TestError2String(c *C) {
+	source := []error{
+		errors.New("A"),
+		errors.New("B"),
+		errors.New("C"),
+	}
+
+	result := ErrorToString(source)
+
+	c.Assert(result, DeepEquals, []string{"A", "B", "C"})
 }
 
 func (s *SliceSuite) TestContains(c *C) {
