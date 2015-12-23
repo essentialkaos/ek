@@ -61,6 +61,7 @@ type Request struct {
 	BasicAuthPassword string            // Basic auth password
 	UserAgent         string            // User Agent string
 	AutoDiscard       bool              // Automatically discard all responses with status code != 200
+	Close             bool              // Close indicates whether to close the connection after sending request
 }
 
 // Response struct contains response data and properties
@@ -142,6 +143,10 @@ func (r Request) Do() (*Response, error) {
 
 	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
 		req.SetBasicAuth(r.BasicAuthUsername, r.BasicAuthPassword)
+	}
+
+	if r.Close {
+		req.Close = true
 	}
 
 	resp, err := Client.Do(req)
