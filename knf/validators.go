@@ -18,7 +18,7 @@ type PropertyValidator func(config *Config, prop string, value interface{}) erro
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Check if given config property is empty or not
+// Empty check if given config property is empty or not
 var Empty = func(config *Config, prop string, value interface{}) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s can't be empty", prop)
@@ -27,7 +27,7 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Check if given config property is less then defined value or not
+// Less check if given config property is less then defined value or not
 var Less = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -45,7 +45,7 @@ var Less = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Check if given config property is greater then defined value or not
+// Greater check if given config property is greater then defined value or not
 var Greater = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -65,7 +65,7 @@ var Greater = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Check if given config property is equals then defined value or not
+// Equals check if given config property is equals then defined value or not
 var Equals = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:

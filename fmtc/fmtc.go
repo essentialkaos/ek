@@ -1,4 +1,4 @@
-// Package provides methods similar to fmt for colored output
+// Package fmtc provides methods similar to fmt for colored output
 package fmtc
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -18,10 +18,9 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_CODE_RESET      = "\033[0m"
-	_CODE_CLEAN_LINE = "\033[0K"
-	_CODE_BACKSPACE  = "\b"
-	_CODE_BELL       = "\a"
+	_CODE_RESET     = "\033[0m"
+	_CODE_BACKSPACE = "\b"
+	_CODE_BELL      = "\a"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -67,11 +66,8 @@ var codes = map[int]int{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Disable colors in output
+// DisableColors disable colors in output
 var DisableColors = false
-
-// Used for TPrintf
-var lastTPrintSize int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -241,10 +237,11 @@ LOOP:
 		output.WriteString("{")
 		output.WriteString(colorCode)
 		output.WriteString("}")
+
 		return true
-	} else {
-		output.WriteString(colorCode)
 	}
+
+	output.WriteString(colorCode)
 
 	return false
 }

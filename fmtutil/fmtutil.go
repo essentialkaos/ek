@@ -1,4 +1,4 @@
-// Package provides methods for output formating
+// Package fmtutil provides methods for output formating
 package fmtutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,10 +25,10 @@ const (
 	_TERA = 1099511627776
 )
 
-// Order separator
+// OrderSeparator default order separator
 var OrderSeparator = ","
 
-// Size separator
+// SizeSeparator default size separator
 var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -80,7 +80,6 @@ func ParseSize(size string) uint64 {
 	var (
 		mlt uint64
 		pfx string
-		err error
 	)
 
 	ns := strings.ToLower(strings.Replace(size, " ", "", -1))

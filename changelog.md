@@ -1,66 +1,70 @@
-### Changelog
+## Changelog
 
-#### r6
+#### v1.2.2
 
-* [crypto] Small improvements in hash generation
-* [csv] Increased code coverage
-* [easing] Increased code coverage
-* [fmtc] Increased code coverage
-* [httputil] Increased code coverage
-* [jsonutil] Increased code coverage
-* [pid] Increased code coverage
-* [req] Increased code coverage
-* [req] Increased default timeout to 10 seconds
-* [strutil] Increased code coverage
-* [timeutil] Increased code coverage
+* `[req]` Added flag for marking connection to close
 
-#### r5
+#### v1.2.1
 
-* [log] Now buffered I/O must be enabled manually
-* [log] Auto flushing for bufio
+* `[crypto]` Small improvements in hash generation
+* `[csv]` Increased code coverage
+* `[easing]` Increased code coverage
+* `[fmtc]` Increased code coverage
+* `[httputil]` Increased code coverage
+* `[jsonutil]` Increased code coverage
+* `[pid]` Increased code coverage
+* `[req]` Increased code coverage
+* `[req]` Increased default timeout to 10 seconds
+* `[strutil]` Increased code coverage
+* `[timeutil]` Increased code coverage
 
-#### r4
+#### v1.2
 
-* [system] Added json tags for User, Group and SessionInfo structs
-* [usage] Info now can use os.Args[0] for info rendering
-* [version] Added package for working with version in simver notation
+* `[log]` Now buffered I/O must be enabled manually
+* `[log]` Auto flushing for bufio
 
-#### r3
+#### v1.1.1
 
-* [arg] Changed default fail values (int -1 → 0, float -1.0 → 0.0)
-* [arg] Increased code coverage
-* [arg] Many minor fixes
-* [cron] Fixed rare bug
-* [cron] Increased code coverage
-* [crypto] Increased code coverage
-* [easing] Increased code coverage
-* [errutil] Increased code coverage
-* [fmtc] Increased code coverage
-* [fmtutil] Increased code coverage
-* [jsonutil] Increased code coverage
-* [knf] Fixed bug in Reload method for global config 
-* [knf] Improved Reload method
-* [knf] Increased code coverage
-* [log] Increased code coverage
-* [mathutil] Increased code coverage
-* [pid] Increased code coverage
-* [rand] Increased code coverage
-* [req] Fixed bug with Accept header
-* [req] Increased code coverage
-* [sliceutil] Increased code coverage
-* [sortutil] Increased code coverage
-* [spellcheck] Increased code coverage
-* [strutil] Increased code coverage
-* [system] Added method system.SetProcName for changing process name
-* [timeutil] Fixed bug in PrettyDuration method
-* [timeutil] Increased code coverage
-* [tmp] Increased code coverage
+* `[system]` Added json tags for User, Group and SessionInfo structs
+* `[usage]` Info now can use os.Args`[0]` for info rendering
+* `[version]` Added package for working with version in simver notation
 
-#### r2
+#### v1.1
 
-* [system] Fixed bug in fs usage calculation
-* [usage] Improved new Info struct creation
+* `[arg]` Changed default fail values (int -1 → 0, float -1.0 → 0.0)
+* `[arg]` Increased code coverage
+* `[arg]` Many minor fixes
+* `[cron]` Fixed rare bug
+* `[cron]` Increased code coverage
+* `[crypto]` Increased code coverage
+* `[easing]` Increased code coverage
+* `[errutil]` Increased code coverage
+* `[fmtc]` Increased code coverage
+* `[fmtutil]` Increased code coverage
+* `[jsonutil]` Increased code coverage
+* `[knf]` Fixed bug in Reload method for global config 
+* `[knf]` Improved Reload method
+* `[knf]` Increased code coverage
+* `[log]` Increased code coverage
+* `[mathutil]` Increased code coverage
+* `[pid]` Increased code coverage
+* `[rand]` Increased code coverage
+* `[req]` Fixed bug with Accept header
+* `[req]` Increased code coverage
+* `[sliceutil]` Increased code coverage
+* `[sortutil]` Increased code coverage
+* `[spellcheck]` Increased code coverage
+* `[strutil]` Increased code coverage
+* `[system]` Added method system.SetProcName for changing process name
+* `[timeutil]` Fixed bug in PrettyDuration method
+* `[timeutil]` Increased code coverage
+* `[tmp]` Increased code coverage
 
-#### r1
+#### v1.0.1
+
+* `[system]` Fixed bug in fs usage calculation
+* `[usage]` Improved new Info struct creation
+
+#### v1
 
 Initial public release

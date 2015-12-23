@@ -28,7 +28,7 @@ func FileHash(file string) string {
 
 	hasher := sha256.New()
 
-	_, err = io.Copy(hasher, fd)
+	io.Copy(hasher, fd)
 
 	return fmt.Sprintf("%064x", hasher.Sum(nil))
 }

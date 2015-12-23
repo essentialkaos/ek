@@ -215,6 +215,16 @@ func (s *ReqSuite) TestAccept(c *C) {
 	c.Assert(resp.StatusCode, Equals, 200)
 }
 
+func (s *ReqSuite) TestClose(c *C) {
+	getResp, err := Request{
+		URL:   s.url + _URL_GET,
+		Close: true,
+	}.Get()
+
+	c.Assert(err, IsNil)
+	c.Assert(getResp.StatusCode, Equals, 200)
+}
+
 func (s *ReqSuite) TestUserAgent(c *C) {
 	resp, err := Request{
 		URL:       s.url + _URL_USER_AGENT,

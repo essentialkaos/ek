@@ -1,4 +1,4 @@
-// Package provides methods for working with json data
+// Package jsonutil provides methods for working with json data
 package jsonutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,4 @@
-// Package with utils for working with crypto data (passwords, uuids, file hashes)
+// Package crypto contains utils for working with crypto data (passwords, uuids, file hashes)
 package crypto
 
 // ////////////////////////////////////////////////////////////////////////////////// //

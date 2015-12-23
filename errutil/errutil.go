@@ -1,4 +1,4 @@
-// Package provides methods for working with errors
+// Package errutil provides methods for working with errors
 package errutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

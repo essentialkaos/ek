@@ -1,4 +1,4 @@
-// Package with utils for sorting slices
+// Package sortutil provides methods for sorting slices
 package sortutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,4 @@
-// Package provides methods for working with command-line arguments
+// Package arg provides methods for working with command-line arguments
 package arg
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -32,6 +32,7 @@ const (
 	FLOAT  = 3
 )
 
+// Error codes
 const (
 	ERROR_UNSUPPORTED         = 0
 	ERROR_NO_NAME             = 1
@@ -47,16 +48,16 @@ const (
 
 // V basic argument struct
 type V struct {
-	Mergeble bool        // argument supports arguments value merging
-	Type     int         // argument type
-	Value    interface{} // default value
-	Required bool        // argument is required
-	Max      float64     // maximum integer argument value
-	Min      float64     // minimum integer argument value
-	Alias    string      // list of aliases
+	Type     int     // argument type
+	Max      float64 // maximum integer argument value
+	Min      float64 // minimum integer argument value
+	Alias    string  // list of aliases
+	Mergeble bool    // argument supports arguments value merging
+	Required bool    // argument is required
 
-	// Non exported field
-	set bool
+	set bool // Non exported field
+
+	Value interface{} // default value
 }
 
 // Map is map with list of argumens

@@ -1,4 +1,4 @@
-// Package with utils for working with slices
+// Package sliceutil provides methods for working with slices
 package sliceutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -8,9 +8,15 @@ package sliceutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import (
+	"errors"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // StringToInterface convert slice with strings to slice with interface{}
 func StringToInterface(data []string) []interface{} {
-	result := []interface{}{}
+	result := make([]interface{}, 0)
 
 	for _, r := range data {
 		result = append(result, r)
@@ -21,10 +27,32 @@ func StringToInterface(data []string) []interface{} {
 
 // IntToInterface convert slice with ints to slice with interface{}
 func IntToInterface(data []int) []interface{} {
-	result := []interface{}{}
+	result := make([]interface{}, 0)
 
 	for _, r := range data {
 		result = append(result, r)
+	}
+
+	return result
+}
+
+// StringToError convert slice with strings to slice with errors
+func StringToError(data []string) []error {
+	result := make([]error, 0)
+
+	for _, e := range data {
+		result = append(result, errors.New(e))
+	}
+
+	return result
+}
+
+// StringToError convert slice with errors to slice with strings
+func ErrorToString(data []error) []string {
+	result := make([]string, 0)
+
+	for _, e := range data {
+		result = append(result, e.Error())
 	}
 
 	return result
@@ -43,4 +71,22 @@ func Contains(slice []string, value string) bool {
 	}
 
 	return false
+}
+
+// Exclude return slice without items in second given slice
+func Exclude(slice []string, items []string) []string {
+	var result = make([]string, 0)
+
+LOOP:
+	for _, i := range slice {
+		for _, j := range items {
+			if i == j {
+				continue LOOP
+			}
+		}
+
+		result = append(result, i)
+	}
+
+	return result
 }

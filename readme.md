@@ -44,12 +44,12 @@ go get github.com/essentialkaos/ek
 * `tmp` - Package provides methods for working with temporary data
 * `usage` - Package provides methods for rendering info for command-line tools
 * `version` - Package provides methods for parsing semver version info
-* `z7` - Package provides methods for working with 7z archives (p7zip wrapper)
 
 ### Projects with EK
 
 * [ssllabs-client](https://github.com/essentialkaos/ssllabs_client) - Pretty awesome command-line client for public SSLLabs API
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
+* [shdoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
 
 ### Test & Coverage Status
 

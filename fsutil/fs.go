@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package provides methods for working with files in posix compatible systems
+// Package fsutil provides methods for working with files in posix compatible systems
 package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -78,6 +78,22 @@ func (s *VersionSuite) TestString(c *C) {
 	c.Assert(Parse("6.12.1-beta2+exp.sha.5114f85").String(), Equals, "6.12.1-beta2+exp.sha.5114f85")
 }
 
+func (s *VersionSuite) TestValidation(c *C) {
+	var v1 *Version
+	var v2 = &Version{}
+
+	c.Assert(v1.Valid(), Equals, false)
+	c.Assert(v2.Valid(), Equals, false)
+	c.Assert(Parse("A").Valid(), Equals, false)
+	c.Assert(Parse("").Valid(), Equals, false)
+
+	c.Assert(Parse("1").Valid(), Equals, true)
+	c.Assert(Parse("2.1").Valid(), Equals, true)
+	c.Assert(Parse("3.4.5").Valid(), Equals, true)
+	c.Assert(Parse("5-beta1+sha:5114f85").Valid(), Equals, true)
+	c.Assert(Parse("6.12.1-beta2+exp.sha.5114f85").Valid(), Equals, true)
+}
+
 func (s *VersionSuite) TestErrors(c *C) {
 	var v1 *Version
 	var v2 = &Version{}
@@ -107,4 +123,53 @@ func (s *VersionSuite) TestErrors(c *C) {
 	c.Assert(v2.PreRelease(), Equals, "")
 	c.Assert(v2.Build(), Equals, "")
 	c.Assert(v2.String(), Equals, "")
+}
+
+func (s *VersionSuite) TestComparison(c *C) {
+	c.Assert(Parse("1").Equal(Parse("1")), Equals, true)
+	c.Assert(Parse("1").Equal(Parse("2")), Equals, false)
+	c.Assert(Parse("1").Equal(Parse("1.0")), Equals, true)
+	c.Assert(Parse("1").Equal(Parse("1.1")), Equals, false)
+	c.Assert(Parse("1").Equal(Parse("1.0.0")), Equals, true)
+	c.Assert(Parse("1").Equal(Parse("1.0.1")), Equals, false)
+	c.Assert(Parse("1").Equal(Parse("1.0.0-alpha1")), Equals, false)
+	c.Assert(Parse("1").Equal(Parse("1.0.0+sha:5114f85")), Equals, false)
+	c.Assert(Parse("1.0.0+sha:5114f85").Equal(Parse("1.0.0+sha:5114f85")), Equals, true)
+
+	c.Assert(Parse("1").Less(Parse("1")), Equals, false)
+	c.Assert(Parse("1").Less(Parse("1.0")), Equals, false)
+	c.Assert(Parse("1").Less(Parse("1.0.0")), Equals, false)
+	c.Assert(Parse("1").Less(Parse("2")), Equals, true)
+	c.Assert(Parse("1").Less(Parse("1.1")), Equals, true)
+	c.Assert(Parse("1").Less(Parse("1.0.1")), Equals, true)
+	c.Assert(Parse("1.0.1-alpha").Less(Parse("1.0.1")), Equals, true)
+	c.Assert(Parse("1.0.1").Less(Parse("1.0.1-alpha")), Equals, false)
+	c.Assert(Parse("1.0.1-alpha").Less(Parse("1.0.1-beta")), Equals, true)
+	c.Assert(Parse("1.0.1-gamma").Less(Parse("1.0.1-beta")), Equals, false)
+	c.Assert(Parse("1.0.1-alpha").Less(Parse("1.0.1-alpha1")), Equals, true)
+	c.Assert(Parse("1.0.1-a4").Less(Parse("1.0.1-a5")), Equals, true)
+	c.Assert(Parse("1.0.1-a5").Less(Parse("1.0.1-a5")), Equals, false)
+
+	c.Assert(Parse("1").Greater(Parse("1")), Equals, false)
+	c.Assert(Parse("1").Greater(Parse("1.0")), Equals, false)
+	c.Assert(Parse("1").Greater(Parse("1.0.0")), Equals, false)
+	c.Assert(Parse("2").Greater(Parse("1")), Equals, true)
+	c.Assert(Parse("1.1").Greater(Parse("1")), Equals, true)
+	c.Assert(Parse("1.0.1").Greater(Parse("1")), Equals, true)
+	c.Assert(Parse("1.0.1-alpha").Greater(Parse("1.0.1")), Equals, false)
+	c.Assert(Parse("1.0.1").Greater(Parse("1.0.1-alpha")), Equals, true)
+	c.Assert(Parse("1.0.1-alpha").Greater(Parse("1.0.1-beta")), Equals, false)
+	c.Assert(Parse("1.0.1-gamma").Greater(Parse("1.0.1-beta")), Equals, true)
+	c.Assert(Parse("1.0.1-alpha").Greater(Parse("1.0.1-alpha1")), Equals, false)
+	c.Assert(Parse("1.0.1-a4").Greater(Parse("1.0.1-a5")), Equals, false)
+	c.Assert(Parse("1.0.1-a5").Greater(Parse("1.0.1-a5")), Equals, false)
+
+	c.Assert(Parse("1").Contains(Parse("1")), Equals, true)
+	c.Assert(Parse("1").Contains(Parse("1.1")), Equals, true)
+	c.Assert(Parse("1").Contains(Parse("1.0.1")), Equals, true)
+	c.Assert(Parse("2").Contains(Parse("1")), Equals, false)
+	c.Assert(Parse("1.1").Contains(Parse("1.2")), Equals, false)
+	c.Assert(Parse("1.0").Contains(Parse("1.0.2")), Equals, true)
+	c.Assert(Parse("1.0.1").Contains(Parse("1.0.2")), Equals, false)
+	c.Assert(Parse("1.0.1").Contains(Parse("1.0.1-alpha")), Equals, false)
 }

@@ -1,4 +1,4 @@
-// Package provides methods for working with http request/responses
+// Package httputil provides methods for working with http request/responses
 package httputil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

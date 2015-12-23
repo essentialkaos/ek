@@ -1,4 +1,4 @@
-// Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+// Package spellcheck provides spellcheck based on Damerau–Levenshtein distance algorithm
 package spellcheck
 
 // ////////////////////////////////////////////////////////////////////////////////// //

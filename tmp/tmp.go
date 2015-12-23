@@ -1,4 +1,4 @@
-// Package provides methods for working with temporary data
+// Package tmp provides methods and structs for working with temporary data
 package tmp
 
 // ////////////////////////////////////////////////////////////////////////////////// //
