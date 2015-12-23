@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.2.2
+
+* `[req]` Added flag for marking connection to close
+
 #### v1.2.1
 
 * `[crypto]` Small improvements in hash generation
