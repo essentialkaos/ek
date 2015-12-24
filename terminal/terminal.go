@@ -14,8 +14,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/essentialkaos/ek/fmtc"
-	"github.com/essentialkaos/go.linenoise"
+	"github.com/GeertJohan/go.linenoise"
+
+	"pkg.re/essentialkaos/ek.v1/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

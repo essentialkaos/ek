@@ -13,9 +13,9 @@ import (
 	"os"
 	"testing"
 
-	. "gopkg.in/check.v1"
+	. "pkg.re/check.v1"
 
-	"github.com/essentialkaos/ek/fsutil"
+	"pkg.re/essentialkaos/ek.v1/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

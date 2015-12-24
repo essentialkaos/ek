@@ -8,8 +8,9 @@ package spellcheck
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
 	"testing"
+
+	. "pkg.re/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }

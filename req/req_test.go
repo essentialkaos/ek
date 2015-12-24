@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/env"
+	. "pkg.re/check.v1"
 
-	. "gopkg.in/check.v1"
+	"pkg.re/essentialkaos/ek.v1/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
