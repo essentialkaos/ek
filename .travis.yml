@@ -14,7 +14,7 @@ env:
   - EK_TEST_PORT=8080
 
 before_install:
-  - go get gopkg.in/check.v1
+  - go get pkg.re/check.v1
 
 script:
   - .travis/script.sh .

@@ -9,9 +9,10 @@ package timeutil
 
 import (
 	"bytes"
-	. "gopkg.in/check.v1"
 	"testing"
 	"time"
+
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

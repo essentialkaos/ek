@@ -17,7 +17,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/essentialkaos/ek/system"
+	"pkg.re/essentialkaos/ek.v1/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
