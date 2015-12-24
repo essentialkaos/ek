@@ -20,6 +20,12 @@ main() {
 # Create links for pkg.re import paths
 #
 makeLink() {
+  # TravicCI download last stable version of ek, but it not ok
+  # remove downloaded version for linking with current version for test
+  if [[ -d $GOPATH/src/pkg.re/essentialkaos/ek.v1 ]] ; then
+    rm -rf $GOPATH/src/pkg.re/essentialkaos/ek.v1
+  fi
+
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
   ln -sf $GOPATH/src/pkg.re/essentialkaos/ek.v1 $GOPATH/src/github.com/essentialkaos/ek
 }
