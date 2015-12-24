@@ -8,8 +8,9 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	. "gopkg.in/check.v1"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -131,11 +132,4 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false)
 	Separator(true, "test")
 	Separator(false, "test")
-}
-
-func (s *FmtUtilSuite) TestTermSize(c *C) {
-	w, h := GetTermSize()
-
-	c.Assert(w, Not(Equals), 0)
-	c.Assert(h, Not(Equals), 0)
 }

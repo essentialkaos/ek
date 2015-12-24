@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.3
+
+* `[system]` Fixed major bug with OS X compatibility
+* `[fmtutil]` Fixed tests for OS X
+
 #### v1.2.2
 
 * `[req]` Added flag for marking connection to close

@@ -2,17 +2,19 @@ language: go
 go:
   - 1.4.2
   - 1.5.2
-  - release
   - tip
 
 sudo: false
+
+os:
+  - linux
+  - osx
 
 env:
   - EK_TEST_PORT=8080
 
 before_install:
   - go get gopkg.in/check.v1
-  - go get golang.org/x/tools/cmd/cover
 
 script:
   - .travis/script.sh .

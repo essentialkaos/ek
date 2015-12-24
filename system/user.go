@@ -292,27 +292,6 @@ func getTDOwnerID() (int, bool) {
 	return ownerID, err == nil
 }
 
-// getUserInfo return user info by name or id
-//
-func getUserInfo(nameOrID string) (string, int, int, string, string, string, error) {
-	cmd := exec.Command("getent", "passwd", nameOrID)
-
-	out, err := cmd.Output()
-
-	if err != nil {
-		return "", -1, -1, "", "", "", fmt.Errorf("User with this name/id %s is not exist", nameOrID)
-	}
-
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-	aOut := strings.Split(sOut, ":")
-
-	uid, _ := strconv.Atoi(aOut[2])
-	gid, _ := strconv.Atoi(aOut[3])
-
-	return aOut[0], uid, gid, aOut[4], aOut[5], aOut[6], nil
-}
-
 // getGroupInfo return group info by name or id
 func getGroupInfo(nameOrID string) (string, int, error) {
 	cmd := exec.Command("getent", "group", nameOrID)
