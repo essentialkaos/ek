@@ -9,7 +9,7 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (f
 ### Installation
 
 ````
-go get github.com/essentialkaos/ek
+go get pkg.re/essentialkaos/ek.v1
 ````
 
 ### Packages
