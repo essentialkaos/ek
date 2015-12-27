@@ -1,9 +1,14 @@
 ## Changelog
 
-#### v1.3.1
+#### v1.3.2
 
 * `[strutil]` Added method Head for subtraction first symbols from the string
 * `[strutil]` Added method Tail for subtraction last symbols from the string
+
+#### v1.3.1
+
+* Improved TravisCI build script for support pkg.re
+* Added pkg.re usage
 
 #### v1.3
 
