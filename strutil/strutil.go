@@ -80,3 +80,33 @@ func Ellipsis(s string, maxSize int) string {
 
 	return s
 }
+
+// Head return n first symbols from given string
+func Head(s string, n int) string {
+	if s == "" || n <= 0 {
+		return ""
+	}
+
+	l := len(s)
+
+	if l <= n {
+		return s
+	}
+
+	return s[:n]
+}
+
+// Tail return n last symbols from given string
+func Tail(s string, n int) string {
+	if s == "" || n <= 0 {
+		return ""
+	}
+
+	l := len(s)
+
+	if l <= n {
+		return s
+	}
+
+	return s[n:]
+}
