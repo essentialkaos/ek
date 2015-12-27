@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.3.1
+
+* `[strutil]` Added method Head for subtraction first symbols from the string
+* `[strutil]` Added method Tail for subtraction last symbols from the string
+
 #### v1.3
 
 * `[system]` Fixed major bug with OS X compatibility

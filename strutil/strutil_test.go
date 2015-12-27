@@ -49,3 +49,19 @@ func (s *StrUtilSuite) TestEllipsis(c *C) {
 	c.Assert(Ellipsis("Test1234", 8), Equals, "Test1234")
 	c.Assert(Ellipsis("Test1234test", 8), Equals, "Test1...")
 }
+
+func (s *StrUtilSuite) TestHead(c *C) {
+	c.Assert(Head("", 1), Equals, "")
+	c.Assert(Head("ABCD1234", 0), Equals, "")
+	c.Assert(Head("ABCD1234", -10), Equals, "")
+	c.Assert(Head("ABCD1234", 4), Equals, "ABCD")
+	c.Assert(Head("ABCD1234", 100), Equals, "ABCD1234")
+}
+
+func (s *StrUtilSuite) TestTail(c *C) {
+	c.Assert(Tail("", 1), Equals, "")
+	c.Assert(Tail("ABCD1234", 0), Equals, "")
+	c.Assert(Tail("ABCD1234", -10), Equals, "")
+	c.Assert(Tail("ABCD1234", 4), Equals, "1234")
+	c.Assert(Tail("ABCD1234", 100), Equals, "ABCD1234")
+}
