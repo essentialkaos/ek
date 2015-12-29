@@ -108,5 +108,5 @@ func Tail(s string, n int) string {
 		return s
 	}
 
-	return s[n:]
+	return s[l-n:]
 }
