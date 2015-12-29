@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.3.3
+
+* `[strutil]` Fixed bug in Tail method
+
 #### v1.3.2
 
 * `[strutil]` Added method Head for subtraction first symbols from the string
