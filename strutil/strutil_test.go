@@ -54,6 +54,7 @@ func (s *StrUtilSuite) TestHead(c *C) {
 	c.Assert(Head("", 1), Equals, "")
 	c.Assert(Head("ABCD1234", 0), Equals, "")
 	c.Assert(Head("ABCD1234", -10), Equals, "")
+	c.Assert(Head("ABCD1234", 1), Equals, "A")
 	c.Assert(Head("ABCD1234", 4), Equals, "ABCD")
 	c.Assert(Head("ABCD1234", 100), Equals, "ABCD1234")
 }
@@ -62,6 +63,7 @@ func (s *StrUtilSuite) TestTail(c *C) {
 	c.Assert(Tail("", 1), Equals, "")
 	c.Assert(Tail("ABCD1234", 0), Equals, "")
 	c.Assert(Tail("ABCD1234", -10), Equals, "")
+	c.Assert(Tail("ABCD1234", 1), Equals, "4")
 	c.Assert(Tail("ABCD1234", 4), Equals, "1234")
 	c.Assert(Tail("ABCD1234", 100), Equals, "ABCD1234")
 }
