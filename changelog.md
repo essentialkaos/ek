@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.4.0
+
+* `[kv]` Added package with simple key-value structs
+
 #### v1.3.3
 
 * `[strutil]` Fixed bug in Tail method

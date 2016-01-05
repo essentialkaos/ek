@@ -1,4 +1,5 @@
-package sortutil
+// Package kv provides simple key-value structs
+package kv
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -15,7 +16,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type SortSuite struct{}
+type KVSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -23,20 +24,38 @@ func Test(t *testing.T) { TestingT(t) }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _ = Suite(&SortSuite{})
+var _ = Suite(&KVSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (ss *SortSuite) TestSorting(c *C) {
-	v1 := []string{"1", "2.1", "2", "2.3.4", "1.3", "1.6.5", "2.3.3", "14.0", "6"}
+func (s *KVSuite) TestTypeConversion(c *C) {
+	kv1 := &KV{"test1", "TEST1234ABCD"}
+	kv2 := &KV{"test2", 1234}
+	kv3 := &KV{"test3", 1234.12}
 
-	Versions(v1)
+	c.Assert(kv1.Value.(string), Equals, "TEST1234ABCD")
+	c.Assert(kv1.String(), Equals, "TEST1234ABCD")
 
-	c.Assert(v1, DeepEquals, []string{"1", "1.3", "1.6.5", "2", "2.1", "2.3.3", "2.3.4", "6", "14.0"})
+	c.Assert(kv2.Value.(int), Equals, 1234)
+	c.Assert(kv2.Int(), Equals, 1234)
 
-	v2 := []string{"1-2", "2", "2.2.3", "2.2.3", "1"}
+	c.Assert(kv3.Value.(float64), Equals, 1234.12)
+	c.Assert(kv3.Float(), Equals, 1234.12)
+}
 
-	Versions(v2)
+func (s *KVSuite) TestSorting(c *C) {
+	kvs := []*KV{
+		&KV{"test1", "1"},
+		&KV{"test5", "2"},
+		&KV{"test3", "3"},
+		&KV{"test2", "4"},
+	}
 
-	c.Assert(v2, DeepEquals, []string{"1", "1-2", "2", "2.2.3", "2.2.3"})
+	Sort(kvs)
+
+	c.Assert(kvs, HasLen, 4)
+	c.Assert(kvs[0].Key, Equals, "test1")
+	c.Assert(kvs[1].Key, Equals, "test2")
+	c.Assert(kvs[2].Key, Equals, "test3")
+	c.Assert(kvs[3].Key, Equals, "test5")
 }
