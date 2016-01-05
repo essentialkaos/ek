@@ -27,6 +27,7 @@ go get pkg.re/essentialkaos/ek.v1
 * `httputil` - Package provides methods for working with http request/responses
 * `jsonutil` - Package provides methods for working with json data
 * `knf` - Package provides methods for working with configs in KNF format
+* `kv` - Package provides simple key-value structs
 * `log` - Package with improved logger
 * `mathutil` - Package with math utils
 * `netutil` - Package with network utils
