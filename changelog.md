@@ -2,8 +2,8 @@
 
 #### v1.4.1
 
-* `[fsutil]` Added FreeBSD support
-* `[system]` Added FreeBSD support
+* `[fsutil]` Added partial FreeBSD support
+* `[system]` Added partial FreeBSD support
 * `[log]` Some minor fixes in tests
 
 #### v1.4.0
