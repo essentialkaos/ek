@@ -1,4 +1,4 @@
-// +build !linux, !darwin, windows
+// +build windows
 
 package system
 

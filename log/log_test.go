@@ -333,7 +333,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 
 	c.Assert(fsutil.GetSize(logfile), Equals, int64(0))
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(2 * time.Second)
 
 	c.Assert(fsutil.GetSize(logfile), Not(Equals), int64(0))
 
