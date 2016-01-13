@@ -1,4 +1,4 @@
-// +build darwin, !linux, !windows
+// +build darwin
 
 package fsutil
 
