@@ -1,6 +1,6 @@
-// +build darwin
+// +build freebsd
 
-package fsutil
+package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,14 +11,18 @@ package fsutil
 
 import (
 	"errors"
+	"fmt"
+	"os/exec"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTimes return time of access, modification and creation at once
-func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
+// getTimes is copy of fsutil.GetTimes
+func getTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
 		return time.Time{}, time.Time{}, time.Time{}, errors.New("Path is empty")
 	}
@@ -37,22 +41,23 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// GetTimestamps return time of access, modification and creation at once as linux timestamp
-func GetTimestamps(path string) (int64, int64, int64, error) {
-	if path == "" {
-		return -1, -1, -1, errors.New("Path is empty")
-	}
+// getUserInfo return user info by name or id (name, id, gid, comment, home, shell)
+//
+func getUserInfo(nameOrID string) (string, int, int, string, string, string, error) {
+	cmd := exec.Command("getent", "passwd", nameOrID)
 
-	var stat = &syscall.Stat_t{}
-
-	err := syscall.Stat(path, stat)
+	out, err := cmd.Output()
 
 	if err != nil {
-		return -1, -1, -1, err
+		return "", -1, -1, "", "", "", fmt.Errorf("User with this name/id %s is not exist", nameOrID)
 	}
 
-	return int64(stat.Atimespec.Sec),
-		int64(stat.Mtimespec.Sec),
-		int64(stat.Ctimespec.Sec),
-		nil
+	sOut := string(out[:])
+	sOut = strings.Trim(sOut, "\n")
+	aOut := strings.Split(sOut, ":")
+
+	uid, _ := strconv.Atoi(aOut[2])
+	gid, _ := strconv.Atoi(aOut[3])
+
+	return aOut[0], uid, gid, aOut[4], aOut[5], aOut[6], nil
 }

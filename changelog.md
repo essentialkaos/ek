@@ -1,5 +1,11 @@
 ## Changelog
 
+#### v1.4.1
+
+* `[fsutil]` Added partial FreeBSD support
+* `[system]` Added partial FreeBSD support
+* `[log]` Some minor fixes in tests
+
 #### v1.4.0
 
 * `[kv]` Added package with simple key-value structs
