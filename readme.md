@@ -51,6 +51,9 @@ go get pkg.re/essentialkaos/ek.v1
 * [ssllabs-client](https://github.com/essentialkaos/ssllabs_client) - Pretty awesome command-line client for public SSLLabs API
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
 * [shdoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
+* [rbinstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
+* [goupx](https://github.com/essentialkaos/goupx) - UPX fixer and packer for Go executables
+* [mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 
 ### Test & Coverage Status
 
