@@ -52,6 +52,12 @@ testWithCover() {
     # fsutil currently is hard to test
     # we test this package by hands
     if [[ "$pkg" == "fsutil" ]] ; then
+      go test $dir/$pkg
+
+      if [[ $? -ne 0 ]] ; then
+        has_errors=true
+      fi
+
       continue
     fi
 
