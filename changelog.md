@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.4.2
+
+* `[fsutil]` Added method `ProperPath` which return first proper path from given slice
+
 #### v1.4.1
 
 * `[fsutil]` Added partial FreeBSD support

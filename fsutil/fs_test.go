@@ -132,3 +132,13 @@ func (fs *FSSuite) TestList(c *check.C) {
 		[]string{"dir2/file4.wav", "file2.jpg"},
 	)
 }
+
+func (fs *FSSuite) TestProperPath(c *check.C) {
+	paths := []string{"/root", "/home", "/tmp"}
+
+	c.Assert(ProperPath("FR", paths), check.Equals, "")
+	c.Assert(ProperPath("DR", paths), check.Equals, "/home")
+	c.Assert(ProperPath("DRW", paths), check.Equals, "/tmp")
+	c.Assert(ProperPath("D", paths), check.Equals, "/root")
+	c.Assert(ProperPath("DX", paths), check.Equals, "/home")
+}
