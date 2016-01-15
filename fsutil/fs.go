@@ -128,6 +128,17 @@ func CheckPerms(props, path string) bool {
 	return true
 }
 
+// ProperPath return first proper path from given slice
+func ProperPath(props string, paths []string) string {
+	for _, path := range paths {
+		if CheckPerms(props, path) {
+			return path
+		}
+	}
+
+	return ""
+}
+
 // IsExist check if target is exist in fs or not
 func IsExist(path string) bool {
 	if path == "" {
