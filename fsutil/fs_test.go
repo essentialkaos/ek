@@ -134,11 +134,18 @@ func (fs *FSSuite) TestList(c *check.C) {
 }
 
 func (fs *FSSuite) TestProperPath(c *check.C) {
-	paths := []string{"/root", "/bin", "/tmp"}
+	tmpFile := fs.TempDir + "/test.txt"
 
-	c.Assert(ProperPath("FR", paths), check.Equals, "")
-	c.Assert(ProperPath("DR", paths), check.Equals, "/bin")
-	c.Assert(ProperPath("DRW", paths), check.Equals, "/tmp")
-	c.Assert(ProperPath("D", paths), check.Equals, "/root")
-	c.Assert(ProperPath("DX", paths), check.Equals, "/bin")
+	os.OpenFile(tmpFile, os.O_CREATE, 0644)
+
+	paths := []string{"/etc/shadow", "/etc/passwd", tmpFile}
+
+	c.Assert(ProperPath("DR", paths), check.Equals, "")
+	c.Assert(ProperPath("FR", paths), check.Equals, "/etc/passwd")
+	c.Assert(ProperPath("FS", paths), check.Equals, "/etc/shadow")
+	c.Assert(ProperPath("FRW", paths), check.Equals, tmpFile)
+	c.Assert(ProperPath("FRWS", paths), check.Equals, "")
+	c.Assert(ProperPath("F", paths), check.Equals, "/etc/shadow")
+
+	os.Remove(tmpFile)
 }
