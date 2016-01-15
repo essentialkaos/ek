@@ -16,7 +16,8 @@ env:
   - EK_TEST_PORT=8080
 
 before_install:
-  - go get pkg.re/check.v1
+  - go get -v golang.org/x/tools/cmd/cover
+  - go get -v pkg.re/check.v1
 
 script:
   - .travis/script.sh .
