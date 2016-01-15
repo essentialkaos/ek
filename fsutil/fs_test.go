@@ -138,13 +138,13 @@ func (fs *FSSuite) TestProperPath(c *check.C) {
 
 	os.OpenFile(tmpFile, os.O_CREATE, 0644)
 
-	paths := []string{"/etc/shadow", "/etc/passwd", tmpFile}
+	paths := []string{"/etc/sudoers", "/etc/passwd", tmpFile}
 
 	c.Assert(ProperPath("DR", paths), check.Equals, "")
 	c.Assert(ProperPath("FR", paths), check.Equals, "/etc/passwd")
 	c.Assert(ProperPath("FRW", paths), check.Equals, tmpFile)
 	c.Assert(ProperPath("FRWS", paths), check.Equals, "")
-	c.Assert(ProperPath("F", paths), check.Equals, "/etc/shadow")
+	c.Assert(ProperPath("F", paths), check.Equals, "/etc/sudoers")
 
 	os.Remove(tmpFile)
 }
