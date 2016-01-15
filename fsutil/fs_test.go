@@ -142,7 +142,6 @@ func (fs *FSSuite) TestProperPath(c *check.C) {
 
 	c.Assert(ProperPath("DR", paths), check.Equals, "")
 	c.Assert(ProperPath("FR", paths), check.Equals, "/etc/passwd")
-	c.Assert(ProperPath("FS", paths), check.Equals, "/etc/shadow")
 	c.Assert(ProperPath("FRW", paths), check.Equals, tmpFile)
 	c.Assert(ProperPath("FRWS", paths), check.Equals, "")
 	c.Assert(ProperPath("F", paths), check.Equals, "/etc/shadow")
