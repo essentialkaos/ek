@@ -1,4 +1,4 @@
-### EK [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v1?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v1)
+# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v1?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v1)
 
 Auxiliary packages for Go.
 
