@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.4.4
+
+* `[errutil]` Added method Num which returns number of errors
+
 #### v1.4.3
 
 * `[errutil]` Improved Add method
