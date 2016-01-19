@@ -28,7 +28,11 @@ func (e *Errors) Add(errs ...error) *Errors {
 		return e
 	}
 
-	e.errors = append(e.errors, errs...)
+	for _, err := range errs {
+		if err != nil {
+			e.errors = append(e.errors, err)
+		}
+	}
 
 	return e
 }
