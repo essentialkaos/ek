@@ -37,6 +37,7 @@ func (s *ErrSuite) TestPositive(c *C) {
 	errs.Add(errors.New("4"))
 	errs.Add(errors.New("5"))
 
+	c.Assert(errs.Num(), Equals, 5)
 	c.Assert(errs.All(), HasLen, 5)
 	c.Assert(errs.HasErrors(), Equals, true)
 	c.Assert(errs.Last(), DeepEquals, errors.New("5"))
