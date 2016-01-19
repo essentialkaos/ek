@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.4.3
+
+* `[errutil]` Improved Add method
+
 #### v1.4.2
 
 * `[fsutil]` Added method `ProperPath` which return first proper path from given slice

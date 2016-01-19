@@ -23,12 +23,12 @@ func NewErrors() *Errors {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds new error to slice
-func (e *Errors) Add(err error) *Errors {
-	if err == nil {
+func (e *Errors) Add(errs ...error) *Errors {
+	if errs == nil || len(errs) == 0 {
 		return e
 	}
 
-	e.errors = append(e.errors, err)
+	e.errors = append(e.errors, errs...)
 
 	return e
 }
