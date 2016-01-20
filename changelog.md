@@ -3,7 +3,7 @@
 #### v1.4.5
 
 * `[pid]` Fixed bug with pid file creation
-* `[pid]` Improved coverage
+* `[pid]` Increased coverage
 
 #### v1.4.4
 
