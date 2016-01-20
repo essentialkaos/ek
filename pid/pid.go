@@ -43,20 +43,18 @@ func Create(name string) error {
 	if fsutil.IsExist(pidFile) {
 		err = os.Remove(pidFile)
 
+		fmt.Println(pidFile, err)
+
 		if err != nil {
 			return err
 		}
 	}
 
-	fd, err := os.OpenFile(pidFile, os.O_RDWR|os.O_CREATE, 0644)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = fd.WriteString(fmt.Sprintf("%d\n", os.Getpid()))
-
-	return err
+	return ioutil.WriteFile(
+		pidFile,
+		[]byte(fmt.Sprintf("%d\n", os.Getpid())),
+		0644,
+	)
 }
 
 // Remove remove file with process pid file
@@ -69,9 +67,7 @@ func Remove(name string) error {
 
 	pidFile := Dir + "/" + normalizePidFilename(name)
 
-	os.Remove(pidFile)
-
-	return nil
+	return os.Remove(pidFile)
 }
 
 // Get return pid from pid file
@@ -100,6 +96,7 @@ func Get(name string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// checkPidDir check dir path and return error if dir not ok
 func checkPidDir(path string) error {
 	switch {
 	case fsutil.IsExist(path) == false:
@@ -115,6 +112,7 @@ func checkPidDir(path string) error {
 	return nil
 }
 
+// normalizePidFilename return pidfile name with extension
 func normalizePidFilename(name string) string {
 	if !strings.Contains(name, ".pid") {
 		return name + ".pid"
