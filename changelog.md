@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.4.5
+
+* `[pid]` Fixed bug with pid file creation
+* `[pid]` Improved coverage
+
 #### v1.4.4
 
 * `[errutil]` Added method Num which returns number of errors
