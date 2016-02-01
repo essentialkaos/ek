@@ -37,8 +37,9 @@ func (ts *TmpSuite) SetUpSuite(c *C) {
 }
 
 func (ts *TmpSuite) TestMk(c *C) {
-	t := NewTemp()
+	t, err := NewTemp()
 
+	c.Assert(err, IsNil)
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, "/tmp")
 
@@ -46,10 +47,24 @@ func (ts *TmpSuite) TestMk(c *C) {
 }
 
 func (ts *TmpSuite) TestErrors(c *C) {
-	t := NewTemp("/")
+	t, err := NewTemp("/")
 
-	c.Assert(t, NotNil)
-	c.Assert(t.Dir, Equals, "/")
+	c.Assert(err, NotNil)
+	c.Assert(t, IsNil)
+
+	t, err = NewTemp("/tmpz")
+
+	c.Assert(err, NotNil)
+	c.Assert(t, IsNil)
+
+	os.Create(ts.TempDir + "/test_")
+
+	t, err = NewTemp(ts.TempDir + "/test_")
+
+	c.Assert(err, NotNil)
+	c.Assert(t, IsNil)
+
+	t = &Temp{Dir: "/"}
 
 	tmpDir, err := t.MkDir("test")
 
@@ -64,8 +79,9 @@ func (ts *TmpSuite) TestErrors(c *C) {
 }
 
 func (ts *TmpSuite) TestMkDir(c *C) {
-	t := NewTemp(ts.TempDir)
+	t, err := NewTemp(ts.TempDir)
 
+	c.Assert(err, IsNil)
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, ts.TempDir)
 
@@ -85,8 +101,9 @@ func (ts *TmpSuite) TestMkDir(c *C) {
 }
 
 func (ts *TmpSuite) TestMkFile(c *C) {
-	t := NewTemp(ts.TempDir)
+	t, err := NewTemp(ts.TempDir)
 
+	c.Assert(err, IsNil)
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, ts.TempDir)
 
@@ -107,15 +124,16 @@ func (ts *TmpSuite) TestMkFile(c *C) {
 }
 
 func (ts *TmpSuite) TestMkName(c *C) {
-	t := NewTemp(ts.TempDir)
+	t, err := NewTemp(ts.TempDir)
 
+	c.Assert(err, IsNil)
 	c.Assert(t, NotNil)
 	c.Assert(t.Dir, Equals, ts.TempDir)
 
 	c.Assert(t.MkName(), Not(Equals), "")
 	c.Assert(t.MkName("1234"), Not(Equals), "")
 
-	ln := len(ts.TempDir + "/_1234")
+	ln := len(ts.TempDir + "/")
 
-	c.Assert(t.MkName("1234")[:ln], Equals, ts.TempDir+"/_1234")
+	c.Assert(t.MkName("1234.json")[ln+14:], Equals, "1234.json")
 }

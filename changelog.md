@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.5.0
+
+* `[tmp]` Improved error handling
+* `[tmp]` Changed name pattern of temporary files and directories
+
 #### v1.4.5
 
 * `[pid]` Fixed bug with pid file creation
