@@ -9,6 +9,7 @@ package tmp
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"os"
 	"path"
 
@@ -33,12 +34,26 @@ var Dir = "/tmp"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTemp create new Temp structure
-func NewTemp(args ...string) *Temp {
-	if len(args) == 0 {
-		return &Temp{Dir: Dir}
+func NewTemp(args ...string) (*Temp, error) {
+	tempDir := path.Clean(Dir)
+
+	if len(args) != 0 {
+		tempDir = path.Clean(args[0])
 	}
 
-	return &Temp{Dir: path.Clean(args[0])}
+	if !fsutil.IsExist(tempDir) {
+		return nil, fmt.Errorf("Directory %s is not exist", tempDir)
+	}
+
+	if !fsutil.IsDir(tempDir) {
+		return nil, fmt.Errorf("%s is not a directory", tempDir)
+	}
+
+	if !fsutil.IsWritable(tempDir) {
+		return nil, fmt.Errorf("Directory %s is not writable", tempDir)
+	}
+
+	return &Temp{Dir: tempDir}, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -110,12 +125,13 @@ func (t *Temp) Clean() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getTempName return name of temporary file
 func getTempName(dir, name string) string {
 	var result string
 
 	for {
 		if name != "" {
-			result = path.Join(dir, "_"+name+"_"+rand.String(12))
+			result = path.Join(dir, "_"+rand.String(12)+"_"+name)
 		} else {
 			result = path.Join(dir, "_tmp_"+rand.String(12))
 		}
