@@ -252,8 +252,8 @@ func (s *KNFSuite) TestCheckers(c *check.C) {
 	c.Assert(HasSection("strings"), check.Equals, false)
 
 	c.Assert(HasProp("string:test1"), check.Equals, true)
-	c.Assert(HasProp("string:test9"), check.Equals, false)
-	c.Assert(HasProp("strings:test9"), check.Equals, false)
+	c.Assert(HasProp("string:test6"), check.Equals, false)
+	c.Assert(HasProp("strings:test6"), check.Equals, false)
 }
 
 func (s *KNFSuite) TestFormating(c *check.C) {

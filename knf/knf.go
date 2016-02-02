@@ -275,9 +275,9 @@ func (c *Config) GetS(name string, defvals ...string) string {
 		return ""
 	}
 
-	val, ok := c.data[name]
+	val := c.data[name]
 
-	if !ok || val == "" {
+	if val == "" {
 		if len(defvals) == 0 {
 			return ""
 		}
@@ -294,9 +294,9 @@ func (c *Config) GetI(name string, defvals ...int) int {
 		return 0
 	}
 
-	val, ok := c.data[name]
+	val := c.data[name]
 
-	if !ok || val == "" {
+	if val == "" {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -330,9 +330,9 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 		return 0.0
 	}
 
-	val, ok := c.data[name]
+	val := c.data[name]
 
-	if !ok || val == "" {
+	if val == "" {
 		if len(defvals) == 0 {
 			return 0.0
 		}
@@ -355,9 +355,9 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 		return false
 	}
 
-	val, ok := c.data[name]
+	val := c.data[name]
 
-	if !ok || val == "" {
+	if val == "" {
 		if len(defvals) == 0 {
 			return false
 		}
@@ -379,9 +379,9 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 		return 0
 	}
 
-	val, ok := c.data[name]
+	val := c.data[name]
 
-	if !ok || val == "" {
+	if val == "" {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -413,9 +413,7 @@ func (c *Config) HasProp(name string) bool {
 		return false
 	}
 
-	_, ok := c.data[name]
-
-	return ok
+	return c.data[name] != ""
 }
 
 // Sections return slice with section names

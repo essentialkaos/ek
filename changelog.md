@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.5.1
+
+* `[knf]` Fixed bug in HasProp method which return true for unset properties
+
 #### v1.5.0
 
 * `[tmp]` Improved error handling
