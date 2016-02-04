@@ -31,6 +31,7 @@ go get pkg.re/essentialkaos/ek.v1
 * `log` - Package with improved logger
 * `mathutil` - Package with math utils
 * `netutil` - Package with network utils
+* `path` - Package for working with paths (fully compatible with base path package)
 * `pid` - Package for working with pid files
 * `rand` - Package for generating random data
 * `req` - Package for working with http request

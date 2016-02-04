@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.6.0
+
+* `[path]` Added package for working with paths
+
 #### v1.5.1
 
 * `[knf]` Fixed bug in HasProp method which return true for unset properties
