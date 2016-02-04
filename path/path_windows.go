@@ -43,7 +43,7 @@ func Ext(path string) string {
 
 // IsAbs reports whether the path is absolute
 func IsAbs(path string) bool {
-	return ""
+	return false
 }
 
 // Join joins any number of path elements into a single path, adding a separating slash if necessary
