@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.6.2
+
+* `[fsutil]` Improved working with paths
+* `[fsutil]` Added method ProperPath to windows stub
+
 #### v1.6.1
 
 * `[path]` Fixed windows stub

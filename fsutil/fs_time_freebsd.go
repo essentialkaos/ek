@@ -13,6 +13,8 @@ import (
 	"errors"
 	"syscall"
 	"time"
+
+	PATH "pkg.re/essentialkaos/ek.v1/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -22,6 +24,8 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
 		return time.Time{}, time.Time{}, time.Time{}, errors.New("Path is empty")
 	}
+
+	path = PATH.Clean(path)
 
 	var stat = &syscall.Stat_t{}
 
@@ -42,6 +46,8 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 	if path == "" {
 		return -1, -1, -1, errors.New("Path is empty")
 	}
+
+	path = PATH.Clean(path)
 
 	var stat = &syscall.Stat_t{}
 
