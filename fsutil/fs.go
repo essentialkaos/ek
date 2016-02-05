@@ -17,6 +17,7 @@ import (
 	"syscall"
 	"time"
 
+	PATH "pkg.re/essentialkaos/ek.v1/path"
 	"pkg.re/essentialkaos/ek.v1/system"
 )
 
@@ -49,6 +50,7 @@ func CheckPerms(props, path string) bool {
 		return false
 	}
 
+	path = PATH.Clean(path)
 	props = strings.ToUpper(props)
 
 	var stat = &syscall.Stat_t{}
@@ -131,6 +133,8 @@ func CheckPerms(props, path string) bool {
 // ProperPath return first proper path from given slice
 func ProperPath(props string, paths []string) string {
 	for _, path := range paths {
+		path = PATH.Clean(path)
+
 		if CheckPerms(props, path) {
 			return path
 		}
@@ -145,11 +149,14 @@ func IsExist(path string) bool {
 		return false
 	}
 
+	path = PATH.Clean(path)
+
 	return syscall.Access(path, syscall.F_OK) == nil
 }
 
 // IsRegular check if target is regular file or not
 func IsRegular(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -161,6 +168,7 @@ func IsRegular(path string) bool {
 
 // IsSocket check if target is socket or not
 func IsSocket(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -172,6 +180,7 @@ func IsSocket(path string) bool {
 
 // IsBlockDevice check if target is block device or not
 func IsBlockDevice(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -183,6 +192,7 @@ func IsBlockDevice(path string) bool {
 
 // IsCharacterDevice check if target is character device or not
 func IsCharacterDevice(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -194,6 +204,7 @@ func IsCharacterDevice(path string) bool {
 
 // IsDir check if target is directory or not
 func IsDir(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -205,6 +216,7 @@ func IsDir(path string) bool {
 
 // IsLink check if file is link or not
 func IsLink(path string) bool {
+	path = PATH.Clean(path)
 	mode := getMode(path)
 
 	if mode == 0 {
@@ -219,6 +231,8 @@ func IsReadable(path string) bool {
 	if path == "" {
 		return false
 	}
+
+	path = PATH.Clean(path)
 
 	var stat = &syscall.Stat_t{}
 
@@ -243,6 +257,8 @@ func IsWritable(path string) bool {
 		return false
 	}
 
+	path = PATH.Clean(path)
+
 	var stat = &syscall.Stat_t{}
 
 	err := syscall.Stat(path, stat)
@@ -265,6 +281,8 @@ func IsExecutable(path string) bool {
 	if path == "" {
 		return false
 	}
+
+	path = PATH.Clean(path)
 
 	var stat = &syscall.Stat_t{}
 
@@ -289,6 +307,8 @@ func IsNonEmpty(path string) bool {
 		return false
 	}
 
+	path = PATH.Clean(path)
+
 	return GetSize(path) != 0
 }
 
@@ -297,6 +317,8 @@ func IsEmptyDir(path string) bool {
 	if path == "" {
 		return false
 	}
+
+	path = PATH.Clean(path)
 
 	fd, err := syscall.Open(path, syscall.O_RDONLY, 0)
 
@@ -319,6 +341,8 @@ func GetOwner(path string) (int, int, error) {
 		return -1, -1, errors.New("Path is empty")
 	}
 
+	path = PATH.Clean(path)
+
 	var stat = &syscall.Stat_t{}
 
 	err := syscall.Stat(path, stat)
@@ -332,6 +356,8 @@ func GetOwner(path string) (int, int, error) {
 
 // GetATime return time of last access
 func GetATime(path string) (time.Time, error) {
+	path = PATH.Clean(path)
+
 	atime, _, _, err := GetTimes(path)
 
 	return atime, err
@@ -339,6 +365,8 @@ func GetATime(path string) (time.Time, error) {
 
 // GetCTime return time of creation
 func GetCTime(path string) (time.Time, error) {
+	path = PATH.Clean(path)
+
 	_, _, ctime, err := GetTimes(path)
 
 	return ctime, err
@@ -346,6 +374,8 @@ func GetCTime(path string) (time.Time, error) {
 
 // GetMTime return time of modification
 func GetMTime(path string) (time.Time, error) {
+	path = PATH.Clean(path)
+
 	_, mtime, _, err := GetTimes(path)
 
 	return mtime, err
@@ -356,6 +386,8 @@ func GetSize(path string) int64 {
 	if path == "" {
 		return 0
 	}
+
+	path = PATH.Clean(path)
 
 	var stat = &syscall.Stat_t{}
 
@@ -370,6 +402,7 @@ func GetSize(path string) int64 {
 
 // GetPerm return file permissions
 func GetPerm(path string) os.FileMode {
+	path = PATH.Clean(path)
 	return os.FileMode(getMode(path) & 0777)
 }
 
