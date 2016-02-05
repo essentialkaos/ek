@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.6.1
+
+* `[path]` Fixed windows stub
+
 #### v1.6.0
 
 * `[path]` Added package for working with paths
