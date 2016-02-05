@@ -48,6 +48,10 @@ func CheckPerms(perms, path string) bool {
 	return false
 }
 
+func ProperPath(props string, paths []string) string {
+	return ""
+}
+
 func IsExist(path string) bool {
 	return false
 }
