@@ -110,3 +110,41 @@ func Tail(s string, n int) string {
 
 	return s[l-n:]
 }
+
+// PrefixSize return prefix size
+func PrefixSize(str string, prefix rune) int {
+	if str == "" {
+		return 0
+	}
+
+	var result int
+
+	for i := 0; i < len(str); i++ {
+		if rune(str[i]) != prefix {
+			return result
+		}
+
+		result++
+	}
+
+	return result
+}
+
+// SuffixSize return suffix size
+func SuffixSize(str string, suffix rune) int {
+	if str == "" {
+		return 0
+	}
+
+	var result int
+
+	for i := len(str) - 1; i >= 0; i-- {
+		if rune(str[i]) != suffix {
+			return result
+		}
+
+		result++
+	}
+
+	return result
+}

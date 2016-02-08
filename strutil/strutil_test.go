@@ -67,3 +67,15 @@ func (s *StrUtilSuite) TestTail(c *C) {
 	c.Assert(Tail("ABCD1234", 4), Equals, "1234")
 	c.Assert(Tail("ABCD1234", 100), Equals, "ABCD1234")
 }
+
+func (s *StrUtilSuite) TestSize(c *C) {
+	c.Assert(PrefixSize("", ' '), Equals, 0)
+	c.Assert(PrefixSize("abcd", ' '), Equals, 0)
+	c.Assert(PrefixSize("    abcd", ' '), Equals, 4)
+	c.Assert(PrefixSize("    ", ' '), Equals, 4)
+
+	c.Assert(SuffixSize("", ' '), Equals, 0)
+	c.Assert(SuffixSize("abcd", ' '), Equals, 0)
+	c.Assert(SuffixSize("abcd    ", ' '), Equals, 4)
+	c.Assert(SuffixSize("    ", ' '), Equals, 4)
+}
