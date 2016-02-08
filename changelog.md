@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.6.3
+
+* `[strutil]` Added methods PrefixSize and SuffixSize
+
 #### v1.6.2
 
 * `[fsutil]` Improved working with paths
