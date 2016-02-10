@@ -65,3 +65,8 @@ func Split(path string) (dir, file string) {
 func IsSafe(path string) bool {
 	return false
 }
+
+// IsDotfile return true if file name begins with a full stop
+func IsDotfile(path string) bool {
+	return false
+}

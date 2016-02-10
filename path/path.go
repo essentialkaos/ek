@@ -14,6 +14,7 @@ import (
 	"errors"
 	PATH "path"
 	"path/filepath"
+	"strings"
 
 	"pkg.re/essentialkaos/ek.v1/env"
 )
@@ -110,6 +111,21 @@ func IsSafe(path string) bool {
 	}
 
 	return true
+}
+
+// IsDotfile return true if file name begins with a full stop
+func IsDotfile(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	if !strings.Contains(path, "/") {
+		return path[0:1] == "."
+	}
+
+	pathBase := Base(path)
+
+	return pathBase[0:1] == "."
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
