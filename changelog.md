@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.6.4
+
+* `[path]` Added method IsDotfile for checking dotfile names
+
 #### v1.6.3
 
 * `[strutil]` Added methods PrefixSize and SuffixSize

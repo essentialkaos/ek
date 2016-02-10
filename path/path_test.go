@@ -81,3 +81,16 @@ func (s *PathUtilSuite) TestSafe(c *C) {
 	c.Assert(IsSafe("/var/db/yum"), Equals, false)
 	c.Assert(IsSafe("/var/lib/pgsql"), Equals, false)
 }
+
+func (s *PathUtilSuite) TestDotfile(c *C) {
+	c.Assert(IsDotfile(""), Equals, false)
+	c.Assert(IsDotfile("/some/dir/abcd"), Equals, false)
+	c.Assert(IsDotfile("/some/dir/"), Equals, false)
+	c.Assert(IsDotfile("/"), Equals, false)
+	c.Assert(IsDotfile("/////"), Equals, false)
+	c.Assert(IsDotfile("   /    "), Equals, false)
+
+	c.Assert(IsDotfile(".dotfile"), Equals, true)
+	c.Assert(IsDotfile("/.dotfile"), Equals, true)
+	c.Assert(IsDotfile("/some/dir/.abcd"), Equals, true)
+}
