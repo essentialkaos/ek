@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v1.6.5
+
+* `[fsutil]` Improved docs
+* `[fsutil]` Added method (wrapper) for moving files
+
 #### v1.6.4
 
 * `[path]` Added method IsDotfile for checking dotfile names
