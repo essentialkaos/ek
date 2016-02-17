@@ -1,5 +1,16 @@
 ## Changelog
 
+#### v1.7.0
+
+* `[fsutil]` Fixed major bug with closing file descriptor after directory listing
+* `[fsutil]` Fixed major bug with closing file descriptor after counting lines in file
+* `[fsutil]` Fixed major bug with closing file descriptor after checking number of files in directory
+
+#### v1.6.5
+
+* `[fsutil]` Improved docs
+* `[fsutil]` Added method (wrapper) for moving files
+
 #### v1.6.4
 
 * `[path]` Added method IsDotfile for checking dotfile names

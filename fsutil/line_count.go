@@ -27,6 +27,8 @@ func LineCount(file string) int {
 		return -1
 	}
 
+	defer fd.Close()
+
 	// Use 32k buffer
 	buf := make([]byte, 32*1024)
 	count := 0

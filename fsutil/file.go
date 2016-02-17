@@ -66,3 +66,18 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 
 	return err
 }
+
+// MoveFile move file
+func MoveFile(from, to string, perms ...os.FileMode) error {
+	err := os.Rename(from, to)
+
+	if err != nil {
+		return err
+	}
+
+	if len(perms) == 0 {
+		return nil
+	}
+
+	return os.Chmod(to, perms[0])
+}

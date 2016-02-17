@@ -126,6 +126,8 @@ func readDir(dir string) []string {
 		return []string{}
 	}
 
+	defer syscall.Close(fd)
+
 	var size = 100
 	var n = -1
 

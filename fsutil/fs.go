@@ -44,7 +44,16 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms check many props at once
+// CheckPerms check many props at once.
+//
+// F - is file
+// D - is directory
+// X - is executable
+// L - is link
+// W - is writable
+// R - is readable
+// S - not empty (only for files)
+//
 func CheckPerms(props, path string) bool {
 	if len(props) == 0 || path == "" {
 		return false
@@ -325,6 +334,8 @@ func IsEmptyDir(path string) bool {
 	if err != nil {
 		return false
 	}
+
+	defer syscall.Close(fd)
 
 	n, err := syscall.ReadDirent(fd, make([]byte, 4096))
 
