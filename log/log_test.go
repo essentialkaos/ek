@@ -115,8 +115,31 @@ func (ls *LogSuite) TestErrors(c *C) {
 func (ls *LogSuite) TestLevel(c *C) {
 	l := &Logger{level: WARN}
 
-	l.MinLevel(-1)
-	l.MinLevel(6)
+	c.Assert(l.MinLevel(-1), IsNil)
+	c.Assert(l.MinLevel(6), IsNil)
+	c.Assert(l.MinLevel("debug"), IsNil)
+	c.Assert(l.MinLevel("info"), IsNil)
+	c.Assert(l.MinLevel("warn"), IsNil)
+	c.Assert(l.MinLevel("warning"), IsNil)
+	c.Assert(l.MinLevel("error"), IsNil)
+	c.Assert(l.MinLevel("crit"), IsNil)
+	c.Assert(l.MinLevel("critical"), IsNil)
+	c.Assert(l.MinLevel(int8(1)), IsNil)
+	c.Assert(l.MinLevel(int16(1)), IsNil)
+	c.Assert(l.MinLevel(int32(1)), IsNil)
+	c.Assert(l.MinLevel(int64(1)), IsNil)
+	c.Assert(l.MinLevel(uint(1)), IsNil)
+	c.Assert(l.MinLevel(uint8(1)), IsNil)
+	c.Assert(l.MinLevel(uint16(1)), IsNil)
+	c.Assert(l.MinLevel(uint32(1)), IsNil)
+	c.Assert(l.MinLevel(uint64(1)), IsNil)
+	c.Assert(l.MinLevel(float32(1)), IsNil)
+	c.Assert(l.MinLevel(float64(1)), IsNil)
+
+	c.Assert(l.MinLevel("abcd"), NotNil)
+	c.Assert(l.MinLevel(time.Now()), NotNil)
+
+	l.MinLevel("crit")
 
 	_, err := l.Print(ERROR, "error")
 

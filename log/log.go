@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -79,6 +80,18 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var logLevelsNames = map[string]int{
+	"debug":    0,
+	"info":     1,
+	"warn":     2,
+	"warning":  2,
+	"error":    3,
+	"crit":     4,
+	"critical": 4,
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // New creates new logger struct
 func New(file string, perms os.FileMode) (*Logger, error) {
 	logger := &Logger{
@@ -104,9 +117,9 @@ func Reopen() error {
 	return Global.Reopen()
 }
 
-// MinLevel defines minimal logging level for global logger (1 by default)
-func MinLevel(level int) {
-	Global.MinLevel(level)
+// MinLevel defines minimal logging level
+func MinLevel(level interface{}) error {
+	return Global.MinLevel(level)
 }
 
 // Set change global logger output target
@@ -181,20 +194,75 @@ func (l *Logger) Reopen() error {
 	return l.Set(l.file, l.perms)
 }
 
-// MinLevel defines minimal logging level for logger (1 by default)
-func (l *Logger) MinLevel(level int) {
+// MinLevel defines minimal logging level
+func (l *Logger) MinLevel(level interface{}) error {
 	if l == nil {
-		return
+		return errors.New("Logger is nil")
+	}
+
+	levelCode := INFO
+
+	switch level.(type) {
+
+	case int:
+		levelCode = level.(int)
+
+	case int8:
+		levelCode = int(level.(int8))
+
+	case int16:
+		levelCode = int(level.(int16))
+
+	case int32:
+		levelCode = int(level.(int32))
+
+	case int64:
+		levelCode = int(level.(int64))
+
+	case uint:
+		levelCode = int(level.(uint))
+
+	case uint8:
+		levelCode = int(level.(uint8))
+
+	case uint16:
+		levelCode = int(level.(uint16))
+
+	case uint32:
+		levelCode = int(level.(uint32))
+
+	case uint64:
+		levelCode = int(level.(uint64))
+
+	case float32:
+		levelCode = int(level.(float32))
+
+	case float64:
+		levelCode = int(level.(float64))
+
+	case string:
+		code, ok := logLevelsNames[strings.ToLower(level.(string))]
+
+		if !ok {
+			return errors.New("Unknown level " + level.(string))
+		}
+
+		levelCode = code
+
+	default:
+		return errors.New("Unexpected level type")
 	}
 
 	switch {
-	case level < DEBUG:
-		level = DEBUG
-	case level > CRIT:
-		level = CRIT
+	case levelCode < DEBUG:
+		levelCode = DEBUG
+	case levelCode > CRIT:
+		levelCode = CRIT
 	}
 
-	l.level = level
+	l.level = levelCode
+
+	return nil
 }
 
 // EnableBufIO enable buffered I/O support
