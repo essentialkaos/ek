@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.1
+
+* `[log]` Improved min level changing
+
 #### v1.7.0
 
 * `[fsutil]` Fixed major bug with closing file descriptor after directory listing
