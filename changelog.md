@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.2
+
+* `[errutil]` Added method Chain
+
 #### v1.7.1
 
 * `[log]` Improved min level changing

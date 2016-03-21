@@ -21,6 +21,22 @@ func NewErrors() *Errors {
 	return &Errors{}
 }
 
+// Chain execute functions in chain and if one of them return error
+// this function stop chain execution and return given error
+func Chain(funcs ...func() error) error {
+	var err error
+
+	for _, fc := range funcs {
+		err = fc()
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds new error to slice
