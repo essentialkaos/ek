@@ -60,3 +60,20 @@ func (s *ErrSuite) TestNegative(c *C) {
 	c.Assert(errs.HasErrors(), Equals, false)
 	c.Assert(errs.Last(), IsNil)
 }
+
+func (s *ErrSuite) TestChain(c *C) {
+	f1 := func() error {
+		return nil
+	}
+
+	f2 := func() error {
+		return errors.New("Error #2")
+	}
+
+	f3 := func() error {
+		return nil
+	}
+
+	c.Assert(Chain(f1, f2, f3), NotNil)
+	c.Assert(Chain(f1, f3), IsNil)
+}
