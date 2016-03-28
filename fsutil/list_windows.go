@@ -47,6 +47,6 @@ func ListAllFiles(dir string, ignoreHidden bool, filters ...*ListingFilter) []st
 	return []string{}
 }
 
-func ListAbsolute(path string, list []string) {
+func ListToAbsolute(path string, list []string) {
 	return
 }

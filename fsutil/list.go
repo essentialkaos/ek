@@ -110,8 +110,8 @@ func ListAllFiles(dir string, ignoreHidden bool, filters ...*ListingFilter) []st
 	return readDirRecFiles(dir, "", ignoreHidden, filters[0].init())
 }
 
-// ListAbsolute convert slice with relative paths to slice with absolute paths
-func ListAbsolute(path string, list []string) {
+// ListToAbsolute convert slice with relative paths to slice with absolute paths
+func ListToAbsolute(path string, list []string) {
 	for i, t := range list {
 		list[i] = path + "/" + t
 	}

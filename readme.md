@@ -14,38 +14,38 @@ go get pkg.re/essentialkaos/ek.v1
 
 ### Packages
 
-* `arg` - Package provides methods for working with command-line arguments
-* `cron` - Package provides methods for working with cron expressions
-* `crypto` - Package with utils for working with crypto data (passwords, uuids, file hashes)
-* `csv` - Package with simple (without any checks) csv parser compatible with default Go parser
-* `easing` - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
-* `env` - Package provides methods for working with environment variables
-* `errutil` - Package provides methods for working with errors
-* `fmtc` - Package provides methods similar to fmt for colored output
-* `fmtutil` - Package provides methods for output formating
-* `fsutil` - Package provides methods for working with files in posix compatible systems (Linux / Mac OS X)
-* `httputil` - Package provides methods for working with http request/responses
-* `jsonutil` - Package provides methods for working with json data
-* `knf` - Package provides methods for working with configs in KNF format
-* `kv` - Package provides simple key-value structs
-* `log` - Package with improved logger
-* `mathutil` - Package with math utils
-* `netutil` - Package with network utils
-* `path` - Package for working with paths (fully compatible with base path package)
-* `pid` - Package for working with pid files
-* `rand` - Package for generating random data
-* `req` - Package for working with http request
-* `signal` - Package for handling signals
-* `sliceutil` - Package with utils for working with slices
-* `sortutil` - Package with utils for sorting slices
-* `spellcheck` - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
-* `strutil` - Package provides utils for working with strings
-* `system` - Package provides methods for working with system data (metrics/users)
-* `terminal` - Package provides methods for working with user input
-* `timeutil` - Package with time utils
-* `tmp` - Package provides methods for working with temporary data
-* `usage` - Package provides methods for rendering info for command-line tools
-* `version` - Package provides methods for parsing semver version info
+* [`arg`](https://godoc.org/pkg.re/essentialkaos/ek.v1/arg) - Package provides methods for working with command-line arguments
+* [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v1/cron) - Package provides methods for working with cron expressions
+* [`crypto`](https://godoc.org/pkg.re/essentialkaos/ek.v1/crypto) - Package with utils for working with crypto data (passwords, uuids, file hashes)
+* [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v1/csv) - Package with simple (without any checks) csv parser compatible with default Go parser
+* [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v1/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
+* [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v1/env) - Package provides methods for working with environment variables
+* [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/errutil) - Package provides methods for working with errors
+* [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v1/fmtc) - Package provides methods similar to fmt for colored output
+* [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/fmtutil) - Package provides methods for output formating
+* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/fsutil) - Package provides methods for working with files in posix compatible systems (Linux / Mac OS X)
+* [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/httputil) - Package provides methods for working with http request/responses
+* [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/jsonutil) - Package provides methods for working with json data
+* [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v1/knf) - Package provides methods for working with configs in KNF format
+* [`kv`](https://godoc.org/pkg.re/essentialkaos/ek.v1/kv) - Package provides simple key-value structs
+* [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v1/log) - Package with improved logger
+* [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/mathutil) - Package with math utils
+* [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/netutil) - Package with network utils
+* [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v1/path) - Package for working with paths (fully compatible with base path package)
+* [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v1/pid) - Package for working with pid files
+* [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v1/rand) - Package for generating random data
+* [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v1/req) - Package for working with http request
+* [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v1/signal) - Package for handling signals
+* [`sliceutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/sliceutil) - Package with utils for working with slices
+* [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/sortutil) - Package with utils for sorting slices
+* [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v1/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+* [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/strutil) - Package provides utils for working with strings
+* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v1/system) - Package provides methods for working with system data (metrics/users)
+* [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v1/terminal) - Package provides methods for working with user input
+* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v1/timeutil) - Package with time utils
+* [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v1/tmp) - Package provides methods for working with temporary data
+* [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v1/usage) - Package provides methods for rendering info for command-line tools
+* [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v1/version) - Package provides methods for parsing semver version info
 
 ### Projects with EK
 
