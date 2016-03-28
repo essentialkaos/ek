@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.3
+
+* `[fsutil]` Method `ListAbsolute` ranamed to `ListToAbsolute`
+
 #### v1.7.2
 
 * `[errutil]` Added method Chain
