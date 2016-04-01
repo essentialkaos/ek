@@ -1,5 +1,7 @@
 # `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v1?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v1) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek)
 
+[![Join the chat at https://gitter.im/essentialkaos/ek](https://badges.gitter.im/essentialkaos/ek.svg)](https://gitter.im/essentialkaos/ek?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Auxiliary packages for Go.
 
 ### Platform support
