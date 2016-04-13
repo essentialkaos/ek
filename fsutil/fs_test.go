@@ -148,6 +148,10 @@ func (s *FSSuite) TestProperPath(c *check.C) {
 func (s *FSSuite) TestWalker(c *check.C) {
 	tmpDir := c.MkDir()
 
+	os.Chdir(tmpDir)
+
+	tmpDir, _ = os.Getwd()
+
 	os.MkdirAll(tmpDir+"/dir1/dir2/dir3/dir4", 0755)
 	os.Chdir(tmpDir)
 
