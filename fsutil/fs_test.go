@@ -169,12 +169,4 @@ func (s *FSSuite) TestWalker(c *check.C) {
 	c.Assert(Pop(), check.Equals, tmpDir+"/dir1")
 	c.Assert(Pop(), check.Equals, tmpDir)
 	c.Assert(Pop(), check.Equals, tmpDir)
-
-	c.Assert(Push("dir1"), check.Equals, tmpDir+"/dir1")
-	c.Assert(Push("dir2"), check.Equals, tmpDir+"/dir1/dir2")
-
-	os.RemoveAll(tmpDir + "/dir1")
-
-	c.Assert(Current(), check.Equals, "")
-	c.Assert(Pop(), check.Equals, "")
 }
