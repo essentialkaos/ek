@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.5
+
+* [usage] Added docs for exported fields in About struct
+
 #### v1.7.4
 
 * [fsutils] Added fs walker (bash `pushd`/`popd` analog)
