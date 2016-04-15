@@ -17,9 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type FSSuite struct {
-	TempDir string
-}
+type FSSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -31,35 +29,33 @@ var _ = check.Suite(&FSSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (fs *FSSuite) SetUpSuite(c *check.C) {
-	fs.TempDir = c.MkDir()
-}
+func (s *FSSuite) TestList(c *check.C) {
+	tmpDir := c.MkDir()
 
-func (fs *FSSuite) TestList(c *check.C) {
-	os.Mkdir(fs.TempDir+"/.dir0", 0755)
+	os.Mkdir(tmpDir+"/.dir0", 0755)
 
-	os.Create(fs.TempDir + "/.file0")
-	os.Create(fs.TempDir + "/file1.mp3")
-	os.Create(fs.TempDir + "/file2.jpg")
+	os.Create(tmpDir + "/.file0")
+	os.Create(tmpDir + "/file1.mp3")
+	os.Create(tmpDir + "/file2.jpg")
 
-	os.Mkdir(fs.TempDir+"/dir1", 0755)
-	os.Mkdir(fs.TempDir+"/dir2", 0755)
+	os.Mkdir(tmpDir+"/dir1", 0755)
+	os.Mkdir(tmpDir+"/dir2", 0755)
 
-	os.Create(fs.TempDir + "/dir1/file3.mp3")
-	os.Create(fs.TempDir + "/dir2/file4.wav")
+	os.Create(tmpDir + "/dir1/file3.mp3")
+	os.Create(tmpDir + "/dir2/file4.wav")
 
-	os.Mkdir(fs.TempDir+"/dir1/dir3", 0755)
+	os.Mkdir(tmpDir+"/dir1/dir3", 0755)
 
-	listing1 := List(fs.TempDir, false)
-	listing2 := List(fs.TempDir, true)
-	listing3 := ListAll(fs.TempDir, false)
-	listing4 := ListAll(fs.TempDir, true)
-	listing5 := ListAllDirs(fs.TempDir, false)
-	listing6 := ListAllDirs(fs.TempDir, true)
-	listing7 := ListAllFiles(fs.TempDir, false)
-	listing8 := ListAllFiles(fs.TempDir, true)
-	listing9 := ListAllFiles(fs.TempDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
-	listing10 := ListAllFiles(fs.TempDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
+	listing1 := List(tmpDir, false)
+	listing2 := List(tmpDir, true)
+	listing3 := ListAll(tmpDir, false)
+	listing4 := ListAll(tmpDir, true)
+	listing5 := ListAllDirs(tmpDir, false)
+	listing6 := ListAllDirs(tmpDir, true)
+	listing7 := ListAllFiles(tmpDir, false)
+	listing8 := ListAllFiles(tmpDir, true)
+	listing9 := ListAllFiles(tmpDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
+	listing10 := ListAllFiles(tmpDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
 
 	sort.Strings(listing1)
 	sort.Strings(listing2)
@@ -133,8 +129,8 @@ func (fs *FSSuite) TestList(c *check.C) {
 	)
 }
 
-func (fs *FSSuite) TestProperPath(c *check.C) {
-	tmpFile := fs.TempDir + "/test.txt"
+func (s *FSSuite) TestProperPath(c *check.C) {
+	tmpFile := c.MkDir() + "/test.txt"
 
 	os.OpenFile(tmpFile, os.O_CREATE, 0644)
 
@@ -147,4 +143,30 @@ func (fs *FSSuite) TestProperPath(c *check.C) {
 	c.Assert(ProperPath("F", paths), check.Equals, "/etc/sudoers")
 
 	os.Remove(tmpFile)
+}
+
+func (s *FSSuite) TestWalker(c *check.C) {
+	tmpDir := c.MkDir()
+
+	os.Chdir(tmpDir)
+
+	tmpDir, _ = os.Getwd()
+
+	os.MkdirAll(tmpDir+"/dir1/dir2/dir3/dir4", 0755)
+	os.Chdir(tmpDir)
+
+	c.Assert(Current(), check.Equals, tmpDir)
+	c.Assert(Pop(), check.Equals, tmpDir)
+
+	dirStack = nil
+
+	c.Assert(Push("dir1"), check.Equals, tmpDir+"/dir1")
+	c.Assert(Push("dir9"), check.Equals, "")
+	c.Assert(Push("dir2/dir3"), check.Equals, tmpDir+"/dir1/dir2/dir3")
+	c.Assert(Push("dir4"), check.Equals, tmpDir+"/dir1/dir2/dir3/dir4")
+	c.Assert(Push("dir9"), check.Equals, "")
+	c.Assert(Pop(), check.Equals, tmpDir+"/dir1/dir2/dir3")
+	c.Assert(Pop(), check.Equals, tmpDir+"/dir1")
+	c.Assert(Pop(), check.Equals, tmpDir)
+	c.Assert(Pop(), check.Equals, tmpDir)
 }
