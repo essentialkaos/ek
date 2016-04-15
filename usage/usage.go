@@ -26,14 +26,14 @@ const _SPACES = "                                                               
 
 // About contains info about application
 type About struct {
-	App     string
-	Version string
-	Release string
-	Build   string
-	Desc    string
-	Year    int
-	License string
-	Owner   string
+	App     string // App is application name
+	Version string // Version is current application version in semver notation
+	Release string // Release is current application release
+	Build   string // Build is current application build
+	Desc    string // Desc is short info about application
+	Year    int    // Year is year when owner complany was founded
+	License string // License is name of license
+	Owner   string // Owner is name of owner (company/developer)
 }
 
 // Info contains info about commands, options and examples

@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.4
+
+* [fsutils] Added fs walker (bash `pushd`/`popd` analog)
+
 #### v1.7.3
 
 * `[fsutil]` Method `ListAbsolute` ranamed to `ListToAbsolute`
