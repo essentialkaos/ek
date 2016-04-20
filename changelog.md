@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.7.6
+
+* [env] Added methods for getting env vars as string, int and float
+
 #### v1.7.5
 
 * [usage] Added docs for exported fields in About struct

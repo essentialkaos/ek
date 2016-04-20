@@ -12,6 +12,7 @@ package env
 
 import (
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 )
@@ -55,4 +56,31 @@ func Which(name string) string {
 // Path return path as string slice
 func (e Env) Path() []string {
 	return strings.Split(e["PATH"], ":")
+}
+
+// GetS return environment variable value as string
+func (e Env) GetS(name string) string {
+	return e[name]
+}
+
+// GetI return environment variable value as int
+func (e Env) GetI(name string) int {
+	value, err := strconv.Atoi(e[name])
+
+	if err != nil {
+		return -1
+	}
+
+	return value
+}
+
+// GetF return environment variable value as float
+func (e Env) GetF(name string) float64 {
+	value, err := strconv.ParseFloat(e[name], 64)
+
+	if err != nil {
+		return -1.0
+	}
+
+	return value
 }
