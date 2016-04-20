@@ -56,3 +56,8 @@ func Which(name string) string {
 func (e Env) Path() []string {
 	return strings.Split(e["PATH"], ":")
 }
+
+// Get return environment variable value
+func (e Env) Get(name string) string {
+	return e[name]
+}
