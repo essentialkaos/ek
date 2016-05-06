@@ -56,6 +56,8 @@ func (s *FSSuite) TestList(c *check.C) {
 	listing8 := ListAllFiles(tmpDir, true)
 	listing9 := ListAllFiles(tmpDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
 	listing10 := ListAllFiles(tmpDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
+	listing11 := List(tmpDir, true, &ListingFilter{Perms: "DR"})
+	listing12 := List(tmpDir, true, &ListingFilter{NotPerms: "DR"})
 
 	sort.Strings(listing1)
 	sort.Strings(listing2)
@@ -126,6 +128,18 @@ func (s *FSSuite) TestList(c *check.C) {
 		listing10,
 		check.DeepEquals,
 		[]string{"dir2/file4.wav", "file2.jpg"},
+	)
+
+	c.Assert(
+		listing11,
+		check.DeepEquals,
+		[]string{"dir2", "dir1"},
+	)
+
+	c.Assert(
+		listing12,
+		check.DeepEquals,
+		[]string{"file1.mp3", "file2.jpg"},
 	)
 }
 
