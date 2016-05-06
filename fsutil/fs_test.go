@@ -69,6 +69,8 @@ func (s *FSSuite) TestList(c *check.C) {
 	sort.Strings(listing8)
 	sort.Strings(listing9)
 	sort.Strings(listing10)
+	sort.Strings(listing11)
+	sort.Strings(listing12)
 
 	c.Assert(
 		listing1,
@@ -133,7 +135,7 @@ func (s *FSSuite) TestList(c *check.C) {
 	c.Assert(
 		listing11,
 		check.DeepEquals,
-		[]string{"dir2", "dir1"},
+		[]string{"dir1", "dir2"},
 	)
 
 	c.Assert(
