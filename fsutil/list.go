@@ -10,7 +10,7 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"path"
+	PATH "path"
 	"syscall"
 )
 
@@ -77,7 +77,7 @@ func List(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
 	}
 
 	if len(filters) != 0 {
-		names = filterList(names, filters[0].init())
+		names = filterList(names, dir, filters[0].init())
 	}
 
 	return names
@@ -270,7 +270,7 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 
 	if filter.hasNotMatchPatterns {
 		for _, pattern := range filter.NotMatchPatterns {
-			matched, _ := path.Match(pattern, name)
+			matched, _ := PATH.Match(pattern, name)
 
 			if matched {
 				match = false
@@ -279,7 +279,7 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 		}
 	} else if filter.hasMatchPatterns {
 		for _, pattern := range filter.MatchPatterns {
-			matched, _ := path.Match(pattern, name)
+			matched, _ := PATH.Match(pattern, name)
 
 			if matched {
 				match = true
@@ -294,56 +294,56 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 		return match
 	}
 
-	atime, mtime, ctime, err := GetTimestamps(fullPath)
+	if filter.hasTimes {
+		atime, mtime, ctime, err := GetTimestamps(fullPath)
 
-	if err != nil {
-		return match
+		if err != nil {
+			return match
+		}
+
+		if filter.MTimeYounger != 0 {
+			match = match && mtime >= filter.MTimeYounger
+		}
+
+		if filter.MTimeOlder != 0 {
+			match = match && mtime <= filter.MTimeOlder
+		}
+
+		if filter.CTimeYounger != 0 {
+			match = match && ctime >= filter.CTimeYounger
+		}
+
+		if filter.CTimeOlder != 0 {
+			match = match && ctime <= filter.CTimeOlder
+		}
+
+		if filter.ATimeYounger != 0 {
+			match = match && atime >= filter.ATimeYounger
+		}
+
+		if filter.ATimeOlder != 0 {
+			match = match && atime <= filter.ATimeOlder
+		}
 	}
 
-	if filter.MTimeYounger != 0 {
-		match = match && mtime >= filter.MTimeYounger
-	}
+	if filter.hasPerms {
+		if filter.Perms != "" {
+			match = match && CheckPerms(filter.Perms, fullPath) == true
+		}
 
-	if filter.MTimeOlder != 0 {
-		match = match && mtime <= filter.MTimeOlder
-	}
-
-	if filter.CTimeYounger != 0 {
-		match = match && ctime >= filter.CTimeYounger
-	}
-
-	if filter.CTimeOlder != 0 {
-		match = match && ctime <= filter.CTimeOlder
-	}
-
-	if filter.ATimeYounger != 0 {
-		match = match && atime >= filter.ATimeYounger
-	}
-
-	if filter.ATimeOlder != 0 {
-		match = match && atime <= filter.ATimeOlder
-	}
-
-	if !filter.hasPerms {
-		return match
-	}
-
-	if filter.Perms != "" {
-		match = match && CheckPerms(filter.Perms, fullPath) == true
-	}
-
-	if filter.NotPerms != "" {
-		match = match && CheckPerms(filter.Perms, fullPath) == false
+		if filter.NotPerms != "" {
+			match = match && CheckPerms(filter.NotPerms, fullPath) == false
+		}
 	}
 
 	return match
 }
 
-func filterList(names []string, filter *ListingFilter) []string {
+func filterList(names []string, dir string, filter *ListingFilter) []string {
 	var filteredNames []string
 
 	for _, name := range names {
-		if isMatch(name, name, filter) {
+		if isMatch(name, dir+"/"+name, filter) {
 			filteredNames = append(filteredNames, name)
 		}
 	}

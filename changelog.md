@@ -1,16 +1,21 @@
 ## Changelog
 
+#### v1.7.7
+
+* `[fsutil]` Fixed bug in `List` function with filtering output
+* `[fsutil]` Fixed bug with `NotPerms` filtering
+
 #### v1.7.6
 
-* [env] Added methods for getting env vars as string, int and float
+* `[env]` Added methods for getting env vars as string, int and float
 
 #### v1.7.5
 
-* [usage] Added docs for exported fields in About struct
+* `[usage]` Added docs for exported fields in About struct
 
 #### v1.7.4
 
-* [fsutils] Added fs walker (bash `pushd`/`popd` analog)
+* `[fsutils]` Added fs walker (bash `pushd`/`popd` analog)
 
 #### v1.7.3
 
