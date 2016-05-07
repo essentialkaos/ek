@@ -3,6 +3,7 @@
 #### v1.8.0
 
 * `[sortutil]` Added case insensitive strings sorting
+* `[sliceutil]` Added deduplication function
 
 #### v1.7.8
 

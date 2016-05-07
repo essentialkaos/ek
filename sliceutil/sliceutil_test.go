@@ -79,3 +79,10 @@ func (s *SliceSuite) TestExclude(c *C) {
 	c.Assert(Exclude(source, []string{"1", "3", "6"}), DeepEquals, []string{"2", "4", "5"})
 	c.Assert(Exclude(source, []string{"1", "2", "3", "4", "5", "6"}), DeepEquals, []string{})
 }
+
+func (s *SliceSuite) TestDeduplicate(c *C) {
+	source := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
+
+	c.Assert(Deduplicate(source), DeepEquals, []string{"1", "2", "3", "4", "5", "6"})
+	c.Assert(Deduplicate([]string{"1"}), DeepEquals, []string{"1"})
+}

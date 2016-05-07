@@ -90,3 +90,27 @@ LOOP:
 
 	return result
 }
+
+// Deduplicate return slice without duplicates. Given slice must be sorted
+// before deduplication
+func Deduplicate(slice []string) []string {
+	sliceLen := len(slice)
+
+	if sliceLen <= 1 {
+		return slice
+	}
+
+	var result []string
+	var lastItem string
+
+	for _, v := range slice {
+		if lastItem == v {
+			continue
+		}
+
+		result = append(result, v)
+		lastItem = v
+	}
+
+	return result
+}
