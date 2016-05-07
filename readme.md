@@ -55,6 +55,7 @@ go get pkg.re/essentialkaos/ek.v1
 * [rbinstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
 * [mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
+* [mdtoc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
 
 ### Test & Coverage Status
 
