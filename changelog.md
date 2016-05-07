@@ -1,5 +1,11 @@
 ## Changelog
 
+#### v1.7.8
+
+* `[terminal]` Custom prompt support
+* `[terminal]` Custom masking symbols support
+* `[terminal]` Code refactoring
+
 #### v1.7.7
 
 * `[fsutil]` Fixed bug in `List` function with filtering output
