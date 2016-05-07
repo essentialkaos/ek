@@ -27,7 +27,7 @@ var _ = Suite(&SortSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (ss *SortSuite) TestSorting(c *C) {
+func (s *SortSuite) TestVersionSorting(c *C) {
 	v1 := []string{"1", "2.1", "2", "2.3.4", "1.3", "1.6.5", "2.3.3", "14.0", "6"}
 
 	Versions(v1)
@@ -39,4 +39,15 @@ func (ss *SortSuite) TestSorting(c *C) {
 	Versions(v2)
 
 	c.Assert(v2, DeepEquals, []string{"1", "1-2", "2", "2.2.3", "2.2.3"})
+}
+
+func (s *SortSuite) TestStringSorting(c *C) {
+	s1 := []string{"Apple", "auto", "image", "Monica", "7", "flower", "moon"}
+	s2 := []string{"Apple", "auto", "image", "Monica", "7", "flower", "moon"}
+
+	Strings(s1, false)
+	Strings(s2, true)
+
+	c.Assert(s1, DeepEquals, []string{"7", "Apple", "Monica", "auto", "flower", "image", "moon"})
+	c.Assert(s2, DeepEquals, []string{"7", "Apple", "auto", "flower", "image", "Monica", "moon"})
 }

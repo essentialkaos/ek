@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.8.0
+
+* `[sortutil]` Added case insensitive strings sorting
+
 #### v1.7.8
 
 * `[terminal]` Custom prompt support
