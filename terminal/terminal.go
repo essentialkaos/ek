@@ -13,6 +13,7 @@ package terminal
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/GeertJohan/go.linenoise"
 
@@ -21,12 +22,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _PROMPT = "> "
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // KillSignalError is error type when user cancel input
 var KillSignalError = linenoise.KillSignalError
+
+// Prompt is prompt string
+var Prompt = "> "
+
+// MaskSymbol is symbol used for masking passwords
+var MaskSymbol = "*"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -48,9 +51,7 @@ func ReadAnswer(title, defaultAnswer string) bool {
 			answer = defaultAnswer
 		}
 
-		answer = strings.ToUpper(answer)
-
-		switch answer {
+		switch strings.ToUpper(answer) {
 		case "Y":
 			return true
 		case "N":
@@ -112,19 +113,11 @@ func SetCompletionHandler(compfunc func(in string) []string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getPrivateHider(data string) string {
-	prefix := ""
-	result := ""
+func getPrivateHider(message string) string {
+	prefix := strings.Repeat(" ", utf8.RuneCountInString(Prompt))
+	masking := strings.Repeat(MaskSymbol, utf8.RuneCountInString(message))
 
-	for i := 0; i < len(_PROMPT); i++ {
-		prefix += " "
-	}
-
-	for i := 0; i < len(data); i++ {
-		result += "*"
-	}
-
-	return fmt.Sprintf("%s\033[1A%s", prefix, result)
+	return fmt.Sprintf("%s\033[1A%s", prefix, masking)
 }
 
 func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
@@ -136,7 +129,7 @@ func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	var err error
 
 	for {
-		ui, err = linenoise.Line(_PROMPT)
+		ui, err = linenoise.Line(Prompt)
 
 		if err != nil {
 			return "", err
