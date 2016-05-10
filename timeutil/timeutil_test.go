@@ -177,4 +177,5 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	c.Assert(ParseDuration("1d3h30m30s"), Equals, int64(99030))
 	c.Assert(ParseDuration("1w3d12h30m30s"), Equals, int64(909030))
 	c.Assert(ParseDuration("10w"), Equals, int64(6048000))
+	c.Assert(ParseDuration("180"), Equals, int64(180))
 }
