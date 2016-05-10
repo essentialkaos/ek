@@ -1,6 +1,6 @@
 // +build !windows
 
-package fmtutil
+package terminal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -26,8 +26,8 @@ type winsize struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTermSize return window width and height
-func GetTermSize() (int, int) {
+// GetSize return window width and height
+func GetSize() (int, int) {
 	var tty *os.File
 
 	tty, err := os.OpenFile("/dev/tty", syscall.O_RDONLY, 0)

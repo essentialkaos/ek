@@ -1,6 +1,6 @@
-// +build linux
+// +build windows
 
-package fmtutil
+package terminal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -9,15 +9,7 @@ package fmtutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	. "pkg.re/check.v1"
-)
-
-// ////////////////////////////////////////////////////
-
-func (s *FmtUtilSuite) TestTermSize(c *C) {
-	w, h := GetTermSize()
-
-	c.Assert(w, Not(Equals), 0)
-	c.Assert(h, Not(Equals), 0)
+// GetSize return window width and height
+func GetSize() (int, int) {
+	return -1, -1
 }
