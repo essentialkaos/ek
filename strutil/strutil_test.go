@@ -79,3 +79,8 @@ func (s *StrUtilSuite) TestSize(c *C) {
 	c.Assert(SuffixSize("abcd    ", ' '), Equals, 4)
 	c.Assert(SuffixSize("    ", ' '), Equals, 4)
 }
+
+func (s *StrUtilSuite) TestReplaceAll(c *C) {
+	c.Assert(ReplaceAll("ABCDABCD12341234", "AB12", "?"), Equals, "??CD??CD??34??34")
+	c.Assert(ReplaceAll("", "AB12", "?"), Equals, "")
+}
