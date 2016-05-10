@@ -131,22 +131,22 @@ func ParseDuration(dur string) int64 {
 
 		case 'w':
 			valueInt, _ = strconv.ParseInt(value, 10, 64)
-			result += valueInt * 604800
+			result += valueInt * _WEEK
 			value = ""
 
 		case 'd':
 			valueInt, _ = strconv.ParseInt(value, 10, 64)
-			result += valueInt * 86400
+			result += valueInt * _DAY
 			value = ""
 
 		case 'h':
 			valueInt, _ = strconv.ParseInt(value, 10, 64)
-			result += valueInt * 3600
+			result += valueInt * _HOUR
 			value = ""
 
 		case 'm':
 			valueInt, _ = strconv.ParseInt(value, 10, 64)
-			result += valueInt * 60
+			result += valueInt * _MINUTE
 			value = ""
 
 		case 's':
@@ -154,6 +154,11 @@ func ParseDuration(dur string) int64 {
 			result += valueInt
 			value = ""
 		}
+	}
+
+	if value != "" {
+		valueInt, _ = strconv.ParseInt(value, 10, 64)
+		result += valueInt
 	}
 
 	return result
