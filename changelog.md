@@ -1,5 +1,13 @@
 ## Changelog
 
+#### v1.8.0
+
+* `[sortutil]` Added case insensitive strings sorting
+* `[sliceutil]` Added `Deduplicate` function
+* `[strutil]` Added `ReplaceAll` function
+* `[terminal]` Function `fmtutil.GetTermSiz`e moved to `terminal.GetSize`
+* `[timeutil]` Added function `ParseDuration` which parses duration in `1w2d3h5m6s` format
+
 #### v1.7.8
 
 * `[terminal]` Custom prompt support

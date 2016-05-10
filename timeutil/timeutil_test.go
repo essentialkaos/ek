@@ -168,3 +168,14 @@ func (s *TimeUtilSuite) TestTimezone(c *C) {
 	c.Assert(getTimezone(t.UTC().In(msk), false), Equals, "+0300")
 	c.Assert(getTimezone(t.UTC().In(msk), true), Equals, "+03:00")
 }
+
+func (s *TimeUtilSuite) TestDurationParsing(c *C) {
+	c.Assert(ParseDuration(""), Equals, int64(0))
+	c.Assert(ParseDuration("25s"), Equals, int64(25))
+	c.Assert(ParseDuration("1m30s"), Equals, int64(90))
+	c.Assert(ParseDuration("1h30m30s"), Equals, int64(5430))
+	c.Assert(ParseDuration("1d3h30m30s"), Equals, int64(99030))
+	c.Assert(ParseDuration("1w3d12h30m30s"), Equals, int64(909030))
+	c.Assert(ParseDuration("10w"), Equals, int64(6048000))
+	c.Assert(ParseDuration("180"), Equals, int64(180))
+}

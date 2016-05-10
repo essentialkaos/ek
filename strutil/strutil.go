@@ -148,3 +148,26 @@ func SuffixSize(str string, suffix rune) int {
 
 	return result
 }
+
+// ReplaceAll replace all symbols in given string
+func ReplaceAll(source, from, to string) string {
+	if source == "" {
+		return ""
+	}
+
+	var result string
+
+SOURCELOOP:
+	for _, sourceSym := range source {
+		for _, fromSym := range from {
+			if fromSym == sourceSym {
+				result += to
+				continue SOURCELOOP
+			}
+		}
+
+		result += string(sourceSym)
+	}
+
+	return result
+}
