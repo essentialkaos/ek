@@ -112,6 +112,53 @@ func DurationToSeconds(d time.Duration) int64 {
 	return int64(d / 1000000000)
 }
 
+// ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
+func ParseDuration(dur string) int64 {
+	if dur == "" {
+		return 0
+	}
+
+	var (
+		result   int64
+		value    string
+		valueInt int64
+	)
+
+	for _, sym := range strings.ToLower(dur) {
+		switch sym {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			value += string(sym)
+
+		case 'w':
+			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			result += valueInt * 604800
+			value = ""
+
+		case 'd':
+			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			result += valueInt * 86400
+			value = ""
+
+		case 'h':
+			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			result += valueInt * 3600
+			value = ""
+
+		case 'm':
+			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			result += valueInt * 60
+			value = ""
+
+		case 's':
+			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			result += valueInt
+			value = ""
+		}
+	}
+
+	return result
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
