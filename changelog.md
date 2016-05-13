@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.8.1
+
+* `[sortutil]` Added method `VersionCompare` which can be used for custom version sorting
+
 #### v1.8.0
 
 * `[sortutil]` Added case insensitive strings sorting
