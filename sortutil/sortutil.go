@@ -24,8 +24,27 @@ type stringSlice []string
 func (s versionSlice) Len() int      { return len(s) }
 func (s versionSlice) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 func (s versionSlice) Less(i, j int) bool {
-	is := strings.Split(s[i], ".")
-	js := strings.Split(s[j], ".")
+	return VersionCompare(s[i], s[j])
+}
+
+func (s stringSlice) Len() int      { return len(s) }
+func (s stringSlice) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s stringSlice) Less(i, j int) bool {
+	return strings.ToLower(s[i]) < strings.ToLower(s[j])
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Versions sort versions slice
+func Versions(s []string) {
+	sort.Sort(versionSlice(s))
+}
+
+// VersionsCompare compare 2 versions and return true if v1 less v2. This function
+// can ve used for version sorting with structs
+func VersionCompare(v1, v2 string) bool {
+	is := strings.Split(v1, ".")
+	js := strings.Split(v2, ".")
 
 	il, jl := len(is), len(js)
 
@@ -63,19 +82,6 @@ func (s versionSlice) Less(i, j int) bool {
 	}
 
 	return true
-}
-
-func (s stringSlice) Len() int      { return len(s) }
-func (s stringSlice) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
-func (s stringSlice) Less(i, j int) bool {
-	return strings.ToLower(s[i]) < strings.ToLower(s[j])
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Versions sort versions slice
-func Versions(s []string) {
-	sort.Sort(versionSlice(s))
 }
 
 // Strings sort strings slice and support case insensitive mode
