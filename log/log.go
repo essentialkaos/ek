@@ -342,7 +342,7 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 		showPrefixes = true
 	}
 
-	if f[len(f)-1:] != "\n" {
+	if f == "" || f[len(f)-1:] != "\n" {
 		f += "\n"
 	}
 
