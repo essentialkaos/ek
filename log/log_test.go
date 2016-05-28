@@ -217,6 +217,8 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	l.Error("Test error %d\n", ERROR)
 	l.Crit("Test crit %d\n", CRIT)
 
+	l.Print(DEBUG, "")
+
 	data, err := ioutil.ReadFile(logfile)
 
 	c.Assert(len(data), Not(Equals), 0)
@@ -224,7 +226,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	dataSlice := strings.Split(string(data[:]), "\n")
 
-	c.Assert(len(dataSlice), Equals, 16)
+	c.Assert(len(dataSlice), Equals, 17)
 
 	c.Assert(dataSlice[0][28:], Equals, "Test debug 0")
 	c.Assert(dataSlice[1][28:], Equals, "Test info 1")
@@ -243,6 +245,8 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	c.Assert(dataSlice[12][28:], Equals, "Test warn 2")
 	c.Assert(dataSlice[13][28:], Equals, "Test error 3")
 	c.Assert(dataSlice[14][28:], Equals, "Test crit 4")
+
+	c.Assert(dataSlice[15][28:], Equals, "")
 }
 
 func (ls *LogSuite) TestWithPrefixes(c *C) {
