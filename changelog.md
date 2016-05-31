@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v1.8.3
+
+* `[signal]` Added function `Send` for sending signal to process
+
 #### v1.8.2
 
 * `[log]` Fixed bug with logging empty strings
