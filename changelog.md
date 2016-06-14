@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v2.0.0
+
+* `[usage]` Added color tags support for description
+* `[usage]` Code refactoring
+
 #### v1.8.3
 
 * `[signal]` Added function `Send` for sending signal to process
