@@ -16,7 +16,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v1/env"
+	"pkg.re/essentialkaos/ek.v2/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

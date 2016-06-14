@@ -2,6 +2,14 @@
 
 ########################################################################################
 
+# Current major version
+VERSION="2"
+
+# Pkg.re package path
+PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"
+
+########################################################################################
+
 # Main func
 #
 # *: All arguments passed to script
@@ -18,19 +26,18 @@ main() {
 }
 
 # Create links for pkg.re import paths
-#
 makeLink() {
   # TravicCI download last stable version of ek, but it not ok
   # remove downloaded version for linking with current version for test
-  if [[ -e $GOPATH/src/pkg.re/essentialkaos/ek.v1 ]] ; then
-    echo "Directory pkg.re/essentialkaos/ek.v1 removed"
-    rm -rf $GOPATH/src/pkg.re/essentialkaos/ek.v1
+  if [[ -e $GOPATH/src/${PKGRE_PKG} ]] ; then
+    echo "Directory ${PKGRE_PKG} removed"
+    rm -rf $GOPATH/src/${PKGRE_PKG}
   fi
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
   
-  echo "Created link $GOPATH/src/pkg.re/essentialkaos/ek.v1 -> $GOPATH/src/github.com/essentialkaos/ek"
-  ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/pkg.re/essentialkaos/ek.v1
+  echo "Created link $GOPATH/src/${PKGRE_PKG} -> $GOPATH/src/github.com/essentialkaos/ek"
+  ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${PKGRE_PKG}
 }
 
 # Test packaages and save coverage info to file
