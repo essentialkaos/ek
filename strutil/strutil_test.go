@@ -84,3 +84,13 @@ func (s *StrUtilSuite) TestReplaceAll(c *C) {
 	c.Assert(ReplaceAll("ABCDABCD12341234", "AB12", "?"), Equals, "??CD??CD??34??34")
 	c.Assert(ReplaceAll("", "AB12", "?"), Equals, "")
 }
+
+func (s *StrUtilSuite) TestFields(c *C) {
+	c.Assert(Fields(""), IsNil)
+	c.Assert(Fields(""), HasLen, 0)
+	c.Assert(Fields("1 2 3 4 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
+	c.Assert(Fields("1,2,3,4,5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
+	c.Assert(Fields("1,  2, 3,   4, 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
+	c.Assert(Fields("\"1 2\" 3 \"4 5\""), DeepEquals, []string{"1 2", "3", "4 5"})
+	c.Assert(Fields("'1 2' 3 '4 5'"), DeepEquals, []string{"1 2", "3", "4 5"})
+}
