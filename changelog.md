@@ -5,6 +5,7 @@
 * `[usage]` Added color tags support for description
 * `[terminal]` Improved reading y/n answers (_incompatible changes_)
 * `[strutil]` Added method `Fields` for "smart" string splitting
+* `[jsonutil]` Code refactoring
 * `[usage]` Code refactoring
 
 #### v1.8.3

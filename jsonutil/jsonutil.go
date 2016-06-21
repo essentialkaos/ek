@@ -24,13 +24,7 @@ func DecodeFile(file string, v interface{}) error {
 		return err
 	}
 
-	err = json.Unmarshal(data, v)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(data, v)
 }
 
 // EncodeToFile encode data to json and save to file
@@ -49,12 +43,9 @@ func EncodeToFile(file string, v interface{}) error {
 		return err
 	}
 
-	_, err = fd.Write(jsonData)
+	jsonData = append(jsonData, byte('\n'))
 
-	if err != nil {
-		return err
-	}
-	_, err = fd.WriteString("\n")
+	_, err = fd.Write(jsonData)
 
 	if err != nil {
 		return err
