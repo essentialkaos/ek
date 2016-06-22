@@ -12,9 +12,16 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (f
 go get pkg.re/essentialkaos/ek.v2
 ````
 
+If you want update ek to latest stable release, do:
+
+````
+go get -u pkg.re/essentialkaos/ek.v2
+````
+
 ### Packages
 
 * [`arg`](https://godoc.org/pkg.re/essentialkaos/ek.v2/arg) - Package provides methods for working with command-line arguments
+* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v2/color) - Package color provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v2/cron) - Package provides methods for working with cron expressions
 * [`crypto`](https://godoc.org/pkg.re/essentialkaos/ek.v2/crypto) - Package with utils for working with crypto data (passwords, uuids, file hashes)
 * [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v2/csv) - Package with simple (without any checks) csv parser compatible with default Go parser
