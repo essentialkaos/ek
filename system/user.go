@@ -77,38 +77,6 @@ var curUser *User
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUsername return current user name
-func GetUsername() string {
-	cmd := exec.Command("id", "-un")
-
-	out, err := cmd.Output()
-
-	if err != nil {
-		return ""
-	}
-
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-
-	return sOut
-}
-
-// GetGroupname return current user group name
-func GetGroupname() string {
-	cmd := exec.Command("id", "-gn")
-
-	out, err := cmd.Output()
-
-	if err != nil {
-		return ""
-	}
-
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-
-	return sOut
-}
-
 // Who return info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	var result []*SessionInfo
@@ -233,6 +201,17 @@ func (u *User) IsRoot() bool {
 // IsSudo check if it user over sudo command
 func (u *User) IsSudo() bool {
 	return u.IsRoot() && u.RealUID != 0 && u.RealGID != 0
+}
+
+// GroupList return slice with user groups names
+func (u *User) GroupList() []string {
+	var result []string
+
+	for _, group := range u.Groups {
+		result = append(result, group.Name)
+	}
+
+	return result
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
