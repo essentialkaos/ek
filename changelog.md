@@ -11,6 +11,8 @@
 * `[jsonutil]` Code refactoring
 * `[usage]` Code refactoring
 
+---
+
 #### v1.8.3
 
 * `[signal]` Added function `Send` for sending signal to process
