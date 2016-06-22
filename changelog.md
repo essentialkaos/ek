@@ -2,6 +2,7 @@
 
 #### v2.0.0
 
+* `[color]` New package for working with colors
 * `[usage]` Added color tags support for description
 * `[terminal]` Improved reading y/n answers (_incompatible changes_)
 * `[strutil]` Added method `Fields` for "smart" string splitting
