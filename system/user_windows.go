@@ -44,16 +44,6 @@ type SessionInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUsername return current user name
-func GetUsername() string {
-	return ""
-}
-
-// GetGroupname return current user group name
-func GetGroupname() string {
-	return ""
-}
-
 // Who return info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	return []*SessionInfo{}, nil
@@ -94,6 +84,11 @@ func (u *User) IsRoot() bool {
 // IsSudo check if it user over sudo command
 func (u *User) IsSudo() bool {
 	return false
+}
+
+// GroupList return slice with user groups names
+func (u *User) GroupList() []string {
+	return []string{}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

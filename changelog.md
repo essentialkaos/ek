@@ -6,6 +6,8 @@
 * `[usage]` Added color tags support for description
 * `[terminal]` Improved reading y/n answers (_incompatible changes_)
 * `[strutil]` Added method `Fields` for "smart" string splitting
+* `[system]` Methods `GetUsername` and `GetGroupname` deprecated
+* `[system]` Added method `GroupList` for user struct which return slice with user groups names
 * `[jsonutil]` Code refactoring
 * `[usage]` Code refactoring
 
