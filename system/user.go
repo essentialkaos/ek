@@ -114,7 +114,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 		return curUser, nil
 	}
 
-	user, err := LookupUser(GetUsername())
+	user, err := LookupUser(getCurrentUserName())
 
 	if err != nil {
 		return user, err
@@ -215,6 +215,21 @@ func (u *User) GroupList() []string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func getCurrentUserName() string {
+	cmd := exec.Command("id", "-un")
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ""
+	}
+
+	sOut := string(out[:])
+	sOut = strings.Trim(sOut, "\n")
+
+	return sOut
+}
 
 // appendGroupInfo append info about groups
 func appendGroupInfo(user *User) {
