@@ -16,6 +16,7 @@ env:
 
 before_install:
   - go get -v pkg.re/check.v1
+  - go get -v github.com/GeertJohan/go.linenoise
 
 script:
   - .travis/script.sh .

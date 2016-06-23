@@ -13,7 +13,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v1/crypto"
+	"pkg.re/essentialkaos/ek.v2/crypto"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

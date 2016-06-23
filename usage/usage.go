@@ -9,13 +9,12 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v1/fmtc"
+	"pkg.re/essentialkaos/ek.v2/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,9 +40,9 @@ type Info struct {
 	name     string
 	args     string
 	spoiler  string
-	commands []*option
-	options  []*option
-	examples []*example
+	commands []option
+	options  []option
+	examples []example
 	curGroup string
 }
 
@@ -64,61 +63,59 @@ type example struct {
 // NewInfo create new info struct
 func NewInfo(name string, args ...string) *Info {
 	if name == "" {
-		return &Info{name: filepath.Base(os.Args[0]), args: strings.Join(args, " ")}
+		return &Info{
+			name:     filepath.Base(os.Args[0]),
+			args:     strings.Join(args, " "),
+			commands: make([]option, 0),
+			options:  make([]option, 0),
+			examples: make([]example, 0),
+		}
 	}
 
-	return &Info{name: name, args: strings.Join(args, " ")}
+	return &Info{
+		name:     name,
+		args:     strings.Join(args, " "),
+		commands: make([]option, 0),
+		options:  make([]option, 0),
+		examples: make([]example, 0),
+	}
 }
 
 // AddGroup add new command group
-func (info *Info) AddGroup(name string) {
-	info.curGroup = name
+func (info *Info) AddGroup(group string) {
+	info.curGroup = group
 }
 
 // AddCommand add command (name, desc, args)
-func (info *Info) AddCommand(args ...string) {
-	if len(args) < 2 {
-		return
-	}
-
-	optArgs := ""
-
-	if len(args) >= 3 {
-		optArgs = strings.Join(args[2:], " ")
-	}
+func (info *Info) AddCommand(a ...string) {
+	group := "Commands:"
 
 	if info.curGroup != "" {
-		info.commands = append(info.commands, &option{args[0], args[1], optArgs, info.curGroup})
-	} else {
-		info.commands = append(info.commands, &option{args[0], args[1], optArgs, "Commands"})
+		group = info.curGroup
 	}
+
+	appendOption(a, &info.commands, group)
 }
 
 // AddOption add option (name, desc, args)
-func (info *Info) AddOption(args ...string) {
-	if len(args) < 2 {
-		return
-	}
-
-	opt := parseOption(args[0])
-	oargs := ""
-
-	if len(args) >= 3 {
-		oargs = strings.Join(args[2:], " ")
-	}
-
-	info.options = append(info.options, &option{opt, args[1], oargs, ""})
+func (info *Info) AddOption(a ...string) {
+	appendOption(a, &info.options, "")
 }
 
 // AddExample add example for some command (command, desc)
-func (info *Info) AddExample(args ...string) {
-	if len(args) == 0 {
+func (info *Info) AddExample(a ...string) {
+	if len(a) == 0 {
 		return
 	}
 
-	args = append(args, "")
+	a = append(a, "")
 
-	info.examples = append(info.examples, &example{args[0], args[1]})
+	info.examples = append(info.examples,
+		example{
+			cmd:  a[0],
+			desc: a[1],
+		},
+	)
 }
 
 // AddSpoiler add spoiler
@@ -126,16 +123,16 @@ func (info *Info) AddSpoiler(spoiler string) {
 	info.spoiler = spoiler
 }
 
-// Render print info to console
+// Render print usage info to console
 func (info *Info) Render() {
-	usageMessage := fmt.Sprintf("\n{*}Usage:{!} %s", info.name)
+	usageMessage := "\n{*}Usage:{!} " + info.name
 
 	if len(info.commands) != 0 {
-		usageMessage += " {y}<command>{!}"
+		usageMessage += " {y}{command}{!}"
 	}
 
 	if len(info.options) != 0 {
-		usageMessage += " {g}<options>{!}"
+		usageMessage += " {g}{options}{!}"
 	}
 
 	if info.args != "" {
@@ -145,39 +142,50 @@ func (info *Info) Render() {
 	fmtc.Println(usageMessage)
 
 	if info.spoiler != "" {
-		fmt.Println("")
+		fmtc.NewLine()
 		fmtc.Println(info.spoiler)
 	}
 
 	if len(info.commands) != 0 {
-		renderCommands(info)
+		renderOptions(info.commands, "y")
 	}
 
 	if len(info.options) != 0 {
-		renderOptions(info)
+		renderOptions(info.options, "g")
 	}
 
 	if len(info.examples) != 0 {
 		renderExamples(info)
 	}
 
-	fmt.Println("")
+	fmtc.NewLine()
 }
 
-// Render print about info to console
+// Render print version info to console
 func (about *About) Render() {
 	switch {
 	case about.Build != "":
-		fmtc.Printf("\n{*c}%s {c}%s{!}{s}%s (%s){!} - %s\n\n", about.App, about.Version, about.Release, about.Build, about.Desc)
+		fmtc.Printf(
+			"\n{*c}%s {c}%s{!}{s}%s (%s){!} - %s\n\n",
+			about.App, about.Version,
+			about.Release, about.Build, about.Desc,
+		)
 	default:
-		fmtc.Printf("\n{*c}%s {c}%s{!}{s}%s{!} - %s\n\n", about.App, about.Version, about.Release, about.Desc)
+		fmtc.Printf(
+			"\n{*c}%s {c}%s{!}{s}%s{!} - %s\n\n",
+			about.App, about.Version,
+			about.Release, about.Desc,
+		)
 	}
 
 	if about.Owner != "" {
 		if about.Year == 0 {
 			fmtc.Printf("{s}Copyright (C) %s{!}\n", about.Owner)
 		} else {
-			fmtc.Printf("{s}Copyright (C) %d-%d %s{!}\n", about.Year, time.Now().Year(), about.Owner)
+			fmtc.Printf(
+				"{s}Copyright (C) %d-%d %s{!}\n",
+				about.Year, time.Now().Year(), about.Owner,
+			)
 		}
 	}
 
@@ -185,101 +193,92 @@ func (about *About) Render() {
 		fmtc.Printf("{s}%s{!}\n", about.License)
 	}
 
-	fmt.Println()
+	fmtc.NewLine()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Parse option in format used by ek.arg
-func parseOption(opt string) string {
-	if opt[0:1] == "-" {
-		return opt
+// appendOption append new option to options slice
+func appendOption(data []string, options *[]option, group string) {
+	if len(data) < 2 {
+		return
 	}
 
-	if strings.Contains(opt, ":") {
-		opts := strings.Split(opt, ":")
-		return "--" + opts[1] + ", -" + opts[0]
+	var optionArgs string
+
+	if len(data) >= 3 {
+		optionArgs = strings.Join(data[2:], " ")
 	}
 
-	return "--" + opt
+	var name = data[0]
+
+	if group == "" {
+		name = parseOption(data[0])
+	}
+
+	*options = append(*options,
+		option{
+			name:  name,
+			desc:  data[1],
+			args:  optionArgs,
+			group: group,
+		},
+	)
 }
 
-// Render options
-func renderOptions(info *Info) {
+// parseOption parse option in format used by ek.arg
+func parseOption(option string) string {
+	if strings.HasPrefix(option, "-") {
+		return option
+	}
+
+	if strings.Contains(option, ":") {
+		optionSlice := strings.Split(option, ":")
+		return "--" + optionSlice[1] + ", -" + optionSlice[0]
+	}
+
+	return "--" + option
+}
+
+// renderOptions render options
+func renderOptions(options []option, color string) {
 	fmtc.Println("\n{*}Options:{!}\n")
 
 	var (
-		opt     *option
-		ln, dln int
-		maxlen  int
+		opt     option
+		maxSize int
 	)
 
-	for _, opt = range info.options {
-		ln = len(opt.name) + len(opt.args) + 2
+	maxSize = getMaxOptionSize(options)
 
-		if ln > maxlen {
-			maxlen = ln
-		}
-	}
-
-	for _, opt = range info.options {
-		ln = len(opt.name) + len(opt.args)
-		dln = maxlen - ln
-
+	for _, opt = range options {
 		if len(opt.args) != 0 {
-			fmtc.Printf("  {g}%s{!} {s}%s{!} %s %s\n", opt.name, opt.args, _SPACES[0:dln], opt.desc)
+			fmtc.Printf(
+				"  {"+color+"}%s{!} {s}%s{!} %s %s\n",
+				opt.name,
+				opt.args,
+				getOptionSpaces(opt, maxSize),
+				fmtc.Sprintf(opt.desc),
+			)
 		} else {
-			fmtc.Printf("  {g}%s{!}  %s %s\n", opt.name, _SPACES[0:dln], opt.desc)
+			fmtc.Printf(
+				"  {"+color+"}%s{!}  %s %s\n",
+				opt.name,
+				getOptionSpaces(opt, maxSize),
+				fmtc.Sprintf(opt.desc),
+			)
 		}
 	}
 }
 
-// Render commands
-func renderCommands(info *Info) {
-	var (
-		cmd      *option
-		ln, dln  int
-		maxlen   int
-		curGroup string
-	)
-
-	for _, cmd = range info.commands {
-		ln = len(cmd.name) + len(cmd.args) + 2
-
-		if ln > maxlen {
-			maxlen = ln
-		}
-	}
-
-	if info.commands[0].group == "" {
-		fmtc.Println("\n{*}Commands:{!}\n")
-	}
-
-	for _, cmd = range info.commands {
-		ln = len(cmd.name) + len(cmd.args)
-		dln = maxlen - ln
-
-		if curGroup != cmd.group {
-			curGroup = cmd.group
-			fmtc.Printf("\n{*}%s:{!}\n\n", curGroup)
-		}
-
-		if len(cmd.args) != 0 {
-			fmtc.Printf("  {y}%s{!} {s}%s{!} %s %s\n", cmd.name, cmd.args, _SPACES[0:dln], cmd.desc)
-		} else {
-			fmtc.Printf("  {y}%s{!}  %s %s\n", cmd.name, _SPACES[0:dln], cmd.desc)
-		}
-	}
-}
-
-// Render examples
+// renderExamples render examples
 func renderExamples(info *Info) {
 	fmtc.Println("\n{*}Examples:{!}\n")
 
 	total := len(info.examples)
 
 	for index, example := range info.examples {
-		fmt.Printf("  %s %s\n", info.name, example.cmd)
+		fmtc.Printf("  %s %s\n", info.name, example.cmd)
 
 		if example.desc != "" {
 			fmtc.Printf("  {s}%s{!}\n", example.desc)
@@ -289,4 +288,27 @@ func renderExamples(info *Info) {
 			fmtc.NewLine()
 		}
 	}
+}
+
+// getOptionSpaces return spaces for option name aligning
+func getOptionSpaces(opt option, maxSize int) string {
+	optLen := len(opt.name) + len(opt.args)
+	spaces := maxSize - optLen
+
+	return _SPACES[:spaces]
+}
+
+// getMaxOptionSize return longest option name size
+func getMaxOptionSize(options []option) int {
+	var result = 0
+
+	for _, opt := range options {
+		optLen := len(opt.name) + len(opt.args) + 2
+
+		if optLen > result {
+			result = optLen
+		}
+	}
+
+	return result
 }

@@ -1,5 +1,18 @@
 ## Changelog
 
+#### v2.0.0
+
+* `[color]` New package for working with colors
+* `[usage]` Added color tags support for description
+* `[terminal]` Improved reading y/n answers (_incompatible changes_)
+* `[strutil]` Added method `Fields` for "smart" string splitting
+* `[system]` Methods `GetUsername` and `GetGroupname` deprecated
+* `[system]` Added method `GroupList` for user struct which return slice with user groups names
+* `[jsonutil]` Code refactoring
+* `[usage]` Code refactoring
+
+---
+
 #### v1.8.3
 
 * `[signal]` Added function `Send` for sending signal to process

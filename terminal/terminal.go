@@ -17,7 +17,7 @@ import (
 
 	"github.com/GeertJohan/go.linenoise"
 
-	"pkg.re/essentialkaos/ek.v1/fmtc"
+	"pkg.re/essentialkaos/ek.v2/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,16 +35,20 @@ var MaskSymbol = "*"
 
 // ReadUI read user input
 func ReadUI(title string, nonEmpty bool) (string, error) {
-	return readUserInput(title, nonEmpty, false)
+	return readUserInput(
+		fmt.Sprintf("{c}%s{!}", title), nonEmpty, false,
+	)
 }
 
 // ReadAnswer read user answer for Y/n question
-func ReadAnswer(title, defaultAnswer string) bool {
+func ReadAnswer(title, defaultAnswer string) (bool, error) {
 	for {
-		answer, err := ReadUI(title, false)
+		answer, err := readUserInput(
+			getAnswerTitle(title, defaultAnswer), false, false,
+		)
 
 		if err != nil {
-			return false
+			return false, err
 		}
 
 		if answer == "" {
@@ -53,11 +57,11 @@ func ReadAnswer(title, defaultAnswer string) bool {
 
 		switch strings.ToUpper(answer) {
 		case "Y":
-			return true
+			return true, nil
 		case "N":
-			return false
+			return false, nil
 		default:
-			fmtc.Println("\n{y}Please enter Y or N{!}\n")
+			PrintWarnMessage("\nPlease enter Y or N\n")
 		}
 	}
 }
@@ -120,9 +124,20 @@ func getPrivateHider(message string) string {
 	return fmt.Sprintf("%s\033[1A%s", prefix, masking)
 }
 
+func getAnswerTitle(title, defaultAnswer string) string {
+	switch strings.ToUpper(defaultAnswer) {
+	case "Y":
+		return fmt.Sprintf("{c}%s (Y/n){!}", title)
+	case "N":
+		return fmt.Sprintf("{c}%s (y/N){!}", title)
+	default:
+		return fmt.Sprintf("{c}%s (y/n){!}", title)
+	}
+}
+
 func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	if title != "" {
-		fmtc.Printf("{c}%s:{!}\n", title)
+		fmtc.Println(title)
 	}
 
 	var ui string

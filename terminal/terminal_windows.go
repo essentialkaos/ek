@@ -13,7 +13,7 @@ func ReadUI(title string, nonEmpty bool) (string, error) {
 	return "", nil
 }
 
-func ReadAnswer(title, defaultAnswer string) bool {
+func ReadAnswer(title, defaultAnswer string) (bool, error) {
 	return true
 }
 

@@ -10,6 +10,7 @@ package strutil
 
 import (
 	"bytes"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -167,6 +168,61 @@ SOURCELOOP:
 		}
 
 		result += string(sourceSym)
+	}
+
+	return result
+}
+
+// Fields splits the string data around each instance of one or more
+// consecutive white space or comma characters
+func Fields(data string) []string {
+	var (
+		result    []string
+		item      string
+		waitQuote bool
+	)
+
+	for _, char := range data {
+		switch char {
+		case '"', '\'', '`':
+			if !waitQuote {
+				waitQuote = true
+			} else {
+				result = append(result, item)
+				item, waitQuote = "", false
+			}
+
+		case ',', ' ':
+			if waitQuote {
+				item += string(char)
+			} else {
+				result = append(result, item)
+				item = ""
+			}
+
+		default:
+			item += string(char)
+		}
+	}
+
+	if item != "" {
+		result = append(result, item)
+	}
+
+	return formatItems(result)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func formatItems(data []string) []string {
+	var result []string
+
+	for _, v := range data {
+		item := strings.Replace(strings.TrimSpace(v), "\"", "", -1)
+
+		if item != "" {
+			result = append(result, item)
+		}
 	}
 
 	return result
