@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v2.0.1
+
+* `[terminal]` Fixed bugs with Windows stubs
+* `[signal]` Fixed bugs with Windows stubs
+
 #### v2.0.0
 
 * `[color]` New package for working with colors

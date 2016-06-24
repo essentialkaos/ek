@@ -14,7 +14,7 @@ func ReadUI(title string, nonEmpty bool) (string, error) {
 }
 
 func ReadAnswer(title, defaultAnswer string) (bool, error) {
-	return true
+	return true, nil
 }
 
 func ReadPassword(title string, nonEmpty bool) (string, error) {
