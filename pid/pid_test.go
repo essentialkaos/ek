@@ -135,8 +135,6 @@ func (s *PidSuite) TestPidFuncs(c *C) {
 	c.Assert(pid, Not(Equals), -1)
 	c.Assert(os.Getpid(), Equals, pid)
 
-	c.Assert(IsWorks("test"), Equals, true)
-
 	Remove("test")
 
 	c.Assert(fsutil.IsExist(Dir+"/test.pid"), Equals, false)

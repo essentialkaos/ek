@@ -88,17 +88,6 @@ func Get(name string) int {
 	return pid
 }
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
-
-	if pid == -1 {
-		return false
-	}
-
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // checkPidDir check dir path and return error if dir not ok
