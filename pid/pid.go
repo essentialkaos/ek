@@ -41,13 +41,7 @@ func Create(name string) error {
 	pidFile := Dir + "/" + normalizePidFilename(name)
 
 	if fsutil.IsExist(pidFile) {
-		err = os.Remove(pidFile)
-
-		fmt.Println(pidFile, err)
-
-		if err != nil {
-			return err
-		}
+		os.Remove(pidFile)
 	}
 
 	return ioutil.WriteFile(
@@ -92,6 +86,17 @@ func Get(name string) int {
 	}
 
 	return pid
+}
+
+// IsWorks return if process with pid from pid file is works
+func IsWorks(name string) bool {
+	pid := Get(name)
+
+	if pid == -1 {
+		return false
+	}
+
+	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
