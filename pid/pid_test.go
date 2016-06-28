@@ -34,11 +34,11 @@ var _ = Suite(&PidSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (ps *PidSuite) SetUpSuite(c *C) {
-	ps.Dir = c.MkDir()
+func (s *PidSuite) SetUpSuite(c *C) {
+	s.Dir = c.MkDir()
 }
 
-func (ps *PidSuite) TestErrors(c *C) {
+func (s *PidSuite) TestErrors(c *C) {
 	Dir = "/_NOT_EXIST"
 
 	err := Create("test")
@@ -79,7 +79,7 @@ func (ps *PidSuite) TestErrors(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	Dir = ps.Dir
+	Dir = s.Dir
 
 	err = Create("")
 
@@ -94,7 +94,7 @@ func (ps *PidSuite) TestErrors(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	ioutil.WriteFile(ps.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
+	ioutil.WriteFile(s.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
 
 	pidNum = Get("bad.pid")
 
@@ -102,7 +102,7 @@ func (ps *PidSuite) TestErrors(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	nonReadableDir := ps.Dir + "/non-readable"
+	nonReadableDir := s.Dir + "/non-readable"
 
 	os.Mkdir(nonReadableDir, 0200)
 
@@ -114,8 +114,8 @@ func (ps *PidSuite) TestErrors(c *C) {
 	c.Assert(err.Error(), Equals, fmt.Sprintf("Directory %s is not readable", nonReadableDir))
 }
 
-func (ps *PidSuite) TestCreate(c *C) {
-	Dir = ps.Dir
+func (s *PidSuite) TestPidFuncs(c *C) {
+	Dir = s.Dir
 
 	err := Create("test.pid")
 
@@ -129,25 +129,16 @@ func (ps *PidSuite) TestCreate(c *C) {
 	err = Create("test")
 
 	c.Assert(err, IsNil)
-}
-
-func (ps *PidSuite) TestGet(c *C) {
-	Dir = ps.Dir
 
 	pid := Get("test")
 
 	c.Assert(pid, Not(Equals), -1)
 	c.Assert(os.Getpid(), Equals, pid)
-}
-
-func (ps *PidSuite) TestRemove(c *C) {
-	Dir = ps.Dir
-
-	c.Assert(fsutil.IsExist(Dir+"/test.pid"), Equals, true)
 
 	Remove("test")
 
 	c.Assert(fsutil.IsExist(Dir+"/test.pid"), Equals, false)
+	c.Assert(IsWorks("test"), Equals, false)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

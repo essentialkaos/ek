@@ -41,13 +41,7 @@ func Create(name string) error {
 	pidFile := Dir + "/" + normalizePidFilename(name)
 
 	if fsutil.IsExist(pidFile) {
-		err = os.Remove(pidFile)
-
-		fmt.Println(pidFile, err)
-
-		if err != nil {
-			return err
-		}
+		os.Remove(pidFile)
 	}
 
 	return ioutil.WriteFile(

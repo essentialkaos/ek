@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v2.0.2
+
+* `[pid]` Added function `IsWorks` which return true if process with pid from pidfile is active
+* `[pid]` Increased code coverage
+
 #### v2.0.1
 
 * `[terminal]` Fixed bugs with Windows stubs
