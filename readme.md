@@ -1,4 +1,4 @@
-# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v2?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v2) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek)
+# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v2?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v2) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek)
 
 Auxiliary packages for Go.
 
