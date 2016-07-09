@@ -20,12 +20,12 @@ var DefaultPluralizer = En
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Pluralize is simple method for pluralization
-func Pluralize(n int, data []string) string {
-	return PluralizeSpecial(DefaultPluralizer, n, data)
+func Pluralize(n int, data ...string) string {
+	return PluralizeSpecial(DefaultPluralizer, n, data...)
 }
 
 // PluralizeSpecial is method which can be used for custom pluralization
-func PluralizeSpecial(p Pluralizer, n int, data []string) string {
+func PluralizeSpecial(p Pluralizer, n int, data ...string) string {
 	return strconv.Itoa(n) + " " + safeSliceGet(data, p(n))
 }
 

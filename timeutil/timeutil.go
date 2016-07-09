@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v3/fmtutil"
+	"pkg.re/essentialkaos/ek.v3/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,24 +57,24 @@ func PrettyDuration(d interface{}) string {
 		if t >= _WEEK {
 			weeks := t / _WEEK
 			t = t % _WEEK
-			r = append(r, fmtutil.Pluralize(weeks, "week", "weeks"))
+			r = append(r, pluralize.PluralizeSpecial(pluralize.En, weeks, "week", "weeks"))
 		} else if t >= _DAY {
 			days := t / _DAY
 			t = t % _DAY
-			r = append(r, fmtutil.Pluralize(days, "day", "days"))
+			r = append(r, pluralize.PluralizeSpecial(pluralize.En, days, "day", "days"))
 		} else if t >= _HOUR {
 			hours := t / _HOUR
 			t = t % _HOUR
-			r = append(r, fmtutil.Pluralize(hours, "hour", "hours"))
+			r = append(r, pluralize.PluralizeSpecial(pluralize.En, hours, "hour", "hours"))
 		} else if t >= _MINUTE {
 			minutes := t / _MINUTE
 			t = t % _MINUTE
-			r = append(r, fmtutil.Pluralize(minutes, "minute", "minutes"))
+			r = append(r, pluralize.PluralizeSpecial(pluralize.En, minutes, "minute", "minutes"))
 		} else if t >= 1 {
 			if len(r) != 0 {
 				r = append(r, "and")
 			}
-			r = append(r, fmtutil.Pluralize(t, "second", "seconds"))
+			r = append(r, pluralize.PluralizeSpecial(pluralize.En, t, "second", "seconds"))
 			break
 		} else if t <= 0 && len(r) == 0 {
 			return "< 1 second"
