@@ -1,5 +1,12 @@
 ## Changelog
 
+#### v3.0.0
+
+* `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize`
+* `[pluralize]` Brand new pluralization package with more than 140 languages support
+
+---
+
 #### v2.0.2
 
 * `[pid]` Added function `IsWorks` which return true if process with pid from pidfile is active

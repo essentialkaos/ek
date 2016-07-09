@@ -17,7 +17,7 @@ import (
 
 	"github.com/GeertJohan/go.linenoise"
 
-	"pkg.re/essentialkaos/ek.v2/fmtc"
+	"pkg.re/essentialkaos/ek.v3/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

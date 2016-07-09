@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v2/fsutil"
+	"pkg.re/essentialkaos/ek.v3/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
