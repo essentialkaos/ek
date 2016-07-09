@@ -27,7 +27,7 @@ func (s *PluralizeSuite) TestAf(c *C) {
 	data := []string{"A", "B"}
 
 	c.Assert(Pluralize(1, data...), Equals, "1 A")
-	c.Assert(Pluralize(2, []string{}), Equals, "2 ")
+	c.Assert(Pluralize(2), Equals, "2 ")
 	c.Assert(PluralizeSpecial(Af, 1, data...), Equals, "1 A")
 	c.Assert(PluralizeSpecial(Af, 2, data...), Equals, "2 B")
 }
