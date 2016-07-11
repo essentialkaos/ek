@@ -32,56 +32,59 @@ const (
 // PrettyDuration return pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
 	var (
-		r []string
-		t int
+		result   []string
+		duration int
 	)
 
 	switch d.(type) {
 	case time.Duration:
-		t = int(d.(time.Duration).Seconds())
+		duration = int(d.(time.Duration).Seconds())
 	case int8:
-		t = int(d.(int8))
+		duration = int(d.(int8))
 	case int16:
-		t = int(d.(int16))
+		duration = int(d.(int16))
 	case int32:
-		t = int(d.(int32))
+		duration = int(d.(int32))
 	case int64:
-		t = int(d.(int64))
+		duration = int(d.(int64))
 	case int:
-		t = d.(int)
+		duration = d.(int)
 	default:
 		return "Wrong duration value"
 	}
 
 	for i := 0; i < 5; i++ {
-		if t >= _WEEK {
-			weeks := t / _WEEK
-			t = t % _WEEK
-			r = append(r, pluralize.PluralizeSpecial(pluralize.En, weeks, "week", "weeks"))
-		} else if t >= _DAY {
-			days := t / _DAY
-			t = t % _DAY
-			r = append(r, pluralize.PluralizeSpecial(pluralize.En, days, "day", "days"))
-		} else if t >= _HOUR {
-			hours := t / _HOUR
-			t = t % _HOUR
-			r = append(r, pluralize.PluralizeSpecial(pluralize.En, hours, "hour", "hours"))
-		} else if t >= _MINUTE {
-			minutes := t / _MINUTE
-			t = t % _MINUTE
-			r = append(r, pluralize.PluralizeSpecial(pluralize.En, minutes, "minute", "minutes"))
-		} else if t >= 1 {
-			if len(r) != 0 {
-				r = append(r, "and")
-			}
-			r = append(r, pluralize.PluralizeSpecial(pluralize.En, t, "second", "seconds"))
+		if duration >= _WEEK {
+			weeks := duration / _WEEK
+			duration = duration % _WEEK
+			result = append(result, pluralize.PluralizeSpecial(pluralize.En, weeks, "week", "weeks"))
+		} else if duration >= _DAY {
+			days := duration / _DAY
+			duration = duration % _DAY
+			result = append(result, pluralize.PluralizeSpecial(pluralize.En, days, "day", "days"))
+		} else if duration >= _HOUR {
+			hours := duration / _HOUR
+			duration = duration % _HOUR
+			result = append(result, pluralize.PluralizeSpecial(pluralize.En, hours, "hour", "hours"))
+		} else if duration >= _MINUTE {
+			minutes := duration / _MINUTE
+			duration = duration % _MINUTE
+			result = append(result, pluralize.PluralizeSpecial(pluralize.En, minutes, "minute", "minutes"))
+		} else if duration >= 1 {
+			result = append(result, pluralize.PluralizeSpecial(pluralize.En, duration, "second", "seconds"))
 			break
-		} else if t <= 0 && len(r) == 0 {
+		} else if duration <= 0 && len(result) == 0 {
 			return "< 1 second"
 		}
 	}
 
-	return strings.Join(r, " ")
+	resultLen := len(result)
+
+	if resultLen > 1 {
+		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
+	}
+
+	return result[0]
 }
 
 // Format return formated date to string with linux date formating

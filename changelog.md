@@ -2,8 +2,9 @@
 
 #### v3.0.0
 
-* `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize`
+* `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize` (_incompatible changes_)
 * `[pluralize]` Brand new pluralization package with more than 140 languages support
+* `[timeutil]` Improved `PrettyDuration` output
 
 ---
 

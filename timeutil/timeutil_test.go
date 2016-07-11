@@ -32,6 +32,7 @@ func (s *TimeUtilSuite) TestPretyDuration(c *C) {
 	c.Assert(PrettyDuration(int16(120)), Equals, "2 minutes")
 	c.Assert(PrettyDuration(int32(120)), Equals, "2 minutes")
 	c.Assert(PrettyDuration(int64(120)), Equals, "2 minutes")
+	c.Assert(PrettyDuration(3720), Equals, "1 hour and 2 minutes")
 	c.Assert(PrettyDuration(60), Equals, "1 minute")
 	c.Assert(PrettyDuration(1370137), Equals, "2 weeks 1 day 20 hours 35 minutes and 37 seconds")
 	c.Assert(PrettyDuration(0), Equals, "< 1 second")
