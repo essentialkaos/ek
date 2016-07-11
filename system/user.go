@@ -49,11 +49,12 @@ type Group struct {
 
 // SessionInfo contains information about all sessions
 type SessionInfo struct {
-	Name             string    `json:"name"`
+	User             *User     `json:"user"`
 	LoginTime        time.Time `json:"login_time"`
 	LastActivityTime time.Time `json:"last_activity_time"`
 }
 
+// sessionsInfo is slice with SessionInfo
 type sessionsInfo []*SessionInfo
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -121,7 +122,11 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	}
 
 	if user.Name == "root" {
-		appendRealUserInfo(user)
+		err = appendRealUserInfo(user)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	curUser = user
@@ -135,23 +140,15 @@ func LookupUser(nameOrID string) (*User, error) {
 		return nil, errors.New("User name/id can't be blank")
 	}
 
-	name, uid, gid, comment, home, shell, err := getUserInfo(nameOrID)
+	user, err := getUserInfo(nameOrID)
 
-	user := &User{
-		Name:     name,
-		UID:      uid,
-		GID:      gid,
-		Comment:  comment,
-		HomeDir:  home,
-		Shell:    shell,
-		RealUID:  uid,
-		RealGID:  gid,
-		RealName: name,
+	if err != nil {
+		return nil, err
 	}
 
 	appendGroupInfo(user)
 
-	return user, err
+	return user, nil
 }
 
 // LookupGroup search group info by given name
@@ -255,20 +252,26 @@ func appendGroupInfo(user *User) {
 }
 
 // appendRealUserInfo append real user info when user under sudo
-func appendRealUserInfo(user *User) {
+func appendRealUserInfo(user *User) error {
 	ownerID, ok := getTDOwnerID()
 
 	if !ok {
-		return
+		return fmt.Errorf("Can't find pseudo-terminal owner ID")
 	}
 
-	username, uid, gid, _, _, _, err := getUserInfo(strconv.Itoa(ownerID))
+	realUser, err := getUserInfo(strconv.Itoa(ownerID))
 
 	if err != nil {
-		return
+		return err
 	}
 
-	user.RealName, user.RealUID, user.RealGID = username, uid, gid
+	fmt.Println(realUser)
+
+	user.RealName = realUser.Name
+	user.RealUID = realUser.UID
+	user.RealGID = realUser.GID
+
+	return nil
 }
 
 // getUserInfo return uid associated with current tty
@@ -382,14 +385,14 @@ func fixCount(n int, err error) (int, error) {
 }
 
 func getSessionInfo(pts string) (*SessionInfo, error) {
-	ptsFile := "/dev/pts/" + pts
+	ptsFile := _PTS_DIR + "/" + pts
 	uid, err := getOwner(ptsFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	username, _, _, _, _, _, err := getUserInfo(strconv.Itoa(uid))
+	user, err := getUserInfo(strconv.Itoa(uid))
 
 	if err != nil {
 		return nil, err
@@ -402,7 +405,7 @@ func getSessionInfo(pts string) (*SessionInfo, error) {
 	}
 
 	return &SessionInfo{
-		Name:             username,
+		User:             user,
 		LoginTime:        ctime,
 		LastActivityTime: mtime,
 	}, nil

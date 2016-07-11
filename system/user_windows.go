@@ -37,9 +37,9 @@ type Group struct {
 
 // SessionInfo contains information about all sessions
 type SessionInfo struct {
-	Name             string
-	LoginTime        time.Time
-	LastActivityTime time.Time
+	User             *User     `json:"user"`
+	LoginTime        time.Time `json:"login_time"`
+	LastActivityTime time.Time `json:"last_activity_time"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -5,6 +5,9 @@
 * `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize` (_incompatible changes_)
 * `[pluralize]` Brand new pluralization package with more than 140 languages support
 * `[timeutil]` Improved `PrettyDuration` output
+* `[system]` Now `SessionInfo` contnains full user info (`Info` struct) instead username (_incompatible changes_)
+* `[timeutil]` Code refactoring
+* `[system]` Code refactoring
 
 ---
 
