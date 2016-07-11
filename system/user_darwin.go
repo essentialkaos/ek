@@ -41,7 +41,7 @@ func getTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// getUserInfo return user info by name
+// getUserInfo find user info by name
 func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("dscl", ".", "-read", "/Users/"+nameOrID)
 
@@ -97,7 +97,7 @@ func getUserInfo(nameOrID string) (*User, error) {
 	return &User{
 		Name:     nameOrID,
 		UID:      uid,
-		GID:      git,
+		GID:      gid,
 		HomeDir:  home,
 		Shell:    shell,
 		RealName: nameOrID,
