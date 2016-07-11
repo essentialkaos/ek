@@ -200,57 +200,10 @@ func (l *Logger) MinLevel(level interface{}) error {
 		return errors.New("Logger is nil")
 	}
 
-	levelCode := INFO
+	levelCode, err := convertMinLevelValue(level)
 
-	switch level.(type) {
-
-	case int:
-		levelCode = level.(int)
-
-	case int8:
-		levelCode = int(level.(int8))
-
-	case int16:
-		levelCode = int(level.(int16))
-
-	case int32:
-		levelCode = int(level.(int32))
-
-	case int64:
-		levelCode = int(level.(int64))
-
-	case uint:
-		levelCode = int(level.(uint))
-
-	case uint8:
-		levelCode = int(level.(uint8))
-
-	case uint16:
-		levelCode = int(level.(uint16))
-
-	case uint32:
-		levelCode = int(level.(uint32))
-
-	case uint64:
-		levelCode = int(level.(uint64))
-
-	case float32:
-		levelCode = int(level.(float32))
-
-	case float64:
-		levelCode = int(level.(float64))
-
-	case string:
-		code, ok := logLevelsNames[strings.ToLower(level.(string))]
-
-		if !ok {
-			return errors.New("Unknown level " + level.(string))
-		}
-
-		levelCode = code
-
-	default:
-		return errors.New("Unexpected level type")
+	if err != nil {
+		return err
 	}
 
 	switch {
@@ -432,4 +385,56 @@ func (l *Logger) flushDaemon(interval time.Duration) {
 
 func getTime() string {
 	return "[ " + time.Now().Format(TimeFormat) + " ]"
+}
+
+func convertMinLevelValue(level interface{}) (int, error) {
+	switch level.(type) {
+
+	case int:
+		return level.(int), nil
+
+	case int8:
+		return int(level.(int8)), nil
+
+	case int16:
+		return int(level.(int16)), nil
+
+	case int32:
+		return int(level.(int32)), nil
+
+	case int64:
+		return int(level.(int64)), nil
+
+	case uint:
+		return int(level.(uint)), nil
+
+	case uint8:
+		return int(level.(uint8)), nil
+
+	case uint16:
+		return int(level.(uint16)), nil
+
+	case uint32:
+		return int(level.(uint32)), nil
+
+	case uint64:
+		return int(level.(uint64)), nil
+
+	case float32:
+		return int(level.(float32)), nil
+
+	case float64:
+		return int(level.(float64)), nil
+
+	case string:
+		code, ok := logLevelsNames[strings.ToLower(level.(string))]
+
+		if !ok {
+			return -1, errors.New("Unknown level " + level.(string))
+		}
+
+		return code, nil
+	}
+
+	return -1, errors.New("Unexpected level type")
 }

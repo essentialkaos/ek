@@ -8,6 +8,7 @@
 * `[system]` Now `SessionInfo` contnains full user info (`Info` struct) instead username (_incompatible changes_)
 * `[timeutil]` Code refactoring
 * `[system]` Code refactoring
+* `[log]` Code refactoring
 
 ---
 
