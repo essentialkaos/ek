@@ -2,6 +2,7 @@
 
 #### v3.0.1
 
+* `[sliceutil]` Code refactoring
 * `[knf]` Typo fixed
 * `[terminal]` Typo fixed
 * Some minor changes

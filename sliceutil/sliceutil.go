@@ -16,7 +16,7 @@ import (
 
 // StringToInterface convert slice with strings to slice with interface{}
 func StringToInterface(data []string) []interface{} {
-	result := make([]interface{}, 0)
+	var result []interface{}
 
 	for _, r := range data {
 		result = append(result, r)
@@ -27,7 +27,7 @@ func StringToInterface(data []string) []interface{} {
 
 // IntToInterface convert slice with ints to slice with interface{}
 func IntToInterface(data []int) []interface{} {
-	result := make([]interface{}, 0)
+	var result []interface{}
 
 	for _, r := range data {
 		result = append(result, r)
@@ -38,7 +38,7 @@ func IntToInterface(data []int) []interface{} {
 
 // StringToError convert slice with strings to slice with errors
 func StringToError(data []string) []error {
-	result := make([]error, 0)
+	var result []error
 
 	for _, e := range data {
 		result = append(result, errors.New(e))
@@ -47,9 +47,9 @@ func StringToError(data []string) []error {
 	return result
 }
 
-// StringToError convert slice with errors to slice with strings
+// ErrorToString convert slice with errors to slice with strings
 func ErrorToString(data []error) []string {
-	result := make([]string, 0)
+	var result []string
 
 	for _, e := range data {
 		result = append(result, e.Error())
@@ -75,7 +75,7 @@ func Contains(slice []string, value string) bool {
 
 // Exclude return slice without items in second given slice
 func Exclude(slice []string, items []string) []string {
-	var result = make([]string, 0)
+	var result []string
 
 LOOP:
 	for _, i := range slice {
@@ -100,8 +100,10 @@ func Deduplicate(slice []string) []string {
 		return slice
 	}
 
-	var result []string
-	var lastItem string
+	var (
+		result   []string
+		lastItem string
+	)
 
 	for _, v := range slice {
 		if lastItem == v {
