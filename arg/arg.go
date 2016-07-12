@@ -473,7 +473,7 @@ func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 			return "", "", ArgumentError{"--" + argSlice[0], ERROR_WRONG_FORMAT}
 		}
 
-		return argSlice[0], strings.Join(argSlice[1:len(argSlice)], "="), nil
+		return argSlice[0], strings.Join(argSlice[1:], "="), nil
 	}
 
 	if args.full[arg] != nil {
@@ -497,7 +497,7 @@ func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 			return "", "", ArgumentError{"-" + argName, ERROR_UNSUPPORTED}
 		}
 
-		return args.short[argName], strings.Join(argSlice[1:len(argSlice)], "="), nil
+		return args.short[argName], strings.Join(argSlice[1:], "="), nil
 	}
 
 	if args.short[arg] == "" {

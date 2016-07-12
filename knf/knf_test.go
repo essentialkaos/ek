@@ -146,7 +146,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	err = Global(s.MalformedConfigPath)
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, fmt.Sprintf("Configuration file %s is malformed.", s.MalformedConfigPath))
+	c.Assert(err.Error(), check.Equals, fmt.Sprintf("Configuration file %s is malformed", s.MalformedConfigPath))
 
 	updated, err := Reload()
 
@@ -416,24 +416,24 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	var errs []error
 
 	errs = Validate([]*Validator{
-		&Validator{"integer:test1", Empty, nil},
-		&Validator{"integer:test1", Less, 0},
-		&Validator{"integer:test1", Less, 0.5},
-		&Validator{"integer:test1", Greater, 10},
-		&Validator{"integer:test1", Greater, 10.1},
-		&Validator{"integer:test1", Equals, 10},
-		&Validator{"integer:test1", Equals, 10.1},
-		&Validator{"integer:test1", Equals, "123"},
+		{"integer:test1", Empty, nil},
+		{"integer:test1", Less, 0},
+		{"integer:test1", Less, 0.5},
+		{"integer:test1", Greater, 10},
+		{"integer:test1", Greater, 10.1},
+		{"integer:test1", Equals, 10},
+		{"integer:test1", Equals, 10.1},
+		{"integer:test1", Equals, "123"},
 	})
 
 	c.Assert(errs, check.HasLen, 0)
 
 	errs = Validate([]*Validator{
-		&Validator{"boolean:test5", Empty, nil},
-		&Validator{"integer:test1", Less, 10},
-		&Validator{"integer:test1", Greater, 0},
-		&Validator{"integer:test1", Equals, 1},
-		&Validator{"integer:test1", Greater, "12345"},
+		{"boolean:test5", Empty, nil},
+		{"integer:test1", Less, 10},
+		{"integer:test1", Greater, 0},
+		{"integer:test1", Equals, 1},
+		{"integer:test1", Greater, "12345"},
 	})
 
 	c.Assert(errs, check.HasLen, 5)

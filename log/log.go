@@ -376,7 +376,7 @@ func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (l *Logger) flushDaemon(interval time.Duration) {
-	for _ = range time.NewTicker(interval).C {
+	for range time.NewTicker(interval).C {
 		l.Flush()
 	}
 }

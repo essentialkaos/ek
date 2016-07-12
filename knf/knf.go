@@ -60,7 +60,7 @@ var global *Config
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Global read and parse config file
-// global config will be accessable globally from any part of code
+// global config will be accessible globally from any part of code
 func Global(file string) error {
 	config, err := Read(file)
 
@@ -123,7 +123,7 @@ func Read(file string) (*Config, error) {
 		}
 
 		if sectionName == "" {
-			return nil, errors.New("Configuration file " + file + " is malformed.")
+			return nil, errors.New("Configuration file " + file + " is malformed")
 		}
 
 		propName, propValue := parseRecord(line, config)
@@ -475,7 +475,7 @@ func parseRecord(data string, config *Config) (string, string) {
 	va := strings.Split(data, _SEPARATOR_SYMBOL)
 
 	propName := va[0]
-	propValue := strings.Join(va[1:len(va)], _SEPARATOR_SYMBOL)
+	propValue := strings.Join(va[1:], _SEPARATOR_SYMBOL)
 
 	propName = strings.TrimLeft(propName, " ")
 	propValue = strings.TrimLeft(propValue, " ")
