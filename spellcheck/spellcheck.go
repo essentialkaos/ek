@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v2/mathutil"
+	"pkg.re/essentialkaos/ek.v3/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -121,12 +121,6 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 	c.Assert(Wrap(input, "  ", 40), Equals, result)
 }
 
-func (s *FmtUtilSuite) TestPluralize(c *C) {
-	c.Assert(Pluralize(1, "test", "tests"), Equals, "1 test")
-	c.Assert(Pluralize(2, "test", "tests"), Equals, "2 tests")
-	c.Assert(Pluralize(100, "test", "tests"), Equals, "100 tests")
-}
-
 func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(true)
 	Separator(false)

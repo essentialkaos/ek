@@ -41,15 +41,14 @@ func getTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// getUserInfo return user info by name (name, id, gid, comment, home, shell)
-//
-func getUserInfo(nameOrID string) (string, int, int, string, string, string, error) {
+// getUserInfo find user info by name
+func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("dscl", ".", "-read", "/Users/"+nameOrID)
 
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
-		return "", -1, -1, "", "", "", fmt.Errorf("User with this name/id %s is not exist", nameOrID)
+		return nil, fmt.Errorf("User with this name %s is not exist", nameOrID)
 	}
 
 	var (
@@ -95,5 +94,14 @@ func getUserInfo(nameOrID string) (string, int, int, string, string, string, err
 		}
 	}
 
-	return nameOrID, uid, gid, "", home, shell, nil
+	return &User{
+		Name:     nameOrID,
+		UID:      uid,
+		GID:      gid,
+		HomeDir:  home,
+		Shell:    shell,
+		RealName: nameOrID,
+		RealUID:  uid,
+		RealGID:  gid,
+	}, nil
 }

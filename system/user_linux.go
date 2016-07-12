@@ -41,15 +41,14 @@ func getTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// getUserInfo return user info by name or id (name, id, gid, comment, home, shell)
-//
-func getUserInfo(nameOrID string) (string, int, int, string, string, string, error) {
+// getUserInfo find user info by name or id
+func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("getent", "passwd", nameOrID)
 
 	out, err := cmd.Output()
 
 	if err != nil {
-		return "", -1, -1, "", "", "", fmt.Errorf("User with this name/id %s is not exist", nameOrID)
+		return nil, fmt.Errorf("User with this name/id %s is not exist", nameOrID)
 	}
 
 	sOut := string(out[:])
@@ -59,5 +58,15 @@ func getUserInfo(nameOrID string) (string, int, int, string, string, string, err
 	uid, _ := strconv.Atoi(aOut[2])
 	gid, _ := strconv.Atoi(aOut[3])
 
-	return aOut[0], uid, gid, aOut[4], aOut[5], aOut[6], nil
+	return &User{
+		Name:     aOut[0],
+		UID:      uid,
+		GID:      gid,
+		Comment:  aOut[4],
+		HomeDir:  aOut[5],
+		Shell:    aOut[6],
+		RealName: aOut[0],
+		RealUID:  uid,
+		RealGID:  gid,
+	}, nil
 }

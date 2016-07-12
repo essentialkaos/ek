@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v2/mathutil"
+	"pkg.re/essentialkaos/ek.v3/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -395,31 +395,34 @@ func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 	}
 
 	var (
-		arg       *V
 		argName   string
 		argList   []string
 		errorList []error
 	)
 
-	for _, argt := range rawArgs {
+	for _, curArg := range rawArgs {
 		if argName == "" {
 			var (
-				argn string
-				argv string
-				err  error
-				ok   bool
+				curArgName  string
+				curArgValue string
+				err         error
 			)
 
+			var curArgLen = len(curArg)
+
 			switch {
-			case argt == "-", argt == "--":
-				argList = append(argList, argt)
+			case strings.TrimRight(curArg, "-") == "":
+				argList = append(argList, curArg)
 				continue
-			case len(argt) > 2 && argt[0:2] == "--":
-				argn, argv, err = args.parseLongArgument(argt[2:len(argt)])
-			case len(argt) > 1 && argt[0:1] == "-":
-				argn, argv, err = args.parseShortArgument(argt[1:len(argt)])
+
+			case curArgLen > 2 && curArg[0:2] == "--":
+				curArgName, curArgValue, err = args.parseLongArgument(curArg[2:curArgLen])
+
+			case curArgLen > 1 && curArg[0:1] == "-":
+				curArgName, curArgValue, err = args.parseShortArgument(curArg[1:curArgLen])
+
 			default:
-				argList = append(argList, argt)
+				argList = append(argList, curArg)
 				continue
 			}
 
@@ -428,34 +431,28 @@ func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 				continue
 			}
 
-			if argv != "" {
-				arg = args.full[argn]
-				err := procValue(argn, arg, argv)
-
-				if err != nil {
-					errorList = append(errorList, err)
-					continue
-				}
+			if curArgValue != "" {
+				errorList = appendError(
+					errorList,
+					updateArgument(args.full[curArgName], curArgName, curArgValue),
+				)
 			} else {
-				argName = argn
-			}
-
-			arg, ok = args.full[argName]
-
-			if ok && arg.Type == BOOL {
-				arg.Value = true
-				arg.set = true
-				argName = ""
+				if args.full[curArgName] != nil && args.full[curArgName].Type == BOOL {
+					errorList = appendError(
+						errorList,
+						updateArgument(args.full[curArgName], curArgName, ""),
+					)
+				} else {
+					argName = curArgName
+				}
 			}
 		} else {
-			arg = args.full[argName]
-			err := procValue(argName, arg, argt)
+			errorList = appendError(
+				errorList,
+				updateArgument(args.full[argName], argName, curArg),
+			)
 
 			argName = ""
-
-			if err != nil {
-				errorList = append(errorList, err)
-			}
 		}
 	}
 
@@ -470,13 +467,13 @@ func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 
 func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 	if strings.Contains(arg, "=") {
-		va := strings.Split(arg, "=")
+		argSlice := strings.Split(arg, "=")
 
-		if len(va) <= 1 || va[1] == "" {
-			return "", "", ArgumentError{"--" + va[0], ERROR_WRONG_FORMAT}
+		if len(argSlice) <= 1 || argSlice[1] == "" {
+			return "", "", ArgumentError{"--" + argSlice[0], ERROR_WRONG_FORMAT}
 		}
 
-		return va[0], strings.Join(va[1:len(va)], "="), nil
+		return argSlice[0], strings.Join(argSlice[1:len(argSlice)], "="), nil
 	}
 
 	if args.full[arg] != nil {
@@ -488,19 +485,19 @@ func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 
 func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 	if strings.Contains(arg, "=") {
-		va := strings.Split(arg, "=")
+		argSlice := strings.Split(arg, "=")
 
-		if len(va) <= 1 || va[1] == "" {
-			return "", "", ArgumentError{"-" + va[0], ERROR_WRONG_FORMAT}
+		if len(argSlice) <= 1 || argSlice[1] == "" {
+			return "", "", ArgumentError{"-" + argSlice[0], ERROR_WRONG_FORMAT}
 		}
 
-		argn := va[0]
+		argName := argSlice[0]
 
-		if args.short[argn] == "" {
-			return "", "", ArgumentError{"-" + argn, ERROR_UNSUPPORTED}
+		if args.short[argName] == "" {
+			return "", "", ArgumentError{"-" + argName, ERROR_UNSUPPORTED}
 		}
 
-		return args.short[argn], strings.Join(va[1:len(va)], "="), nil
+		return args.short[argName], strings.Join(argSlice[1:len(argSlice)], "="), nil
 	}
 
 	if args.short[arg] == "" {
@@ -508,6 +505,22 @@ func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 	}
 
 	return args.short[arg], "", nil
+}
+
+func (args *Arguments) getErrorsForRequiredArgs() []error {
+	if args.hasRequired == false {
+		return nil
+	}
+
+	var errorList []error
+
+	for n, v := range args.full {
+		if v.Required == true && v.Value == nil {
+			errorList = append(errorList, ArgumentError{n, ERROR_REQUIRED_NOT_SET})
+		}
+	}
+
+	return errorList
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -528,77 +541,98 @@ func parseName(name string) (string, string) {
 	return na[1], na[0]
 }
 
-func (args *Arguments) getErrorsForRequiredArgs() []error {
-	if args.hasRequired == false {
-		return nil
-	}
-
-	var errorList []error
-
-	for n, v := range args.full {
-		if v.Required == true && v.Value == nil {
-			errorList = append(errorList, ArgumentError{n, ERROR_REQUIRED_NOT_SET})
-		}
-	}
-
-	return errorList
-}
-
-func procValue(name string, arg *V, value string) error {
+func updateArgument(arg *V, name string, value string) error {
 	switch arg.Type {
 	case STRING:
-		if arg.set && arg.Mergeble {
-			arg.Value = arg.Value.(string) + " " + value
-		} else {
-			arg.Value = value
-			arg.set = true
-		}
+		return updateStringArgument(arg, value)
+
+	case BOOL:
+		return updateBooleanArgument(arg)
+
 	case FLOAT:
-		v, err := strconv.ParseFloat(value, 64)
-
-		if err != nil {
-			return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
-		}
-
-		var tv float64
-
-		if arg.Min != arg.Max {
-			tv = mathutil.BetweenF(v, arg.Min, arg.Max)
-		} else {
-			tv = v
-		}
-
-		if arg.set && arg.Mergeble {
-			arg.Value = arg.Value.(float64) + tv
-		} else {
-			arg.Value = tv
-			arg.set = true
-		}
+		return updateFloatArgument(name, arg, value)
 
 	case INT:
-		v, err := strconv.Atoi(value)
+		return updateIntArgument(name, arg, value)
+	}
 
-		if err != nil {
-			return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
-		}
+	return fmt.Errorf("Unsuported argument type %d", arg.Type)
+}
 
-		var tv int
-
-		if arg.Min != arg.Max {
-			tv = mathutil.Between(v, int(arg.Min), int(arg.Max))
-		} else {
-			tv = v
-		}
-
-		if arg.set && arg.Mergeble {
-			arg.Value = arg.Value.(int) + tv
-		} else {
-			arg.Value = tv
-			arg.set = true
-		}
+func updateStringArgument(arg *V, value string) error {
+	if arg.set && arg.Mergeble {
+		arg.Value = arg.Value.(string) + " " + value
+	} else {
+		arg.Value = value
+		arg.set = true
 	}
 
 	return nil
+}
+
+func updateBooleanArgument(arg *V) error {
+	arg.Value = true
+	arg.set = true
+
+	return nil
+}
+
+func updateFloatArgument(name string, arg *V, value string) error {
+	floatValue, err := strconv.ParseFloat(value, 64)
+
+	if err != nil {
+		return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
+	}
+
+	var resultFloat float64
+
+	if arg.Min != arg.Max {
+		resultFloat = mathutil.BetweenF(floatValue, arg.Min, arg.Max)
+	} else {
+		resultFloat = floatValue
+	}
+
+	if arg.set && arg.Mergeble {
+		arg.Value = arg.Value.(float64) + resultFloat
+	} else {
+		arg.Value = resultFloat
+		arg.set = true
+	}
+
+	return nil
+}
+
+func updateIntArgument(name string, arg *V, value string) error {
+	intValue, err := strconv.Atoi(value)
+
+	if err != nil {
+		return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
+	}
+
+	var resultInt int
+
+	if arg.Min != arg.Max {
+		resultInt = mathutil.Between(intValue, int(arg.Min), int(arg.Max))
+	} else {
+		resultInt = intValue
+	}
+
+	if arg.set && arg.Mergeble {
+		arg.Value = arg.Value.(int) + resultInt
+	} else {
+		arg.Value = resultInt
+		arg.set = true
+	}
+
+	return nil
+}
+
+func appendError(errList []error, err error) []error {
+	if err == nil {
+		return errList
+	}
+
+	return append(errList, err)
 }
 
 func (e ArgumentError) Error() string {

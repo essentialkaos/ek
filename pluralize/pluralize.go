@@ -1,4 +1,5 @@
-package fmtutil
+// Package pluralize provides methods for pluralization
+package pluralize
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,33 +9,32 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"pkg.re/essentialkaos/ek.v3/fmtc"
+	"strconv"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _SEPARATOR = "----------------------------------------------------------------------------------------"
+// DefaultPluralizer holds default pluralization function
+var DefaultPluralizer = En
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Separator print separator to output
-func Separator(tiny bool, args ...string) {
-	var sep = _SEPARATOR
+// Pluralize is simple method for pluralization
+func Pluralize(n int, data ...string) string {
+	return PluralizeSpecial(DefaultPluralizer, n, data...)
+}
 
-	if len(args) != 0 {
-		name := args[0]
+// PluralizeSpecial is method which can be used for custom pluralization
+func PluralizeSpecial(p Pluralizer, n int, data ...string) string {
+	return strconv.Itoa(n) + " " + safeSliceGet(data, p(n))
+}
 
-		sep = "-- "
-		sep += name
-		sep += " "
-		sep += _SEPARATOR[0:(84 - len(name))]
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func safeSliceGet(data []string, index int) string {
+	if len(data) < index {
+		return ""
 	}
 
-	switch tiny {
-	case true:
-		fmtc.Printf("{s}%s{!}\n", sep)
-	case false:
-		fmtc.Printf("\n{s}%s{!}\n\n", sep)
-	}
-
+	return data[index]
 }

@@ -217,6 +217,13 @@ func (s *ArgUtilSuite) TestParsing(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
+	_, errs = NewArguments().Parse([]string{"--test", "100"}, Map{"t:test": &V{Type: 10}})
+
+	c.Assert(errs, Not(HasLen), 0)
+	c.Assert(errs[0].Error(), Equals, "Unsuported argument type 10")
+
+	// //////////////////////////////////////////////////////////////////////////////// //
+
 	_, errs = NewArguments().Parse([]string{}, Map{"s:string": &V{}, "s:trace": &V{}})
 
 	c.Assert(errs, Not(HasLen), 0)
