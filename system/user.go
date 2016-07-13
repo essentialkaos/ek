@@ -265,8 +265,6 @@ func appendRealUserInfo(user *User) error {
 		return err
 	}
 
-	fmt.Println(realUser)
-
 	user.RealName = realUser.Name
 	user.RealUID = realUser.UID
 	user.RealGID = realUser.GID
