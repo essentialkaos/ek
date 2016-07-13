@@ -14,12 +14,12 @@ import (
 	"pkg.re/essentialkaos/ek.v3/mathutil"
 )
 
-// RGBToHex convert RGB color to Hex
+// RGB2Hex convert RGB color to Hex
 func RGB2Hex(r, g, b int) int {
 	return r<<16 | g<<8 | b
 }
 
-// HexToRGB convert Hex color to RGB
+// Hex2RGB convert Hex color to RGB
 func Hex2RGB(h int) (int, int, int) {
 	if IsRGBA(h) {
 		return 0xFF, 0xFF, 0xFF
@@ -28,12 +28,12 @@ func Hex2RGB(h int) (int, int, int) {
 	return h >> 16 & 0xFF, h >> 8 & 0xFF, h & 0xFF
 }
 
-// RGBAToHex convert RGBA color to Hex
+// RGBA2Hex convert RGBA color to Hex
 func RGBA2Hex(r, g, b, a int) int {
 	return r<<24 | g<<16 | b<<8 | a
 }
 
-// HexToRGBA convert Hex color to RGBA
+// Hex2RGBA convert Hex color to RGBA
 func Hex2RGBA(h int) (int, int, int, int) {
 	if h >= 0xFFFFFF {
 		return h >> 24 & 0xFF, h >> 16 & 0xFF, h >> 8 & 0xFF, h & 0xFF

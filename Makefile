@@ -1,1 +1,19 @@
-# Dummy make file for TravisCI
+########################################################################################
+
+export EK_TEST_PORT=8080
+
+########################################################################################
+
+.PHONY = all test fmt deps
+
+########################################################################################
+
+deps:
+	go get -v github.com/GeertJohan/go.linenoise
+
+test:
+	go get -v pkg.re/check.v1
+	go test ./...
+
+fmt:
+	find . -name "*.go" -exec gofmt -s -w {} \;

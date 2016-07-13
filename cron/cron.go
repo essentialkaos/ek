@@ -68,11 +68,11 @@ type exprInfo struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var info = []*exprInfo{
-	&exprInfo{0, 59, _NAMES_NONE},
-	&exprInfo{0, 23, _NAMES_NONE},
-	&exprInfo{1, 31, _NAMES_NONE},
-	&exprInfo{1, 12, _NAMES_MONTHS},
-	&exprInfo{0, 6, _NAMES_DAYS},
+	{0, 59, _NAMES_NONE},
+	{0, 23, _NAMES_NONE},
+	{1, 31, _NAMES_NONE},
+	{1, 12, _NAMES_MONTHS},
+	{0, 6, _NAMES_DAYS},
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
