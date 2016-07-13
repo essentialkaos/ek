@@ -67,7 +67,7 @@ func (s *ColorSuite) TestHex2RGBA(c *C) {
 	c.Assert([]int{r, g, b, a}, DeepEquals, []int{0x7F, 0x7F, 0x7F, 0x7F})
 }
 
-func (cs *ColorSuite) TestRGB2HSB(c *C) {
+func (s *ColorSuite) TestRGB2HSB(c *C) {
 	var h, s, b int
 
 	h, s, b = RGB2HSB(0, 0, 0)
