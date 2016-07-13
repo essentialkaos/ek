@@ -45,10 +45,10 @@ func (s *KVSuite) TestTypeConversion(c *C) {
 
 func (s *KVSuite) TestSorting(c *C) {
 	kvs := []*KV{
-		&KV{"test1", "1"},
-		&KV{"test5", "2"},
-		&KV{"test3", "3"},
-		&KV{"test2", "4"},
+		{"test1", "1"},
+		{"test5", "2"},
+		{"test3", "3"},
+		{"test2", "4"},
 	}
 
 	Sort(kvs)
