@@ -110,12 +110,12 @@ func GetCPUInfo() (*CPUInfo, error) {
 
 // GetFSInfo return info about mounted filesystems
 func GetFSInfo() (map[string]*FSInfo, error) {
-	return map[string]*FSInfo{"/": &FSInfo{}}, nil
+	return map[string]*FSInfo{"/": {}}, nil
 }
 
 // GetIOStats return I/O stats
 func GetIOStats() (map[string]*IOStats, error) {
-	return map[string]*IOStats{"/dev/sda1": &IOStats{}}, nil
+	return map[string]*IOStats{"/dev/sda1": {}}, nil
 }
 
 // GetSystemInfo return system info
@@ -125,7 +125,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 // GetInterfacesInfo return info about network interfaces
 func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
-	return map[string]*InterfaceInfo{"eth0": &InterfaceInfo{}}, nil
+	return map[string]*InterfaceInfo{"eth0": {}}, nil
 }
 
 // GetNetworkSpeed return input/output speed in bytes per second

@@ -77,7 +77,7 @@ func (s *SliceSuite) TestExclude(c *C) {
 
 	c.Assert(Exclude(source, []string{"1"}), DeepEquals, []string{"2", "3", "4", "5", "6"})
 	c.Assert(Exclude(source, []string{"1", "3", "6"}), DeepEquals, []string{"2", "4", "5"})
-	c.Assert(Exclude(source, []string{"1", "2", "3", "4", "5", "6"}), DeepEquals, []string{})
+	c.Assert(Exclude(source, []string{"1", "2", "3", "4", "5", "6"}), IsNil)
 }
 
 func (s *SliceSuite) TestDeduplicate(c *C) {

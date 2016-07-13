@@ -105,9 +105,9 @@ func PrintActionStatus(status int) {
 	}
 }
 
-// AddHstory add line to input history
-func AddHstory(ui string) {
-	linenoise.AddHistory(ui)
+// AddHistory add line to input history
+func AddHistory(data string) {
+	linenoise.AddHistory(data)
 }
 
 // SetCompletionHandler add function for autocompletion

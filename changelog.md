@@ -1,5 +1,12 @@
 ## Changelog
 
+#### v3.0.1
+
+* `[sliceutil]` Code refactoring
+* `[knf]` Typo fixed
+* `[terminal]` Typo fixed
+* Some minor changes
+
 #### v3.0.0
 
 * `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize` (_incompatible changes_)
