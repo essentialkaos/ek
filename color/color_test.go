@@ -68,25 +68,25 @@ func (s *ColorSuite) TestHex2RGBA(c *C) {
 }
 
 func (s *ColorSuite) TestRGB2HSB(c *C) {
-	var h, s, b int
+	var h, sv, b int
 
-	h, s, b = RGB2HSB(0, 0, 0)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{0, 0, 0})
+	h, sv, b = RGB2HSB(0, 0, 0)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{0, 0, 0})
 
-	h, s, b = RGB2HSB(255, 255, 255)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{0, 0, 100})
+	h, sv, b = RGB2HSB(255, 255, 255)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{0, 0, 100})
 
-	h, s, b = RGB2HSB(255, 0, 0)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{0, 100, 100})
+	h, sv, b = RGB2HSB(255, 0, 0)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{0, 100, 100})
 
-	h, s, b = RGB2HSB(0, 255, 0)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{120, 100, 100})
+	h, sv, b = RGB2HSB(0, 255, 0)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{120, 100, 100})
 
-	h, s, b = RGB2HSB(0, 0, 255)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{240, 100, 100})
+	h, sv, b = RGB2HSB(0, 0, 255)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{240, 100, 100})
 
-	h, s, b = RGB2HSB(127, 127, 127)
-	c.Assert([]int{h, s, b}, DeepEquals, []int{0, 0, 50})
+	h, sv, b = RGB2HSB(127, 127, 127)
+	c.Assert([]int{h, sv, b}, DeepEquals, []int{0, 0, 50})
 }
 
 func (s *ColorSuite) TestHSB2RGB(c *C) {
