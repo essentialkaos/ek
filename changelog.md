@@ -1,5 +1,14 @@
 ## Changelog
 
+#### v3.0.3
+
+* `[system]` Removed debug output
+
+#### v3.0.2
+
+* Added makefile with some helpful commands (`fmt`, `deps`, `test`)
+* Small fixes in docs
+
 #### v3.0.1
 
 * `[sliceutil]` Code refactoring
