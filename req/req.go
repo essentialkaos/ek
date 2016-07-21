@@ -82,14 +82,20 @@ var (
 	// UserAgent is default user-agent used for all requests
 	UserAgent = ""
 
+	// DialTimeout is dial timeout in seconds
+	DialTimeout = 10.0
+
+	// RequestTimeout is request timeout in seconds
+	RequestTimeout = 5.0
+
 	// Dialer default dialer struct
-	Dialer = &net.Dialer{Timeout: 10 * time.Second}
+	Dialer *net.Dialer
 
 	// Transport is default transport struct
-	Transport = &http.Transport{Dial: Dialer.Dial, Proxy: http.ProxyFromEnvironment}
+	Transport *http.Transport
 
 	// Client default client struct
-	Client = &http.Client{Transport: Transport}
+	Client *http.Client
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -148,6 +154,8 @@ func (r Request) Do() (*Response, error) {
 	if r.Close {
 		req.Close = true
 	}
+
+	initTransport()
 
 	resp, err := Client.Do(req)
 
@@ -229,6 +237,28 @@ func (e RequestError) Error() string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func initTransport() {
+	if Dialer == nil {
+		Dialer = &net.Dialer{
+			Timeout: time.Duration(DialTimeout * float64(time.Second)),
+		}
+	}
+
+	if Transport == nil {
+		Transport = &http.Transport{
+			Dial:  Dialer.Dial,
+			Proxy: http.ProxyFromEnvironment,
+		}
+	}
+
+	if Client == nil {
+		Client = &http.Client{
+			Transport: Transport,
+			Timeout:   time.Duration(RequestTimeout * float64(time.Second)),
+		}
+	}
+}
 
 func getBodyReader(body interface{}) (io.Reader, error) {
 	switch body.(type) {

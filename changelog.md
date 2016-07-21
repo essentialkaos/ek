@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v3.1.0
+
+* `[req]` Lazy transport initialization
+* `[req]` Added `DialTimeout` and `RequestTimeout` variables for timeouts control
+
 #### v3.0.3
 
 * `[system]` Removed debug output
