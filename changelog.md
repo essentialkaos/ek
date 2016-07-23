@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.1.1
+
+* `[req]` Small fixes in Request struct fields types
+
 #### v3.1.0
 
 * `[req]` Lazy transport initialization

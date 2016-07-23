@@ -50,18 +50,18 @@ type Headers map[string]string
 
 // Request is basic struct
 type Request struct {
-	Method            string            // Request method
-	URL               string            // Request url
-	Query             map[string]string // Map with query params
-	Body              interface{}       // Request body
-	Headers           map[string]string // Map with headers
-	ContentType       string            // Content type header
-	Accept            string            // Accept header
-	BasicAuthUsername string            // Basic auth username
-	BasicAuthPassword string            // Basic auth password
-	UserAgent         string            // User Agent string
-	AutoDiscard       bool              // Automatically discard all responses with status code != 200
-	Close             bool              // Close indicates whether to close the connection after sending request
+	Method            string      // Request method
+	URL               string      // Request url
+	Query             Query       // Map with query params
+	Body              interface{} // Request body
+	Headers           Headers     // Map with headers
+	ContentType       string      // Content type header
+	Accept            string      // Accept header
+	BasicAuthUsername string      // Basic auth username
+	BasicAuthPassword string      // Basic auth password
+	UserAgent         string      // User Agent string
+	AutoDiscard       bool        // Automatically discard all responses with status code != 200
+	Close             bool        // Close indicates whether to close the connection after sending request
 }
 
 // Response struct contains response data and properties
