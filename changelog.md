@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.1.2
+
+* `[terminal]` Fixed bug with source name file conventions
+
 #### v3.1.1
 
 * `[req]` Small fixes in Request struct fields types
