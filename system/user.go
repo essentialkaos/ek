@@ -19,6 +19,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v3/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -122,11 +124,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	}
 
 	if user.Name == "root" {
-		err = appendRealUserInfo(user)
-
-		if err != nil {
-			return nil, err
-		}
+		appendRealUserInfo(user)
 	}
 
 	curUser = user
@@ -252,24 +250,16 @@ func appendGroupInfo(user *User) {
 }
 
 // appendRealUserInfo append real user info when user under sudo
-func appendRealUserInfo(user *User) error {
-	ownerID, ok := getTDOwnerID()
+func appendRealUserInfo(user *User) {
+	username, uid, gid := getRealUserByPTY()
 
-	if !ok {
-		return fmt.Errorf("Can't find pseudo-terminal owner ID")
+	if username == "" {
+		username, uid, gid = getRealUserFromEnv()
 	}
 
-	realUser, err := getUserInfo(strconv.Itoa(ownerID))
-
-	if err != nil {
-		return err
-	}
-
-	user.RealName = realUser.Name
-	user.RealUID = realUser.UID
-	user.RealGID = realUser.GID
-
-	return nil
+	user.RealName = username
+	user.RealUID = uid
+	user.RealGID = gid
 }
 
 // getUserInfo return uid associated with current tty
@@ -285,6 +275,38 @@ func getTDOwnerID() (int, bool) {
 	ownerID, err := getOwner(fdLink)
 
 	return ownerID, err == nil
+}
+
+// getRealUserByPTY try to find info about real user from real user PTY
+func getRealUserByPTY() (string, int, int) {
+	ownerID, ok := getTDOwnerID()
+
+	if !ok {
+		return "", -1, -1
+	}
+
+	realUser, err := getUserInfo(strconv.Itoa(ownerID))
+
+	if err != nil {
+		return "", -1, -1
+	}
+
+	return realUser.Name, realUser.UID, realUser.GID
+}
+
+// getRealUserFromEnv try to find info about real user in environment variables
+func getRealUserFromEnv() (string, int, int) {
+	e := env.Get()
+
+	if e["SUDO_USER"] == "" || e["SUDO_UID"] == "" || e["SUDO_GID"] == "" {
+		return "", -1, -1
+	}
+
+	user := e["SUDO_USER"]
+	uid, _ := strconv.Atoi(e["SUDO_UID"])
+	gid, _ := strconv.Atoi(e["SUDO_GID"])
+
+	return user, uid, gid
 }
 
 // getGroupInfo return group info by name or id

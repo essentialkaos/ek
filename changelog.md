@@ -3,6 +3,7 @@
 #### v3.1.2
 
 * `[terminal]` Fixed bug with source name file conventions
+* `[system]` Fixed bug with appending real user info on MacOS X
 
 #### v3.1.1
 
