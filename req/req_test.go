@@ -82,6 +82,9 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 
 	go runHTTPServer(s, c)
 
+	DialTimeout = 60.0
+	RequestTimeout = 60.0
+
 	time.Sleep(time.Second)
 }
 

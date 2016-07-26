@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.1.3
+
+* `[req]` `RequestTimeout` set to 0 (_disabled_) by default
+
 #### v3.1.2
 
 * `[terminal]` Fixed bug with source name file conventions

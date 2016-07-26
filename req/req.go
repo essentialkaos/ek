@@ -86,7 +86,7 @@ var (
 	DialTimeout = 10.0
 
 	// RequestTimeout is request timeout in seconds
-	RequestTimeout = 5.0
+	RequestTimeout = 0.0
 
 	// Dialer default dialer struct
 	Dialer *net.Dialer
@@ -240,8 +240,10 @@ func (e RequestError) Error() string {
 
 func initTransport() {
 	if Dialer == nil {
-		Dialer = &net.Dialer{
-			Timeout: time.Duration(DialTimeout * float64(time.Second)),
+		Dialer = &net.Dialer{}
+
+		if DialTimeout > 0 {
+			Dialer.Timeout = time.Duration(DialTimeout * float64(time.Second))
 		}
 	}
 
@@ -255,7 +257,10 @@ func initTransport() {
 	if Client == nil {
 		Client = &http.Client{
 			Transport: Transport,
-			Timeout:   time.Duration(RequestTimeout * float64(time.Second)),
+		}
+
+		if RequestTimeout > 0 {
+			Client.Timeout = time.Duration(RequestTimeout * float64(time.Second))
 		}
 	}
 }
