@@ -1,5 +1,13 @@
 ## Changelog
 
+#### v3.1.4
+
+* `[strutil]` Added method `Len` which return number of symbols in string
+* `[strutil]` UTF-8 support for `Substr`, `Tail`, `Head` and `Elipsis` methods
+* `[strutil]` Added some benchmarks to tests
+* `[fsutil]` Fixed `GetPerm` stub for Windows
+* `[fsutil]` Fixed package description
+
 #### v3.1.3
 
 * `[req]` `RequestTimeout` set to 0 (_disabled_) by default
