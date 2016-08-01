@@ -1,6 +1,6 @@
 ## Changelog
 
-#### v3.1.4
+#### v3.2.0
 
 * `[strutil]` Added method `Len` which return number of symbols in string
 * `[strutil]` UTF-8 support for `Substr`, `Tail`, `Head` and `Elipsis` methods
