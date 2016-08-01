@@ -82,7 +82,7 @@ const _CONFIG_MALF_DATA = `
 
 const (
 	_CONFIG_FILE_NAME           = "knf-config-test.conf"
-	_CONFIG_EMTPY_FILE_NAME     = "knf-config-test-empty.conf"
+	_CONFIG_EMPTY_FILE_NAME     = "knf-config-test-empty.conf"
 	_CONFIG_MALFORMED_FILE_NAME = "knf-config-test-malf.conf"
 )
 
@@ -108,7 +108,7 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 	tmpdir := c.MkDir()
 
 	s.ConfigPath = tmpdir + "/" + _CONFIG_FILE_NAME
-	s.EmptyConfigPath = tmpdir + "/" + _CONFIG_EMTPY_FILE_NAME
+	s.EmptyConfigPath = tmpdir + "/" + _CONFIG_EMPTY_FILE_NAME
 	s.MalformedConfigPath = tmpdir + "/" + _CONFIG_MALFORMED_FILE_NAME
 
 	err := ioutil.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)

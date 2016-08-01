@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v3.2.1
+
+* `[knf]` Fixed typo in tests
+* `[strutil]` Removed unreachable code
+
 #### v3.2.0
 
 * `[strutil]` Added method `Len` which return number of symbols in string
