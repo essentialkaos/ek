@@ -120,7 +120,7 @@ func GetSize(path string) int64 {
 	return 0
 }
 
-func GetPerm() os.FileMode {
+func GetPerm(path string) os.FileMode {
 	return 0644
 }
 

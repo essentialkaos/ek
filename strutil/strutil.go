@@ -32,54 +32,53 @@ func Substr(s string, start int, end int) string {
 		return ""
 	}
 
-	sl := len(s)
+	var count int
+	var startIndex int
 
-	if start > sl {
+	for i := range s {
+		if count == start {
+			startIndex = i
+		}
+
+		if count == end {
+			return s[startIndex:i]
+		}
+
+		count++
+	}
+
+	switch {
+	case count < start:
 		return ""
+	case startIndex != 0:
+		return s[startIndex:]
 	}
 
-	if start < 0 {
-		start = 0
+	return s
+}
+
+// Len return number of symbols in string
+func Len(s string) int {
+	if s == "" {
+		return 0
 	}
 
-	if end > sl || end == 0 {
-		end = sl
+	var count int
+
+	for range s {
+		count++
 	}
 
-	input := bytes.NewBufferString(s)
-	output := bytes.NewBufferString("")
-
-	input.Next(start)
-
-	current := 0
-	max := end - start
-
-	for {
-		r, _, _ := input.ReadRune()
-
-		if r == rune(65533) {
-			continue
-		}
-
-		output.WriteRune(r)
-
-		current++
-
-		if current == max {
-			break
-		}
-	}
-
-	return output.String()
+	return count
 }
 
 // Ellipsis trims given string
 func Ellipsis(s string, maxSize int) string {
-	if len([]rune(s)) > maxSize {
-		return Substr(s, 0, maxSize-3) + "..."
+	if Len(s) <= maxSize {
+		return s
 	}
 
-	return s
+	return Substr(s, 0, maxSize-3) + "..."
 }
 
 // Head return n first symbols from given string
@@ -88,13 +87,13 @@ func Head(s string, n int) string {
 		return ""
 	}
 
-	l := len(s)
+	l := Len(s)
 
 	if l <= n {
 		return s
 	}
 
-	return s[:n]
+	return Substr(s, 0, n)
 }
 
 // Tail return n last symbols from given string
@@ -103,13 +102,14 @@ func Tail(s string, n int) string {
 		return ""
 	}
 
-	l := len(s)
+	l := Len(s)
 
 	if l <= n {
 		return s
 	}
 
 	return s[l-n:]
+	return Substr(s, l-n, 99999999999)
 }
 
 // PrefixSize return prefix size
