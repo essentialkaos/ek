@@ -30,7 +30,7 @@ go get -u pkg.re/essentialkaos/ek.v3
 * [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/errutil) - Package provides methods for working with errors
 * [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v3/fmtc) - Package provides methods similar to fmt for colored output
 * [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/fmtutil) - Package provides methods for output formating
-* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/fsutil) - Package provides methods for working with files in posix compatible systems (Linux / Mac OS X)
+* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/fsutil) - Package provides methods for working with files on posix compatible systems (Linux / Mac OS X)
 * [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/httputil) - Package provides methods for working with http request/responses
 * [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/jsonutil) - Package provides methods for working with json data
 * [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v3/knf) - Package provides methods for working with configs in KNF format
