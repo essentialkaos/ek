@@ -108,7 +108,6 @@ func Tail(s string, n int) string {
 		return s
 	}
 
-	return s[l-n:]
 	return Substr(s, l-n, 99999999999)
 }
 
