@@ -40,6 +40,76 @@ const (
 	PATCH  = "PATCH"
 )
 
+// Content types
+const (
+	CONTENT_TYPE_ATOM         = "application/atom+xml"
+	CONTENT_TYPE_EDI          = "application/EDI-X12"
+	CONTENT_TYPE_EDIFACT      = "application/EDIFACT"
+	CONTENT_TYPE_JSON         = "application/json"
+	CONTENT_TYPE_JAVASCRIPT   = "application/javascript"
+	CONTENT_TYPE_OCTET_STREAM = "application/octet-stream"
+	CONTENT_TYPE_PDF          = "application/pdf"
+	CONTENT_TYPE_POSTSCRIPT   = "application/postscript"
+	CONTENT_TYPE_SOAP         = "application/soap+xml"
+	CONTENT_TYPE_WOFF         = "application/font-woff"
+	CONTENT_TYPE_XHTML        = "application/xhtml+xml"
+	CONTENT_TYPE_DTD          = "application/xml-dtd"
+	CONTENT_TYPE_XOP          = "application/xop+xml"
+	CONTENT_TYPE_ZIP          = "application/zip"
+	CONTENT_TYPE_GZIP         = "application/gzip"
+	CONTENT_TYPE_BITTORRENT   = "application/x-bittorrent"
+	CONTENT_TYPE_TEX          = "application/x-tex"
+	CONTENT_TYPE_BASIC        = "audio/basic"
+	CONTENT_TYPE_L24          = "audio/L24"
+	CONTENT_TYPE_MP4_AUDIO    = "audio/mp4"
+	CONTENT_TYPE_AAC          = "audio/aac"
+	CONTENT_TYPE_MPEG_AUDIO   = "audio/mpeg"
+	CONTENT_TYPE_OGG_AUDIO    = "audio/ogg"
+	CONTENT_TYPE_VORBIS       = "audio/vorbis"
+	CONTENT_TYPE_WMA          = "audio/x-ms-wma"
+	CONTENT_TYPE_WAX          = "audio/x-ms-wax"
+	CONTENT_TYPE_REALAUDIO    = "audio/vnd.rn-realaudio"
+	CONTENT_TYPE_WAV          = "audio/vnd.wave"
+	CONTENT_TYPE_WEBM_AUDIO   = "audio/webm"
+	CONTENT_TYPE_GIF          = "image/gif"
+	CONTENT_TYPE_JPEG         = "image/jpeg"
+	CONTENT_TYPE_PJPEG        = "image/pjpeg"
+	CONTENT_TYPE_PNG          = "image/png"
+	CONTENT_TYPE_SVG          = "image/svg+xml"
+	CONTENT_TYPE_TIFF         = "image/tiff"
+	CONTENT_TYPE_ICON         = "image/vnd.microsoft.icon"
+	CONTENT_TYPE_WBMP         = "image/vnd.wap.wbmp"
+	CONTENT_TYPE_HTTP         = "message/http"
+	CONTENT_TYPE_IMDN         = "message/imdn+xml"
+	CONTENT_TYPE_PARTIAL      = "message/partial"
+	CONTENT_TYPE_RFC822       = "message/rfc822"
+	CONTENT_TYPE_EXAMPLE      = "model/example"
+	CONTENT_TYPE_IGES         = "model/iges"
+	CONTENT_TYPE_MESH         = "model/mesh"
+	CONTENT_TYPE_VRML         = "model/vrml"
+	CONTENT_TYPE_MIXED        = "multipart/mixed"
+	CONTENT_TYPE_ALTERNATIVE  = "multipart/alternative"
+	CONTENT_TYPE_RELATED      = "multipart/related"
+	CONTENT_TYPE_FORM_DATA    = "multipart/form-data"
+	CONTENT_TYPE_SIGNED       = "multipart/signed"
+	CONTENT_TYPE_ENCRYPTED    = "multipart/encrypted"
+	CONTENT_TYPE_CSS          = "text/css"
+	CONTENT_TYPE_CSV          = "text/csv"
+	CONTENT_TYPE_HTML         = "text/html"
+	CONTENT_TYPE_PLAIN        = "text/plain"
+	CONTENT_TYPE_PHP          = "text/php"
+	CONTENT_TYPE_XML          = "text/xml"
+	CONTENT_TYPE_MPEG_VIDEO   = "video/mpeg"
+	CONTENT_TYPE_MP4_VIDEO    = "video/mp4"
+	CONTENT_TYPE_OGG_VIDEO    = "video/ogg"
+	CONTENT_TYPE_QUICKTIME    = "video/quicktime"
+	CONTENT_TYPE_WEBM_VIDEO   = "video/webm"
+	CONTENT_TYPE_WMV          = "video/x-ms-wmv"
+	CONTENT_TYPE_FLV          = "video/x-flv"
+	CONTENT_TYPE_3GPP         = "video/3gpp"
+	CONTENT_TYPE_3GPP2        = "video/3gpp2"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Query is a map[string]string used for query
@@ -82,10 +152,10 @@ var (
 	// UserAgent is default user-agent used for all requests
 	UserAgent = ""
 
-	// DialTimeout is dial timeout in seconds
+	// DialTimeout is dial timeout in seconds (0 = disabled)
 	DialTimeout = 10.0
 
-	// RequestTimeout is request timeout in seconds
+	// RequestTimeout is request timeout in seconds (0 = disabled)
 	RequestTimeout = 0.0
 
 	// Dialer default dialer struct
