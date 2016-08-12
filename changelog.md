@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.2.2
+
+* `[req]` Added content types constants
+
 #### v3.2.1
 
 * `[knf]` Fixed typo in tests
