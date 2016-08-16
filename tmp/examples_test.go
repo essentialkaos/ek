@@ -59,17 +59,32 @@ func ExampleTemp_MkFile() {
 	// &{0xc8200a0e00} /tmp/_l9yKFblzvv4e_test123 <nil>
 }
 
-func ExampleTemp_MkName() {
+func ExampleTemp_MkFile() {
 	tmp, err := tmp.NewTemp()
 
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	fmt.Println(tmp.MkDir())
-	fmt.Println(tmp.MkDir("test123"))
+	fmt.Println(tmp.MkFile())
+	fmt.Println(tmp.MkFile("test123"))
+
+	tmp.Clean()
 
 	// Output:
-	// /tmp/_tmp_4xrgpNxaH6Gl <nil>
-	// /tmp/_oDUNbUndLe2w_test123 <nil>
+	// &{0xc8200a0d40} /tmp/_tmp_pfR9Qf6I5TZk <nil>
+	// &{0xc8200a0e00} /tmp/_l9yKFblzvv4e_test123 <nil>
+}
+
+func ExampleTemp_Clean() {
+	tmp, err := tmp.NewTemp()
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	tmp.MkDir()
+
+	// All temporary data will be removed
+	tmp.Clean()
 }
