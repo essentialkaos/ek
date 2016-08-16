@@ -26,7 +26,7 @@ func ExampleHex2RGB() {
 	// Output: r:127 g:25 b:75
 }
 
-func ExampleRGBA2Hex() {
+func ExampleHex2RGBA() {
 	r, g, b, a := color.Hex2RGBA(0x7f194bcc)
 
 	fmt.Printf("r:%d g:%d b:%d a:%d\n", r, g, b, a)
