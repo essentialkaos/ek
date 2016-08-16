@@ -4,7 +4,7 @@ Auxiliary packages for Go.
 
 ### Platform support
 
-Currently we support Linux and Mac OS X. Some packages have stubs for Windows (for autocomplete).
+Currently we support Linux and Mac OS X. Some packages have stubs for Windows (_for autocomplete_).
 
 ### Installation
 
@@ -57,7 +57,7 @@ go get -u pkg.re/essentialkaos/ek.v3
 
 ### Projects with EK
 
-* [ssllabs-client](https://github.com/essentialkaos/ssllabs_client) - Pretty awesome command-line client for public SSLLabs API
+* [sslcli](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
 * [shdoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
 * [rbinstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
