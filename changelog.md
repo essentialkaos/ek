@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.2.3
+
+* `[terminal]` Fixed bug with title formating in `ReadUI` function
+
 #### v3.2.2
 
 * `[req]` Added content types constants

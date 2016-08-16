@@ -36,7 +36,7 @@ var MaskSymbol = "*"
 // ReadUI read user input
 func ReadUI(title string, nonEmpty bool) (string, error) {
 	return readUserInput(
-		fmt.Sprintf("{c}%s{!}", title), nonEmpty, false,
+		title, nonEmpty, false,
 	)
 }
 
@@ -125,6 +125,10 @@ func getPrivateHider(message string) string {
 }
 
 func getAnswerTitle(title, defaultAnswer string) string {
+	if title == "" {
+		return ""
+	}
+
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
 		return fmt.Sprintf("{c}%s (Y/n){!}", title)
@@ -137,7 +141,7 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	if title != "" {
-		fmtc.Println(title)
+		fmtc.Printf("{c}%s{!}\n", title)
 	}
 
 	var ui string
