@@ -49,8 +49,8 @@ func ExampleTemp_MkFile() {
 		log.Fatalln(err.Error())
 	}
 
-	fmt.Println(tmp.MkDir())
-	fmt.Println(tmp.MkDir("test123"))
+	fmt.Println(tmp.MkFile())
+	fmt.Println(tmp.MkFile("test123"))
 
 	tmp.Clean()
 
