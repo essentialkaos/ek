@@ -25,7 +25,7 @@ func ExampleNewTemp() {
 	// Output: &{/tmp []} <nil>
 }
 
-func Example_mkDir() {
+func ExampleTemp_mkDir() {
 	tmp, err := tmp.NewTemp()
 
 	if err != nil {
@@ -42,7 +42,7 @@ func Example_mkDir() {
 	// /tmp/_oDUNbUndLe2w_test123 <nil>
 }
 
-func Example_mkFile() {
+func ExampleTemp_mkFile() {
 	tmp, err := tmp.NewTemp()
 
 	if err != nil {
@@ -59,7 +59,7 @@ func Example_mkFile() {
 	// &{0xc8200a0e00} /tmp/_l9yKFblzvv4e_test123 <nil>
 }
 
-func Example_mkName() {
+func ExampleTemp_mkName() {
 	tmp, err := tmp.NewTemp()
 
 	if err != nil {
