@@ -14,12 +14,12 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleRGB2Hex() {
-	fmt.Printf("%x\n", color.RGB2Hex(127, 25, 75))
+	fmt.Printf("%x\n", RGB2Hex(127, 25, 75))
 	// Output: 7f194b
 }
 
 func ExampleHex2RGB() {
-	r, g, b := color.Hex2RGB(0x7f194b)
+	r, g, b := Hex2RGB(0x7f194b)
 
 	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
 
@@ -27,7 +27,7 @@ func ExampleHex2RGB() {
 }
 
 func ExampleHex2RGBA() {
-	r, g, b, a := color.Hex2RGBA(0x7f194bcc)
+	r, g, b, a := Hex2RGBA(0x7f194bcc)
 
 	fmt.Printf("r:%d g:%d b:%d a:%d\n", r, g, b, a)
 
@@ -35,7 +35,7 @@ func ExampleHex2RGBA() {
 }
 
 func ExampleRGB2HSB() {
-	h, s, v := color.RGB2HSB(127, 25, 75)
+	h, s, v := RGB2HSB(127, 25, 75)
 
 	fmt.Printf("h:%d s:%d v:%d\n", h, s, v)
 
@@ -43,7 +43,7 @@ func ExampleRGB2HSB() {
 }
 
 func ExampleHSB2RGB() {
-	r, g, b := color.HSB2RGB(331, 81, 50)
+	r, g, b := HSB2RGB(331, 81, 50)
 
 	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
 
@@ -51,8 +51,8 @@ func ExampleHSB2RGB() {
 }
 
 func ExampleIsRGBA() {
-	fmt.Println(color.IsRGBA(0xAABBCC))
-	fmt.Println(color.IsRGBA(0xAABBCCDD))
+	fmt.Println(IsRGBA(0xAABBCC))
+	fmt.Println(IsRGBA(0xAABBCCDD))
 
 	// Output:
 	// false
