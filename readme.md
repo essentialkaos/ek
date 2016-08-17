@@ -49,6 +49,7 @@ go get -u pkg.re/essentialkaos/ek.v3
 * [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v3/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
 * [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/strutil) - Package provides utils for working with strings
 * [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v3/system) - Package provides methods for working with system data (metrics/users)
+* [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v3/system/process) - Package provides methods for getting information about active processes
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v3/terminal) - Package provides methods for working with user input
 * [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v3/timeutil) - Package with time utils
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v3/tmp) - Package provides methods for working with temporary data
