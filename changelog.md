@@ -2,7 +2,7 @@
 
 #### v3.3.0
 
-* `[system/process]` Added new package for working with getting information about active processes
+* `[system/process]` Added new package for getting information about active system processes
 
 #### v3.2.3
 
