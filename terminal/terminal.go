@@ -131,11 +131,11 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf("{c}%s (Y/n){!}", title)
+		return fmt.Sprintf("%s (Y/n)", title)
 	case "N":
-		return fmt.Sprintf("{c}%s (y/N){!}", title)
+		return fmt.Sprintf("%s (y/N)", title)
 	default:
-		return fmt.Sprintf("{c}%s (y/n){!}", title)
+		return fmt.Sprintf("%s (y/n)", title)
 	}
 }
 
