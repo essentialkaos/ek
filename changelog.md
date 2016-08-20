@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v3.3.0
+
+* `[system/process]` Added new package for getting information about active system processes
+* `[terminal]` Fixed bug with title formating in `ReadAnswer` function
+
 #### v3.2.3
 
 * `[terminal]` Fixed bug with title formating in `ReadUI` function
