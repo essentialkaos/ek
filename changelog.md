@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v3.3.1
+
+* `[usage]` Fixed bug with rendering command groups
+* `[terminal]` Small fixes in windows stubs
+
 #### v3.3.0
 
 * `[system/process]` Added new package for getting information about active system processes
