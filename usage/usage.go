@@ -60,6 +60,16 @@ type example struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var (
+	// CommandsColor contains default commands color
+	CommandsColor = "y"
+
+	// OptionsColor contains default options color
+	OptionsColor = "g"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // NewInfo create new info struct
 func NewInfo(name string, args ...string) *Info {
 	if name == "" {
@@ -88,7 +98,7 @@ func (info *Info) AddGroup(group string) {
 
 // AddCommand add command (name, desc, args)
 func (info *Info) AddCommand(a ...string) {
-	group := "Commands:"
+	group := "Commands"
 
 	if info.curGroup != "" {
 		group = info.curGroup
@@ -99,7 +109,7 @@ func (info *Info) AddCommand(a ...string) {
 
 // AddOption add option (name, desc, args)
 func (info *Info) AddOption(a ...string) {
-	appendOption(a, &info.options, "")
+	appendOption(a, &info.options, "Options")
 }
 
 // AddExample add example for some command (command, desc)
@@ -128,11 +138,11 @@ func (info *Info) Render() {
 	usageMessage := "\n{*}Usage:{!} " + info.name
 
 	if len(info.commands) != 0 {
-		usageMessage += " {y}{command}{!}"
+		usageMessage += " {" + CommandsColor + "}{command}{!}"
 	}
 
 	if len(info.options) != 0 {
-		usageMessage += " {g}{options}{!}"
+		usageMessage += " {" + OptionsColor + "}{options}{!}"
 	}
 
 	if info.args != "" {
@@ -147,11 +157,11 @@ func (info *Info) Render() {
 	}
 
 	if len(info.commands) != 0 {
-		renderOptions(info.commands, "y")
+		renderOptions(info.commands, CommandsColor)
 	}
 
 	if len(info.options) != 0 {
-		renderOptions(info.options, "g")
+		renderOptions(info.options, OptionsColor)
 	}
 
 	if len(info.examples) != 0 {
@@ -212,7 +222,7 @@ func appendOption(data []string, options *[]option, group string) {
 
 	var name = data[0]
 
-	if group == "" {
+	if group == "Options" {
 		name = parseOption(data[0])
 	}
 
@@ -242,16 +252,20 @@ func parseOption(option string) string {
 
 // renderOptions render options
 func renderOptions(options []option, color string) {
-	fmtc.Println("\n{*}Options:{!}\n")
-
 	var (
-		opt     option
-		maxSize int
+		curGroup string
+		opt      option
+		maxSize  int
 	)
 
 	maxSize = getMaxOptionSize(options)
 
 	for _, opt = range options {
+		if curGroup != opt.group {
+			fmtc.Printf("\n{*}%s{!}\n\n", opt.group)
+			curGroup = opt.group
+		}
+
 		if len(opt.args) != 0 {
 			fmtc.Printf(
 				"  {"+color+"}%s{!} {s}%s{!} %s %s\n",

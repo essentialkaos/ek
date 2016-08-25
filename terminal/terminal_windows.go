@@ -9,6 +9,15 @@ package terminal
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import (
+	"errors"
+)
+
+// KillSignalError is error type when user cancel input
+var KillSignalError = errors.New("")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func ReadUI(title string, nonEmpty bool) (string, error) {
 	return "", nil
 }
