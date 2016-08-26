@@ -1,8 +1,12 @@
 ## Changelog
 
+#### v3.4.1
+
+* `[terminal]` Improved reading user input
+
 #### v3.4.0
 
-* [httputil] Added `GetRequestAddr`, `GetRemoteAddr`, `GetRemoteHost`, `GetRemotePort` methods
+* `[httputil]` Added `GetRequestAddr`, `GetRemoteAddr`, `GetRemoteHost`, `GetRemotePort` methods
 
 #### v3.3.1
 
