@@ -52,6 +52,20 @@ func (s *HTTPUtilSuite) TestRequestParsing(c *C) {
 	c.Assert(GetRequestPort(req5), Equals, "")
 }
 
+func (s *HTTPUtilSuite) TestRemoteParsing(c *C) {
+	req1, _ := http.NewRequest("GET", "http://127.0.0.1/hello", nil)
+	req2, _ := http.NewRequest("GET", "http://127.0.0.1/hello", nil)
+
+	req1.RemoteAddr = ""
+	req2.RemoteAddr = "127.0.0.1:12345"
+
+	c.Assert(GetRemoteHost(req1), Equals, "")
+	c.Assert(GetRemotePort(req1), Equals, "")
+
+	c.Assert(GetRemoteHost(req2), Equals, "127.0.0.1")
+	c.Assert(GetRemotePort(req2), Equals, "12345")
+}
+
 func (s *HTTPUtilSuite) TestGetDescCode(c *C) {
 	c.Assert(GetDescByCode(100), Equals, "Continue")
 	c.Assert(GetDescByCode(101), Equals, "Switching Protocols")

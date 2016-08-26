@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.4.0
+
+* [httputil] Added `GetRequestAddr`, `GetRemoteAddr`, `GetRemoteHost`, `GetRemotePort` methods
+
 #### v3.3.1
 
 * `[usage]` Fixed bug with rendering command groups

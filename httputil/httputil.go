@@ -20,29 +20,57 @@ var statusDesc map[int]string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetRequestHost return host from request struct
-func GetRequestHost(r *http.Request) string {
+// GetRequestAddr return host and port info from request
+func GetRequestAddr(r *http.Request) (string, string) {
 	if r.Host == "" {
-		return ""
+		return "", ""
 	}
 
-	return strings.Split(r.Host, ":")[0]
+	hostSlice := strings.Split(r.Host, ":")
+
+	switch len(hostSlice) {
+	case 2:
+		return hostSlice[0], hostSlice[1]
+	default:
+		return hostSlice[0], "80"
+	}
+}
+
+// GetRequestHost return host from request struct
+func GetRequestHost(r *http.Request) string {
+	host, _ := GetRequestAddr(r)
+	return host
 }
 
 // GetRequestPort return port from request struct
 func GetRequestPort(r *http.Request) string {
-	if r.Host == "" {
-		return ""
+	_, port := GetRequestAddr(r)
+	return port
+}
+
+// GetRemoteHost return network address that sent the request
+func GetRemoteAddr(r *http.Request) (string, string) {
+	addr := r.RemoteAddr
+
+	if addr == "" || !strings.Contains(addr, ":") {
+		return "", ""
 	}
 
-	hs := strings.Split(r.Host, ":")
+	addrSlice := strings.Split(addr, ":")
 
-	switch len(hs) {
-	case 2:
-		return hs[1]
-	default:
-		return "80"
-	}
+	return addrSlice[0], addrSlice[1]
+}
+
+// GetRemoteHost return host that sent the request
+func GetRemoteHost(r *http.Request) string {
+	host, _ := GetRemoteAddr(r)
+	return host
+}
+
+// GetRemoteHost return host port that sent the request
+func GetRemotePort(r *http.Request) string {
+	_, port := GetRemoteAddr(r)
+	return port
 }
 
 // GetDescByCode return response code description
