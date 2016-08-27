@@ -144,27 +144,29 @@ func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 		fmtc.Printf("{c}%s{!}\n", title)
 	}
 
-	var ui string
-	var err error
+	var (
+		input string
+		err   error
+	)
 
 	for {
-		ui, err = linenoise.Line(Prompt)
+		input, err = linenoise.Line(Prompt)
 
 		if err != nil {
 			return "", err
 		}
 
-		if nonEmpty && ui == "" {
+		if nonEmpty && strings.TrimSpace(input) == "" {
 			PrintWarnMessage("\nYou must enter non empty value\n")
 			continue
 		}
 
-		if private && ui != "" {
-			fmt.Println(getPrivateHider(ui))
+		if private && input != "" {
+			fmt.Println(getPrivateHider(input))
 		}
 
 		break
 	}
 
-	return ui, err
+	return input, err
 }
