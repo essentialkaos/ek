@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/GeertJohan/go.linenoise"
+	"pkg.re/essentialkaos/go-linenoise"
 
 	"pkg.re/essentialkaos/ek.v3/fmtc"
 )

@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.5.0
+
+* `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
+
 #### v3.4.2
 
 * `[strutil]` Fixed bug with overflowing int in `Tail` method

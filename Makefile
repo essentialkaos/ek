@@ -9,7 +9,7 @@ export EK_TEST_PORT=8080
 ########################################################################################
 
 deps:
-	go get -v github.com/GeertJohan/go.linenoise
+	go get -v pkg.re/essentialkaos/go-linenoise
 
 test:
 	go get -v pkg.re/check.v1
