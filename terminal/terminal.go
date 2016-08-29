@@ -22,8 +22,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// KillSignalError is error type when user cancel input
-var KillSignalError = linenoise.KillSignalError
+// ErrKillSignal is error type when user cancel input
+var ErrKillSignal = linenoise.ErrKillSignal
 
 // Prompt is prompt string
 var Prompt = "> "
