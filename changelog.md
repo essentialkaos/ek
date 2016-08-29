@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v3.4.2
+
+* `[strutil]` Fixed bug with overflowing int in `Tail` method
+
 #### v3.4.1
 
 * `[terminal]` Improved reading user input
