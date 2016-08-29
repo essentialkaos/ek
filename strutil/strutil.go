@@ -108,7 +108,7 @@ func Tail(s string, n int) string {
 		return s
 	}
 
-	return Substr(s, l-n, 99999999999)
+	return Substr(s, l-n, l)
 }
 
 // PrefixSize return prefix size
