@@ -111,8 +111,13 @@ func AddHistory(data string) {
 }
 
 // SetCompletionHandler add function for autocompletion
-func SetCompletionHandler(compfunc func(in string) []string) {
-	linenoise.SetCompletionHandler(compfunc)
+func SetCompletionHandler(h func(input string) []string) {
+	linenoise.SetCompletionHandler(h)
+}
+
+// SetHintHandler add function for input hints
+func SetHintHandler(h func(input string) string) {
+	linenoise.SetCompletionHandler(h)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

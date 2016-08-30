@@ -3,6 +3,7 @@
 #### v3.5.0
 
 * `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
+* `[terminal]` Added hints support from new version of `go.linenoise`
 
 #### v3.4.2
 
