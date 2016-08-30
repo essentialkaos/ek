@@ -117,7 +117,7 @@ func SetCompletionHandler(h func(input string) []string) {
 
 // SetHintHandler add function for input hints
 func SetHintHandler(h func(input string) string) {
-	linenoise.SetCompletionHandler(h)
+	linenoise.SetHintHandler(h)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
