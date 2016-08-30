@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"pkg.re/essentialkaos/go-linenoise"
+	"pkg.re/essentialkaos/go-linenoise.v2"
 
 	"pkg.re/essentialkaos/ek.v3/fmtc"
 )
