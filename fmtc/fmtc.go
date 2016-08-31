@@ -50,7 +50,7 @@ var codes = map[int]int{
 	'b': 34, // Blue
 	'm': 35, // Magenta
 	'c': 36, // Cyan
-	's': 90, // Grey (Smokey)
+	's': 37, // Grey (Smokey)
 	'w': 97, // White
 
 	// Background
@@ -61,7 +61,7 @@ var codes = map[int]int{
 	'B': 44,  // Blue
 	'M': 45,  // Magenta
 	'C': 46,  // Cyan
-	'S': 100, // Grey (Smokey)
+	'S': 47,  // Grey (Smokey)
 	'W': 107, // White
 }
 
@@ -201,8 +201,10 @@ func tag2ANSI(tag string, clean bool) string {
 
 	if light {
 		switch charColor {
-		case 90, 97:
+		case 97:
 			break
+		case 37:
+			charColor = 90
 		default:
 			charColor += 60
 		}
