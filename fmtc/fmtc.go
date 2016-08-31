@@ -34,12 +34,13 @@ type T struct {
 
 var codes = map[int]int{
 	// Special
-	'!': 0, // Default
-	'*': 1, // Bold
-	'^': 2, // Dim
-	'_': 4, // Underline
-	'~': 5, // Blink
-	'@': 7, // Reverse
+	'-': -1, // Light colors
+	'!': 0,  // Default
+	'*': 1,  // Bold
+	'^': 2,  // Dim
+	'_': 4,  // Underline
+	'~': 5,  // Blink
+	'@': 7,  // Reverse
 
 	// Text
 	'd': 30, // Black (Dark)
@@ -49,7 +50,7 @@ var codes = map[int]int{
 	'b': 34, // Blue
 	'm': 35, // Magenta
 	'c': 36, // Cyan
-	's': 37, // Grey (Smokey)
+	's': 90, // Grey (Smokey)
 	'w': 97, // White
 
 	// Background
@@ -60,13 +61,13 @@ var codes = map[int]int{
 	'B': 44,  // Blue
 	'M': 45,  // Magenta
 	'C': 46,  // Cyan
-	'S': 47,  // Grey (Smokey)
+	'S': 100, // Grey (Smokey)
 	'W': 107, // White
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DisableColors disable colors in output
+// DisableColors disable all colors and modificators in output
 var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -176,20 +177,34 @@ func tag2ANSI(tag string, clean bool) string {
 		modificator = 0
 		charColor   = 39
 		bgColor     = 49
+		light       = false
 	)
 
 	for _, key := range tag {
 		code, ok := codes[int(key)]
 
-		switch {
-		case !ok:
+		if !ok {
 			return fmt.Sprint(tag)
-		case code >= 1 && code <= 10:
+		}
+
+		switch key {
+		case '-':
+			light = true
+		case '!', '*', '^', '_', '~', '@':
 			modificator = code
-		case code >= 30 && code <= 40:
+		case 'd', 'r', 'g', 'y', 'b', 'm', 'c', 's', 'w':
 			charColor = code
-		case code >= 40 && code <= 50:
+		case 'D', 'R', 'G', 'Y', 'B', 'M', 'C', 'S', 'W':
 			bgColor = code
+		}
+	}
+
+	if light {
+		switch charColor {
+		case 90, 97:
+			break
+		default:
+			charColor += 60
 		}
 	}
 
