@@ -33,6 +33,7 @@ func (s *FormatSuite) TestColors(c *C) {
 	c.Assert(Sprint("{m}W{!}"), Equals, "\x1b[0;35;49mW\x1b[0m")
 	c.Assert(Sprint("{c}W{!}"), Equals, "\x1b[0;36;49mW\x1b[0m")
 	c.Assert(Sprint("{s}W{!}"), Equals, "\x1b[0;37;49mW\x1b[0m")
+	c.Assert(Sprint("{w}W{!}"), Equals, "\x1b[0;97;49mW\x1b[0m")
 	c.Assert(Sprint("{r-}W{!}"), Equals, "\x1b[0;91;49mW\x1b[0m")
 	c.Assert(Sprint("{g-}W{!}"), Equals, "\x1b[0;92;49mW\x1b[0m")
 	c.Assert(Sprint("{y-}W{!}"), Equals, "\x1b[0;93;49mW\x1b[0m")
@@ -40,6 +41,7 @@ func (s *FormatSuite) TestColors(c *C) {
 	c.Assert(Sprint("{m-}W{!}"), Equals, "\x1b[0;95;49mW\x1b[0m")
 	c.Assert(Sprint("{c-}W{!}"), Equals, "\x1b[0;96;49mW\x1b[0m")
 	c.Assert(Sprint("{s-}W{!}"), Equals, "\x1b[0;90;49mW\x1b[0m")
+	c.Assert(Sprint("{w-}W{!}"), Equals, "\x1b[0;97;49mW\x1b[0m")
 }
 
 func (s *FormatSuite) TestBackgrounds(c *C) {
