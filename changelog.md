@@ -5,6 +5,7 @@
 * `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
 * `[terminal]` Added hints support from new version of `go.linenoise`
 * `[fmtc]` Light colors tag (`-`) support
+* `[usage]` Using dark grey color for option values and example description
 
 #### v3.4.2
 
