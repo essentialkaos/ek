@@ -76,6 +76,16 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	c.Assert(tmpFd, IsNil)
 	c.Assert(tmpFile, Equals, "")
 	c.Assert(err, NotNil)
+
+	var nilTemp *Temp
+
+	_, err = nilTemp.MkDir()
+
+	c.Assert(err, NotNil)
+
+	_, _, err = nilTemp.MkFile()
+
+	c.Assert(err, NotNil)
 }
 
 func (ts *TmpSuite) TestMkDir(c *C) {

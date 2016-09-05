@@ -15,15 +15,15 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/GeertJohan/go.linenoise"
+	"pkg.re/essentialkaos/go-linenoise.v2"
 
 	"pkg.re/essentialkaos/ek.v3/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// KillSignalError is error type when user cancel input
-var KillSignalError = linenoise.KillSignalError
+// ErrKillSignal is error type when user cancel input
+var ErrKillSignal = linenoise.ErrKillSignal
 
 // Prompt is prompt string
 var Prompt = "> "
@@ -111,8 +111,13 @@ func AddHistory(data string) {
 }
 
 // SetCompletionHandler add function for autocompletion
-func SetCompletionHandler(compfunc func(in string) []string) {
-	linenoise.SetCompletionHandler(compfunc)
+func SetCompletionHandler(h func(input string) []string) {
+	linenoise.SetCompletionHandler(h)
+}
+
+// SetHintHandler add function for input hints
+func SetHintHandler(h func(input string) string) {
+	linenoise.SetHintHandler(h)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

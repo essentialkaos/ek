@@ -31,6 +31,12 @@ type Temp struct {
 // Dir is default temporary directory
 var Dir = "/tmp"
 
+// DefaultDirPerms is default permissions for directories
+var DefaultDirPerms os.FileMode = 0750
+
+// DefaultFilePerms is default permissions for files
+var DefaultFilePerms os.FileMode = 0640
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTemp create new Temp structure
@@ -60,6 +66,10 @@ func NewTemp(args ...string) (*Temp, error) {
 
 // MkDir make temporary directory
 func (t *Temp) MkDir(args ...string) (string, error) {
+	if t == nil {
+		return "", fmt.Errorf("Temp struct is nil")
+	}
+
 	name := ""
 
 	if len(args) != 0 {
@@ -67,7 +77,7 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 	}
 
 	tmpDir := getTempName(t.Dir, name)
-	err := os.MkdirAll(tmpDir, 0750)
+	err := os.MkdirAll(tmpDir, DefaultDirPerms)
 
 	if err != nil {
 		return "", err
@@ -80,6 +90,10 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 
 // MkFile make temporary file
 func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
+	if t == nil {
+		return nil, "", fmt.Errorf("Temp struct is nil")
+	}
+
 	name := ""
 
 	if len(args) != 0 {
@@ -87,7 +101,7 @@ func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
 	}
 
 	tmpFile := getTempName(t.Dir, name)
-	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, 0640)
+	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, DefaultFilePerms)
 
 	if err != nil {
 		return nil, "", err
@@ -114,7 +128,7 @@ func (t *Temp) MkName(args ...string) string {
 
 // Clean remove all temporary targets
 func (t *Temp) Clean() {
-	if t.targets == nil || len(t.targets) == 0 {
+	if t == nil || t.targets == nil || len(t.targets) == 0 {
 		return
 	}
 

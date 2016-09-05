@@ -268,7 +268,7 @@ func renderOptions(options []option, color string) {
 
 		if len(opt.args) != 0 {
 			fmtc.Printf(
-				"  {"+color+"}%s{!} {s}%s{!} %s %s\n",
+				"  {"+color+"}%s{!} {s-}%s{!} %s %s\n",
 				opt.name,
 				opt.args,
 				getOptionSpaces(opt, maxSize),
@@ -295,7 +295,7 @@ func renderExamples(info *Info) {
 		fmtc.Printf("  %s %s\n", info.name, example.cmd)
 
 		if example.desc != "" {
-			fmtc.Printf("  {s}%s{!}\n", example.desc)
+			fmtc.Printf("  {s-}%s{!}\n", example.desc)
 		}
 
 		if index < total-1 {

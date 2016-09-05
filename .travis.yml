@@ -1,9 +1,8 @@
 language: go
 
 go:
-  - 1.5.4
-  - 1.6.2
-  - tip
+  - 1.6.3
+  - 1.7
 
 sudo: false
 
@@ -16,7 +15,7 @@ env:
 
 before_install:
   - go get -v pkg.re/check.v1
-  - go get -v github.com/GeertJohan/go.linenoise
+  - go get -v pkg.re/essentialkaos/go-linenoise.v2
 
 script:
   - .travis/script.sh .
