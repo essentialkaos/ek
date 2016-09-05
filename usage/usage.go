@@ -190,17 +190,17 @@ func (about *About) Render() {
 
 	if about.Owner != "" {
 		if about.Year == 0 {
-			fmtc.Printf("{s}Copyright (C) %s{!}\n", about.Owner)
+			fmtc.Printf("{s-}Copyright (C) %s{!}\n", about.Owner)
 		} else {
 			fmtc.Printf(
-				"{s}Copyright (C) %d-%d %s{!}\n",
+				"{s-}Copyright (C) %d-%d %s{!}\n",
 				about.Year, time.Now().Year(), about.Owner,
 			)
 		}
 	}
 
 	if about.License != "" {
-		fmtc.Printf("{s}%s{!}\n", about.License)
+		fmtc.Printf("{s-}%s{!}\n", about.License)
 	}
 
 	fmtc.NewLine()
