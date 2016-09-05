@@ -66,6 +66,10 @@ func NewTemp(args ...string) (*Temp, error) {
 
 // MkDir make temporary directory
 func (t *Temp) MkDir(args ...string) (string, error) {
+	if t == nil {
+		return "", fmt.Errorf("Temp struct is nil")
+	}
+
 	name := ""
 
 	if len(args) != 0 {
@@ -86,6 +90,10 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 
 // MkFile make temporary file
 func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
+	if t == nil {
+		return nil, "", fmt.Errorf("Temp struct is nil")
+	}
+
 	name := ""
 
 	if len(args) != 0 {
@@ -120,7 +128,7 @@ func (t *Temp) MkName(args ...string) string {
 
 // Clean remove all temporary targets
 func (t *Temp) Clean() {
-	if t.targets == nil || len(t.targets) == 0 {
+	if t == nil || t.targets == nil || len(t.targets) == 0 {
 		return
 	}
 

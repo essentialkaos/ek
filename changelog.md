@@ -7,6 +7,7 @@
 * `[fmtc]` Light colors tag (`-`) support
 * `[usage]` Using dark grey color for option values and example description
 * `[tmp]` Added `DefaultDirPerms` and `DefaultFilePerms` global variables for permissions customization
+* `[tmp]` Improved error handling
 
 #### v3.4.2
 
