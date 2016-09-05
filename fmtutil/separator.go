@@ -17,6 +17,11 @@ const _SEPARATOR = "------------------------------------------------------------
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// SeparatorColorTag is color tag used for separator output (light grey by default)
+var SeparatorColorTag string = "{s}"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Separator print separator to output
 func Separator(tiny bool, args ...string) {
 	var sep = _SEPARATOR
@@ -32,9 +37,8 @@ func Separator(tiny bool, args ...string) {
 
 	switch tiny {
 	case true:
-		fmtc.Printf("{s}%s{!}\n", sep)
+		fmtc.Printf(SeparatorColorTag+"%s{!}\n", sep)
 	case false:
-		fmtc.Printf("\n{s}%s{!}\n\n", sep)
+		fmtc.Printf("\n"+SeparatorColorTag+"%s{!}\n\n", sep)
 	}
-
 }
