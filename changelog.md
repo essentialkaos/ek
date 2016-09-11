@@ -4,6 +4,7 @@
 
 * `[usage]` Using dark grey color for license and copyright
 * `[fmtutil]` Added global variable `SeparatorColorTag` for separator color customization
+* `[fmtutil]` Added global variable `SeparatorTitleColorTag` for separator title color customization
 
 #### v3.5.0
 
