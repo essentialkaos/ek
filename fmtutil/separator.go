@@ -17,24 +17,26 @@ const _SEPARATOR = "------------------------------------------------------------
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// SeparatorColorTag is fmtc color tag used for separator (light grey by default)
+var SeparatorColorTag string = "{s}"
+
+// SeparatorTitleColorTag is fmtc color tag used for separator title (light grey by default)
+var SeparatorTitleColorTag = "{s}"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Separator print separator to output
 func Separator(tiny bool, args ...string) {
-	var sep = _SEPARATOR
+	sep := SeparatorColorTag + _SEPARATOR + "{!}"
 
 	if len(args) != 0 {
 		name := args[0]
-
-		sep = "-- "
-		sep += name
-		sep += " "
-		sep += _SEPARATOR[0:(84 - len(name))]
+		sep = SeparatorColorTag + "-- {!}" + SeparatorTitleColorTag + name + "{!} " + SeparatorColorTag + _SEPARATOR[:(84-len(name))] + "{!}"
 	}
 
-	switch tiny {
-	case true:
-		fmtc.Printf("{s}%s{!}\n", sep)
-	case false:
-		fmtc.Printf("\n{s}%s{!}\n\n", sep)
+	if !tiny {
+		sep = "\n" + sep + "\n"
 	}
 
+	fmtc.Println(sep)
 }

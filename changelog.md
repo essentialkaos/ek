@@ -1,5 +1,11 @@
 ## Changelog
 
+#### v3.5.1
+
+* `[usage]` Using dark grey color for license and copyright
+* `[fmtutil]` Added global variable `SeparatorColorTag` for separator color customization
+* `[fmtutil]` Added global variable `SeparatorTitleColorTag` for separator title color customization
+
 #### v3.5.0
 
 * `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
