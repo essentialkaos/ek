@@ -3,7 +3,7 @@
 #### 3.6.0
 
 * `[terminal]` Minor fixes in windows stubs
-* `[knf]` Added `ContainsAny` validator which check if given config property contains any value from given slice
+* `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
 
 #### v3.5.1
 

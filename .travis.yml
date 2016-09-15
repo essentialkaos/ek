@@ -1,14 +1,27 @@
+sudo: false
+
 language: go
 
 go:
   - 1.6.3
-  - 1.7
+  - 1.7.1
+  - tip
 
-sudo: false
+branches:
+  only:
+  - master
+  - develop
 
 os:
   - linux
   - osx
+
+matrix:
+  include:
+    - go: 1.6.3
+    - go: 1.7.1
+  allow_failures:
+    - go: tip
 
 env:
   - EK_TEST_PORT=8080

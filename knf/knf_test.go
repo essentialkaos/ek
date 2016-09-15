@@ -484,7 +484,7 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	c.Assert(Equals(fakeConfig, "test:float", 130.0), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
 
-	c.Assert(ContainsAny(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
-	c.Assert(ContainsAny(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
-	c.Assert(ContainsAny(fakeConfig, "test:string", 0), check.NotNil)
+	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
+	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
+	c.Assert(NotContains(fakeConfig, "test:string", 0), check.NotNil)
 }

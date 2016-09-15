@@ -27,8 +27,8 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// ContainsAny check if given config property contains any value from given slice
-var ContainsAny = func(config *Config, prop string, value interface{}) error {
+// NotContains check if given config property contains any value from given slice
+var NotContains = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case []string:
 		currentValue := config.GetS(prop)
