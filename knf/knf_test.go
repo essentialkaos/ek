@@ -434,7 +434,7 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 		{"integer:test1", Greater, 0},
 		{"integer:test1", Equals, 1},
 		{"integer:test1", Greater, "12345"},
-		{"integer:test1", ContainsAny, []string{"A", "B", "C"}},
+		{"integer:test1", NotContains, []string{"A", "B", "C"}},
 	})
 
 	c.Assert(errs, check.HasLen, 6)
