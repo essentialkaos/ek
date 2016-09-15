@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 3.6.0
+
+* `[terminal]` Minor fixes in windows stubs
+
 #### v3.5.1
 
 * `[usage]` Using dark grey color for license and copyright
