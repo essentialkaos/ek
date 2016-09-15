@@ -17,9 +17,6 @@ os:
   - osx
 
 matrix:
-  include:
-    - go: 1.6.3
-    - go: 1.7.1
   allow_failures:
     - go: tip
 
