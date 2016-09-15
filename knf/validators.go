@@ -27,6 +27,24 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
+// ContainsAny check if given config property contains any value from given slice
+var ContainsAny = func(config *Config, prop string, value interface{}) error {
+	switch value.(type) {
+	case []string:
+		currentValue := config.GetS(prop)
+
+		for _, v := range value.([]string) {
+			if v == currentValue {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+	}
+
+	return getWrongValidatorError(prop)
+}
+
 // Less check if given config property is less then defined value or not
 var Less = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {

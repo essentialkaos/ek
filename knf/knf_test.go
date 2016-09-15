@@ -434,15 +434,17 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 		{"integer:test1", Greater, 0},
 		{"integer:test1", Equals, 1},
 		{"integer:test1", Greater, "12345"},
+		{"integer:test1", ContainsAny, []string{"A", "B", "C"}},
 	})
 
-	c.Assert(errs, check.HasLen, 5)
+	c.Assert(errs, check.HasLen, 6)
 
 	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 can't be empty")
 	c.Assert(errs[1].Error(), check.Equals, "Property integer:test1 can't be less than 10")
 	c.Assert(errs[2].Error(), check.Equals, "Property integer:test1 can't be greater than 0")
 	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
 	c.Assert(errs[4].Error(), check.Equals, "Wrong validator for property integer:test1")
+	c.Assert(errs[5].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
 
 	fakeConfig := &Config{
 		data: map[string]string{
@@ -481,4 +483,8 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	c.Assert(Equals(fakeConfig, "test:integer", 15), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:float", 130.0), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
+
+	c.Assert(ContainsAny(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
+	c.Assert(ContainsAny(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
+	c.Assert(ContainsAny(fakeConfig, "test:string", 0), check.NotNil)
 }
