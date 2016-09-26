@@ -315,7 +315,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	return result, nil
 }
 
-// GetIOStats return I/O stats
+// GetIOStats return IO statatistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
 	result := make(map[string]*IOStats)
 
@@ -338,8 +338,10 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 		device := values[2]
 
-		if device[0:3] == "ram" || device[0:3] == "loo" {
-			continue
+		if len(device) > 3 {
+			if device[0:3] == "ram" || device[0:3] == "loo" {
+				continue
+			}
 		}
 
 		metrics := stringSliceToUintSlice(values[3:])
