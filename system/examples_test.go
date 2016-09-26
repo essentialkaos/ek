@@ -31,8 +31,35 @@ func Example_getFSInfo() {
 	// info is slice path -> info
 	for path, info := range fsInfo {
 		fmt.Printf(
-			"Path: %s Type: %s Device: %s Used: %d Free: %d Total: %d",
+			"Path: %s Type: %s Device: %s Used: %d Free: %d Total: %d\n",
 			path, info.Type, info.Device, info.Used, info.Free, info.Total,
+		)
+	}
+}
+
+func Example_getIOStats() {
+	ioStats, err := GetIOStats()
+
+	if err != nil {
+		return
+	}
+
+	// print info for each device
+	for device, info := range ioStats {
+		fmt.Printf("Device: %s", device)
+		fmt.Printf(
+			"  ReadComplete: %d ReadMerged: %d ReadSectors: %d ReadMs: %d\n",
+			info.ReadComplete, info.ReadMerged, info.ReadSectors, info.ReadMs,
+		)
+
+		fmt.Printf(
+			"  WriteComplete: %d WriteMerged: %d WriteSectors: %d WriteMs: %d\n",
+			info.WriteComplete, info.WriteMerged, info.WriteSectors, info.WriteMs,
+		)
+
+		fmt.Printf(
+			"  IOPending: %d IOMs: %d IOQueueMs: %d\n",
+			info.IOPending, info.IOMs, info.IOQueueMs,
 		)
 	}
 }
