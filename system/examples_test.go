@@ -9,6 +9,7 @@ package system
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -58,8 +59,22 @@ func Example_getIOStats() {
 		)
 
 		fmt.Printf(
-			"  IOPending: %d IOMs: %d IOQueueMs: %d\n",
+			"  IOPending: %d IOMs: %d IOQueueMs: %d\n\n",
 			info.IOPending, info.IOMs, info.IOQueueMs,
 		)
+	}
+}
+
+func Example_getIOUtil() {
+	// get 5 sec IO utilization
+	ioUtil, err := GetIOUtil(5 * time.Second)
+
+	if err != nil {
+		return
+	}
+
+	// print utilization for each device
+	for device, utilization := range ioUtil {
+		fmt.Printf("Device: %s Utilization: %g\n", device, utilization)
 	}
 }
