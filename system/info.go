@@ -22,7 +22,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _Hz = 100.0
+const _HZ = 100.0
 
 const (
 	_PROC_UPTIME    = "/proc/uptime"
@@ -401,15 +401,16 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 	return result, nil
 }
 
-// GetNetworkSpeed return input/output speed in bytes per second
-func GetNetworkSpeed() (uint64, uint64, error) {
+// GetNetworkSpeed return network input/output speed in bytes per second for
+// all network interfaces
+func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	intInfo1, err := GetInterfacesInfo()
 
 	if err != nil {
 		return 0, 0, err
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(duration)
 
 	intInfo2, err := GetInterfacesInfo()
 
@@ -424,11 +425,13 @@ func GetNetworkSpeed() (uint64, uint64, error) {
 		return 0, 0, nil
 	}
 
-	return rb2 - rb1, tb2 - tb1, nil
+	durationSec := uint64(duration / time.Second)
+
+	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec, nil
 }
 
-// GetIOUtil return IO utilization
-func GetIOUtil() (map[string]float64, error) {
+// GetIOUtil return slice (device -> utilization) with IO utilization
+func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	result := make(map[string]float64)
 
 	fsInfoPrev, err := GetFSInfo()
@@ -437,13 +440,13 @@ func GetIOUtil() (map[string]float64, error) {
 		return result, err
 	}
 
-	userPrev, systemPrev, _, idlePrev, waitPrev, _, count, err := getCPUStats()
+	userPrev, systemPrev, _, idlePrev, waitPrev, _, cpuCount, err := getCPUStats()
 
 	if err != nil {
 		return result, err
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(duration)
 
 	fsInfoCur, err := GetFSInfo()
 
@@ -457,7 +460,10 @@ func GetIOUtil() (map[string]float64, error) {
 		return result, err
 	}
 
-	deltams := 1000.0 * (float64(userCur+systemCur+idleCur+waitCur) - float64(userPrev+systemPrev+idlePrev+waitPrev)) / float64(count) / _Hz
+	curCPUUsage := float64(userCur + systemCur + idleCur + waitCur)
+	prevCPUUsage := float64(userPrev + systemPrev + idlePrev + waitPrev)
+
+	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(cpuCount) / _HZ
 
 	for n, f := range fsInfoPrev {
 		if fsInfoPrev[n].IOStats != nil && fsInfoCur[n].IOStats != nil {
@@ -554,6 +560,7 @@ func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {
 	return received, transmitted
 }
 
+// getCPUStats return user, system, nice, idle, wait, total, cpu count
 func getCPUStats() (uint64, uint64, uint64, uint64, uint64, uint64, int, error) {
 	content, err := readFileContent(_PROC_CPUINFO)
 
@@ -565,11 +572,11 @@ func getCPUStats() (uint64, uint64, uint64, uint64, uint64, uint64, int, error) 
 		return 0, 0, 0, 0, 0, 0, 0, err
 	}
 
-	var count int
+	var cpuCount int
 
 	for _, line := range content {
 		if line != "" && line[0:3] == "cpu" && line[0:4] != "cpu " {
-			count++
+			cpuCount++
 		}
 	}
 
@@ -589,5 +596,5 @@ func getCPUStats() (uint64, uint64, uint64, uint64, uint64, uint64, int, error) 
 
 	total = user + system + nice + idle + wait + irq + srq + steal
 
-	return user, system, nice, idle, wait, total, count, nil
+	return user, system, nice, idle, wait, total, cpuCount, nil
 }
