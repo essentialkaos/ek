@@ -68,9 +68,9 @@ func ExamplePrintf() {
 	)
 
 	if isUserOnline {
-		Printf("User {c}%s{!} is {g}online{!}\n")
+		Printf("User {c}%s{!} is {g}online{!}\n", user)
 	} else {
-		Printf("User {c}%s{!} is {r}offline{!}\n")
+		Printf("User {c}%s{!} is {r}offline{!}\n", user)
 	}
 }
 
