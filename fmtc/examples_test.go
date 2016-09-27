@@ -14,7 +14,9 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExamplePrintln() {
+
 	// print colored text
+	// {!} is tag for style reset
 	Println("{d}black{!}")
 	Println("{r}red{!}")
 	Println("{y}yellow{!}")
@@ -59,6 +61,10 @@ func ExamplePrintln() {
 	Println("{M}magenta{!}")
 	Println("{G}green{!}")
 	Println("{S}light grey{!}")
+
+	// many tags at once
+	// underline, cyan text with red background
+	Println("{cR_}text{!}")
 }
 
 func ExamplePrintf() {
