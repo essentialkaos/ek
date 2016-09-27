@@ -20,9 +20,19 @@ func ExampleExec() {
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 	}
+}
 
-	// execute command over sudo
-	err = SudoExec("/bin/echo", "abc", "123")
+func ExampleSudoExec() {
+	err := SudoExec("/bin/echo", "abc", "123")
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
+}
+
+func RunAsUser() {
+	// run echo as user some user and redirect ouput to /var/log/output.log
+	err := RunAsUser("someuser", "/var/log/output.log", "/bin/echo", "abc", "123")
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
