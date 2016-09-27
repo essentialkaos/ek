@@ -180,3 +180,25 @@ func Example_who() {
 		)
 	}
 }
+
+func Example_currentUser() {
+	user, err := CurrentUser()
+
+	if err != nil {
+		return
+	}
+
+	// print info about current user
+	fmt.Printf("UID: %d\n", user.UID)
+	fmt.Printf("GID: %d\n", user.GID)
+	fmt.Printf("Name: %s\n", user.Name)
+	fmt.Printf("Groups: %v\n", user.GroupList())
+	fmt.Printf("Comment: %s\n", user.Comment)
+	fmt.Printf("Shell: %s\n", userShell)
+	fmt.Printf("HomeDir: %s\n", user.HomeDir)
+	fmt.Printf("RealUID: %d\n", user.RealUID)
+	fmt.Printf("RealGID: %d\n", user.RealGID)
+	fmt.Printf("RealName: %s\n", user.RealName)
+	fmt.Printf("IsRoot: %t\n", user.IsRoot())
+	fmt.Printf("IsSudo: %t\n", user.IsSudo())
+}
