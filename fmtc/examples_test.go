@@ -77,3 +77,10 @@ func ExampleClean() {
 
 	// Output: Text
 }
+
+func ExampleT_printf() {
+	t := T{}
+
+	t.Printf("This is temporary text")
+	t.Printf("This message replace previous message")
+}

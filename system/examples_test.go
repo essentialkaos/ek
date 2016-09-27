@@ -211,7 +211,7 @@ func ExampleCurrentUser() {
 	fmt.Printf("Name: %s\n", user.Name)
 	fmt.Printf("Groups: %v\n", user.GroupList())
 	fmt.Printf("Comment: %s\n", user.Comment)
-	fmt.Printf("Shell: %s\n", userShell)
+	fmt.Printf("Shell: %s\n", user.Shell)
 	fmt.Printf("HomeDir: %s\n", user.HomeDir)
 	fmt.Printf("RealUID: %d\n", user.RealUID)
 	fmt.Printf("RealGID: %d\n", user.RealGID)
