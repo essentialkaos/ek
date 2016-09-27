@@ -61,6 +61,19 @@ func ExamplePrintln() {
 	Println("{S}light grey{!}")
 }
 
+func ExamplePrintf() {
+	var (
+		user         = "Bob"
+		isUserOnline = true
+	)
+
+	if isUserOnline {
+		Printf("User {c}%s{!} is {g}online{!}\n")
+	} else {
+		Printf("User {c}%s{!} is {r}offline{!}\n")
+	}
+}
+
 func ExampleBell() {
 	// terminal bell
 	Bell()
