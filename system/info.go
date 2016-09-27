@@ -115,7 +115,7 @@ type InterfaceInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUptime return uptime in seconds from 1/1/1970
+// GetUptime return system uptime in seconds
 func GetUptime() (uint64, error) {
 	content, err := readFileContent(_PROC_UPTIME)
 
