@@ -56,9 +56,9 @@ testWithCover() {
       continue
     fi
 
-    # fsutil currently is hard to test
+    # fsutil and system packages currently is hard to implement unit testing
     # we test this package by hands
-    if [[ "$pkg" == "fsutil" ]] ; then
+    if [[ "$pkg" == "fsutil" || "$pkg" == "system" ]] ; then
       go test $dir/$pkg
 
       if [[ $? -ne 0 ]] ; then
