@@ -112,8 +112,8 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Query is a map[string]string used for query
-type Query map[string]string
+// Query is a map[string]interface{} used for query
+type Query map[string]interface{}
 
 // Headers is a map[string]string used for headers
 type Headers map[string]string
@@ -181,7 +181,13 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	if r.Query != nil && len(r.Query) != 0 {
-		r.URL += "?" + encodeQuery(r.Query)
+		query, err := encodeQuery(r.Query)
+
+		if err != nil {
+			return nil, err
+		}
+
+		r.URL += "?" + query
 	}
 
 	bodyReader, err := getBodyReader(r.Body)
@@ -356,17 +362,49 @@ func getBodyReader(body interface{}) (io.Reader, error) {
 	}
 }
 
-func encodeQuery(query map[string]string) string {
+func encodeQuery(query Query) (string, error) {
 	var result string
 
 	for k, v := range query {
-		switch v {
-		case "":
+		switch v.(type) {
+		case string:
+			if v == "" {
+				result += k + "&"
+			} else {
+				result += k + "=" + url.QueryEscape(v.(string)) + "&"
+			}
+		case nil:
 			result += k + "&"
+		case bool:
+			result += k + "=" + fmt.Sprintf("%t", v.(bool)) + "&"
+		case int:
+			result += k + "=" + fmt.Sprintf("%d", v.(int)) + "&"
+		case int8:
+			result += k + "=" + fmt.Sprintf("%d", v.(int8)) + "&"
+		case int16:
+			result += k + "=" + fmt.Sprintf("%d", v.(int16)) + "&"
+		case int32:
+			result += k + "=" + fmt.Sprintf("%d", v.(int32)) + "&"
+		case int64:
+			result += k + "=" + fmt.Sprintf("%d", v.(int64)) + "&"
+		case uint:
+			result += k + "=" + fmt.Sprintf("%d", v.(uint)) + "&"
+		case uint8:
+			result += k + "=" + fmt.Sprintf("%d", v.(uint8)) + "&"
+		case uint16:
+			result += k + "=" + fmt.Sprintf("%d", v.(uint16)) + "&"
+		case uint32:
+			result += k + "=" + fmt.Sprintf("%d", v.(uint32)) + "&"
+		case uint64:
+			result += k + "=" + fmt.Sprintf("%d", v.(uint64)) + "&"
+		case float32:
+			result += k + "=" + fmt.Sprintf("%g", v.(float32)) + "&"
+		case float64:
+			result += k + "=" + fmt.Sprintf("%g", v.(float64)) + "&"
 		default:
-			result += k + "=" + url.QueryEscape(v) + "&"
+			return "", fmt.Errorf("Can't encode query - unsupported value type")
 		}
 	}
 
-	return result[:len(result)-1]
+	return result[:len(result)-1], nil
 }
