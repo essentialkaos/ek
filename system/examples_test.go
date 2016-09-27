@@ -30,7 +30,7 @@ func ExampleSudoExec() {
 	}
 }
 
-func RunAsUser() {
+func ExampleRunAsUser() {
 	// run echo as user some user and redirect ouput to /var/log/output.log
 	err := RunAsUser("someuser", "/var/log/output.log", "/bin/echo", "abc", "123")
 
