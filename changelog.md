@@ -1,9 +1,17 @@
 ## Changelog
 
-#### 3.6.0
+#### 4.0.0
 
-* `[terminal]` Minor fixes in windows stubs
+* `[req]` Added different types support for `Query`
 * `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
+* `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
+* `[system]` More logical `RunAsUser` arguments naming
+* `[terminal]` Minor fixes in windows stubs
+* `[system]` Added usage examples
+* `[fmtc]` Added usage examples
+* `[req]` Added usage examples
+
+---
 
 #### v3.5.1
 
