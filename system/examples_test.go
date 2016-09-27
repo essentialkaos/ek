@@ -14,15 +14,22 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_exec() {
+func ExampleExec() {
 	err := Exec("/bin/echo", "abc", "123")
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
+
+	// execute command over sudo
+	err = SudoExec("/bin/echo", "abc", "123")
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 	}
 }
 
-func Example_getFSInfo() {
+func ExampleGetFSInfo() {
 	fsInfo, err := GetFSInfo()
 
 	if err != nil {
@@ -38,7 +45,7 @@ func Example_getFSInfo() {
 	}
 }
 
-func Example_getIOStats() {
+func ExampleGetIOStats() {
 	ioStats, err := GetIOStats()
 
 	if err != nil {
@@ -65,7 +72,7 @@ func Example_getIOStats() {
 	}
 }
 
-func Example_getIOUtil() {
+func ExampleGetIOUtil() {
 	// get 5 sec IO utilization
 	ioUtil, err := GetIOUtil(5 * time.Second)
 
@@ -79,7 +86,7 @@ func Example_getIOUtil() {
 	}
 }
 
-func Example_getNetworkSpeed() {
+func ExampleGetNetworkSpeed() {
 	input, output, err := GetNetworkSpeed(5 * time.Second)
 
 	if err != nil {
@@ -90,7 +97,7 @@ func Example_getNetworkSpeed() {
 	fmt.Printf("Input: %f kb/s\n Output: %f kb/s\n", input/1024, output/1024)
 }
 
-func Example_getUptime() {
+func ExampleGetUptime() {
 	uptime, err := GetUptime()
 
 	if err != nil {
@@ -101,7 +108,7 @@ func Example_getUptime() {
 	fmt.Printf("Uptime: %f seconds\n", uptime)
 }
 
-func Example_getLA() {
+func ExampleGetLA() {
 	la, err := GetLA()
 
 	if err != nil {
@@ -112,7 +119,7 @@ func Example_getLA() {
 	fmt.Printf("Min1: %g Min5: %g Min15: %g\n", la.Min1, la.Min5, la.Min15)
 }
 
-func Example_getMemInfo() {
+func ExampleGetMemInfo() {
 	memInfo, err := GetMemInfo()
 
 	if err != nil {
@@ -135,7 +142,7 @@ func Example_getMemInfo() {
 	fmt.Printf("Slab: %f\n", memInfo.Slab)
 }
 
-func Example_getCPUInfo() {
+func ExampleGetCPUInfo() {
 	cpuInfo, err := GetCPUInfo()
 
 	if err != nil {
@@ -151,7 +158,7 @@ func Example_getCPUInfo() {
 	fmt.Printf("CPU Count: %f\n", cpuInfo.Count)
 }
 
-func Example_getSystemInfo() {
+func ExampleGetSystemInfo() {
 	sysInfo, err := GetSystemInfo()
 
 	if err != nil {
@@ -165,7 +172,7 @@ func Example_getSystemInfo() {
 	fmt.Printf("Arch: %s\n", sysInfo.Arch)
 }
 
-func Example_who() {
+func ExampleWho() {
 	sessions, err := Who()
 
 	if err != nil {
@@ -181,7 +188,7 @@ func Example_who() {
 	}
 }
 
-func Example_currentUser() {
+func ExampleCurrentUser() {
 	user, err := CurrentUser()
 
 	if err != nil {
