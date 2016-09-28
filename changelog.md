@@ -1,6 +1,6 @@
 ## Changelog
 
-#### 4.0.0
+#### v4.0.0
 
 * `[req]` Added different types support for `Query`
 * `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
