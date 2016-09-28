@@ -7,7 +7,7 @@ package usage
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleAbout_render() {
+func ExampleAboutRender() {
 	&About{
 		App:     "MySupperApp",
 		Desc:    "My super golang utility",
@@ -20,7 +20,7 @@ func ExampleAbout_render() {
 	}.Render()
 }
 
-func ExampleInfo_render() {
+func ExampleInfoRender() {
 	info := NewInfo("myapp", "file...")
 
 	info.AddSpoiler("This is my supadupa utility")
