@@ -3,7 +3,7 @@
 ########################################################################################
 
 # Current major version
-VERSION="3"
+VERSION="4"
 
 # Pkg.re package path
 PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"

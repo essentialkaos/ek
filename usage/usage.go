@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v3/fmtc"
+	"pkg.re/essentialkaos/ek.v4/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
