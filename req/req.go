@@ -170,7 +170,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Do execute request
+// Do send request and process response
 func (r Request) Do() (*Response, error) {
 	if r.URL == "" {
 		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
@@ -248,37 +248,37 @@ func (r Request) Do() (*Response, error) {
 	return result, nil
 }
 
-// Get execute as GET request
+// Get send GET request and process response
 func (r Request) Get() (*Response, error) {
 	r.Method = GET
 	return r.Do()
 }
 
-// Post execute as POST request
+// Post send POST request and process response
 func (r Request) Post() (*Response, error) {
 	r.Method = POST
 	return r.Do()
 }
 
-// Put execute as PUT request
+// Put send PUT request and process response
 func (r Request) Put() (*Response, error) {
 	r.Method = PUT
 	return r.Do()
 }
 
-// Head execute as HEAD request
+// Head send HEAD request and process response
 func (r Request) Head() (*Response, error) {
 	r.Method = HEAD
 	return r.Do()
 }
 
-// Patch execute as PATCH request
+// Patch send PATCH request and process response
 func (r Request) Patch() (*Response, error) {
 	r.Method = PATCH
 	return r.Do()
 }
 
-// Delete execute as DELETE request
+// Delete send DELETE request and process response
 func (r Request) Delete() (*Response, error) {
 	r.Method = DELETE
 	return r.Do()
