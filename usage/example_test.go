@@ -8,7 +8,7 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleAbout_Render() {
-	&About{
+	about := About{
 		App:     "MySupperApp",
 		Desc:    "My super golang utility",
 		Version: "1.0.1",
@@ -17,7 +17,9 @@ func ExampleAbout_Render() {
 		Year:    2009, // Year when company was founded
 		License: "MIT",
 		Owner:   "John Dow <john@domain.com>",
-	}.Render()
+	}
+
+	about.Render()
 }
 
 func ExampleInfo_Render() {
