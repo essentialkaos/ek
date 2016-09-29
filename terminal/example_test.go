@@ -40,7 +40,7 @@ func ExampleReadPassword() {
 func ExampleReadAnswer() {
 
 	// is user doesn't enter any value, we use default value (Y in this case)
-	ok, err := ReadUI("Remove this file?", "Y")
+	ok, err := ReadAnswer("Remove this file?", "Y")
 
 	if !ok || err != nil {
 		return
