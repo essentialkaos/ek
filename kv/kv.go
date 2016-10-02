@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type kvSlice []*KV
+type kvSlice []KV
 
 // KV is key-value struct
 type KV struct {
@@ -30,24 +30,24 @@ func (s kvSlice) Less(i, j int) bool { return s[i].Key < s[j].Key }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Sort sorts slice with kv structs
-func Sort(slice []*KV) {
+// Sort sorts slice with kv structs by key
+func Sort(slice []KV) {
 	sort.Sort(kvSlice(slice))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // String return value as string
-func (k *KV) String() string {
+func (k KV) String() string {
 	return k.Value.(string)
 }
 
 // Int return value as int
-func (k *KV) Int() int {
+func (k KV) Int() int {
 	return k.Value.(int)
 }
 
 // Float return value as float64
-func (k *KV) Float() float64 {
+func (k KV) Float() float64 {
 	return k.Value.(float64)
 }

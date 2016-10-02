@@ -4,10 +4,12 @@
 
 * `[req]` Added different types support for `Query`
 * `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
+* `[kv]` Using values instead pointers
 * `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
 * `[system]` More logical `RunAsUser` arguments naming
 * `[terminal]` Minor fixes in windows stubs
 * `[fmtc]` Added usage examples
+* `[kv]` Added usage examples
 * `[netutil]` Added usage examples
 * `[req]` Added usage examples
 * `[strutil]` Added usage examples
