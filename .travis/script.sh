@@ -63,7 +63,9 @@ testWithCover() {
     fi
 
     for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
-      skip_cover=true
+      if [[ "$pkg" == "$excl_pkg" ]] ; then
+        skip_cover=true
+      fi
     done
 
     if [[ $skip_cover ]] ; then
@@ -92,9 +94,9 @@ testWithCover() {
     exit 1
   fi
 
-  wc -l coverage.txt
-
-  $HOME/gopath/bin/goveralls -coverprofile=coverage.txt -service=travis-ci
+  if [[ -f coverage.txt ]] ; then
+    $HOME/gopath/bin/goveralls -coverprofile=coverage.txt -service=travis-ci
+  fi
 
   exit 0
 }
