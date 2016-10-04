@@ -9,6 +9,7 @@ package version
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -31,9 +32,9 @@ var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parse parse version string and return version struct
-func Parse(v string) *Version {
+func Parse(v string) (*Version, error) {
 	if v == "" {
-		return &Version{}
+		return nil, errors.New("Version can't be empty")
 	}
 
 	result := &Version{raw: v}
@@ -42,7 +43,7 @@ func Parse(v string) *Version {
 		bs := strings.Split(v, "+")
 
 		if bs[1] == "" {
-			v = bs[0]
+			return nil, errors.New("Build number is empty")
 		} else {
 			v = bs[0]
 			result.build = bs[1]
@@ -53,7 +54,7 @@ func Parse(v string) *Version {
 		ps := strings.Split(v, "-")
 
 		if ps[1] == "" {
-			v = ps[0]
+			return nil, errors.New("Prerelease number is empty")
 		} else {
 			v = ps[0]
 			result.preRelease = ps[1]
@@ -64,13 +65,13 @@ func Parse(v string) *Version {
 		iv, err := strconv.Atoi(version)
 
 		if err != nil {
-			break
+			return nil, err
 		}
 
 		result.versionSlice = append(result.versionSlice, iv)
 	}
 
-	return result
+	return result, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -222,15 +223,6 @@ func (v *Version) Contains(version *Version) bool {
 	}
 
 	return false
-}
-
-// Valid return true if version struct is valid
-func (v *Version) Valid() bool {
-	if v == nil {
-		return false
-	}
-
-	return len(v.versionSlice) != 0
 }
 
 // String return version as string

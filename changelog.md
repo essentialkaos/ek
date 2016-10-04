@@ -8,6 +8,7 @@
 * `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
 * `[kv]` Using values instead pointers
 * `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
+* `[version]` Improved version parsing
 * `[system]` More logical `RunAsUser` arguments naming
 * `[terminal]` Minor fixes in windows stubs
 * `[netutil]` Added tests
@@ -23,6 +24,7 @@
 * `[timeutil]` Added usage examples
 * `[usage]` Added usage examples
 * `[uuid]` Added usage examples
+* `[version]` Added usage examples
 
 ---
 
