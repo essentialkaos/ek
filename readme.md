@@ -68,7 +68,7 @@ go get -u pkg.re/essentialkaos/ek.v4
 * [terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
 * [mdtoc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
 
-### Test & Coverage Status
+### Build Status
 
 | Branch | TravisCI |
 |--------|----------|
