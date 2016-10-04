@@ -27,9 +27,8 @@ env:
 before_install:
   - go get -v pkg.re/check.v1
   - go get -v pkg.re/essentialkaos/go-linenoise.v2
+  - go get -v github.com/mattn/goveralls
 
 script:
   - .travis/script.sh .
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)

@@ -76,7 +76,7 @@ testWithCover() {
       continue
     fi
 
-    go test -coverprofile=coverage.tmp -covermode=atomic $dir/$pkg
+    go test -covermode=count -coverprofile=coverage.tmp $dir/$pkg
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
@@ -91,6 +91,8 @@ testWithCover() {
   if [[ $has_errors ]] ; then
     exit 1
   fi
+
+  $HOME/gopath/bin/goveralls -coverprofile=coverage.txt -service=travis-ci
 
   exit 0
 }
