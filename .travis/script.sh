@@ -53,8 +53,6 @@ testWithCover() {
 
   local pkg has_errors excl_pkg skip_cover
 
-  rm -f coverage.tmp coverage.txt &> /dev/null
-
   for pkg in $(ls -1 $dir) ; do
     skip_cover=""
 
@@ -78,24 +76,15 @@ testWithCover() {
       continue
     fi
 
-    go test -covermode=count -coverprofile=coverage.tmp $dir/$pkg
+    go test -covermode=count $dir/$pkg
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
-    fi
-
-    if [[ -f coverage.tmp ]] ; then
-      cat coverage.tmp | egrep -v "(mode:|^$)" >> coverage.txt
-      rm -f coverage.tmp
     fi
   done
 
   if [[ $has_errors ]] ; then
     exit 1
-  fi
-
-  if [[ -f coverage.txt ]] ; then
-    $HOME/gopath/bin/goveralls -coverprofile=coverage.txt -service=travis-ci
   fi
 
   exit 0
