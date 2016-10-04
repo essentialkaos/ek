@@ -85,7 +85,7 @@ testWithCover() {
     fi
 
     if [[ -f coverage.tmp ]] ; then
-      cat coverage.tmp >> coverage.txt
+      cat coverage.tmp | egrep -v "(mode:|^$)" >> coverage.txt
       rm -f coverage.tmp
     fi
   done
