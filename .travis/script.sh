@@ -8,6 +8,9 @@ VERSION="4"
 # Pkg.re package path
 PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"
 
+# List of packages excluded from coverage export
+EXCLUDED_PACKAGES=("fsutil system terminal usage netutil")
+
 ########################################################################################
 
 # Main func
@@ -35,8 +38,9 @@ makeLink() {
   fi
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
-  
+
   echo "Created link $GOPATH/src/${PKGRE_PKG} -> $GOPATH/src/github.com/essentialkaos/ek"
+
   ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${PKGRE_PKG}
 }
 
@@ -47,18 +51,22 @@ makeLink() {
 testWithCover() {
   local dir="$1"
 
-  local pkg has_errors
+  local pkg has_errors excl_pkg skip_cover
 
   rm -f coverage.tmp coverage.txt &> /dev/null
 
   for pkg in $(ls -1 $dir) ; do
+    skip_cover=""
+
     if [[ ! -d $dir/$pkg ]] ; then
       continue
     fi
 
-    # fsutil and system packages currently is hard to implement unit testing
-    # we test this package by hands
-    if [[ "$pkg" == "fsutil" || "$pkg" == "system" ]] ; then
+    for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
+      skip_cover=true
+    done
+
+    if [[ $skip_cover ]] ; then
       go test $dir/$pkg
 
       if [[ $? -ne 0 ]] ; then
