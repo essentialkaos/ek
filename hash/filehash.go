@@ -1,4 +1,6 @@
-package crypto
+// Package hash contains different hash algorithms and utilities
+
+package hash
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //

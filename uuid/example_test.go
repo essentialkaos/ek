@@ -1,4 +1,4 @@
-package crypto
+package uuid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,20 +8,19 @@ package crypto
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/rand"
 	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GenUUID generate UUID (Universally Unique Identifier)
-func GenUUID() string {
-	uuid := make([]byte, 16)
+func ExampleGenUUID() {
+	fmt.Printf("UUID: %s\n", GenUUID())
+}
 
-	rand.Read(uuid)
+func ExampleGenUUID4() {
+	fmt.Printf("UUID v4: %s\n", GenUUID4())
+}
 
-	uuid[6] = (uuid[6] & 0x0f) | 0x40
-	uuid[8] = (uuid[8] & 0x3f) | 0x80
-
-	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:])
+func ExampleGenUUID5() {
+	fmt.Printf("UUID v5: %s\n", GenUUID5(NsURL, "http://www.domain.com"))
 }

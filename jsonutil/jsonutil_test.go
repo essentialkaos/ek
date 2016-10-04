@@ -13,7 +13,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v4/crypto"
+	"pkg.re/essentialkaos/ek.v4/hash"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,7 +57,7 @@ func (s *JSONSuite) TestDecoding(c *C) {
 	err := ioutil.WriteFile(jsonFile, []byte(_JSON_DATA), 0644)
 
 	c.Assert(err, IsNil)
-	c.Assert(crypto.FileHash(jsonFile), Equals,
+	c.Assert(hash.FileHash(jsonFile), Equals,
 		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
 
 	testStruct := &TestStruct{}
@@ -86,7 +86,7 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	err := EncodeToFile(jsonFile, testStruct)
 
 	c.Assert(err, IsNil)
-	c.Assert(crypto.FileHash(jsonFile), Equals,
+	c.Assert(hash.FileHash(jsonFile), Equals,
 		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
 
 	err = EncodeToFile("/test.json", testStruct)

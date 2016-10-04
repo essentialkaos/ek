@@ -1,4 +1,4 @@
-package crypto
+package passwd
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,7 +8,6 @@ package crypto
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -18,34 +17,15 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type CryptoSuite struct {
-	TmpDir string
-}
+type PasswdSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _ = Suite(&CryptoSuite{})
+var _ = Suite(&PasswdSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *CryptoSuite) SetUpSuite(c *C) {
-	s.TmpDir = c.MkDir()
-}
-
-func (s *CryptoSuite) TestJCHash(c *C) {
-	c.Assert(JCHash(1, 1), Equals, 0)
-	c.Assert(JCHash(36, 49), Equals, 8)
-	c.Assert(JCHash(0xDEAD10CC, 1), Equals, 0)
-	c.Assert(JCHash(0xDEAD10CC, 1000), Equals, 361)
-	c.Assert(JCHash(128, 1024), Equals, 267)
-}
-
-func (s *CryptoSuite) TestJCHashNegative(c *C) {
-	c.Assert(JCHash(0, -10), Equals, 0)
-	c.Assert(JCHash(0xDEAD10CC, -1000), Equals, 0)
-}
-
-func (s *CryptoSuite) TestStrengthCheck(c *C) {
+func (s *PasswdSuite) TestStrengthCheck(c *C) {
 	weakPass1 := "fgiaft"
 	weakPass2 := "FgA13"
 	mediumPass := "AcDr123"
@@ -59,7 +39,7 @@ func (s *CryptoSuite) TestStrengthCheck(c *C) {
 	c.Assert(GetPasswordStrength(""), Equals, STRENGTH_WEAK)
 }
 
-func (s *CryptoSuite) TestGenPassword(c *C) {
+func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GenPassword(0, STRENGTH_WEAK), Equals, "")
 	c.Assert(GenPassword(16, STRENGTH_WEAK), HasLen, 16)
 	c.Assert(GetPasswordStrength(GenPassword(16, STRENGTH_WEAK)), Equals, STRENGTH_WEAK)
@@ -68,7 +48,7 @@ func (s *CryptoSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(4, STRENGTH_STRONG)), Equals, STRENGTH_STRONG)
 }
 
-func (s *CryptoSuite) TestGenAuth(c *C) {
+func (s *PasswdSuite) TestGenAuth(c *C) {
 	ad1 := GenAuth(16, STRENGTH_WEAK)
 
 	c.Assert(ad1.Password, HasLen, 16)
@@ -77,7 +57,7 @@ func (s *CryptoSuite) TestGenAuth(c *C) {
 	c.Assert(GetPasswordStrength(ad1.Password), Equals, STRENGTH_WEAK)
 }
 
-func (s *CryptoSuite) TestGenHash(c *C) {
+func (s *PasswdSuite) TestGenHash(c *C) {
 	pass := "test1234test"
 	salt := "saLT"
 	hash := "070dd77d9bf913db7681b2271b2328154b53aeb4b70c3742880c08ed32188456"
@@ -88,16 +68,8 @@ func (s *CryptoSuite) TestGenHash(c *C) {
 	c.Assert(v, Equals, hash)
 }
 
-func (s *CryptoSuite) TestGenUUID(c *C) {
-	c.Assert(GenUUID(), HasLen, 36)
-}
-
-func (s *CryptoSuite) TestFileHash(c *C) {
-	tempFile := s.TmpDir + "/test.log"
-
-	err := ioutil.WriteFile(tempFile, []byte("ABCDEF12345\n\n"), 0644)
-
-	c.Assert(err, IsNil)
-	c.Assert(FileHash(tempFile), Equals, "2d7ec20906125cd23fee7b628b98463d554b1105b141b2d39a19bac5f3274dec")
-	c.Assert(FileHash(s.TmpDir+"/not-exist.log"), Equals, "")
+func (s *PasswdSuite) BenchmarkGenHash(c *C) {
+	for i := 0; i < c.N; i++ {
+		GenHash("TEST1234TEST", "12345678")
+	}
 }

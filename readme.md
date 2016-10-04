@@ -23,7 +23,6 @@ go get -u pkg.re/essentialkaos/ek.v4
 * [`arg`](https://godoc.org/pkg.re/essentialkaos/ek.v4/arg) - Package provides methods for working with command-line arguments
 * [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v4/color) - Package color provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v4/cron) - Package provides methods for working with cron expressions
-* [`crypto`](https://godoc.org/pkg.re/essentialkaos/ek.v4/crypto) - Package with utils for working with crypto data (passwords, uuids, file hashes)
 * [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v4/csv) - Package with simple (without any checks) csv parser compatible with default Go parser
 * [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v4/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
 * [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v4/env) - Package provides methods for working with environment variables
@@ -31,6 +30,7 @@ go get -u pkg.re/essentialkaos/ek.v4
 * [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v4/fmtc) - Package provides methods similar to fmt for colored output
 * [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/fmtutil) - Package provides methods for output formating
 * [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/fsutil) - Package provides methods for working with files on posix compatible systems (Linux / Mac OS X)
+* [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v4/hash) - Package hash contains different hash algorithms and utilities
 * [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/httputil) - Package provides methods for working with http request/responses
 * [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/jsonutil) - Package provides methods for working with json data
 * [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v4/knf) - Package provides methods for working with configs in KNF format
@@ -38,6 +38,7 @@ go get -u pkg.re/essentialkaos/ek.v4
 * [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v4/log) - Package with improved logger
 * [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/mathutil) - Package with math utils
 * [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/netutil) - Package with network utils
+* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v4/passwd) - Package passwd contains methods for working with passwords
 * [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v4/path) - Package for working with paths (fully compatible with base path package)
 * [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v4/pid) - Package for working with pid files
 * [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v4/pluralize) - Package pluralize provides methods for pluralization
@@ -48,12 +49,13 @@ go get -u pkg.re/essentialkaos/ek.v4
 * [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/sortutil) - Package with utils for sorting slices
 * [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v4/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
 * [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/strutil) - Package provides utils for working with strings
-* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v4/system) - Package provides methods for working with system data (metrics/users)
 * [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v4/system/process) - Package provides methods for getting information about active processes
+* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v4/system) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v4/terminal) - Package provides methods for working with user input
 * [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v4/timeutil) - Package with time utils
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v4/tmp) - Package provides methods for working with temporary data
 * [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v4/usage) - Package provides methods for rendering info for command-line tools
+* [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v4/uuid) - Package uuid contains methods for generating version 4 and 5 UUID's
 * [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v4/version) - Package provides methods for parsing semver version info
 
 ### Projects with EK

@@ -2,6 +2,8 @@
 
 #### v4.0.0
 
+* `[crypto]` Package divided into multiple packages (`hash`, `passwd`, `uuid`)
+* `[uuid]` Added UUID generation based on SHA-1 hash of namespace UUID and name (_version 5_)
 * `[req]` Added different types support for `Query`
 * `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
 * `[kv]` Using values instead pointers
@@ -9,14 +11,17 @@
 * `[system]` More logical `RunAsUser` arguments naming
 * `[terminal]` Minor fixes in windows stubs
 * `[fmtc]` Added usage examples
+* `[hash]` Added usage examples
 * `[kv]` Added usage examples
 * `[netutil]` Added usage examples
+* `[passwd]` Added usage examples
 * `[req]` Added usage examples
 * `[strutil]` Added usage examples
 * `[system]` Added usage examples
 * `[terminal]` Added usage examples
 * `[timeutil]` Added usage examples
 * `[usage]` Added usage examples
+* `[uuid]` Added usage examples
 
 ---
 
