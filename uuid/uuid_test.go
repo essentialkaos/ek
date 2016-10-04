@@ -25,6 +25,11 @@ var _ = Suite(&UUIDSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *UUIDSuite) TestGenUUID(c *C) {
+	c.Assert(GenUUID(), HasLen, 36)
+	c.Assert(GenUUID(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+}
+
 func (s *UUIDSuite) TestGenUUID4(c *C) {
 	c.Assert(GenUUID4(), HasLen, 36)
 	c.Assert(GenUUID4(), Not(Equals), "00000000-0000-0000-0000-000000000000")
