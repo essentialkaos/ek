@@ -92,6 +92,8 @@ testWithCover() {
     exit 1
   fi
 
+  wc -l coverage.txt
+
   $HOME/gopath/bin/goveralls -coverprofile=coverage.txt -service=travis-ci
 
   exit 0
