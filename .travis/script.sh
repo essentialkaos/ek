@@ -8,9 +8,6 @@ VERSION="4"
 # Pkg.re package path
 PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"
 
-# List of packages excluded from coverage export
-EXCLUDED_PACKAGES=("fsutil system terminal usage netutil")
-
 ########################################################################################
 
 # Main func
@@ -51,37 +48,17 @@ makeLink() {
 testWithCover() {
   local dir="$1"
 
-  local pkg has_errors excl_pkg skip_cover
+  local pkg has_errors
 
-  for pkg in $(ls -1 $dir) ; do
-    skip_cover=""
+  pushd $dir &> /dev/null
 
-    if [[ ! -d $dir/$pkg ]] ; then
-      continue
-    fi
-
-    for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
-      if [[ "$pkg" == "$excl_pkg" ]] ; then
-        skip_cover=true
-      fi
-    done
-
-    if [[ $skip_cover ]] ; then
-      go test $dir/$pkg
-
-      if [[ $? -ne 0 ]] ; then
-        has_errors=true
-      fi
-
-      continue
-    fi
-
-    go test -covermode=count $dir/$pkg
+    EK_TEST_PORT=8080 gocov test ./... | gocov report
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
     fi
-  done
+
+  popd &> /dev/null
 
   if [[ $has_errors ]] ; then
     exit 1
