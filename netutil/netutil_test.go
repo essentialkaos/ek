@@ -1,5 +1,3 @@
-// Package netutil with network utils
-
 package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,27 +9,25 @@ package netutil
 
 import (
 	"net"
+	"testing"
+
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP return current server IP
-func GetIP() string {
-	addrs, err := net.InterfaceAddrs()
+func Test(t *testing.T) { TestingT(t) }
 
-	if err != nil {
-		return ""
-	}
+type NetUtilSuite struct{}
 
-	for _, a := range addrs {
-		ipnet, ok := a.(*net.IPNet)
+// ////////////////////////////////////////////////////////////////////////////////// //
 
-		if ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
-			}
-		}
-	}
+var _ = Suite(&NetUtilSuite{})
 
-	return ""
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *NetUtilSuite) TestGetIP(c *C) {
+	ip := net.ParseIP(GetIP())
+
+	c.Assert(ip.IsGlobalUnicast(), Equals, true)
 }
