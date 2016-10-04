@@ -10,6 +10,7 @@
 * `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
 * `[system]` More logical `RunAsUser` arguments naming
 * `[terminal]` Minor fixes in windows stubs
+* `[netutil]` Added tests
 * `[fmtc]` Added usage examples
 * `[hash]` Added usage examples
 * `[kv]` Added usage examples
