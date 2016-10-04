@@ -13,8 +13,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"pkg.re/essentialkaos/ek.v4/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -587,7 +585,7 @@ func updateFloatArgument(name string, arg *V, value string) error {
 	var resultFloat float64
 
 	if arg.Min != arg.Max {
-		resultFloat = mathutil.BetweenF(floatValue, arg.Min, arg.Max)
+		resultFloat = betweenFloat(floatValue, arg.Min, arg.Max)
 	} else {
 		resultFloat = floatValue
 	}
@@ -612,7 +610,7 @@ func updateIntArgument(name string, arg *V, value string) error {
 	var resultInt int
 
 	if arg.Min != arg.Max {
-		resultInt = mathutil.Between(intValue, int(arg.Min), int(arg.Max))
+		resultInt = betweenInt(intValue, int(arg.Min), int(arg.Max))
 	} else {
 		resultInt = intValue
 	}
@@ -633,6 +631,28 @@ func appendError(errList []error, err error) []error {
 	}
 
 	return append(errList, err)
+}
+
+func betweenInt(val, min, max int) int {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
+}
+
+func betweenFloat(val, min, max float64) float64 {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
 }
 
 func (e ArgumentError) Error() string {

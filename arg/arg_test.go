@@ -109,6 +109,29 @@ func (s *ArgUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetB("b:bool"), Equals, true)
 }
 
+func (s *ArgUtilSuite) TestLimiters(c *C) {
+	argline := "--int1 1 --int2 5 --int3 10 --float1 1.0 --float2 5.0 --float3 10.0"
+
+	argsMap := Map{
+		"int1":   &V{Type: INT, Min: 3, Max: 7},
+		"int2":   &V{Type: INT, Min: 3, Max: 7},
+		"int3":   &V{Type: INT, Min: 3, Max: 7},
+		"float1": &V{Type: FLOAT, Min: 3.0, Max: 7.0},
+		"float2": &V{Type: FLOAT, Min: 3.0, Max: 7.0},
+		"float3": &V{Type: FLOAT, Min: 3.0, Max: 7.0},
+	}
+
+	args := NewArguments()
+	args.Parse(strings.Split(argline, " "), argsMap)
+
+	c.Assert(args.GetI("int1"), Equals, 3)
+	c.Assert(args.GetI("int2"), Equals, 5)
+	c.Assert(args.GetI("int3"), Equals, 7)
+	c.Assert(args.GetF("float1"), Equals, 3.0)
+	c.Assert(args.GetF("float2"), Equals, 5.0)
+	c.Assert(args.GetF("float3"), Equals, 7.0)
+}
+
 func (s *ArgUtilSuite) TestGetters(c *C) {
 	argline := "file.mp3 -s STRING --required TEST -i 320 -b -f 1.098765 -S2 100 -f1 5 -f2 1 -ms ABC --merg-string DEF -mi 6 --merg-int 6 -f3 12 -mf 10.1 -mf 10.1 -i1 5"
 
