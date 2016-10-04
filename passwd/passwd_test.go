@@ -46,6 +46,9 @@ func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(16, STRENGTH_MEDIUM)), Equals, STRENGTH_MEDIUM)
 	c.Assert(GetPasswordStrength(GenPassword(16, STRENGTH_STRONG)), Equals, STRENGTH_STRONG)
 	c.Assert(GetPasswordStrength(GenPassword(4, STRENGTH_STRONG)), Equals, STRENGTH_STRONG)
+
+	c.Assert(GetPasswordStrength(GenPassword(16, -100)), Equals, STRENGTH_WEAK)
+	c.Assert(GetPasswordStrength(GenPassword(4, 100)), Equals, STRENGTH_STRONG)
 }
 
 func (s *PasswdSuite) TestGenAuth(c *C) {
