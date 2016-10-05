@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_IsSafe() {
+func ExampleIsSafe() {
 	path1 := "/home/user/project"
 	path2 := "/usr/sbin/project"
 
@@ -25,7 +25,7 @@ func Example_IsSafe() {
 	// /usr/sbin/project is safe → false
 }
 
-func Example_IsDotfile() {
+func ExampleIsDotfile() {
 	file1 := "/home/user/project/file"
 	file2 := "/home/user/project/.file"
 

@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_Chain() {
+func ExampleChain() {
 	f1 := func() error { return nil }
 	f2 := func() error { return nil }
 	f3 := func() error { return fmt.Errorf("Error 3") }
