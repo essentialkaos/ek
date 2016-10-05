@@ -37,7 +37,7 @@ func Exec(command string, args ...string) error {
 }
 
 // RunAsUser run command as some user
-func RunAsUser(user, logFile string, args ...string) error {
+func RunAsUser(user, logFile string, command string, args ...string) error {
 	var log *os.File
 	var err error
 
@@ -51,7 +51,12 @@ func RunAsUser(user, logFile string, args ...string) error {
 
 	defer log.Close()
 
-	cmd := exec.Command("/sbin/runuser", "-s", "/bin/bash", user, "-c", strings.Join(args, " "))
+	cmd := exec.Command(
+		"/sbin/runuser",
+		"-s", "/bin/bash",
+		user, "-c",
+		command, strings.Join(args, " "),
+	)
 
 	if logFile != "" && log != nil {
 		cmd.Stderr = log

@@ -22,7 +22,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _Hz = 100.0
+const _HZ = 100.0
 
 const (
 	_PROC_UPTIME    = "/proc/uptime"
@@ -82,7 +82,7 @@ type FSInfo struct {
 	IOStats *IOStats `json:"iostats"` // IO statistics
 }
 
-// IOStats contains inforamtion about I/O
+// IOStats contains information about I/O
 type IOStats struct {
 	ReadComplete  uint64 `json:"read_complete"`  // Reads completed successfully
 	ReadMerged    uint64 `json:"read_merged"`    // Reads merged
@@ -115,7 +115,22 @@ type InterfaceInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUptime return uptime in seconds from 1/1/1970
+type basicCPUInfo struct {
+	User   uint64
+	Nice   uint64
+	System uint64
+	Idle   uint64
+	Wait   uint64
+	IRQ    uint64
+	SRQ    uint64
+	Steal  uint64
+	Total  uint64
+	Count  int
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetUptime return system uptime in seconds
 func GetUptime() (uint64, error) {
 	content, err := readFileContent(_PROC_UPTIME)
 
@@ -126,7 +141,7 @@ func GetUptime() (uint64, error) {
 	ca := strings.Split(content[0], " ")
 
 	if len(ca) != 2 {
-		return 0, errors.New("Can't parse file " + _PROC_UPTIME + ".")
+		return 0, errors.New("Can't parse file " + _PROC_UPTIME)
 	}
 
 	up, _ := strconv.ParseFloat(ca[0], 64)
@@ -140,13 +155,13 @@ func GetLA() (*LoadAvg, error) {
 	content, err := readFileContent(_PROC_LOADAVG)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	contentSlice := strings.Split(content[0], " ")
 
 	if len(contentSlice) != 5 {
-		return result, errors.New("Can't parse file " + _PROC_LOADAVG + ".")
+		return nil, errors.New("Can't parse file " + _PROC_LOADAVG)
 	}
 
 	procSlice := strings.Split(contentSlice[3], "/")
@@ -180,7 +195,7 @@ func GetMemInfo() (*MemInfo, error) {
 	content, err := readFileContent(_PROC_MEMINFO)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	for _, line := range content {
@@ -191,7 +206,7 @@ func GetMemInfo() (*MemInfo, error) {
 		lineSlice := strings.Split(line, ":")
 
 		if len(lineSlice) != 2 {
-			return result, errors.New("Can't parse file " + _PROC_MEMINFO + ".")
+			return nil, errors.New("Can't parse file " + _PROC_MEMINFO)
 		}
 
 		if props[lineSlice[0]] != true {
@@ -203,7 +218,7 @@ func GetMemInfo() (*MemInfo, error) {
 		uintValue, err := strconv.ParseUint(strValue, 10, 64)
 
 		if err != nil {
-			return result, err
+			return nil, err
 		}
 
 		switch lineSlice[0] {
@@ -241,22 +256,20 @@ func GetMemInfo() (*MemInfo, error) {
 
 // GetCPUInfo return info about CPU usage
 func GetCPUInfo() (*CPUInfo, error) {
-	result := &CPUInfo{}
-
-	user, system, nice, idle, wait, total, count, err := getCPUStats()
+	info, err := getCPUStats()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	result.System = (float64(system) / float64(total)) * 100
-	result.User = (float64(user) / float64(total)) * 100
-	result.Nice = (float64(nice) / float64(total)) * 100
-	result.Wait = (float64(wait) / float64(total)) * 100
-	result.Idle = (float64(idle) / float64(total)) * 100
-	result.Count = count
-
-	return result, nil
+	return &CPUInfo{
+		System: (float64(info.System) / float64(info.Total)) * 100,
+		User:   (float64(info.User) / float64(info.Total)) * 100,
+		Nice:   (float64(info.Nice) / float64(info.Total)) * 100,
+		Wait:   (float64(info.Wait) / float64(info.Total)) * 100,
+		Idle:   (float64(info.Idle) / float64(info.Total)) * 100,
+		Count:  info.Count,
+	}, nil
 }
 
 // GetFSInfo return info about mounted filesystems
@@ -266,13 +279,13 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	content, err := readFileContent(_MTAB_FILE)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	ios, err := GetIOStats()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	for _, line := range content {
@@ -283,7 +296,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 		values := strings.Split(line, " ")
 
 		if len(values) < 4 {
-			return result, errors.New("Can't parse file " + _MTAB_FILE)
+			return nil, errors.New("Can't parse file " + _MTAB_FILE)
 		}
 
 		path := values[1]
@@ -293,7 +306,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 		err = syscall.Statfs(path, stats)
 
 		if err != nil {
-			return result, err
+			return nil, err
 		}
 
 		fsDevice, err := filepath.EvalSymlinks(values[0])
@@ -315,14 +328,14 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	return result, nil
 }
 
-// GetIOStats return I/O stats
+// GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
 	result := make(map[string]*IOStats)
 
 	content, err := readFileContent(_PROC_DISCSTATS)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	for _, line := range content {
@@ -333,13 +346,15 @@ func GetIOStats() (map[string]*IOStats, error) {
 		values := cleanSlice(strings.Split(line, " "))
 
 		if len(values) != 14 {
-			return result, errors.New("Can't parse file " + _PROC_DISCSTATS)
+			return nil, errors.New("Can't parse file " + _PROC_DISCSTATS)
 		}
 
 		device := values[2]
 
-		if device[0:3] == "ram" || device[0:3] == "loo" {
-			continue
+		if len(device) > 3 {
+			if device[0:3] == "ram" || device[0:3] == "loo" {
+				continue
+			}
 		}
 
 		metrics := stringSliceToUintSlice(values[3:])
@@ -369,7 +384,7 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 	content, err := readFileContent(_PROC_NET)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	if len(content) <= 2 {
@@ -401,15 +416,16 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 	return result, nil
 }
 
-// GetNetworkSpeed return input/output speed in bytes per second
-func GetNetworkSpeed() (uint64, uint64, error) {
+// GetNetworkSpeed return network input/output speed in bytes per second for
+// all network interfaces
+func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	intInfo1, err := GetInterfacesInfo()
 
 	if err != nil {
 		return 0, 0, err
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(duration)
 
 	intInfo2, err := GetInterfacesInfo()
 
@@ -424,40 +440,45 @@ func GetNetworkSpeed() (uint64, uint64, error) {
 		return 0, 0, nil
 	}
 
-	return rb2 - rb1, tb2 - tb1, nil
+	durationSec := uint64(duration / time.Second)
+
+	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec, nil
 }
 
-// GetIOUtil return IO utilization
-func GetIOUtil() (map[string]float64, error) {
+// GetIOUtil return slice (device -> utilization) with IO utilization
+func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	result := make(map[string]float64)
 
 	fsInfoPrev, err := GetFSInfo()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	userPrev, systemPrev, _, idlePrev, waitPrev, _, count, err := getCPUStats()
+	prevCPUInfo, err := getCPUStats()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(duration)
 
 	fsInfoCur, err := GetFSInfo()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	userCur, systemCur, _, idleCur, waitCur, _, _, err := getCPUStats()
+	curCPUInfo, err := getCPUStats()
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
-	deltams := 1000.0 * (float64(userCur+systemCur+idleCur+waitCur) - float64(userPrev+systemPrev+idlePrev+waitPrev)) / float64(count) / _Hz
+	curCPUUsage := float64(curCPUInfo.User + curCPUInfo.System + curCPUInfo.Idle + curCPUInfo.Wait)
+	prevCPUUsage := float64(prevCPUInfo.User + prevCPUInfo.System + prevCPUInfo.Idle + prevCPUInfo.Wait)
+
+	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(curCPUInfo.Count) / _HZ
 
 	for n, f := range fsInfoPrev {
 		if fsInfoPrev[n].IOStats != nil && fsInfoCur[n].IOStats != nil {
@@ -483,13 +504,13 @@ func readFileContent(file string) ([]string, error) {
 	content, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	result = strings.Split(string(content), "\n")
 
 	if len(result) == 0 {
-		return result, errors.New("File " + file + " is empty")
+		return nil, errors.New("File " + file + " is empty")
 	}
 
 	return result, nil
@@ -554,40 +575,37 @@ func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {
 	return received, transmitted
 }
 
-func getCPUStats() (uint64, uint64, uint64, uint64, uint64, uint64, int, error) {
+// getCPUStats return basicCPUInfo
+func getCPUStats() (basicCPUInfo, error) {
 	content, err := readFileContent(_PROC_CPUINFO)
 
-	if err != nil {
-		return 0, 0, 0, 0, 0, 0, 0, errors.New("Can't parse file " + _PROC_CPUINFO + ".")
+	if err != nil || len(content) <= 1 {
+		return basicCPUInfo{}, errors.New("Can't parse file " + _PROC_CPUINFO)
 	}
 
-	if len(content) <= 1 {
-		return 0, 0, 0, 0, 0, 0, 0, err
-	}
-
-	var count int
+	result := basicCPUInfo{}
 
 	for _, line := range content {
-		if line != "" && line[0:3] == "cpu" && line[0:4] != "cpu " {
-			count++
+		if strings.HasPrefix(line, "cpu") {
+			result.Count++
 		}
 	}
+
+	result.Count--
 
 	cpu := strings.Replace(content[0], "cpu  ", "", -1)
 	cpua := strings.Split(cpu, " ")
 
-	var user, system, nice, idle, wait, irq, srq, steal, total uint64
+	result.User, _ = strconv.ParseUint(cpua[0], 10, 64)
+	result.Nice, _ = strconv.ParseUint(cpua[1], 10, 64)
+	result.System, _ = strconv.ParseUint(cpua[2], 10, 64)
+	result.Idle, _ = strconv.ParseUint(cpua[3], 10, 64)
+	result.Wait, _ = strconv.ParseUint(cpua[4], 10, 64)
+	result.IRQ, _ = strconv.ParseUint(cpua[5], 10, 64)
+	result.SRQ, _ = strconv.ParseUint(cpua[6], 10, 64)
+	result.Steal, _ = strconv.ParseUint(cpua[7], 10, 64)
 
-	user, _ = strconv.ParseUint(cpua[0], 10, 64)
-	nice, _ = strconv.ParseUint(cpua[1], 10, 64)
-	system, _ = strconv.ParseUint(cpua[2], 10, 64)
-	idle, _ = strconv.ParseUint(cpua[3], 10, 64)
-	wait, _ = strconv.ParseUint(cpua[4], 10, 64)
-	irq, _ = strconv.ParseUint(cpua[5], 10, 64)
-	srq, _ = strconv.ParseUint(cpua[6], 10, 64)
-	steal, _ = strconv.ParseUint(cpua[7], 10, 64)
+	result.Total = result.User + result.System + result.Nice + result.Idle + result.Wait + result.IRQ + result.SRQ + result.Steal
 
-	total = user + system + nice + idle + wait + irq + srq + steal
-
-	return user, system, nice, idle, wait, total, count, nil
+	return result, nil
 }

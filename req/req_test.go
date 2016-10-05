@@ -16,7 +16,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v3/env"
+	"pkg.re/essentialkaos/ek.v4/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -175,9 +175,24 @@ func (s *ReqSuite) TestQuery(c *C) {
 	resp, err := Request{
 		URL: s.url + _URL_QUERY,
 		Query: Query{
-			"user": "john",
-			"id":   "912",
-			"root": "",
+			"test01": "john",
+			"test02": 1398,
+			"test03": true,
+			"test04": false,
+			"test05": int(1),
+			"test06": int8(2),
+			"test07": int16(3),
+			"test08": int32(4),
+			"test09": int64(5),
+			"test10": uint(6),
+			"test11": uint8(7),
+			"test12": uint16(8),
+			"test13": uint32(9),
+			"test14": uint64(10),
+			"test15": float32(12.35),
+			"test16": float64(56.7895),
+			"test17": "",
+			"test18": nil,
 		},
 	}.Do()
 
@@ -371,6 +386,11 @@ func (s *ReqSuite) TestErrors(c *C) {
 	c.Assert(e1.Error(), Equals, "Can't encode request body (Test 1)")
 	c.Assert(e2.Error(), Equals, "Can't create request struct (Test 2)")
 	c.Assert(e3.Error(), Equals, "Can't send request (Test 3)")
+
+	resp, err = Request{URL: "http://127.0.0.1", Query: Query{"t": []string{}}}.Do()
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -477,20 +497,68 @@ func deleteRequestHandler(w http.ResponseWriter, r *http.Request) {
 func queryRequestHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
-	if query.Get("user") != "john" {
-		w.WriteHeader(900)
-		return
-	}
-
-	if query.Get("id") != "912" {
+	switch {
+	case query.Get("test01") != "john":
 		w.WriteHeader(901)
 		return
+	case query.Get("test02") != "1398":
+		w.WriteHeader(902)
+		return
+	case query.Get("test03") != "true":
+		w.WriteHeader(903)
+		return
+	case query.Get("test04") != "false":
+		w.WriteHeader(904)
+		return
+	case query.Get("test05") != "1":
+		w.WriteHeader(905)
+		return
+	case query.Get("test06") != "2":
+		w.WriteHeader(906)
+		return
+	case query.Get("test07") != "3":
+		w.WriteHeader(907)
+		return
+	case query.Get("test08") != "4":
+		w.WriteHeader(908)
+		return
+	case query.Get("test09") != "5":
+		w.WriteHeader(909)
+		return
+	case query.Get("test10") != "6":
+		w.WriteHeader(910)
+		return
+	case query.Get("test11") != "7":
+		w.WriteHeader(911)
+		return
+	case query.Get("test12") != "8":
+		w.WriteHeader(912)
+		return
+	case query.Get("test13") != "9":
+		w.WriteHeader(913)
+		return
+	case query.Get("test14") != "10":
+		w.WriteHeader(914)
+		return
+	case query.Get("test15") != "12.35":
+		w.WriteHeader(915)
+		return
+	case query.Get("test16") != "56.7895":
+		w.WriteHeader(916)
+		return
 	}
 
-	_, root := query["root"]
+	_, test17 := query["test17"]
 
-	if !root {
-		w.WriteHeader(902)
+	if !test17 {
+		w.WriteHeader(917)
+		return
+	}
+
+	_, test18 := query["test18"]
+
+	if !test18 {
+		w.WriteHeader(918)
 		return
 	}
 

@@ -1,5 +1,22 @@
 ## Changelog
 
+#### v4.0.0
+
+* `[crypto]` Package divided into multiple packages (`hash`, `passwd`, `uuid`)
+* `[uuid]` Added UUID generation based on SHA-1 hash of namespace UUID and name (_version 5_)
+* `[req]` Added different types support for `Query`
+* `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
+* `[kv]` Using values instead pointers
+* `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
+* `[version]` Improved version parsing
+* `[system]` More logical `RunAsUser` arguments naming
+* `[terminal]` Minor fixes in windows stubs
+* `[netutil]` Added tests
+* `[system]` Code refactoring
+* Added usage examples
+
+---
+
 #### v3.5.1
 
 * `[usage]` Using dark grey color for license and copyright

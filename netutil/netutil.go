@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP return current machine IP
+// GetIP return current server IP
 func GetIP() string {
 	addrs, err := net.InterfaceAddrs()
 

@@ -27,7 +27,25 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Less check if given config property is less then defined value or not
+// NotContains check if given config property contains any value from given slice
+var NotContains = func(config *Config, prop string, value interface{}) error {
+	switch value.(type) {
+	case []string:
+		currentValue := config.GetS(prop)
+
+		for _, v := range value.([]string) {
+			if v == currentValue {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+	}
+
+	return getWrongValidatorError(prop)
+}
+
+// Less check if given config property is less than defined value or not
 var Less = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -45,7 +63,7 @@ var Less = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Greater check if given config property is greater then defined value or not
+// Greater check if given config property is greater than defined value or not
 var Greater = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:

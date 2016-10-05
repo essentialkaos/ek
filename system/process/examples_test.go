@@ -1,3 +1,5 @@
+// +build linux
+
 package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -5,6 +7,12 @@ package process
 //                     Copyright (c) 2009-2016 Essential Kaos                         //
 //      Essential Kaos Open Source License <http://essentialkaos.com/ekol?en>         //
 //                                                                                    //
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+import (
+	"fmt"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Example_getTree() {
@@ -15,6 +23,7 @@ func Example_getTree() {
 	}
 
 	// process is top process in tree
+	fmt.Println(process.PID)
 }
 
 func Example_getList() {
@@ -25,4 +34,5 @@ func Example_getList() {
 	}
 
 	// processes is slice with info about all active processes
+	fmt.Println(processes)
 }

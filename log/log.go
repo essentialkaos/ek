@@ -167,7 +167,7 @@ func Crit(f string, a ...interface{}) (int, error) {
 	return Global.Crit(f, a...)
 }
 
-// Aux write unskipable message (for separators/headers)
+// Aux write unskippable message (for separators/headers)
 func Aux(f string, a ...interface{}) (int, error) {
 	return Global.Aux(f, a...)
 }
@@ -237,7 +237,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 		return err
 	}
 
-	// Flush data if writter exist
+	// Flush data if writer exist
 	if l.w != nil {
 		l.w.Flush()
 		l.w = nil

@@ -13,6 +13,14 @@ import (
 	"errors"
 )
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Prompt is prompt string
+var Prompt = "> "
+
+// MaskSymbol is symbol used for masking passwords
+var MaskSymbol = "*"
+
 // KillSignalError is error type when user cancel input
 var KillSignalError = errors.New("")
 

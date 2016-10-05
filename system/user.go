@@ -20,7 +20,7 @@ import (
 	"syscall"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v3/env"
+	"pkg.re/essentialkaos/ek.v4/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

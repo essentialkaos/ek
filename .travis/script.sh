@@ -3,7 +3,7 @@
 ########################################################################################
 
 # Current major version
-VERSION="3"
+VERSION="4"
 
 # Pkg.re package path
 PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"
@@ -35,8 +35,9 @@ makeLink() {
   fi
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
-  
+
   echo "Created link $GOPATH/src/${PKGRE_PKG} -> $GOPATH/src/github.com/essentialkaos/ek"
+
   ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${PKGRE_PKG}
 }
 
@@ -49,36 +50,15 @@ testWithCover() {
 
   local pkg has_errors
 
-  rm -f coverage.tmp coverage.txt &> /dev/null
+  pushd $dir &> /dev/null
 
-  for pkg in $(ls -1 $dir) ; do
-    if [[ ! -d $dir/$pkg ]] ; then
-      continue
-    fi
-
-    # fsutil currently is hard to test
-    # we test this package by hands
-    if [[ "$pkg" == "fsutil" ]] ; then
-      go test $dir/$pkg
-
-      if [[ $? -ne 0 ]] ; then
-        has_errors=true
-      fi
-
-      continue
-    fi
-
-    go test -coverprofile=coverage.tmp -covermode=atomic $dir/$pkg
+    EK_TEST_PORT=8080 gocov test ./... | gocov report
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
     fi
 
-    if [[ -f coverage.tmp ]] ; then
-      cat coverage.tmp >> coverage.txt
-      rm -f coverage.tmp
-    fi
-  done
+  popd &> /dev/null
 
   if [[ $has_errors ]] ; then
     exit 1

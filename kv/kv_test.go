@@ -29,9 +29,9 @@ var _ = Suite(&KVSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *KVSuite) TestTypeConversion(c *C) {
-	kv1 := &KV{"test1", "TEST1234ABCD"}
-	kv2 := &KV{"test2", 1234}
-	kv3 := &KV{"test3", 1234.12}
+	kv1 := KV{"test1", "TEST1234ABCD"}
+	kv2 := KV{"test2", 1234}
+	kv3 := KV{"test3", 1234.12}
 
 	c.Assert(kv1.Value.(string), Equals, "TEST1234ABCD")
 	c.Assert(kv1.String(), Equals, "TEST1234ABCD")
@@ -44,7 +44,7 @@ func (s *KVSuite) TestTypeConversion(c *C) {
 }
 
 func (s *KVSuite) TestSorting(c *C) {
-	kvs := []*KV{
+	kvs := []KV{
 		{"test1", "1"},
 		{"test5", "2"},
 		{"test3", "3"},

@@ -1,4 +1,4 @@
-package crypto
+package kv
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,20 +8,28 @@ package crypto
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/rand"
 	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GenUUID generate UUID (Universally Unique Identifier)
-func GenUUID() string {
-	uuid := make([]byte, 16)
+func ExampleSort() {
+	data := []KV{
+		{"test1", "1"},
+		{"test5", "2"},
+		{"test3", "3"},
+		{"test2", "4"},
+	}
 
-	rand.Read(uuid)
+	Sort(data)
 
-	uuid[6] = (uuid[6] & 0x0f) | 0x40
-	uuid[8] = (uuid[8] & 0x3f) | 0x80
+	for _, kv := range data {
+		fmt.Println(kv.Key, kv.Value)
+	}
 
-	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:])
+	// Output:
+	// test1 1
+	// test2 4
+	// test3 3
+	// test5 2
 }

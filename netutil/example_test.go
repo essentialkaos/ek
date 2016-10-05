@@ -1,4 +1,4 @@
-package crypto
+package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,27 +8,15 @@ package crypto
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/sha256"
 	"fmt"
-	"io"
-	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// FileHash generate SHA-256 hash for file
-func FileHash(file string) string {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0644)
+func ExampleGetIP() {
+	ip := GetIP()
 
-	if err != nil {
-		return ""
+	if ip != "" {
+		fmt.Printf("Your IP is %s\n", ip)
 	}
-
-	defer fd.Close()
-
-	hasher := sha256.New()
-
-	io.Copy(hasher, fd)
-
-	return fmt.Sprintf("%064x", hasher.Sum(nil))
 }

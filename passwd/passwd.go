@@ -1,5 +1,5 @@
-// Package crypto contains utils for working with crypto data (passwords, uuids, file hashes)
-package crypto
+// Package passwd contains methods for working with passwords
+package passwd
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -14,13 +14,11 @@ import (
 	"math/rand"
 	"strings"
 	"time"
-
-	"pkg.re/essentialkaos/ek.v3/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// AuthData structure with all auth data
+// AuthData contains password, salt and hash
 type AuthData struct {
 	Password string // Password
 	Salt     string // Salt
@@ -46,24 +44,24 @@ const (
 
 // GenPassword generate random password
 func GenPassword(length, strength int) string {
-	return getRandomPassword(length, mathutil.Between(strength, 0, 2))
+	return getRandomPassword(length, between(strength, 0, 2))
 }
 
-// GenAuth generate auth struct with random password
-func GenAuth(length, strength int) *AuthData {
-	password := getRandomPassword(length, mathutil.Between(strength, 0, 2))
+// GenAuth return struct with generated password, hashed password and salt
+func GenAuth(length, strength int) AuthData {
+	password := getRandomPassword(length, between(strength, 0, 2))
 	return CreateAuth(password)
 }
 
-// CreateAuth create strcut with raw password, hash and salt
-func CreateAuth(password string) *AuthData {
+// CreateAuth return struct with given password, hashed password and salt
+func CreateAuth(password string) AuthData {
 	salt := getRandomPassword(16, STRENGTH_MEDIUM)
 	hash := GenHash(password, salt)
 
-	return &AuthData{password, salt, hash}
+	return AuthData{password, salt, hash}
 }
 
-// GenHash generate hash by raw password and salt
+// GenHash generate SHA-256 hash for given password and salt
 func GenHash(password, salt string) string {
 	hasher := sha256.New()
 
@@ -77,7 +75,7 @@ func GenHash(password, salt string) string {
 	return fmt.Sprintf("%x", hasher.Sum(nil))
 }
 
-// GetPasswordStrength check password strength
+// GetPasswordStrength return password strength
 func GetPasswordStrength(password string) int {
 	if password == "" {
 		return STRENGTH_WEAK
@@ -117,6 +115,17 @@ func GetPasswordStrength(password string) int {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func between(val, min, max int) int {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
+}
 
 func getRandomPassword(length, strength int) string {
 	if length == 0 {
