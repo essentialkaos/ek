@@ -55,7 +55,7 @@ type FSInfo struct {
 	IOStats *IOStats `json:"iostats"` // IO statistics
 }
 
-// IOStats contains inforamtion about I/O
+// IOStats contains information about I/O
 type IOStats struct {
 	ReadComplete  uint64 `json:"read_complete"`  // Reads completed successfully
 	ReadMerged    uint64 `json:"read_merged"`    // Reads merged

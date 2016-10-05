@@ -228,7 +228,7 @@ func getParentPIDs(pidDir string) (int, int) {
 }
 
 func formatCommand(cmd string) string {
-	// Normalize delemiters
+	// Normalize delimiters
 	command := strings.Replace(cmd, "\000", " ", -1)
 
 	// Remove space on the end of command

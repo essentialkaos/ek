@@ -127,7 +127,7 @@ func Errorf(f string, a ...interface{}) error {
 	return errors.New(Sprintf(f, a...))
 }
 
-// NewLine prints a newline to standart output
+// NewLine prints a newline to standard output
 func NewLine() (int, error) {
 	return fmt.Println("")
 }

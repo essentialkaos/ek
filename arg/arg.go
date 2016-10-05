@@ -58,7 +58,7 @@ type V struct {
 	Value interface{} // default value
 }
 
-// Map is map with list of argumens
+// Map is map with list of arguments
 type Map map[string]*V
 
 // Arguments arguments struct

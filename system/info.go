@@ -82,7 +82,7 @@ type FSInfo struct {
 	IOStats *IOStats `json:"iostats"` // IO statistics
 }
 
-// IOStats contains inforamtion about I/O
+// IOStats contains information about I/O
 type IOStats struct {
 	ReadComplete  uint64 `json:"read_complete"`  // Reads completed successfully
 	ReadMerged    uint64 `json:"read_merged"`    // Reads merged
@@ -315,7 +315,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	return result, nil
 }
 
-// GetIOStats return IO statatistics as map device -> statistics
+// GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
 	result := make(map[string]*IOStats)
 

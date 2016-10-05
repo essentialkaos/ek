@@ -30,7 +30,7 @@ type About struct {
 	Release string // Release is current application release
 	Build   string // Build is current application build
 	Desc    string // Desc is short info about application
-	Year    int    // Year is year when owner complany was founded
+	Year    int    // Year is year when owner company was founded
 	License string // License is name of license
 	Owner   string // Owner is name of owner (company/developer)
 }

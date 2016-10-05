@@ -42,7 +42,7 @@ type Config struct {
 	file     string
 }
 
-// Validator is config propery validator struct
+// Validator is config property validator struct
 type Validator struct {
 	Property string            // Property name
 	Func     PropertyValidator // Validation func
@@ -51,7 +51,7 @@ type Validator struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// RegExp strcut for searching and parsing macroses
+// RegExp struct for searching and parsing macroses
 var macroRE = regexp.MustCompile(_MACRO_REGEXP)
 
 // Global config struct
@@ -73,7 +73,7 @@ func Global(file string) error {
 	return nil
 }
 
-// Read read and parse config file
+// Read reads and parse config file
 func Read(file string) (*Config, error) {
 	switch {
 	case fsutil.IsExist(file) == false:
@@ -140,7 +140,7 @@ func Read(file string) (*Config, error) {
 	return config, nil
 }
 
-// Reload read and parse global config file
+// Reload reads and parse global config file
 func Reload() (map[string]bool, error) {
 	if global == nil {
 		return nil, errors.New("Global config is not loaded")

@@ -16,7 +16,7 @@ import (
 
 func ExampleParsing() {
 	// Key is argument in format "short-name:long-name" or "long-name"
-	// We highly recommend to define arguments names as constans
+	// We highly recommend to define arguments names as constants
 	argMap := Map{
 		"s:string":   &V{},                                     // By default argument has string type
 		"S:string2":  &V{Type: STRING, Value: "Default value"}, // You can predefine default values

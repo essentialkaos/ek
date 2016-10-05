@@ -45,7 +45,7 @@ var NotContains = func(config *Config, prop string, value interface{}) error {
 	return getWrongValidatorError(prop)
 }
 
-// Less check if given config property is less then defined value or not
+// Less check if given config property is less than defined value or not
 var Less = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -63,7 +63,7 @@ var Less = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Greater check if given config property is greater then defined value or not
+// Greater check if given config property is greater than defined value or not
 var Greater = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
