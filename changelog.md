@@ -12,19 +12,8 @@
 * `[system]` More logical `RunAsUser` arguments naming
 * `[terminal]` Minor fixes in windows stubs
 * `[netutil]` Added tests
-* `[fmtc]` Added usage examples
-* `[hash]` Added usage examples
-* `[kv]` Added usage examples
-* `[netutil]` Added usage examples
-* `[passwd]` Added usage examples
-* `[req]` Added usage examples
-* `[strutil]` Added usage examples
-* `[system]` Added usage examples
-* `[terminal]` Added usage examples
-* `[timeutil]` Added usage examples
-* `[usage]` Added usage examples
-* `[uuid]` Added usage examples
-* `[version]` Added usage examples
+* `[system]` Code refactoring
+* Added usage examples
 
 ---
 
