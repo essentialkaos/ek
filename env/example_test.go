@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_Get() {
+func ExampleGet() {
 	env := Get()
 
 	// Print PATH environment variable
@@ -30,7 +30,7 @@ func Example_Get() {
 	fmt.Printf("String value %s = %d\n", "STR_VALUE", env.GetS("STR_VALUE"))
 }
 
-func Example_Which() {
+func ExampleWhich() {
 	echoPath := Which("echo")
 
 	fmt.Printf("Full path to echo binary is %s\n", echoPath)

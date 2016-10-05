@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleParsing() {
+func Example_parsing() {
 	// Key is argument in format "short-name:long-name" or "long-name"
 	// We highly recommend to define arguments names as constants
 	argMap := Map{
