@@ -443,12 +443,18 @@ func (s *ReqSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 }
 
-func (s *ReqSuite) BenchmarkGet(c *C) {
+func (s *ReqSuite) BenchmarkGetOk(c *C) {
 	for i := 0; i < c.N; i++ {
 		getResp, err := Request{URL: s.url + _URL_GET, Method: GET}.Do()
 
 		c.Assert(err, IsNil)
 		c.Assert(getResp.StatusCode, Equals, 200)
+	}
+}
+
+func (s *ReqSuite) BenchmarkGetErr(c *C) {
+	for i := 0; i < c.N; i++ {
+		Request{URL: "--", Method: GET}.Do()
 	}
 }
 

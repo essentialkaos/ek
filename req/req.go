@@ -272,12 +272,16 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
 	}
 
-	if method == "" {
-		method = GET
+	if !isURL(r.URL) {
+		return nil, RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
 	}
 
-	if r.Method != "" {
-		method = r.Method
+	if method != "" {
+		r.Method = method
+	}
+
+	if r.Method == "" {
+		r.Method = GET
 	}
 
 	if r.Query != nil && len(r.Query) != 0 {
@@ -296,7 +300,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
 	}
 
-	req, err := http.NewRequest(method, r.URL, bodyReader)
+	req, err := http.NewRequest(r.Method, r.URL, bodyReader)
 
 	if err != nil {
 		return nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
@@ -444,4 +448,19 @@ func encodeQuery(query Query) (string, error) {
 	}
 
 	return result[:len(result)-1], nil
+}
+
+func isURL(url string) bool {
+	switch {
+	case len(url) < 10:
+		return false
+	case url[0:7] == "http://":
+		return true
+	case url[0:8] == "https://":
+		return true
+	case url[0:6] == "ftp://":
+		return true
+	}
+
+	return false
 }
