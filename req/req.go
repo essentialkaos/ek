@@ -374,6 +374,8 @@ func initEngine(e *Engine) {
 			e.Client.Timeout = time.Duration(e.RequestTimeout * float64(time.Second))
 		}
 	}
+
+	e.initialized = true
 }
 
 func getBodyReader(body interface{}) (io.Reader, error) {
