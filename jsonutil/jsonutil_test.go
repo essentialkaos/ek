@@ -13,7 +13,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v4/hash"
+	"pkg.re/essentialkaos/ek.v5/hash"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -16,7 +16,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v4/env"
+	"pkg.re/essentialkaos/ek.v5/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -80,10 +80,10 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
 	}
 
-	go runHTTPServer(s, c)
+	global.UserAgent = _TEST_USER_AGENT
+	global.RequestTimeout = 10.0
 
-	DialTimeout = 60.0
-	RequestTimeout = 60.0
+	go runHTTPServer(s, c)
 
 	time.Sleep(time.Second)
 }
@@ -100,12 +100,22 @@ func (s *ReqSuite) TestMethodGet(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
 
+	getResp, err = global.Do(Request{URL: s.url + _URL_GET, Method: GET})
+
+	c.Assert(err, IsNil)
+	c.Assert(getResp.StatusCode, Equals, 200)
+
 	getResp, err = Request{URL: s.url + _URL_GET}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
 
 	getResp, err = Request{URL: s.url + _URL_GET}.Get()
+
+	c.Assert(err, IsNil)
+	c.Assert(getResp.StatusCode, Equals, 200)
+
+	getResp, err = global.Get(Request{URL: s.url + _URL_GET})
 
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
@@ -117,7 +127,17 @@ func (s *ReqSuite) TestMethodPost(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
 
+	postResp, err = global.Do(Request{URL: s.url + _URL_POST, Method: POST})
+
+	c.Assert(err, IsNil)
+	c.Assert(postResp.StatusCode, Equals, 200)
+
 	postResp, err = Request{URL: s.url + _URL_POST}.Post()
+
+	c.Assert(err, IsNil)
+	c.Assert(postResp.StatusCode, Equals, 200)
+
+	postResp, err = global.Post(Request{URL: s.url + _URL_POST})
 
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
@@ -129,7 +149,17 @@ func (s *ReqSuite) TestMethodPut(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
 
+	putResp, err = global.Do(Request{URL: s.url + _URL_PUT, Method: PUT})
+
+	c.Assert(err, IsNil)
+	c.Assert(putResp.StatusCode, Equals, 200)
+
 	putResp, err = Request{URL: s.url + _URL_PUT}.Put()
+
+	c.Assert(err, IsNil)
+	c.Assert(putResp.StatusCode, Equals, 200)
+
+	putResp, err = global.Put(Request{URL: s.url + _URL_PUT})
 
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
@@ -141,7 +171,17 @@ func (s *ReqSuite) TestMethodHead(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
 
+	headResp, err = global.Do(Request{URL: s.url + _URL_HEAD, Method: HEAD})
+
+	c.Assert(err, IsNil)
+	c.Assert(headResp.StatusCode, Equals, 200)
+
 	headResp, err = Request{URL: s.url + _URL_HEAD}.Head()
+
+	c.Assert(err, IsNil)
+	c.Assert(headResp.StatusCode, Equals, 200)
+
+	headResp, err = global.Head(Request{URL: s.url + _URL_HEAD})
 
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
@@ -153,7 +193,17 @@ func (s *ReqSuite) TestMethodPatch(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
 
+	patchResp, err = global.Do(Request{URL: s.url + _URL_PATCH, Method: PATCH})
+
+	c.Assert(err, IsNil)
+	c.Assert(patchResp.StatusCode, Equals, 200)
+
 	patchResp, err = Request{URL: s.url + _URL_PATCH}.Patch()
+
+	c.Assert(err, IsNil)
+	c.Assert(patchResp.StatusCode, Equals, 200)
+
+	patchResp, err = global.Patch(Request{URL: s.url + _URL_PATCH})
 
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
@@ -165,7 +215,17 @@ func (s *ReqSuite) TestMethodDelete(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
 
+	deleteResp, err = global.Do(Request{URL: s.url + _URL_DELETE, Method: DELETE})
+
+	c.Assert(err, IsNil)
+	c.Assert(deleteResp.StatusCode, Equals, 200)
+
 	deleteResp, err = Request{URL: s.url + _URL_DELETE}.Delete()
+
+	c.Assert(err, IsNil)
+	c.Assert(deleteResp.StatusCode, Equals, 200)
+
+	deleteResp, err = global.Delete(Request{URL: s.url + _URL_DELETE})
 
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
@@ -245,16 +305,6 @@ func (s *ReqSuite) TestClose(c *C) {
 
 func (s *ReqSuite) TestUserAgent(c *C) {
 	resp, err := Request{
-		URL:       s.url + _URL_USER_AGENT,
-		UserAgent: _TEST_USER_AGENT,
-	}.Do()
-
-	c.Assert(err, IsNil)
-	c.Assert(resp.StatusCode, Equals, 200)
-
-	UserAgent = _TEST_USER_AGENT
-
-	resp, err = Request{
 		URL: s.url + _URL_USER_AGENT,
 	}.Do()
 
@@ -391,6 +441,15 @@ func (s *ReqSuite) TestErrors(c *C) {
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+}
+
+func (s *ReqSuite) BenchmarkGet(c *C) {
+	for i := 0; i < c.N; i++ {
+		getResp, err := Request{URL: s.url + _URL_GET, Method: GET}.Do()
+
+		c.Assert(err, IsNil)
+		c.Assert(getResp.StatusCode, Equals, 200)
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

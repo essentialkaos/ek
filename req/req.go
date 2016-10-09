@@ -129,8 +129,8 @@ type Request struct {
 	Accept            string      // Accept header
 	BasicAuthUsername string      // Basic auth username
 	BasicAuthPassword string      // Basic auth password
-	UserAgent         string      // User Agent string
 	AutoDiscard       bool        // Automatically discard all responses with status code != 200
+	FollowRedirect    bool        // Follow redirect
 	Close             bool        // Close indicates whether to close the connection after sending request
 }
 
@@ -146,142 +146,95 @@ type RequestError struct {
 	desc  string
 }
 
+// Engine is request engine
+type Engine struct {
+	UserAgent      string          // UserAgent is default user-agent used for all requests
+	DialTimeout    float64         // DialTimeout is dial timeout in seconds (0 = disabled)
+	RequestTimeout float64         // RequestTimeout is request timeout in seconds (0 = disabled)
+	Dialer         *net.Dialer     // Dialer default dialer struct
+	Transport      *http.Transport // Transport is default transport struct
+	Client         *http.Client    // Client default client struct
+
+	initialized bool
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var (
-	// UserAgent is default user-agent used for all requests
-	UserAgent = ""
-
-	// DialTimeout is dial timeout in seconds (0 = disabled)
-	DialTimeout = 10.0
-
-	// RequestTimeout is request timeout in seconds (0 = disabled)
-	RequestTimeout = 0.0
-
-	// Dialer default dialer struct
-	Dialer *net.Dialer
-
-	// Transport is default transport struct
-	Transport *http.Transport
-
-	// Client default client struct
-	Client *http.Client
-)
+var global *Engine = &Engine{
+	UserAgent:   "GOEK-HTTP-Client/v5",
+	DialTimeout: 10.0,
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Do send request and process response
+func (e *Engine) Do(r Request) (*Response, error) {
+	return e.doRequest(r, "")
+}
+
+// Get send GET request and process response
+func (e *Engine) Get(r Request) (*Response, error) {
+	return e.doRequest(r, GET)
+}
+
+// Post send POST request and process response
+func (e *Engine) Post(r Request) (*Response, error) {
+	return e.doRequest(r, POST)
+}
+
+// Put send PUT request and process response
+func (e *Engine) Put(r Request) (*Response, error) {
+	return e.doRequest(r, PUT)
+}
+
+// Head send HEAD request and process response
+func (e *Engine) Head(r Request) (*Response, error) {
+	return e.doRequest(r, HEAD)
+}
+
+// Patch send PATCH request and process response
+func (e *Engine) Patch(r Request) (*Response, error) {
+	return e.doRequest(r, PATCH)
+}
+
+// Delete send DELETE request and process response
+func (e *Engine) Delete(r Request) (*Response, error) {
+	return e.doRequest(r, DELETE)
+}
+
+// Do send request and process response
 func (r Request) Do() (*Response, error) {
-	if r.URL == "" {
-		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
-	}
-
-	if r.Method == "" {
-		r.Method = GET
-	}
-
-	if r.Query != nil && len(r.Query) != 0 {
-		query, err := encodeQuery(r.Query)
-
-		if err != nil {
-			return nil, err
-		}
-
-		r.URL += "?" + query
-	}
-
-	bodyReader, err := getBodyReader(r.Body)
-
-	if err != nil {
-		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
-	}
-
-	req, err := http.NewRequest(r.Method, r.URL, bodyReader)
-
-	if err != nil {
-		return nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
-	}
-
-	if r.Headers != nil && len(r.Headers) != 0 {
-		for k, v := range r.Headers {
-			req.Header.Add(k, v)
-		}
-	}
-
-	if r.ContentType != "" {
-		req.Header.Add("Content-Type", r.ContentType)
-	}
-
-	if r.Accept != "" {
-		req.Header.Add("Accept", r.Accept)
-	}
-
-	switch {
-	case r.UserAgent != "":
-		req.Header.Add("User-Agent", r.UserAgent)
-	case UserAgent != "":
-		req.Header.Add("User-Agent", UserAgent)
-	}
-
-	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
-		req.SetBasicAuth(r.BasicAuthUsername, r.BasicAuthPassword)
-	}
-
-	if r.Close {
-		req.Close = true
-	}
-
-	initTransport()
-
-	resp, err := Client.Do(req)
-
-	if err != nil {
-		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
-	}
-
-	result := &Response{resp, r.URL}
-
-	if resp.StatusCode != 200 && r.AutoDiscard {
-		result.Discard()
-	}
-
-	return result, nil
+	return global.doRequest(r, "")
 }
 
 // Get send GET request and process response
 func (r Request) Get() (*Response, error) {
-	r.Method = GET
-	return r.Do()
+	return global.doRequest(r, GET)
 }
 
 // Post send POST request and process response
 func (r Request) Post() (*Response, error) {
-	r.Method = POST
-	return r.Do()
+	return global.doRequest(r, POST)
 }
 
 // Put send PUT request and process response
 func (r Request) Put() (*Response, error) {
-	r.Method = PUT
-	return r.Do()
+	return global.doRequest(r, PUT)
 }
 
 // Head send HEAD request and process response
 func (r Request) Head() (*Response, error) {
-	r.Method = HEAD
-	return r.Do()
+	return global.doRequest(r, HEAD)
 }
 
 // Patch send PATCH request and process response
 func (r Request) Patch() (*Response, error) {
-	r.Method = PATCH
-	return r.Do()
+	return global.doRequest(r, PATCH)
 }
 
 // Delete send DELETE request and process response
 func (r Request) Delete() (*Response, error) {
-	r.Method = DELETE
-	return r.Do()
+	return global.doRequest(r, DELETE)
 }
 
 // Discard reads response body for closing connection
@@ -314,29 +267,111 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func initTransport() {
-	if Dialer == nil {
-		Dialer = &net.Dialer{}
+func (e *Engine) doRequest(r Request, method string) (*Response, error) {
+	if r.URL == "" {
+		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	}
 
-		if DialTimeout > 0 {
-			Dialer.Timeout = time.Duration(DialTimeout * float64(time.Second))
+	if method == "" {
+		method = GET
+	}
+
+	if r.Method != "" {
+		method = r.Method
+	}
+
+	if r.Query != nil && len(r.Query) != 0 {
+		query, err := encodeQuery(r.Query)
+
+		if err != nil {
+			return nil, err
+		}
+
+		r.URL += "?" + query
+	}
+
+	bodyReader, err := getBodyReader(r.Body)
+
+	if err != nil {
+		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
+	}
+
+	req, err := http.NewRequest(method, r.URL, bodyReader)
+
+	if err != nil {
+		return nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
+	}
+
+	if r.Headers != nil && len(r.Headers) != 0 {
+		for k, v := range r.Headers {
+			req.Header.Add(k, v)
 		}
 	}
 
-	if Transport == nil {
-		Transport = &http.Transport{
-			Dial:  Dialer.Dial,
+	if r.ContentType != "" {
+		req.Header.Add("Content-Type", r.ContentType)
+	}
+
+	if r.Accept != "" {
+		req.Header.Add("Accept", r.Accept)
+	}
+
+	if e.UserAgent != "" {
+		req.Header.Add("User-Agent", e.UserAgent)
+	}
+
+	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
+		req.SetBasicAuth(r.BasicAuthUsername, r.BasicAuthPassword)
+	}
+
+	if r.Close {
+		req.Close = true
+	}
+
+	if !e.initialized {
+		initEngine(e)
+	}
+
+	resp, err := e.Client.Do(req)
+
+	if err != nil {
+		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
+	}
+
+	result := &Response{resp, r.URL}
+
+	if resp.StatusCode != 200 && r.AutoDiscard {
+		result.Discard()
+	}
+
+	return result, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func initEngine(e *Engine) {
+	if e.Dialer == nil {
+		e.Dialer = &net.Dialer{}
+
+		if e.DialTimeout > 0 {
+			e.Dialer.Timeout = time.Duration(e.DialTimeout * float64(time.Second))
+		}
+	}
+
+	if e.Transport == nil {
+		e.Transport = &http.Transport{
+			Dial:  e.Dialer.Dial,
 			Proxy: http.ProxyFromEnvironment,
 		}
 	}
 
-	if Client == nil {
-		Client = &http.Client{
-			Transport: Transport,
+	if e.Client == nil {
+		e.Client = &http.Client{
+			Transport: e.Transport,
 		}
 
-		if RequestTimeout > 0 {
-			Client.Timeout = time.Duration(RequestTimeout * float64(time.Second))
+		if e.RequestTimeout > 0 {
+			e.Client.Timeout = time.Duration(e.RequestTimeout * float64(time.Second))
 		}
 	}
 }
