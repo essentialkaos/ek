@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.0.1
+
+* `[usage]` Fixed examples header
+
 #### v5.0.0
 
 * `[req]` Fixed major bug with setting method through helper functions

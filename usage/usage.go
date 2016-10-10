@@ -287,7 +287,7 @@ func renderOptions(options []option, color string) {
 
 // renderExamples render examples
 func renderExamples(info *Info) {
-	fmtc.Println("\n{*}Examples:{!}\n")
+	fmtc.Println("\n{*}Examples{!}\n")
 
 	total := len(info.examples)
 
