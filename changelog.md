@@ -1,7 +1,9 @@
 ## Changelog
 
-#### v4.0.0
+#### v5.0.0
 
+* `[req]` Fixed major bug with setting method through helper functions
+* `[req]` Multi-client feature (_use `req.Engine` instead `req.Request` struct methods_)
 * `[crypto]` Package divided into multiple packages (`hash`, `passwd`, `uuid`)
 * `[uuid]` Added UUID generation based on SHA-1 hash of namespace UUID and name (_version 5_)
 * `[req]` Added different types support for `Query`

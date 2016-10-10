@@ -129,8 +129,8 @@ type Request struct {
 	Accept            string      // Accept header
 	BasicAuthUsername string      // Basic auth username
 	BasicAuthPassword string      // Basic auth password
-	UserAgent         string      // User Agent string
 	AutoDiscard       bool        // Automatically discard all responses with status code != 200
+	FollowRedirect    bool        // Follow redirect
 	Close             bool        // Close indicates whether to close the connection after sending request
 }
 
@@ -146,34 +146,138 @@ type RequestError struct {
 	desc  string
 }
 
+// Engine is request engine
+type Engine struct {
+	UserAgent      string          // UserAgent is default user-agent used for all requests
+	DialTimeout    float64         // DialTimeout is dial timeout in seconds (0 = disabled)
+	RequestTimeout float64         // RequestTimeout is request timeout in seconds (0 = disabled)
+	Dialer         *net.Dialer     // Dialer default dialer struct
+	Transport      *http.Transport // Transport is default transport struct
+	Client         *http.Client    // Client default client struct
+
+	initialized bool
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var (
-	// UserAgent is default user-agent used for all requests
-	UserAgent = ""
-
-	// DialTimeout is dial timeout in seconds (0 = disabled)
-	DialTimeout = 10.0
-
-	// RequestTimeout is request timeout in seconds (0 = disabled)
-	RequestTimeout = 0.0
-
-	// Dialer default dialer struct
-	Dialer *net.Dialer
-
-	// Transport is default transport struct
-	Transport *http.Transport
-
-	// Client default client struct
-	Client *http.Client
-)
+var global *Engine = &Engine{
+	UserAgent:   "GOEK-HTTP-Client/v5",
+	DialTimeout: 10.0,
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Do send request and process response
+func (e *Engine) Do(r Request) (*Response, error) {
+	return e.doRequest(r, "")
+}
+
+// Get send GET request and process response
+func (e *Engine) Get(r Request) (*Response, error) {
+	return e.doRequest(r, GET)
+}
+
+// Post send POST request and process response
+func (e *Engine) Post(r Request) (*Response, error) {
+	return e.doRequest(r, POST)
+}
+
+// Put send PUT request and process response
+func (e *Engine) Put(r Request) (*Response, error) {
+	return e.doRequest(r, PUT)
+}
+
+// Head send HEAD request and process response
+func (e *Engine) Head(r Request) (*Response, error) {
+	return e.doRequest(r, HEAD)
+}
+
+// Patch send PATCH request and process response
+func (e *Engine) Patch(r Request) (*Response, error) {
+	return e.doRequest(r, PATCH)
+}
+
+// Delete send DELETE request and process response
+func (e *Engine) Delete(r Request) (*Response, error) {
+	return e.doRequest(r, DELETE)
+}
+
+// Do send request and process response
 func (r Request) Do() (*Response, error) {
+	return global.doRequest(r, "")
+}
+
+// Get send GET request and process response
+func (r Request) Get() (*Response, error) {
+	return global.doRequest(r, GET)
+}
+
+// Post send POST request and process response
+func (r Request) Post() (*Response, error) {
+	return global.doRequest(r, POST)
+}
+
+// Put send PUT request and process response
+func (r Request) Put() (*Response, error) {
+	return global.doRequest(r, PUT)
+}
+
+// Head send HEAD request and process response
+func (r Request) Head() (*Response, error) {
+	return global.doRequest(r, HEAD)
+}
+
+// Patch send PATCH request and process response
+func (r Request) Patch() (*Response, error) {
+	return global.doRequest(r, PATCH)
+}
+
+// Delete send DELETE request and process response
+func (r Request) Delete() (*Response, error) {
+	return global.doRequest(r, DELETE)
+}
+
+// Discard reads response body for closing connection
+func (r *Response) Discard() {
+	io.Copy(ioutil.Discard, r.Body)
+}
+
+// JSON decode json encoded body
+func (r *Response) JSON(v interface{}) error {
+	return json.NewDecoder(r.Body).Decode(v)
+}
+
+// String read response body as string
+func (r *Response) String() string {
+	result, _ := ioutil.ReadAll(r.Body)
+	return string(result)
+}
+
+// Error show error message
+func (e RequestError) Error() string {
+	switch e.class {
+	case ERROR_BODY_ENCODE:
+		return fmt.Sprintf("Can't encode request body (%s)", e.desc)
+	case ERROR_SEND_REQUEST:
+		return fmt.Sprintf("Can't send request (%s)", e.desc)
+	default:
+		return fmt.Sprintf("Can't create request struct (%s)", e.desc)
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	if r.URL == "" {
 		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	}
+
+	if !isURL(r.URL) {
+		return nil, RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
+	}
+
+	if method != "" {
+		r.Method = method
 	}
 
 	if r.Method == "" {
@@ -216,11 +320,8 @@ func (r Request) Do() (*Response, error) {
 		req.Header.Add("Accept", r.Accept)
 	}
 
-	switch {
-	case r.UserAgent != "":
-		req.Header.Add("User-Agent", r.UserAgent)
-	case UserAgent != "":
-		req.Header.Add("User-Agent", UserAgent)
+	if e.UserAgent != "" {
+		req.Header.Add("User-Agent", e.UserAgent)
 	}
 
 	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
@@ -231,9 +332,11 @@ func (r Request) Do() (*Response, error) {
 		req.Close = true
 	}
 
-	initTransport()
+	if !e.initialized {
+		initEngine(e)
+	}
 
-	resp, err := Client.Do(req)
+	resp, err := e.Client.Do(req)
 
 	if err != nil {
 		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
@@ -248,97 +351,35 @@ func (r Request) Do() (*Response, error) {
 	return result, nil
 }
 
-// Get send GET request and process response
-func (r Request) Get() (*Response, error) {
-	r.Method = GET
-	return r.Do()
-}
-
-// Post send POST request and process response
-func (r Request) Post() (*Response, error) {
-	r.Method = POST
-	return r.Do()
-}
-
-// Put send PUT request and process response
-func (r Request) Put() (*Response, error) {
-	r.Method = PUT
-	return r.Do()
-}
-
-// Head send HEAD request and process response
-func (r Request) Head() (*Response, error) {
-	r.Method = HEAD
-	return r.Do()
-}
-
-// Patch send PATCH request and process response
-func (r Request) Patch() (*Response, error) {
-	r.Method = PATCH
-	return r.Do()
-}
-
-// Delete send DELETE request and process response
-func (r Request) Delete() (*Response, error) {
-	r.Method = DELETE
-	return r.Do()
-}
-
-// Discard reads response body for closing connection
-func (r *Response) Discard() {
-	io.Copy(ioutil.Discard, r.Body)
-}
-
-// JSON decode json encoded body
-func (r *Response) JSON(v interface{}) error {
-	return json.NewDecoder(r.Body).Decode(v)
-}
-
-// String read response body as string
-func (r *Response) String() string {
-	result, _ := ioutil.ReadAll(r.Body)
-	return string(result)
-}
-
-// Error show error message
-func (e RequestError) Error() string {
-	switch e.class {
-	case ERROR_BODY_ENCODE:
-		return fmt.Sprintf("Can't encode request body (%s)", e.desc)
-	case ERROR_SEND_REQUEST:
-		return fmt.Sprintf("Can't send request (%s)", e.desc)
-	default:
-		return fmt.Sprintf("Can't create request struct (%s)", e.desc)
-	}
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func initTransport() {
-	if Dialer == nil {
-		Dialer = &net.Dialer{}
+func initEngine(e *Engine) {
+	if e.Dialer == nil {
+		e.Dialer = &net.Dialer{}
 
-		if DialTimeout > 0 {
-			Dialer.Timeout = time.Duration(DialTimeout * float64(time.Second))
+		if e.DialTimeout > 0 {
+			e.Dialer.Timeout = time.Duration(e.DialTimeout * float64(time.Second))
 		}
 	}
 
-	if Transport == nil {
-		Transport = &http.Transport{
-			Dial:  Dialer.Dial,
+	if e.Transport == nil {
+		e.Transport = &http.Transport{
+			Dial:  e.Dialer.Dial,
 			Proxy: http.ProxyFromEnvironment,
 		}
 	}
 
-	if Client == nil {
-		Client = &http.Client{
-			Transport: Transport,
+	if e.Client == nil {
+		e.Client = &http.Client{
+			Transport: e.Transport,
 		}
 
-		if RequestTimeout > 0 {
-			Client.Timeout = time.Duration(RequestTimeout * float64(time.Second))
+		if e.RequestTimeout > 0 {
+			e.Client.Timeout = time.Duration(e.RequestTimeout * float64(time.Second))
 		}
 	}
+
+	e.initialized = true
 }
 
 func getBodyReader(body interface{}) (io.Reader, error) {
@@ -407,4 +448,19 @@ func encodeQuery(query Query) (string, error) {
 	}
 
 	return result[:len(result)-1], nil
+}
+
+func isURL(url string) bool {
+	switch {
+	case len(url) < 10:
+		return false
+	case url[0:7] == "http://":
+		return true
+	case url[0:8] == "https://":
+		return true
+	case url[0:6] == "ftp://":
+		return true
+	}
+
+	return false
 }

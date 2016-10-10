@@ -13,8 +13,8 @@ import (
 	"os"
 	"path"
 
-	"pkg.re/essentialkaos/ek.v4/fsutil"
-	"pkg.re/essentialkaos/ek.v4/rand"
+	"pkg.re/essentialkaos/ek.v5/fsutil"
+	"pkg.re/essentialkaos/ek.v5/rand"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

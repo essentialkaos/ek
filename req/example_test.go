@@ -32,7 +32,6 @@ func ExampleRequest_Do() {
 			"My-Suppa-Header": "Test",
 		},
 		ContentType: CONTENT_TYPE_JSON,
-		UserAgent:   "My Client 1.0.0",
 	}.Do()
 
 	if err != nil {
