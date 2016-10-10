@@ -2,7 +2,7 @@
 
 #### v5.1.0
 
-* `[req]` Global engine now in public scope and can changed
+* `[req]` Global engine now in public scope and can be changed
 
 #### v5.0.0
 
