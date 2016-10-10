@@ -175,7 +175,6 @@ var (
 // Global is global engine used by default for Request.Do, Request.Get, Request.Post,
 // Request.Put, Request.Patch, Request.Head and Request.Delete methods
 var Global *Engine = &Engine{
-	UserAgent:   "GOEK-HTTP-Client/v5",
 	dialTimeout: 10.0,
 }
 
@@ -420,6 +419,10 @@ func initEngine(e *Engine) {
 
 	if e.requestTimeout > 0 {
 		e.SetRequestTimeout(e.requestTimeout)
+	}
+
+	if e.UserAgent == "" {
+		e.SetUserAgent("goek-http-client", "5.x")
 	}
 
 	e.dialTimeout = 0
