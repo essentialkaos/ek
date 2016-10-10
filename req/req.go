@@ -160,7 +160,9 @@ type Engine struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var global *Engine = &Engine{
+// Global is global engine used by default for Request.Do, Request.Get, Request.Post,
+// Request.Put, Request.Patch, Request.Head and Request.Delete methods
+var Global *Engine = &Engine{
 	UserAgent:   "GOEK-HTTP-Client/v5",
 	DialTimeout: 10.0,
 }
