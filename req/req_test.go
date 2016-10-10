@@ -80,8 +80,8 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
 	}
 
-	global.UserAgent = _TEST_USER_AGENT
-	global.RequestTimeout = 10.0
+	Global.UserAgent = _TEST_USER_AGENT
+	Global.RequestTimeout = 10.0
 
 	go runHTTPServer(s, c)
 
@@ -100,7 +100,7 @@ func (s *ReqSuite) TestMethodGet(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
 
-	getResp, err = global.Do(Request{URL: s.url + _URL_GET, Method: GET})
+	getResp, err = Global.Do(Request{URL: s.url + _URL_GET, Method: GET})
 
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
@@ -115,7 +115,7 @@ func (s *ReqSuite) TestMethodGet(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
 
-	getResp, err = global.Get(Request{URL: s.url + _URL_GET})
+	getResp, err = Global.Get(Request{URL: s.url + _URL_GET})
 
 	c.Assert(err, IsNil)
 	c.Assert(getResp.StatusCode, Equals, 200)
@@ -127,7 +127,7 @@ func (s *ReqSuite) TestMethodPost(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
 
-	postResp, err = global.Do(Request{URL: s.url + _URL_POST, Method: POST})
+	postResp, err = Global.Do(Request{URL: s.url + _URL_POST, Method: POST})
 
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
@@ -137,7 +137,7 @@ func (s *ReqSuite) TestMethodPost(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
 
-	postResp, err = global.Post(Request{URL: s.url + _URL_POST})
+	postResp, err = Global.Post(Request{URL: s.url + _URL_POST})
 
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
@@ -149,7 +149,7 @@ func (s *ReqSuite) TestMethodPut(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
 
-	putResp, err = global.Do(Request{URL: s.url + _URL_PUT, Method: PUT})
+	putResp, err = Global.Do(Request{URL: s.url + _URL_PUT, Method: PUT})
 
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
@@ -159,7 +159,7 @@ func (s *ReqSuite) TestMethodPut(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
 
-	putResp, err = global.Put(Request{URL: s.url + _URL_PUT})
+	putResp, err = Global.Put(Request{URL: s.url + _URL_PUT})
 
 	c.Assert(err, IsNil)
 	c.Assert(putResp.StatusCode, Equals, 200)
@@ -171,7 +171,7 @@ func (s *ReqSuite) TestMethodHead(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
 
-	headResp, err = global.Do(Request{URL: s.url + _URL_HEAD, Method: HEAD})
+	headResp, err = Global.Do(Request{URL: s.url + _URL_HEAD, Method: HEAD})
 
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
@@ -181,7 +181,7 @@ func (s *ReqSuite) TestMethodHead(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
 
-	headResp, err = global.Head(Request{URL: s.url + _URL_HEAD})
+	headResp, err = Global.Head(Request{URL: s.url + _URL_HEAD})
 
 	c.Assert(err, IsNil)
 	c.Assert(headResp.StatusCode, Equals, 200)
@@ -193,7 +193,7 @@ func (s *ReqSuite) TestMethodPatch(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
 
-	patchResp, err = global.Do(Request{URL: s.url + _URL_PATCH, Method: PATCH})
+	patchResp, err = Global.Do(Request{URL: s.url + _URL_PATCH, Method: PATCH})
 
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
@@ -203,7 +203,7 @@ func (s *ReqSuite) TestMethodPatch(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
 
-	patchResp, err = global.Patch(Request{URL: s.url + _URL_PATCH})
+	patchResp, err = Global.Patch(Request{URL: s.url + _URL_PATCH})
 
 	c.Assert(err, IsNil)
 	c.Assert(patchResp.StatusCode, Equals, 200)
@@ -215,7 +215,7 @@ func (s *ReqSuite) TestMethodDelete(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
 
-	deleteResp, err = global.Do(Request{URL: s.url + _URL_DELETE, Method: DELETE})
+	deleteResp, err = Global.Do(Request{URL: s.url + _URL_DELETE, Method: DELETE})
 
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
@@ -225,7 +225,7 @@ func (s *ReqSuite) TestMethodDelete(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
 
-	deleteResp, err = global.Delete(Request{URL: s.url + _URL_DELETE})
+	deleteResp, err = Global.Delete(Request{URL: s.url + _URL_DELETE})
 
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)

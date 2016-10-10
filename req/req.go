@@ -206,37 +206,37 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 
 // Do send request and process response
 func (r Request) Do() (*Response, error) {
-	return global.doRequest(r, "")
+	return Global.doRequest(r, "")
 }
 
 // Get send GET request and process response
 func (r Request) Get() (*Response, error) {
-	return global.doRequest(r, GET)
+	return Global.doRequest(r, GET)
 }
 
 // Post send POST request and process response
 func (r Request) Post() (*Response, error) {
-	return global.doRequest(r, POST)
+	return Global.doRequest(r, POST)
 }
 
 // Put send PUT request and process response
 func (r Request) Put() (*Response, error) {
-	return global.doRequest(r, PUT)
+	return Global.doRequest(r, PUT)
 }
 
 // Head send HEAD request and process response
 func (r Request) Head() (*Response, error) {
-	return global.doRequest(r, HEAD)
+	return Global.doRequest(r, HEAD)
 }
 
 // Patch send PATCH request and process response
 func (r Request) Patch() (*Response, error) {
-	return global.doRequest(r, PATCH)
+	return Global.doRequest(r, PATCH)
 }
 
 // Delete send DELETE request and process response
 func (r Request) Delete() (*Response, error) {
-	return global.doRequest(r, DELETE)
+	return Global.doRequest(r, DELETE)
 }
 
 // Discard reads response body for closing connection
@@ -270,6 +270,10 @@ func (e RequestError) Error() string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
+	if e == nil {
+		return nil, RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+	}
+
 	if r.URL == "" {
 		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
 	}
