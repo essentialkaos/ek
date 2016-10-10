@@ -181,6 +181,23 @@ var Global *Engine = &Engine{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// SetUserAgent set user agent based on app name and version for global engine
+func SetUserAgent(app, version string) {
+	Global.SetUserAgent(app, version)
+}
+
+// SetDialTimeout set dial timeout for global engine
+func SetDialTimeout(timeout float64) {
+	Global.SetDialTimeout(timeout)
+}
+
+// SetRequestTimeout set request timeout for global engine
+func SetRequestTimeout(timeout float64) {
+	Global.SetRequestTimeout(timeout)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Do send request and process response
 func (e *Engine) Do(r Request) (*Response, error) {
 	return e.doRequest(r, "")

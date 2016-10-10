@@ -20,6 +20,11 @@ func ExampleRequest_Do() {
 		Balance float64 `json:"balance"`
 	}{}
 
+	// Configure global enagine
+	SetUserAgent("my-supper-app", "1.0")
+	SetDialTimeout(30.0)
+	SetRequestTimeout(30.0)
+
 	resp, err := Request{
 		Method: GET,
 		URL:    "https://my.domain.com",
