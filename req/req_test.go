@@ -81,7 +81,9 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 	}
 
 	Global.UserAgent = _TEST_USER_AGENT
-	Global.RequestTimeout = 10.0
+
+	Global.SetDialTimeout(60.0)
+	Global.SetRequestTimeout(60.0)
 
 	go runHTTPServer(s, c)
 
@@ -408,7 +410,7 @@ func (s *ReqSuite) TestEncoding(c *C) {
 	c.Assert(resp, NotNil)
 }
 
-func (s *ReqSuite) TestErrors(c *C) {
+func (s *ReqSuite) TestRequestErrors(c *C) {
 	resp, err := Request{}.Do()
 
 	c.Assert(resp, IsNil)
@@ -441,6 +443,51 @@ func (s *ReqSuite) TestErrors(c *C) {
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+}
+
+func (s *ReqSuite) TestEngineErrors(c *C) {
+	var eng *Engine
+
+	resp, err := eng.Do(Request{URL: "https://essentialkaos.com"})
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+
+	eng = &Engine{}
+	initEngine(eng)
+
+	eng.Dialer = nil
+
+	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+
+	eng = &Engine{}
+	initEngine(eng)
+	eng.Transport = nil
+
+	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+
+	eng = &Engine{}
+	initEngine(eng)
+	eng.Client = nil
+
+	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *ReqSuite) TestIsURL(c *C) {
+	c.Assert(isURL(""), Equals, false)
+	c.Assert(isURL("http://domain.com"), Equals, true)
+	c.Assert(isURL("https://domain.com"), Equals, true)
+	c.Assert(isURL("ftp://domain.com"), Equals, true)
+	c.Assert(isURL("test://domain.com"), Equals, false)
 }
 
 func (s *ReqSuite) BenchmarkGetOk(c *C) {
