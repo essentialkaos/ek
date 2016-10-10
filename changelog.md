@@ -1,9 +1,5 @@
 ## Changelog
 
-#### v5.1.0
-
-* `[req]` Global engine now in public scope and can be changed
-
 #### v5.0.0
 
 * `[req]` Fixed major bug with setting method through helper functions
