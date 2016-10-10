@@ -17,6 +17,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -148,21 +149,50 @@ type RequestError struct {
 
 // Engine is request engine
 type Engine struct {
-	UserAgent      string          // UserAgent is default user-agent used for all requests
-	DialTimeout    float64         // DialTimeout is dial timeout in seconds (0 = disabled)
-	RequestTimeout float64         // RequestTimeout is request timeout in seconds (0 = disabled)
-	Dialer         *net.Dialer     // Dialer default dialer struct
-	Transport      *http.Transport // Transport is default transport struct
-	Client         *http.Client    // Client default client struct
+	UserAgent string // UserAgent is default user-agent used for all requests
+
+	Dialer    *net.Dialer     // Dialer default dialer struct
+	Transport *http.Transport // Transport is default transport struct
+	Client    *http.Client    // Client default client struct
+
+	dialTimeout    float64 // dialTimeout is dial timeout in seconds
+	requestTimeout float64 // requestTimeout is request timeout in seconds
 
 	initialized bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var global *Engine = &Engine{
-	UserAgent:   "GOEK-HTTP-Client/v5",
-	DialTimeout: 10.0,
+var (
+	ErrEngineIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+	ErrClientIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
+	ErrTransportIsNil    = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
+	ErrDialerIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+	ErrEmptyURL          = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	ErrUnsupportedScheme = RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
+)
+
+// Global is global engine used by default for Request.Do, Request.Get, Request.Post,
+// Request.Put, Request.Patch, Request.Head and Request.Delete methods
+var Global *Engine = &Engine{
+	dialTimeout: 10.0,
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// SetUserAgent set user agent based on app name and version for global engine
+func SetUserAgent(app, version string) {
+	Global.SetUserAgent(app, version)
+}
+
+// SetDialTimeout set dial timeout for global engine
+func SetDialTimeout(timeout float64) {
+	Global.SetDialTimeout(timeout)
+}
+
+// SetRequestTimeout set request timeout for global engine
+func SetRequestTimeout(timeout float64) {
+	Global.SetRequestTimeout(timeout)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -202,39 +232,72 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 	return e.doRequest(r, DELETE)
 }
 
+// SetUserAgent set user agent based on app name and version
+func (e *Engine) SetUserAgent(app, version string) {
+	if e != nil {
+		e.UserAgent = fmt.Sprintf(
+			"%s/%s (go; %s; %s-%s)",
+			app, version, runtime.Version(),
+			runtime.GOARCH, runtime.GOOS,
+		)
+	}
+}
+
+// SetDialTimeout set dial timeout
+func (e *Engine) SetDialTimeout(timeout float64) {
+	if e != nil && timeout > 0 {
+		if e.Dialer == nil {
+			e.dialTimeout = timeout
+		} else {
+			e.Dialer.Timeout = time.Duration(timeout * float64(time.Second))
+		}
+	}
+}
+
+// SetRequestTimeout set request timeout
+func (e *Engine) SetRequestTimeout(timeout float64) {
+	if e != nil && timeout > 0 {
+		if e.Dialer == nil {
+			e.requestTimeout = timeout
+		} else {
+			e.Client.Timeout = time.Duration(timeout * float64(time.Second))
+		}
+	}
+}
+
 // Do send request and process response
 func (r Request) Do() (*Response, error) {
-	return global.doRequest(r, "")
+	return Global.doRequest(r, "")
 }
 
 // Get send GET request and process response
 func (r Request) Get() (*Response, error) {
-	return global.doRequest(r, GET)
+	return Global.doRequest(r, GET)
 }
 
 // Post send POST request and process response
 func (r Request) Post() (*Response, error) {
-	return global.doRequest(r, POST)
+	return Global.doRequest(r, POST)
 }
 
 // Put send PUT request and process response
 func (r Request) Put() (*Response, error) {
-	return global.doRequest(r, PUT)
+	return Global.doRequest(r, PUT)
 }
 
 // Head send HEAD request and process response
 func (r Request) Head() (*Response, error) {
-	return global.doRequest(r, HEAD)
+	return Global.doRequest(r, HEAD)
 }
 
 // Patch send PATCH request and process response
 func (r Request) Patch() (*Response, error) {
-	return global.doRequest(r, PATCH)
+	return Global.doRequest(r, PATCH)
 }
 
 // Delete send DELETE request and process response
 func (r Request) Delete() (*Response, error) {
-	return global.doRequest(r, DELETE)
+	return Global.doRequest(r, DELETE)
 }
 
 // Discard reads response body for closing connection
@@ -268,12 +331,21 @@ func (e RequestError) Error() string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
-	if r.URL == "" {
-		return nil, RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	// Lazy engine initialization
+	if e != nil && !e.initialized {
+		initEngine(e)
 	}
 
-	if !isURL(r.URL) {
-		return nil, RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
+	err := checkRequest(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkEngine(e)
+
+	if err != nil {
+		return nil, err
 	}
 
 	if method != "" {
@@ -300,6 +372,98 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
 	}
 
+	req, err := createRequest(e, r, bodyReader)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.Client.Do(req)
+
+	if err != nil {
+		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
+	}
+
+	result := &Response{resp, r.URL}
+
+	if resp.StatusCode != 200 && r.AutoDiscard {
+		result.Discard()
+	}
+
+	return result, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func initEngine(e *Engine) {
+	if e.Dialer == nil {
+		e.Dialer = &net.Dialer{}
+	}
+
+	if e.Transport == nil {
+		e.Transport = &http.Transport{
+			Dial:  e.Dialer.Dial,
+			Proxy: http.ProxyFromEnvironment,
+		}
+	}
+
+	if e.Client == nil {
+		e.Client = &http.Client{
+			Transport: e.Transport,
+		}
+	}
+
+	if e.dialTimeout > 0 {
+		e.SetDialTimeout(e.dialTimeout)
+	}
+
+	if e.requestTimeout > 0 {
+		e.SetRequestTimeout(e.requestTimeout)
+	}
+
+	if e.UserAgent == "" {
+		e.SetUserAgent("goek-http-client", "5.x")
+	}
+
+	e.dialTimeout = 0
+	e.requestTimeout = 0
+
+	e.initialized = true
+}
+
+func checkRequest(r Request) error {
+	if r.URL == "" {
+		return ErrEmptyURL
+	}
+
+	if !isURL(r.URL) {
+		return ErrUnsupportedScheme
+	}
+
+	return nil
+}
+
+func checkEngine(e *Engine) error {
+	if e == nil {
+		return ErrEngineIsNil
+	}
+
+	if e.Dialer == nil {
+		return ErrDialerIsNil
+	}
+
+	if e.Transport == nil {
+		return ErrTransportIsNil
+	}
+
+	if e.Client == nil {
+		return ErrClientIsNil
+	}
+
+	return nil
+}
+
+func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(r.Method, r.URL, bodyReader)
 
 	if err != nil {
@@ -332,54 +496,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		req.Close = true
 	}
 
-	if !e.initialized {
-		initEngine(e)
-	}
-
-	resp, err := e.Client.Do(req)
-
-	if err != nil {
-		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
-	}
-
-	result := &Response{resp, r.URL}
-
-	if resp.StatusCode != 200 && r.AutoDiscard {
-		result.Discard()
-	}
-
-	return result, nil
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-func initEngine(e *Engine) {
-	if e.Dialer == nil {
-		e.Dialer = &net.Dialer{}
-
-		if e.DialTimeout > 0 {
-			e.Dialer.Timeout = time.Duration(e.DialTimeout * float64(time.Second))
-		}
-	}
-
-	if e.Transport == nil {
-		e.Transport = &http.Transport{
-			Dial:  e.Dialer.Dial,
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
-
-	if e.Client == nil {
-		e.Client = &http.Client{
-			Transport: e.Transport,
-		}
-
-		if e.RequestTimeout > 0 {
-			e.Client.Timeout = time.Duration(e.RequestTimeout * float64(time.Second))
-		}
-	}
-
-	e.initialized = true
+	return req, nil
 }
 
 func getBodyReader(body interface{}) (io.Reader, error) {
