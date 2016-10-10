@@ -17,6 +17,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -215,9 +216,20 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 	return e.doRequest(r, DELETE)
 }
 
+// SetUserAgent set user agent based on app name and version
+func (e *Engine) SetUserAgent(app, version string) {
+	if e != nil {
+		e.UserAgent = fmt.Sprintf(
+			"%s/%s (go; %s; %s-%s)",
+			app, version, runtime.Version(),
+			runtime.GOARCH, runtime.GOOS,
+		)
+	}
+}
+
 // SetDialTimeout set dial timeout
 func (e *Engine) SetDialTimeout(timeout float64) {
-	if timeout > 0 {
+	if e != nil && timeout > 0 {
 		if e.Dialer == nil {
 			e.dialTimeout = timeout
 		} else {
@@ -228,7 +240,7 @@ func (e *Engine) SetDialTimeout(timeout float64) {
 
 // SetRequestTimeout set request timeout
 func (e *Engine) SetRequestTimeout(timeout float64) {
-	if timeout > 0 {
+	if e != nil && timeout > 0 {
 		if e.Dialer == nil {
 			e.requestTimeout = timeout
 		} else {

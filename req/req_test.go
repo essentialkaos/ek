@@ -40,7 +40,6 @@ const (
 )
 
 const (
-	_TEST_USER_AGENT      = "REQ TEST USER AGENT"
 	_TEST_CONTENT_TYPE    = "application/json"
 	_TEST_ACCEPT          = "application/vnd.example.api+json;version=2"
 	_TEST_BASIC_AUTH_USER = "admin"
@@ -80,10 +79,9 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
 	}
 
-	Global.UserAgent = _TEST_USER_AGENT
-
 	Global.SetDialTimeout(60.0)
 	Global.SetRequestTimeout(60.0)
+	Global.SetUserAgent("req-test", "5")
 
 	go runHTTPServer(s, c)
 
@@ -738,7 +736,7 @@ func acceptRequestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func uaRequestHandler(w http.ResponseWriter, r *http.Request) {
-	if r.UserAgent() != _TEST_USER_AGENT {
+	if r.UserAgent() != Global.UserAgent {
 		w.WriteHeader(940)
 		return
 	}
