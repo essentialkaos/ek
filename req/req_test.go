@@ -79,9 +79,9 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
 	}
 
-	Global.SetDialTimeout(60.0)
-	Global.SetRequestTimeout(60.0)
-	Global.SetUserAgent("req-test", "5")
+	SetDialTimeout(60.0)
+	SetRequestTimeout(60.0)
+	SetUserAgent("req-test", "5", "Test/5.1.1", "Magic/4.2.1")
 
 	go runHTTPServer(s, c)
 
