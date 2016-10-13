@@ -181,8 +181,8 @@ var Global *Engine = &Engine{
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // SetUserAgent set user agent based on app name and version for global engine
-func SetUserAgent(app, version string) {
-	Global.SetUserAgent(app, version)
+func SetUserAgent(app, version string, subs ...string) {
+	Global.SetUserAgent(app, version, subs...)
 }
 
 // SetDialTimeout set dial timeout for global engine
@@ -233,13 +233,17 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 }
 
 // SetUserAgent set user agent based on app name and version
-func (e *Engine) SetUserAgent(app, version string) {
+func (e *Engine) SetUserAgent(app, version string, subs ...string) {
 	if e != nil {
 		e.UserAgent = fmt.Sprintf(
 			"%s/%s (go; %s; %s-%s)",
 			app, version, runtime.Version(),
 			runtime.GOARCH, runtime.GOOS,
 		)
+
+		if len(subs) != 0 {
+			e.UserAgent += " " + strings.Join(subs, " ")
+		}
 	}
 }
 
