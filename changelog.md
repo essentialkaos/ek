@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.1.0
+
+* `[req]` Improved `SetUserAgent` method for appending subpackages versions
+
 #### v5.0.1
 
 * `[usage]` Fixed examples header
