@@ -21,8 +21,8 @@ var Prompt = "> "
 // MaskSymbol is symbol used for masking passwords
 var MaskSymbol = "*"
 
-// KillSignalError is error type when user cancel input
-var KillSignalError = errors.New("")
+// ErrKillSignal is error type when user cancel input
+var ErrKillSignal = errors.New("")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
