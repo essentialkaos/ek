@@ -443,6 +443,16 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	c.Assert(err, NotNil)
 }
 
+func (s *ReqSuite) TestEngineInit(c *C) {
+	var eng *Engine
+
+	eng = &Engine{}
+	initEngine(eng)
+
+	eng = &Engine{Transport: &http.Transport{}}
+	initEngine(eng)
+}
+
 func (s *ReqSuite) TestEngineErrors(c *C) {
 	var eng *Engine
 
