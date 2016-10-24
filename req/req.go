@@ -409,6 +409,8 @@ func initEngine(e *Engine) {
 			Dial:  e.Dialer.Dial,
 			Proxy: http.ProxyFromEnvironment,
 		}
+	} else {
+		e.Transport.Dial = e.Dialer.Dial
 	}
 
 	if e.Client == nil {

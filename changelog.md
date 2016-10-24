@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v5.1.1
+
+* `[req]` Improved `Engine` initialization routine
+* `[terminal]` Fixed bug in windows stub with error variable name
+
 #### v5.1.0
 
 * `[req]` Improved `SetUserAgent` method for appending subpackages versions
