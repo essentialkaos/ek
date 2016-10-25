@@ -80,6 +80,15 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Errors
+var (
+	ErrLoggerIsNil     = errors.New("Logger is nil")
+	ErrUnexpectedLevel = errors.New("Unexpected level type")
+	ErrOutputNotSet    = errors.New("Output file is not set")
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var logLevelsNames = map[string]int{
 	"debug":    0,
 	"info":     1,
@@ -178,11 +187,11 @@ func Aux(f string, a ...interface{}) (int, error) {
 // Useful for log rotation
 func (l *Logger) Reopen() error {
 	if l == nil {
-		return errors.New("Logger is nil")
+		return ErrLoggerIsNil
 	}
 
 	if l.fd == nil {
-		return errors.New("Output file is not set")
+		return ErrOutputNotSet
 	}
 
 	if l.w != nil {
@@ -197,7 +206,7 @@ func (l *Logger) Reopen() error {
 // MinLevel defines minimal logging level
 func (l *Logger) MinLevel(level interface{}) error {
 	if l == nil {
-		return errors.New("Logger is nil")
+		return ErrLoggerIsNil
 	}
 
 	levelCode, err := convertMinLevelValue(level)
@@ -260,7 +269,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 // Print write message to logger output
 func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	if l.level > level {
@@ -309,7 +318,7 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 // Flush write buffered data to file
 func (l *Logger) Flush() error {
 	if l == nil {
-		return errors.New("Logger is nil")
+		return ErrLoggerIsNil
 	}
 
 	if l.w == nil {
@@ -322,7 +331,7 @@ func (l *Logger) Flush() error {
 // Debug write debug message to logger output
 func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(DEBUG, f, a...)
@@ -331,7 +340,7 @@ func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
 // Info write info message to logger output
 func (l *Logger) Info(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(INFO, f, a...)
@@ -340,7 +349,7 @@ func (l *Logger) Info(f string, a ...interface{}) (int, error) {
 // Warn write warning message to logger output
 func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(WARN, f, a...)
@@ -349,7 +358,7 @@ func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
 // Error write error message to logger output
 func (l *Logger) Error(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(ERROR, f, a...)
@@ -358,7 +367,7 @@ func (l *Logger) Error(f string, a ...interface{}) (int, error) {
 // Crit write critical message to logger output
 func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(CRIT, f, a...)
@@ -367,7 +376,7 @@ func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
 // Aux write unskipable message (for separators/headers)
 func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 	if l == nil {
-		return -1, errors.New("Logger is nil")
+		return -1, ErrLoggerIsNil
 	}
 
 	return l.Print(AUX, f, a...)
@@ -436,5 +445,5 @@ func convertMinLevelValue(level interface{}) (int, error) {
 		return code, nil
 	}
 
-	return -1, errors.New("Unexpected level type")
+	return -1, ErrUnexpectedLevel
 }

@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.2.1
+
+* `[log]` Code refactoring
+
 #### v5.2.0
 
 * `[terminal]` Added password mask symbol color customization
