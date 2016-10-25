@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v5.2.0
+
+* `[terminal]` Added password mask symbol color customization
+* `[terminal]` [go-linenoise](https://github.com/essentialkaos/go-linenoise) updated to v3
+
 #### v5.1.1
 
 * `[req]` Improved `Engine` initialization routine

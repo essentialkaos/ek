@@ -15,14 +15,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrKillSignal is error type when user cancel input
+var ErrKillSignal = errors.New("")
+
 // Prompt is prompt string
 var Prompt = "> "
 
 // MaskSymbol is symbol used for masking passwords
 var MaskSymbol = "*"
 
-// ErrKillSignal is error type when user cancel input
-var ErrKillSignal = errors.New("")
+// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+var MaskSymbolColorTag = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -58,6 +61,10 @@ func AddHstory(ui string) {
 	return
 }
 
-func SetCompletionHandler(compfunc func(in string) []string) {
+func SetCompletionHandler(h func(in string) []string) {
+	return
+}
+
+func SetHintHandler(h func(input string) string) {
 	return
 }
