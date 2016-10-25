@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"pkg.re/essentialkaos/go-linenoise.v2"
+	"pkg.re/essentialkaos/go-linenoise.v3"
 
 	"pkg.re/essentialkaos/ek.v5/fmtc"
 )
@@ -30,6 +30,9 @@ var Prompt = "> "
 
 // MaskSymbol is symbol used for masking passwords
 var MaskSymbol = "*"
+
+// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+var MaskSymbolColorTag = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -167,7 +170,11 @@ func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 		}
 
 		if private && input != "" {
-			fmt.Println(getPrivateHider(input))
+			if MaskSymbolColorTag == "" {
+				fmt.Println(getPrivateHider(input))
+			} else {
+				fmtc.Println(MaskSymbolColorTag + getPrivateHider(input) + "{!}")
+			}
 		}
 
 		break

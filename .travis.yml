@@ -4,7 +4,7 @@ language: go
 
 go:
   - 1.6.3
-  - 1.7.1
+  - 1.7.3
   - tip
 
 branches:
@@ -26,7 +26,7 @@ env:
 
 before_install:
   - go get -v pkg.re/check.v1
-  - go get -v pkg.re/essentialkaos/go-linenoise.v2
+  - go get -v pkg.re/essentialkaos/go-linenoise.v3
   - go get -v github.com/axw/gocov/gocov
 
 script:
