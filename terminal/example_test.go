@@ -27,6 +27,10 @@ func ExampleReadUI() {
 
 func ExampleReadPassword() {
 
+	Prompt = "› "
+	MaskSymbol = "•"
+	MaskSymbolColorTag = "{s}"
+
 	// user must enter password
 	input, err := ReadUI("Please enter password", true)
 
