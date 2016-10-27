@@ -3,6 +3,7 @@
 #### v5.2.1
 
 * `[log]` Code refactoring
+* `[tmp]` Added permissions customization for each temp struct
 
 #### v5.2.0
 

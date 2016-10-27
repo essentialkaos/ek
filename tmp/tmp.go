@@ -21,7 +21,9 @@ import (
 
 // Temp is basic temp struct
 type Temp struct {
-	Dir string
+	Dir       string
+	DirPerms  os.FileMode
+	FilePerms os.FileMode
 
 	targets []string
 }
@@ -59,7 +61,11 @@ func NewTemp(args ...string) (*Temp, error) {
 		return nil, fmt.Errorf("Directory %s is not writable", tempDir)
 	}
 
-	return &Temp{Dir: tempDir}, nil
+	return &Temp{
+		Dir:       tempDir,
+		DirPerms:  DefaultDirPerms,
+		FilePerms: DefaultFilePerms,
+	}, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -77,7 +83,7 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 	}
 
 	tmpDir := getTempName(t.Dir, name)
-	err := os.MkdirAll(tmpDir, DefaultDirPerms)
+	err := os.MkdirAll(tmpDir, t.DirPerms)
 
 	if err != nil {
 		return "", err
@@ -101,7 +107,7 @@ func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
 	}
 
 	tmpFile := getTempName(t.Dir, name)
-	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, DefaultFilePerms)
+	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, t.FilePerms)
 
 	if err != nil {
 		return nil, "", err

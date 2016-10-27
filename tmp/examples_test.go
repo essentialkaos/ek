@@ -16,9 +16,9 @@ import (
 func ExampleNewTemp() {
 	tmp, _ := NewTemp()
 
-	fmt.Println(tmp)
+	fmt.Println(tmp.Dir)
 
-	// Output: &{/tmp []}
+	// Output: /tmp
 }
 
 func ExampleTemp_MkDir() {
