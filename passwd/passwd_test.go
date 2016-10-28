@@ -28,12 +28,13 @@ var _ = Suite(&PasswdSuite{})
 func (s *PasswdSuite) TestStrengthCheck(c *C) {
 	weakPass1 := "fgiaft"
 	weakPass2 := "FgA13"
+	weakPass3 := "FgaCCvfaD"
 	mediumPass := "AcDr123"
 	strongPass := "AbCDEf34%;"
 
 	c.Assert(GetPasswordStrength(weakPass1), Equals, STRENGTH_WEAK)
 	c.Assert(GetPasswordStrength(weakPass2), Equals, STRENGTH_WEAK)
-	c.Assert(GetPasswordStrength(weakPass2), Equals, STRENGTH_WEAK)
+	c.Assert(GetPasswordStrength(weakPass3), Equals, STRENGTH_WEAK)
 	c.Assert(GetPasswordStrength(mediumPass), Equals, STRENGTH_MEDIUM)
 	c.Assert(GetPasswordStrength(strongPass), Equals, STRENGTH_STRONG)
 	c.Assert(GetPasswordStrength(""), Equals, STRENGTH_WEAK)
