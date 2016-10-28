@@ -114,3 +114,12 @@ func ExampleWrap() {
 		Wrap(text, "", 36),
 	)
 }
+
+func ExampleColorizePassword() {
+	password := ">+XY!b3Rog"
+
+	fmt.Println(ColorizePassword(password, "{r}", "{y}", "{c}"))
+
+	// Output:
+	// {c}>+{r}XY{c}!{r}b{y}3{r}Rog{!}
+}

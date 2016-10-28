@@ -176,6 +176,41 @@ func Wrap(text, indent string, maxLineLength int) string {
 	return result
 }
 
+// ColorizePassword add different fmtc color tags for numbers and letters
+func ColorizePassword(password, letterTag, numTag, specialTag string) string {
+	var (
+		result  = ""
+		curTag  = ""
+		prevTag = "-"
+	)
+
+	for _, r := range password {
+		switch {
+		case r >= 48 && r <= 57:
+			curTag = numTag
+		case r >= 91 && r <= 93:
+			curTag = specialTag
+		case r >= 65 && r <= 122:
+			curTag = letterTag
+		default:
+			curTag = specialTag
+		}
+
+		if curTag != prevTag {
+			if curTag == "" {
+				result += "{!}" + string(r)
+			} else {
+				result += curTag + string(r)
+			}
+			prevTag = curTag
+		} else {
+			result += string(r)
+		}
+	}
+
+	return result + "{!}"
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getPrettyNum(i interface{}) string {
