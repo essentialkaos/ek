@@ -268,7 +268,7 @@ func renderOptions(options []option, color string) {
 
 		if len(opt.args) != 0 {
 			fmtc.Printf(
-				"  {"+color+"}%s{!} {s-}%s{!} %s %s\n",
+				"  {"+color+"}%s{!} {s}%s{!} %s %s\n",
 				opt.name,
 				opt.args,
 				getOptionSpaces(opt, maxSize),
