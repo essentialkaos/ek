@@ -106,7 +106,7 @@ func GetPasswordStrength(password string) int {
 	case 4:
 		return STRENGTH_STRONG
 
-	case 2, 3:
+	case 3:
 		return STRENGTH_MEDIUM
 
 	default:

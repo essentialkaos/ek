@@ -127,3 +127,17 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(true, "test")
 	Separator(false, "test")
 }
+
+func (s *FmtUtilSuite) TestColorizePassword(c *C) {
+	p1 := "acbdabcd"
+	p2 := "ABcd12AB"
+	p3 := "AB[3a=c+"
+
+	c.Assert(ColorizePassword(p1, "{r}", "{g}", "{y}"), Equals, "{r}acbdabcd{!}")
+	c.Assert(ColorizePassword(p2, "{r}", "{g}", "{y}"), Equals, "{r}ABcd{g}12{r}AB{!}")
+	c.Assert(ColorizePassword(p3, "{r}", "{g}", "{y}"), Equals, "{r}AB{y}[{g}3{r}a{y}={r}c{y}+{!}")
+
+	c.Assert(ColorizePassword(p3, "{r}", "", ""), Equals, "{r}AB{!}[3{r}a{!}={r}c{!}+{!}")
+	c.Assert(ColorizePassword(p3, "", "{g}", ""), Equals, "{!}AB[{g}3{!}a=c+{!}")
+	c.Assert(ColorizePassword(p3, "", "", "{y}"), Equals, "{!}AB{y}[{!}3a{y}={!}c{y}+{!}")
+}

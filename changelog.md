@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v5.3.0
+
+* `[fmtutil]` Added method `ColorizePassword` for password colorization
+* `[passwd]` Improved password generation and strength check
+
 #### v5.2.1
 
 * `[log]` Code refactoring
