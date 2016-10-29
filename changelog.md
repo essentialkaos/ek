@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.3.1
+
+* `[usage]` Changed color for arguments from dark grey to light grey
+
 #### v5.3.0
 
 * `[fmtutil]` Added method `ColorizePassword` for password colorization
