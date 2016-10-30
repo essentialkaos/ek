@@ -188,7 +188,7 @@ func ColorizePassword(password, letterTag, numTag, specialTag string) string {
 		switch {
 		case r >= 48 && r <= 57:
 			curTag = numTag
-		case r >= 91 && r <= 93:
+		case r >= 91 && r <= 96:
 			curTag = specialTag
 		case r >= 65 && r <= 122:
 			curTag = letterTag
