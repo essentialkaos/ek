@@ -1,5 +1,11 @@
 ## Changelog
 
+#### v5.4.0
+
+* `[usage]` Changed color for arguments from dark grey to light grey
+* `[usage]` Added breadcrumbs output for commands and options
+* `[fmtutil]` Fixed special symbols colorization in `ColorizePassword`
+
 #### v5.3.0
 
 * `[fmtutil]` Added method `ColorizePassword` for password colorization
