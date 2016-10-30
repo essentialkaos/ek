@@ -1,8 +1,9 @@
 ## Changelog
 
-#### v5.3.1
+#### v5.4.0
 
 * `[usage]` Changed color for arguments from dark grey to light grey
+* `[usage]` Added breadcrumbs output for commands and options
 
 #### v5.3.0
 

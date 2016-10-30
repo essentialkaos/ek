@@ -19,7 +19,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _SPACES = "                                                                "
+const (
+	_SPACES = "                                                                "
+	_DOTS   = "................................................................"
+)
+
+const _BREADCRUMBS_MIN_SIZE = 16
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -66,6 +71,9 @@ var (
 
 	// OptionsColor contains default options color
 	OptionsColor = "g"
+
+	// Use bread crumbs for commands and options output
+	Breadcrumbs = false
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -268,18 +276,13 @@ func renderOptions(options []option, color string) {
 
 		if len(opt.args) != 0 {
 			fmtc.Printf(
-				"  {"+color+"}%s{!} {s}%s{!} %s %s\n",
-				opt.name,
-				opt.args,
-				getOptionSpaces(opt, maxSize),
-				fmtc.Sprintf(opt.desc),
+				"  {"+color+"}%s{!} {s}%s{!} "+getBreadcrumbs(opt, maxSize)+" %s\n",
+				opt.name, opt.args, fmtc.Sprintf(opt.desc),
 			)
 		} else {
 			fmtc.Printf(
-				"  {"+color+"}%s{!}  %s %s\n",
-				opt.name,
-				getOptionSpaces(opt, maxSize),
-				fmtc.Sprintf(opt.desc),
+				"  {"+color+"}%s{!} "+getBreadcrumbs(opt, maxSize+1)+" %s\n",
+				opt.name, fmtc.Sprintf(opt.desc),
 			)
 		}
 	}
@@ -304,12 +307,16 @@ func renderExamples(info *Info) {
 	}
 }
 
-// getOptionSpaces return spaces for option name aligning
-func getOptionSpaces(opt option, maxSize int) string {
+// getBreadCrumbs return bread crumbs (or spaces if colors are disabled) for
+// option name aligning
+func getBreadcrumbs(opt option, maxSize int) string {
 	optLen := len(opt.name) + len(opt.args)
-	spaces := maxSize - optLen
 
-	return _SPACES[:spaces]
+	if Breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
+		return "{s-}" + _DOTS[:maxSize-optLen] + "{!}"
+	}
+
+	return _SPACES[:maxSize-optLen]
 }
 
 // getMaxOptionSize return longest option name size
