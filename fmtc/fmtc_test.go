@@ -90,6 +90,8 @@ func (s *FormatSuite) TestZDisable(c *C) {
 	c.Assert(Sprint("{S}W{!}"), Equals, "W")
 	c.Assert(Sprint("{S*_}W{!}"), Equals, "W")
 
+	c.Assert(Sprint("Test {config} value"), Equals, "Test {config} value")
+
 	DisableColors = false
 }
 
