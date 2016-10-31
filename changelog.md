@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.4.1
+
+* `[fmtc]` Fixed bug with parsing tags
+
 #### v5.4.0
 
 * `[usage]` Changed color for arguments from dark grey to light grey
