@@ -32,7 +32,7 @@ type T struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var codes = map[int]int{
+var codes = map[rune]int{
 	// Special
 	'-': -1, // Light colors
 	'!': 0,  // Default
@@ -181,11 +181,7 @@ func tag2ANSI(tag string, clean bool) string {
 	)
 
 	for _, key := range tag {
-		code, ok := codes[int(key)]
-
-		if !ok {
-			return fmt.Sprint(tag)
-		}
+		code := codes[key]
 
 		switch key {
 		case '-':
@@ -221,8 +217,7 @@ LOOP:
 		i, _, err := input.ReadRune()
 
 		if err != nil {
-			output.WriteString("{")
-			output.WriteString(tag.String())
+			output.WriteString("{" + tag.String())
 			return true
 		}
 
@@ -230,8 +225,7 @@ LOOP:
 		default:
 			tag.WriteRune(i)
 		case '{':
-			output.WriteString("{")
-			output.WriteString(tag.String())
+			output.WriteString("{" + tag.String())
 			tag = bytes.NewBufferString("")
 		case '}':
 			break LOOP
@@ -239,6 +233,11 @@ LOOP:
 	}
 
 	tagStr := tag.String()
+
+	if !isValidTag(tagStr) {
+		output.WriteString("{" + tagStr + "}")
+		return true
+	}
 
 	if tagStr == "!" {
 		if !clean {
@@ -248,17 +247,7 @@ LOOP:
 		return true
 	}
 
-	colorCode := tag2ANSI(tagStr, clean)
-
-	if colorCode == tagStr {
-		output.WriteString("{")
-		output.WriteString(colorCode)
-		output.WriteString("}")
-
-		return true
-	}
-
-	output.WriteString(colorCode)
+	output.WriteString(tag2ANSI(tagStr, clean))
 
 	return false
 }
@@ -312,6 +301,18 @@ func getSymbols(symbol string, count int) string {
 	}
 
 	return result
+}
+
+func isValidTag(tag string) bool {
+	for _, r := range tag {
+		_, hasCode := codes[r]
+
+		if !hasCode {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
