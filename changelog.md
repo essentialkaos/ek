@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v5.5.0
+
+* `[system]` Added method `CurrentTTY` which return path to current tty
+* `[system]` Code refactoring
+
 #### v5.4.1
 
 * `[fmtc]` Fixed bug with parsing tags
