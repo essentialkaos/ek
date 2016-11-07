@@ -186,6 +186,18 @@ func IsGroupExist(name string) bool {
 	return false
 }
 
+// CurrentTTY return current tty or empty string if error occurred
+func CurrentTTY() string {
+	pid := strconv.Itoa(os.Getpid())
+	fdLink, err := os.Readlink("/proc/" + pid + "/fd/0")
+
+	if err != nil {
+		return ""
+	}
+
+	return fdLink
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // IsRoot check if current user is root
@@ -264,15 +276,13 @@ func appendRealUserInfo(user *User) {
 
 // getUserInfo return uid associated with current tty
 func getTDOwnerID() (int, bool) {
-	sPid := strconv.Itoa(os.Getpid())
+	tty := CurrentTTY()
 
-	fdLink, err := os.Readlink("/proc/" + sPid + "/fd/0")
-
-	if err != nil {
+	if tty == "" {
 		return -1, false
 	}
 
-	ownerID, err := getOwner(fdLink)
+	ownerID, err := getOwner(tty)
 
 	return ownerID, err == nil
 }
@@ -296,15 +306,15 @@ func getRealUserByPTY() (string, int, int) {
 
 // getRealUserFromEnv try to find info about real user in environment variables
 func getRealUserFromEnv() (string, int, int) {
-	e := env.Get()
+	envMap := env.Get()
 
-	if e["SUDO_USER"] == "" || e["SUDO_UID"] == "" || e["SUDO_GID"] == "" {
+	if envMap["SUDO_USER"] == "" || envMap["SUDO_UID"] == "" || envMap["SUDO_GID"] == "" {
 		return "", -1, -1
 	}
 
-	user := e["SUDO_USER"]
-	uid, _ := strconv.Atoi(e["SUDO_UID"])
-	gid, _ := strconv.Atoi(e["SUDO_GID"])
+	user := envMap["SUDO_USER"]
+	uid, _ := strconv.Atoi(envMap["SUDO_UID"])
+	gid, _ := strconv.Atoi(envMap["SUDO_GID"])
 
 	return user, uid, gid
 }
