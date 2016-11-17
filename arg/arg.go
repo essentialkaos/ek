@@ -385,6 +385,11 @@ func ParseArgName(arg string) (string, string) {
 	return parseName(arg)
 }
 
+// Q merge several arguments to string
+func Q(args ...string) string {
+	return strings.Join(args, " ")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {

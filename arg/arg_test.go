@@ -343,3 +343,9 @@ func (s *ArgUtilSuite) TestParsing(c *C) {
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0].Error(), Equals, "Some argument does not have a name")
 }
+
+func (s *ArgUtilSuite) TestMerging(c *C) {
+	c.Assert(Q(), Equals, "")
+	c.Assert(Q("test"), Equals, "test")
+	c.Assert(Q("test1", "test2"), Equals, "test1 test2")
+}

@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.6.0
+
+* `[arg]` Added method `Q` for merging several arguments to string (useful for `Alias` property)
+
 #### v5.5.0
 
 * `[system]` Added method `CurrentTTY` which return path to current tty
