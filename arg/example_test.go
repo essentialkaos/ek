@@ -27,6 +27,8 @@ func Example_parsing() {
 		"r:required": {Type: INT, Required: true},            // Some arguments can be marked as required
 		"m:merg":     {Type: STRING, Mergeble: true},         // Mergeble arguments can be defined more than one time
 		"h:help":     {Type: BOOL, Alias: "u:usage about"},   // You can define argument aliases
+		"e:example":  {Conflicts: "s:string S:string2"},      // Argument conflicts with string and string2 (arguments can't be set at same time)
+		"E:example2": {Bound: "int I:int2"},                  // Argument bound with int and int2 (arguments must be set at same time)
 	}
 
 	// args contains unparsed values

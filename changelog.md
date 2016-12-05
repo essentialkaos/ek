@@ -2,7 +2,9 @@
 
 #### v5.6.0
 
-* `[arg]` Added method `Q` for merging several arguments to string (useful for `Alias` property)
+* `[arg]` Added bound arguments support
+* `[arg]` Added conflicts arguments support
+* `[arg]` Added method `Q` for merging several arguments to string (useful for `Alias`, `Bound` and `Conflicts`)
 
 #### v5.5.0
 
