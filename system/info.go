@@ -36,6 +36,20 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	LINUX_ARCH   = "arch"
+	LINUX_CENTOS = "centos"
+	LINUX_DEBIAN = "debian"
+	LINUX_FEDORA = "fedora"
+	LINUX_GENTOO = "gentoo"
+	LINUX_RHEL   = "rhel"
+	LINUX_SUSE   = "suse"
+	LINUX_UBUNTU = "ubuntu"
+	DARWIN_OSX   = "osx"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // LoadAvg contains information about average system load
 type LoadAvg struct {
 	Min1  float64 `json:"min1"`  // LA in last 1 minute
@@ -99,10 +113,12 @@ type IOStats struct {
 
 // SystemInfo contains info about system (hostname, OS, arch...)
 type SystemInfo struct {
-	Hostname string `json:"hostname"` // Hostname
-	OS       string `json:"os"`       // OS name
-	Kernel   string `json:"kernel"`   // Kernel version
-	Arch     string `json:"arch"`     // System architecture (i386/i686/x86_64/etc...)
+	Hostname     string `json:"hostname"`     // Hostname
+	OS           string `json:"os"`           // OS name
+	Distribution string `json:"distribution"` // OS distribution
+	Version      string `json:"version"`      // OS version
+	Kernel       string `json:"kernel"`       // Kernel version
+	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
 }
 
 // InterfaceInfo contains info about network interfaces
@@ -608,4 +624,12 @@ func getCPUStats() (basicCPUInfo, error) {
 	result.Total = result.User + result.System + result.Nice + result.Idle + result.Wait + result.IRQ + result.SRQ + result.Steal
 
 	return result, nil
+}
+
+func isFileExist(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	return syscall.Access(path, syscall.F_OK) == nil
 }
