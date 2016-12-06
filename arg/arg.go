@@ -40,18 +40,22 @@ const (
 	ERROR_EMPTY_VALUE         = 5
 	ERROR_REQUIRED_NOT_SET    = 6
 	ERROR_WRONG_FORMAT        = 7
+	ERROR_CONFLICT            = 8
+	ERROR_BOUND_NOT_SET       = 9
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // V basic argument struct
 type V struct {
-	Type     int     // argument type
-	Max      float64 // maximum integer argument value
-	Min      float64 // minimum integer argument value
-	Alias    string  // list of aliases
-	Mergeble bool    // argument supports arguments value merging
-	Required bool    // argument is required
+	Type      int     // argument type
+	Max       float64 // maximum integer argument value
+	Min       float64 // minimum integer argument value
+	Alias     string  // list of aliases
+	Conflicts string  // list of conflicts arguments
+	Bound     string  // list of bound arguments
+	Mergeble  bool    // argument supports arguments value merging
+	Required  bool    // argument is required
 
 	set bool // Non exported field
 
@@ -66,17 +70,29 @@ type Arguments struct {
 	full        Map
 	short       map[string]string
 	initialized bool
-	hasRequired bool
+
+	hasRequired  bool
+	hasBound     bool
+	hasConflicts bool
 }
 
 // ArgumentError argument parsing error
 type ArgumentError struct {
-	Arg  string
-	Type int
+	Arg      string
+	BoundArg string
+	Type     int
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type argumentName struct {
+	Long  string
+	Short string
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// global is global arguments
 var global *Arguments
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -87,39 +103,45 @@ func (args *Arguments) Add(name string, arg *V) error {
 		initArgs(args)
 	}
 
-	longName, shortName := parseName(name)
+	a := parseName(name)
 
 	switch {
 	case arg == nil:
-		return ArgumentError{"--" + longName, ERROR_ARG_IS_NIL}
-	case longName == "":
-		return ArgumentError{"", ERROR_NO_NAME}
-	case args.full[longName] != nil:
-		return ArgumentError{"--" + longName, ERROR_DUPLICATE_LONGNAME}
-	case shortName != "" && args.short[shortName] != "":
-		return ArgumentError{"-" + shortName, ERROR_DUPLICATE_SHORTNAME}
+		return ArgumentError{"--" + a.Long, "", ERROR_ARG_IS_NIL}
+	case a.Long == "":
+		return ArgumentError{"", "", ERROR_NO_NAME}
+	case args.full[a.Long] != nil:
+		return ArgumentError{"--" + a.Long, "", ERROR_DUPLICATE_LONGNAME}
+	case a.Short != "" && args.short[a.Short] != "":
+		return ArgumentError{"-" + a.Short, "", ERROR_DUPLICATE_SHORTNAME}
 	}
 
-	if arg.Required == true {
+	if arg.Required {
 		args.hasRequired = true
 	}
 
-	args.full[longName] = arg
+	if arg.Bound != "" {
+		args.hasBound = true
+	}
 
-	if shortName != "" {
-		args.short[shortName] = longName
+	if arg.Conflicts != "" {
+		args.hasConflicts = true
+	}
+
+	args.full[a.Long] = arg
+
+	if a.Short != "" {
+		args.short[a.Short] = a.Long
 	}
 
 	if arg.Alias != "" {
-		aliases := strings.Split(arg.Alias, " ")
+		aliases := parseArgList(arg.Alias)
 
-		for _, v := range aliases {
-			alLongName, alShortName := parseName(v)
+		for _, l := range aliases {
+			args.full[l.Long] = arg
 
-			args.full[alLongName] = arg
-
-			if alShortName != "" {
-				args.short[alShortName] = longName
+			if l.Short != "" {
+				args.short[l.Short] = a.Long
 			}
 		}
 	}
@@ -144,13 +166,13 @@ func (args *Arguments) AddMap(argsMap Map) []error {
 
 // GetS get argument value as string
 func (args *Arguments) GetS(name string) string {
-	longName, _ := parseName(name)
-	arg, ok := args.full[longName]
+	a := parseName(name)
+	arg, ok := args.full[a.Long]
 
 	switch {
 	case !ok:
 		return ""
-	case args.full[longName].Value == nil:
+	case args.full[a.Long].Value == nil:
 		return ""
 	case arg.Type == INT:
 		return strconv.Itoa(arg.Value.(int))
@@ -165,14 +187,14 @@ func (args *Arguments) GetS(name string) string {
 
 // GetI get argument value as integer
 func (args *Arguments) GetI(name string) int {
-	longName, _ := parseName(name)
-	arg, ok := args.full[longName]
+	a := parseName(name)
+	arg, ok := args.full[a.Long]
 
 	switch {
 	case !ok:
 		return 0
 
-	case args.full[longName].Value == nil:
+	case args.full[a.Long].Value == nil:
 		return 0
 
 	case arg.Type == STRING:
@@ -198,14 +220,14 @@ func (args *Arguments) GetI(name string) int {
 
 // GetB get argument value as boolean
 func (args *Arguments) GetB(name string) bool {
-	longName, _ := parseName(name)
-	arg, ok := args.full[longName]
+	a := parseName(name)
+	arg, ok := args.full[a.Long]
 
 	switch {
 	case !ok:
 		return false
 
-	case args.full[longName].Value == nil:
+	case args.full[a.Long].Value == nil:
 		return false
 
 	case arg.Type == STRING:
@@ -233,14 +255,14 @@ func (args *Arguments) GetB(name string) bool {
 
 // GetF get argument value as floating number
 func (args *Arguments) GetF(name string) float64 {
-	longName, _ := parseName(name)
-	arg, ok := args.full[longName]
+	a := parseName(name)
+	arg, ok := args.full[a.Long]
 
 	switch {
 	case !ok:
 		return 0.0
 
-	case args.full[longName].Value == nil:
+	case args.full[a.Long].Value == nil:
 		return 0.0
 
 	case arg.Type == STRING:
@@ -266,8 +288,8 @@ func (args *Arguments) GetF(name string) float64 {
 
 // Has check that argument exists and set
 func (args *Arguments) Has(name string) bool {
-	longName, _ := parseName(name)
-	arg, ok := args.full[longName]
+	a := parseName(name)
+	arg, ok := args.full[a.Long]
 
 	if !ok {
 		return false
@@ -382,14 +404,20 @@ func Parse(argsMap ...Map) ([]string, []error) {
 
 // ParseArgName parse combined name and return long and short arguments
 func ParseArgName(arg string) (string, string) {
-	return parseName(arg)
+	a := parseName(arg)
+	return a.Long, a.Short
+}
+
+// Q merge several arguments to string
+func Q(args ...string) string {
+	return strings.Join(args, " ")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 	if len(rawArgs) == 0 {
-		return nil, args.getErrorsForRequiredArgs()
+		return nil, args.validate()
 	}
 
 	var (
@@ -454,10 +482,10 @@ func (args *Arguments) parseArgs(rawArgs []string) ([]string, []error) {
 		}
 	}
 
-	errorList = append(errorList, args.getErrorsForRequiredArgs()...)
+	errorList = append(errorList, args.validate()...)
 
 	if argName != "" {
-		errorList = append(errorList, ArgumentError{"--" + argName, ERROR_EMPTY_VALUE})
+		errorList = append(errorList, ArgumentError{"--" + argName, "", ERROR_EMPTY_VALUE})
 	}
 
 	return argList, errorList
@@ -468,7 +496,7 @@ func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 		argSlice := strings.Split(arg, "=")
 
 		if len(argSlice) <= 1 || argSlice[1] == "" {
-			return "", "", ArgumentError{"--" + argSlice[0], ERROR_WRONG_FORMAT}
+			return "", "", ArgumentError{"--" + argSlice[0], "", ERROR_WRONG_FORMAT}
 		}
 
 		return argSlice[0], strings.Join(argSlice[1:], "="), nil
@@ -478,7 +506,7 @@ func (args *Arguments) parseLongArgument(arg string) (string, string, error) {
 		return arg, "", nil
 	}
 
-	return "", "", ArgumentError{"--" + arg, ERROR_UNSUPPORTED}
+	return "", "", ArgumentError{"--" + arg, "", ERROR_UNSUPPORTED}
 }
 
 func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
@@ -486,27 +514,27 @@ func (args *Arguments) parseShortArgument(arg string) (string, string, error) {
 		argSlice := strings.Split(arg, "=")
 
 		if len(argSlice) <= 1 || argSlice[1] == "" {
-			return "", "", ArgumentError{"-" + argSlice[0], ERROR_WRONG_FORMAT}
+			return "", "", ArgumentError{"-" + argSlice[0], "", ERROR_WRONG_FORMAT}
 		}
 
 		argName := argSlice[0]
 
 		if args.short[argName] == "" {
-			return "", "", ArgumentError{"-" + argName, ERROR_UNSUPPORTED}
+			return "", "", ArgumentError{"-" + argName, "", ERROR_UNSUPPORTED}
 		}
 
 		return args.short[argName], strings.Join(argSlice[1:], "="), nil
 	}
 
 	if args.short[arg] == "" {
-		return "", "", ArgumentError{"-" + arg, ERROR_UNSUPPORTED}
+		return "", "", ArgumentError{"-" + arg, "", ERROR_UNSUPPORTED}
 	}
 
 	return args.short[arg], "", nil
 }
 
-func (args *Arguments) getErrorsForRequiredArgs() []error {
-	if args.hasRequired == false {
+func (args *Arguments) validate() []error {
+	if !args.hasRequired && !args.hasBound && !args.hasConflicts {
 		return nil
 	}
 
@@ -514,7 +542,27 @@ func (args *Arguments) getErrorsForRequiredArgs() []error {
 
 	for n, v := range args.full {
 		if v.Required == true && v.Value == nil {
-			errorList = append(errorList, ArgumentError{n, ERROR_REQUIRED_NOT_SET})
+			errorList = append(errorList, ArgumentError{n, "", ERROR_REQUIRED_NOT_SET})
+		}
+
+		if v.Conflicts != "" {
+			conflicts := parseArgList(v.Conflicts)
+
+			for _, c := range conflicts {
+				if args.Has(c.Long) {
+					errorList = append(errorList, ArgumentError{n, c.Long, ERROR_CONFLICT})
+				}
+			}
+		}
+
+		if v.Bound != "" {
+			bound := parseArgList(v.Bound)
+
+			for _, b := range bound {
+				if !args.Has(b.Long) {
+					errorList = append(errorList, ArgumentError{n, b.Long, ERROR_BOUND_NOT_SET})
+				}
+			}
 		}
 	}
 
@@ -529,14 +577,24 @@ func initArgs(args *Arguments) {
 	args.initialized = true
 }
 
-func parseName(name string) (string, string) {
+func parseName(name string) argumentName {
 	na := strings.Split(name, ":")
 
 	if len(na) == 1 {
-		return na[0], ""
+		return argumentName{na[0], ""}
 	}
 
-	return na[1], na[0]
+	return argumentName{na[1], na[0]}
+}
+
+func parseArgList(list string) []argumentName {
+	var result []argumentName
+
+	for _, a := range strings.Split(list, " ") {
+		result = append(result, parseName(a))
+	}
+
+	return result
 }
 
 func updateArgument(arg *V, name string, value string) error {
@@ -579,7 +637,7 @@ func updateFloatArgument(name string, arg *V, value string) error {
 	floatValue, err := strconv.ParseFloat(value, 64)
 
 	if err != nil {
-		return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
+		return ArgumentError{"--" + name, "", ERROR_WRONG_FORMAT}
 	}
 
 	var resultFloat float64
@@ -604,7 +662,7 @@ func updateIntArgument(name string, arg *V, value string) error {
 	intValue, err := strconv.Atoi(value)
 
 	if err != nil {
-		return ArgumentError{"--" + name, ERROR_WRONG_FORMAT}
+		return ArgumentError{"--" + name, "", ERROR_WRONG_FORMAT}
 	}
 
 	var resultInt int
@@ -671,6 +729,10 @@ func (e ArgumentError) Error() string {
 		return fmt.Sprintf("Argument %s defined 2 or more times", e.Arg)
 	case ERROR_NO_NAME:
 		return "Some argument does not have a name"
+	case ERROR_CONFLICT:
+		return fmt.Sprintf("Argument %s conflicts with argument %s", e.Arg, e.BoundArg)
+	case ERROR_BOUND_NOT_SET:
+		return fmt.Sprintf("Argument %s must be defined with argument %s", e.BoundArg, e.Arg)
 	}
 }
 

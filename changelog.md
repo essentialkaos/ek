@@ -1,5 +1,12 @@
 ## Changelog
 
+#### v5.6.0
+
+* `[system]` Added `Distribution` and `Version` info to `SystemInfo` struct
+* `[arg]` Added bound arguments support
+* `[arg]` Added conflicts arguments support
+* `[arg]` Added method `Q` for merging several arguments to string (useful for `Alias`, `Bound` and `Conflicts`)
+
 #### v5.5.0
 
 * `[system]` Added method `CurrentTTY` which return path to current tty
