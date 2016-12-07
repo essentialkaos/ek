@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v5.7.0
+
+* `[process]` `GetTree` now can return tree for custom root process
+* `[process]` Fixed threads marking
+
 #### v5.6.0
 
 * `[system]` Added `Distribution` and `Version` info to `SystemInfo` struct
