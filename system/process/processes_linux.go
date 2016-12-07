@@ -35,7 +35,7 @@ type ProcessInfo struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetTree return root process with all subprocesses on system
-func GetTree() (*ProcessInfo, error) {
+func GetTree(pid ...int) (*ProcessInfo, error) {
 	list, err := findInfo("/proc", make(map[int]string))
 
 	if err != nil {
@@ -46,23 +46,13 @@ func GetTree() (*ProcessInfo, error) {
 		return nil, errors.New("Can't find any processes")
 	}
 
-	processMap := processListToMap(list)
+	root := 1
 
-	for _, process := range processMap {
-		if process.Parent < 0 {
-			continue
-		}
-
-		parentProcess := processMap[process.Parent]
-
-		if parentProcess == nil {
-			continue
-		}
-
-		parentProcess.Childs = append(parentProcess.Childs, process)
+	if len(pid) != 0 {
+		root = pid[0]
 	}
 
-	return processMap[1], nil
+	return processListToTree(list, root), nil
 }
 
 // GetList return slice with all active processes on system
@@ -77,12 +67,12 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 
 	dirs := fsutil.List(dir, true, &fsutil.ListingFilter{Perms: "DRX"})
 
-	for _, pidDir := range dirs {
-		if !isPID(pidDir) {
+	for _, pid := range dirs {
+		if !isPID(pid) {
 			continue
 		}
 
-		taskDir := dir + "/" + pidDir + "/task"
+		taskDir := dir + "/" + pid + "/task"
 
 		if fsutil.IsExist(taskDir) {
 			threads, err := findInfo(taskDir, userMap)
@@ -95,14 +85,12 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 				continue
 			}
 
-			processThreads(threads)
-
 			result = append(result, threads...)
 
 			continue
 		}
 
-		info, err := readProcessInfo(dir+"/"+pidDir, pidDir, userMap)
+		info, err := readProcessInfo(dir+"/"+pid, pid, userMap)
 
 		if err != nil {
 			return nil, err
@@ -147,11 +135,14 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 		return nil, err
 	}
 
+	ppid, isThread := getProcessParent(dir, pidInt)
+
 	return &ProcessInfo{
-		Command: formatCommand(string(cmd)),
-		User:    username,
-		PID:     pidInt,
-		Parent:  getProcessParent(dir, pidInt),
+		Command:  formatCommand(string(cmd)),
+		User:     username,
+		PID:      pidInt,
+		Parent:   ppid,
+		IsThread: isThread,
 	}, nil
 }
 
@@ -175,20 +166,14 @@ func getProcessUser(uid int, userMap map[int]string) (string, error) {
 	return user.Name, nil
 }
 
-func processThreads(threads []*ProcessInfo) {
-	for _, info := range threads {
-		info.IsThread = true
-	}
-}
-
-func getProcessParent(pidDir string, pid int) int {
+func getProcessParent(pidDir string, pid int) (int, bool) {
 	tgid, ppid := getParentPIDs(pidDir)
 
 	if tgid != pid {
-		return tgid
+		return tgid, true
 	}
 
-	return ppid
+	return ppid, false
 }
 
 func getParentPIDs(pidDir string) (int, int) {
@@ -237,14 +222,28 @@ func formatCommand(cmd string) string {
 	return command
 }
 
-func processListToMap(processes []*ProcessInfo) map[int]*ProcessInfo {
+func processListToTree(processes []*ProcessInfo, root int) *ProcessInfo {
 	var result = make(map[int]*ProcessInfo)
 
 	for _, info := range processes {
 		result[info.PID] = info
 	}
 
-	return result
+	for _, process := range result {
+		if process.Parent < 0 {
+			continue
+		}
+
+		parentProcess := result[process.Parent]
+
+		if parentProcess == nil {
+			continue
+		}
+
+		parentProcess.Childs = append(parentProcess.Childs, process)
+	}
+
+	return result[root]
 }
 
 func isPID(pid string) bool {
