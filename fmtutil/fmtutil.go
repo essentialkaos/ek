@@ -10,6 +10,7 @@ package fmtutil
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -209,6 +210,15 @@ func ColorizePassword(password, letterTag, numTag, specialTag string) string {
 	}
 
 	return result + "{!}"
+}
+
+// CountDigits return number of digits in integer
+func CountDigits(i int) int {
+	if i < 0 {
+		return int(math.Log10(math.Abs(float64(i)))) + 2
+	}
+
+	return int(math.Log10(math.Abs(float64(i)))) + 1
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

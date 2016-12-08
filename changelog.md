@@ -4,6 +4,7 @@
 
 * `[process]` `GetTree` now can return tree for custom root process
 * `[process]` Fixed threads marking
+* `[fmtutil]` Added method `CountDigits` for counting the number of digits in integer
 
 #### v5.6.0
 
