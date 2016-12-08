@@ -218,7 +218,7 @@ func CountDigits(i int) int {
 		return int(math.Log10(math.Abs(float64(i)))) + 2
 	}
 
-	return int(math.Log10(math.Abs(float64(i)))) + 1
+	return int(math.Log10(float64(i))) + 1
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
