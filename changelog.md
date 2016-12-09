@@ -6,7 +6,7 @@
 * `[process]` Fixed threads marking
 * `[fmtutil]` Added method `CountDigits` for counting the number of digits in integer
 * `[terminal]` Now `PrintWarnMessage` and `PrintErrorMessage` prints messages to stderr
-* `[usage]` Added optional command arguments support
+* `[usage]` Added support for optional arguments in commands
 
 #### v5.6.0
 
