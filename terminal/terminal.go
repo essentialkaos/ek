@@ -12,6 +12,7 @@ package terminal
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -78,18 +79,18 @@ func ReadPassword(title string, nonEmpty bool) (string, error) {
 // PrintErrorMessage print error message
 func PrintErrorMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
-		fmtc.Printf("{r}%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, "{r}%s{!}\n", message)
 	} else {
-		fmtc.Printf("{r}%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, "{r}%s{!}\n", fmt.Sprintf(message, args...))
 	}
 }
 
 // PrintWarnMessage print warning message
 func PrintWarnMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
-		fmtc.Printf("{y}%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, "{y}%s{!}\n", message)
 	} else {
-		fmtc.Printf("{y}%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, "{y}%s{!}\n", fmt.Sprintf(message, args...))
 	}
 }
 
