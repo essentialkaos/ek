@@ -5,6 +5,7 @@
 * `[process]` `GetTree` now can return tree for custom root process
 * `[process]` Fixed threads marking
 * `[fmtutil]` Added method `CountDigits` for counting the number of digits in integer
+* `[terminal]` Now `PrintWarnMessage` and `PrintErrorMessage` prints messages to stderr
 
 #### v5.6.0
 
