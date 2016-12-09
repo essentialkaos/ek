@@ -26,7 +26,7 @@ func ExampleInfo_Render() {
 	info := NewInfo("myapp", "items...")
 
 	// Enable breadcrumbs feature
-	info.Breadcrumbs = true
+	Breadcrumbs = true
 
 	info.AddSpoiler("This is my supadupa utility")
 
