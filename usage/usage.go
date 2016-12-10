@@ -54,7 +54,7 @@ type Info struct {
 type option struct {
 	name  string
 	desc  string
-	args  string
+	args  []string
 	group string
 }
 
@@ -67,10 +67,10 @@ type example struct {
 
 var (
 	// CommandsColor contains default commands color
-	CommandsColor = "y"
+	CommandsColorTag = "{y}"
 
 	// OptionsColor contains default options color
-	OptionsColor = "g"
+	OptionsColorTag = "{g}"
 
 	// Use bread crumbs for commands and options output
 	Breadcrumbs = false
@@ -146,11 +146,11 @@ func (info *Info) Render() {
 	usageMessage := "\n{*}Usage:{!} " + info.name
 
 	if len(info.commands) != 0 {
-		usageMessage += " {" + CommandsColor + "}{command}{!}"
+		usageMessage += " " + CommandsColorTag + "{command}{!}"
 	}
 
 	if len(info.options) != 0 {
-		usageMessage += " {" + OptionsColor + "}{options}{!}"
+		usageMessage += " " + OptionsColorTag + "{options}{!}"
 	}
 
 	if info.args != "" {
@@ -165,11 +165,11 @@ func (info *Info) Render() {
 	}
 
 	if len(info.commands) != 0 {
-		renderOptions(info.commands, CommandsColor)
+		renderOptions(info.commands, CommandsColorTag)
 	}
 
 	if len(info.options) != 0 {
-		renderOptions(info.options, OptionsColor)
+		renderOptions(info.options, OptionsColorTag)
 	}
 
 	if len(info.examples) != 0 {
@@ -222,16 +222,16 @@ func appendOption(data []string, options *[]option, group string) {
 		return
 	}
 
-	var optionArgs string
+	var optionArgs []string
 
 	if len(data) >= 3 {
-		optionArgs = strings.Join(data[2:], " ")
+		optionArgs = data[2:]
 	}
 
 	var name = data[0]
 
 	if group == "Options" {
-		name = parseOption(data[0])
+		name = parseOption(name)
 	}
 
 	*options = append(*options,
@@ -259,7 +259,7 @@ func parseOption(option string) string {
 }
 
 // renderOptions render options
-func renderOptions(options []option, color string) {
+func renderOptions(options []option, colorTag string) {
 	var (
 		curGroup string
 		opt      option
@@ -270,27 +270,26 @@ func renderOptions(options []option, color string) {
 
 	for _, opt = range options {
 		if curGroup != opt.group {
-			fmtc.Printf("\n{*}%s{!}\n\n", opt.group)
+			printGroupHeader(opt.group)
 			curGroup = opt.group
 		}
 
+		fmtc.Printf("  "+colorTag+"%s{!}", opt.name)
+
 		if len(opt.args) != 0 {
-			fmtc.Printf(
-				"  {"+color+"}%s{!} {s}%s{!} "+getBreadcrumbs(opt, maxSize)+" %s\n",
-				opt.name, opt.args, fmtc.Sprintf(opt.desc),
-			)
-		} else {
-			fmtc.Printf(
-				"  {"+color+"}%s{!} "+getBreadcrumbs(opt, maxSize+1)+" %s\n",
-				opt.name, fmtc.Sprintf(opt.desc),
-			)
+			fmtc.Printf(" " + renderArgs(opt.args))
 		}
+
+		fmtc.Printf(getBreadcrumbs(opt, maxSize))
+		fmtc.Printf(opt.desc)
+
+		fmtc.NewLine()
 	}
 }
 
 // renderExamples render examples
 func renderExamples(info *Info) {
-	fmtc.Println("\n{*}Examples{!}\n")
+	printGroupHeader("Examples")
 
 	total := len(info.examples)
 
@@ -307,16 +306,46 @@ func renderExamples(info *Info) {
 	}
 }
 
+// renderArgs render args with colors
+func renderArgs(args []string) string {
+	var result string
+
+	for _, a := range args {
+		if strings.HasPrefix(a, "?") {
+			result += "{s-}" + a[1:] + "{!} "
+		} else {
+			result += "{s}" + a + "{!} "
+		}
+	}
+
+	return fmtc.Sprintf(strings.TrimRight(result, " "))
+}
+
+// getRenderedArgsSize return size of string with rendered arguments
+func getRenderedArgsSize(args []string) int {
+	var result int
+
+	for _, a := range args {
+		if strings.HasPrefix(a, "?") {
+			result += len(a)
+		} else {
+			result += len(a) + 1
+		}
+	}
+
+	return result
+}
+
 // getBreadCrumbs return bread crumbs (or spaces if colors are disabled) for
 // option name aligning
 func getBreadcrumbs(opt option, maxSize int) string {
-	optLen := len(opt.name) + len(opt.args)
+	optLen := len(opt.name) + getRenderedArgsSize(opt.args)
 
 	if Breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
-		return "{s-}" + _DOTS[:maxSize-optLen] + "{!}"
+		return " {s-}" + _DOTS[:maxSize-optLen] + "{!} "
 	}
 
-	return _SPACES[:maxSize-optLen]
+	return " " + _SPACES[:maxSize-optLen] + " "
 }
 
 // getMaxOptionSize return longest option name size
@@ -324,7 +353,8 @@ func getMaxOptionSize(options []option) int {
 	var result = 0
 
 	for _, opt := range options {
-		optLen := len(opt.name) + len(opt.args) + 2
+		argsLen := getRenderedArgsSize(opt.args)
+		optLen := len(opt.name) + argsLen + 2
 
 		if optLen > result {
 			result = optLen
@@ -332,4 +362,9 @@ func getMaxOptionSize(options []option) int {
 	}
 
 	return result
+}
+
+// printGroupHeader print category header
+func printGroupHeader(name string) {
+	fmtc.Printf("\n{*}%s{!}\n\n", name)
 }

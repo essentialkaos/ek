@@ -13,8 +13,8 @@ func ExampleAbout_Render() {
 		Desc:    "My super golang utility",
 		Version: "1.0.1",
 		Release: "-44",
-		Build:   "17746",
-		Year:    2009, // Year when company was founded
+		Build:   "17746", // Number of build or commit hash
+		Year:    2009,    // Year when company was founded
 		License: "MIT",
 		Owner:   "John Dow <john@domain.com>",
 	}
@@ -23,17 +23,21 @@ func ExampleAbout_Render() {
 }
 
 func ExampleInfo_Render() {
-	info := NewInfo("myapp", "file...")
+	info := NewInfo("myapp", "items...")
+
+	// Enable breadcrumbs feature
+	Breadcrumbs = true
 
 	info.AddSpoiler("This is my supadupa utility")
 
-	// you can add commands or options groups
-	info.AddGroup("Basic Commands")
+	// You can define command arguments names
+	info.AddCommand("add", "Add item", "file")
 
-	info.AddCommand("add", "Add item")
-	info.AddCommand("remove", "Remove item")
+	// Also you can mark optional arguments using ? prefix
+	info.AddCommand("remove", "Remove item", "file", "?mode")
 	info.AddCommand("list", "List items")
 
+	// You can add custom commands or options groups
 	info.AddGroup("External Commands")
 
 	info.AddCommand("publish", "Publish items")
@@ -43,11 +47,14 @@ func ExampleInfo_Render() {
 	// AddOption support options in format used in ek.arg package
 	info.AddOption("v:version", "Print version")
 
-	// first part with application name will be automatically added
+	// You can define option argument name
+	info.AddOption("o:output", "Output", "file")
+
+	// First part with application name will be automatically added
 	info.AddExample("add file.dat")
 
-	// this is example with description
-	info.AddExample("remove file.dat", "Remove file.da")
+	// This is example with description
+	info.AddExample("remove file.dat", "Remove file.dat")
 
 	// render all data
 	info.Render()

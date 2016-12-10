@@ -1,5 +1,13 @@
 ## Changelog
 
+#### v5.7.0
+
+* `[process]` `GetTree` now can return tree for custom root process
+* `[process]` Fixed threads marking
+* `[fmtutil]` Added method `CountDigits` for counting the number of digits in integer
+* `[terminal]` Now `PrintWarnMessage` and `PrintErrorMessage` prints messages to stderr
+* `[usage]` Added support for optional arguments in commands
+
 #### v5.6.0
 
 * `[system]` Added `Distribution` and `Version` info to `SystemInfo` struct

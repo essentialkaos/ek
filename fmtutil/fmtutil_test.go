@@ -128,6 +128,13 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false, "test")
 }
 
+func (s *FmtUtilSuite) TestCountDigits(c *C) {
+	c.Assert(CountDigits(1), Equals, 1)
+	c.Assert(CountDigits(999), Equals, 3)
+	c.Assert(CountDigits(45999), Equals, 5)
+	c.Assert(CountDigits(-45999), Equals, 6)
+}
+
 func (s *FmtUtilSuite) TestColorizePassword(c *C) {
 	p1 := "acbdabcd"
 	p2 := "ABcd12AB"
