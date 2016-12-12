@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v5.7.1
+
+* `[usage]` Improved build info output
+
 #### v5.7.0
 
 * `[process]` `GetTree` now can return tree for custom root process
