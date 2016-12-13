@@ -51,19 +51,19 @@ func getDistributionInfo() (string, string) {
 
 	case isFileExist("/etc/centos-release"):
 		distribution = LINUX_CENTOS
-		version = getReleasePart("/etc/centos-release", 2)
+		version = getReleasePart("/etc/centos-release")
 
 	case isFileExist("/etc/fedora-release"):
 		distribution = LINUX_FEDORA
-		version = getReleasePart("/etc/fedora-release", 2)
+		version = getReleasePart("/etc/fedora-release")
 
 	case isFileExist("/etc/gentoo-release"):
 		distribution = LINUX_GENTOO
-		version = getReleasePart("/etc/gentoo-release", 4)
+		version = getReleasePart("/etc/gentoo-release")
 
 	case isFileExist("/etc/redhat-release"):
 		distribution = LINUX_RHEL
-		version = getReleasePart("/etc/redhat-release", 6)
+		version = getReleasePart("/etc/redhat-release")
 
 	case isFileExist("/etc/SuSE-release"):
 		distribution = LINUX_SUSE
@@ -81,20 +81,32 @@ func getDistributionInfo() (string, string) {
 	return distribution, version
 }
 
-func getReleasePart(file string, field int) string {
+func getReleasePart(file string) string {
 	data, err := ioutil.ReadFile(file)
 
 	if err != nil || len(data) == 0 {
 		return ""
 	}
 
-	versionSlice := strings.Split(string(data), " ")
+	return findOSVersionNumber(string(data))
+}
 
-	if len(versionSlice) < field+1 {
-		return ""
+func findOSVersionNumber(data string) string {
+WORDLOOP:
+	for _, word := range strings.Split(data, " ") {
+		for _, r := range word {
+			switch r {
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.':
+				continue
+			default:
+				continue WORDLOOP
+			}
+		}
+
+		return word
 	}
 
-	return versionSlice[field]
+	return ""
 }
 
 func getRawRelease(file string) string {

@@ -184,7 +184,7 @@ func (about *About) Render() {
 	switch {
 	case about.Build != "":
 		fmtc.Printf(
-			"\n{*c}%s {c}%s{!}{s}%s (%s){!} - %s\n\n",
+			"\n{*c}%s {c}%s{!}{s}%s{!} {s-}(%s){!} - %s\n\n",
 			about.App, about.Version,
 			about.Release, about.Build, about.Desc,
 		)
