@@ -3,6 +3,7 @@
 #### v5.7.1
 
 * `[usage]` Improved build info output
+* `[system]` Improved OS version search process
 
 #### v5.7.0
 
