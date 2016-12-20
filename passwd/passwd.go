@@ -48,8 +48,13 @@ func Encrypt(password, pepper string) (string, error) {
 		return "", errors.New("Password can't be empty")
 	case pepper == "":
 		return "", errors.New("Pepper can't be empty")
-	case len(pepper)%16 != 0:
-		return "", errors.New("Pepper size have invalid size")
+	}
+
+	switch len(pepper) {
+	case 16, 24, 32:
+		break
+	default:
+		return "", errors.New("Pepper have invalid size")
 	}
 
 	hasher := sha512.New()

@@ -82,7 +82,7 @@ func (s *PasswdSuite) TestEncryptErrors(c *C) {
 	_, err = Encrypt("Test123", "ABCD1234ABCD12")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Pepper size have invalid size")
+	c.Assert(err.Error(), Equals, "Pepper have invalid size")
 
 	_, ok := unpadData([]byte("-"))
 
