@@ -8,7 +8,7 @@
 #
 main() {
   local version="$1"
-  local dir="${1:-.}"
+  local dir="${2:-.}"
 
   if [[ ! -d $dir ]] ; then
     exit 1
