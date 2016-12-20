@@ -25,9 +25,8 @@ env:
   - EK_TEST_PORT=8080
 
 before_install:
-  - go get -v pkg.re/check.v1
-  - go get -v pkg.re/essentialkaos/go-linenoise.v3
-  - go get -v github.com/axw/gocov/gocov
+  - make deps
+  - make deps-test
 
 script:
-  - .travis/script.sh .
+  - .travis/script.sh 6

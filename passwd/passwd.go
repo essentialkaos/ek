@@ -9,21 +9,20 @@ package passwd
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/sha256"
-	"fmt"
+	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	crand "crypto/rand"
+	"crypto/sha512"
+	"encoding/base64"
+	"errors"
+	"io"
 	"math/rand"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// AuthData contains password, salt and hash
-type AuthData struct {
-	Password string // Password
-	Salt     string // Salt
-	Hash     string // Salted hash
-}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -42,37 +41,92 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Encrypt hash and encrypt password with salt and pepper
+func Encrypt(password, pepper string) (string, error) {
+	switch {
+	case password == "":
+		return "", errors.New("Password can't be empty")
+	case pepper == "":
+		return "", errors.New("Pepper can't be empty")
+	case len(pepper)%16 != 0:
+		return "", errors.New("Pepper size have invalid size")
+	}
+
+	hasher := sha512.New()
+	hasher.Write([]byte(password))
+
+	hp, err := bcrypt.GenerateFromPassword(hasher.Sum(nil), 10)
+
+	if err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher([]byte(pepper))
+
+	if err != nil {
+		return "", err
+	}
+
+	hpd := padData(hp)
+
+	ct := make([]byte, aes.BlockSize+len(hpd))
+	iv := ct[:aes.BlockSize]
+
+	_, err = io.ReadFull(crand.Reader, iv)
+
+	if err != nil {
+		return "", err
+	}
+
+	cfb := cipher.NewCFBEncrypter(block, iv)
+	cfb.XORKeyStream(ct[aes.BlockSize:], hpd)
+
+	return removeBase64Padding(base64.URLEncoding.EncodeToString(ct)), nil
+}
+
+// Check compare password and hash
+func Check(password, pepper, hash string) bool {
+	if password == "" || hash == "" {
+		return false
+	}
+
+	block, err := aes.NewCipher([]byte(pepper))
+
+	if err != nil {
+		return false
+	}
+
+	hpd, err := base64.URLEncoding.DecodeString(addBase64Padding(hash))
+
+	if err != nil {
+		return false
+	}
+
+	if (len(hpd) % aes.BlockSize) != 0 {
+		return false
+	}
+
+	iv := hpd[:aes.BlockSize]
+	hp := hpd[aes.BlockSize:]
+
+	cfb := cipher.NewCFBDecrypter(block, iv)
+	cfb.XORKeyStream(hp, hp)
+
+	h, ok := unpadData(hp)
+
+	if !ok {
+		return false
+	}
+
+	hasher := sha512.New()
+	hasher.Write([]byte(password))
+
+	return bcrypt.CompareHashAndPassword(h, hasher.Sum(nil)) == nil
+}
+
 // GenPassword generate random password
 func GenPassword(length, strength int) string {
 	return getRandomPassword(length, between(strength, 0, 2))
-}
-
-// GenAuth return struct with generated password, hashed password and salt
-func GenAuth(length, strength int) AuthData {
-	password := getRandomPassword(length, between(strength, 0, 2))
-	return CreateAuth(password)
-}
-
-// CreateAuth return struct with given password, hashed password and salt
-func CreateAuth(password string) AuthData {
-	salt := getRandomPassword(16, STRENGTH_MEDIUM)
-	hash := GenHash(password, salt)
-
-	return AuthData{password, salt, hash}
-}
-
-// GenHash generate SHA-256 hash for given password and salt
-func GenHash(password, salt string) string {
-	hasher := sha256.New()
-
-	hasher.Write([]byte(password + salt))
-
-	prehash := fmt.Sprintf("%064x", hasher.Sum(nil))
-	hasher2 := sha256.New()
-
-	hasher2.Write([]byte(salt + prehash))
-
-	return fmt.Sprintf("%x", hasher.Sum(nil))
 }
 
 // GetPasswordStrength return password strength
@@ -125,6 +179,38 @@ func between(val, min, max int) int {
 	default:
 		return val
 	}
+}
+
+func padData(src []byte) []byte {
+	padding := aes.BlockSize - len(src)%aes.BlockSize
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+
+	return append(src, padText...)
+}
+
+func unpadData(src []byte) ([]byte, bool) {
+	length := len(src)
+	unpadding := int(src[length-1])
+
+	if unpadding > length {
+		return nil, false
+	}
+
+	return src[:(length - unpadding)], true
+}
+
+func addBase64Padding(src string) string {
+	m := len(src) % 4
+
+	if m != 0 {
+		src += strings.Repeat("=", 4-m)
+	}
+
+	return src
+}
+
+func removeBase64Padding(src string) string {
+	return strings.TrimRight(src, "=")
 }
 
 func getRandomPassword(length, strength int) string {

@@ -2,43 +2,39 @@
 
 ########################################################################################
 
-# Current major version
-VERSION="5"
-
-# Pkg.re package path
-PKGRE_PKG="pkg.re/essentialkaos/ek.v${VERSION}"
-
-########################################################################################
-
 # Main func
 #
 # *: All arguments passed to script
 #
 main() {
-  local dir="$1"
+  local version="$1"
+  local dir="${1:-.}"
 
   if [[ ! -d $dir ]] ; then
     exit 1
   fi
 
-  makeLink
+  makeLink "$version"
   testWithCover "$dir"
 }
 
 # Create links for pkg.re import paths
 makeLink() {
+  local version="$1"
+  local pkg_dir="pkg.re/essentialkaos/ek.v${version}"
+
   # TravicCI download last stable version of ek, but it not ok
   # remove downloaded version for linking with current version for test
-  if [[ -e $GOPATH/src/${PKGRE_PKG} ]] ; then
-    echo "Directory ${PKGRE_PKG} removed"
-    rm -rf $GOPATH/src/${PKGRE_PKG}
+  if [[ -e $GOPATH/src/${pkg_dir} ]] ; then
+    echo "Directory ${pkg_dir} removed"
+    rm -rf $GOPATH/src/${pkg_dir}
   fi
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
 
-  echo "Created link $GOPATH/src/${PKGRE_PKG} -> $GOPATH/src/github.com/essentialkaos/ek"
+  echo "Created link $GOPATH/src/${pkg_dir} -> $GOPATH/src/github.com/essentialkaos/ek"
 
-  ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${PKGRE_PKG}
+  ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${pkg_dir}
 }
 
 # Test packaages and save coverage info to file
@@ -50,7 +46,7 @@ testWithCover() {
 
   local pkg has_errors
 
-  pushd $dir &> /dev/null
+  pushd "$dir" &> /dev/null
 
     EK_TEST_PORT=8080 gocov test ./... | gocov report
 
@@ -60,7 +56,7 @@ testWithCover() {
 
   popd &> /dev/null
 
-  if [[ $has_errors ]] ; then
+  if [[ -n "$has_errors" ]] ; then
     exit 1
   fi
 
@@ -69,4 +65,4 @@ testWithCover() {
 
 ########################################################################################
 
-main $@
+main "$@"

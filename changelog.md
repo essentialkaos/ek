@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v6.0.0
+
+* `[passwd]` Much secure hash generation (now with sha512, bcrypt and AES)
+
 #### v5.7.1
 
 * `[usage]` Improved build info output
