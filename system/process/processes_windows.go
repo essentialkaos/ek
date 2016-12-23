@@ -22,7 +22,7 @@ type ProcessInfo struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetTree return root process with all subprocesses on system
-func GetTree() (*ProcessInfo, error) {
+func GetTree(pid ...int) (*ProcessInfo, error) {
 	return nil, nil
 }
 

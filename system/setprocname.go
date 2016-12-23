@@ -1,4 +1,4 @@
-// +build linux, darwin
+// +build linux darwin
 
 package system
 
@@ -10,8 +10,10 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"os"
 	"reflect"
+	"strings"
 	"unsafe"
 )
 
@@ -19,20 +21,42 @@ import (
 
 // SetProcName change current process name
 // New process name must have same length or less.
-func SetProcName(name string) {
-	titleStr := (*reflect.StringHeader)(unsafe.Pointer(&os.Args[0]))
-	title := (*[1 << 30]byte)(unsafe.Pointer(titleStr.Data))[:titleStr.Len]
-
-	newTitle := name
-	curTitle := os.Args[0]
-
-	if len(curTitle) > len(newTitle) {
-		spaces := "                                                                "
-		newTitle += spaces[:len(curTitle)-len(newTitle)]
+func SetProcName(args []string) error {
+	if len(args) != len(os.Args) {
+		return errors.New("Wrong arguments slice size")
 	}
 
-	n := copy(title, newTitle)
-	if n < len(title) {
-		title[n] = 0
+	for i := 0; i < len(args); i++ {
+		if args[i] == os.Args[i] {
+			continue
+		}
+
+		changeArgument(i, args[i])
+	}
+
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func changeArgument(index int, newArg string) {
+	argStrHr := (*reflect.StringHeader)(unsafe.Pointer(&os.Args[index]))
+	arg := (*[1 << 30]byte)(unsafe.Pointer(argStrHr.Data))[:argStrHr.Len]
+
+	curArg := os.Args[index]
+	curArgLen := len(curArg)
+	newArgLen := len(newArg)
+
+	switch {
+	case curArgLen > newArgLen:
+		newArg = newArg + strings.Repeat(" ", curArgLen-newArgLen)
+	case curArgLen < newArgLen:
+		newArg = newArg[:curArgLen]
+	}
+
+	n := copy(arg, newArg)
+
+	if n < len(arg) {
+		arg[n] = 0
 	}
 }
