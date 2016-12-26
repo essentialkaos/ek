@@ -37,15 +37,15 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	LINUX_ARCH   = "arch"
-	LINUX_CENTOS = "centos"
-	LINUX_DEBIAN = "debian"
-	LINUX_FEDORA = "fedora"
-	LINUX_GENTOO = "gentoo"
-	LINUX_RHEL   = "rhel"
-	LINUX_SUSE   = "suse"
-	LINUX_UBUNTU = "ubuntu"
-	DARWIN_OSX   = "osx"
+	LINUX_ARCH   = "Arch"
+	LINUX_CENTOS = "CentOS"
+	LINUX_DEBIAN = "Debian"
+	LINUX_FEDORA = "Dedora"
+	LINUX_GENTOO = "Gentoo"
+	LINUX_RHEL   = "RHEL"
+	LINUX_SUSE   = "SuSe"
+	LINUX_UBUNTU = "Ubuntu"
+	DARWIN_OSX   = "OSX"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
