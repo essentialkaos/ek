@@ -52,28 +52,51 @@ func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(4, 100)), Equals, STRENGTH_STRONG)
 }
 
-func (s *PasswdSuite) TestGenAuth(c *C) {
-	ad1 := GenAuth(16, STRENGTH_WEAK)
+func (s *PasswdSuite) TestEncrypt(c *C) {
+	hp, err := Encrypt("Test123", "ABCD1234ABCD1234")
 
-	c.Assert(ad1.Password, HasLen, 16)
-	c.Assert(ad1.Salt, HasLen, 16)
-	c.Assert(ad1.Hash, HasLen, 64)
-	c.Assert(GetPasswordStrength(ad1.Password), Equals, STRENGTH_WEAK)
+	c.Assert(hp, NotNil)
+	c.Assert(err, IsNil)
+
+	c.Assert(Check("Test123", "ABCD1234ABCD1234", hp), Equals, true)
+	c.Assert(Check("Test123", "ABCD1234ABCD1234", "A1236"), Equals, false)
+	c.Assert(Check("Test123", "ABCD1234ABCD1234", "VEVTdA"), Equals, false)
+	c.Assert(Check("Test123", "", hp), Equals, false)
+	c.Assert(Check("", "ABCD1234ABCD1234", hp), Equals, false)
+	c.Assert(Check("", "ABCD1234ABCD1234", hp), Equals, false)
 }
 
-func (s *PasswdSuite) TestGenHash(c *C) {
-	pass := "test1234test"
-	salt := "saLT"
-	hash := "070dd77d9bf913db7681b2271b2328154b53aeb4b70c3742880c08ed32188456"
+func (s *PasswdSuite) TestEncryptErrors(c *C) {
+	var err error
 
-	v := GenHash(pass, salt)
+	_, err = Encrypt("", "ABCD1234ABCD1234")
 
-	c.Assert(v, HasLen, 64)
-	c.Assert(v, Equals, hash)
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Password can't be empty")
+
+	_, err = Encrypt("Test123", "")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Pepper can't be empty")
+
+	_, err = Encrypt("Test123", "ABCD1234ABCD12")
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Pepper have invalid size")
+
+	_, ok := unpadData([]byte("-"))
+
+	c.Assert(ok, Equals, false)
 }
 
-func (s *PasswdSuite) BenchmarkGenHash(c *C) {
+func (s *PasswdSuite) BenchmarkEncrypt(c *C) {
 	for i := 0; i < c.N; i++ {
-		GenHash("TEST1234TEST", "12345678")
+		Encrypt("Test123", "ABCD1234ABCD1234")
+	}
+}
+
+func (s *PasswdSuite) BenchmarkCheck(c *C) {
+	for i := 0; i < c.N; i++ {
+		Check("Test123", "ABCD1234ABCD1234", "jXtzmneskO_ht9VNsuwq68O-jwj3PBxewGrr3YUKf8f7zPqNSlO-Eg7x2KlmoK-wOivvvdaiDpDH_3o5LdWP7ULf6K490KpoNhTZ5XOfaYc")
 	}
 }

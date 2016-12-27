@@ -1,5 +1,11 @@
 ## Changelog
 
+#### v6.0.0
+
+* `[passwd]` Much secure hash generation (now with sha512, bcrypt and AES)
+* `[system]` Improved changing proccess and arguments names
+* `[system/process]` Fixed windows stubs
+
 #### v5.7.1
 
 * `[usage]` Improved build info output
@@ -7,8 +13,8 @@
 
 #### v5.7.0
 
-* `[process]` `GetTree` now can return tree for custom root process
-* `[process]` Fixed threads marking
+* `[system/process]` `GetTree` now can return tree for custom root process
+* `[system/process]` Fixed threads marking
 * `[fmtutil]` Added method `CountDigits` for counting the number of digits in integer
 * `[terminal]` Now `PrintWarnMessage` and `PrintErrorMessage` prints messages to stderr
 * `[usage]` Added support for optional arguments in commands
