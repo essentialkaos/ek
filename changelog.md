@@ -6,6 +6,8 @@
 * `[system]` Improved changing proccess and arguments names
 * `[system/process]` Fixed windows stubs
 
+---
+
 #### v5.7.1
 
 * `[usage]` Improved build info output
