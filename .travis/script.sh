@@ -19,8 +19,14 @@ main() {
     exit 1
   fi
 
+  installGoveralls
   makeLink "$version"
   testWithCover "$dir"
+}
+
+# Install goveralls
+installGoveralls() {
+  go get -v github.com/mattn/goveralls
 }
 
 # Create links for pkg.re import paths
@@ -94,7 +100,7 @@ testWithCover() {
     exit 1
   fi
 
-  $HOME/gopath/bin/goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
+  goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
 }
 
 ########################################################################################
