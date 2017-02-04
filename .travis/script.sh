@@ -26,7 +26,9 @@ main() {
 
 # Install goveralls
 installGoveralls() {
+  echo "Installing latest version of Goveralls..."
   go get -v github.com/mattn/goveralls
+  echo ""
 }
 
 # Create links for pkg.re import paths
@@ -43,7 +45,7 @@ makeLink() {
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
 
-  echo "Created link $GOPATH/src/${pkg_dir} → $GOPATH/src/github.com/essentialkaos/ek"
+  echo -e "Created link $GOPATH/src/${pkg_dir} → $GOPATH/src/github.com/essentialkaos/ek\n"
 
   ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${pkg_dir}
 }
@@ -51,7 +53,6 @@ makeLink() {
 # Test packaages and save coverage info to file
 #
 # 1: Dir with sources (String)
-#
 testWithCover() {
   local dir="$1"
 
@@ -64,14 +65,14 @@ testWithCover() {
   fi
 
   for pkg in $(ls -1 $dir) ; do
-    skip_cover=""
+    unset skip_cover
 
     if [[ ! -d $dir/$pkg ]] ; then
       continue
     fi
 
     for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
-      skip_cover=true
+      [[ "$excl_pkg" == "$pkg" ]] && skip_cover=true && break
     done
 
     if [[ $skip_cover ]] ; then
