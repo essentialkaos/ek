@@ -60,6 +60,8 @@ testWithCover() {
 
   rm -f coverage.tmp coverage.txt &> /dev/null
 
+  echo "mode: count" > coverage.txt
+
   if [[ -z "$EK_TEST_PORT" ]] ; then
     export EK_TEST_PORT=8080
   fi
@@ -101,7 +103,11 @@ testWithCover() {
     exit 1
   fi
 
+  echo -e "\nSending data to Coveralls..."
+
   goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
+
+  exit 0
 }
 
 ########################################################################################
