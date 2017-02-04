@@ -2,6 +2,11 @@
 
 ########################################################################################
 
+# List of packages excluded from coverage export
+EXCLUDED_PACKAGES=("fsutil system terminal usage netutil")
+
+########################################################################################
+
 # Main func
 #
 # *: All arguments passed to script
@@ -32,7 +37,7 @@ makeLink() {
 
   mkdir -p $GOPATH/src/pkg.re/essentialkaos
 
-  echo "Created link $GOPATH/src/${pkg_dir} -> $GOPATH/src/github.com/essentialkaos/ek"
+  echo "Created link $GOPATH/src/${pkg_dir} → $GOPATH/src/github.com/essentialkaos/ek"
 
   ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${pkg_dir}
 }
@@ -44,23 +49,52 @@ makeLink() {
 testWithCover() {
   local dir="$1"
 
-  local pkg has_errors
+  local pkg has_errors excl_pkg skip_cover
 
-  pushd "$dir" &> /dev/null
+  rm -f coverage.tmp coverage.txt &> /dev/null
 
-    EK_TEST_PORT=8080 gocov test ./... | gocov report
+  if [[ -z "$EK_TEST_PORT" ]] ; then
+    export EK_TEST_PORT=8080
+  fi
+
+  for pkg in $(ls -1 $dir) ; do
+    skip_cover=""
+
+    if [[ ! -d $dir/$pkg ]] ; then
+      continue
+    fi
+
+    for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
+      skip_cover=true
+    done
+
+    if [[ $skip_cover ]] ; then
+      go test $dir/$pkg
+
+      if [[ $? -ne 0 ]] ; then
+        has_errors=true
+      fi
+
+      continue
+    fi
+
+    go test -covermode=count -coverprofile=coverage.tmp $dir/$pkg
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
     fi
 
-  popd &> /dev/null
+    if [[ -f coverage.tmp ]] ; then
+      cat coverage.tmp >> coverage.txt
+      rm -f coverage.tmp
+    fi
+  done
 
-  if [[ -n "$has_errors" ]] ; then
+  if [[ $has_errors ]] ; then
     exit 1
   fi
 
-  exit 0
+  $HOME/gopath/bin/goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
 }
 
 ########################################################################################
