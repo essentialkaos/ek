@@ -91,48 +91,91 @@ func PrettyDuration(d interface{}) string {
 //
 // Interpreted sequences:
 // '%%' a literal %
+//
 // '%a' locale's abbreviated weekday name (e.g., Sun)
+//
 // '%A' locale's full weekday name (e.g., Sunday)
+//
 // '%b' locale's abbreviated month name (e.g., Jan)
+//
 // '%B' locale's full month name (e.g., January)
+//
 // '%c' locale's date and time (e.g., Thu Mar 3 23:05:25 2005)
+//
 // '%C' century; like %Y, except omit last two digits (e.g., 20)
+//
 // '%d' day of month (e.g, 01)
+//
 // '%D' date; same as %m/%d/%y
+//
 // '%e' day of month, space padded
+//
 // '%F' full date; same as %Y-%m-%d
+//
 // '%g' last two digits of year of ISO week number (see %G)
+//
 // '%G' year of ISO week number (see %V); normally useful only with %V
+//
 // '%h' same as %b
+//
 // '%H' hour (00..23)
+//
 // '%I' hour (01..12)
+//
 // '%j' day of year (001..366)
+//
 // '%k' hour ( 0..23)
+//
 // '%K' milliseconds (000..999)
+//
 // '%l' hour ( 1..12)
+//
 // '%m' month (01..12)
+//
 // '%M' minute (00..59)
+//
 // '%n' a newline
+//
 // '%N' nanoseconds (000000000..999999999)
+//
 // '%p' AM or PM
+//
 // '%P' like %p, but lower case
+//
 // '%r' locale's 12-hour clock time (e.g., 11:11:04 PM)
+//
 // '%R' 24-hour hour and minute; same as %H:%M
+//
 // '%s' seconds since 1970-01-01 00:00:00 UTC
+//
 // '%S' second (00..60)
+//
 // '%t' a tab
+//
 // '%T' time; same as %H:%M:%S
+//
 // '%u' day of week (1..7); 1 is Monday
+//
 // '%U' week number of year, with Sunday as first day of week (00..53)
+//
 // '%V' ISO week number, with Monday as first day of week (01..53)
+//
 // '%w' day of week (0..6); 0 is Sunday
+//
 // '%W' week number of year, with Monday as first day of week (00..53)
+//
 // '%x' locale's date representation (e.g., 12/31/99)
+//
 // '%X' locale's time representation (e.g., 23:13:48)
+//
 // '%y' last two digits of year (00..99)
+//
 // '%Y' year
+//
 // '%z' +hhmm numeric timezone (e.g., -0400)
+//
 // '%:z' +hh:mm numeric timezone (e.g., -04:00)
+//
 // '%Z' alphabetic time zone abbreviation (e.g., EDT)
 func Format(d time.Time, f string) string {
 	input := bytes.NewBufferString(f)
