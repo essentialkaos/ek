@@ -178,7 +178,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 
 	switch r {
 	case '%':
-		output.WriteString("%")
+		fmt.Fprintf(output, "%%")
 	case 'a':
 		output.WriteString(getShortWeekday(d.Weekday()))
 	case 'A':
@@ -189,7 +189,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 		output.WriteString(getLongMonth(d.Month()))
 	case 'c':
 		zn, _ := d.Zone()
-		output.WriteString(fmt.Sprintf("%s %02d %s %d %02d:%02d:%02d %s %s",
+		fmt.Fprintf(output, "%s %02d %s %d %02d:%02d:%02d %s %s",
 			getShortWeekday(d.Weekday()),
 			d.Day(),
 			getShortMonth(d.Month()),
@@ -198,60 +198,60 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 			d.Minute(),
 			d.Second(),
 			getAMPM(d, true),
-			zn))
+			zn)
 	case 'C', 'g':
 		output.WriteString(strconv.Itoa(d.Year())[0:2])
 	case 'd':
-		output.WriteString(fmt.Sprintf("%02d", d.Day()))
+		fmt.Fprintf(output, "%02d", d.Day())
 	case 'D':
-		output.WriteString(fmt.Sprintf("%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4]))
+		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4])
 	case 'e':
-		if d.Day() >= 10 {
-			output.WriteString(strconv.Itoa(d.Day()))
-		} else {
-			output.WriteString(" " + strconv.Itoa(d.Day()))
-		}
+		fmt.Fprintf(output, "%2d", d.Day())
 	case 'F':
-		output.WriteString(fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()))
+		fmt.Fprintf(output, "%d-%02d-%02d", d.Year(), d.Month(), d.Day())
 	case 'G':
-		output.WriteString(strconv.Itoa(d.Year()))
+		fmt.Fprintf(output, "%02d", d.Year())
 	case 'H':
-		output.WriteString(fmt.Sprintf("%02d", d.Hour()))
+		fmt.Fprintf(output, "%02d", d.Hour())
 	case 'I':
-		output.WriteString(fmt.Sprintf("%02d", getAMPMHour(d)))
+		fmt.Fprintf(output, "%02d", getAMPMHour(d))
 	case 'j':
-		output.WriteString(fmt.Sprintf("%03d", d.YearDay()))
+		fmt.Fprintf(output, "%03d", d.YearDay())
 	case 'k':
-		output.WriteString(" " + strconv.Itoa(d.Hour()))
+		fmt.Fprintf(output, "%2d", d.Hour())
+	case 'K':
+		fmt.Fprintf(output, "%03d", d.Nanosecond())
 	case 'l':
 		output.WriteString(strconv.Itoa(getAMPMHour(d)))
 	case 'm':
-		output.WriteString(fmt.Sprintf("%02d", d.Month()))
+		fmt.Fprintf(output, "%02d", d.Month())
 	case 'M':
-		output.WriteString(fmt.Sprintf("%02d", d.Minute()))
+		fmt.Fprintf(output, "%02d", d.Minute())
+	case 'n':
+		output.WriteString("\n")
 	case 'N':
-		output.WriteString(fmt.Sprintf("%09d", d.Nanosecond()))
+		fmt.Fprintf(output, "%09d", d.Nanosecond())
 	case 'p':
 		output.WriteString(getAMPM(d, false))
 	case 'P':
 		output.WriteString(getAMPM(d, true))
 	case 'r':
-		output.WriteString(fmt.Sprintf("%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true)))
+		fmt.Fprintf(output, "%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true))
 	case 'R':
-		output.WriteString(fmt.Sprintf("%02d:%02d", d.Hour(), d.Minute()))
+		fmt.Fprintf(output, "%02d:%02d", d.Hour(), d.Minute())
 	case 's':
 		output.WriteString(strconv.FormatInt(d.Unix(), 10))
 	case 'S':
-		output.WriteString(fmt.Sprintf("%02d", d.Second()))
+		fmt.Fprintf(output, "%02d", d.Second())
 	case 'T':
-		output.WriteString(fmt.Sprintf("%02d:%02d:%02d", d.Hour(), d.Minute(), d.Second()))
+		fmt.Fprintf(output, "%02d:%02d:%02d", d.Hour(), d.Minute(), d.Second())
 	case 'u':
 		output.WriteString(strconv.Itoa(getWeekdayNum(d)))
 	case 'V':
 		_, wn := d.ISOWeek()
-		output.WriteString(fmt.Sprintf("%02d", wn))
+		fmt.Fprintf(output, "%02d", wn)
 	case 'w':
-		output.WriteString(strconv.Itoa(int(d.Weekday())))
+		fmt.Fprintf(output, "%d", d.Weekday())
 	case 'y':
 		output.WriteString(strconv.Itoa(d.Year())[2:4])
 	case 'Y':
