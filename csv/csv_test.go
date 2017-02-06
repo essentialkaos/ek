@@ -84,3 +84,22 @@ func (s *CSVSuite) TestParsing(c *C) {
 		count++
 	}
 }
+
+func (s *CSVSuite) BenchmarkRead(c *C) {
+	fd, _ := os.Open(s.dataFile)
+
+	defer fd.Close()
+
+	for i := 0; i < c.N; i++ {
+		reader := NewReader(fd)
+		reader.Comma = ','
+
+		for {
+			_, err := reader.Read()
+
+			if err == io.EOF {
+				break
+			}
+		}
+	}
+}
