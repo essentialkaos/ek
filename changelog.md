@@ -2,7 +2,7 @@
 
 #### v6.1.0
 
-* `[knf]` Added support tabs in indentation
+* `[knf]` Added tabs support in indentation
 * `[timeutil]` Added new sequences `%n` (_new line symbol_) and `%K` (_milliseconds_)
 * `[timeutil]` Code refactoring
 
