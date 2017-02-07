@@ -23,7 +23,7 @@ const _CONFIG_DATA = `
 test1:      1
             test2:2
 
-      test3: 3
+		test3: 3
 
 [string]
   test1: test

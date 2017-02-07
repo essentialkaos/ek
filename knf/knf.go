@@ -107,15 +107,15 @@ func Read(file string) (*Config, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if line == "" || strings.Replace(line, " ", "", -1) == "" {
+		if line == "" || strings.Trim(line, " \t") == "" {
 			continue
 		}
 
-		if strings.HasPrefix(strings.Trim(line, " "), _COMMENT_SYMBOL) {
+		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _COMMENT_SYMBOL) {
 			continue
 		}
 
-		if strings.HasPrefix(strings.Trim(line, " "), _SECTION_SYMBOL) {
+		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _SECTION_SYMBOL) {
 			sectionName = strings.Trim(line, "[ ]")
 			config.data[sectionName+_DELIMITER] = "true"
 			config.sections = append(config.sections, sectionName)
@@ -477,8 +477,8 @@ func parseRecord(data string, config *Config) (string, string) {
 	propName := va[0]
 	propValue := strings.Join(va[1:], _SEPARATOR_SYMBOL)
 
-	propName = strings.TrimLeft(propName, " ")
-	propValue = strings.TrimLeft(propValue, " ")
+	propName = strings.TrimLeft(propName, " \t")
+	propValue = strings.TrimLeft(propValue, " \t")
 
 	if strings.Contains(propValue, _MACRO_SYMBOL) {
 		macroses := macroRE.FindAllStringSubmatch(propValue, -1)
