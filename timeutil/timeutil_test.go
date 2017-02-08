@@ -2,8 +2,8 @@ package timeutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2016 Essential Kaos                         //
-//      Essential Kaos Open Source License <http://essentialkaos.com/ekol?en>         //
+//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -64,10 +64,12 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%I"), Equals, "12")
 	c.Assert(Format(d, "%j"), Equals, "001")
 	c.Assert(Format(d, "%k"), Equals, " 0")
+	c.Assert(Format(d, "%K"), Equals, "000")
 	c.Assert(Format(d, "%l"), Equals, "12")
 	c.Assert(Format(d, "%m"), Equals, "01")
 	c.Assert(Format(d, "%M"), Equals, "00")
 	c.Assert(Format(d, "%N"), Equals, "000000000")
+	c.Assert(Format(d, "%n"), Equals, "\n")
 	c.Assert(Format(d, "%p"), Equals, "am")
 	c.Assert(Format(d, "%P"), Equals, "AM")
 	c.Assert(Format(d, "%r"), Equals, "12:00:00 AM")

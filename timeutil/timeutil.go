@@ -3,8 +3,8 @@ package timeutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2016 Essential Kaos                         //
-//      Essential Kaos Open Source License <http://essentialkaos.com/ekol?en>         //
+//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -88,6 +88,52 @@ func PrettyDuration(d interface{}) string {
 }
 
 // Format return formated date to string with linux date formating
+//
+// Interpreted sequences:
+//	'%%' a literal %
+//	'%a' locale's abbreviated weekday name (e.g., Sun)
+//	'%A' locale's full weekday name (e.g., Sunday)
+//	'%b' locale's abbreviated month name (e.g., Jan)
+//	'%B' locale's full month name (e.g., January)
+//	'%c' locale's date and time (e.g., Thu Mar 3 23:05:25 2005)
+//	'%C' century; like %Y, except omit last two digits (e.g., 20)
+//	'%d' day of month (e.g, 01)
+//	'%D' date; same as %m/%d/%y
+//	'%e' day of month, space padded
+//	'%F' full date; same as %Y-%m-%d
+//	'%g' last two digits of year of ISO week number (see %G)
+//	'%G' year of ISO week number (see %V); normally useful only with %V
+//	'%h' same as %b
+//	'%H' hour (00..23)
+//	'%I' hour (01..12)
+//	'%j' day of year (001..366)
+//	'%k' hour ( 0..23)
+//	'%K' milliseconds (000..999)
+//	'%l' hour ( 1..12)
+//	'%m' month (01..12)
+//	'%M' minute (00..59)
+//	'%n' a newline
+//	'%N' nanoseconds (000000000..999999999)
+//	'%p' AM or PM
+//	'%P' like %p, but lower case
+//	'%r' locale's 12-hour clock time (e.g., 11:11:04 PM)
+//	'%R' 24-hour hour and minute; same as %H:%M
+//	'%s' seconds since 1970-01-01 00:00:00 UTC
+//	'%S' second (00..60)
+//	'%t' a tab
+//	'%T' time; same as %H:%M:%S
+//	'%u' day of week (1..7); 1 is Monday
+//	'%U' week number of year, with Sunday as first day of week (00..53)
+//	'%V' ISO week number, with Monday as first day of week (01..53)
+//	'%w' day of week (0..6); 0 is Sunday
+//	'%W' week number of year, with Monday as first day of week (00..53)
+//	'%x' locale's date representation (e.g., 12/31/99)
+//	'%X' locale's time representation (e.g., 23:13:48)
+//	'%y' last two digits of year (00..99)
+//	'%Y' year
+//	'%z' +hhmm numeric timezone (e.g., -0400)
+//	'%:z' +hh:mm numeric timezone (e.g., -04:00)
+//	'%Z' alphabetic time zone abbreviation (e.g., EDT)
 func Format(d time.Time, f string) string {
 	input := bytes.NewBufferString(f)
 	output := bytes.NewBufferString("")
@@ -178,7 +224,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 
 	switch r {
 	case '%':
-		output.WriteString("%")
+		fmt.Fprintf(output, "%%")
 	case 'a':
 		output.WriteString(getShortWeekday(d.Weekday()))
 	case 'A':
@@ -189,7 +235,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 		output.WriteString(getLongMonth(d.Month()))
 	case 'c':
 		zn, _ := d.Zone()
-		output.WriteString(fmt.Sprintf("%s %02d %s %d %02d:%02d:%02d %s %s",
+		fmt.Fprintf(output, "%s %02d %s %d %02d:%02d:%02d %s %s",
 			getShortWeekday(d.Weekday()),
 			d.Day(),
 			getShortMonth(d.Month()),
@@ -198,60 +244,60 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 			d.Minute(),
 			d.Second(),
 			getAMPM(d, true),
-			zn))
+			zn)
 	case 'C', 'g':
 		output.WriteString(strconv.Itoa(d.Year())[0:2])
 	case 'd':
-		output.WriteString(fmt.Sprintf("%02d", d.Day()))
+		fmt.Fprintf(output, "%02d", d.Day())
 	case 'D':
-		output.WriteString(fmt.Sprintf("%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4]))
+		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4])
 	case 'e':
-		if d.Day() >= 10 {
-			output.WriteString(strconv.Itoa(d.Day()))
-		} else {
-			output.WriteString(" " + strconv.Itoa(d.Day()))
-		}
+		fmt.Fprintf(output, "%2d", d.Day())
 	case 'F':
-		output.WriteString(fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()))
+		fmt.Fprintf(output, "%d-%02d-%02d", d.Year(), d.Month(), d.Day())
 	case 'G':
-		output.WriteString(strconv.Itoa(d.Year()))
+		fmt.Fprintf(output, "%02d", d.Year())
 	case 'H':
-		output.WriteString(fmt.Sprintf("%02d", d.Hour()))
+		fmt.Fprintf(output, "%02d", d.Hour())
 	case 'I':
-		output.WriteString(fmt.Sprintf("%02d", getAMPMHour(d)))
+		fmt.Fprintf(output, "%02d", getAMPMHour(d))
 	case 'j':
-		output.WriteString(fmt.Sprintf("%03d", d.YearDay()))
+		fmt.Fprintf(output, "%03d", d.YearDay())
 	case 'k':
-		output.WriteString(" " + strconv.Itoa(d.Hour()))
+		fmt.Fprintf(output, "%2d", d.Hour())
+	case 'K':
+		fmt.Fprintf(output, "%03d", d.Nanosecond())
 	case 'l':
 		output.WriteString(strconv.Itoa(getAMPMHour(d)))
 	case 'm':
-		output.WriteString(fmt.Sprintf("%02d", d.Month()))
+		fmt.Fprintf(output, "%02d", d.Month())
 	case 'M':
-		output.WriteString(fmt.Sprintf("%02d", d.Minute()))
+		fmt.Fprintf(output, "%02d", d.Minute())
+	case 'n':
+		output.WriteString("\n")
 	case 'N':
-		output.WriteString(fmt.Sprintf("%09d", d.Nanosecond()))
+		fmt.Fprintf(output, "%09d", d.Nanosecond())
 	case 'p':
 		output.WriteString(getAMPM(d, false))
 	case 'P':
 		output.WriteString(getAMPM(d, true))
 	case 'r':
-		output.WriteString(fmt.Sprintf("%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true)))
+		fmt.Fprintf(output, "%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true))
 	case 'R':
-		output.WriteString(fmt.Sprintf("%02d:%02d", d.Hour(), d.Minute()))
+		fmt.Fprintf(output, "%02d:%02d", d.Hour(), d.Minute())
 	case 's':
 		output.WriteString(strconv.FormatInt(d.Unix(), 10))
 	case 'S':
-		output.WriteString(fmt.Sprintf("%02d", d.Second()))
+		fmt.Fprintf(output, "%02d", d.Second())
 	case 'T':
-		output.WriteString(fmt.Sprintf("%02d:%02d:%02d", d.Hour(), d.Minute(), d.Second()))
+		fmt.Fprintf(output, "%02d:%02d:%02d", d.Hour(), d.Minute(), d.Second())
 	case 'u':
 		output.WriteString(strconv.Itoa(getWeekdayNum(d)))
 	case 'V':
 		_, wn := d.ISOWeek()
-		output.WriteString(fmt.Sprintf("%02d", wn))
+		fmt.Fprintf(output, "%02d", wn)
 	case 'w':
-		output.WriteString(strconv.Itoa(int(d.Weekday())))
+		fmt.Fprintf(output, "%d", d.Weekday())
 	case 'y':
 		output.WriteString(strconv.Itoa(d.Year())[2:4])
 	case 'Y':
