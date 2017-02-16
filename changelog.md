@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v6.2.0
+
+* `[usage]` Showing info about latest available release on GitHub
+
 #### v6.1.0
 
 * `[knf]` Added tabs support in indentation
