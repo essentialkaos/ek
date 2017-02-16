@@ -78,7 +78,7 @@ testWithCover() {
     done
 
     if [[ $skip_cover ]] ; then
-      go test $dir/$pkg
+      go test $dir/$pkg -covermode=count
 
       if [[ $? -ne 0 ]] ; then
         has_errors=true
