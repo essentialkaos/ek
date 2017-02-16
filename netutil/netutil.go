@@ -10,23 +10,41 @@ package netutil
 
 import (
 	"net"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP return current server IP
+// GetIP return main IPv4 adress
 func GetIP() string {
-	addrs, err := net.InterfaceAddrs()
+	return getMainIP(false)
+}
+
+// GetIP6 return main IPv6 adress
+func GetIP6() string {
+	return getMainIP(true)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func getMainIP(v6 bool) string {
+	interfaces, err := net.Interfaces()
 
 	if err != nil {
 		return ""
 	}
 
-	for _, a := range addrs {
-		ipnet, ok := a.(*net.IPNet)
+	for i := len(interfaces) - 1; i >= 0; i-- {
+		addr, err := interfaces[i].Addrs()
 
-		if ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
+		if err != nil || len(addr) == 0 {
+			continue
+		}
+
+		for _, a := range addr {
+			ipnet, ok := a.(*net.IPNet)
+
+			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
 				return ipnet.IP.String()
 			}
 		}

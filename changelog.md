@@ -2,6 +2,8 @@
 
 #### v6.2.0
 
+* `[netutil]` Now GetIP return primary IPv4 adress
+* `[netutil]` Added method `GetIP6` which return main IPv6 adress
 * `[usage]` Showing info about latest available release on GitHub
 
 #### v6.1.0

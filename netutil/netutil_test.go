@@ -8,7 +8,6 @@ package netutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"net"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -27,7 +26,9 @@ var _ = Suite(&NetUtilSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *NetUtilSuite) TestGetIP(c *C) {
-	ip := net.ParseIP(GetIP())
+	c.Assert(GetIP(), Not(Equals), "")
+}
 
-	c.Assert(ip.IsGlobalUnicast(), Equals, true)
+func (s *NetUtilSuite) TestGetIP6(c *C) {
+	c.Assert(GetIP6(), Not(Equals), "")
 }
