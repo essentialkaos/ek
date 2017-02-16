@@ -15,12 +15,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP return main IPv4 adress
+// GetIP return main IPv4 address
 func GetIP() string {
 	return getMainIP(false)
 }
 
-// GetIP6 return main IPv6 adress
+// GetIP6 return main IPv6 address
 func GetIP6() string {
 	return getMainIP(true)
 }

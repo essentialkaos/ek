@@ -2,8 +2,8 @@
 
 #### v6.2.0
 
-* `[netutil]` Now GetIP return primary IPv4 adress
-* `[netutil]` Added method `GetIP6` which return main IPv6 adress
+* `[netutil]` Now GetIP return primary IPv4 address
+* `[netutil]` Added method `GetIP6` which return main IPv6 address
 * `[usage]` Showing info about latest available release on GitHub
 
 #### v6.1.0
@@ -15,7 +15,7 @@
 #### v6.0.0
 
 * `[passwd]` Much secure hash generation (now with sha512, bcrypt and AES)
-* `[system]` Improved changing proccess and arguments names
+* `[system]` Improved changing process and arguments names
 * `[system/process]` Fixed windows stubs
 
 ---
