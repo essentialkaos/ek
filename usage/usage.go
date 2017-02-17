@@ -16,6 +16,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v6/fmtc"
 	"pkg.re/essentialkaos/ek.v6/req"
+	"pkg.re/essentialkaos/ek.v6/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -221,7 +222,7 @@ func (about *About) Render() {
 	}
 
 	if about.Repository != "" {
-		printLatestReleaseInfo(about.Version, about.Repository)
+		printLatestReleaseInfo(about.App, about.Version, about.Repository)
 	}
 
 	fmtc.NewLine()
@@ -383,8 +384,8 @@ func printGroupHeader(name string) {
 }
 
 // printLatestReleaseInfo print info about latest release on GitHub
-func printLatestReleaseInfo(version, repository string) {
-	latestRelease := getLatestRelease(repository)
+func printLatestReleaseInfo(app, currentVersion, repository string) {
+	latestRelease := getLatestRelease(app, currentVersion, repository)
 
 	if latestRelease == nil || len(latestRelease.Tag) < 2 {
 		return
@@ -392,7 +393,7 @@ func printLatestReleaseInfo(version, repository string) {
 
 	latestVersion := latestRelease.Tag[1:]
 
-	if latestVersion == version {
+	if !isNewerVersion(currentVersion, latestVersion) {
 		return
 	}
 
@@ -425,11 +426,12 @@ func printLatestReleaseInfo(version, repository string) {
 }
 
 // getLatestRelease fetch latest release from GitHub
-func getLatestRelease(repository string) *release {
+func getLatestRelease(app, version, repository string) *release {
 	engine := req.Engine{}
 
 	engine.SetDialTimeout(2)
 	engine.SetRequestTimeout(2)
+	engine.SetUserAgent(app, version, "go.ek/6")
 
 	response, err := engine.Get(req.Request{
 		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
@@ -437,6 +439,10 @@ func getLatestRelease(repository string) *release {
 	})
 
 	if err != nil || response.StatusCode != 200 {
+		return nil
+	}
+
+	if response.Header.Get("X-RateLimit-Remaining") == "0" {
 		return nil
 	}
 
@@ -449,4 +455,21 @@ func getLatestRelease(repository string) *release {
 	}
 
 	return rel
+}
+
+// isNewerVersion return true if latest version is greater than current
+func isNewerVersion(current, latest string) bool {
+	v1, err := version.Parse(current)
+
+	if err != nil {
+		return false
+	}
+
+	v2, err := version.Parse(latest)
+
+	if err != nil {
+		return false
+	}
+
+	return v2.Greater(v1)
 }
