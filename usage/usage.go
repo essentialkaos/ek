@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v6/fmtc"
+	"pkg.re/essentialkaos/ek.v6/req"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -30,14 +31,15 @@ const _BREADCRUMBS_MIN_SIZE = 16
 
 // About contains info about application
 type About struct {
-	App     string // App is application name
-	Version string // Version is current application version in semver notation
-	Release string // Release is current application release
-	Build   string // Build is current application build
-	Desc    string // Desc is short info about application
-	Year    int    // Year is year when owner company was founded
-	License string // License is name of license
-	Owner   string // Owner is name of owner (company/developer)
+	App        string // App is application name
+	Version    string // Version is current application version in semver notation
+	Release    string // Release is current application release
+	Build      string // Build is current application build
+	Desc       string // Desc is short info about application
+	Year       int    // Year is year when owner company was founded
+	License    string // License is name of license
+	Owner      string // Owner is name of owner (company/developer)
+	Repository string // GitHub repository (owner/name)
 }
 
 // Info contains info about commands, options and examples
@@ -51,6 +53,8 @@ type Info struct {
 	curGroup string
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 type option struct {
 	name  string
 	desc  string
@@ -61,6 +65,11 @@ type option struct {
 type example struct {
 	cmd  string
 	desc string
+}
+
+type release struct {
+	Tag       string    `json:"tag_name"`
+	Published time.Time `json:"published_at"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -209,6 +218,10 @@ func (about *About) Render() {
 
 	if about.License != "" {
 		fmtc.Printf("{s-}%s{!}\n", about.License)
+	}
+
+	if about.Repository != "" {
+		printLatestReleaseInfo(about.Version, about.Repository)
 	}
 
 	fmtc.NewLine()
@@ -367,4 +380,73 @@ func getMaxOptionSize(options []option) int {
 // printGroupHeader print category header
 func printGroupHeader(name string) {
 	fmtc.Printf("\n{*}%s{!}\n\n", name)
+}
+
+// printLatestReleaseInfo print info about latest release on GitHub
+func printLatestReleaseInfo(version, repository string) {
+	latestRelease := getLatestRelease(repository)
+
+	if latestRelease == nil || len(latestRelease.Tag) < 2 {
+		return
+	}
+
+	latestVersion := latestRelease.Tag[1:]
+
+	if latestVersion == version {
+		return
+	}
+
+	fmtc.NewLine()
+
+	days := int(time.Since(latestRelease.Published) / (time.Hour * 24))
+
+	var colorTag string
+
+	switch {
+	case days < 14:
+		colorTag = "{s}"
+	case days < 60:
+		colorTag = "{y}"
+	default:
+		colorTag = "{r}"
+	}
+
+	if days < 2 {
+		fmtc.Printf(
+			colorTag+"Latest version is %s (released 1 day ago){!}\n",
+			latestVersion,
+		)
+	} else {
+		fmtc.Printf(
+			colorTag+"Latest version is %s (released %d days ago){!}\n",
+			latestVersion, days,
+		)
+	}
+}
+
+// getLatestRelease fetch latest release from GitHub
+func getLatestRelease(repository string) *release {
+	engine := req.Engine{}
+
+	engine.SetDialTimeout(2)
+	engine.SetRequestTimeout(2)
+
+	response, err := engine.Get(req.Request{
+		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
+		AutoDiscard: true,
+	})
+
+	if err != nil || response.StatusCode != 200 {
+		return nil
+	}
+
+	var rel = &release{}
+
+	err = response.JSON(rel)
+
+	if err != nil {
+		return nil
+	}
+
+	return rel
 }
