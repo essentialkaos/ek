@@ -1,5 +1,9 @@
 ## Changelog
 
+#### v6.2.1
+
+* `[usage]` Improved working with GitHub API
+
 #### v6.2.0
 
 * `[netutil]` Now GetIP return primary IPv4 address
