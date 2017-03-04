@@ -15,8 +15,6 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v6/fmtc"
-	"pkg.re/essentialkaos/ek.v6/req"
-	"pkg.re/essentialkaos/ek.v6/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -32,19 +30,25 @@ const _BREADCRUMBS_MIN_SIZE = 16
 
 // About contains info about application
 type About struct {
-	App        string // App is application name
-	Version    string // Version is current application version in semver notation
-	Release    string // Release is current application release
-	Build      string // Build is current application build
-	Desc       string // Desc is short info about application
-	Year       int    // Year is year when owner company was founded
-	License    string // License is name of license
-	Owner      string // Owner is name of owner (company/developer)
-	Repository string // GitHub repository (owner/name)
+	App     string // App is application name
+	Version string // Version is current application version in semver notation
+	Release string // Release is current application release
+	Build   string // Build is current application build
+	Desc    string // Desc is short info about application
+	Year    int    // Year is year when owner company was founded
+	License string // License is name of license
+	Owner   string // Owner is name of owner (company/developer)
+
+	// Function for checking application updates
+	UpdateChecker UpdateChecker
 }
 
 // Info contains info about commands, options and examples
 type Info struct {
+	CommandsColorTag string // CommandsColor contains default commands color
+	OptionsColorTag  string // OptionsColor contains default options color
+	Breadcrumbs      bool   // Use bread crumbs for commands and options output
+
 	name     string
 	args     string
 	spoiler  string
@@ -52,6 +56,11 @@ type Info struct {
 	options  []option
 	examples []example
 	curGroup string
+}
+
+type UpdateChecker struct {
+	Data      string
+	CheckFunc func(app, version, data string) (string, time.Time, bool)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -68,45 +77,27 @@ type example struct {
 	desc string
 }
 
-type release struct {
-	Tag       string    `json:"tag_name"`
-	Published time.Time `json:"published_at"`
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	// CommandsColor contains default commands color
-	CommandsColorTag = "{y}"
-
-	// OptionsColor contains default options color
-	OptionsColorTag = "{g}"
-
-	// Use bread crumbs for commands and options output
-	Breadcrumbs = false
-)
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewInfo create new info struct
 func NewInfo(name string, args ...string) *Info {
-	if name == "" {
-		return &Info{
-			name:     filepath.Base(os.Args[0]),
-			args:     strings.Join(args, " "),
-			commands: make([]option, 0),
-			options:  make([]option, 0),
-			examples: make([]example, 0),
-		}
-	}
-
-	return &Info{
+	info := &Info{
 		name:     name,
 		args:     strings.Join(args, " "),
 		commands: make([]option, 0),
 		options:  make([]option, 0),
 		examples: make([]example, 0),
+
+		CommandsColorTag: "{y}",
+		OptionsColorTag:  "{g}",
+		Breadcrumbs:      true,
 	}
+
+	if info.name == "" {
+		info.name = filepath.Base(os.Args[0])
+	}
+
+	return info
 }
 
 // AddGroup add new command group
@@ -156,11 +147,11 @@ func (info *Info) Render() {
 	usageMessage := "\n{*}Usage:{!} " + info.name
 
 	if len(info.commands) != 0 {
-		usageMessage += " " + CommandsColorTag + "{command}{!}"
+		usageMessage += " " + info.CommandsColorTag + "{command}{!}"
 	}
 
 	if len(info.options) != 0 {
-		usageMessage += " " + OptionsColorTag + "{options}{!}"
+		usageMessage += " " + info.OptionsColorTag + "{options}{!}"
 	}
 
 	if info.args != "" {
@@ -175,11 +166,11 @@ func (info *Info) Render() {
 	}
 
 	if len(info.commands) != 0 {
-		renderOptions(info.commands, CommandsColorTag)
+		renderOptions(info.commands, info.CommandsColorTag, info.Breadcrumbs)
 	}
 
 	if len(info.options) != 0 {
-		renderOptions(info.options, OptionsColorTag)
+		renderOptions(info.options, info.OptionsColorTag, info.Breadcrumbs)
 	}
 
 	if len(info.examples) != 0 {
@@ -221,8 +212,16 @@ func (about *About) Render() {
 		fmtc.Printf("{s-}%s{!}\n", about.License)
 	}
 
-	if about.Repository != "" {
-		printLatestReleaseInfo(about.App, about.Version, about.Repository)
+	if about.UpdateChecker.CheckFunc != nil && about.UpdateChecker.Data != "" {
+		newVersion, releaseDate, hasUpdate := about.UpdateChecker.CheckFunc(
+			about.App,
+			about.Version,
+			about.UpdateChecker.Data,
+		)
+
+		if hasUpdate {
+			printNewVersionInfo(newVersion, releaseDate)
+		}
 	}
 
 	fmtc.NewLine()
@@ -273,7 +272,7 @@ func parseOption(option string) string {
 }
 
 // renderOptions render options
-func renderOptions(options []option, colorTag string) {
+func renderOptions(options []option, colorTag string, breadcrumbs bool) {
 	var (
 		curGroup string
 		opt      option
@@ -294,7 +293,7 @@ func renderOptions(options []option, colorTag string) {
 			fmtc.Printf(" " + renderArgs(opt.args))
 		}
 
-		fmtc.Printf(getBreadcrumbs(opt, maxSize))
+		fmtc.Printf(getOptionSeparator(opt, maxSize, breadcrumbs))
 		fmtc.Printf(opt.desc)
 
 		fmtc.NewLine()
@@ -350,12 +349,12 @@ func getRenderedArgsSize(args []string) int {
 	return result
 }
 
-// getBreadCrumbs return bread crumbs (or spaces if colors are disabled) for
+// getOptionSeparator return bread crumbs (or spaces if colors are disabled) for
 // option name aligning
-func getBreadcrumbs(opt option, maxSize int) string {
+func getOptionSeparator(opt option, maxSize int, breadcrumbs bool) string {
 	optLen := len(opt.name) + getRenderedArgsSize(opt.args)
 
-	if Breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
+	if breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
 		return " {s-}" + _DOTS[:maxSize-optLen] + "{!} "
 	}
 
@@ -383,23 +382,11 @@ func printGroupHeader(name string) {
 	fmtc.Printf("\n{*}%s{!}\n\n", name)
 }
 
-// printLatestReleaseInfo print info about latest release on GitHub
-func printLatestReleaseInfo(app, currentVersion, repository string) {
-	latestRelease := getLatestRelease(app, currentVersion, repository)
-
-	if latestRelease == nil || len(latestRelease.Tag) < 2 {
-		return
-	}
-
-	latestVersion := latestRelease.Tag[1:]
-
-	if !isNewerVersion(currentVersion, latestVersion) {
-		return
-	}
-
+// printNewVersionInfo print info about latest release
+func printNewVersionInfo(newVersion string, releaseDate time.Time) {
 	fmtc.NewLine()
 
-	days := int(time.Since(latestRelease.Published) / (time.Hour * 24))
+	days := int(time.Since(releaseDate) / (time.Hour * 24))
 
 	var colorTag string
 
@@ -415,61 +402,12 @@ func printLatestReleaseInfo(app, currentVersion, repository string) {
 	if days < 2 {
 		fmtc.Printf(
 			colorTag+"Latest version is %s (released 1 day ago){!}\n",
-			latestVersion,
+			newVersion,
 		)
 	} else {
 		fmtc.Printf(
 			colorTag+"Latest version is %s (released %d days ago){!}\n",
-			latestVersion, days,
+			newVersion, days,
 		)
 	}
-}
-
-// getLatestRelease fetch latest release from GitHub
-func getLatestRelease(app, version, repository string) *release {
-	engine := req.Engine{}
-
-	engine.SetDialTimeout(2)
-	engine.SetRequestTimeout(2)
-	engine.SetUserAgent(app, version, "go.ek/6")
-
-	response, err := engine.Get(req.Request{
-		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
-		AutoDiscard: true,
-	})
-
-	if err != nil || response.StatusCode != 200 {
-		return nil
-	}
-
-	if response.Header.Get("X-RateLimit-Remaining") == "0" {
-		return nil
-	}
-
-	var rel = &release{}
-
-	err = response.JSON(rel)
-
-	if err != nil {
-		return nil
-	}
-
-	return rel
-}
-
-// isNewerVersion return true if latest version is greater than current
-func isNewerVersion(current, latest string) bool {
-	v1, err := version.Parse(current)
-
-	if err != nil {
-		return false
-	}
-
-	v2, err := version.Parse(latest)
-
-	if err != nil {
-		return false
-	}
-
-	return v2.Greater(v1)
 }

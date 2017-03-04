@@ -1,5 +1,13 @@
 ## Changelog
 
+### v7.0.0
+
+* `[usage]` Added interface for different ways to check application updates
+* `[usage]` Added github update checker
+* `[usage]` Moved `CommandsColorTag`, `OptionsColorTag`, `Breadcrumbs` to `Info` struct (_incompatible changes_)
+
+---
+
 #### v6.2.1
 
 * `[usage]` Improved working with GitHub API
