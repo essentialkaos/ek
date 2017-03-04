@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v6/req"
+	"pkg.re/essentialkaos/ek.v7/req"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
