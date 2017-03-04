@@ -28,6 +28,11 @@ type ListingFilter struct {
 	MTimeOlder   int64
 	MTimeYounger int64
 
+	SizeLess    int64
+	SizeGreater int64
+	SizeEqual   int64
+	SizeZero    bool
+
 	Perms    string
 	NotPerms string
 }
@@ -59,6 +64,10 @@ func (lf ListingFilter) hasTimes() bool {
 
 func (lf ListingFilter) hasPerms() bool {
 	return lf.Perms != "" || lf.NotPerms != ""
+}
+
+func (lf ListingFilter) hasSize() bool {
+	return lf.SizeZero || lf.SizeGreater > 0 || lf.SizeLess > 0 || lf.SizeEqual > 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -262,9 +271,10 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 		hasMatchPatterns    = filter.hasMatchPatterns()
 		hasTimes            = filter.hasTimes()
 		hasPerms            = filter.hasPerms()
+		hasSize             = filter.hasSize()
 	)
 
-	if !hasNotMatchPatterns && !hasMatchPatterns && !hasTimes && !hasPerms {
+	if !hasNotMatchPatterns && !hasMatchPatterns && !hasTimes && !hasPerms && !hasSize {
 		return true
 	}
 
@@ -292,7 +302,7 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 		}
 	}
 
-	if !hasTimes && !hasPerms {
+	if !hasTimes && !hasPerms && !hasSize {
 		return match
 	}
 
@@ -328,6 +338,10 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 		}
 	}
 
+	if !hasPerms && !hasSize {
+		return match
+	}
+
 	if hasPerms {
 		if filter.Perms != "" {
 			match = match && CheckPerms(filter.Perms, fullPath) == true
@@ -335,6 +349,24 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 
 		if filter.NotPerms != "" {
 			match = match && CheckPerms(filter.NotPerms, fullPath) == false
+		}
+	}
+
+	if hasSize {
+		if filter.SizeZero == true {
+			match = match && GetSize(fullPath) == 0
+		} else {
+			if filter.SizeEqual > 0 {
+				match = match && GetSize(fullPath) == filter.SizeEqual
+			}
+
+			if filter.SizeGreater > 0 {
+				match = match && GetSize(fullPath) > filter.SizeGreater
+			}
+
+			if filter.SizeLess > 0 {
+				match = match && GetSize(fullPath) < filter.SizeLess
+			}
 		}
 	}
 
