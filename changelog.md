@@ -5,6 +5,7 @@
 * `[usage]` Added interface for different ways to check application updates
 * `[usage]` Added github update checker
 * `[usage]` Moved `CommandsColorTag`, `OptionsColorTag`, `Breadcrumbs` to `Info` struct (_incompatible changes_)
+* `[fsutil]` Now `ListingFilter` must be passed as value instead of pointer (_incompatible changes_)
 
 ---
 
