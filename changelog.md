@@ -7,6 +7,8 @@
 * `[usage]` Moved `CommandsColorTag`, `OptionsColorTag`, `Breadcrumbs` to `Info` struct (_incompatible changes_)
 * `[fsutil]` Now `ListingFilter` must be passed as value instead of pointer (_incompatible changes_)
 * `[fsutil]` Added support of filtering by size for `ListingFilter`
+* `[version]` Added fuzz testing
+* `[knf]` Added fuzz testing
 
 ---
 

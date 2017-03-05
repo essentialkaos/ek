@@ -11,6 +11,7 @@ package knf
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"path"
 	"regexp"
@@ -99,41 +100,9 @@ func Read(file string) (*Config, error) {
 
 	defer fd.Close()
 
-	var sectionName = ""
+	err = readConfigData(config, fd, file)
 
-	reader := bufio.NewReader(fd)
-	scanner := bufio.NewScanner(reader)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if line == "" || strings.Trim(line, " \t") == "" {
-			continue
-		}
-
-		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _COMMENT_SYMBOL) {
-			continue
-		}
-
-		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _SECTION_SYMBOL) {
-			sectionName = strings.Trim(line, "[ ]")
-			config.data[sectionName+_DELIMITER] = "true"
-			config.sections = append(config.sections, sectionName)
-			continue
-		}
-
-		if sectionName == "" {
-			return nil, errors.New("Configuration file " + file + " is malformed")
-		}
-
-		propName, propValue := parseRecord(line, config)
-		fullPropName := sectionName + _DELIMITER + propName
-
-		config.props = append(config.props, fullPropName)
-		config.data[fullPropName] = propValue
-	}
-
-	if err := scanner.Err(); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -470,6 +439,48 @@ func (c *Config) Validate(validators []*Validator) []error {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func readConfigData(config *Config, fd io.Reader, file string) error {
+	var sectionName = ""
+
+	reader := bufio.NewReader(fd)
+	scanner := bufio.NewScanner(reader)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if line == "" || strings.Trim(line, " \t") == "" {
+			continue
+		}
+
+		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _COMMENT_SYMBOL) {
+			continue
+		}
+
+		if strings.HasPrefix(strings.TrimLeft(line, " \t"), _SECTION_SYMBOL) {
+			sectionName = strings.Trim(line, "[ ]")
+			config.data[sectionName+_DELIMITER] = "true"
+			config.sections = append(config.sections, sectionName)
+			continue
+		}
+
+		if sectionName == "" {
+			return errors.New("Configuration file " + file + " is malformed")
+		}
+
+		propName, propValue := parseRecord(line, config)
+		fullPropName := sectionName + _DELIMITER + propName
+
+		config.props = append(config.props, fullPropName)
+		config.data[fullPropName] = propValue
+	}
+
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func parseRecord(data string, config *Config) (string, string) {
 	va := strings.Split(data, _SEPARATOR_SYMBOL)
