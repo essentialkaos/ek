@@ -9,6 +9,7 @@
 * `[fsutil]` Added support of filtering by size for `ListingFilter`
 * `[version]` Now `Parse` return value instead of pointer
 * `[version]` Added fuzz testing
+* `[cron]` Added fuzz testing
 * `[knf]` Added fuzz testing
 
 ---
