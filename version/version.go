@@ -27,26 +27,41 @@ type Version struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var (
+	ErrEmpty           = errors.New("Version can't be empty")
+	ErrEmptyBuild      = errors.New("Build number is empty")
+	ErrEmptyPrerelease = errors.New("Prerelease number is empty")
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parse parse version string and return version struct
-func Parse(v string) (*Version, error) {
+func Parse(v string) (Version, error) {
 	if v == "" {
-		return nil, errors.New("Version can't be empty")
+		return Version{}, ErrEmpty
 	}
 
-	result := &Version{raw: v}
+	var (
+		raw          string
+		versionSlice []int
+		preRelease   string
+		build        string
+	)
+
+	raw = v
 
 	if strings.Contains(v, "+") {
 		bs := strings.Split(v, "+")
 
 		if bs[1] == "" {
-			return nil, errors.New("Build number is empty")
+			return Version{}, ErrEmptyBuild
 		} else {
 			v = bs[0]
-			result.build = bs[1]
+			build = bs[1]
 		}
 	}
 
@@ -54,10 +69,10 @@ func Parse(v string) (*Version, error) {
 		ps := strings.Split(v, "-")
 
 		if ps[1] == "" {
-			return nil, errors.New("Prerelease number is empty")
+			return Version{}, ErrEmptyPrerelease
 		} else {
 			v = ps[0]
-			result.preRelease = ps[1]
+			preRelease = ps[1]
 		}
 	}
 
@@ -65,20 +80,25 @@ func Parse(v string) (*Version, error) {
 		iv, err := strconv.Atoi(version)
 
 		if err != nil {
-			return nil, err
+			return Version{}, err
 		}
 
-		result.versionSlice = append(result.versionSlice, iv)
+		versionSlice = append(versionSlice, iv)
 	}
 
-	return result, nil
+	return Version{
+		raw:          raw,
+		versionSlice: versionSlice,
+		preRelease:   preRelease,
+		build:        build,
+	}, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Major return major version
-func (v *Version) Major() int {
-	if v == nil || v.raw == "" || len(v.versionSlice) == 0 {
+func (v Version) Major() int {
+	if v.raw == "" || len(v.versionSlice) == 0 {
 		return -1
 	}
 
@@ -86,8 +106,8 @@ func (v *Version) Major() int {
 }
 
 // Minor return minor version
-func (v *Version) Minor() int {
-	if v == nil || v.raw == "" || len(v.versionSlice) == 0 {
+func (v Version) Minor() int {
+	if v.raw == "" || len(v.versionSlice) == 0 {
 		return -1
 	}
 
@@ -99,8 +119,8 @@ func (v *Version) Minor() int {
 }
 
 // Patch return patch version
-func (v *Version) Patch() int {
-	if v == nil || v.raw == "" || len(v.versionSlice) == 0 {
+func (v Version) Patch() int {
+	if v.raw == "" || len(v.versionSlice) == 0 {
 		return -1
 	}
 
@@ -112,8 +132,8 @@ func (v *Version) Patch() int {
 }
 
 // PreRelease return prerelease version
-func (v *Version) PreRelease() string {
-	if v == nil || v.raw == "" {
+func (v Version) PreRelease() string {
+	if v.raw == "" {
 		return ""
 	}
 
@@ -121,8 +141,8 @@ func (v *Version) PreRelease() string {
 }
 
 // Build return build
-func (v *Version) Build() string {
-	if v == nil || v.raw == "" {
+func (v Version) Build() string {
+	if v.raw == "" {
 		return ""
 	}
 
@@ -130,7 +150,7 @@ func (v *Version) Build() string {
 }
 
 // Equal return true if version are equal to given
-func (v *Version) Equal(version *Version) bool {
+func (v Version) Equal(version Version) bool {
 	if v.Major() != version.Major() {
 		return false
 	}
@@ -155,7 +175,7 @@ func (v *Version) Equal(version *Version) bool {
 }
 
 // Less return true if given version is greater
-func (v *Version) Less(version *Version) bool {
+func (v Version) Less(version Version) bool {
 	if v.Major() < version.Major() {
 		return true
 	}
@@ -178,7 +198,7 @@ func (v *Version) Less(version *Version) bool {
 }
 
 // Greater return true if given version is less
-func (v *Version) Greater(version *Version) bool {
+func (v Version) Greater(version Version) bool {
 	if v.Major() > version.Major() {
 		return true
 	}
@@ -201,7 +221,7 @@ func (v *Version) Greater(version *Version) bool {
 }
 
 // Contains check is current version contains given version
-func (v *Version) Contains(version *Version) bool {
+func (v Version) Contains(version Version) bool {
 	if v.Major() != version.Major() {
 		return false
 	}
@@ -226,11 +246,7 @@ func (v *Version) Contains(version *Version) bool {
 }
 
 // String return version as string
-func (v *Version) String() string {
-	if v == nil {
-		return ""
-	}
-
+func (v Version) String() string {
 	return v.raw
 }
 

@@ -65,7 +65,7 @@ func GetList() ([]*ProcessInfo, error) {
 func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 	var result []*ProcessInfo
 
-	dirs := fsutil.List(dir, true, &fsutil.ListingFilter{Perms: "DRX"})
+	dirs := fsutil.List(dir, true, fsutil.ListingFilter{Perms: "DRX"})
 
 	for _, pid := range dirs {
 		if !isPID(pid) {
