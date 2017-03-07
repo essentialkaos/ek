@@ -8,6 +8,7 @@
 * `[fsutil]` Now `ListingFilter` must be passed as value instead of pointer (_incompatible changes_)
 * `[fsutil]` Added support of filtering by size for `ListingFilter`
 * `[version]` Now `Parse` return value instead of pointer
+* `[cron]` Improved expressions parsing
 * `[version]` Added fuzz testing
 * `[cron]` Added fuzz testing
 * `[knf]` Added fuzz testing
