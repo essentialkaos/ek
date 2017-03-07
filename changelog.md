@@ -1,5 +1,9 @@
 ## Changelog
 
+### v7.0.1
+
+* `[fsutil]` Fixed windows stubs for compatibility with latest changes
+
 ### v7.0.0
 
 * `[usage]` Added interface for different ways to check application updates
