@@ -58,7 +58,7 @@ go get -u pkg.re/essentialkaos/ek.v7
 * [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v7/uuid) - Package uuid contains methods for generating version 4 and 5 UUID's
 * [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v7/version) - Package provides methods for parsing semver version info
 
-### Projects with EK
+### Projects with `EK`
 
 * [sslcli](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
@@ -67,6 +67,9 @@ go get -u pkg.re/essentialkaos/ek.v7
 * [mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
 * [mdtoc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
+* [goheft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
+* [deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
+* [yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
 
 ### Build Status
 
