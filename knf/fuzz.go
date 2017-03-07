@@ -1,4 +1,6 @@
-package pid
+// +build gofuzz
+
+package knf
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,20 +10,24 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
-
-	"pkg.re/essentialkaos/ek.v7/fsutil"
+	"bytes"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
-
-	if pid == -1 {
-		return false
+func Fuzz(data []byte) int {
+	config := &Config{
+		data:     make(map[string]string),
+		sections: make([]string, 0),
+		props:    make([]string, 0),
+		file:     "",
 	}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	err := readConfigData(config, bytes.NewReader(data), "")
+
+	if err != nil {
+		return 0
+	}
+
+	return 1
 }

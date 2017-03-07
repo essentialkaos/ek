@@ -8,6 +8,7 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"io/ioutil"
 	"os"
 	"sort"
 	"testing"
@@ -35,8 +36,9 @@ func (s *FSSuite) TestList(c *check.C) {
 	os.Mkdir(tmpDir+"/.dir0", 0755)
 
 	os.Create(tmpDir + "/.file0")
-	os.Create(tmpDir + "/file1.mp3")
-	os.Create(tmpDir + "/file2.jpg")
+
+	ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 644)
+	ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 644)
 
 	os.Mkdir(tmpDir+"/dir1", 0755)
 	os.Mkdir(tmpDir+"/dir2", 0755)
@@ -54,10 +56,14 @@ func (s *FSSuite) TestList(c *check.C) {
 	listing6 := ListAllDirs(tmpDir, true)
 	listing7 := ListAllFiles(tmpDir, false)
 	listing8 := ListAllFiles(tmpDir, true)
-	listing9 := ListAllFiles(tmpDir, true, &ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
-	listing10 := ListAllFiles(tmpDir, true, &ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
-	listing11 := List(tmpDir, true, &ListingFilter{Perms: "DR"})
-	listing12 := List(tmpDir, true, &ListingFilter{NotPerms: "DR"})
+	listing9 := ListAllFiles(tmpDir, true, ListingFilter{MatchPatterns: []string{"*.mp3", "*.wav"}})
+	listing10 := ListAllFiles(tmpDir, true, ListingFilter{NotMatchPatterns: []string{"*.mp3"}})
+	listing11 := List(tmpDir, true, ListingFilter{Perms: "DR"})
+	listing12 := List(tmpDir, true, ListingFilter{NotPerms: "DR"})
+	listing13 := ListAllFiles(tmpDir, true, ListingFilter{NotMatchPatterns: []string{"*.mp3"}, SizeZero: true})
+	listing14 := ListAllFiles(tmpDir, false, ListingFilter{SizeEqual: 16})
+	listing15 := ListAllFiles(tmpDir, false, ListingFilter{SizeLess: 12, SizeGreater: 5})
+	listing16 := ListAllFiles(tmpDir, false, ListingFilter{SizeGreater: 12})
 
 	sort.Strings(listing1)
 	sort.Strings(listing2)
@@ -71,6 +77,10 @@ func (s *FSSuite) TestList(c *check.C) {
 	sort.Strings(listing10)
 	sort.Strings(listing11)
 	sort.Strings(listing12)
+	sort.Strings(listing13)
+	sort.Strings(listing14)
+	sort.Strings(listing15)
+	sort.Strings(listing16)
 
 	c.Assert(
 		listing1,
@@ -142,6 +152,30 @@ func (s *FSSuite) TestList(c *check.C) {
 		listing12,
 		check.DeepEquals,
 		[]string{"file1.mp3", "file2.jpg"},
+	)
+
+	c.Assert(
+		listing13,
+		check.DeepEquals,
+		[]string{"dir2/file4.wav"},
+	)
+
+	c.Assert(
+		listing14,
+		check.DeepEquals,
+		[]string{"file1.mp3"},
+	)
+
+	c.Assert(
+		listing15,
+		check.DeepEquals,
+		[]string{"file2.jpg"},
+	)
+
+	c.Assert(
+		listing16,
+		check.DeepEquals,
+		[]string{"file1.mp3"},
 	)
 }
 

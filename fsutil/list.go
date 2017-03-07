@@ -28,26 +28,26 @@ type ListingFilter struct {
 	MTimeOlder   int64
 	MTimeYounger int64
 
+	SizeLess    int64
+	SizeGreater int64
+	SizeEqual   int64
+	SizeZero    bool
+
 	Perms    string
 	NotPerms string
-
-	hasMatchPatterns    bool
-	hasNotMatchPatterns bool
-	hasTimes            bool
-	hasPerms            bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (lf *ListingFilter) init() *ListingFilter {
-	if len(lf.MatchPatterns) != 0 {
-		lf.hasMatchPatterns = true
-	}
+func (lf ListingFilter) hasMatchPatterns() bool {
+	return len(lf.MatchPatterns) != 0
+}
 
-	if len(lf.NotMatchPatterns) != 0 {
-		lf.hasNotMatchPatterns = true
-	}
+func (lf ListingFilter) hasNotMatchPatterns() bool {
+	return len(lf.NotMatchPatterns) != 0
+}
 
+func (lf ListingFilter) hasTimes() bool {
 	switch {
 	case lf.ATimeOlder != 0,
 		lf.ATimeOlder != 0,
@@ -56,20 +56,24 @@ func (lf *ListingFilter) init() *ListingFilter {
 		lf.CTimeYounger != 0,
 		lf.MTimeOlder != 0,
 		lf.MTimeYounger != 0:
-		lf.hasTimes = true
+		return true
 	}
 
-	if lf.Perms != "" || lf.NotPerms != "" {
-		lf.hasPerms = true
-	}
+	return false
+}
 
-	return lf
+func (lf ListingFilter) hasPerms() bool {
+	return lf.Perms != "" || lf.NotPerms != ""
+}
+
+func (lf ListingFilter) hasSize() bool {
+	return lf.SizeZero || lf.SizeGreater > 0 || lf.SizeLess > 0 || lf.SizeEqual > 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // List is lightweight method for listing directory
-func List(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func List(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	var names = readDir(dir)
 
 	if ignoreHidden {
@@ -77,37 +81,37 @@ func List(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
 	}
 
 	if len(filters) != 0 {
-		names = filterList(names, dir, filters[0].init())
+		names = filterList(names, dir, filters[0])
 	}
 
 	return names
 }
 
 // ListAll is lightweight method for listing all files and directories
-func ListAll(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAll(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
-		return readDirRecAll(dir, "", ignoreHidden, nil)
+		return readDirRecAll(dir, "", ignoreHidden, ListingFilter{})
 	}
 
-	return readDirRecAll(dir, "", ignoreHidden, filters[0].init())
+	return readDirRecAll(dir, "", ignoreHidden, filters[0])
 }
 
 // ListAllDirs is lightweight method for listing all directories
-func ListAllDirs(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAllDirs(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
-		return readDirRecDirs(dir, "", ignoreHidden, nil)
+		return readDirRecDirs(dir, "", ignoreHidden, ListingFilter{})
 	}
 
-	return readDirRecDirs(dir, "", ignoreHidden, filters[0].init())
+	return readDirRecDirs(dir, "", ignoreHidden, filters[0])
 }
 
 // ListAllFiles is lightweight method for listing all files
-func ListAllFiles(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
-		return readDirRecFiles(dir, "", ignoreHidden, nil)
+		return readDirRecFiles(dir, "", ignoreHidden, ListingFilter{})
 	}
 
-	return readDirRecFiles(dir, "", ignoreHidden, filters[0].init())
+	return readDirRecFiles(dir, "", ignoreHidden, filters[0])
 }
 
 // ListToAbsolute convert slice with relative paths to slice with absolute paths
@@ -123,7 +127,7 @@ func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 
 	if err != nil {
-		return []string{}
+		return nil
 	}
 
 	defer syscall.Close(fd)
@@ -163,7 +167,7 @@ func readDir(dir string) []string {
 	return names
 }
 
-func readDirRecAll(path, base string, ignoreHidden bool, filter *ListingFilter) []string {
+func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result = make([]string, 0)
 
 	names := readDir(path)
@@ -201,7 +205,7 @@ func readDirRecAll(path, base string, ignoreHidden bool, filter *ListingFilter) 
 	return result
 }
 
-func readDirRecDirs(path, base string, ignoreHidden bool, filter *ListingFilter) []string {
+func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result = make([]string, 0)
 
 	names := readDir(path)
@@ -229,7 +233,7 @@ func readDirRecDirs(path, base string, ignoreHidden bool, filter *ListingFilter)
 	return result
 }
 
-func readDirRecFiles(path, base string, ignoreHidden bool, filter *ListingFilter) []string {
+func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result = make([]string, 0)
 
 	names := readDir(path)
@@ -261,14 +265,22 @@ func readDirRecFiles(path, base string, ignoreHidden bool, filter *ListingFilter
 	return result
 }
 
-func isMatch(name, fullPath string, filter *ListingFilter) bool {
-	if filter == nil {
+func isMatch(name, fullPath string, filter ListingFilter) bool {
+	var (
+		hasNotMatchPatterns = filter.hasNotMatchPatterns()
+		hasMatchPatterns    = filter.hasMatchPatterns()
+		hasTimes            = filter.hasTimes()
+		hasPerms            = filter.hasPerms()
+		hasSize             = filter.hasSize()
+	)
+
+	if !hasNotMatchPatterns && !hasMatchPatterns && !hasTimes && !hasPerms && !hasSize {
 		return true
 	}
 
 	var match = true
 
-	if filter.hasNotMatchPatterns {
+	if hasNotMatchPatterns {
 		for _, pattern := range filter.NotMatchPatterns {
 			matched, _ := PATH.Match(pattern, name)
 
@@ -277,7 +289,7 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 				break
 			}
 		}
-	} else if filter.hasMatchPatterns {
+	} else if hasMatchPatterns {
 		for _, pattern := range filter.MatchPatterns {
 			matched, _ := PATH.Match(pattern, name)
 
@@ -290,11 +302,11 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 		}
 	}
 
-	if !filter.hasTimes && !filter.hasPerms {
+	if !hasTimes && !hasPerms && !hasSize {
 		return match
 	}
 
-	if filter.hasTimes {
+	if hasTimes {
 		atime, mtime, ctime, err := GetTimestamps(fullPath)
 
 		if err != nil {
@@ -326,7 +338,11 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 		}
 	}
 
-	if filter.hasPerms {
+	if !hasPerms && !hasSize {
+		return match
+	}
+
+	if hasPerms {
 		if filter.Perms != "" {
 			match = match && CheckPerms(filter.Perms, fullPath) == true
 		}
@@ -336,10 +352,28 @@ func isMatch(name, fullPath string, filter *ListingFilter) bool {
 		}
 	}
 
+	if hasSize {
+		if filter.SizeZero == true {
+			match = match && GetSize(fullPath) == 0
+		} else {
+			if filter.SizeEqual > 0 {
+				match = match && GetSize(fullPath) == filter.SizeEqual
+			}
+
+			if filter.SizeGreater > 0 {
+				match = match && GetSize(fullPath) > filter.SizeGreater
+			}
+
+			if filter.SizeLess > 0 {
+				match = match && GetSize(fullPath) < filter.SizeLess
+			}
+		}
+	}
+
 	return match
 }
 
-func filterList(names []string, dir string, filter *ListingFilter) []string {
+func filterList(names []string, dir string, filter ListingFilter) []string {
 	var filteredNames []string
 
 	for _, name := range names {
@@ -369,5 +403,6 @@ func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0
 	}
+
 	return n, err
 }

@@ -126,6 +126,11 @@ func (s *CronSuite) TestParsing(c *C) {
 		Equals,
 		time.Unix(0, 0),
 	)
+
+	e11, err := Parse("45 17 7 0-99999 1")
+
+	c.Assert(err, IsNil)
+	c.Assert(e11, NotNil)
 }
 
 func (s *CronSuite) TestAliases(c *C) {

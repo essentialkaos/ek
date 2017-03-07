@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v6/mathutil"
+	"pkg.re/essentialkaos/ek.v7/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,6 @@
-package pid
+// +build gofuzz
+
+package cron
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,21 +9,12 @@ package pid
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"fmt"
+func Fuzz(data []byte) int {
+	_, err := Parse(string(data))
 
-	"pkg.re/essentialkaos/ek.v7/fsutil"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
-
-	if pid == -1 {
-		return false
+	if err != nil {
+		return 0
 	}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	return 1
 }

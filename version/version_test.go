@@ -136,8 +136,8 @@ func (s *VersionSuite) TestString(c *C) {
 func (s *VersionSuite) TestErrors(c *C) {
 	var err error
 
-	var v1 *Version
-	var v2 = &Version{}
+	var v1 Version
+	var v2 = Version{}
 
 	_, err = Parse("A")
 	c.Assert(err, NotNil)
@@ -173,7 +173,7 @@ func (s *VersionSuite) TestErrors(c *C) {
 }
 
 func (s *VersionSuite) TestComparison(c *C) {
-	var P = func(version string) *Version {
+	var P = func(version string) Version {
 		v, _ := Parse(version)
 		return v
 	}

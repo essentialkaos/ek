@@ -67,7 +67,11 @@ type exprInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var info = []*exprInfo{
+var ErrMalformedExpression = errors.New("Expression must have 5 tokens")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var info = []exprInfo{
 	{0, 59, _NAMES_NONE},
 	{0, 23, _NAMES_NONE},
 	{1, 31, _NAMES_NONE},
@@ -87,7 +91,7 @@ func Parse(expr string) (*Expr, error) {
 	exprAr := strings.Split(expr, " ")
 
 	if len(exprAr) != 5 {
-		return nil, errors.New("Expression must have 5 tokens")
+		return nil, ErrMalformedExpression
 	}
 
 	data := make([][]uint8, 5)
@@ -102,6 +106,8 @@ func Parse(expr string) (*Expr, error) {
 			data[tn] = getEnumFromToken(token, ei.nt)
 		case isPeriodToken(token):
 			ts, te := getPeriodFromToken(token, ei.nt)
+			ts = between(ts, ei.min, ei.max)
+			te = between(te, ei.min, ei.max)
 			data[tn] = fillUintSlice(ts, te, 1)
 		case isIntervalToken(token):
 			data[tn] = fillUintSlice(ei.min, ei.max, getIntervalFromToken(token))
@@ -447,4 +453,15 @@ func getNearPrevIndex(items []uint8, item uint8) int {
 	}
 
 	return len(items) - 1
+}
+
+func between(val, min, max uint8) uint8 {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
 }

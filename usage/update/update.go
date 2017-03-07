@@ -1,4 +1,5 @@
-package pid
+// Package update provides methods for checking application updates
+package update
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,20 +9,24 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
-
-	"pkg.re/essentialkaos/ek.v7/fsutil"
+	"pkg.re/essentialkaos/ek.v7/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
+// isNewerVersion return true if latest version is greater than current
+func isNewerVersion(current, latest string) bool {
+	v1, err := version.Parse(current)
 
-	if pid == -1 {
+	if err != nil {
 		return false
 	}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	v2, err := version.Parse(latest)
+
+	if err != nil {
+		return false
+	}
+
+	return v2.Greater(v1)
 }
