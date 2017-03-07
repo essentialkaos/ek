@@ -9,6 +9,7 @@ package fsutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ListingFilter is struct with properties for filtering listing output
 type ListingFilter struct {
 	MatchPatterns    []string
 	NotMatchPatterns []string
@@ -20,30 +21,30 @@ type ListingFilter struct {
 	MTimeOlder   int64
 	MTimeYounger int64
 
+	SizeLess    int64
+	SizeGreater int64
+	SizeEqual   int64
+	SizeZero    bool
+
 	Perms    string
 	NotPerms string
-
-	hasMatchPatterns    bool
-	hasNotMatchPatterns bool
-	hasTimes            bool
-	hasPerms            bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func List(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func List(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return []string{}
 }
 
-func ListAll(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAll(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return []string{}
 }
 
-func ListAllDirs(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAllDirs(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return []string{}
 }
 
-func ListAllFiles(dir string, ignoreHidden bool, filters ...*ListingFilter) []string {
+func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return []string{}
 }
 
