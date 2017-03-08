@@ -4,6 +4,7 @@
 
 * `[version]` Fixed bug with version comparison
 * `[version]` Improved version data storing model
+* `[usage]` Fixed bug with new application version checking mechanics
 
 ### v7.0.1
 
