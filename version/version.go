@@ -19,10 +19,11 @@ import (
 
 // Version contains version data
 type Version struct {
-	raw          string
-	versionSlice []int
-	preRelease   string
-	build        string
+	raw        string
+	slice      [3]int
+	preRelease string
+	build      string
+	size       int
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -45,14 +46,14 @@ func Parse(v string) (Version, error) {
 		return Version{}, ErrEmpty
 	}
 
-	var (
-		raw          string
-		versionSlice []int
-		preRelease   string
-		build        string
-	)
+	var slice = [3]int{0, 0, 0}
+	var raw = v
 
-	raw = v
+	var (
+		preRelease string
+		build      string
+		size       int
+	)
 
 	if strings.Contains(v, "+") {
 		bs := strings.Split(v, "+")
@@ -76,21 +77,25 @@ func Parse(v string) (Version, error) {
 		}
 	}
 
-	for _, version := range strings.Split(v, ".") {
-		iv, err := strconv.Atoi(version)
+	for index, version := range strings.Split(v, ".") {
+		if index < 3 {
+			iv, err := strconv.Atoi(version)
 
-		if err != nil {
-			return Version{}, err
+			if err != nil {
+				return Version{}, err
+			}
+
+			slice[index] = iv
+			size = index + 1
 		}
-
-		versionSlice = append(versionSlice, iv)
 	}
 
 	return Version{
-		raw:          raw,
-		versionSlice: versionSlice,
-		preRelease:   preRelease,
-		build:        build,
+		raw:        raw,
+		slice:      slice,
+		preRelease: preRelease,
+		build:      build,
+		size:       size,
 	}, nil
 }
 
@@ -98,37 +103,29 @@ func Parse(v string) (Version, error) {
 
 // Major return major version
 func (v Version) Major() int {
-	if v.raw == "" || len(v.versionSlice) == 0 {
+	if v.raw == "" || len(v.slice) == 0 {
 		return -1
 	}
 
-	return v.versionSlice[0]
+	return v.slice[0]
 }
 
 // Minor return minor version
 func (v Version) Minor() int {
-	if v.raw == "" || len(v.versionSlice) == 0 {
+	if v.raw == "" || len(v.slice) == 0 {
 		return -1
 	}
 
-	if len(v.versionSlice) == 1 {
-		return 0
-	}
-
-	return v.versionSlice[1]
+	return v.slice[1]
 }
 
 // Patch return patch version
 func (v Version) Patch() int {
-	if v.raw == "" || len(v.versionSlice) == 0 {
+	if v.raw == "" || len(v.slice) == 0 {
 		return -1
 	}
 
-	if len(v.versionSlice) <= 2 {
-		return 0
-	}
-
-	return v.versionSlice[2]
+	return v.slice[2]
 }
 
 // PreRelease return prerelease version
@@ -176,16 +173,16 @@ func (v Version) Equal(version Version) bool {
 
 // Less return true if given version is greater
 func (v Version) Less(version Version) bool {
-	if v.Major() < version.Major() {
-		return true
+	if v.Major() > version.Major() {
+		return false
 	}
 
-	if v.Minor() < version.Minor() {
-		return true
+	if v.Minor() > version.Minor() {
+		return false
 	}
 
-	if v.Patch() < version.Patch() {
-		return true
+	if v.Patch() > version.Patch() {
+		return false
 	}
 
 	pr1, pr2 := v.PreRelease(), version.PreRelease()
@@ -194,21 +191,25 @@ func (v Version) Less(version Version) bool {
 		return prereleaseLess(pr1, pr2)
 	}
 
-	return false
+	if v.slice == version.slice {
+		return false
+	}
+
+	return true
 }
 
 // Greater return true if given version is less
 func (v Version) Greater(version Version) bool {
-	if v.Major() > version.Major() {
-		return true
+	if v.Major() < version.Major() {
+		return false
 	}
 
-	if v.Minor() > version.Minor() {
-		return true
+	if v.Minor() < version.Minor() {
+		return false
 	}
 
-	if v.Patch() > version.Patch() {
-		return true
+	if v.Patch() < version.Patch() {
+		return false
 	}
 
 	pr1, pr2 := v.PreRelease(), version.PreRelease()
@@ -217,7 +218,11 @@ func (v Version) Greater(version Version) bool {
 		return !prereleaseLess(pr1, pr2)
 	}
 
-	return false
+	if v.slice == version.slice {
+		return false
+	}
+
+	return true
 }
 
 // Contains check is current version contains given version
@@ -226,7 +231,7 @@ func (v Version) Contains(version Version) bool {
 		return false
 	}
 
-	if len(v.versionSlice) == 1 {
+	if v.size == 1 {
 		return true
 	}
 
@@ -234,7 +239,7 @@ func (v Version) Contains(version Version) bool {
 		return false
 	}
 
-	if len(v.versionSlice) == 2 {
+	if v.size == 2 {
 		return true
 	}
 

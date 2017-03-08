@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v7/fmtc"
+	"pkg.re/essentialkaos/ek.v7/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -219,7 +220,7 @@ func (about *About) Render() {
 			about.UpdateChecker.Data,
 		)
 
-		if hasUpdate {
+		if hasUpdate && isNewerVersion(about.Version, newVersion) {
 			printNewVersionInfo(newVersion, releaseDate)
 		}
 	}
@@ -380,6 +381,23 @@ func getMaxOptionSize(options []option) int {
 // printGroupHeader print category header
 func printGroupHeader(name string) {
 	fmtc.Printf("\n{*}%s{!}\n\n", name)
+}
+
+// isNewerVersion return true if latest version is greater than current
+func isNewerVersion(current, latest string) bool {
+	v1, err := version.Parse(current)
+
+	if err != nil {
+		return false
+	}
+
+	v2, err := version.Parse(latest)
+
+	if err != nil {
+		return false
+	}
+
+	return v2.Greater(v1)
 }
 
 // printNewVersionInfo print info about latest release

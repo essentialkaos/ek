@@ -1,5 +1,11 @@
 ## Changelog
 
+### v7.0.2
+
+* `[version]` Fixed bug with version comparison
+* `[version]` Improved version data storing model
+* `[usage]` Fixed bug with new application version checking mechanics
+
 ### v7.0.1
 
 * `[fsutil]` Fixed windows stubs for compatibility with latest changes
