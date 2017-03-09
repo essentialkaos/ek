@@ -89,9 +89,10 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type KNFSuite struct {
-	ConfigPath          string
-	EmptyConfigPath     string
-	MalformedConfigPath string
+	ConfigPath            string
+	EmptyConfigPath       string
+	MalformedConfigPath   string
+	NonReadableConfigPath string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -110,6 +111,7 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 	s.ConfigPath = tmpdir + "/" + _CONFIG_FILE_NAME
 	s.EmptyConfigPath = tmpdir + "/" + _CONFIG_EMPTY_FILE_NAME
 	s.MalformedConfigPath = tmpdir + "/" + _CONFIG_MALFORMED_FILE_NAME
+	s.NonReadableConfigPath = "/etc/sudoers"
 
 	err := ioutil.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)
 
@@ -136,12 +138,17 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	err := Global("/_not_exists_")
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "File /_not_exists_ is not exist")
+	c.Assert(err.Error(), check.Equals, "File /_not_exists_ does not exist")
 
 	err = Global(s.EmptyConfigPath)
 
 	c.Assert(err, check.NotNil)
 	c.Assert(err.Error(), check.Equals, fmt.Sprintf("File %s is empty", s.EmptyConfigPath))
+
+	err = Global(s.NonReadableConfigPath)
+
+	c.Assert(err, check.NotNil)
+	c.Assert(err.Error(), check.Equals, fmt.Sprintf("File %s is not readable", s.NonReadableConfigPath))
 
 	err = Global(s.MalformedConfigPath)
 
@@ -191,7 +198,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "File /_not_exists_ is not exist")
+	c.Assert(err.Error(), check.Equals, "File /_not_exists_ does not exist")
 }
 
 func (s *KNFSuite) TestParsing(c *check.C) {

@@ -78,7 +78,7 @@ func Global(file string) error {
 func Read(file string) (*Config, error) {
 	switch {
 	case fsutil.IsExist(file) == false:
-		return nil, errors.New("File " + file + " is not exist")
+		return nil, errors.New("File " + file + " does not exist")
 	case fsutil.IsNonEmpty(file) == false:
 		return nil, errors.New("File " + file + " is empty")
 	case fsutil.IsReadable(file) == false:
