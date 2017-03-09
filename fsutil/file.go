@@ -23,13 +23,13 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 
 	switch {
 	case IsExist(from) == false:
-		return errors.New("File " + from + " is not exists")
+		return errors.New("File " + from + " does not exists")
 	case IsRegular(from) == false:
 		return errors.New("File " + from + " is not a regular file")
 	case IsReadable(from) == false:
 		return errors.New("File " + from + " is not readable")
 	case IsExist(dir) == false:
-		return errors.New("Directory " + from + " is not exists")
+		return errors.New("Directory " + from + " does not exists")
 	case IsWritable(dir) == false:
 		return errors.New("Directory " + from + " is not writable")
 	}

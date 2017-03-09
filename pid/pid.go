@@ -94,7 +94,7 @@ func Get(name string) int {
 func checkPidDir(path string) error {
 	switch {
 	case fsutil.IsExist(path) == false:
-		return errors.New("Directory " + path + " is not exist")
+		return errors.New("Directory " + path + " does not exist")
 	case fsutil.IsDir(path) == false:
 		return errors.New(path + " is not directory")
 	case fsutil.IsWritable(path) == false:

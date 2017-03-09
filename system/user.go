@@ -326,7 +326,7 @@ func getGroupInfo(nameOrID string) (string, int, error) {
 	out, err := cmd.Output()
 
 	if err != nil {
-		return "", -1, fmt.Errorf("Group with this name/id %s is not exist", nameOrID)
+		return "", -1, fmt.Errorf("Group with this name/id %s does not exist", nameOrID)
 	}
 
 	sOut := string(out[:])

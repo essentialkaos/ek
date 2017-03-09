@@ -48,7 +48,7 @@ func getUserInfo(nameOrID string) (*User, error) {
 	out, err := cmd.Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("User with this name/id %s is not exist", nameOrID)
+		return nil, fmt.Errorf("User with this name/id %s does not exist", nameOrID)
 	}
 
 	sOut := string(out[:])

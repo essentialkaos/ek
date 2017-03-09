@@ -1,5 +1,14 @@
 ## Changelog
 
+### v7.0.3
+
+* `[passwd]` Fixed panic in `Check` for some rare cases
+* `[fsutil]` Fixed typo
+* `[pid]` Fixed typo
+* `[system]` Fixed typo
+* `[tmp]` Fixed typo
+* `[knf]` Increased code coverage
+
 ### v7.0.2
 
 * `[version]` Fixed bug with version comparison

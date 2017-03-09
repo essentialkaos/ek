@@ -50,7 +50,7 @@ func NewTemp(args ...string) (*Temp, error) {
 	}
 
 	if !fsutil.IsExist(tempDir) {
-		return nil, fmt.Errorf("Directory %s is not exist", tempDir)
+		return nil, fmt.Errorf("Directory %s does not exist", tempDir)
 	}
 
 	if !fsutil.IsDir(tempDir) {

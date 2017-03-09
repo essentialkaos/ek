@@ -20,7 +20,6 @@ os:
 matrix:
   fast_finish: true
   allow_failures:
-    - os: osx
     - go: tip
 
 env:
