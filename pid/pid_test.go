@@ -44,7 +44,7 @@ func (s *PidSuite) TestErrors(c *C) {
 	err := Create("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST is not exist")
+	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST does not exist")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
