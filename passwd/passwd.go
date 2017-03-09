@@ -50,10 +50,7 @@ func Encrypt(password, pepper string) (string, error) {
 		return "", errors.New("Pepper can't be empty")
 	}
 
-	switch len(pepper) {
-	case 16, 24, 32:
-		break
-	default:
+	if !isValidPepper(pepper) {
 		return "", errors.New("Pepper have invalid size")
 	}
 
@@ -91,7 +88,7 @@ func Encrypt(password, pepper string) (string, error) {
 
 // Check compare password and hash
 func Check(password, pepper, hash string) bool {
-	if password == "" || hash == "" {
+	if password == "" || hash == "" || !isValidPepper(pepper) {
 		return false
 	}
 
@@ -107,12 +104,18 @@ func Check(password, pepper, hash string) bool {
 		return false
 	}
 
-	if (len(hpd) % aes.BlockSize) != 0 {
+	hdpl := len(hpd)
+
+	if hdpl < aes.BlockSize || (hdpl%aes.BlockSize) != 0 {
 		return false
 	}
 
 	iv := hpd[:aes.BlockSize]
 	hp := hpd[aes.BlockSize:]
+
+	if len(hp) == 0 {
+		return false
+	}
 
 	cfb := cipher.NewCFBDecrypter(block, iv)
 	cfb.XORKeyStream(hp, hp)
@@ -250,4 +253,13 @@ func getRandomPassword(length, strength int) string {
 			return string(r)
 		}
 	}
+}
+
+func isValidPepper(pepper string) bool {
+	switch len(pepper) {
+	case 16, 24, 32:
+		return true
+	}
+
+	return false
 }

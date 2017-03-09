@@ -2,6 +2,7 @@
 
 ### v7.0.3
 
+* `[passwd]` Fixed panic in `Check` for some rare cases
 * `[fsutil]` Fixed typo
 * `[pid]` Fixed typo
 * `[system]` Fixed typo

@@ -64,6 +64,9 @@ func (s *PasswdSuite) TestEncrypt(c *C) {
 	c.Assert(Check("Test123", "", hp), Equals, false)
 	c.Assert(Check("", "ABCD1234ABCD1234", hp), Equals, false)
 	c.Assert(Check("", "ABCD1234ABCD1234", hp), Equals, false)
+
+	c.Assert(Check("TEST", "ABCD1234ABCD1234", "\n\n\n\n"), Equals, false)
+	c.Assert(Check("TEST", "ABCD1234ABCD1234", "0000000000000000000000"), Equals, false)
 }
 
 func (s *PasswdSuite) TestEncryptErrors(c *C) {
