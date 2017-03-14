@@ -166,11 +166,7 @@ func IsUserExist(name string) bool {
 
 	err := cmd.Run()
 
-	if err == nil {
-		return true
-	}
-
-	return false
+	return err == nil
 }
 
 // IsGroupExist check if group exist on system or not
@@ -179,11 +175,7 @@ func IsGroupExist(name string) bool {
 
 	err := cmd.Run()
 
-	if err == nil {
-		return true
-	}
-
-	return false
+	return err == nil
 }
 
 // CurrentTTY return current tty or empty string if error occurred

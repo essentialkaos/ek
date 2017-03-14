@@ -129,12 +129,23 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 }
 
 // GetNetworkSpeed return input/output speed in bytes per second
-func GetNetworkSpeed() (uint64, uint64, error) {
+func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
+	return 0, 0, nil
+}
+
+// CalculateNetworkSpeed calculate network input/output speed in bytes per second for
+// all network interfaces
+func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
 	return 0, 0, nil
 }
 
 // GetIOUtil return IO utilization
-func GetIOUtil() (map[string]float64, error) {
+func GetIOUtil(duration time.Duration) (map[string]float64, error) {
+	return map[string]float64{"/": 0}, nil
+}
+
+// CalculateIOUtil calculate IO utilization for all devices
+func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map[string]*FSInfo) map[string]float64 {
 	return map[string]float64{"/": 0}, nil
 }
 

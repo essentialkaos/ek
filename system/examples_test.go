@@ -49,7 +49,7 @@ func ExampleGetFSInfo() {
 	// info is slice path -> info
 	for path, info := range fsInfo {
 		fmt.Printf(
-			"Path: %s Type: %s Device: %s Used: %f Free: %f Total: %f\n",
+			"Path: %s Type: %s Device: %s Used: %d Free: %d Total: %d\n",
 			path, info.Type, info.Device, info.Used, info.Free, info.Total,
 		)
 	}
@@ -66,17 +66,17 @@ func ExampleGetIOStats() {
 	for device, info := range ioStats {
 		fmt.Printf("Device: %s", device)
 		fmt.Printf(
-			"  ReadComplete: %f ReadMerged: %f ReadSectors: %f ReadMs: %f\n",
+			"  ReadComplete: %d ReadMerged: %d ReadSectors: %d ReadMs: %d\n",
 			info.ReadComplete, info.ReadMerged, info.ReadSectors, info.ReadMs,
 		)
 
 		fmt.Printf(
-			"  WriteComplete: %f WriteMerged: %f WriteSectors: %f WriteMs: %f\n",
+			"  WriteComplete: %d WriteMerged: %d WriteSectors: %d WriteMs: %d\n",
 			info.WriteComplete, info.WriteMerged, info.WriteSectors, info.WriteMs,
 		)
 
 		fmt.Printf(
-			"  IOPending: %f IOMs: %f IOQueueMs: %f\n\n",
+			"  IOPending: %d IOMs: %d IOQueueMs: %d\n\n",
 			info.IOPending, info.IOMs, info.IOQueueMs,
 		)
 	}
@@ -104,7 +104,7 @@ func ExampleGetNetworkSpeed() {
 	}
 
 	// print input and output speed for all interfaces
-	fmt.Printf("Input: %f kb/s\n Output: %f kb/s\n", input/1024, output/1024)
+	fmt.Printf("Input: %d kb/s\n Output: %d kb/s\n", input/1024, output/1024)
 }
 
 func ExampleGetUptime() {
@@ -115,7 +115,7 @@ func ExampleGetUptime() {
 	}
 
 	// print uptime
-	fmt.Printf("Uptime: %f seconds\n", uptime)
+	fmt.Printf("Uptime: %d seconds\n", uptime)
 }
 
 func ExampleGetLA() {
@@ -137,19 +137,19 @@ func ExampleGetMemInfo() {
 	}
 
 	// print all available memory info
-	fmt.Printf("MemTotal: %f\n", memInfo.MemTotal)
-	fmt.Printf("MemFree: %f\n", memInfo.MemFree)
-	fmt.Printf("MemUsed: %f\n", memInfo.MemUsed)
-	fmt.Printf("Buffers: %f\n", memInfo.Buffers)
-	fmt.Printf("Cached: %f\n", memInfo.Cached)
-	fmt.Printf("Active: %f\n", memInfo.Active)
-	fmt.Printf("Inactive: %f\n", memInfo.Inactive)
-	fmt.Printf("SwapTotal: %f\n", memInfo.SwapTotal)
-	fmt.Printf("SwapFree: %f\n", memInfo.SwapFree)
-	fmt.Printf("SwapUsed: %f\n", memInfo.SwapUsed)
-	fmt.Printf("SwapCached: %f\n", memInfo.SwapCached)
-	fmt.Printf("Dirty: %f\n", memInfo.Dirty)
-	fmt.Printf("Slab: %f\n", memInfo.Slab)
+	fmt.Printf("MemTotal: %d\n", memInfo.MemTotal)
+	fmt.Printf("MemFree: %d\n", memInfo.MemFree)
+	fmt.Printf("MemUsed: %d\n", memInfo.MemUsed)
+	fmt.Printf("Buffers: %d\n", memInfo.Buffers)
+	fmt.Printf("Cached: %d\n", memInfo.Cached)
+	fmt.Printf("Active: %d\n", memInfo.Active)
+	fmt.Printf("Inactive: %d\n", memInfo.Inactive)
+	fmt.Printf("SwapTotal: %d\n", memInfo.SwapTotal)
+	fmt.Printf("SwapFree: %d\n", memInfo.SwapFree)
+	fmt.Printf("SwapUsed: %d\n", memInfo.SwapUsed)
+	fmt.Printf("SwapCached: %d\n", memInfo.SwapCached)
+	fmt.Printf("Dirty: %d\n", memInfo.Dirty)
+	fmt.Printf("Slab: %d\n", memInfo.Slab)
 }
 
 func ExampleGetCPUInfo() {
@@ -165,7 +165,7 @@ func ExampleGetCPUInfo() {
 	fmt.Printf("Nice: %f\n", cpuInfo.Nice)
 	fmt.Printf("Idle: %f\n", cpuInfo.Idle)
 	fmt.Printf("Wait: %f\n", cpuInfo.Wait)
-	fmt.Printf("CPU Count: %f\n", cpuInfo.Count)
+	fmt.Printf("CPU Count: %d\n", cpuInfo.Count)
 }
 
 func ExampleGetSystemInfo() {
