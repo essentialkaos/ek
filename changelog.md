@@ -1,5 +1,10 @@
 ## Changelog
 
+### v7.1.0
+
+* `[system]` Added methods `CalculateNetworkSpeed` and `CalculateIOUtil` for metrics calculation without blocking main thread
+* `[system]` Code and examples refactoring
+
 ### v7.0.3
 
 * `[passwd]` Fixed panic in `Check` for some rare cases
@@ -123,7 +128,7 @@
 
 #### v5.0.0
 
-* `[req]` Fixed major bug with setting method through helper functions
+* `[req]` Fixed major bug with setting method through helper methods
 * `[req]` Multi-client feature (_use `req.Engine` instead `req.Request` struct methods_)
 * `[crypto]` Package divided into multiple packages (`hash`, `passwd`, `uuid`)
 * `[uuid]` Added UUID generation based on SHA-1 hash of namespace UUID and name (_version 5_)
@@ -175,11 +180,11 @@
 #### v3.3.0
 
 * `[system/process]` Added new package for getting information about active system processes
-* `[terminal]` Fixed bug with title formating in `ReadAnswer` function
+* `[terminal]` Fixed bug with title formating in `ReadAnswer` method
 
 #### v3.2.3
 
-* `[terminal]` Fixed bug with title formating in `ReadUI` function
+* `[terminal]` Fixed bug with title formating in `ReadUI` method
 
 #### v3.2.2
 
@@ -247,7 +252,7 @@
 
 #### v2.0.2
 
-* `[pid]` Added function `IsWorks` which return true if process with pid from pidfile is active
+* `[pid]` Added method `IsWorks` which return true if process with pid from pidfile is active
 * `[pid]` Increased code coverage
 
 #### v2.0.1
@@ -270,7 +275,7 @@
 
 #### v1.8.3
 
-* `[signal]` Added function `Send` for sending signal to process
+* `[signal]` Added method `Send` for sending signal to process
 
 #### v1.8.2
 
@@ -283,10 +288,10 @@
 #### v1.8.0
 
 * `[sortutil]` Added case insensitive strings sorting
-* `[sliceutil]` Added `Deduplicate` function
-* `[strutil]` Added `ReplaceAll` function
-* `[terminal]` Function `fmtutil.GetTermSiz`e moved to `terminal.GetSize`
-* `[timeutil]` Added function `ParseDuration` which parses duration in `1w2d3h5m6s` format
+* `[sliceutil]` Added `Deduplicate` method
+* `[strutil]` Added `ReplaceAll` method
+* `[terminal]` method `fmtutil.GetTermSize` moved to `terminal.GetSize`
+* `[timeutil]` Added method `ParseDuration` which parses duration in `1w2d3h5m6s` format
 
 #### v1.7.8
 
@@ -296,7 +301,7 @@
 
 #### v1.7.7
 
-* `[fsutil]` Fixed bug in `List` function with filtering output
+* `[fsutil]` Fixed bug in `List` method with filtering output
 * `[fsutil]` Fixed bug with `NotPerms` filtering
 
 #### v1.7.6

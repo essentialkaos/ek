@@ -225,7 +225,7 @@ func GetMemInfo() (*MemInfo, error) {
 			return nil, errors.New("Can't parse file " + _PROC_MEMINFO)
 		}
 
-		if props[lineSlice[0]] != true {
+		if !props[lineSlice[0]] {
 			continue
 		}
 
@@ -435,7 +435,7 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 // GetNetworkSpeed return network input/output speed in bytes per second for
 // all network interfaces
 func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
-	intInfo1, err := GetInterfacesInfo()
+	ii1, err := GetInterfacesInfo()
 
 	if err != nil {
 		return 0, 0, err
@@ -443,35 +443,41 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 
 	time.Sleep(duration)
 
-	intInfo2, err := GetInterfacesInfo()
+	ii2, err := GetInterfacesInfo()
 
 	if err != nil {
 		return 0, 0, err
 	}
 
-	rb1, tb1 := getActiveInterfacesBytes(intInfo1)
-	rb2, tb2 := getActiveInterfacesBytes(intInfo2)
+	in, out := CalculateNetworkSpeed(ii1, ii2, duration)
+
+	return in, out, nil
+}
+
+// CalculateNetworkSpeed calculate network input/output speed in bytes per second for
+// all network interfaces
+func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
+	rb1, tb1 := getActiveInterfacesBytes(ii1)
+	rb2, tb2 := getActiveInterfacesBytes(ii2)
 
 	if rb1+tb1 == 0 || rb2+tb2 == 0 {
-		return 0, 0, nil
+		return 0, 0
 	}
 
 	durationSec := uint64(duration / time.Second)
 
-	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec, nil
+	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec
 }
 
 // GetIOUtil return slice (device -> utilization) with IO utilization
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
-	result := make(map[string]float64)
-
-	fsInfoPrev, err := GetFSInfo()
+	fi1, err := GetFSInfo()
 
 	if err != nil {
 		return nil, err
 	}
 
-	prevCPUInfo, err := getCPUStats()
+	ci1, err := GetCPUInfo()
 
 	if err != nil {
 		return nil, err
@@ -479,26 +485,33 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 
 	time.Sleep(duration)
 
-	fsInfoCur, err := GetFSInfo()
+	fi2, err := GetFSInfo()
 
 	if err != nil {
 		return nil, err
 	}
 
-	curCPUInfo, err := getCPUStats()
+	ci2, err := GetCPUInfo()
 
 	if err != nil {
 		return nil, err
 	}
 
-	curCPUUsage := float64(curCPUInfo.User + curCPUInfo.System + curCPUInfo.Idle + curCPUInfo.Wait)
-	prevCPUUsage := float64(prevCPUInfo.User + prevCPUInfo.System + prevCPUInfo.Idle + prevCPUInfo.Wait)
+	return CalculateIOUtil(ci1, fi1, ci2, fi2), nil
+}
 
-	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(curCPUInfo.Count) / _HZ
+// CalculateIOUtil calculate IO utilization for all devices
+func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map[string]*FSInfo) map[string]float64 {
+	result := make(map[string]float64)
 
-	for n, f := range fsInfoPrev {
-		if fsInfoPrev[n].IOStats != nil && fsInfoCur[n].IOStats != nil {
-			ticks := float64(fsInfoCur[n].IOStats.IOQueueMs - fsInfoPrev[n].IOStats.IOQueueMs)
+	curCPUUsage := float64(ci2.User + ci2.System + ci2.Idle + ci2.Wait)
+	prevCPUUsage := float64(ci1.User + ci1.System + ci1.Idle + ci1.Wait)
+
+	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(ci2.Count) / _HZ
+
+	for n, f := range fi1 {
+		if fi1[n].IOStats != nil && fi2[n].IOStats != nil {
+			ticks := float64(fi2[n].IOStats.IOQueueMs - fi1[n].IOStats.IOQueueMs)
 			util := 100.0 * ticks / deltams
 
 			if util > 100.0 {
@@ -509,13 +522,13 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func readFileContent(file string) ([]string, error) {
-	result := []string{}
+	var result []string
 
 	content, err := ioutil.ReadFile(file)
 
