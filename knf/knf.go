@@ -121,7 +121,11 @@ func Reload() (map[string]bool, error) {
 // GetS return global config value as string
 func GetS(name string, defvals ...string) string {
 	if global == nil {
-		return ""
+		if len(defvals) == 0 {
+			return ""
+		}
+
+		return defvals[0]
 	}
 
 	return global.GetS(name, defvals...)
@@ -130,7 +134,11 @@ func GetS(name string, defvals ...string) string {
 // GetI return global config value as string
 func GetI(name string, defvals ...int) int {
 	if global == nil {
-		return 0
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	return global.GetI(name, defvals...)
@@ -139,7 +147,11 @@ func GetI(name string, defvals ...int) int {
 // GetF return global config value as floating number
 func GetF(name string, defvals ...float64) float64 {
 	if global == nil {
-		return 0.0
+		if len(defvals) == 0 {
+			return 0.0
+		}
+
+		return defvals[0]
 	}
 
 	return global.GetF(name, defvals...)
@@ -148,7 +160,11 @@ func GetF(name string, defvals ...float64) float64 {
 // GetB return global config value as boolean
 func GetB(name string, defvals ...bool) bool {
 	if global == nil {
-		return false
+		if len(defvals) == 0 {
+			return false
+		}
+
+		return defvals[0]
 	}
 
 	return global.GetB(name, defvals...)
@@ -157,7 +173,11 @@ func GetB(name string, defvals ...bool) bool {
 // GetM return global config value as file mode
 func GetM(name string, defvals ...os.FileMode) os.FileMode {
 	if global == nil {
-		return os.FileMode(0)
+		if len(defvals) == 0 {
+			return os.FileMode(0)
+		}
+
+		return defvals[0]
 	}
 
 	return global.GetM(name, defvals...)
@@ -241,7 +261,11 @@ func (c *Config) Reload() (map[string]bool, error) {
 // GetS return config value as string
 func (c *Config) GetS(name string, defvals ...string) string {
 	if c == nil {
-		return ""
+		if len(defvals) == 0 {
+			return ""
+		}
+
+		return defvals[0]
 	}
 
 	val := c.data[name]
@@ -260,7 +284,11 @@ func (c *Config) GetS(name string, defvals ...string) string {
 // GetI return config value as string
 func (c *Config) GetI(name string, defvals ...int) int {
 	if c == nil {
-		return 0
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	val := c.data[name]
@@ -296,7 +324,11 @@ func (c *Config) GetI(name string, defvals ...int) int {
 // GetF return config value as floating number
 func (c *Config) GetF(name string, defvals ...float64) float64 {
 	if c == nil {
-		return 0.0
+		if len(defvals) == 0 {
+			return 0.0
+		}
+
+		return defvals[0]
 	}
 
 	val := c.data[name]
@@ -321,7 +353,11 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 // GetB return config value as boolean
 func (c *Config) GetB(name string, defvals ...bool) bool {
 	if c == nil {
-		return false
+		if len(defvals) == 0 {
+			return false
+		}
+
+		return defvals[0]
 	}
 
 	val := c.data[name]
@@ -345,14 +381,18 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 // GetM return config value as file mode
 func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	if c == nil {
-		return 0
+		if len(defvals) == 0 {
+			return os.FileMode(0)
+		}
+
+		return defvals[0]
 	}
 
 	val := c.data[name]
 
 	if val == "" {
 		if len(defvals) == 0 {
-			return 0
+			return os.FileMode(0)
 		}
 
 		return defvals[0]

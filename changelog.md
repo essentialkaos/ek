@@ -1,5 +1,9 @@
 ## Changelog
 
+### v7.2.0
+
+* `[knf]` Return default value for the property even if config struct is nil
+
 ### v7.1.0
 
 * `[system]` Added methods `CalculateNetworkSpeed` and `CalculateIOUtil` for metrics calculation without blocking main thread
