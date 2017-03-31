@@ -60,16 +60,18 @@ go get -u pkg.re/essentialkaos/ek.v7
 
 ### Projects with `EK`
 
-* [sslcli](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
+* [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
+* [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
+* [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
+* [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
+* [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
+* [RBInstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
-* [shdoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
-* [rbinstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
-* [mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
-* [terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
-* [mdtoc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
-* [goheft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
-* [deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
-* [yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
+* [SHDoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
+* [SourceIndex](https://github.com/essentialkaos/source-index) - Utility for generating an index for source archives
+* [SSLScan Client](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
+* [Terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
+* [Yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
 
 ### Build Status
 
