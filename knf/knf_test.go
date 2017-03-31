@@ -399,6 +399,15 @@ func (s *KNFSuite) TestNil(c *check.C) {
 func (s *KNFSuite) TestDefault(c *check.C) {
 	var err error
 
+	global = nil
+
+	c.Assert(GetS("string:test100", "fail"), check.Equals, "fail")
+	c.Assert(GetB("boolean:test100", true), check.Equals, true)
+	c.Assert(GetI("integer:test100", 9999), check.Equals, 9999)
+	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
+	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
+	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
+
 	err = Global(s.ConfigPath)
 
 	c.Assert(global, check.NotNil)
@@ -410,6 +419,15 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
+
+	var nc *Config
+
+	c.Assert(nc.GetS("string:test100", "fail"), check.Equals, "fail")
+	c.Assert(nc.GetB("boolean:test100", true), check.Equals, true)
+	c.Assert(nc.GetI("integer:test100", 9999), check.Equals, 9999)
+	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
+	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
+	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
 func (s *KNFSuite) TestValidation(c *check.C) {
