@@ -51,3 +51,36 @@ func (s *SortSuite) TestStringSorting(c *C) {
 	c.Assert(s1, DeepEquals, []string{"7", "Apple", "Monica", "auto", "flower", "image", "moon"})
 	c.Assert(s2, DeepEquals, []string{"7", "Apple", "auto", "flower", "image", "Monica", "moon"})
 }
+
+func (s *SortSuite) TestNaturalSorting(c *C) {
+	s1 := []string{"abc5", "abc1", "abc01", "ab", "abc10", "abc2"}
+
+	StringsNatural(s1)
+
+	c.Assert(s1, DeepEquals, []string{"ab", "abc1", "abc01", "abc2", "abc5", "abc10"})
+
+	c.Assert(NaturalLess("0", "00"), Equals, true)
+	c.Assert(NaturalLess("00", "0"), Equals, false)
+	c.Assert(NaturalLess("aa", "ab"), Equals, true)
+	c.Assert(NaturalLess("ab", "abc"), Equals, true)
+	c.Assert(NaturalLess("abc", "ad"), Equals, true)
+	c.Assert(NaturalLess("ab1", "ab2"), Equals, true)
+	c.Assert(NaturalLess("ab1c", "ab1c"), Equals, false)
+	c.Assert(NaturalLess("ab12", "abc"), Equals, true)
+	c.Assert(NaturalLess("ab2a", "ab10"), Equals, true)
+	c.Assert(NaturalLess("a0001", "a0000001"), Equals, true)
+	c.Assert(NaturalLess("a10", "abcdefgh2"), Equals, true)
+	c.Assert(NaturalLess("аб2аб", "аб10аб"), Equals, true)
+	c.Assert(NaturalLess("2аб", "3аб"), Equals, true)
+	c.Assert(NaturalLess("a1b", "a01b"), Equals, true)
+	c.Assert(NaturalLess("a01b", "a1b"), Equals, false)
+	c.Assert(NaturalLess("ab01b", "ab010b"), Equals, true)
+	c.Assert(NaturalLess("ab010b", "ab01b"), Equals, false)
+	c.Assert(NaturalLess("a001b01", "a01b001"), Equals, false)
+	c.Assert(NaturalLess("a1", "a1x"), Equals, true)
+	c.Assert(NaturalLess("1ax", "1b"), Equals, true)
+	c.Assert(NaturalLess("1b", "1ax"), Equals, false)
+	c.Assert(NaturalLess("082", "83"), Equals, true)
+	c.Assert(NaturalLess("083a", "9a"), Equals, false)
+	c.Assert(NaturalLess("9a", "083a"), Equals, true)
+}

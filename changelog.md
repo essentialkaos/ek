@@ -1,5 +1,9 @@
 ## Changelog
 
+### v7.3.0
+
+* `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natual ordering
+
 ### v7.2.0
 
 * `[knf]` Return default value for the property even if config struct is nil
