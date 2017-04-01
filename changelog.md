@@ -3,6 +3,10 @@
 ### v7.3.0
 
 * `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natural ordering
+* `[jsonutil]` Added optional argument to `EncodeToFile` method with file permissions (0644 by default)
+* `[jsonutil]` Code refactoring
+* `[jsonutil]` Improved tests
+* `[jsonutil]` Added usage examples
 
 ### v7.2.0
 

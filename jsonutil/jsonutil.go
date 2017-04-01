@@ -16,6 +16,27 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// EncodeToFile encode data to json and save to file
+func EncodeToFile(file string, v interface{}, perms ...os.FileMode) error {
+	jsonData, err := json.MarshalIndent(v, "", "  ")
+
+	if err != nil {
+		return err
+	}
+
+	if jsonData[len(jsonData)-1] != '\n' {
+		jsonData = append(jsonData, byte('\n'))
+	}
+
+	var perm os.FileMode = 0644
+
+	if len(perms) > 0 {
+		perm = perms[0]
+	}
+
+	return ioutil.WriteFile(file, jsonData, perm)
+}
+
 // DecodeFile reads and decode json file
 func DecodeFile(file string, v interface{}) error {
 	data, err := ioutil.ReadFile(file)
@@ -25,31 +46,4 @@ func DecodeFile(file string, v interface{}) error {
 	}
 
 	return json.Unmarshal(data, v)
-}
-
-// EncodeToFile encode data to json and save to file
-func EncodeToFile(file string, v interface{}) error {
-	fd, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		return err
-	}
-
-	defer fd.Close()
-
-	jsonData, err := json.MarshalIndent(v, "", "  ")
-
-	if err != nil {
-		return err
-	}
-
-	jsonData = append(jsonData, byte('\n'))
-
-	_, err = fd.Write(jsonData)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
