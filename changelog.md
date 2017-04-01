@@ -2,7 +2,7 @@
 
 ### v7.3.0
 
-* `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natual ordering
+* `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natural ordering
 
 ### v7.2.0
 
@@ -35,7 +35,7 @@
 ### v7.0.0
 
 * `[usage]` Added interface for different ways to check application updates
-* `[usage]` Added github update checker
+* `[usage]` Added Github update checker
 * `[usage]` Moved `CommandsColorTag`, `OptionsColorTag`, `Breadcrumbs` to `Info` struct (_incompatible changes_)
 * `[fsutil]` Now `ListingFilter` must be passed as value instead of pointer (_incompatible changes_)
 * `[fsutil]` Added support of filtering by size for `ListingFilter`
@@ -65,7 +65,7 @@
 
 #### v6.0.0
 
-* `[passwd]` Much secure hash generation (now with sha512, bcrypt and AES)
+* `[passwd]` Much secure hash generation (now with sha512, bcrypt, and AES)
 * `[system]` Improved changing process and arguments names
 * `[system/process]` Fixed windows stubs
 
@@ -102,7 +102,7 @@
 
 #### v5.4.0
 
-* `[usage]` Changed color for arguments from dark grey to light grey
+* `[usage]` Changed color for arguments from dark gray to light gray
 * `[usage]` Added breadcrumbs output for commands and options
 * `[fmtutil]` Fixed special symbols colorization in `ColorizePassword`
 
@@ -141,7 +141,7 @@
 * `[crypto]` Package divided into multiple packages (`hash`, `passwd`, `uuid`)
 * `[uuid]` Added UUID generation based on SHA-1 hash of namespace UUID and name (_version 5_)
 * `[req]` Added different types support for `Query`
-* `[knf]` Added `NotContains` validator which check if given config property contains any value from given slice
+* `[knf]` Added `NotContains` validator which checks if given config property contains any value from given slice
 * `[kv]` Using values instead pointers
 * `[system]` Added custom duration support for `GetNetworkSpeed` and `GetIOUtil`
 * `[version]` Improved version parsing
@@ -155,7 +155,7 @@
 
 #### v3.5.1
 
-* `[usage]` Using dark grey color for license and copyright
+* `[usage]` Using dark gray color for license and copyright
 * `[fmtutil]` Added global variable `SeparatorColorTag` for separator color customization
 * `[fmtutil]` Added global variable `SeparatorTitleColorTag` for separator title color customization
 
@@ -164,7 +164,7 @@
 * `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
 * `[terminal]` Added hints support from new version of `go.linenoise`
 * `[fmtc]` Light colors tag (`-`) support
-* `[usage]` Using dark grey color for option values and example description
+* `[usage]` Using dark gray color for option values and example description
 * `[tmp]` Added `DefaultDirPerms` and `DefaultFilePerms` global variables for permissions customization
 * `[tmp]` Improved error handling
 
@@ -205,8 +205,8 @@
 
 #### v3.2.0
 
-* `[strutil]` Added method `Len` which return number of symbols in string
-* `[strutil]` UTF-8 support for `Substr`, `Tail`, `Head` and `Elipsis` methods
+* `[strutil]` Added method `Len` which returns number of symbols in string
+* `[strutil]` UTF-8 support for `Substr`, `Tail`, `Head` and `Ellipsis` methods
 * `[strutil]` Added some benchmarks to tests
 * `[fsutil]` Fixed `GetPerm` stub for Windows
 * `[fsutil]` Fixed package description
@@ -260,7 +260,7 @@
 
 #### v2.0.2
 
-* `[pid]` Added method `IsWorks` which return true if process with pid from pidfile is active
+* `[pid]` Added method `IsWorks` which return true if process with PID from PID file is active
 * `[pid]` Increased code coverage
 
 #### v2.0.1
@@ -275,7 +275,7 @@
 * `[terminal]` Improved reading y/n answers (_incompatible changes_)
 * `[strutil]` Added method `Fields` for "smart" string splitting
 * `[system]` Methods `GetUsername` and `GetGroupname` deprecated
-* `[system]` Added method `GroupList` for user struct which return slice with user groups names
+* `[system]` Added method `GroupList` for user struct which returns slice with user groups names
 * `[jsonutil]` Code refactoring
 * `[usage]` Code refactoring
 
@@ -314,7 +314,7 @@
 
 #### v1.7.6
 
-* `[env]` Added methods for getting env vars as string, int and float
+* `[env]` Added methods for getting env vars as string, int, and float
 
 #### v1.7.5
 
@@ -370,7 +370,7 @@
 
 #### v1.5.1
 
-* `[knf]` Fixed bug in HasProp method which return true for unset properties
+* `[knf]` Fixed bug in HasProp method which returns true for unset properties
 
 #### v1.5.0
 
@@ -379,7 +379,7 @@
 
 #### v1.4.5
 
-* `[pid]` Fixed bug with pid file creation
+* `[pid]` Fixed bug with PID file creation
 * `[pid]` Increased coverage
 
 #### v1.4.4
@@ -448,9 +448,9 @@
 
 #### v1.1.1
 
-* `[system]` Added json tags for User, Group and SessionInfo structs
+* `[system]` Added JSON tags for User, Group and SessionInfo structs
 * `[usage]` Info now can use os.Args`[0]` for info rendering
-* `[version]` Added package for working with version in simver notation
+* `[version]` Added package for working with version in semver notation
 
 #### v1.1
 
