@@ -50,7 +50,7 @@ var codes = map[rune]int{
 	'b': 34, // Blue
 	'm': 35, // Magenta
 	'c': 36, // Cyan
-	's': 37, // Grey (Smokey)
+	's': 37, // Gray (Smokey)
 	'w': 97, // White
 
 	// Background
@@ -61,7 +61,7 @@ var codes = map[rune]int{
 	'B': 44,  // Blue
 	'M': 45,  // Magenta
 	'C': 46,  // Cyan
-	'S': 47,  // Grey (Smokey)
+	'S': 47,  // Gray (Smokey)
 	'W': 107, // White
 }
 

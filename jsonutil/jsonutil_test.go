@@ -9,11 +9,12 @@ package jsonutil
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v7/hash"
+	"pkg.re/essentialkaos/ek.v7/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,8 +58,6 @@ func (s *JSONSuite) TestDecoding(c *C) {
 	err := ioutil.WriteFile(jsonFile, []byte(_JSON_DATA), 0644)
 
 	c.Assert(err, IsNil)
-	c.Assert(hash.FileHash(jsonFile), Equals,
-		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
 
 	testStruct := &TestStruct{}
 
@@ -83,11 +82,16 @@ func (s *JSONSuite) TestEncoding(c *C) {
 		Boolean: true,
 	}
 
-	err := EncodeToFile(jsonFile, testStruct)
+	err := EncodeToFile(jsonFile, testStruct, 0640)
 
 	c.Assert(err, IsNil)
-	c.Assert(hash.FileHash(jsonFile), Equals,
-		"b88184cc9c6c517e572a21acae7118d58c485b051c33f3f13d057b43461c4eec")
+	c.Assert(fsutil.GetPerm(jsonFile), Equals, os.FileMode(0640))
+
+	data, err := ioutil.ReadFile(jsonFile)
+
+	c.Assert(err, IsNil)
+	c.Assert(string(data), Equals, _JSON_DATA)
+	c.Assert(string(data), Equals, _JSON_DATA)
 
 	err = EncodeToFile("/test.json", testStruct)
 
