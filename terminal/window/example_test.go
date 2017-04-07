@@ -1,6 +1,3 @@
-// +build !windows
-
-// Package window provides methods for working terminal window
 package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,39 +8,17 @@ package window
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"os"
-	"syscall"
-	"unsafe"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type winsize struct {
-	rows    uint16
-	cols    uint16
-	xpixels uint16
-	ypixels uint16
-}
+func ExampleGetSize() {
+	width, height := GetSize()
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// GetSize return window width and height
-func GetSize() (int, int) {
-	var tty *os.File
-
-	tty, err := os.OpenFile("/dev/tty", syscall.O_RDONLY, 0)
-
-	if err != nil {
-		return -1, -1
+	if width == -1 && height == -1 {
+		fmt.Println("Can't detect window size")
 	}
 
-	var sz winsize
-
-	_, _, _ = syscall.Syscall(
-		syscall.SYS_IOCTL, tty.Fd(),
-		uintptr(syscall.TIOCGWINSZ),
-		uintptr(unsafe.Pointer(&sz)),
-	)
-
-	return int(sz.cols), int(sz.rows)
+	fmt.Printf("Window size: %d x %d\n", width, height)
 }

@@ -1,6 +1,3 @@
-// +build !windows
-
-// Package window provides methods for working terminal window
 package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,39 +8,28 @@ package window
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"os"
-	"syscall"
-	"unsafe"
+	"testing"
+
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type winsize struct {
-	rows    uint16
-	cols    uint16
-	xpixels uint16
-	ypixels uint16
-}
+func Test(t *testing.T) { TestingT(t) }
+
+type WindowSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize return window width and height
-func GetSize() (int, int) {
-	var tty *os.File
+var _ = Suite(&WindowSuite{})
 
-	tty, err := os.OpenFile("/dev/tty", syscall.O_RDONLY, 0)
+// ////////////////////////////////////////////////////////////////////////////////// //
 
-	if err != nil {
-		return -1, -1
-	}
+func (s *WindowSuite) TestGetSize(c *C) {
+	w, h := GetSize()
 
-	var sz winsize
-
-	_, _, _ = syscall.Syscall(
-		syscall.SYS_IOCTL, tty.Fd(),
-		uintptr(syscall.TIOCGWINSZ),
-		uintptr(unsafe.Pointer(&sz)),
-	)
-
-	return int(sz.cols), int(sz.rows)
+	c.Assert(w, Not(Equals), -1)
+	c.Assert(w, Not(Equals), 0)
+	c.Assert(h, Not(Equals), -1)
+	c.Assert(h, Not(Equals), 0)
 }

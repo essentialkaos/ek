@@ -52,6 +52,7 @@ go get -u pkg.re/essentialkaos/ek.v7
 * [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v7/system/process) - Package provides methods for getting information about active processes
 * [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v7/system) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v7/terminal) - Package provides methods for working with user input
+* [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v7/terminal/window) - Package provides methods for working terminal window
 * [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/timeutil) - Package with time utils
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v7/tmp) - Package provides methods for working with temporary data
 * [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v7/usage) - Package provides methods for rendering info for command-line tools
