@@ -1,5 +1,10 @@
 ## Changelog
 
+### v7.4.0
+
+* `[terminal/window]` Window size detection code moved from `terminal` to `terminal/window` package
+* `[terminal/window]` Fixed bug with unclosed TTY file descriptor
+
 ### v7.3.0
 
 * `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natural ordering

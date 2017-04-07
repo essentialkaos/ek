@@ -1,6 +1,6 @@
 // +build !windows
 
-package terminal
+package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -35,8 +35,6 @@ func GetSize() (int, int) {
 	if err != nil {
 		return -1, -1
 	}
-
-	defer tty.Close()
 
 	var sz winsize
 
