@@ -96,4 +96,8 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	err = EncodeToFile("/test.json", testStruct)
 
 	c.Assert(err, NotNil)
+
+	err = EncodeToFile(jsonFile, map[float64]int{3.14: 123})
+
+	c.Assert(err, NotNil)
 }
