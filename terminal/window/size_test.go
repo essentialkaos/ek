@@ -32,4 +32,11 @@ func (s *WindowSuite) TestGetSize(c *C) {
 	c.Assert(w, Not(Equals), 0)
 	c.Assert(h, Not(Equals), -1)
 	c.Assert(h, Not(Equals), 0)
+
+	tty = "/non-exist"
+
+	w, h = GetSize()
+
+	c.Assert(w, Equals, -1)
+	c.Assert(h, Equals, -1)
 }
