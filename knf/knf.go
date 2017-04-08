@@ -79,26 +79,24 @@ func Read(file string) (*Config, error) {
 	switch {
 	case fsutil.IsExist(file) == false:
 		return nil, errors.New("File " + file + " does not exist")
-	case fsutil.IsNonEmpty(file) == false:
-		return nil, errors.New("File " + file + " is empty")
 	case fsutil.IsReadable(file) == false:
 		return nil, errors.New("File " + file + " is not readable")
+	case fsutil.IsNonEmpty(file) == false:
+		return nil, errors.New("File " + file + " is empty")
 	}
 
-	config := &Config{
-		data:     make(map[string]string),
-		sections: make([]string, 0),
-		props:    make([]string, 0),
-		file:     file,
-	}
-
-	fd, err := os.Open(path.Clean(file))
+	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
 	defer fd.Close()
+
+	config := &Config{
+		data: make(map[string]string),
+		file: file,
+	}
 
 	err = readConfigData(config, fd, file)
 
@@ -515,11 +513,7 @@ func readConfigData(config *Config, fd io.Reader, file string) error {
 		config.data[fullPropName] = propValue
 	}
 
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-
-	return nil
+	return scanner.Err()
 }
 
 func parseRecord(data string, config *Config) (string, string) {
