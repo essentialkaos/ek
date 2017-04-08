@@ -8,7 +8,10 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strings"
+
 	"pkg.re/essentialkaos/ek.v7/fmtc"
+	"pkg.re/essentialkaos/ek.v7/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -23,20 +26,44 @@ var SeparatorColorTag string = "{s}"
 // SeparatorTitleColorTag is fmtc color tag used for separator title (light grey by default)
 var SeparatorTitleColorTag = "{s}"
 
+// FullscreenSeparator allow to enable full screen separator
+var FullscreenSeparator = false
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Separator print separator to output
 func Separator(tiny bool, args ...string) {
-	sep := SeparatorColorTag + _SEPARATOR + "{!}"
+	var separator string
 
 	if len(args) != 0 {
 		name := args[0]
-		sep = SeparatorColorTag + "-- {!}" + SeparatorTitleColorTag + name + "{!} " + SeparatorColorTag + _SEPARATOR[:(84-len(name))] + "{!}"
+		sep := getSeparator()
+		rem := (len(sep) - 4) - len(name)
+		separator = SeparatorColorTag + "--{!} " + SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + sep[:rem] + "{!}"
+	} else {
+		separator = SeparatorColorTag + getSeparator() + "{!}"
 	}
 
 	if !tiny {
-		sep = "\n" + sep + "\n"
+		separator = "\n" + separator + "\n"
 	}
 
-	fmtc.Println(sep)
+	fmtc.Println(separator)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func getSeparator() string {
+	if !FullscreenSeparator {
+		return _SEPARATOR
+	}
+
+	width := window.GetWidth()
+
+	if width == -1 {
+		return _SEPARATOR
+	}
+
+	return strings.Repeat("-", width)
 }

@@ -2,6 +2,7 @@
 
 ### v7.4.0
 
+* `[fmtutil]` Added flag `FullscreenSeparator` which enable full size separator
 * `[terminal/window]` Window size detection code moved from `terminal` to `terminal/window` package
 * `[terminal/window]` Fixed bug with unclosed TTY file descriptor
 
