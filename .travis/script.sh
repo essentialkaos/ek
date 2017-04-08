@@ -3,7 +3,7 @@
 ########################################################################################
 
 # List of packages excluded from coverage export
-EXCLUDED_PACKAGES=("fsutil system terminal usage netutil")
+EXCLUDED_PACKAGES=("fsutil signal system terminal usage netutil")
 
 ########################################################################################
 
