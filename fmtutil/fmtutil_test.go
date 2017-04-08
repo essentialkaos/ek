@@ -126,6 +126,10 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false)
 	Separator(true, "test")
 	Separator(false, "test")
+
+	FullscreenSeparator = true
+
+	Separator(true)
 }
 
 func (s *FmtUtilSuite) TestCountDigits(c *C) {
