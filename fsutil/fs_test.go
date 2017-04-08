@@ -255,6 +255,12 @@ func (s *FSSuite) TestWalker(c *check.C) {
 	c.Assert(Pop(), check.Equals, tmpDir+"/dir1")
 	c.Assert(Pop(), check.Equals, tmpDir)
 	c.Assert(Pop(), check.Equals, tmpDir)
+
+	c.Assert(Push("dir1"), check.Equals, tmpDir+"/dir1")
+	c.Assert(Push("dir2"), check.Equals, tmpDir+"/dir1/dir2")
+	c.Assert(Push("dir3"), check.Equals, tmpDir+"/dir1/dir2/dir3")
+	os.RemoveAll(tmpDir + "/dir1/dir2")
+	c.Assert(Pop(), check.Equals, "")
 }
 
 func (s *FSSuite) TestGetSize(c *check.C) {

@@ -68,11 +68,6 @@ func Pop() string {
 
 // Current return current working directory
 func Current() string {
-	wd, err := os.Getwd()
-
-	if err != nil {
-		return ""
-	}
-
+	wd, _ := os.Getwd()
 	return wd
 }
