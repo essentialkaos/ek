@@ -294,6 +294,21 @@ func (s *FSSuite) TestGetTime(c *check.C) {
 
 	c.Assert(err, check.IsNil)
 	c.Assert(ct.IsZero(), check.Equals, false)
+
+	at, err = GetATime("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(at.IsZero(), check.Equals, true)
+
+	mt, err = GetMTime("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(mt.IsZero(), check.Equals, true)
+
+	ct, err = GetCTime("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(ct.IsZero(), check.Equals, true)
 }
 
 func (s *FSSuite) TestGetOwner(c *check.C) {
@@ -364,4 +379,73 @@ func (s *FSSuite) TestIsNonEmpty(c *check.C) {
 	c.Assert(IsNonEmpty("/not_exist"), check.Equals, false)
 	c.Assert(IsNonEmpty(tmpFile2), check.Equals, false)
 	c.Assert(IsNonEmpty(tmpFile1), check.Equals, true)
+}
+
+func (s *FSSuite) TestCheckers(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile := tmpDir + "/test.file"
+	tmpLink := tmpDir + "/test.link"
+
+	err := ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	err = os.Symlink("123", tmpLink)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	c.Assert(IsExist(""), check.Equals, false)
+	c.Assert(IsExist("/not_exist"), check.Equals, false)
+	c.Assert(IsExist(tmpFile), check.Equals, true)
+
+	c.Assert(IsRegular(""), check.Equals, false)
+	c.Assert(IsRegular("/not_exist"), check.Equals, false)
+	c.Assert(IsRegular(tmpFile), check.Equals, true)
+	c.Assert(IsRegular(tmpLink), check.Equals, false)
+
+	c.Assert(IsLink(""), check.Equals, false)
+	c.Assert(IsLink("/not_exist"), check.Equals, false)
+	c.Assert(IsLink(tmpFile), check.Equals, false)
+	c.Assert(IsLink(tmpLink), check.Equals, true)
+
+	c.Assert(IsCharacterDevice(""), check.Equals, false)
+	c.Assert(IsCharacterDevice("/not_exist"), check.Equals, false)
+	c.Assert(IsCharacterDevice(tmpFile), check.Equals, false)
+	c.Assert(IsCharacterDevice("/dev/tty"), check.Equals, true)
+
+	c.Assert(IsBlockDevice(""), check.Equals, false)
+	c.Assert(IsBlockDevice("/not_exist"), check.Equals, false)
+	c.Assert(IsBlockDevice(tmpFile), check.Equals, false)
+
+	switch {
+	case IsExist("/dev/sda"):
+		c.Assert(IsBlockDevice("/dev/sda"), check.Equals, true)
+	case IsExist("/dev/vda"):
+		c.Assert(IsBlockDevice("/dev/vda"), check.Equals, true)
+	case IsExist("/dev/hda"):
+		c.Assert(IsBlockDevice("/dev/hda"), check.Equals, true)
+	case IsExist("/dev/disk0"):
+		c.Assert(IsBlockDevice("/dev/disk0"), check.Equals, true)
+	}
+
+	c.Assert(IsDir(""), check.Equals, false)
+	c.Assert(IsDir("/not_exist"), check.Equals, false)
+	c.Assert(IsDir(tmpFile), check.Equals, false)
+	c.Assert(IsDir(tmpDir), check.Equals, true)
+
+	c.Assert(IsSocket(""), check.Equals, false)
+	c.Assert(IsSocket("/not_exist"), check.Equals, false)
+	c.Assert(IsSocket(tmpFile), check.Equals, false)
+	c.Assert(IsSocket(tmpDir), check.Equals, false)
+
+	switch {
+	case IsExist("/dev/log"):
+		c.Assert(IsSocket("/dev/log"), check.Equals, true)
+	case IsExist("/dev/stdout"):
+		c.Assert(IsSocket("/dev/log"), check.Equals, true)
+	}
 }

@@ -24,22 +24,22 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_IFMT   = 0170000
-	_IFSOCK = 0140000
-	_IFLNK  = 0120000
-	_IFREG  = 0100000
-	_IFBLK  = 0060000
-	_IFDIR  = 0040000
-	_IFCHR  = 0020000
-	_IRUSR  = 00400
-	_IWUSR  = 00200
-	_IXUSR  = 00100
-	_IRGRP  = 00040
-	_IWGRP  = 00020
-	_IXGRP  = 00010
-	_IROTH  = 00004
-	_IWOTH  = 00002
-	_IXOTH  = 00001
+	_IFMT   = 0xf000
+	_IFSOCK = 0xc000
+	_IFLNK  = 0xa000
+	_IFREG  = 0x8000
+	_IFBLK  = 0x6000
+	_IFDIR  = 0x4000
+	_IFCHR  = 0x2000
+	_IRUSR  = 0x100
+	_IWUSR  = 0x80
+	_IXUSR  = 0x40
+	_IRGRP  = 0x20
+	_IWGRP  = 0x10
+	_IXGRP  = 0x8
+	_IROTH  = 0x4
+	_IWOTH  = 0x2
+	_IXOTH  = 0x1
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -170,6 +170,10 @@ func IsExist(path string) bool {
 
 // IsRegular check if target is regular file or not
 func IsRegular(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	path = PATH.Clean(path)
 	mode := getMode(path)
 
@@ -182,6 +186,10 @@ func IsRegular(path string) bool {
 
 // IsSocket check if target is socket or not
 func IsSocket(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	path = PATH.Clean(path)
 	mode := getMode(path)
 
@@ -194,6 +202,10 @@ func IsSocket(path string) bool {
 
 // IsBlockDevice check if target is block device or not
 func IsBlockDevice(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	path = PATH.Clean(path)
 	mode := getMode(path)
 
@@ -206,6 +218,10 @@ func IsBlockDevice(path string) bool {
 
 // IsCharacterDevice check if target is character device or not
 func IsCharacterDevice(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	path = PATH.Clean(path)
 	mode := getMode(path)
 
@@ -218,6 +234,10 @@ func IsCharacterDevice(path string) bool {
 
 // IsDir check if target is directory or not
 func IsDir(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	path = PATH.Clean(path)
 	mode := getMode(path)
 
@@ -230,14 +250,16 @@ func IsDir(path string) bool {
 
 // IsLink check if file is link or not
 func IsLink(path string) bool {
-	path = PATH.Clean(path)
-	mode := getMode(path)
-
-	if mode == 0 {
+	if path == "" {
 		return false
 	}
 
-	return mode&_IFMT == _IFLNK
+	path = PATH.Clean(path)
+
+	var buf = make([]byte, 1)
+	_, err := syscall.Readlink(path, buf)
+
+	return err == nil
 }
 
 // IsReadable check if file is readable or not
@@ -372,6 +394,10 @@ func GetOwner(path string) (int, int, error) {
 
 // GetATime return time of last access
 func GetATime(path string) (time.Time, error) {
+	if path == "" {
+		return time.Time{}, ErrEmptyPath
+	}
+
 	path = PATH.Clean(path)
 
 	atime, _, _, err := GetTimes(path)
@@ -381,6 +407,10 @@ func GetATime(path string) (time.Time, error) {
 
 // GetCTime return time of creation
 func GetCTime(path string) (time.Time, error) {
+	if path == "" {
+		return time.Time{}, ErrEmptyPath
+	}
+
 	path = PATH.Clean(path)
 
 	_, _, ctime, err := GetTimes(path)
@@ -390,6 +420,10 @@ func GetCTime(path string) (time.Time, error) {
 
 // GetMTime return time of modification
 func GetMTime(path string) (time.Time, error) {
+	if path == "" {
+		return time.Time{}, ErrEmptyPath
+	}
+
 	path = PATH.Clean(path)
 
 	_, mtime, _, err := GetTimes(path)
@@ -418,17 +452,18 @@ func GetSize(path string) int64 {
 
 // GetPerm return file permissions
 func GetPerm(path string) os.FileMode {
+	if path == "" {
+		return 0
+	}
+
 	path = PATH.Clean(path)
+
 	return os.FileMode(getMode(path) & 0777)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getMode(path string) uint32 {
-	if path == "" {
-		return 0
-	}
-
 	var stat = &syscall.Stat_t{}
 
 	err := syscall.Stat(path, stat)
