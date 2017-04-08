@@ -17,11 +17,11 @@ import (
 
 // LineCount return number of lines in file
 func LineCount(file string) int {
-	if !CheckPerms("FR", file) {
+	if file == "" {
 		return -1
 	}
 
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0644)
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
 
 	if err != nil {
 		return -1
@@ -36,6 +36,7 @@ func LineCount(file string) int {
 
 	for {
 		c, err := fd.Read(buf)
+
 		if err != nil && err != io.EOF {
 			return count
 		}

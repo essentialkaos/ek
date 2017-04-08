@@ -91,7 +91,7 @@ func CheckPerms(props, path string) bool {
 			}
 
 		case 'L':
-			if stat.Mode&_IFMT != _IFLNK {
+			if !IsLink(path) {
 				return false
 			}
 
@@ -450,8 +450,8 @@ func GetSize(path string) int64 {
 	return stat.Size
 }
 
-// GetPerm return file permissions
-func GetPerm(path string) os.FileMode {
+// GetPerms return file permissions
+func GetPerms(path string) os.FileMode {
 	if path == "" {
 		return 0
 	}
@@ -480,10 +480,11 @@ func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 		return true
 	}
 
-	switch {
-	case stat.Mode&_IROTH == _IROTH:
+	if stat.Mode&_IROTH == _IROTH {
 		return true
-	case stat.Mode&_IRUSR == _IRUSR && uid == int(stat.Uid):
+	}
+
+	if stat.Mode&_IRUSR == _IRUSR && uid == int(stat.Uid) {
 		return true
 	}
 
@@ -501,10 +502,11 @@ func isWritableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 		return true
 	}
 
-	switch {
-	case stat.Mode&_IWOTH == _IWOTH:
+	if stat.Mode&_IWOTH == _IWOTH {
 		return true
-	case stat.Mode&_IWUSR == _IWUSR && uid == int(stat.Uid):
+	}
+
+	if stat.Mode&_IWUSR == _IWUSR && uid == int(stat.Uid) {
 		return true
 	}
 
@@ -522,10 +524,11 @@ func isExecutableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 		return true
 	}
 
-	switch {
-	case stat.Mode&_IXOTH == _IXOTH:
+	if stat.Mode&_IXOTH == _IXOTH {
 		return true
-	case stat.Mode&_IXUSR == _IXUSR && uid == int(stat.Uid):
+	}
+
+	if stat.Mode&_IXUSR == _IXUSR && uid == int(stat.Uid) {
 		return true
 	}
 
@@ -540,7 +543,7 @@ func isExecutableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 
 func getGIDList(user *system.User) []int {
 	if user == nil {
-		return []int{}
+		return nil
 	}
 
 	var result []int
