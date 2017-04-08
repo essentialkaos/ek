@@ -563,6 +563,8 @@ func (s *FSSuite) TestGetPerms(c *check.C) {
 		c.Fatal("Can't create temporary file")
 	}
 
+	os.Chmod(tmpFile, 0764)
+
 	c.Assert(GetPerms(""), check.Equals, os.FileMode(0))
 	c.Assert(GetPerms(tmpFile), check.Equals, os.FileMode(0764))
 }
