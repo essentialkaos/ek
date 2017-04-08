@@ -13,3 +13,13 @@ package window
 func GetSize() (int, int) {
 	return -1, -1
 }
+
+// GetWidth return window width
+func GetWidth() int {
+	return -1
+}
+
+// GetHeight return window height
+func GetHeight() int {
+	return -1
+}

@@ -50,3 +50,15 @@ func GetSize() (int, int) {
 
 	return int(sz.cols), int(sz.rows)
 }
+
+// GetWidth return window width
+func GetWidth() int {
+	w, _ := GetSize()
+	return w
+}
+
+// GetHeight return window height
+func GetHeight() int {
+	_, h := GetSize()
+	return h
+}
