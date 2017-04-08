@@ -16,33 +16,39 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _SEPARATOR = "----------------------------------------------------------------------------------------"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // SeparatorColorTag is fmtc color tag used for separator (light grey by default)
 var SeparatorColorTag string = "{s}"
 
 // SeparatorTitleColorTag is fmtc color tag used for separator title (light grey by default)
 var SeparatorTitleColorTag = "{s}"
 
-// FullscreenSeparator allow to enable full screen separator
-var FullscreenSeparator = false
+// SeparatorFullscreen allow to enable full screen separator
+var SeparatorFullscreen = false
+
+// SeparatorSize contains size of separator
+var SeparatorSize = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Separator print separator to output
 func Separator(tiny bool, args ...string) {
 	var separator string
+	var size int
+
+	if SeparatorFullscreen {
+		size = between(window.GetWidth(), 16, 999999)
+	} else {
+		size = between(SeparatorSize, 80, 999999)
+	}
 
 	if len(args) != 0 {
 		name := args[0]
-		sep := getSeparator()
-		rem := (len(sep) - 4) - len(name)
+		sep := getSeparator(size)
+		rem := between((len(sep)-4)-len(name), 0, 999999)
 		separator = SeparatorColorTag + "--{!} " + SeparatorTitleColorTag + name + "{!} "
 		separator += SeparatorColorTag + sep[:rem] + "{!}"
 	} else {
-		separator = SeparatorColorTag + getSeparator() + "{!}"
+		separator = SeparatorColorTag + getSeparator(size) + "{!}"
 	}
 
 	if !tiny {
@@ -54,16 +60,17 @@ func Separator(tiny bool, args ...string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getSeparator() string {
-	if !FullscreenSeparator {
-		return _SEPARATOR
+func getSeparator(size int) string {
+	return strings.Repeat("-", size)
+}
+
+func between(val, min, max int) int {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
 	}
-
-	width := window.GetWidth()
-
-	if width == -1 {
-		return _SEPARATOR
-	}
-
-	return strings.Repeat("-", width)
 }

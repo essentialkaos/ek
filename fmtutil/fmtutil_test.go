@@ -122,14 +122,21 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 }
 
 func (s *FmtUtilSuite) TestSeparator(c *C) {
+	SeparatorSize = 1
+
 	Separator(true)
 	Separator(false)
 	Separator(true, "test")
 	Separator(false, "test")
+	Separator(false, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
-	FullscreenSeparator = true
+	SeparatorFullscreen = true
 
 	Separator(true)
+
+	c.Assert(between(0, 1, 3), Equals, 1)
+	c.Assert(between(2, 1, 3), Equals, 2)
+	c.Assert(between(10, 1, 3), Equals, 3)
 }
 
 func (s *FmtUtilSuite) TestCountDigits(c *C) {
