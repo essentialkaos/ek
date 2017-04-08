@@ -1,4 +1,4 @@
-// Package pid provides methods for working with pid files
+// Package pid provides methods for working with PID files
 package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //

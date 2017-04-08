@@ -117,11 +117,11 @@ func GetMTime(path string) (time.Time, error) {
 }
 
 func GetSize(path string) int64 {
-	return 0
+	return -1
 }
 
-func GetPerm(path string) os.FileMode {
-	return 0644
+func GetPerms(path string) os.FileMode {
+	return 0
 }
 
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {

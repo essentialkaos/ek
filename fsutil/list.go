@@ -18,23 +18,23 @@ import (
 
 // ListingFilter is struct with properties for filtering listing output
 type ListingFilter struct {
-	MatchPatterns    []string
-	NotMatchPatterns []string
+	MatchPatterns    []string // Slice with shell file name patterns
+	NotMatchPatterns []string // Slice with shell file name patterns
 
-	ATimeOlder   int64
-	ATimeYounger int64
-	CTimeOlder   int64
-	CTimeYounger int64
-	MTimeOlder   int64
-	MTimeYounger int64
+	ATimeOlder   int64 // Files with ATime less or equal to defined timestamp (BEFORE date)
+	ATimeYounger int64 // Files with ATime greater or equal to defined timestamp (AFTER date)
+	CTimeOlder   int64 // Files with CTime less or equal to defined timestamp (BEFORE date)
+	CTimeYounger int64 // Files with CTime greater or equal to defined timestamp (AFTER date)
+	MTimeOlder   int64 // Files with MTime less or equal to defined timestamp (BEFORE date)
+	MTimeYounger int64 // Files with MTime greater or equal to defined timestamp (AFTER date)
 
-	SizeLess    int64
-	SizeGreater int64
-	SizeEqual   int64
-	SizeZero    bool
+	SizeLess    int64 // Files with size less than defined
+	SizeGreater int64 // Files with size greater than defined
+	SizeEqual   int64 // Files with size equals than defined
+	SizeZero    bool  // Empty files
 
-	Perms    string
-	NotPerms string
+	Perms    string // Permission (see fsutil.CheckPerms for more info)
+	NotPerms string // Permission (see fsutil.CheckPerms for more info)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

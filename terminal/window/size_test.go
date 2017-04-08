@@ -1,5 +1,4 @@
-// Package csv contains simple CSV parser
-package csv
+package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -9,38 +8,49 @@ package csv
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bufio"
-	"io"
-	"strings"
+	"testing"
+
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Reader is reader struct
-type Reader struct {
-	Comma rune
-	br    *bufio.Reader
-}
+func Test(t *testing.T) { TestingT(t) }
+
+type WindowSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader create new reader
-func NewReader(r io.Reader) *Reader {
-	return &Reader{
-		Comma: ';',
-		br:    bufio.NewReader(r),
-	}
-}
+var _ = Suite(&WindowSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Read reads line from csv file
-func (r *Reader) Read() ([]string, error) {
-	str, _, err := r.br.ReadLine()
+func (s *WindowSuite) TestGetSize(c *C) {
+	w, h := GetSize()
 
-	if err != nil || len(str) == 0 {
-		return []string{}, err
-	}
+	c.Assert(w, Not(Equals), -1)
+	c.Assert(w, Not(Equals), 0)
+	c.Assert(h, Not(Equals), -1)
+	c.Assert(h, Not(Equals), 0)
+}
 
-	return strings.Split(string(str), string(r.Comma)), nil
+func (s *WindowSuite) TestGetWidth(c *C) {
+	c.Assert(GetWidth(), Not(Equals), -1)
+	c.Assert(GetWidth(), Not(Equals), 0)
+}
+
+func (s *WindowSuite) TestGetHeight(c *C) {
+	c.Assert(GetHeight(), Not(Equals), -1)
+	c.Assert(GetHeight(), Not(Equals), 0)
+}
+
+func (s *WindowSuite) TestErrors(c *C) {
+	tty = "/non-exist"
+
+	w, h := GetSize()
+
+	c.Assert(w, Equals, -1)
+	c.Assert(h, Equals, -1)
+
+	tty = "/dev/tty"
 }

@@ -10,7 +10,6 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"errors"
 	"syscall"
 	"time"
 
@@ -22,7 +21,7 @@ import (
 // GetTimes return time of access, modification and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
-		return time.Time{}, time.Time{}, time.Time{}, errors.New("Path is empty")
+		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
 	}
 
 	path = PATH.Clean(path)
@@ -44,7 +43,7 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 // GetTimestamps return time of access, modification and creation at once as linux timestamp
 func GetTimestamps(path string) (int64, int64, int64, error) {
 	if path == "" {
-		return -1, -1, -1, errors.New("Path is empty")
+		return -1, -1, -1, ErrEmptyPath
 	}
 
 	path = PATH.Clean(path)

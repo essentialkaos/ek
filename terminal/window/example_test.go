@@ -1,4 +1,4 @@
-package fsutil
+package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,45 +8,40 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bytes"
-	"io"
-	"os"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// LineCount return number of lines in file
-func LineCount(file string) int {
-	if file == "" {
-		return -1
+func ExampleGetSize() {
+	width, height := GetSize()
+
+	if width == -1 && height == -1 {
+		fmt.Println("Can't detect window size")
+		return
 	}
 
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+	fmt.Printf("Window size: %d x %d\n", width, height)
+}
 
-	if err != nil {
-		return -1
+func ExampleGetWidth() {
+	width := GetWidth()
+
+	if width == -1 {
+		fmt.Println("Can't detect window size")
+		return
 	}
 
-	defer fd.Close()
+	fmt.Printf("Window width: %d\n", width)
+}
 
-	// Use 32k buffer
-	buf := make([]byte, 32*1024)
-	count := 0
-	sep := []byte{'\n'}
+func ExampleGetHeight() {
+	height := GetHeight()
 
-	for {
-		c, err := fd.Read(buf)
-
-		if err != nil && err != io.EOF {
-			return count
-		}
-
-		count += bytes.Count(buf[:c], sep)
-
-		if err == io.EOF {
-			break
-		}
+	if height == -1 {
+		fmt.Println("Can't detect window size")
+		return
 	}
 
-	return count
+	fmt.Printf("Window height: %d\n", height)
 }

@@ -103,7 +103,7 @@ func (ts *TmpSuite) TestMkDir(c *C) {
 	c.Assert(fsutil.IsDir(tmpDir), Equals, true)
 	c.Assert(fsutil.IsReadable(tmpDir), Equals, true)
 	c.Assert(fsutil.IsWritable(tmpDir), Equals, true)
-	c.Assert(fsutil.GetPerm(tmpDir), Equals, os.FileMode(0750))
+	c.Assert(fsutil.GetPerms(tmpDir), Equals, os.FileMode(0750))
 
 	t.Clean()
 
@@ -126,7 +126,7 @@ func (ts *TmpSuite) TestMkFile(c *C) {
 	c.Assert(fsutil.IsRegular(tmpFile), Equals, true)
 	c.Assert(fsutil.IsReadable(tmpFile), Equals, true)
 	c.Assert(fsutil.IsWritable(tmpFile), Equals, true)
-	c.Assert(fsutil.GetPerm(tmpFile), Equals, os.FileMode(0640))
+	c.Assert(fsutil.GetPerms(tmpFile), Equals, os.FileMode(0640))
 
 	t.Clean()
 

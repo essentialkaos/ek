@@ -1,5 +1,18 @@
 ## Changelog
 
+### v7.4.0
+
+* `[fmtutil]` Added flag `SeparatorFullscreen` which enable full size separator
+* `[terminal/window]` Window size detection code moved from `terminal` to `terminal/window` package
+* `[terminal/window]` Fixed bug with unclosed TTY file descriptor
+* `[fsutil]` Fixed bug with `fsutil.IsLink` (_method returns true for symlinks_)
+* `[fsutil]` Fixed bug with `fsutil.GetSize` (_method returns 0 for non-existent files_)
+* `[fsutil]` Improved input arguments checks in `fsutil.CopyFile`
+* `[fsutil]` Added input arguments checks to `fsutil.MoveFile`
+* `[fsutil]` Increased code coverage (49.8% → 97.9%)
+* `[knf]` Increased code coverage (99.2% → 99.6%)
+* `[jsonutil]` Increased code coverage (92.3% → 100%)
+
 ### v7.3.0
 
 * `[sortutil]` Added methods `NatualLess` and `StringsNatual` for natural ordering

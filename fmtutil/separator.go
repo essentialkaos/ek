@@ -8,12 +8,11 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strings"
+
 	"pkg.re/essentialkaos/ek.v7/fmtc"
+	"pkg.re/essentialkaos/ek.v7/terminal/window"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-const _SEPARATOR = "----------------------------------------------------------------------------------------"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -23,20 +22,55 @@ var SeparatorColorTag string = "{s}"
 // SeparatorTitleColorTag is fmtc color tag used for separator title (light grey by default)
 var SeparatorTitleColorTag = "{s}"
 
+// SeparatorFullscreen allow to enable full screen separator
+var SeparatorFullscreen = false
+
+// SeparatorSize contains size of separator
+var SeparatorSize = 88
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Separator print separator to output
 func Separator(tiny bool, args ...string) {
-	sep := SeparatorColorTag + _SEPARATOR + "{!}"
+	var separator string
+	var size int
+
+	if SeparatorFullscreen {
+		size = between(window.GetWidth(), 16, 999999)
+	} else {
+		size = between(SeparatorSize, 80, 999999)
+	}
 
 	if len(args) != 0 {
 		name := args[0]
-		sep = SeparatorColorTag + "-- {!}" + SeparatorTitleColorTag + name + "{!} " + SeparatorColorTag + _SEPARATOR[:(84-len(name))] + "{!}"
+		sep := getSeparator(size)
+		rem := between((len(sep)-4)-len(name), 0, 999999)
+		separator = SeparatorColorTag + "--{!} " + SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + sep[:rem] + "{!}"
+	} else {
+		separator = SeparatorColorTag + getSeparator(size) + "{!}"
 	}
 
 	if !tiny {
-		sep = "\n" + sep + "\n"
+		separator = "\n" + separator + "\n"
 	}
 
-	fmtc.Println(sep)
+	fmtc.Println(separator)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func getSeparator(size int) string {
+	return strings.Repeat("-", size)
+}
+
+func between(val, min, max int) int {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
 }
