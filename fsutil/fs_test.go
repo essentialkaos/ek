@@ -443,9 +443,9 @@ func (s *FSSuite) TestCheckers(c *check.C) {
 	c.Assert(IsSocket(tmpDir), check.Equals, false)
 
 	switch {
+	case IsExist("/var/run/mDNSResponder"):
+		c.Assert(IsSocket("/var/run/mDNSResponder"), check.Equals, true)
 	case IsExist("/dev/log"):
-		c.Assert(IsSocket("/dev/log"), check.Equals, true)
-	case IsExist("/dev/stdout"):
 		c.Assert(IsSocket("/dev/log"), check.Equals, true)
 	}
 }
