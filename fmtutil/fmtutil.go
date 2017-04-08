@@ -1,4 +1,4 @@
-// Package fmtutil provides methods for output formating
+// Package fmtutil provides methods for output formatting
 package fmtutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,4 @@
-// Package jsonutil provides methods for working with json data
+// Package jsonutil provides methods for working with JSON data
 package jsonutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -16,7 +16,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// EncodeToFile encode data to json and save to file
+// EncodeToFile encode data to JSON and save to file
 func EncodeToFile(file string, v interface{}, perms ...os.FileMode) error {
 	jsonData, err := json.MarshalIndent(v, "", "  ")
 
@@ -37,7 +37,7 @@ func EncodeToFile(file string, v interface{}, perms ...os.FileMode) error {
 	return ioutil.WriteFile(file, jsonData, perm)
 }
 
-// DecodeFile reads and decode json file
+// DecodeFile reads and decode JSON file
 func DecodeFile(file string, v interface{}) error {
 	data, err := ioutil.ReadFile(file)
 
