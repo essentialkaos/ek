@@ -20,7 +20,7 @@ Make sure you have a working Go 1.6+ workspace ([instructions](https://golang.or
 go get pkg.re/essentialkaos/ek.v7
 ```
 
-If you want update `EK` to latest stable release, do:
+If you want to update `EK` to latest stable release, do:
 
 ```
 go get -u pkg.re/essentialkaos/ek.v7
