@@ -220,3 +220,148 @@ func (s *FSSuite) TestWalker(c *check.C) {
 	c.Assert(Pop(), check.Equals, tmpDir)
 	c.Assert(Pop(), check.Equals, tmpDir)
 }
+
+func (s *FSSuite) TestGetSize(c *check.C) {
+	c.Assert(GetSize(""), check.Equals, int64(-1))
+	c.Assert(GetSize("/not_exist"), check.Equals, int64(-1))
+}
+
+func (s *FSSuite) TestGetTime(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile := tmpDir + "/test.file"
+
+	err := ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	at, mt, ct, err := GetTimes(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(at.IsZero(), check.Equals, false)
+	c.Assert(mt.IsZero(), check.Equals, false)
+	c.Assert(ct.IsZero(), check.Equals, false)
+
+	at, mt, ct, err = GetTimes("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(err, check.Equals, ErrEmptyPath)
+	c.Assert(at.IsZero(), check.Equals, true)
+	c.Assert(mt.IsZero(), check.Equals, true)
+	c.Assert(ct.IsZero(), check.Equals, true)
+
+	at, mt, ct, err = GetTimes("/not_exist")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(at.IsZero(), check.Equals, true)
+	c.Assert(mt.IsZero(), check.Equals, true)
+	c.Assert(ct.IsZero(), check.Equals, true)
+
+	ats, mts, cts, err := GetTimestamps(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(ats, check.Not(check.Equals), int64(-1))
+	c.Assert(mts, check.Not(check.Equals), int64(-1))
+	c.Assert(cts, check.Not(check.Equals), int64(-1))
+
+	ats, mts, cts, err = GetTimestamps("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(err, check.Equals, ErrEmptyPath)
+	c.Assert(ats, check.Equals, int64(-1))
+	c.Assert(mts, check.Equals, int64(-1))
+	c.Assert(cts, check.Equals, int64(-1))
+
+	ats, mts, cts, err = GetTimestamps("/not_exist")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(ats, check.Equals, int64(-1))
+	c.Assert(mts, check.Equals, int64(-1))
+	c.Assert(cts, check.Equals, int64(-1))
+
+	at, err = GetATime(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(at.IsZero(), check.Equals, false)
+
+	mt, err = GetMTime(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(mt.IsZero(), check.Equals, false)
+
+	ct, err = GetCTime(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(ct.IsZero(), check.Equals, false)
+}
+
+func (s *FSSuite) TestGetOwner(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile := tmpDir + "/test.file"
+
+	err := ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	uid, gid, err := GetOwner(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(uid, check.Not(check.Equals), -1)
+	c.Assert(gid, check.Not(check.Equals), -1)
+
+	uid, gid, err = GetOwner("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(err, check.Equals, ErrEmptyPath)
+	c.Assert(uid, check.Equals, -1)
+	c.Assert(gid, check.Equals, -1)
+
+	uid, gid, err = GetOwner("/not_exist")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(uid, check.Equals, -1)
+	c.Assert(gid, check.Equals, -1)
+}
+
+func (s *FSSuite) TestIsEmptyDir(c *check.C) {
+	tmpDir1 := c.MkDir()
+	tmpDir2 := c.MkDir()
+	tmpFile := tmpDir1 + "/test.file"
+
+	err := ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	c.Assert(IsEmptyDir(tmpDir1), check.Equals, false)
+	c.Assert(IsEmptyDir(tmpDir2), check.Equals, true)
+	c.Assert(IsEmptyDir(""), check.Equals, false)
+	c.Assert(IsEmptyDir("/not_exist"), check.Equals, false)
+}
+
+func (s *FSSuite) TestIsNonEmpty(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile1 := tmpDir + "/test1.file"
+	tmpFile2 := tmpDir + "/test2.file"
+
+	err := ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	err = ioutil.WriteFile(tmpFile2, []byte(""), 0644)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
+	c.Assert(IsNonEmpty(""), check.Equals, false)
+	c.Assert(IsNonEmpty("/not_exist"), check.Equals, false)
+	c.Assert(IsNonEmpty(tmpFile2), check.Equals, false)
+	c.Assert(IsNonEmpty(tmpFile1), check.Equals, true)
+}

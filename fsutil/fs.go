@@ -44,6 +44,11 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrEmptyPath error
+var ErrEmptyPath = errors.New("Path is empty")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // CheckPerms check many props at once.
 //
 // F - is file
@@ -318,7 +323,7 @@ func IsNonEmpty(path string) bool {
 
 	path = PATH.Clean(path)
 
-	return GetSize(path) != 0
+	return GetSize(path) > 0
 }
 
 // IsEmptyDir check if directory empty or not
@@ -349,7 +354,7 @@ func IsEmptyDir(path string) bool {
 // GetOwner return object owner pid and gid
 func GetOwner(path string) (int, int, error) {
 	if path == "" {
-		return -1, -1, errors.New("Path is empty")
+		return -1, -1, ErrEmptyPath
 	}
 
 	path = PATH.Clean(path)
@@ -395,7 +400,7 @@ func GetMTime(path string) (time.Time, error) {
 // GetSize return file size in bytes
 func GetSize(path string) int64 {
 	if path == "" {
-		return 0
+		return -1
 	}
 
 	path = PATH.Clean(path)
@@ -405,7 +410,7 @@ func GetSize(path string) int64 {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return 0
+		return -1
 	}
 
 	return stat.Size
