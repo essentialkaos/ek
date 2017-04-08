@@ -8,15 +8,23 @@ Currently we support Linux and Mac OS X. Some packages have stubs for Windows (_
 
 ### Installation
 
-````
+Before the initial install allows git to use redirects for [pkg.re](https://github.com/essentialkaos/pkgre) service (_reason why you should do this described [here](https://github.com/essentialkaos/pkgre#git-support)_):
+
+```
+git config --global http.https://pkg.re.followRedirects true
+```
+
+Make sure you have a working Go 1.6+ workspace ([instructions](https://golang.org/doc/install)), then:
+
+```
 go get pkg.re/essentialkaos/ek.v7
-````
+```
 
-If you want update ek to latest stable release, do:
+If you want update `EK` to latest stable release, do:
 
-````
+```
 go get -u pkg.re/essentialkaos/ek.v7
-````
+```
 
 ### Packages
 
