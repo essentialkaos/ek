@@ -9,10 +9,7 @@ package errutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Errors is struct for handling many errors at once
-type Errors struct {
-	num    int
-	errors []error
-}
+type Errors []error
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -28,7 +25,6 @@ func Chain(funcs ...func() error) error {
 
 	for _, fc := range funcs {
 		err = fc()
-
 		if err != nil {
 			return err
 		}
@@ -41,14 +37,9 @@ func Chain(funcs ...func() error) error {
 
 // Add adds new error to slice
 func (e *Errors) Add(errs ...error) *Errors {
-	if errs == nil {
-		return e
-	}
-
 	for _, err := range errs {
 		if err != nil {
-			e.errors = append(e.errors, err)
-			e.num++
+			*e = append(*e, err)
 		}
 	}
 
@@ -57,32 +48,24 @@ func (e *Errors) Add(errs ...error) *Errors {
 
 // Last return last error in slice
 func (e *Errors) Last() error {
-	if e.errors == nil || e.num == 0 {
+	if *e == nil {
 		return nil
 	}
 
-	return e.errors[e.num-1]
+	return (*e)[len(*e)-1]
 }
 
 // All return all errors in slice
 func (e *Errors) All() []error {
-	if e.errors == nil {
-		return make([]error, 0)
-	}
-
-	return e.errors
+	return *e
 }
 
 // HasErrors check if slice contains errors
 func (e *Errors) HasErrors() bool {
-	if e.errors == nil {
-		return false
-	}
-
-	return e.num != 0
+	return len(*e) > 0
 }
 
 // Num return number of errors
 func (e *Errors) Num() int {
-	return e.num
+	return len(*e)
 }
