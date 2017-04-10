@@ -91,7 +91,7 @@ func (e *Errors) Num() int {
 	return e.num
 }
 
-// Error return error text
+// Error return text of all errors
 func (e *Errors) Error() string {
 	if e == nil || e.num == 0 {
 		return ""
