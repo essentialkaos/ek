@@ -1,5 +1,10 @@
 ## Changelog
 
+### v7.5.0
+
+* `[errutil]` Implemented error interface (_added method_ `Error() string`)
+* `[errutil]` Minor improvements
+
 ### v7.4.0
 
 * `[fmtutil]` Added flag `SeparatorFullscreen` which enable full size separator
