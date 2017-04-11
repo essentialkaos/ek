@@ -4,6 +4,7 @@
 
 * `[errutil]` Implemented error interface (_added method_ `Error() string`)
 * `[errutil]` Minor improvements
+* `[system]` Fixed windows stubs
 
 ### v7.4.0
 
