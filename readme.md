@@ -1,4 +1,4 @@
-# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v7?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v7) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
+# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v8?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v8) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
 
 Auxiliary packages for Go.
 
@@ -17,55 +17,55 @@ git config --global http.https://pkg.re.followRedirects true
 Make sure you have a working Go 1.6+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
-go get pkg.re/essentialkaos/ek.v7
+go get pkg.re/essentialkaos/ek.v8
 ```
 
 If you want to update `EK` to latest stable release, do:
 
 ```
-go get -u pkg.re/essentialkaos/ek.v7
+go get -u pkg.re/essentialkaos/ek.v8
 ```
 
 ## Packages
 
-* [`arg`](https://godoc.org/pkg.re/essentialkaos/ek.v7/arg) - Package provides methods for working with command-line arguments
-* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v7/color) - Package color provides methods for working with colors
-* [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v7/cron) - Package provides methods for working with cron expressions
-* [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v7/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
-* [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v7/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
-* [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v7/env) - Package provides methods for working with environment variables
-* [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/errutil) - Package provides methods for working with errors
-* [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v7/fmtc) - Package provides methods similar to fmt for colored output
-* [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/fmtutil) - Package provides methods for output formatting
-* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/fsutil) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
-* [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v7/hash) - Package hash contains different hash algorithms and utilities
-* [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/httputil) - Package provides methods for working with HTTP request/responses
-* [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/jsonutil) - Package provides methods for working with JSON data
-* [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v7/knf) - Package provides methods for working with configs in KNF format
-* [`kv`](https://godoc.org/pkg.re/essentialkaos/ek.v7/kv) - Package provides simple key-value structs
-* [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v7/log) - Package with an improved logger
-* [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/mathutil) - Package with math utils
-* [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/netutil) - Package with network utils
-* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v7/passwd) - Package passwd contains methods for working with passwords
-* [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v7/path) - Package for working with paths (fully compatible with base path package)
-* [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v7/pid) - Package for working with PID files
-* [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v7/pluralize) - Package pluralize provides methods for pluralization
-* [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v7/rand) - Package for generating random data
-* [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v7/req) - Package for working with HTTP request
-* [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v7/signal) - Package for handling signals
-* [`sliceutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/sliceutil) - Package with utils for working with slices
-* [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/sortutil) - Package with utils for sorting slices
-* [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v7/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
-* [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/strutil) - Package provides utils for working with strings
-* [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v7/system/process) - Package provides methods for getting information about active processes
-* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v7/system) - Package provides methods for working with system data (metrics/users)
-* [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v7/terminal) - Package provides methods for working with user input
-* [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v7/terminal/window) - Package provides methods for working terminal window
-* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v7/timeutil) - Package with time utils
-* [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v7/tmp) - Package provides methods for working with temporary data
-* [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v7/usage) - Package provides methods for rendering info for command-line tools
-* [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v7/uuid) - Package provides methods for generating version 4 and 5 UUID's
-* [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v7/version) - Package provides methods for parsing semver version info
+* [`arg`](https://godoc.org/pkg.re/essentialkaos/ek.v8/arg) - Package provides methods for working with command-line arguments
+* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v8/color) - Package color provides methods for working with colors
+* [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v8/cron) - Package provides methods for working with cron expressions
+* [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v8/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
+* [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v8/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
+* [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v8/env) - Package provides methods for working with environment variables
+* [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/errutil) - Package provides methods for working with errors
+* [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v8/fmtc) - Package provides methods similar to fmt for colored output
+* [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/fmtutil) - Package provides methods for output formatting
+* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/fsutil) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
+* [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v8/hash) - Package hash contains different hash algorithms and utilities
+* [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/httputil) - Package provides methods for working with HTTP request/responses
+* [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/jsonutil) - Package provides methods for working with JSON data
+* [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v8/knf) - Package provides methods for working with configs in KNF format
+* [`kv`](https://godoc.org/pkg.re/essentialkaos/ek.v8/kv) - Package provides simple key-value structs
+* [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v8/log) - Package with an improved logger
+* [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/mathutil) - Package with math utils
+* [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/netutil) - Package with network utils
+* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v8/passwd) - Package passwd contains methods for working with passwords
+* [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v8/path) - Package for working with paths (fully compatible with base path package)
+* [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v8/pid) - Package for working with PID files
+* [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v8/pluralize) - Package pluralize provides methods for pluralization
+* [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v8/rand) - Package for generating random data
+* [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v8/req) - Package for working with HTTP request
+* [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v8/signal) - Package for handling signals
+* [`sliceutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/sliceutil) - Package with utils for working with slices
+* [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/sortutil) - Package with utils for sorting slices
+* [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v8/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+* [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/strutil) - Package provides utils for working with strings
+* [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v8/system/process) - Package provides methods for getting information about active processes
+* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v8/system) - Package provides methods for working with system data (metrics/users)
+* [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v8/terminal) - Package provides methods for working with user input
+* [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v8/terminal/window) - Package provides methods for working terminal window
+* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v8/timeutil) - Package with time utils
+* [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v8/tmp) - Package provides methods for working with temporary data
+* [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v8/usage) - Package provides methods for rendering info for command-line tools
+* [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v8/uuid) - Package provides methods for generating version 4 and 5 UUID's
+* [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v8/version) - Package provides methods for parsing semver version info
 
 ## Projects with `EK`
 
