@@ -163,3 +163,25 @@ func getSuseVersion(file string) string {
 
 	return versionSlice[2] + "." + patchSlice[2]
 }
+
+func byteSliceToString(s [65]int8) string {
+	result := ""
+
+	for _, r := range s {
+		if r == 0 {
+			break
+		}
+
+		result += string(r)
+	}
+
+	return result
+}
+
+func isFileExist(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	return syscall.Access(path, syscall.F_OK) == nil
+}

@@ -46,22 +46,22 @@ type SessionInfo struct {
 
 // Who return info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
-	return []*SessionInfo{}, nil
+	return nil, nil
 }
 
 // CurrentUser return struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
-	return &User{}, nil
+	return nil, nil
 }
 
 // LookupUser search user info by given name
 func LookupUser(name string) (*User, error) {
-	return &User{}, nil
+	return nil, nil
 }
 
 // LookupGroup search group info by given name
 func LookupGroup(name string) (*Group, error) {
-	return &Group{}, nil
+	return nil, nil
 }
 
 // IsUserExist check if user exist on system or not
@@ -88,7 +88,7 @@ func (u *User) IsSudo() bool {
 
 // GroupList return slice with user groups names
 func (u *User) GroupList() []string {
-	return []string{}
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

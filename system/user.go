@@ -25,10 +25,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _PTS_DIR = "/dev/pts"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // User contains information about user
 type User struct {
 	UID      int      `json:"uid"`
@@ -78,13 +74,16 @@ func (s sessionsInfo) Swap(i, j int) {
 // Current user info cache
 var curUser *User
 
+// Path to pts dir
+var ptsDir = "/dev/pts"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Who return info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	var result []*SessionInfo
 
-	ptsList := readDir(_PTS_DIR)
+	ptsList := readDir(ptsDir)
 
 	if len(ptsList) == 0 {
 		return result, nil
@@ -361,7 +360,7 @@ func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 
 	if err != nil {
-		return []string{}
+		return nil
 	}
 
 	var size = 100
@@ -403,11 +402,12 @@ func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0
 	}
+
 	return n, err
 }
 
 func getSessionInfo(pts string) (*SessionInfo, error) {
-	ptsFile := _PTS_DIR + "/" + pts
+	ptsFile := ptsDir + "/" + pts
 	uid, err := getOwner(ptsFile)
 
 	if err != nil {
