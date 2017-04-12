@@ -2,9 +2,10 @@
 
 ### v8.0.0
 
-* `[system]` Methods for executing commands moved to `system/exec` package 
-* `[system]` Methods for changing process name moved to `system/procname` package 
+* `[system]` Methods for executing commands moved to `system/exec` package (_incompatible changes_)
+* `[system]` Methods for changing process name moved to `system/procname` package (_incompatible changes_)
 * `[system]` Code refactoring
+* `[system]` Increased code coverage (0.0% → 79.6%)
 
 ---
 
