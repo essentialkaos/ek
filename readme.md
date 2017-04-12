@@ -93,6 +93,6 @@ go get -u pkg.re/essentialkaos/ek.v7
 
 Before contributing to this project please read our [Contributing Guidelines](https://github.com/essentialkaos/contributing-guidelines#contributing-guidelines).
 
-### License
+## License
 
 [EKOL](https://essentialkaos.com/ekol)

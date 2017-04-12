@@ -57,7 +57,7 @@ func (e *Errors) Add(errs ...error) *Errors {
 
 // Last return last error in slice
 func (e *Errors) Last() error {
-	if e.errors == nil || e.num == 0 {
+	if e == nil || e.num == 0 || e.errors == nil {
 		return nil
 	}
 
@@ -66,8 +66,8 @@ func (e *Errors) Last() error {
 
 // All return all errors in slice
 func (e *Errors) All() []error {
-	if e.errors == nil {
-		return make([]error, 0)
+	if e == nil || e.errors == nil {
+		return nil
 	}
 
 	return e.errors
@@ -75,7 +75,7 @@ func (e *Errors) All() []error {
 
 // HasErrors check if slice contains errors
 func (e *Errors) HasErrors() bool {
-	if e.errors == nil {
+	if e == nil || e.errors == nil {
 		return false
 	}
 
@@ -84,5 +84,24 @@ func (e *Errors) HasErrors() bool {
 
 // Num return number of errors
 func (e *Errors) Num() int {
+	if e == nil {
+		return 0
+	}
+
 	return e.num
+}
+
+// Error return text of all errors
+func (e *Errors) Error() string {
+	if e == nil || e.num == 0 {
+		return ""
+	}
+
+	var result string
+
+	for _, err := range e.errors {
+		result += "  " + err.Error() + "\n"
+	}
+
+	return result
 }

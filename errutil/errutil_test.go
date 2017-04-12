@@ -51,6 +51,7 @@ func (s *ErrSuite) TestPositive(c *C) {
 		},
 	)
 	c.Assert(errs.Add(nil), NotNil)
+	c.Assert(errs.Error(), Equals, "  1\n  2\n  3\n  4\n  5\n")
 }
 
 func (s *ErrSuite) TestNegative(c *C) {
@@ -59,6 +60,17 @@ func (s *ErrSuite) TestNegative(c *C) {
 	c.Assert(errs.All(), HasLen, 0)
 	c.Assert(errs.HasErrors(), Equals, false)
 	c.Assert(errs.Last(), IsNil)
+	c.Assert(errs.Error(), Equals, "")
+}
+
+func (s *ErrSuite) TestNil(c *C) {
+	var errs *Errors
+
+	c.Assert(errs.Num(), Equals, 0)
+	c.Assert(errs.All(), HasLen, 0)
+	c.Assert(errs.HasErrors(), Equals, false)
+	c.Assert(errs.Last(), IsNil)
+	c.Assert(errs.Error(), Equals, "")
 }
 
 func (s *ErrSuite) TestChain(c *C) {
