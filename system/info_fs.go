@@ -1,4 +1,4 @@
-// +build !windows
+// +build linux
 
 package system
 
@@ -11,6 +11,7 @@ package system
 
 import (
 	"errors"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -20,15 +21,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _HZ = 100.0
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Path to file with disc info in procfs
 var procDiscStatsFile = "/proc/diskstats"
 
 // Path to mtab file
 var mtabFile = "/etc/mtab"
+
+// Ticks per second
+var hz = 0.0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -202,7 +202,7 @@ func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map
 	curCPUUsage := float64(ci2.User + ci2.System + ci2.Idle + ci2.Wait)
 	prevCPUUsage := float64(ci1.User + ci1.System + ci1.Idle + ci1.Wait)
 
-	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(ci2.Count) / _HZ
+	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(ci2.Count) / getHZ()
 
 	for n, f := range fi1 {
 		if fi1[n].IOStats != nil && fi2[n].IOStats != nil {
@@ -231,4 +231,26 @@ func stringSliceToUintSlice(s []string) []uint64 {
 	}
 
 	return result
+}
+
+func getHZ() float64 {
+	if hz != 0.0 {
+		return hz
+	}
+
+	output, err := exec.Command("/usr/bin/getconf", "CLK_TCK").Output()
+
+	if err != nil {
+		hz = 100.0
+		return hz
+	}
+
+	hz, _ = strconv.ParseFloat(string(output), 64)
+
+	if hz == 0.0 {
+		hz = 100.0
+		return hz
+	}
+
+	return hz
 }

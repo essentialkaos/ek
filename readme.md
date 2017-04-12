@@ -4,7 +4,7 @@ Auxiliary packages for Go.
 
 ## Platform support
 
-Currently we support Linux and Mac OS X. Some packages have stubs for Windows (_for autocomplete_).
+Currently we support Linux and Mac OS X (except `system` package). Some packages have stubs for Windows (_for autocomplete_).
 
 ## Installation
 

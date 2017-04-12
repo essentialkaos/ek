@@ -4,8 +4,9 @@
 
 * `[system]` Methods for executing commands moved to `system/exec` package (_incompatible changes_)
 * `[system]` Methods for changing process name moved to `system/procname` package (_incompatible changes_)
+* `[system]` Minor improvements
 * `[system]` Code refactoring
-* `[system]` Increased code coverage (0.0% → 79.6%)
+* `[system]` Increased code coverage (0.0% → 79.4%)
 
 ---
 
