@@ -2,6 +2,9 @@
 
 ### v8.0.0
 
+* `[system/process]` Added method `GetMemInfo` for obtaining information about memory consumption by process.
+* `[system/process]` Added method `GetInfo` which return partial info from `/proc/[PID]/stat`.
+* `[system/process]` Added method `CalculateCPUUsage` which can be used for process CPU usage calculation.
 * `[system]` Methods for executing commands moved to `system/exec` package (_incompatible changes_)
 * `[system]` Methods for changing process name moved to `system/procname` package (_incompatible changes_)
 * `[system]` Minor improvements
