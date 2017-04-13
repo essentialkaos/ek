@@ -58,13 +58,36 @@ func readFileContent(file string) ([]string, error) {
 	return strings.Split(string(content), "\n"), nil
 }
 
-func cleanSlice(s []string) []string {
-	var result []string
+func splitLine(line string) []string {
+	if line == "" {
+		return nil
+	}
 
-	for _, item := range s {
-		if item != "" {
-			result = append(result, item)
+	var (
+		result []string
+		buffer string
+		space  bool
+	)
+
+	for _, r := range line {
+		if r == ' ' || r == '\t' {
+			space = true
+			continue
 		}
+
+		if space == true {
+			if buffer != "" {
+				result = append(result, buffer)
+			}
+
+			buffer, space = "", false
+		}
+
+		buffer += string(r)
+	}
+
+	if buffer != "" {
+		result = append(result, buffer)
 	}
 
 	return result

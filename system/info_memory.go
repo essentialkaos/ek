@@ -10,9 +10,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"errors"
 	"strconv"
-	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,9 +34,6 @@ type MemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// defaultMemProps map with names of required stats
-var defaultMemProps map[string]bool
-
 // Path to file with memory info in procfs
 var procMemInfoFile = "/proc/meminfo"
 
@@ -46,22 +41,6 @@ var procMemInfoFile = "/proc/meminfo"
 
 // GetMemInfo return memory info
 func GetMemInfo() (*MemInfo, error) {
-	if defaultMemProps == nil {
-		defaultMemProps = map[string]bool{
-			"MemTotal":   true,
-			"MemFree":    true,
-			"Buffers":    true,
-			"Cached":     true,
-			"SwapCached": true,
-			"Active":     true,
-			"Inactive":   true,
-			"SwapTotal":  true,
-			"SwapFree":   true,
-			"Dirty":      true,
-			"Slab":       true,
-		}
-	}
-
 	content, err := readFileContent(procMemInfoFile)
 
 	if err != nil {
@@ -71,51 +50,41 @@ func GetMemInfo() (*MemInfo, error) {
 	mem := &MemInfo{}
 
 	for _, line := range content {
-		if line == "" {
+		lineSlice := splitLine(line)
+
+		if len(lineSlice) < 2 {
 			continue
-		}
-
-		lineSlice := strings.Split(line, ":")
-
-		if len(lineSlice) != 2 {
-			return nil, errors.New("Can't parse file " + procMemInfoFile)
-		}
-
-		if !defaultMemProps[lineSlice[0]] {
-			continue
-		}
-
-		strValue := strings.TrimRight(lineSlice[1], " kB")
-		strValue = strings.Replace(strValue, " ", "", -1)
-		uintValue, err := strconv.ParseUint(strValue, 10, 64)
-
-		if err != nil {
-			return nil, err
 		}
 
 		switch lineSlice[0] {
-		case "MemTotal":
-			mem.MemTotal = uintValue * 1024
-		case "MemFree":
-			mem.MemFree = uintValue * 1024
-		case "Buffers":
-			mem.Buffers = uintValue * 1024
-		case "Cached":
-			mem.Cached = uintValue * 1024
-		case "SwapCached":
-			mem.SwapCached = uintValue * 1024
-		case "Active":
-			mem.Active = uintValue * 1024
-		case "Inactive":
-			mem.Inactive = uintValue * 1024
-		case "SwapTotal":
-			mem.SwapTotal = uintValue * 1024
-		case "SwapFree":
-			mem.SwapFree = uintValue * 1024
-		case "Dirty":
-			mem.Dirty = uintValue * 1024
-		case "Slab":
-			mem.Slab = uintValue * 1024
+		case "MemTotal:":
+			mem.MemTotal, err = parseSize(lineSlice[1])
+		case "MemFree:":
+			mem.MemFree, err = parseSize(lineSlice[1])
+		case "Buffers:":
+			mem.Buffers, err = parseSize(lineSlice[1])
+		case "Cached:":
+			mem.Cached, err = parseSize(lineSlice[1])
+		case "SwapCached:":
+			mem.SwapCached, err = parseSize(lineSlice[1])
+		case "Active:":
+			mem.Active, err = parseSize(lineSlice[1])
+		case "Inactive:":
+			mem.Inactive, err = parseSize(lineSlice[1])
+		case "SwapTotal:":
+			mem.SwapTotal, err = parseSize(lineSlice[1])
+		case "SwapFree:":
+			mem.SwapFree, err = parseSize(lineSlice[1])
+		case "Dirty:":
+			mem.Dirty, err = parseSize(lineSlice[1])
+		case "Slab:":
+			mem.Slab, err = parseSize(lineSlice[1])
+		default:
+			continue
+		}
+
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -124,4 +93,16 @@ func GetMemInfo() (*MemInfo, error) {
 	mem.SwapUsed = mem.SwapTotal - mem.SwapFree
 
 	return mem, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func parseSize(s string) (uint64, error) {
+	size, err := strconv.ParseUint(s, 10, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return size * 1024, nil
 }

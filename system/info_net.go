@@ -48,18 +48,21 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 	info := make(map[string]*InterfaceInfo)
 
 	for _, line := range content[2:] {
-		lineSlice := strings.Split(line, ":")
-
-		if len(lineSlice) != 2 {
+		if !strings.Contains(line, ":") {
 			continue
 		}
 
-		metrics := cleanSlice(strings.Split(lineSlice[1], " "))
-		name := strings.TrimLeft(lineSlice[0], " ")
-		receivedBytes, _ := strconv.ParseUint(metrics[0], 10, 64)
-		receivedPackets, _ := strconv.ParseUint(metrics[1], 10, 64)
-		transmittedBytes, _ := strconv.ParseUint(metrics[8], 10, 64)
-		transmittedPackets, _ := strconv.ParseUint(metrics[9], 10, 64)
+		lineSlice := splitLine(line)
+
+		if len(lineSlice) < 11 {
+			continue
+		}
+
+		name := strings.TrimRight(lineSlice[0], ":")
+		receivedBytes, _ := strconv.ParseUint(lineSlice[1], 10, 64)
+		receivedPackets, _ := strconv.ParseUint(lineSlice[2], 10, 64)
+		transmittedBytes, _ := strconv.ParseUint(lineSlice[9], 10, 64)
+		transmittedPackets, _ := strconv.ParseUint(lineSlice[10], 10, 64)
 
 		info[name] = &InterfaceInfo{
 			receivedBytes,

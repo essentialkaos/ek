@@ -130,13 +130,13 @@ func GetIOStats() (map[string]*IOStats, error) {
 			continue
 		}
 
-		values := cleanSlice(strings.Split(line, " "))
+		lineSlice := splitLine(line)
 
-		if len(values) != 14 {
+		if len(lineSlice) != 14 {
 			return nil, errors.New("Can't parse file " + procDiscStatsFile)
 		}
 
-		device := values[2]
+		device := lineSlice[2]
 
 		if len(device) > 3 {
 			if device[0:3] == "ram" || device[0:3] == "loo" {
@@ -144,7 +144,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 			}
 		}
 
-		metrics := stringSliceToUintSlice(values[3:])
+		metrics := stringSliceToUintSlice(lineSlice[3:])
 
 		iostats[device] = &IOStats{
 			ReadComplete:  metrics[0],

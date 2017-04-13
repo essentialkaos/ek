@@ -11,7 +11,6 @@ package process
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os/exec"
 	"strconv"
@@ -37,20 +36,20 @@ const (
 
 // ProcInfo contains partial info from /proc/[PID]/stat
 type ProcInfo struct {
-	PID        int    `json:"pid"`
-	Comm       string `json:"comm"`
-	State      string `json:"state"`
-	PPID       int    `json:"ppid"`
-	Session    int    `json:"session"`
-	TTYNR      int    `json:"tty_nr"`
-	TPGid      int    `json:"tpgid"`
-	UTime      uint64 `json:"utime"`
-	STime      uint64 `json:"stime"`
-	CUTime     uint64 `json:"cutime"`
-	CSTime     uint64 `json:"cstime"`
-	Priority   int    `json:"priority"`
-	Nice       int    `json:"nice"`
-	NumThreads int    `json:"num_threads"`
+	PID        int    `json:"pid"`         // The process ID
+	Comm       string `json:"comm"`        // The filename of the executable, in parentheses
+	State      string `json:"state"`       // Process state
+	PPID       int    `json:"ppid"`        // The PID of the parent of this process
+	Session    int    `json:"session"`     // The session ID of the process
+	TTYNR      int    `json:"tty_nr"`      // The controlling terminal of the process
+	TPGid      int    `json:"tpgid"`       // The ID of the foreground process group of the controlling terminal of the process
+	UTime      uint64 `json:"utime"`       // Amount of time that this process has been scheduled in user mode, measured in clock ticks
+	STime      uint64 `json:"stime"`       // Amount of time that this process has been scheduled in kernel mode, measured in clock ticks
+	CUTime     uint64 `json:"cutime"`      // Amount of time that this process's waited-for children have been scheduled in user mode, measured in clock ticks
+	CSTime     uint64 `json:"cstime"`      // Amount of time that this process's waited-for children have been scheduled in kernel mode, measured in clock ticks
+	Priority   int    `json:"priority"`    // Priority
+	Nice       int    `json:"nice"`        // The nice value
+	NumThreads int    `json:"num_threads"` // Number of threads in this process
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

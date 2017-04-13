@@ -108,12 +108,11 @@ func (s *SystemSuite) TestMemory(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
 
-	procMemInfoFile = s.CreateTestFile(c, "CORRUPT")
+	procMemInfoFile = s.CreateTestFile(c, "MemTotal:")
 
 	mem, err = GetMemInfo()
 
-	c.Assert(err, NotNil)
-	c.Assert(mem, IsNil)
+	c.Assert(err, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal: ABC! kB")
 
