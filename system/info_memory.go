@@ -97,6 +97,7 @@ func GetMemInfo() (*MemInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// parseSize convert string with size in kb to uint64 bytes
 func parseSize(s string) (uint64, error) {
 	size, err := strconv.ParseUint(s, 10, 64)
 

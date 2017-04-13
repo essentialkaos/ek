@@ -222,6 +222,7 @@ func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// stringSliceToUintSlice conver string slice to uint64 slice
 func stringSliceToUintSlice(s []string) []uint64 {
 	var result []uint64
 
@@ -233,6 +234,7 @@ func stringSliceToUintSlice(s []string) []uint64 {
 	return result
 }
 
+// getHZ return number of processor clock ticks per second
 func getHZ() float64 {
 	if hz != 0.0 {
 		return hz

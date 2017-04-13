@@ -17,6 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// MemInfo contains process memory usage stats
 type MemInfo struct {
 	VmPeak uint64 `json:"peak"` // Peak virtual memory size
 	VmSize uint64 `json:"size"` // Virtual memory size
@@ -90,6 +91,7 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// splitLine split line to slice by whitespace symbol
 func splitLine(line string) []string {
 	if line == "" {
 		return nil
@@ -125,6 +127,7 @@ func splitLine(line string) []string {
 	return result
 }
 
+// parseSize convert string with size in kb to uint64 bytes
 func parseSize(s string) (uint64, error) {
 	size, err := strconv.ParseUint(s, 10, 64)
 

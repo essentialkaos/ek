@@ -114,6 +114,7 @@ func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Dur
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getActiveInterfacesBytes calculate received and transmitted bytes on all interfaces
 func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {
 	var (
 		received    uint64

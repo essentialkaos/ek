@@ -214,6 +214,7 @@ func (u *User) GroupList() []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getCurrentUserName return name of current user
 func getCurrentUserName() string {
 	cmd := exec.Command("id", "-un")
 
@@ -356,6 +357,7 @@ func getOwner(path string) (int, error) {
 	return int(stat.Uid), nil
 }
 
+// readDir return list of files in given dir
 func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 
@@ -398,6 +400,7 @@ func readDir(dir string) []string {
 	return names
 }
 
+// fixCount fix count for negative values
 func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0
@@ -406,6 +409,7 @@ func fixCount(n int, err error) (int, error) {
 	return n, err
 }
 
+// getSessionInfo find session info by pts file
 func getSessionInfo(pts string) (*SessionInfo, error) {
 	ptsFile := ptsDir + "/" + pts
 	uid, err := getOwner(ptsFile)

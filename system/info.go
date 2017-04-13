@@ -18,6 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// OS names
 const (
 	LINUX_ARCH   = "Arch"
 	LINUX_CENTOS = "CentOS"
@@ -44,6 +45,7 @@ type SystemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// readFileContent read file content and split it to slice by new line symbol
 func readFileContent(file string) ([]string, error) {
 	content, err := ioutil.ReadFile(file)
 
@@ -58,6 +60,7 @@ func readFileContent(file string) ([]string, error) {
 	return strings.Split(string(content), "\n"), nil
 }
 
+// splitLine split line to slice by whitespace symbol
 func splitLine(line string) []string {
 	if line == "" {
 		return nil
