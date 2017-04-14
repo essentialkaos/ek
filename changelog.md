@@ -1,5 +1,12 @@
 ## Changelog
 
+### v8.0.1
+
+* `[system/process]` Fixed windows stubs
+* `[system]` Package refactoring
+* `[fsutil]` Fixed checking empty directory on FreeBSD
+* `[pid]` Fixed checking process state on FreeBSD
+
 ### v8.0.0
 
 * `[system/process]` Added method `GetMemInfo` for obtaining information about memory consumption by process.

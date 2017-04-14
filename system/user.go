@@ -71,6 +71,15 @@ func (s sessionsInfo) Swap(i, j int) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Errors
+var (
+	ErrEmptyPath      = errors.New("Path is empty")
+	ErrEmptyUserName  = errors.New("User name/id can't be blank")
+	ErrEmptyGroupName = errors.New("Group name/id can't be blank")
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Current user info cache
 var curUser *User
 
@@ -134,7 +143,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 // LookupUser search user info by given name
 func LookupUser(nameOrID string) (*User, error) {
 	if nameOrID == "" {
-		return nil, errors.New("User name/id can't be blank")
+		return nil, ErrEmptyUserName
 	}
 
 	user, err := getUserInfo(nameOrID)
@@ -151,7 +160,7 @@ func LookupUser(nameOrID string) (*User, error) {
 // LookupGroup search group info by given name
 func LookupGroup(nameOrID string) (*Group, error) {
 	if nameOrID == "" {
-		return nil, errors.New("Group name/id can't be blank")
+		return nil, ErrEmptyGroupName
 	}
 
 	name, gid, err := getGroupInfo(nameOrID)
@@ -343,7 +352,7 @@ func parseGroupInfo(info string) *Group {
 // getOwner return file or dir owner uid
 func getOwner(path string) (int, error) {
 	if path == "" {
-		return -1, errors.New("Path is empty")
+		return -1, ErrEmptyPath
 	}
 
 	var stat = &syscall.Stat_t{}

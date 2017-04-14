@@ -1,6 +1,6 @@
-// +build linux
+// +build linux freebsd
 
-package system
+package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -10,28 +10,28 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"syscall"
-	"time"
+	"io/ioutil"
+
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getTimes is copy of fsutil.GetTimes
-func getTimes(path string) (time.Time, time.Time, time.Time, error) {
-	if path == "" {
-		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
-	}
+func (s *PidSuite) TestIsWorks(c *C) {
+	Dir = s.Dir
 
-	var stat = &syscall.Stat_t{}
+	err := Create("test")
 
-	err := syscall.Stat(path, stat)
+	c.Assert(err, IsNil)
 
-	if err != nil {
-		return time.Time{}, time.Time{}, time.Time{}, err
-	}
+	c.Assert(IsWorks("test"), Equals, true)
 
-	return time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec)),
-		time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec)),
-		time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec)),
-		nil
+	Remove("test")
+
+	c.Assert(IsWorks("test"), Equals, false)
+
+	// Write fake pid to pid file
+	ioutil.WriteFile(s.Dir+"/test.pid", []byte("9736163"), 0644)
+
+	c.Assert(IsWorks("test"), Equals, false)
 }

@@ -366,7 +366,7 @@ func IsEmptyDir(path string) bool {
 
 	n, err := syscall.ReadDirent(fd, make([]byte, 4096))
 
-	if n == 0x30 || err != nil {
+	if isEmptyDirent(n) || err != nil {
 		return true
 	}
 

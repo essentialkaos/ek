@@ -8,28 +8,21 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
-
-	. "pkg.re/check.v1"
+	"os/exec"
+	"strconv"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *PidSuite) TestIsWorks(c *C) {
-	Dir = s.Dir
+// IsWorks return if process pid is not -1
+func IsWorks(name string) bool {
+	pid := Get(name)
 
-	err := Create("test")
+	if pid == -1 {
+		return false
+	}
 
-	c.Assert(err, IsNil)
+	err := exec.Command("/usr/bin/procstat", strconv.Itoa(pid)).Run()
 
-	c.Assert(IsWorks("test"), Equals, true)
-
-	Remove("test")
-
-	c.Assert(IsWorks("test"), Equals, false)
-
-	// Write fake pid to pid file
-	ioutil.WriteFile(s.Dir+"/test.pid", []byte("9736163"), 0644)
-
-	c.Assert(IsWorks("test"), Equals, false)
+	return err == nil
 }
