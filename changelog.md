@@ -3,6 +3,7 @@
 ### v8.0.1
 
 * `[system/process]` Fixed windows stubs
+* `[system]` Package refactoring
 
 ### v8.0.0
 
