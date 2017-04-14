@@ -1,4 +1,4 @@
-// +build freebsd
+// +build linux
 
 package fsutil
 
@@ -34,9 +34,9 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 		return time.Time{}, time.Time{}, time.Time{}, err
 	}
 
-	return time.Unix(int64(stat.Atimespec.Sec), int64(stat.Atimespec.Nsec)),
-		time.Unix(int64(stat.Mtimespec.Sec), int64(stat.Mtimespec.Nsec)),
-		time.Unix(int64(stat.Ctimespec.Sec), int64(stat.Ctimespec.Nsec)),
+	return time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec)),
+		time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec)),
+		time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec)),
 		nil
 }
 
@@ -56,8 +56,14 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 		return -1, -1, -1, err
 	}
 
-	return int64(stat.Atimespec.Sec),
-		int64(stat.Mtimespec.Sec),
-		int64(stat.Ctimespec.Sec),
+	return int64(stat.Atim.Sec),
+		int64(stat.Mtim.Sec),
+		int64(stat.Ctim.Sec),
 		nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func isEmptyDirent(n int) bool {
+	return n == 0x30
 }
