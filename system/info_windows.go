@@ -101,17 +101,17 @@ func GetUptime() (uint64, error) {
 
 // GetLA return loadavg
 func GetLA() (*LoadAvg, error) {
-	return &LoadAvg{}, nil
+	return nil, nil
 }
 
 // GetMemInfo return memory info
 func GetMemInfo() (*MemInfo, error) {
-	return &MemInfo{}, nil
+	return nil, nil
 }
 
 // GetCPUInfo return info about CPU usage
 func GetCPUInfo() (*CPUInfo, error) {
-	return &CPUInfo{}, nil
+	return nil, nil
 }
 
 // GetFSInfo return info about mounted filesystems
@@ -126,7 +126,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 // GetSystemInfo return system info
 func GetSystemInfo() (*SystemInfo, error) {
-	return &SystemInfo{}, nil
+	return nil, nil
 }
 
 // GetInterfacesInfo return info about network interfaces

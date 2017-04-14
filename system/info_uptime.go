@@ -1,4 +1,6 @@
-package pid
+// +build !windows
+
+package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,20 +10,33 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
-
-	"pkg.re/essentialkaos/ek.v8/fsutil"
+	"errors"
+	"strconv"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
+// Path to file with uptime info in procfs
+var procUptimeFile = "/proc/uptime"
 
-	if pid == -1 {
-		return false
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetUptime return system uptime in seconds
+func GetUptime() (uint64, error) {
+	content, err := readFileContent(procUptimeFile)
+
+	if err != nil {
+		return 0, err
 	}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	ca := strings.Split(content[0], " ")
+
+	if len(ca) != 2 {
+		return 0, errors.New("Can't parse file " + procUptimeFile)
+	}
+
+	up, _ := strconv.ParseFloat(ca[0], 64)
+
+	return uint64(up), nil
 }

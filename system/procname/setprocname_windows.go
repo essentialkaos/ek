@@ -1,6 +1,6 @@
 // +build windows
 
-package system
+package procname
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -9,8 +9,8 @@ package system
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetProcName change current process name
+// Set change current process name
 // New process name must have same length or less.
-func SetProcName(name string) {
+func Set(name string) {
 	return
 }

@@ -1,3 +1,5 @@
+// +build linux
+
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -13,31 +15,6 @@ import (
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func ExampleExec() {
-	err := Exec("/bin/echo", "abc", "123")
-
-	if err != nil {
-		fmt.Printf("Error: %v", err)
-	}
-}
-
-func ExampleSudoExec() {
-	err := SudoExec("/bin/echo", "abc", "123")
-
-	if err != nil {
-		fmt.Printf("Error: %v", err)
-	}
-}
-
-func ExampleRunAsUser() {
-	// run echo as user some user and redirect output to /var/log/output.log
-	err := RunAsUser("someuser", "/var/log/output.log", "/bin/echo", "abc", "123")
-
-	if err != nil {
-		fmt.Printf("Error: %v", err)
-	}
-}
 
 func ExampleGetFSInfo() {
 	fsInfo, err := GetFSInfo()
@@ -180,42 +157,4 @@ func ExampleGetSystemInfo() {
 	fmt.Printf("OS: %s\n", sysInfo.OS)
 	fmt.Printf("Kernel: %s\n", sysInfo.Kernel)
 	fmt.Printf("Arch: %s\n", sysInfo.Arch)
-}
-
-func ExampleWho() {
-	sessions, err := Who()
-
-	if err != nil {
-		return
-	}
-
-	// print info about all active sessions
-	for _, session := range sessions {
-		fmt.Printf(
-			"User: %s LoginTime: %v LastActivityTime: %v\n",
-			session.User.Name, session.LoginTime, session.LastActivityTime,
-		)
-	}
-}
-
-func ExampleCurrentUser() {
-	user, err := CurrentUser()
-
-	if err != nil {
-		return
-	}
-
-	// print info about current user
-	fmt.Printf("UID: %d\n", user.UID)
-	fmt.Printf("GID: %d\n", user.GID)
-	fmt.Printf("Name: %s\n", user.Name)
-	fmt.Printf("Groups: %v\n", user.GroupList())
-	fmt.Printf("Comment: %s\n", user.Comment)
-	fmt.Printf("Shell: %s\n", user.Shell)
-	fmt.Printf("HomeDir: %s\n", user.HomeDir)
-	fmt.Printf("RealUID: %d\n", user.RealUID)
-	fmt.Printf("RealGID: %d\n", user.RealGID)
-	fmt.Printf("RealName: %s\n", user.RealName)
-	fmt.Printf("IsRoot: %t\n", user.IsRoot())
-	fmt.Printf("IsSudo: %t\n", user.IsSudo())
 }

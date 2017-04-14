@@ -1,6 +1,7 @@
 // +build linux darwin
 
-package system
+// Package procname provides methods for changing process name in the process tree
+package procname
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -19,11 +20,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetProcName change current process name
+// ErrWrongSize error occurred if given slice have the wrong size
+var ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Set change current process name
 // New process name must have same length or less.
-func SetProcName(args []string) error {
+func Set(args []string) error {
 	if len(args) != len(os.Args) {
-		return errors.New("Wrong arguments slice size")
+		return ErrWrongSize
 	}
 
 	for i := 0; i < len(args); i++ {

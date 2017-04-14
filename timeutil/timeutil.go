@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v7/pluralize"
+	"pkg.re/essentialkaos/ek.v8/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

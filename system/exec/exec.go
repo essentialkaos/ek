@@ -1,6 +1,7 @@
 // +build linux, darwin, !windows
 
-package system
+// Package exec provides methods for executing commands
+package exec
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -17,18 +18,18 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SudoExec execute some command with sudo
-func SudoExec(user string, args ...string) error {
+// Sudo execute some command with sudo
+func Sudo(user string, args ...string) error {
 	var cmdArgs []string
 
 	cmdArgs = append(cmdArgs, "-u", user)
 	cmdArgs = append(cmdArgs, args...)
 
-	return Exec("sudo", cmdArgs...)
+	return Run("sudo", cmdArgs...)
 }
 
-// Exec execute some command
-func Exec(command string, args ...string) error {
+// Run execute some command
+func Run(command string, args ...string) error {
 	var cmd = exec.Command(command)
 
 	cmd.Args = append(cmd.Args, args...)
@@ -38,18 +39,18 @@ func Exec(command string, args ...string) error {
 
 // RunAsUser run command as some user
 func RunAsUser(user, logFile string, command string, args ...string) error {
-	var log *os.File
+	var logFd *os.File
 	var err error
 
 	if logFile != "" {
-		log, err = os.OpenFile(logFile, os.O_APPEND|os.O_WRONLY, 0644)
+		logFd, err = os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 
 		if err != nil {
 			return err
 		}
 	}
 
-	defer log.Close()
+	defer logFd.Close()
 
 	cmd := exec.Command(
 		"/sbin/runuser",
@@ -58,9 +59,9 @@ func RunAsUser(user, logFile string, command string, args ...string) error {
 		command, strings.Join(args, " "),
 	)
 
-	if logFile != "" && log != nil {
-		cmd.Stderr = log
-		cmd.Stdout = log
+	if logFd != nil {
+		cmd.Stderr = logFd
+		cmd.Stdout = logFd
 	}
 
 	return cmd.Run()

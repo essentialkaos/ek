@@ -1,4 +1,4 @@
-package pid
+package exec
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -9,19 +9,31 @@ package pid
 
 import (
 	"fmt"
-
-	"pkg.re/essentialkaos/ek.v8/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
+func ExampleRun() {
+	err := Run("/bin/echo", "abc", "123")
 
-	if pid == -1 {
-		return false
+	if err != nil {
+		fmt.Printf("Error: %v", err)
 	}
+}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+func ExampleSudo() {
+	err := Sudo("/bin/echo", "abc", "123")
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
+}
+
+func ExampleRunAsUser() {
+	// run echo as user some user and redirect output to /var/log/output.log
+	err := RunAsUser("someuser", "/var/log/output.log", "/bin/echo", "abc", "123")
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
 }

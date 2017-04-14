@@ -40,6 +40,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getDistributionInfo try to find current OS distribution and version
 func getDistributionInfo() (string, string) {
 	var distribution string
 	var version string
@@ -81,6 +82,7 @@ func getDistributionInfo() (string, string) {
 	return distribution, version
 }
 
+// getReleasePart extract release part from version info
 func getReleasePart(file string) string {
 	data, err := ioutil.ReadFile(file)
 
@@ -91,6 +93,7 @@ func getReleasePart(file string) string {
 	return findOSVersionNumber(string(data))
 }
 
+// findOSVersionNumber try to find OS version number
 func findOSVersionNumber(data string) string {
 WORDLOOP:
 	for _, word := range strings.Split(data, " ") {
@@ -109,6 +112,7 @@ WORDLOOP:
 	return ""
 }
 
+// getRawRelease extract raw release data from given file
 func getRawRelease(file string) string {
 	data, err := ioutil.ReadFile(file)
 
@@ -119,6 +123,7 @@ func getRawRelease(file string) string {
 	return string(data)
 }
 
+// getUbuntuRelease extract info about Ubuntu release from given release file
 func getUbuntuRelease(file string) string {
 	data, err := ioutil.ReadFile(file)
 
@@ -141,6 +146,7 @@ func getUbuntuRelease(file string) string {
 	return versionSlice[1]
 }
 
+// getUbuntuRelease extract info about SuSe release from given release file
 func getSuseVersion(file string) string {
 	data, err := ioutil.ReadFile(file)
 
@@ -162,4 +168,28 @@ func getSuseVersion(file string) string {
 	}
 
 	return versionSlice[2] + "." + patchSlice[2]
+}
+
+// byteSliceToString convert byte slice to string
+func byteSliceToString(s [65]int8) string {
+	result := ""
+
+	for _, r := range s {
+		if r == 0 {
+			break
+		}
+
+		result += string(r)
+	}
+
+	return result
+}
+
+// isFileExist check if file exist
+func isFileExist(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	return syscall.Access(path, syscall.F_OK) == nil
 }
