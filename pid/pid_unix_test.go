@@ -1,3 +1,5 @@
+// +build linux freebsd
+
 package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -8,20 +10,28 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
+	"io/ioutil"
 
-	"pkg.re/essentialkaos/ek.v8/fsutil"
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
+func (s *PidSuite) TestIsWorks(c *C) {
+	Dir = s.Dir
 
-	if pid == -1 {
-		return false
-	}
+	err := Create("test")
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	c.Assert(err, IsNil)
+
+	c.Assert(IsWorks("test"), Equals, true)
+
+	Remove("test")
+
+	c.Assert(IsWorks("test"), Equals, false)
+
+	// Write fake pid to pid file
+	ioutil.WriteFile(s.Dir+"/test.pid", []byte("9736163"), 0644)
+
+	c.Assert(IsWorks("test"), Equals, false)
 }
