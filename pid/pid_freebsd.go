@@ -1,5 +1,3 @@
-// +build linux freebsd
-
 package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -10,14 +8,13 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
-
-	"pkg.re/essentialkaos/ek.v8/fsutil"
+	"os/exec"
+	"strconv"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
+// IsWorks return if process pid is not -1
 func IsWorks(name string) bool {
 	pid := Get(name)
 
@@ -25,5 +22,7 @@ func IsWorks(name string) bool {
 		return false
 	}
 
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	err := exec.Command("/usr/bin/procstat", pid).Run()
+
+	return err == nil
 }

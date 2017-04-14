@@ -1,5 +1,3 @@
-// +build darwin
-
 package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -10,28 +8,20 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"fmt"
 
-	. "pkg.re/check.v1"
+	"pkg.re/essentialkaos/ek.v8/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *PidSuite) TestIsWorks(c *C) {
-	Dir = s.Dir
+// IsWorks return if process with pid from pid file is works
+func IsWorks(name string) bool {
+	pid := Get(name)
 
-	err := Create("test")
+	if pid == -1 {
+		return false
+	}
 
-	c.Assert(err, IsNil)
-
-	c.Assert(IsWorks("test"), Equals, true)
-
-	Remove("test")
-
-	c.Assert(IsWorks("test"), Equals, false)
-
-	// Write fake pid to pid file
-	ioutil.WriteFile(s.Dir+"/test.pid", []byte("9736163"), 0644)
-
-	c.Assert(IsWorks("test"), Equals, true)
+	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
 }
