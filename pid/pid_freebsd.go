@@ -22,7 +22,7 @@ func IsWorks(name string) bool {
 		return false
 	}
 
-	err := exec.Command("/usr/bin/procstat", pid).Run()
+	err := exec.Command("/usr/bin/procstat", strconv.Itoa(pid)).Run()
 
 	return err == nil
 }
