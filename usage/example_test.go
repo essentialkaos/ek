@@ -30,7 +30,7 @@ func ExampleInfo_Render() {
 	// You can define command arguments names
 	info.AddCommand("add", "Add item", "file")
 
-	// Also you can mark optional arguments using ? prefix
+	// Also, you can mark optional arguments using ? prefix
 	info.AddCommand("remove", "Remove item", "file", "?mode")
 	info.AddCommand("list", "List items")
 

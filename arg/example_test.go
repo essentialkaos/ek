@@ -16,9 +16,9 @@ import (
 
 func Example_parsing() {
 	// Key is argument in format "short-name:long-name" or "long-name"
-	// We highly recommend to define arguments names as constants
+	// We highly recommend defining arguments names as constants
 	argMap := Map{
-		"s:string":   {},                                     // By default argument has string type
+		"s:string":   {},                                     // By default, argument has string type
 		"S:string2":  {Type: STRING, Value: "Default value"}, // You can predefine default values
 		"int":        {Type: INT},                            // Integer without short name
 		"I:int2":     {Type: INT, Min: 1, Max: 10},           // Integer with limits

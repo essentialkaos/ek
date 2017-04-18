@@ -275,7 +275,7 @@ func appendRealUserInfo(user *User) {
 	user.RealGID = gid
 }
 
-// getUserInfo return uid associated with current tty
+// getUserInfo return UID associated with current TTY
 func getTDOwnerID() (int, bool) {
 	tty := CurrentTTY()
 
@@ -349,7 +349,7 @@ func parseGroupInfo(info string) *Group {
 	return &Group{name, gid}
 }
 
-// getOwner return file or dir owner uid
+// getOwner return file or directory owner UID
 func getOwner(path string) (int, error) {
 	if path == "" {
 		return -1, ErrEmptyPath
@@ -366,7 +366,7 @@ func getOwner(path string) (int, error) {
 	return int(stat.Uid), nil
 }
 
-// readDir return list of files in given dir
+// readDir return list of files in given directory
 func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 

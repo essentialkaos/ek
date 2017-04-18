@@ -7,7 +7,7 @@ package pid
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process pid is not -1
+// IsWorks return if process PID is not -1
 func IsWorks(name string) bool {
 	return Get(name) != -1
 }

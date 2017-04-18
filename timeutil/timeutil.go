@@ -87,7 +87,7 @@ func PrettyDuration(d interface{}) string {
 	return result[0]
 }
 
-// Format return formated date to string with linux date formating
+// Format return formatted date as string
 //
 // Interpreted sequences:
 //	'%%' a literal %

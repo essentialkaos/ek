@@ -122,7 +122,7 @@ type Headers map[string]string
 // Request is basic struct
 type Request struct {
 	Method            string      // Request method
-	URL               string      // Request url
+	URL               string      // Request URL
 	Query             Query       // Map with query params
 	Body              interface{} // Request body
 	Headers           Headers     // Map with headers

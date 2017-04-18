@@ -157,7 +157,7 @@ func ProperPath(props string, paths []string) string {
 	return ""
 }
 
-// IsExist check if target is exist in fs or not
+// IsExist check if target exists
 func IsExist(path string) bool {
 	if path == "" {
 		return false
@@ -373,7 +373,7 @@ func IsEmptyDir(path string) bool {
 	return false
 }
 
-// GetOwner return object owner pid and gid
+// GetOwner return object owner UID and GID
 func GetOwner(path string) (int, int, error) {
 	if path == "" {
 		return -1, -1, ErrEmptyPath

@@ -26,7 +26,6 @@ var ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Set change current process name
-// New process name must have same length or less.
 func Set(args []string) error {
 	if len(args) != len(os.Args) {
 		return ErrWrongSize

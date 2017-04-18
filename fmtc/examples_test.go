@@ -63,7 +63,7 @@ func ExamplePrintln() {
 	Println("{S}light grey{!}")
 
 	// many tags at once
-	// underline, cyan text with red background
+	// underline, cyan text with the red background
 	Println("{cR_}text{!}")
 }
 
@@ -86,7 +86,7 @@ func ExampleBell() {
 }
 
 func ExampleNewLine() {
-	// just print new line
+	// just print a new line
 	NewLine()
 }
 

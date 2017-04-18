@@ -15,7 +15,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with pid from pid file is works
+// IsWorks return if process with PID from PID file is works
 func IsWorks(name string) bool {
 	pid := Get(name)
 

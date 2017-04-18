@@ -22,7 +22,7 @@ func Example_Logger() {
 		return
 	}
 
-	// Enable buffered IO with 1 second flush interval
+	// Enable buffered IO with 1-second flush interval
 	logger.EnableBufIO(time.Second)
 
 	// Set minimal log level

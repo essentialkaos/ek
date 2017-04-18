@@ -1,5 +1,9 @@
 ## Changelog
 
+### v8.0.2
+
+* Overall documentation improvements
+
 ### v8.0.1
 
 * `[system/process]` Fixed windows stubs

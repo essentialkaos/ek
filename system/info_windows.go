@@ -76,7 +76,7 @@ type IOStats struct {
 	IOQueueMs     uint64 `json:"io_queue_ms"`    // Weighted time spent doing I/Os (ms)
 }
 
-// SystemInfo contains info about system (hostname, OS, arch...)
+// SystemInfo contains info about a system (hostname, OS, arch...)
 type SystemInfo struct {
 	Hostname string `json:"hostname"` // Hostname
 	OS       string `json:"os"`       // OS name

@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Date is tyny date struct
+// Date is tiny date
 type Date uint32
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -28,7 +28,7 @@ func TinyDate(t int64) Date {
 	return Date(uint32(t) - StartDate)
 }
 
-// Unix return linux timestamp
+// Unix return unix timestamp
 func (d Date) Unix() int64 {
 	return int64(StartDate + uint32(d))
 }

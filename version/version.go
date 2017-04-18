@@ -257,7 +257,6 @@ func (v Version) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// prereleaseLess
 func prereleaseLess(pr1, pr2 string) bool {
 	// Current version is release and given is prerelease
 	if pr1 == "" && pr2 != "" {

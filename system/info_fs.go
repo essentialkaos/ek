@@ -222,7 +222,7 @@ func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// stringSliceToUintSlice conver string slice to uint64 slice
+// stringSliceToUintSlice convert string slice to uint64 slice
 func stringSliceToUintSlice(s []string) []uint64 {
 	var result []uint64
 

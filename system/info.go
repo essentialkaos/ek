@@ -33,7 +33,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SystemInfo contains info about system (hostname, OS, arch...)
+// SystemInfo contains info about a system (hostname, OS, arch...)
 type SystemInfo struct {
 	Hostname     string `json:"hostname"`     // Hostname
 	OS           string `json:"os"`           // OS name

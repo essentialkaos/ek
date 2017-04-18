@@ -40,7 +40,7 @@ func Versions(s []string) {
 	sort.Sort(versionSlice(s))
 }
 
-// VersionCompare compare 2 versions and return true if v1 less v2. This function
+// VersionCompare compares 2 versions and returns true if v1 less v2. This function
 // can be used for version sorting with structs
 func VersionCompare(v1, v2 string) bool {
 	is := strings.Split(v1, ".")

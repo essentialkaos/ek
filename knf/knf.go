@@ -46,7 +46,7 @@ type Config struct {
 // Validator is config property validator struct
 type Validator struct {
 	Property string            // Property name
-	Func     PropertyValidator // Validation func
+	Func     PropertyValidator // Validation function
 	Value    interface{}       // Expected value
 }
 
@@ -61,7 +61,7 @@ var global *Config
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Global read and parse config file
-// global config will be accessible globally from any part of code
+// Global config will be accessible globally from any part of the code
 func Global(file string) error {
 	config, err := Read(file)
 

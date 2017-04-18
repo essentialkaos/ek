@@ -127,7 +127,7 @@ func Parse(expr string) (*Expr, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsDue check if current moment is match fo expression
+// IsDue check if current moment is match for expression
 func (expr *Expr) IsDue(args ...time.Time) bool {
 	var t time.Time
 

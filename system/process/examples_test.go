@@ -22,7 +22,7 @@ func Example_getTree() {
 		return
 	}
 
-	// process is top process in tree
+	// process is a top process in the tree
 	fmt.Println(process.PID)
 }
 

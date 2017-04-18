@@ -22,7 +22,7 @@ func NewErrors() *Errors {
 }
 
 // Chain execute functions in chain and if one of them return error
-// this function stop chain execution and return given error
+// this function stop chain execution and return this error
 func Chain(funcs ...func() error) error {
 	var err error
 

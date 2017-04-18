@@ -130,7 +130,7 @@ func GetDescByCode(code int) string {
 	return statusDesc[code]
 }
 
-// IsURL check if given value is url or not
+// IsURL check if given value is valid URL or not
 func IsURL(url string) bool {
 	switch {
 	case len(url) < 10:
