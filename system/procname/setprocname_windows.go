@@ -10,7 +10,6 @@ package procname
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Set change current process name
-// New process name must have same length or less.
-func Set(name string) {
-	return
+func Set(args []string) error {
+	return nil
 }

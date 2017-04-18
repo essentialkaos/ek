@@ -48,18 +48,17 @@ const (
 
 // V basic argument struct
 type V struct {
-	Type      int     // argument type
-	Max       float64 // maximum integer argument value
-	Min       float64 // minimum integer argument value
-	Alias     string  // list of aliases
-	Conflicts string  // list of conflicts arguments
-	Bound     string  // list of bound arguments
-	Mergeble  bool    // argument supports arguments value merging
-	Required  bool    // argument is required
+	Type      int         // argument type
+	Max       float64     // maximum integer argument value
+	Min       float64     // minimum integer argument value
+	Alias     string      // list of aliases
+	Conflicts string      // list of conflicts arguments
+	Bound     string      // list of bound arguments
+	Mergeble  bool        // argument supports arguments value merging
+	Required  bool        // argument is required
+	Value     interface{} // default value
 
-	set bool // Non exported field
-
-	Value interface{} // default value
+	set bool // non-exported field
 }
 
 // Map is map with list of arguments
@@ -97,7 +96,7 @@ var global *Arguments
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add add new supported argument
+// Add add a new supported argument
 func (args *Arguments) Add(name string, arg *V) error {
 	if !args.initialized {
 		initArgs(args)

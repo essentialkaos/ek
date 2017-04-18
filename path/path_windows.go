@@ -66,7 +66,7 @@ func IsSafe(path string) bool {
 	return false
 }
 
-// IsDotfile return true if file name begins with a full stop
+// IsDotfile return true if filename begins with a full stop
 func IsDotfile(path string) bool {
 	return false
 }

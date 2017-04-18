@@ -144,7 +144,7 @@ func Bell() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Printf remove previous message (if printed) and print new message
+// Printf remove the previous message (if printed) and print new message
 func (t *T) Printf(f string, a ...interface{}) (int, error) {
 	if t.size != 0 {
 		fmt.Printf(getSymbols(_CODE_BACKSPACE, t.size) + "\033[0K")
@@ -155,7 +155,7 @@ func (t *T) Printf(f string, a ...interface{}) (int, error) {
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
 
-// Println remove previous message (if printed) and print new message
+// Println remove the previous message (if printed) and print new message
 func (t *T) Println(a ...interface{}) (int, error) {
 	if t.size != 0 {
 		fmt.Printf(getSymbols(_CODE_BACKSPACE, t.size) + "\033[0K")

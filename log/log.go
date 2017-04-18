@@ -373,7 +373,7 @@ func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
 	return l.Print(CRIT, f, a...)
 }
 
-// Aux write unskipable message (for separators/headers)
+// Aux write unfiltered message (for separators/headers) to logger output
 func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 	if l == nil {
 		return -1, ErrLoggerIsNil

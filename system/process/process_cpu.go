@@ -93,7 +93,7 @@ func GetInfo(pid int) (*ProcInfo, error) {
 	return info, nil
 }
 
-// CalculateCPUUsage calculate cpu usage
+// CalculateCPUUsage calculate CPU usage
 func CalculateCPUUsage(i1, i2 *ProcInfo, duration time.Duration) float64 {
 	if i1 == nil || i2 == nil {
 		return 0.0

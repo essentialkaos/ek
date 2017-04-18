@@ -1,4 +1,4 @@
-// Package update contains update chekers
+// Package update contains update checkers
 package update
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,7 +24,7 @@ type githubRelease struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitHubChecker check new releases on github
+// GitHubChecker check new releases on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 	ghRelease := getLatestGitHubRelease(app, version, data)
 
@@ -37,7 +37,7 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestRelease fetch latest release from GitHub
+// getLatestRelease fetch the latest release from GitHub
 func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine := req.Engine{}
 

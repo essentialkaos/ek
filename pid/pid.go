@@ -21,12 +21,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is path to directory with pid files
+// Dir is path to directory with PID files
 var Dir = "/var/run"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Create create file with process pid file
+// Create create file with process PID file
 func Create(name string) error {
 	err := checkPidDir(Dir)
 
@@ -51,7 +51,7 @@ func Create(name string) error {
 	)
 }
 
-// Remove remove file with process pid file
+// Remove remove file with process PID file
 func Remove(name string) error {
 	err := checkPidDir(Dir)
 
@@ -64,7 +64,7 @@ func Remove(name string) error {
 	return os.Remove(pidFile)
 }
 
-// Get return pid from pid file
+// Get return PID from PID file
 func Get(name string) int {
 	err := checkPidDir(Dir)
 
@@ -90,7 +90,7 @@ func Get(name string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// checkPidDir check dir path and return error if dir not ok
+// checkPidDir check directory path and return error if directory not ok
 func checkPidDir(path string) error {
 	switch {
 	case fsutil.IsExist(path) == false:
@@ -106,7 +106,7 @@ func checkPidDir(path string) error {
 	return nil
 }
 
-// normalizePidFilename return pidfile name with extension
+// normalizePidFilename return PID file name with extension
 func normalizePidFilename(name string) string {
 	if !strings.Contains(name, ".pid") {
 		return name + ".pid"

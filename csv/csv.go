@@ -24,7 +24,7 @@ type Reader struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader create new reader
+// NewReader create new CSV reader
 func NewReader(r io.Reader) *Reader {
 	return &Reader{
 		Comma: ';',
@@ -34,7 +34,7 @@ func NewReader(r io.Reader) *Reader {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Read reads line from csv file
+// Read reads line from CSV file
 func (r *Reader) Read() ([]string, error) {
 	str, _, err := r.br.ReadLine()
 

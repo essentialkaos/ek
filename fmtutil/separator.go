@@ -16,13 +16,13 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SeparatorColorTag is fmtc color tag used for separator (light grey by default)
+// SeparatorColorTag is fmtc color tag used for separator (light gray by default)
 var SeparatorColorTag string = "{s}"
 
-// SeparatorTitleColorTag is fmtc color tag used for separator title (light grey by default)
+// SeparatorTitleColorTag is fmtc color tag used for separator title (light gray by default)
 var SeparatorTitleColorTag = "{s}"
 
-// SeparatorFullscreen allow to enable full screen separator
+// SeparatorFullscreen allow enabling full-screen separator
 var SeparatorFullscreen = false
 
 // SeparatorSize contains size of separator

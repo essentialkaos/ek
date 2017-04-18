@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PropertyValidator is default type of property validation func
+// PropertyValidator is default type of property validation function
 type PropertyValidator func(config *Config, prop string, value interface{}) error
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -83,7 +83,7 @@ var Greater = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Equals check if given config property is equals then defined value or not
+// Equals check if given config property equals to defined value or not
 var Equals = func(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:

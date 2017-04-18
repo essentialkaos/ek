@@ -44,7 +44,7 @@ type About struct {
 	UpdateChecker UpdateChecker
 }
 
-// Info contains info about commands, options and examples
+// Info contains info about commands, options, and examples
 type Info struct {
 	CommandsColorTag string // CommandsColor contains default commands color
 	OptionsColorTag  string // OptionsColor contains default options color
@@ -106,7 +106,7 @@ func (info *Info) AddGroup(group string) {
 	info.curGroup = group
 }
 
-// AddCommand add command (name, desc, args)
+// AddCommand add command (name, description, args)
 func (info *Info) AddCommand(a ...string) {
 	group := "Commands"
 
@@ -117,12 +117,12 @@ func (info *Info) AddCommand(a ...string) {
 	appendOption(a, &info.commands, group)
 }
 
-// AddOption add option (name, desc, args)
+// AddOption add option (name, description, args)
 func (info *Info) AddOption(a ...string) {
 	appendOption(a, &info.options, "Options")
 }
 
-// AddExample add example for some command (command, desc)
+// AddExample add example for some command (command, description)
 func (info *Info) AddExample(a ...string) {
 	if len(a) == 0 {
 		return

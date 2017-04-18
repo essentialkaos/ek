@@ -17,7 +17,7 @@ func ExampleSeparator() {
 	// You can change color of separator symbols and title using fmtc color tags
 
 	SeparatorColorTag = "{r}"       // Set color to red
-	SeparatorTitleColorTag = "{r*}" // Set color red and bold weight
+	SeparatorTitleColorTag = "{r*}" // Set color to red with bold weight
 
 	// Or you can remove colors
 	SeparatorColorTag = ""
