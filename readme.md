@@ -1,5 +1,7 @@
 # `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v8?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v8) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
 
+[![Join the chat at https://gitter.im/essentialkaos/ek](https://badges.gitter.im/essentialkaos/ek.svg)](https://gitter.im/essentialkaos/ek?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Auxiliary packages for Go.
 
 ## Platform support
