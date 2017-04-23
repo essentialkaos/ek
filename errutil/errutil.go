@@ -8,6 +8,8 @@ package errutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import "strings"
+
 // Errors is struct for handling many errors at once
 type Errors struct {
 	num    int
@@ -15,6 +17,14 @@ type Errors struct {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func (e Errors) Error() string {
+	var r []string
+	for _, err := range e.errors {
+		r = append(r, err.Error() + "\n")
+	}
+	return strings.Join(r, "")
+}
 
 // NewErrors creates new struct
 func NewErrors() *Errors {
