@@ -1,5 +1,9 @@
 ## Changelog
 
+### v8.0.3
+
+* `[usage]` Improved options and commands info rendering
+
 ### v8.0.2
 
 * Overall documentation improvements
