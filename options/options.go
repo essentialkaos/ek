@@ -1,0 +1,732 @@
+// Package options provides methods for working with command-line options
+package options
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+//                                                                                    //
+//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
+//                                                                                    //
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Options types
+const (
+	STRING = 0
+	INT    = 1
+	BOOL   = 2
+	FLOAT  = 3
+)
+
+// Error codes
+const (
+	ERROR_UNSUPPORTED         = 0
+	ERROR_NO_NAME             = 1
+	ERROR_DUPLICATE_LONGNAME  = 2
+	ERROR_DUPLICATE_SHORTNAME = 3
+	ERROR_OPTION_IS_NIL       = 4
+	ERROR_EMPTY_VALUE         = 5
+	ERROR_REQUIRED_NOT_SET    = 6
+	ERROR_WRONG_FORMAT        = 7
+	ERROR_CONFLICT            = 8
+	ERROR_BOUND_NOT_SET       = 9
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// V basic option struct
+type V struct {
+	Type      int         // option type
+	Max       float64     // maximum integer option value
+	Min       float64     // minimum integer option value
+	Alias     string      // list of aliases
+	Conflicts string      // list of conflicts options
+	Bound     string      // list of bound options
+	Mergeble  bool        // option supports options value merging
+	Required  bool        // option is required
+	Value     interface{} // default value
+
+	set bool // non-exported field
+}
+
+// Map is map with list of options
+type Map map[string]*V
+
+// Options options struct
+type Options struct {
+	full        Map
+	short       map[string]string
+	initialized bool
+
+	hasRequired  bool
+	hasBound     bool
+	hasConflicts bool
+}
+
+// OptionError argument parsing error
+type OptionError struct {
+	Option      string
+	BoundOption string
+	Type        int
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type optionName struct {
+	Long  string
+	Short string
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// global is global options
+var global *Options
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Add add a new supported option
+func (opts *Options) Add(name string, option *V) error {
+	if !opts.initialized {
+		initOptions(opts)
+	}
+
+	optName := parseName(name)
+
+	switch {
+	case option == nil:
+		return OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}
+	case optName.Long == "":
+		return OptionError{"", "", ERROR_NO_NAME}
+	case opts.full[optName.Long] != nil:
+		return OptionError{"--" + optName.Long, "", ERROR_DUPLICATE_LONGNAME}
+	case optName.Short != "" && opts.short[optName.Short] != "":
+		return OptionError{"-" + optName.Short, "", ERROR_DUPLICATE_SHORTNAME}
+	}
+
+	if option.Required {
+		opts.hasRequired = true
+	}
+
+	if option.Bound != "" {
+		opts.hasBound = true
+	}
+
+	if option.Conflicts != "" {
+		opts.hasConflicts = true
+	}
+
+	opts.full[optName.Long] = option
+
+	if optName.Short != "" {
+		opts.short[optName.Short] = optName.Long
+	}
+
+	if option.Alias != "" {
+		aliases := parseOptionsList(option.Alias)
+
+		for _, l := range aliases {
+			opts.full[l.Long] = option
+
+			if l.Short != "" {
+				opts.short[l.Short] = optName.Long
+			}
+		}
+	}
+
+	return nil
+}
+
+// AddMap add supported options as map
+func (opts *Options) AddMap(optMap Map) []error {
+	var errs []error
+
+	for name, opt := range optMap {
+		err := opts.Add(name, opt)
+
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return errs
+}
+
+// GetS return option value as string
+func (opts *Options) GetS(name string) string {
+	optName := parseName(name)
+	opt, ok := opts.full[optName.Long]
+
+	switch {
+	case !ok:
+		return ""
+	case opts.full[optName.Long].Value == nil:
+		return ""
+	case opt.Type == INT:
+		return strconv.Itoa(opt.Value.(int))
+	case opt.Type == FLOAT:
+		return strconv.FormatFloat(opt.Value.(float64), 'f', -1, 64)
+	case opt.Type == BOOL:
+		return strconv.FormatBool(opt.Value.(bool))
+	default:
+		return opt.Value.(string)
+	}
+}
+
+// GetI return option value as integer
+func (opts *Options) GetI(name string) int {
+	optName := parseName(name)
+	opt, ok := opts.full[optName.Long]
+
+	switch {
+	case !ok:
+		return 0
+
+	case opts.full[optName.Long].Value == nil:
+		return 0
+
+	case opt.Type == STRING:
+		result, err := strconv.Atoi(opt.Value.(string))
+		if err == nil {
+			return result
+		}
+		return 0
+
+	case opt.Type == FLOAT:
+		return int(opt.Value.(float64))
+
+	case opt.Type == BOOL:
+		if opt.Value.(bool) {
+			return 1
+		}
+		return 0
+
+	default:
+		return opt.Value.(int)
+	}
+}
+
+// GetB return option value as boolean
+func (opts *Options) GetB(name string) bool {
+	optName := parseName(name)
+	opt, ok := opts.full[optName.Long]
+
+	switch {
+	case !ok:
+		return false
+
+	case opts.full[optName.Long].Value == nil:
+		return false
+
+	case opt.Type == STRING:
+		if opt.Value.(string) == "" {
+			return false
+		}
+		return true
+
+	case opt.Type == FLOAT:
+		if opt.Value.(float64) > 0 {
+			return true
+		}
+		return false
+
+	case opt.Type == INT:
+		if opt.Value.(int) > 0 {
+			return true
+		}
+		return false
+
+	default:
+		return opt.Value.(bool)
+	}
+}
+
+// GetF return option value as floating number
+func (opts *Options) GetF(name string) float64 {
+	optName := parseName(name)
+	opt, ok := opts.full[optName.Long]
+
+	switch {
+	case !ok:
+		return 0.0
+
+	case opts.full[optName.Long].Value == nil:
+		return 0.0
+
+	case opt.Type == STRING:
+		result, err := strconv.ParseFloat(opt.Value.(string), 64)
+		if err == nil {
+			return result
+		}
+		return 0.0
+
+	case opt.Type == INT:
+		return float64(opt.Value.(int))
+
+	case opt.Type == BOOL:
+		if opt.Value.(bool) {
+			return 1.0
+		}
+		return 0.0
+
+	default:
+		return opt.Value.(float64)
+	}
+}
+
+// Has check that option exists and set
+func (opts *Options) Has(name string) bool {
+	opt, ok := opts.full[parseName(name).Long]
+
+	if !ok {
+		return false
+	}
+
+	if !opt.set {
+		return false
+	}
+
+	return true
+}
+
+// Parse parse options
+func (opts *Options) Parse(rawOpts []string, optMap ...Map) ([]string, []error) {
+	var errs []error
+
+	if len(optMap) != 0 {
+		for _, m := range optMap {
+			errs = append(errs, opts.AddMap(m)...)
+		}
+	}
+
+	if len(errs) != 0 {
+		return []string{}, errs
+	}
+
+	return opts.parseOptions(rawOpts)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// NewOptions create new options struct
+func NewOptions() *Options {
+	return &Options{
+		full:        make(Map),
+		short:       make(map[string]string),
+		initialized: true,
+	}
+}
+
+// Add add new supported option
+func Add(name string, opt *V) error {
+	if global == nil || global.initialized == false {
+		global = NewOptions()
+	}
+
+	return global.Add(name, opt)
+}
+
+// AddMap add supported option as map
+func AddMap(optMap Map) []error {
+	if global == nil || global.initialized == false {
+		global = NewOptions()
+	}
+
+	return global.AddMap(optMap)
+}
+
+// GetS return option value as string
+func GetS(name string) string {
+	if global == nil || global.initialized == false {
+		return ""
+	}
+
+	return global.GetS(name)
+}
+
+// GetI return option value as integer
+func GetI(name string) int {
+	if global == nil || global.initialized == false {
+		return 0
+	}
+
+	return global.GetI(name)
+}
+
+// GetB return option value as boolean
+func GetB(name string) bool {
+	if global == nil || global.initialized == false {
+		return false
+	}
+
+	return global.GetB(name)
+}
+
+// GetF return option value as floating number
+func GetF(name string) float64 {
+	if global == nil || global.initialized == false {
+		return 0.0
+	}
+
+	return global.GetF(name)
+}
+
+// Has check that option exists and set
+func Has(name string) bool {
+	if global == nil || global.initialized == false {
+		return false
+	}
+
+	return global.Has(name)
+}
+
+// Parse parse options
+func Parse(optMap ...Map) ([]string, []error) {
+	if global == nil || global.initialized == false {
+		global = NewOptions()
+	}
+
+	return global.Parse(os.Args[1:], optMap...)
+}
+
+// ParseOptionName parse combined name and return long and short options
+func ParseOptionName(name string) (string, string) {
+	a := parseName(name)
+	return a.Long, a.Short
+}
+
+// Q merge several options to string
+func Q(opts ...string) string {
+	return strings.Join(opts, " ")
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
+	if len(rawOpts) == 0 {
+		return nil, opts.validate()
+	}
+
+	var (
+		optName    string
+		nonOptList []string
+		errorList  []error
+	)
+
+	for _, curOpt := range rawOpts {
+		if optName == "" {
+			var (
+				curOptName  string
+				curOptValue string
+				err         error
+			)
+
+			var curOptLen = len(curOpt)
+
+			switch {
+			case strings.TrimRight(curOpt, "-") == "":
+				nonOptList = append(nonOptList, curOpt)
+				continue
+
+			case curOptLen > 2 && curOpt[0:2] == "--":
+				curOptName, curOptValue, err = opts.parseLongOption(curOpt[2:curOptLen])
+
+			case curOptLen > 1 && curOpt[0:1] == "-":
+				curOptName, curOptValue, err = opts.parseShortOption(curOpt[1:curOptLen])
+
+			default:
+				nonOptList = append(nonOptList, curOpt)
+				continue
+			}
+
+			if err != nil {
+				errorList = append(errorList, err)
+				continue
+			}
+
+			if curOptValue != "" {
+				errorList = appendError(
+					errorList,
+					updateOption(opts.full[curOptName], curOptName, curOptValue),
+				)
+			} else {
+				if opts.full[curOptName] != nil && opts.full[curOptName].Type == BOOL {
+					errorList = appendError(
+						errorList,
+						updateOption(opts.full[curOptName], curOptName, ""),
+					)
+				} else {
+					optName = curOptName
+				}
+			}
+		} else {
+			errorList = appendError(
+				errorList,
+				updateOption(opts.full[optName], optName, curOpt),
+			)
+
+			optName = ""
+		}
+	}
+
+	errorList = append(errorList, opts.validate()...)
+
+	if optName != "" {
+		errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+	}
+
+	return nonOptList, errorList
+}
+
+func (opts *Options) parseLongOption(opt string) (string, string, error) {
+	if strings.Contains(opt, "=") {
+		optSlice := strings.Split(opt, "=")
+
+		if len(optSlice) <= 1 || optSlice[1] == "" {
+			return "", "", OptionError{"--" + optSlice[0], "", ERROR_WRONG_FORMAT}
+		}
+
+		return optSlice[0], strings.Join(optSlice[1:], "="), nil
+	}
+
+	if opts.full[opt] != nil {
+		return opt, "", nil
+	}
+
+	return "", "", OptionError{"--" + opt, "", ERROR_UNSUPPORTED}
+}
+
+func (opts *Options) parseShortOption(opt string) (string, string, error) {
+	if strings.Contains(opt, "=") {
+		optSlice := strings.Split(opt, "=")
+
+		if len(optSlice) <= 1 || optSlice[1] == "" {
+			return "", "", OptionError{"-" + optSlice[0], "", ERROR_WRONG_FORMAT}
+		}
+
+		optName := optSlice[0]
+
+		if opts.short[optName] == "" {
+			return "", "", OptionError{"-" + optName, "", ERROR_UNSUPPORTED}
+		}
+
+		return opts.short[optName], strings.Join(optSlice[1:], "="), nil
+	}
+
+	if opts.short[opt] == "" {
+		return "", "", OptionError{"-" + opt, "", ERROR_UNSUPPORTED}
+	}
+
+	return opts.short[opt], "", nil
+}
+
+func (opts *Options) validate() []error {
+	if !opts.hasRequired && !opts.hasBound && !opts.hasConflicts {
+		return nil
+	}
+
+	var errorList []error
+
+	for n, v := range opts.full {
+		if v.Required == true && v.Value == nil {
+			errorList = append(errorList, OptionError{n, "", ERROR_REQUIRED_NOT_SET})
+		}
+
+		if v.Conflicts != "" {
+			conflicts := parseOptionsList(v.Conflicts)
+
+			for _, c := range conflicts {
+				if opts.Has(c.Long) {
+					errorList = append(errorList, OptionError{n, c.Long, ERROR_CONFLICT})
+				}
+			}
+		}
+
+		if v.Bound != "" {
+			bound := parseOptionsList(v.Bound)
+
+			for _, b := range bound {
+				if !opts.Has(b.Long) {
+					errorList = append(errorList, OptionError{n, b.Long, ERROR_BOUND_NOT_SET})
+				}
+			}
+		}
+	}
+
+	return errorList
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func initOptions(opts *Options) {
+	opts.full = make(Map)
+	opts.short = make(map[string]string)
+	opts.initialized = true
+}
+
+func parseName(name string) optionName {
+	na := strings.Split(name, ":")
+
+	if len(na) == 1 {
+		return optionName{na[0], ""}
+	}
+
+	return optionName{na[1], na[0]}
+}
+
+func parseOptionsList(list string) []optionName {
+	var result []optionName
+
+	for _, a := range strings.Split(list, " ") {
+		result = append(result, parseName(a))
+	}
+
+	return result
+}
+
+func updateOption(opt *V, name string, value string) error {
+	switch opt.Type {
+	case STRING:
+		return updateStringOption(opt, value)
+
+	case BOOL:
+		return updateBooleanOption(opt)
+
+	case FLOAT:
+		return updateFloatOption(name, opt, value)
+
+	case INT:
+		return updateIntOption(name, opt, value)
+	}
+
+	return fmt.Errorf("Option --%s has unsupported type", parseName(name).Long)
+}
+
+func updateStringOption(opt *V, value string) error {
+	if opt.set && opt.Mergeble {
+		opt.Value = opt.Value.(string) + " " + value
+	} else {
+		opt.Value = value
+		opt.set = true
+	}
+
+	return nil
+}
+
+func updateBooleanOption(opt *V) error {
+	opt.Value = true
+	opt.set = true
+
+	return nil
+}
+
+func updateFloatOption(name string, opt *V, value string) error {
+	floatValue, err := strconv.ParseFloat(value, 64)
+
+	if err != nil {
+		return OptionError{"--" + name, "", ERROR_WRONG_FORMAT}
+	}
+
+	var resultFloat float64
+
+	if opt.Min != opt.Max {
+		resultFloat = betweenFloat(floatValue, opt.Min, opt.Max)
+	} else {
+		resultFloat = floatValue
+	}
+
+	if opt.set && opt.Mergeble {
+		opt.Value = opt.Value.(float64) + resultFloat
+	} else {
+		opt.Value = resultFloat
+		opt.set = true
+	}
+
+	return nil
+}
+
+func updateIntOption(name string, opt *V, value string) error {
+	intValue, err := strconv.Atoi(value)
+
+	if err != nil {
+		return OptionError{"--" + name, "", ERROR_WRONG_FORMAT}
+	}
+
+	var resultInt int
+
+	if opt.Min != opt.Max {
+		resultInt = betweenInt(intValue, int(opt.Min), int(opt.Max))
+	} else {
+		resultInt = intValue
+	}
+
+	if opt.set && opt.Mergeble {
+		opt.Value = opt.Value.(int) + resultInt
+	} else {
+		opt.Value = resultInt
+		opt.set = true
+	}
+
+	return nil
+}
+
+func appendError(errList []error, err error) []error {
+	if err == nil {
+		return errList
+	}
+
+	return append(errList, err)
+}
+
+func betweenInt(val, min, max int) int {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
+}
+
+func betweenFloat(val, min, max float64) float64 {
+	switch {
+	case val < min:
+		return min
+	case val > max:
+		return max
+	default:
+		return val
+	}
+}
+
+func (e OptionError) Error() string {
+	switch e.Type {
+	default:
+		return fmt.Sprintf("Option %s is not supported", e.Option)
+	case ERROR_EMPTY_VALUE:
+		return fmt.Sprintf("Non-boolean option %s is empty", e.Option)
+	case ERROR_REQUIRED_NOT_SET:
+		return fmt.Sprintf("Required option %s is not set", e.Option)
+	case ERROR_WRONG_FORMAT:
+		return fmt.Sprintf("Option %s has wrong format", e.Option)
+	case ERROR_OPTION_IS_NIL:
+		return fmt.Sprintf("Struct for option %s is nil", e.Option)
+	case ERROR_DUPLICATE_LONGNAME, ERROR_DUPLICATE_SHORTNAME:
+		return fmt.Sprintf("Option %s defined 2 or more times", e.Option)
+	case ERROR_NO_NAME:
+		return "Some option does not have a name"
+	case ERROR_CONFLICT:
+		return fmt.Sprintf("Option %s conflicts with option %s", e.Option, e.BoundOption)
+	case ERROR_BOUND_NOT_SET:
+		return fmt.Sprintf("Option %s must be defined with option %s", e.BoundOption, e.Option)
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //

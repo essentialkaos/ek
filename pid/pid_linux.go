@@ -10,7 +10,7 @@ package pid
 import (
 	"fmt"
 
-	"pkg.re/essentialkaos/ek.v8/fsutil"
+	"pkg.re/essentialkaos/ek.v9/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

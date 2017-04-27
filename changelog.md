@@ -1,8 +1,11 @@
 ## Changelog
 
-### v8.0.4
+### v9.0.0
 
+* Package `args` renamed to `options` (_incompatible changes_)
 * `[usage]` Code refactoring
+
+---
 
 ### v8.0.3
 

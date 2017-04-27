@@ -133,8 +133,8 @@ func (s *SystemSuite) TestNet(c *C) {
 	c.Assert(err, IsNil)
 
 	in, out := CalculateNetworkSpeed(
-		map[string]*InterfaceInfo{"eth0": &InterfaceInfo{0, 0, 0, 0}},
-		map[string]*InterfaceInfo{"eth0": &InterfaceInfo{0, 0, 0, 0}},
+		map[string]*InterfaceInfo{"eth0": {0, 0, 0, 0}},
+		map[string]*InterfaceInfo{"eth0": {0, 0, 0, 0}},
 		time.Second,
 	)
 
@@ -234,9 +234,9 @@ func (s *SystemSuite) TestFS(c *C) {
 
 	util = CalculateIOUtil(
 		&CPUInfo{24.0, 25.0, 25.0, 25.0, 25.0, 10},
-		map[string]*FSInfo{"abc": &FSInfo{Device: "abc", IOStats: &IOStats{IOQueueMs: 1}}},
+		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOQueueMs: 1}}},
 		&CPUInfo{25.0, 25.0, 25.0, 25.0, 25.0, 10},
-		map[string]*FSInfo{"abc": &FSInfo{Device: "abc", IOStats: &IOStats{IOQueueMs: 3}}},
+		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOQueueMs: 3}}},
 	)
 
 	c.Assert(util, NotNil)
