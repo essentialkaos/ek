@@ -195,12 +195,13 @@ func (about *About) Render() {
 
 	if about.Owner != "" {
 		if about.Year == 0 {
-			fmtc.Printf("{s-}Copyright (C) %s{!}\n", about.Owner)
+			fmtc.Printf(
+				"{s-}Copyright (C) %d %s{!}\n",
+				time.Now().Year(), about.Owner)
 		} else {
 			fmtc.Printf(
 				"{s-}Copyright (C) %d-%d %s{!}\n",
-				about.Year, time.Now().Year(), about.Owner,
-			)
+				about.Year, time.Now().Year(), about.Owner)
 		}
 	}
 
@@ -216,7 +217,7 @@ func (about *About) Render() {
 		)
 
 		if hasUpdate && isNewerVersion(about.Version, newVersion) {
-			printNewVersionInfo(newVersion, releaseDate)
+			printNewVersionInfo(about.Version, newVersion, releaseDate)
 		}
 	}
 
@@ -394,31 +395,39 @@ func isNewerVersion(current, latest string) bool {
 }
 
 // printNewVersionInfo print info about latest release
-func printNewVersionInfo(newVersion string, releaseDate time.Time) {
-	fmtc.NewLine()
+func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
+	cv, err := version.Parse(curVersion)
+
+	if err != nil {
+		return
+	}
+
+	nv, err := version.Parse(newVersion)
+
+	if err != nil {
+		return
+	}
 
 	days := int(time.Since(releaseDate) / (time.Hour * 24))
 
-	var colorTag string
+	colorTag := "{s}"
 
 	switch {
-	case days < 14:
-		colorTag = "{s}"
-	case days < 60:
-		colorTag = "{y}"
-	default:
+	case cv.Major() != nv.Major():
 		colorTag = "{r}"
+	case cv.Minor() != nv.Minor():
+		colorTag = "{y}"
 	}
 
-	if days < 2 {
-		fmtc.Printf(
-			colorTag+"Latest version is %s (released 1 day ago){!}\n",
-			newVersion,
-		)
-	} else {
-		fmtc.Printf(
-			colorTag+"Latest version is %s (released %d days ago){!}\n",
-			newVersion, days,
-		)
+	fmtc.NewLine()
+	fmtc.Printf(colorTag+"Latest version is %s{!} ", newVersion)
+
+	switch days {
+	case 0:
+		fmtc.Println("{s-}(released today){!}")
+	case 1:
+		fmtc.Println("{s-}(released 1 day ago){!}")
+	default:
+		fmtc.Printf("{s-}(released %d days ago){!}\n", days)
 	}
 }
