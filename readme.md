@@ -28,7 +28,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 
 ## Packages
 
-* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v9/color) - Package color provides methods for working with colors
+* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v9/color) - Package provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v9/cron) - Package provides methods for working with cron expressions
 * [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v9/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
 * [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v9/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
@@ -47,10 +47,10 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/mathutil) - Package with math utils
 * [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/netutil) - Package with network utils
 * [`options`](https://godoc.org/pkg.re/essentialkaos/ek.v9/options) - Package provides methods for working with command-line options
-* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v9/passwd) - Package passwd contains methods for working with passwords
+* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v9/passwd) - Package contains methods for working with passwords
 * [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v9/path) - Package for working with paths (fully compatible with base path package)
 * [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v9/pid) - Package for working with PID files
-* [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v9/pluralize) - Package pluralize provides methods for pluralization
+* [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v9/pluralize) - Package provides methods for pluralization
 * [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v9/rand) - Package for generating random data
 * [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v9/req) - Package for working with HTTP request
 * [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v9/signal) - Package for handling signals
@@ -58,7 +58,9 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/sortutil) - Package with utils for sorting slices
 * [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v9/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
 * [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/strutil) - Package provides utils for working with strings
+* [`system/exec`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for executing commands
 * [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for getting information about active processes
+* [`system/procname`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for changing process name in the process tree
 * [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal) - Package provides methods for working with user input
 * [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal/window) - Package provides methods for working terminal window
