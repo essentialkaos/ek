@@ -36,6 +36,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/errutil) - Package provides methods for working with errors
 * [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtc) - Package provides methods similar to fmt for colored output
 * [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtutil) - Package provides methods for output formatting
+* [`fmtutil/table`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtutil/table) - Package table contains methods and structs for rendering data as a table
 * [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fsutil) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
 * [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v9/hash) - Package hash contains different hash algorithms and utilities
 * [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/httputil) - Package provides methods for working with HTTP request/responses

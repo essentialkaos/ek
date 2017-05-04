@@ -23,6 +23,8 @@ type FmtUtilSuite struct{}
 
 var _ = Suite(&FmtUtilSuite{})
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(999), Equals, "999")
 	c.Assert(PrettyNum(1000), Equals, "1,000")

@@ -3,6 +3,7 @@
 ### v9.0.0
 
 * Package `args` renamed to `options` (_incompatible changes_)
+* `[fmtutil/table]` Added new package for rendering data as a table
 * `[usage]` Code refactoring
 
 ---
