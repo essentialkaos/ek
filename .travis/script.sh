@@ -91,6 +91,10 @@ testWithCover() {
 
   done < <(awk 1 $package_list)
 
+  if [[ $has_errors ]] ; then
+    exit 1
+  fi
+
   echo -e "\nSending data to Coveralls..."
 
   goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
