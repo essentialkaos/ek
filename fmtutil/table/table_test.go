@@ -40,6 +40,16 @@ func (s *TableSuite) TestSetHeaders(c *C) {
 	c.Assert(t.Headers, HasLen, 3)
 }
 
+func (s *TableSuite) TestHasData(c *C) {
+	t := NewTable("1", "2", "3")
+
+	c.Assert(t.HasData(), Equals, false)
+
+	c.Assert(t.Add(10, "abc", 3.14), NotNil)
+
+	c.Assert(t.HasData(), Equals, true)
+}
+
 func (s *TableSuite) TestSetSizes(c *C) {
 	var t *Table
 

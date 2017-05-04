@@ -115,6 +115,11 @@ func (t *Table) Print(data ...interface{}) *Table {
 	return t
 }
 
+// HasData return true if table have some data
+func (t *Table) HasData() bool {
+	return t != nil && len(t.data) != 0
+}
+
 // Separator print separator
 func (t *Table) Separator() *Table {
 	if t == nil {
