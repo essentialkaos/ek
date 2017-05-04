@@ -68,6 +68,10 @@ testWithCover() {
 
     read cover_enabled package_dir <<< "$package"
 
+    if [[ "$cover_enabled" == "!" ]] ; then
+      continue
+    fi 
+
     if [[ "$cover_enabled" == "-" ]] ; then
       go test $dir/$package_dir -covermode=count
 

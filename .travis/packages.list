@@ -33,7 +33,7 @@
 + system/process
 + system/procname
 - terminal
-- terminal/window
+! terminal/window
 + timeutil
 + tmp
 + usage
