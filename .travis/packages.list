@@ -29,9 +29,9 @@
 + spellcheck
 + strutil
 - system
-+ system/exec
-+ system/process
-+ system/procname
+- system/exec
+- system/process
+- system/procname
 - terminal
 ! terminal/window
 + timeutil
