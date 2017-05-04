@@ -36,7 +36,7 @@
 ! terminal/window
 + timeutil
 + tmp
-- usage
++ usage
 - usage/update
 + uuid
 + version
