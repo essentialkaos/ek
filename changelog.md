@@ -4,6 +4,7 @@
 
 * Package `args` renamed to `options` (_incompatible changes_)
 * `[fmtutil/table]` Added new package for rendering data as a table
+* `[fmtutil]` Added support of separator symbol configuration
 * `[usage]` Improved output about a newer version
 * `[usage]` Increased code coverage (0.0% → 100%)
 * `[usage]` Code refactoring
