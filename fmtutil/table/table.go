@@ -10,7 +10,6 @@ package table
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v9/fmtc"
@@ -20,17 +19,19 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MIN_WINDOW_SIZE is minimal window size
-const MIN_WINDOW_SIZE = 88
+// Column alignment flags
+const (
+	ALIGN_LEFT   uint8 = 0
+	ALIGN_CENTER       = 1
+	ALIGN_RIGHT        = 2
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Table struct {
-	Sizes   []int    // Custom columns sizes
-	Headers []string // Slice with headers
-
-	HeaderCapitalize bool   // Capitalize headers
-	HeaderColorTag   string // Customize headers color
+	Sizes     []int    // Custom columns sizes
+	Headers   []string // Slice with headers
+	Alignment []uint8  // Columns alignment
 
 	// Slice with data
 	data [][]string
@@ -53,6 +54,9 @@ var HeaderCapitalize = false
 // HeaderColorTag is fmtc tag used for headers by default for all tables
 var HeaderColorTag = "{*}"
 
+// SeparatorSymbol used for separator generation
+var SeparatorSymbol = "–"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTable create new table struct
@@ -62,7 +66,7 @@ func NewTable(headers ...string) *Table {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetHeaders set columns headers
+// SetHeaders allow to set columns headers
 func (t *Table) SetHeaders(headers ...string) *Table {
 	if t == nil {
 		return nil
@@ -73,13 +77,24 @@ func (t *Table) SetHeaders(headers ...string) *Table {
 	return t
 }
 
-// SetSizes set column sizes
+// SetSizes allow to set column sizes
 func (t *Table) SetSizes(sizes ...int) *Table {
 	if t == nil {
 		return nil
 	}
 
 	t.Sizes = sizes
+
+	return t
+}
+
+// SetAlignment allow to set column alignment
+func (t *Table) SetAlignment(align ...uint8) *Table {
+	if t == nil {
+		return nil
+	}
+
+	t.Alignment = align
 
 	return t
 }
@@ -127,7 +142,7 @@ func (t *Table) Separator() *Table {
 	}
 
 	if t.separator == "" {
-		t.separator = renderSeparator(t.columnSizes)
+		t.separator = strings.Repeat(SeparatorSymbol, getSeparatorSize(t))
 	}
 
 	fmtc.Println("{s}" + t.separator + "{!}")
@@ -184,8 +199,6 @@ func renderHeaders(t *Table) {
 		return
 	}
 
-	colorTag := getHeaderColorTag(t)
-	headerCapitalize := getHeaderCapitalize(t)
 	totalHeaders := len(t.Headers)
 	totalColumns := len(t.columnSizes)
 
@@ -198,15 +211,16 @@ func renderHeaders(t *Table) {
 			headerText = t.Headers[columnIndex]
 		}
 
-		if headerCapitalize {
+		if HeaderCapitalize {
 			headerText = strings.ToUpper(headerText)
 		}
 
-		if columnIndex+1 == totalColumns {
-			fmtc.Printf(" "+colorTag+"%s{!}\n", headerText)
+		fmtc.Printf(" " + HeaderColorTag + formatText(headerText, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+
+		if columnIndex+1 != totalColumns {
+			fmtc.Printf("{s}|{!}")
 		} else {
-			headerSizeStr := strconv.Itoa(t.columnSizes[columnIndex])
-			fmtc.Printf(" "+colorTag+"%"+headerSizeStr+"s{!} {s}|{!}", headerText)
+			fmtc.NewLine()
 		}
 	}
 
@@ -231,10 +245,10 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 			break
 		}
 
-		if columnIndex+1 == totalColumns {
-			fmtc.Printf(" %s", fmtc.Sprintf(columnData))
-		} else {
-			fmtc.Printf(" " + alignData(columnData, t.columnSizes[columnIndex]) + " {s}|{!}")
+		fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+
+		if columnIndex+1 != totalColumns {
+			fmtc.Printf("{s}|{!}")
 		}
 	}
 
@@ -287,6 +301,21 @@ func calculateColumnSizes(t *Table) []int {
 		}
 	}
 
+	var fullSize int
+
+	windowWidth := getWindowWidth()
+
+	for columnIndex, columnSize := range t.columnSizes {
+		if columnIndex+1 == totalColumns {
+			if fullSize+columnSize < windowWidth {
+				t.columnSizes[columnIndex] = ((windowWidth - fullSize) - (totalColumns * 3)) + 1
+				break
+			}
+		}
+
+		fullSize += columnSize
+	}
+
 	return t.columnSizes
 }
 
@@ -313,32 +342,8 @@ func getColumnsNum(t *Table) int {
 	return len(t.Sizes)
 }
 
-// renderSeparator render separator
-func renderSeparator(sizes []int) string {
-	var result string
-
-	columns := len(sizes)
-
-	for columnIndex, columnSize := range sizes {
-		result += strings.Repeat("-", columnSize+2)
-
-		if columnIndex+1 != columns {
-			result += "+"
-		}
-	}
-
-	winWidth := getWindowWidth()
-	resultLen := len(result)
-
-	if resultLen < winWidth {
-		result += strings.Repeat("-", winWidth-resultLen)
-	}
-
-	return result
-}
-
-// alignRecord align records with color tags
-func alignData(data string, size int) string {
+// formatText align text with color tags
+func formatText(data string, size int, align uint8) string {
 	var dataSize int
 
 	if strings.Contains(data, "{") {
@@ -351,28 +356,46 @@ func alignData(data string, size int) string {
 		return data
 	}
 
-	return strings.Repeat(" ", size-dataSize) + data
+	switch align {
+	case ALIGN_RIGHT:
+		return strings.Repeat(" ", size-dataSize) + data
+
+	case ALIGN_CENTER:
+		prefixSize := (size - dataSize) / 2
+		suffixSize := size - (prefixSize + dataSize)
+		return strings.Repeat(" ", prefixSize) + data + strings.Repeat(" ", suffixSize)
+	}
+
+	return data + strings.Repeat(" ", size-dataSize)
+}
+
+// getAlignment return align for given column
+func getAlignment(t *Table, columnIndex int) uint8 {
+	l := len(t.Alignment)
+
+	if l == 0 || columnIndex >= l {
+		return 0
+	}
+
+	return t.Alignment[columnIndex]
+}
+
+// getSeparatorSize return separator size based on size of all columns
+func getSeparatorSize(t *Table) int {
+	if len(t.columnSizes) == 0 {
+		return getWindowWidth()
+	}
+
+	var size int
+
+	for _, columnSize := range t.columnSizes {
+		size += columnSize
+	}
+
+	return size + (len(t.columnSizes) * 3) - 1
 }
 
 // getWindowWidth return window width
 func getWindowWidth() int {
-	return mathutil.Between(window.GetWidth(), MIN_WINDOW_SIZE, 9999)
-}
-
-// getHeaderColorTag return header color tag
-func getHeaderColorTag(t *Table) string {
-	if t.HeaderColorTag != "" {
-		return t.HeaderColorTag
-	}
-
-	return HeaderColorTag
-}
-
-// getHeaderCapitalize return header capitalization flag
-func getHeaderCapitalize(t *Table) bool {
-	if t.HeaderCapitalize {
-		return true
-	}
-
-	return HeaderCapitalize
+	return mathutil.Between(window.GetWidth(), 88, 9999)
 }

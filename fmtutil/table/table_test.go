@@ -40,16 +40,6 @@ func (s *TableSuite) TestSetHeaders(c *C) {
 	c.Assert(t.Headers, HasLen, 3)
 }
 
-func (s *TableSuite) TestHasData(c *C) {
-	t := NewTable("1", "2", "3")
-
-	c.Assert(t.HasData(), Equals, false)
-
-	c.Assert(t.Add(10, "abc", 3.14), NotNil)
-
-	c.Assert(t.HasData(), Equals, true)
-}
-
 func (s *TableSuite) TestSetSizes(c *C) {
 	var t *Table
 
@@ -59,6 +49,27 @@ func (s *TableSuite) TestSetSizes(c *C) {
 
 	c.Assert(t.SetSizes(10, 20, 30), NotNil)
 	c.Assert(t.Sizes, HasLen, 3)
+}
+
+func (s *TableSuite) TestSetAlignment(c *C) {
+	var t *Table
+
+	c.Assert(t.SetAlignment(0, 1, 2), IsNil)
+
+	t = NewTable()
+
+	c.Assert(t.SetAlignment(0, 1, 2), NotNil)
+	c.Assert(t.Alignment, HasLen, 3)
+}
+
+func (s *TableSuite) TestHasData(c *C) {
+	t := NewTable("1", "2", "3")
+
+	c.Assert(t.HasData(), Equals, false)
+
+	c.Assert(t.Add(10, "abc", 3.14), NotNil)
+
+	c.Assert(t.HasData(), Equals, true)
 }
 
 func (s *TableSuite) TestAdd(c *C) {
@@ -106,9 +117,6 @@ func (s *TableSuite) TestRender(c *C) {
 
 	t = NewTable()
 
-	t.HeaderCapitalize = true
-	t.HeaderColorTag = "{b}"
-
 	c.Assert(t.Render(), NotNil)
 
 	c.Assert(t.Add(10, "abc", 3.14), NotNil)
@@ -117,12 +125,17 @@ func (s *TableSuite) TestRender(c *C) {
 	c.Assert(t.Render(), NotNil)
 
 	t.SetHeaders("id", "name", "price")
-	t.SetSizes(4)
+	t.SetSizes(12, 12, 12)
+	t.SetAlignment(ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT)
+
+	HeaderCapitalize = true
 
 	c.Assert(t.Add(10, "abc", 3.14), NotNil)
 	c.Assert(t.Add(11, "{g}ABC{!}", 2.28, 400), NotNil)
 
 	c.Assert(t.Render(), NotNil)
+
+	HeaderCapitalize = false
 }
 
 func (s *TableSuite) TestAuxi(c *C) {
