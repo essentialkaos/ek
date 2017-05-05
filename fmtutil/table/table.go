@@ -55,7 +55,7 @@ var HeaderCapitalize = false
 var HeaderColorTag = "{*}"
 
 // SeparatorSymbol used for separator generation
-var SeparatorSymbol = "–"
+var SeparatorSymbol = "-"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
