@@ -12,7 +12,7 @@ func ExampleNewTable() {
 
 	t.SetHeaders("id", "user", "balance")
 	t.SetSizes(4, 12)
-	t.SetAlignment(ALIGN_RIGHT, ALIGN_RIGHT, ALIGN_LEFT)
+	t.SetAlignments(ALIGN_RIGHT, ALIGN_RIGHT, ALIGN_LEFT)
 
 	t.Add(1, "{g}Bob{!}", 1.42)
 	t.Add(2, "John", 73.1)

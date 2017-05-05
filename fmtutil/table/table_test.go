@@ -51,14 +51,14 @@ func (s *TableSuite) TestSetSizes(c *C) {
 	c.Assert(t.Sizes, HasLen, 3)
 }
 
-func (s *TableSuite) TestSetAlignment(c *C) {
+func (s *TableSuite) TestSetAlignments(c *C) {
 	var t *Table
 
-	c.Assert(t.SetAlignment(0, 1, 2), IsNil)
+	c.Assert(t.SetAlignments(0, 1, 2), IsNil)
 
 	t = NewTable()
 
-	c.Assert(t.SetAlignment(0, 1, 2), NotNil)
+	c.Assert(t.SetAlignments(0, 1, 2), NotNil)
 	c.Assert(t.Alignment, HasLen, 3)
 }
 
@@ -126,7 +126,7 @@ func (s *TableSuite) TestRender(c *C) {
 
 	t.SetHeaders("id", "name", "price")
 	t.SetSizes(12, 12, 12)
-	t.SetAlignment(ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT)
+	t.SetAlignments(ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT)
 
 	HeaderCapitalize = true
 

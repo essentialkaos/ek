@@ -88,8 +88,8 @@ func (t *Table) SetSizes(sizes ...int) *Table {
 	return t
 }
 
-// SetAlignment allow to set column alignment
-func (t *Table) SetAlignment(align ...uint8) *Table {
+// SetAlignments allow to set column alignment
+func (t *Table) SetAlignments(align ...uint8) *Table {
 	if t == nil {
 		return nil
 	}
