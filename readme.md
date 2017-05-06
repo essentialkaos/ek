@@ -64,7 +64,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal) - Package provides methods for working with user input
 * [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal/window) - Package provides methods for working terminal window
-* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/timeutil) - Package with time utils
+* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/timeutil) - Package provides methods for working with time
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v9/tmp) - Package provides methods for working with temporary data
 * [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v9/usage) - Package provides methods for rendering info for command-line tools
 * [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v9/uuid) - Package provides methods for generating version 4 and 5 UUID's
