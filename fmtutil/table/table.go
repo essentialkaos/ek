@@ -57,6 +57,9 @@ var HeaderColorTag = "{*}"
 // SeparatorSymbol used for separator generation
 var SeparatorSymbol = "-"
 
+// ColumnSeparatorSymbol is column separator symbol
+var ColumnSeparatorSymbol = "|"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTable create new table struct
@@ -120,7 +123,7 @@ func (t *Table) Print(data ...interface{}) *Table {
 		return nil
 	}
 
-	if len(data) == 0 || len(t.Headers) == 0 {
+	if len(data) == 0 && len(t.Headers) == 0 && len(t.Sizes) == 0 {
 		return t
 	}
 
@@ -163,6 +166,10 @@ func (t *Table) Render() *Table {
 
 	prepareRender(t)
 
+	if len(t.Headers) == 0 {
+		t.Separator()
+	}
+
 	if t.data != nil {
 		renderData(t)
 	}
@@ -191,13 +198,13 @@ func prepareRender(t *Table) {
 
 // renderHeaders render headers
 func renderHeaders(t *Table) {
-	t.Separator()
-
 	t.headerShown = true
 
 	if len(t.Headers) == 0 {
 		return
 	}
+
+	t.Separator()
 
 	totalHeaders := len(t.Headers)
 	totalColumns := len(t.columnSizes)
@@ -218,7 +225,7 @@ func renderHeaders(t *Table) {
 		fmtc.Printf(" " + HeaderColorTag + formatText(headerText, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
 
 		if columnIndex+1 != totalColumns {
-			fmtc.Printf("{s}|{!}")
+			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)
 		} else {
 			fmtc.NewLine()
 		}
@@ -248,7 +255,7 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 		fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
 
 		if columnIndex+1 != totalColumns {
-			fmtc.Printf("{s}|{!}")
+			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)
 		}
 	}
 

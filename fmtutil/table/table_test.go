@@ -91,7 +91,6 @@ func (s *TableSuite) TestPrint(c *C) {
 
 	t = NewTable("ABCD", "ABCD", "ABCD")
 
-	c.Assert(t.Print(), NotNil)
 	c.Assert(t.Print(10, "abc", 3.14), NotNil)
 	c.Assert(t.Print(10, "abc", 3.14, 400), NotNil)
 }
@@ -114,6 +113,7 @@ func (s *TableSuite) TestRender(c *C) {
 	t = NewTable()
 
 	c.Assert(t.Render(), NotNil)
+	c.Assert(t.Print(), NotNil)
 
 	t = NewTable()
 
