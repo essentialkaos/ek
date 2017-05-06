@@ -46,10 +46,12 @@ func Separator(tiny bool, args ...string) {
 
 	if len(args) != 0 {
 		name := args[0]
-		sep := getSeparator(size)
-		rem := between((len(sep)-4)-len(name), 0, 999999)
-		separator = SeparatorColorTag + sep[:2] + "{!} " + SeparatorTitleColorTag + name + "{!} "
-		separator += SeparatorColorTag + sep[:rem] + "{!}"
+		suffixSize := between((size-4)-len(name), 0, 999999)
+
+		separator += SeparatorColorTag
+		separator += strings.Repeat(SeparatorSymbol, 2) + "{!} "
+		separator += SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, suffixSize) + "{!}"
 	} else {
 		separator = SeparatorColorTag + getSeparator(size) + "{!}"
 	}
