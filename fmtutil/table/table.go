@@ -14,6 +14,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/fmtc"
 	"pkg.re/essentialkaos/ek.v9/mathutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 	"pkg.re/essentialkaos/ek.v9/terminal/window"
 )
 
@@ -289,7 +290,7 @@ func calculateColumnSizes(t *Table) []int {
 	if len(t.data) > 0 {
 		for _, row := range t.data {
 			for index, item := range row {
-				itemSizes := len(fmtc.Clean(item))
+				itemSizes := strutil.Len(fmtc.Clean(item))
 
 				if itemSizes > t.columnSizes[index] {
 					t.columnSizes[index] = itemSizes
@@ -300,7 +301,7 @@ func calculateColumnSizes(t *Table) []int {
 
 	if len(t.Headers) > 0 {
 		for index, header := range t.Headers {
-			headerSize := len(header)
+			headerSize := strutil.Len(header)
 
 			if headerSize > t.columnSizes[index] {
 				t.columnSizes[index] = headerSize
@@ -354,9 +355,9 @@ func formatText(data string, size int, align uint8) string {
 	var dataSize int
 
 	if strings.Contains(data, "{") {
-		dataSize = len(fmtc.Clean(data))
+		dataSize = strutil.Len(fmtc.Clean(data))
 	} else {
-		dataSize = len(data)
+		dataSize = strutil.Len(data)
 	}
 
 	if dataSize >= size {

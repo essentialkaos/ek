@@ -89,10 +89,10 @@ func (s *TableSuite) TestPrint(c *C) {
 
 	c.Assert(t.Print(10, "abc", 3.14), IsNil)
 
-	t = NewTable("ABCD", "ABCD", "ABCD")
+	t = NewTable("ABCD", "ABCDEF", "ABCD")
 
 	c.Assert(t.Print(10, "abc", 3.14), NotNil)
-	c.Assert(t.Print(10, "abc", 3.14, 400), NotNil)
+	c.Assert(t.Print(10, "abµ", 3.14, 400), NotNil)
 }
 
 func (s *TableSuite) TestSeparator(c *C) {
