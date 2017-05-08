@@ -253,7 +253,11 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 			break
 		}
 
-		fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+		if strutil.Len(columnData) > t.columnSizes[columnIndex] {
+			fmtc.Printf(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
+		} else {
+			fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+		}
 
 		if columnIndex+1 != totalColumns {
 			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)
@@ -275,7 +279,7 @@ func convertSlice(data []interface{}) []string {
 }
 
 // calculateColumnSizes calculate size for each column
-func calculateColumnSizes(t *Table) []int {
+func calculateColumnSizes(t *Table) {
 	totalColumns := getColumnsNum(t)
 	t.columnSizes = make([]int, totalColumns)
 
@@ -315,16 +319,11 @@ func calculateColumnSizes(t *Table) []int {
 
 	for columnIndex, columnSize := range t.columnSizes {
 		if columnIndex+1 == totalColumns {
-			if fullSize+columnSize < windowWidth {
-				t.columnSizes[columnIndex] = ((windowWidth - fullSize) - (totalColumns * 3)) + 1
-				break
-			}
+			t.columnSizes[columnIndex] = ((windowWidth - fullSize) - (totalColumns * 3)) + 1
 		}
 
 		fullSize += columnSize
 	}
-
-	return t.columnSizes
 }
 
 // getColumnsNum return number of columns
