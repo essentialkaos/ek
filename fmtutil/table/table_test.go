@@ -8,6 +8,7 @@ package table
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strings"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -121,6 +122,7 @@ func (s *TableSuite) TestRender(c *C) {
 
 	c.Assert(t.Add(10, "abc", 3.14), NotNil)
 	c.Assert(t.Add(11, "ABC", 2.28), NotNil)
+	c.Assert(t.Add(11, "ABC", strings.Repeat("ABC123_", 20)), NotNil)
 
 	c.Assert(t.Render(), NotNil)
 
