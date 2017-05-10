@@ -1,0 +1,53 @@
+_Before opening an issue, search for similar bug reports or feature requests on GitHub Issues. If yes, please add a 👍 reaction to the existing issue. If no similar issue can be found, fill out either the "Bug Report" or the "Feature Request" section below. Erase the other section and everything on and above this line._
+
+### Bug report
+
+**System info:**
+
+* **Version used**: 
+* **OS (e.g. from `/etc/os-release`)**: 
+* **Kernel (e.g. `uname -a`)**: 
+* **Go version (e.g. `go version`)**: 
+
+**System info:**
+
+1. [First Step]
+2. [Second Step]
+3. [and so on...]
+
+**Expected behavior:**
+
+[What you expected to happen]
+
+**Actual behavior:**
+
+[What actually happened]
+
+**Additional info:**
+
+[Include gist of relevant config, logs, etc.]
+
+Please run those if possible and link them from a [gist](http://gist.github.com).
+
+---
+
+### Feature Request
+
+Opening a feature request kicks off a discussion. Requests may be closed if we're not actively planning to work on them.
+
+**Proposal:**
+
+[Description of the feature]
+
+**Current behavior:**
+
+[What currently happens]
+
+**Desired behavior:**
+
+[What you would like to happen]
+
+**Use case:**
+
+[Why is this important (helps with prioritizing requests)]
+
