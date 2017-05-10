@@ -1,4 +1,4 @@
-_Before opening an issue, search for similar bug reports or feature requests on GitHub Issues. If yes, please add a_ 👍 _reaction to the existing issue. If no similar issue can be found, fill out either the "Bug Report" or the "Feature Request" section below. Erase the other section and everything on and above this line._
+_Before opening an issue, search for similar bug reports or feature requests on GitHub Issues. If a similar issue was found, please add a_ 👍 _reaction to the existing issue. If no similar issue can be found, fill out either the "Bug Report" or the "Feature Request" section below. Erase the other section and everything on and above this line._
 
 ### Bug report
 
