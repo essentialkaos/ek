@@ -1,13 +1,14 @@
-_Before opening an issue, search for similar bug reports or feature requests on GitHub Issues. If yes, please add a 👍 reaction to the existing issue. If no similar issue can be found, fill out either the "Bug Report" or the "Feature Request" section below. Erase the other section and everything on and above this line._
+_Before opening an issue, search for similar bug reports or feature requests on GitHub Issues. If yes, please add a_ 👍 _reaction to the existing issue. If no similar issue can be found, fill out either the "Bug Report" or the "Feature Request" section below. Erase the other section and everything on and above this line._
 
 ### Bug report
 
 **System info:**
 
-* **Version used**: 
-* **OS (e.g. from `/etc/os-release`)**: 
-* **Kernel (e.g. `uname -a`)**: 
-* **Go version (e.g. `go version`)**: 
+* **Version used (`--version` output):** 
+* **OS (e.g. from `/etc/os-release`):** 
+* **Kernel (e.g. `uname -a`):** 
+* **Go version (e.g. `go version`):** 
+* **Install tools:** 
 
 **System info:**
 
