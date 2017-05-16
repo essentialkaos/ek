@@ -1,4 +1,4 @@
-// Package timeutil with time utils
+// Package timeutil provides methods for working with time
 package timeutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v8/pluralize"
+	"pkg.re/essentialkaos/ek.v9/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

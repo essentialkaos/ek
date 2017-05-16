@@ -30,4 +30,4 @@ before_install:
   - make deps-test
 
 script:
-  - .travis/script.sh 8
+  - .travis/script.sh 9

@@ -2,11 +2,6 @@
 
 ########################################################################################
 
-# List of packages excluded from coverage export
-EXCLUDED_PACKAGES=("signal system terminal usage netutil")
-
-########################################################################################
-
 # Main func
 #
 # *: All arguments passed to script
@@ -56,29 +51,29 @@ makeLink() {
 testWithCover() {
   local dir="$1"
 
-  local pkg has_errors excl_pkg skip_cover
-
+  # Remove coverage output if exist
   rm -f coverage.tmp coverage.txt &> /dev/null
 
+  # Fix coverage header
   echo "mode: count" > coverage.txt
 
   if [[ -z "$EK_TEST_PORT" ]] ; then
     export EK_TEST_PORT=8080
   fi
 
-  for pkg in $(ls -1 $dir) ; do
-    unset skip_cover
+  local has_errors cover_enabled package_dir
+  local package_list=".travis/packages.list"
 
-    if [[ ! -d $dir/$pkg ]] ; then
+  while read package ; do
+
+    read cover_enabled package_dir <<< "$package"
+
+    if [[ "$cover_enabled" == "!" ]] ; then
       continue
-    fi
+    fi 
 
-    for excl_pkg in ${EXCLUDED_PACKAGES[@]} ; do
-      [[ "$excl_pkg" == "$pkg" ]] && skip_cover=true && break
-    done
-
-    if [[ $skip_cover ]] ; then
-      go test $dir/$pkg -covermode=count
+    if [[ "$cover_enabled" == "-" ]] ; then
+      go test $dir/$package_dir -covermode=count
 
       if [[ $? -ne 0 ]] ; then
         has_errors=true
@@ -87,7 +82,7 @@ testWithCover() {
       continue
     fi
 
-    go test -covermode=count -coverprofile=coverage.tmp $dir/$pkg
+    go test -covermode=count -coverprofile=coverage.tmp $dir/$package_dir
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true
@@ -97,7 +92,8 @@ testWithCover() {
       egrep -v '^mode:' coverage.tmp >> coverage.txt
       rm -f coverage.tmp
     fi
-  done
+
+  done < <(awk 1 $package_list)
 
   if [[ $has_errors ]] ; then
     exit 1

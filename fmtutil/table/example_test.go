@@ -1,4 +1,4 @@
-package pid
+package table
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,21 +7,16 @@ package pid
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"fmt"
+func ExampleNewTable() {
+	t := NewTable()
 
-	"pkg.re/essentialkaos/ek.v9/fsutil"
-)
+	t.SetHeaders("id", "user", "balance")
+	t.SetSizes(4, 12)
+	t.SetAlignments(ALIGN_RIGHT, ALIGN_RIGHT, ALIGN_LEFT)
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	t.Add(1, "{g}Bob{!}", 1.42)
+	t.Add(2, "John", 73.1)
+	t.Add(3, "Mary", 2.29)
 
-// IsWorks return if process with PID from PID file is works
-func IsWorks(name string) bool {
-	pid := Get(name)
-
-	if pid == -1 {
-		return false
-	}
-
-	return fsutil.IsExist(fmt.Sprintf("/proc/%d", pid))
+	t.Render()
 }

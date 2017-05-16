@@ -10,8 +10,8 @@ package fmtutil
 import (
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v8/fmtc"
-	"pkg.re/essentialkaos/ek.v8/terminal/window"
+	"pkg.re/essentialkaos/ek.v9/fmtc"
+	"pkg.re/essentialkaos/ek.v9/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,6 +24,9 @@ var SeparatorTitleColorTag = "{s}"
 
 // SeparatorFullscreen allow enabling full-screen separator
 var SeparatorFullscreen = false
+
+// SeparatorSymbol used for separator generation
+var SeparatorSymbol = "-"
 
 // SeparatorSize contains size of separator
 var SeparatorSize = 88
@@ -43,10 +46,12 @@ func Separator(tiny bool, args ...string) {
 
 	if len(args) != 0 {
 		name := args[0]
-		sep := getSeparator(size)
-		rem := between((len(sep)-4)-len(name), 0, 999999)
-		separator = SeparatorColorTag + "--{!} " + SeparatorTitleColorTag + name + "{!} "
-		separator += SeparatorColorTag + sep[:rem] + "{!}"
+		suffixSize := between((size-4)-len(name), 0, 999999)
+
+		separator += SeparatorColorTag
+		separator += strings.Repeat(SeparatorSymbol, 2) + "{!} "
+		separator += SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, suffixSize) + "{!}"
 	} else {
 		separator = SeparatorColorTag + getSeparator(size) + "{!}"
 	}
@@ -61,7 +66,7 @@ func Separator(tiny bool, args ...string) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getSeparator(size int) string {
-	return strings.Repeat("-", size)
+	return strings.Repeat(SeparatorSymbol, size)
 }
 
 func between(val, min, max int) int {

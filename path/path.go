@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v8/env"
+	"pkg.re/essentialkaos/ek.v9/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

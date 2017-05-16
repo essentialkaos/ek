@@ -11,7 +11,7 @@ package color
 import (
 	"math"
 
-	"pkg.re/essentialkaos/ek.v8/mathutil"
+	"pkg.re/essentialkaos/ek.v9/mathutil"
 )
 
 // RGB2Hex convert RGB color to Hex
