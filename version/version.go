@@ -173,16 +173,8 @@ func (v Version) Equal(version Version) bool {
 
 // Less return true if given version is greater
 func (v Version) Less(version Version) bool {
-	if v.Major() > version.Major() {
-		return false
-	}
-
-	if v.Minor() > version.Minor() {
-		return false
-	}
-
-	if v.Patch() > version.Patch() {
-		return false
+	if v.Int() < version.Int() {
+		return true
 	}
 
 	pr1, pr2 := v.PreRelease(), version.PreRelease()
@@ -191,25 +183,13 @@ func (v Version) Less(version Version) bool {
 		return prereleaseLess(pr1, pr2)
 	}
 
-	if v.slice == version.slice {
-		return false
-	}
-
-	return true
+	return false
 }
 
 // Greater return true if given version is less
 func (v Version) Greater(version Version) bool {
-	if v.Major() < version.Major() {
-		return false
-	}
-
-	if v.Minor() < version.Minor() {
-		return false
-	}
-
-	if v.Patch() < version.Patch() {
-		return false
+	if v.Int() > version.Int() {
+		return true
 	}
 
 	pr1, pr2 := v.PreRelease(), version.PreRelease()
@@ -218,11 +198,7 @@ func (v Version) Greater(version Version) bool {
 		return !prereleaseLess(pr1, pr2)
 	}
 
-	if v.slice == version.slice {
-		return false
-	}
-
-	return true
+	return false
 }
 
 // Contains check is current version contains given version
@@ -248,6 +224,15 @@ func (v Version) Contains(version Version) bool {
 	}
 
 	return false
+}
+
+// String return version as integer
+func (v Version) Int() int {
+	result := v.Major() * 1000000
+	result += v.Minor() * 1000
+	result += v.Patch()
+
+	return result
 }
 
 // String return version as string

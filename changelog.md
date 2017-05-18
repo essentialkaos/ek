@@ -1,5 +1,10 @@
 ## Changelog
 
+### v9.1.0
+
+* `[version]` Fixed bug with version comparison
+* `[version]` Added method `Int()` which return version as integer
+
 ### v9.0.0
 
 * Package `args` renamed to `options` (_incompatible changes_)
