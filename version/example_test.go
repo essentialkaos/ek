@@ -35,6 +35,15 @@ func ExampleParse() {
 	// Build: exp.sha.5114f85
 }
 
+func ExampleVersion_Int() {
+	v, _ := Parse("14.8.22")
+
+	fmt.Println(v.Int())
+
+	// Output:
+	// 14008022
+}
+
 func ExampleVersion_Equal() {
 	v1, _ := Parse("1")
 	v2, _ := Parse("1.0.0")
