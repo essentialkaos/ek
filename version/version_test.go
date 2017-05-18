@@ -203,6 +203,7 @@ func (s *VersionSuite) TestComparison(c *C) {
 	c.Assert(P("1.0.1-a5").Less(P("1.0.1-a5")), Equals, false)
 	c.Assert(P("1.11.0").Less(P("1.10.0")), Equals, false)
 	c.Assert(P("1.0.11").Less(P("1.0.10")), Equals, false)
+	c.Assert(P("2.0.0").Less(P("1.1.0")), Equals, false)
 
 	c.Assert(P("1").Greater(P("1")), Equals, false)
 	c.Assert(P("1").Greater(P("1.0")), Equals, false)
@@ -219,6 +220,7 @@ func (s *VersionSuite) TestComparison(c *C) {
 	c.Assert(P("1.0.1-a5").Greater(P("1.0.1-a5")), Equals, false)
 	c.Assert(P("1.10.0").Greater(P("1.11.0")), Equals, false)
 	c.Assert(P("1.0.10").Greater(P("1.0.11")), Equals, false)
+	c.Assert(P("2.0.0").Greater(P("1.1.0")), Equals, true)
 
 	c.Assert(P("1").Contains(P("1")), Equals, true)
 	c.Assert(P("1").Contains(P("1.1")), Equals, true)
