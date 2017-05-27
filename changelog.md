@@ -118,23 +118,23 @@
 
 ---
 
-#### 6.2.1
+### 6.2.1
 
 * `[usage]` Improved working with GitHub API
 
-#### 6.2.0
+### 6.2.0
 
 * `[netutil]` Now GetIP return primary IPv4 address
 * `[netutil]` Added method `GetIP6` which return main IPv6 address
 * `[usage]` Showing info about latest available release on GitHub
 
-#### 6.1.0
+### 6.1.0
 
 * `[knf]` Added tabs support in indentation
 * `[timeutil]` Added new sequences `%n` (_new line symbol_) and `%K` (_milliseconds_)
 * `[timeutil]` Code refactoring
 
-#### 6.0.0
+### 6.0.0
 
 * `[passwd]` Much secure hash generation (now with sha512, bcrypt, and AES)
 * `[system]` Improved changing process and arguments names
@@ -142,12 +142,12 @@
 
 ---
 
-#### 5.7.1
+### 5.7.1
 
 * `[usage]` Improved build info output
 * `[system]` Improved OS version search process
 
-#### 5.7.0
+### 5.7.0
 
 * `[system/process]` `GetTree` now can return tree for custom root process
 * `[system/process]` Fixed threads marking
@@ -155,57 +155,57 @@
 * `[terminal]` Now `PrintWarnMessage` and `PrintErrorMessage` prints messages to stderr
 * `[usage]` Added support for optional arguments in commands
 
-#### 5.6.0
+### 5.6.0
 
 * `[system]` Added `Distribution` and `Version` info to `SystemInfo` struct
 * `[arg]` Added bound arguments support
 * `[arg]` Added conflicts arguments support
 * `[arg]` Added method `Q` for merging several arguments to string (useful for `Alias`, `Bound` and `Conflicts`)
 
-#### 5.5.0
+### 5.5.0
 
 * `[system]` Added method `CurrentTTY` which return path to current tty
 * `[system]` Code refactoring
 
-#### 5.4.1
+### 5.4.1
 
 * `[fmtc]` Fixed bug with parsing tags
 
-#### 5.4.0
+### 5.4.0
 
 * `[usage]` Changed color for arguments from dark gray to light gray
 * `[usage]` Added breadcrumbs output for commands and options
 * `[fmtutil]` Fixed special symbols colorization in `ColorizePassword`
 
-#### 5.3.0
+### 5.3.0
 
 * `[fmtutil]` Added method `ColorizePassword` for password colorization
 * `[passwd]` Improved password generation and strength check
 
-#### 5.2.1
+### 5.2.1
 
 * `[log]` Code refactoring
 * `[tmp]` Added permissions customization for each temp struct
 
-#### 5.2.0
+### 5.2.0
 
 * `[terminal]` Added password mask symbol color customization
 * `[terminal]` [go-linenoise](https://github.com/essentialkaos/go-linenoise) updated to v3
 
-#### 5.1.1
+### 5.1.1
 
 * `[req]` Improved `Engine` initialization routine
 * `[terminal]` Fixed bug in windows stub with error variable name
 
-#### 5.1.0
+### 5.1.0
 
 * `[req]` Improved `SetUserAgent` method for appending subpackages versions
 
-#### 5.0.1
+### 5.0.1
 
 * `[usage]` Fixed examples header
 
-#### 5.0.0
+### 5.0.0
 
 * `[req]` Fixed major bug with setting method through helper methods
 * `[req]` Multi-client feature (_use `req.Engine` instead `req.Request` struct methods_)
@@ -224,13 +224,13 @@
 
 ---
 
-#### 3.5.1
+### 3.5.1
 
 * `[usage]` Using dark gray color for license and copyright
 * `[fmtutil]` Added global variable `SeparatorColorTag` for separator color customization
 * `[fmtutil]` Added global variable `SeparatorTitleColorTag` for separator title color customization
 
-#### 3.5.0
+### 3.5.0
 
 * `[terminal]` Using forked [go.linenoise](https://github.com/essentialkaos/go-linenoise) package instead original
 * `[terminal]` Added hints support from new version of `go.linenoise`
@@ -239,42 +239,42 @@
 * `[tmp]` Added `DefaultDirPerms` and `DefaultFilePerms` global variables for permissions customization
 * `[tmp]` Improved error handling
 
-#### 3.4.2
+### 3.4.2
 
 * `[strutil]` Fixed bug with overflowing int in `Tail` method
 
-#### 3.4.1
+### 3.4.1
 
 * `[terminal]` Improved reading user input
 
-#### 3.4.0
+### 3.4.0
 
 * `[httputil]` Added `GetRequestAddr`, `GetRemoteAddr`, `GetRemoteHost`, `GetRemotePort` methods
 
-#### 3.3.1
+### 3.3.1
 
 * `[usage]` Fixed bug with rendering command groups
 * `[terminal]` Small fixes in windows stubs
 
-#### 3.3.0
+### 3.3.0
 
 * `[system/process]` Added new package for getting information about active system processes
 * `[terminal]` Fixed bug with title formating in `ReadAnswer` method
 
-#### 3.2.3
+### 3.2.3
 
 * `[terminal]` Fixed bug with title formating in `ReadUI` method
 
-#### 3.2.2
+### 3.2.2
 
 * `[req]` Added content types constants
 
-#### 3.2.1
+### 3.2.1
 
 * `[knf]` Fixed typo in tests
 * `[strutil]` Removed unreachable code
 
-#### 3.2.0
+### 3.2.0
 
 * `[strutil]` Added method `Len` which returns number of symbols in string
 * `[strutil]` UTF-8 support for `Substr`, `Tail`, `Head` and `Ellipsis` methods
@@ -282,41 +282,41 @@
 * `[fsutil]` Fixed `GetPerm` stub for Windows
 * `[fsutil]` Fixed package description
 
-#### 3.1.3
+### 3.1.3
 
 * `[req]` `RequestTimeout` set to 0 (_disabled_) by default
 
-#### 3.1.2
+### 3.1.2
 
 * `[terminal]` Fixed bug with source name file conventions
 * `[system]` Fixed bug with appending real user info on MacOS X
 
-#### 3.1.1
+### 3.1.1
 
 * `[req]` Small fixes in Request struct fields types
 
-#### 3.1.0
+### 3.1.0
 
 * `[req]` Lazy transport initialization
 * `[req]` Added `DialTimeout` and `RequestTimeout` variables for timeouts control
 
-#### 3.0.3
+### 3.0.3
 
 * `[system]` Removed debug output
 
-#### 3.0.2
+### 3.0.2
 
 * Added makefile with some helpful commands (`fmt`, `deps`, `test`)
 * Small fixes in docs
 
-#### 3.0.1
+### 3.0.1
 
 * `[sliceutil]` Code refactoring
 * `[knf]` Typo fixed
 * `[terminal]` Typo fixed
 * Some minor changes
 
-#### 3.0.0
+### 3.0.0
 
 * `[fmtutil]` Pluralization moved from `fmtutil` to separate package `pluralize` (_incompatible changes_)
 * `[pluralize]` Brand new pluralization package with more than 140 languages support
@@ -329,17 +329,17 @@
 
 ---
 
-#### 2.0.2
+### 2.0.2
 
 * `[pid]` Added method `IsWorks` which return true if process with PID from PID file is active
 * `[pid]` Increased code coverage
 
-#### 2.0.1
+### 2.0.1
 
 * `[terminal]` Fixed bugs with Windows stubs
 * `[signal]` Fixed bugs with Windows stubs
 
-#### 2.0.0
+### 2.0.0
 
 * `[color]` New package for working with colors
 * `[usage]` Added color tags support for description
@@ -352,19 +352,19 @@
 
 ---
 
-#### 1.8.3
+### 1.8.3
 
 * `[signal]` Added method `Send` for sending signal to process
 
-#### 1.8.2
+### 1.8.2
 
 * `[log]` Fixed bug with logging empty strings
 
-#### 1.8.1
+### 1.8.1
 
 * `[sortutil]` Added method `VersionCompare` which can be used for custom version sorting
 
-#### 1.8.0
+### 1.8.0
 
 * `[sortutil]` Added case insensitive strings sorting
 * `[sliceutil]` Added `Deduplicate` method
@@ -372,133 +372,133 @@
 * `[terminal]` method `fmtutil.GetTermSize` moved to `terminal.GetSize`
 * `[timeutil]` Added method `ParseDuration` which parses duration in `1w2d3h5m6s` format
 
-#### 1.7.8
+### 1.7.8
 
 * `[terminal]` Custom prompt support
 * `[terminal]` Custom masking symbols support
 * `[terminal]` Code refactoring
 
-#### 1.7.7
+### 1.7.7
 
 * `[fsutil]` Fixed bug in `List` method with filtering output
 * `[fsutil]` Fixed bug with `NotPerms` filtering
 
-#### 1.7.6
+### 1.7.6
 
 * `[env]` Added methods for getting env vars as string, int, and float
 
-#### 1.7.5
+### 1.7.5
 
 * `[usage]` Added docs for exported fields in About struct
 
-#### 1.7.4
+### 1.7.4
 
 * `[fsutils]` Added fs walker (bash `pushd`/`popd` analog)
 
-#### 1.7.3
+### 1.7.3
 
 * `[fsutil]` Method `ListAbsolute` ranamed to `ListToAbsolute`
 
-#### 1.7.2
+### 1.7.2
 
 * `[errutil]` Added method Chain
 
-#### 1.7.1
+### 1.7.1
 
 * `[log]` Improved min level changing
 
-#### 1.7.0
+### 1.7.0
 
 * `[fsutil]` Fixed major bug with closing file descriptor after directory listing
 * `[fsutil]` Fixed major bug with closing file descriptor after counting lines in file
 * `[fsutil]` Fixed major bug with closing file descriptor after checking number of files in directory
 
-#### 1.6.5
+### 1.6.5
 
 * `[fsutil]` Improved docs
 * `[fsutil]` Added method (wrapper) for moving files
 
-#### 1.6.4
+### 1.6.4
 
 * `[path]` Added method IsDotfile for checking dotfile names
 
-#### 1.6.3
+### 1.6.3
 
 * `[strutil]` Added methods PrefixSize and SuffixSize
 
-#### 1.6.2
+### 1.6.2
 
 * `[fsutil]` Improved working with paths
 * `[fsutil]` Added method ProperPath to windows stub
 
-#### 1.6.1
+### 1.6.1
 
 * `[path]` Fixed windows stub
 
-#### 1.6.0
+### 1.6.0
 
 * `[path]` Added package for working with paths
 
-#### 1.5.1
+### 1.5.1
 
 * `[knf]` Fixed bug in HasProp method which returns true for unset properties
 
-#### 1.5.0
+### 1.5.0
 
 * `[tmp]` Improved error handling
 * `[tmp]` Changed name pattern of temporary files and directories
 
-#### 1.4.5
+### 1.4.5
 
 * `[pid]` Fixed bug with PID file creation
 * `[pid]` Increased coverage
 
-#### 1.4.4
+### 1.4.4
 
 * `[errutil]` Added method Num which returns number of errors
 
-#### 1.4.3
+### 1.4.3
 
 * `[errutil]` Improved Add method
 
-#### 1.4.2
+### 1.4.2
 
 * `[fsutil]` Added method `ProperPath` which return first proper path from given slice
 
-#### 1.4.1
+### 1.4.1
 
 * `[fsutil]` Added partial FreeBSD support
 * `[system]` Added partial FreeBSD support
 * `[log]` Some minor fixes in tests
 
-#### 1.4.0
+### 1.4.0
 
 * `[kv]` Added package with simple key-value structs
 
-#### 1.3.3
+### 1.3.3
 
 * `[strutil]` Fixed bug in Tail method
 
-#### 1.3.2
+### 1.3.2
 
 * `[strutil]` Added method Head for subtraction first symbols from the string
 * `[strutil]` Added method Tail for subtraction last symbols from the string
 
-#### 1.3.1
+### 1.3.1
 
 * Improved TravisCI build script for support pkg.re
 * Added pkg.re usage
 
-#### 1.3.0
+### 1.3.0
 
 * `[system]` Fixed major bug with OS X compatibility
 * `[fmtutil]` Fixed tests for OS X
 
-#### 1.2.2
+### 1.2.2
 
 * `[req]` Added flag for marking connection to close
 
-#### 1.2.1
+### 1.2.1
 
 * `[crypto]` Small improvements in hash generation
 * `[csv]` Increased code coverage
@@ -512,18 +512,18 @@
 * `[strutil]` Increased code coverage
 * `[timeutil]` Increased code coverage
 
-#### 1.2.0
+### 1.2.0
 
 * `[log]` Now buffered I/O must be enabled manually
 * `[log]` Auto flushing for bufio
 
-#### 1.1.1
+### 1.1.1
 
 * `[system]` Added JSON tags for User, Group and SessionInfo structs
 * `[usage]` Info now can use os.Args`[0]` for info rendering
 * `[version]` Added package for working with version in semver notation
 
-#### 1.1.0
+### 1.1.0
 
 * `[arg]` Changed default fail values (int -1 → 0, float -1.0 → 0.0)
 * `[arg]` Increased code coverage
@@ -554,11 +554,11 @@
 * `[timeutil]` Increased code coverage
 * `[tmp]` Increased code coverage
 
-#### 1.0.1
+### 1.0.1
 
 * `[system]` Fixed bug in fs usage calculation
 * `[usage]` Improved new Info struct creation
 
-#### 1.0.0
+### 1.0.0
 
 Initial public release
