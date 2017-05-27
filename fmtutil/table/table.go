@@ -253,7 +253,7 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 			break
 		}
 
-		if strutil.Len(columnData) > t.columnSizes[columnIndex] {
+		if strutil.Len(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
 			fmtc.Printf(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
 		} else {
 			fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
