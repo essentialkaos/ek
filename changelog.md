@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.1.2
+
+* `[terminal]` Fixed bug with masking password in tmux
+
 ### 9.1.1
 
 * `[fmtutil/table]` Fixed bug with rendering data with color tags

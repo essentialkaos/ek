@@ -18,6 +18,7 @@ import (
 
 	"pkg.re/essentialkaos/go-linenoise.v3"
 
+	"pkg.re/essentialkaos/ek.v9/env"
 	"pkg.re/essentialkaos/ek.v9/fmtc"
 )
 
@@ -34,6 +35,10 @@ var MaskSymbol = "*"
 
 // MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var tmux int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -127,8 +132,17 @@ func SetHintHandler(h func(input string) string) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getPrivateHider(message string) string {
+	var masking string
+
 	prefix := strings.Repeat(" ", utf8.RuneCountInString(Prompt))
-	masking := strings.Repeat(MaskSymbol, utf8.RuneCountInString(message))
+
+	checkTmux()
+
+	if tmux == 1 {
+		masking = strings.Repeat("*", utf8.RuneCountInString(message))
+	} else {
+		masking = strings.Repeat(MaskSymbol, utf8.RuneCountInString(message))
+	}
 
 	return fmt.Sprintf("%s\033[1A%s", prefix, masking)
 }
@@ -182,4 +196,14 @@ func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	}
 
 	return input, err
+}
+
+func checkTmux() {
+	if tmux == 0 {
+		if env.Get().GetS("TMUX") == "" {
+			tmux = -1
+		} else {
+			tmux = 1
+		}
+	}
 }
