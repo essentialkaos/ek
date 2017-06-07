@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.1.4
+
+* `[fmtutil/table]` Fixed bug with color tags in headers when colors is disabled
+
 ### 9.1.3
 
 * `[timeutil]` Fixed bug with formatting milliseconds
