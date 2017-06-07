@@ -2,7 +2,7 @@
 
 ### 9.1.3
 
-* `[timeutil]` Fixed bug with formating milliseconds
+* `[timeutil]` Fixed bug with formatting milliseconds
 * `[timeutil]` Improved tests
 
 ### 9.1.2
