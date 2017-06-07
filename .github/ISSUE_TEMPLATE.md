@@ -4,7 +4,7 @@ _Before opening an issue, search for similar bug reports or feature requests on 
 
 **System info:**
 
-* **Version used (`--version` output):** 
+* **Version used:** 
 * **OS (e.g. from `/etc/os-release`):** 
 * **Kernel (e.g. `uname -a`):** 
 * **Go version (e.g. `go version`):** 
