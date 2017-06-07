@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.1.3
+
+* `[timeutil]` Fixed bug with formating milliseconds
+* `[timeutil]` Improved tests
+
 ### 9.1.2
 
 * `[terminal]` Fixed bug with masking password in tmux
