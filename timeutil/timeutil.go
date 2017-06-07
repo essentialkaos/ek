@@ -266,7 +266,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'k':
 		fmt.Fprintf(output, "%2d", d.Hour())
 	case 'K':
-		fmt.Fprintf(output, "%03d", d.Nanosecond())
+		output.WriteString(fmt.Sprintf("%03d", d.Nanosecond())[:3])
 	case 'l':
 		output.WriteString(strconv.Itoa(getAMPMHour(d)))
 	case 'm':
