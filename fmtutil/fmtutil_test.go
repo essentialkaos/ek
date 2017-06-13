@@ -31,7 +31,8 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(1234567890), Equals, "1,234,567,890")
 	c.Assert(PrettyNum(100000), Equals, "100,000")
 	c.Assert(PrettyNum(0), Equals, "0")
-	c.Assert(PrettyNum(2500.50), Equals, "2,500.50")
+	c.Assert(PrettyNum(2500.50), Equals, "2,500.5")
+	c.Assert(PrettyNum(2500.00), Equals, "2,500")
 	c.Assert(PrettyNum(1.23), Equals, "1.23")
 	c.Assert(PrettyNum(-1000), Equals, "-1,000")
 }

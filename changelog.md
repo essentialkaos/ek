@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.2.0
+
+* `[fmtutil]` Improved floating numbers formatting with `PrettyNum`
+
 ### 9.1.4
 
 * `[fmtutil/table]` Fixed bug with color tags in headers when colors is disabled
