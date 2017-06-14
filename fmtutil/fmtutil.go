@@ -224,52 +224,52 @@ func CountDigits(i int) int {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getPrettyNum(i interface{}) string {
-	var nStr string
-	var isFloat bool
+	var str string
 
 	switch v := i.(type) {
 	case int, int32, int64, uint, uint32, uint64:
-		nStr = fmt.Sprintf("%d", v)
+		str = fmt.Sprintf("%d", v)
 
-		if len(nStr) <= 3 {
-			return nStr
-		}
 	case float32, float64:
-		isFloat = true
-		nStr = fmt.Sprintf("%.2f", v)
+		str = fmt.Sprintf("%.3f", v)
 
-		if len(nStr) <= 6 {
-			return nStr
-		}
+		return formatPrettyFloat(str)
 	}
 
-	if isFloat {
-		aStr := strings.Split(nStr, ".")
-		cStr := appendPrettySymbol(aStr[0])
-		nStr = cStr + "." + aStr[1]
-	} else {
-		nStr = appendPrettySymbol(nStr)
-	}
-
-	return nStr
+	return appendPrettySymbol(str)
 }
 
-func appendPrettySymbol(s string) string {
-	l := len(s)
-	r := l % 3
+func formatPrettyFloat(str string) string {
+	slc := strings.Split(str, ".")
+	flt := strings.TrimRight(slc[1], "0")
 
+	if flt == "" {
+		return appendPrettySymbol(slc[0])
+	}
+
+	return appendPrettySymbol(slc[0]) + "." + flt
+}
+
+func appendPrettySymbol(str string) string {
+	l := len(str)
+
+	if l <= 3 {
+		return str
+	}
+
+	r := l % 3
 	rs := ""
 
 	for i := l - 3; i >= 0; i -= 3 {
 		if i == 0 {
-			rs = s[i:i+3] + rs
+			rs = str[i:i+3] + rs
 		} else {
-			rs = OrderSeparator + s[i:i+3] + rs
+			rs = OrderSeparator + str[i:i+3] + rs
 		}
 	}
 
 	if r != 0 {
-		rs = s[0:r] + rs
+		rs = str[0:r] + rs
 	}
 
 	return rs
