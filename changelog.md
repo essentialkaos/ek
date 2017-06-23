@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.2.1
+
+* `[terminal]` Improved title rendering for `ReadAnswer` method
+* `[terminal]` Simplified API for `ReadAnswer` method
+
 ### 9.2.0
 
 * `[fmtutil]` Improved floating numbers formatting with `PrettyNum`

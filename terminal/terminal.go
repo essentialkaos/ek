@@ -45,12 +45,18 @@ var tmux int8
 // ReadUI read user input
 func ReadUI(title string, nonEmpty bool) (string, error) {
 	return readUserInput(
-		title, nonEmpty, false,
+		colorozeTitle(title), nonEmpty, false,
 	)
 }
 
-// ReadAnswer read user answer for Y/n question
-func ReadAnswer(title, defaultAnswer string) (bool, error) {
+// ReadAnswer read user answer for yes/no question
+func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
+	var defaultAnswer string
+
+	if len(defaultAnswers) != 0 {
+		defaultAnswer = defaultAnswers[0]
+	}
+
 	for {
 		answer, err := readUserInput(
 			getAnswerTitle(title, defaultAnswer), false, false,
@@ -78,7 +84,7 @@ func ReadAnswer(title, defaultAnswer string) (bool, error) {
 // ReadPassword read password or some private input which will be hidden
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
-	return readUserInput(title, nonEmpty, true)
+	return readUserInput(colorozeTitle(title), nonEmpty, true)
 }
 
 // PrintErrorMessage print error message
@@ -154,17 +160,17 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf("%s (Y/n)", title)
+		return fmt.Sprintf("{c}%s ({c*}Y{c}/n){!}", title)
 	case "N":
-		return fmt.Sprintf("%s (y/N)", title)
+		return fmt.Sprintf("{c}%s (y/{c*}N{c}){!}", title)
 	default:
-		return fmt.Sprintf("%s (y/n)", title)
+		return fmt.Sprintf("{c}%s (y/n){!}", title)
 	}
 }
 
 func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	if title != "" {
-		fmtc.Printf("{c}%s{!}\n", title)
+		fmtc.Println(title)
 	}
 
 	var (
@@ -196,6 +202,10 @@ func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	}
 
 	return input, err
+}
+
+func colorozeTitle(title string) string {
+	return "{c}" + title + "{!}"
 }
 
 func checkTmux() {
