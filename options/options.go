@@ -192,7 +192,7 @@ func (opts *Options) GetI(name string) int {
 	case opts.full[optName.Long].Value == nil:
 		return 0
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		result, err := strconv.Atoi(opt.Value.(string))
 		if err == nil {
 			return result
@@ -225,7 +225,7 @@ func (opts *Options) GetB(name string) bool {
 	case opts.full[optName.Long].Value == nil:
 		return false
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		if opt.Value.(string) == "" {
 			return false
 		}
@@ -260,7 +260,7 @@ func (opts *Options) GetF(name string) float64 {
 	case opts.full[optName.Long].Value == nil:
 		return 0.0
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		result, err := strconv.ParseFloat(opt.Value.(string), 64)
 		if err == nil {
 			return result
