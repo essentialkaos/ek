@@ -269,21 +269,32 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 func (s *OptUtilSuite) TestMixed(c *C) {
 	optMap := Map{
 		"M:mixed": {Type: MIXED},
+		"t:test":  {},
 	}
 
-	argline := "-M"
+	argline := "-M -t 123"
 	opts := NewOptions()
 	opts.Parse(strings.Split(argline, " "), optMap)
 
 	c.Assert(opts.Has("M:mixed"), Equals, true)
 	c.Assert(opts.GetS("M:mixed"), Equals, "true")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
 
-	argline = "-M TEST123"
+	argline = "-M TEST123 --test 123"
 	opts = NewOptions()
 	opts.Parse(strings.Split(argline, " "), optMap)
 
 	c.Assert(opts.Has("M:mixed"), Equals, true)
 	c.Assert(opts.GetS("M:mixed"), Equals, "TEST123")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
+
+	argline = "--test 123 -M"
+	opts = NewOptions()
+	opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(opts.Has("M:mixed"), Equals, true)
+	c.Assert(opts.GetS("M:mixed"), Equals, "true")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
 }
 
 func (s *OptUtilSuite) TestParsing(c *C) {
