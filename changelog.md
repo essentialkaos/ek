@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.4.0
+
+* `[options]` Added support of mixed options (string / bool)
+
 ### 9.3.0
 
 * `[terminal]` Improved title rendering for `ReadAnswer` method

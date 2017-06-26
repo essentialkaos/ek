@@ -23,6 +23,7 @@ const (
 	INT    = 1
 	BOOL   = 2
 	FLOAT  = 3
+	MIXED  = 4 // string or bool
 )
 
 // Error codes
@@ -478,7 +479,14 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 	errorList = append(errorList, opts.validate()...)
 
 	if optName != "" {
-		errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+		if opts.full[optName].Type == MIXED {
+			errorList = appendError(
+				errorList,
+				updateOption(opts.full[optName], optName, "true"),
+			)
+		} else {
+			errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+		}
 	}
 
 	return nonOptList, errorList
@@ -592,7 +600,7 @@ func parseOptionsList(list string) []optionName {
 
 func updateOption(opt *V, name string, value string) error {
 	switch opt.Type {
-	case STRING:
+	case STRING, MIXED:
 		return updateStringOption(opt, value)
 
 	case BOOL:
