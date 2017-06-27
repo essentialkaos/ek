@@ -187,6 +187,7 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 		"mf:merg-float":     {Type: FLOAT, Mergeble: true},
 		"S1:not-set-string": {Type: STRING, Value: ""},
 		"S2:string-as-num":  {Type: STRING},
+		"M:mixed":           {Type: MIXED},
 	}
 
 	opts := NewOptions()
@@ -263,6 +264,37 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.Has("_not_exist_"), Equals, false)
 	c.Assert(opts.Has("empty-string"), Equals, false)
 	c.Assert(opts.Has("s:string"), Equals, true)
+}
+
+func (s *OptUtilSuite) TestMixed(c *C) {
+	optMap := Map{
+		"M:mixed": {Type: MIXED},
+		"t:test":  {},
+	}
+
+	argline := "-M -t 123"
+	opts := NewOptions()
+	opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(opts.Has("M:mixed"), Equals, true)
+	c.Assert(opts.GetS("M:mixed"), Equals, "true")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
+
+	argline = "-M TEST123 --test 123"
+	opts = NewOptions()
+	opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(opts.Has("M:mixed"), Equals, true)
+	c.Assert(opts.GetS("M:mixed"), Equals, "TEST123")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
+
+	argline = "--test 123 -M"
+	opts = NewOptions()
+	opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(opts.Has("M:mixed"), Equals, true)
+	c.Assert(opts.GetS("M:mixed"), Equals, "true")
+	c.Assert(opts.GetS("t:test"), Equals, "123")
 }
 
 func (s *OptUtilSuite) TestParsing(c *C) {

@@ -23,6 +23,7 @@ const (
 	INT    = 1
 	BOOL   = 2
 	FLOAT  = 3
+	MIXED  = 4 // string or bool
 )
 
 // Error codes
@@ -191,7 +192,7 @@ func (opts *Options) GetI(name string) int {
 	case opts.full[optName.Long].Value == nil:
 		return 0
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		result, err := strconv.Atoi(opt.Value.(string))
 		if err == nil {
 			return result
@@ -224,7 +225,7 @@ func (opts *Options) GetB(name string) bool {
 	case opts.full[optName.Long].Value == nil:
 		return false
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		if opt.Value.(string) == "" {
 			return false
 		}
@@ -259,7 +260,7 @@ func (opts *Options) GetF(name string) float64 {
 	case opts.full[optName.Long].Value == nil:
 		return 0.0
 
-	case opt.Type == STRING:
+	case opt.Type == STRING, opt.Type == MIXED:
 		result, err := strconv.ParseFloat(opt.Value.(string), 64)
 		if err == nil {
 			return result
@@ -415,12 +416,13 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 
 	var (
 		optName    string
+		mixedOpt   bool
 		nonOptList []string
 		errorList  []error
 	)
 
 	for _, curOpt := range rawOpts {
-		if optName == "" {
+		if optName == "" || mixedOpt {
 			var (
 				curOptName  string
 				curOptValue string
@@ -440,6 +442,14 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 			case curOptLen > 1 && curOpt[0:1] == "-":
 				curOptName, curOptValue, err = opts.parseShortOption(curOpt[1:curOptLen])
 
+			case mixedOpt:
+				errorList = appendError(
+					errorList,
+					updateOption(opts.full[optName], optName, curOpt),
+				)
+
+				optName, mixedOpt = "", false
+
 			default:
 				nonOptList = append(nonOptList, curOpt)
 				continue
@@ -448,6 +458,15 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 			if err != nil {
 				errorList = append(errorList, err)
 				continue
+			}
+
+			if curOptName != "" && mixedOpt {
+				errorList = appendError(
+					errorList,
+					updateOption(opts.full[optName], optName, "true"),
+				)
+
+				mixedOpt = false
 			}
 
 			if curOptValue != "" {
@@ -461,6 +480,9 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 						errorList,
 						updateOption(opts.full[curOptName], curOptName, ""),
 					)
+				} else if opts.full[curOptName] != nil && opts.full[curOptName].Type == MIXED {
+					optName = curOptName
+					mixedOpt = true
 				} else {
 					optName = curOptName
 				}
@@ -478,7 +500,14 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 	errorList = append(errorList, opts.validate()...)
 
 	if optName != "" {
-		errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+		if opts.full[optName].Type == MIXED {
+			errorList = appendError(
+				errorList,
+				updateOption(opts.full[optName], optName, "true"),
+			)
+		} else {
+			errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+		}
 	}
 
 	return nonOptList, errorList
@@ -592,7 +621,7 @@ func parseOptionsList(list string) []optionName {
 
 func updateOption(opt *V, name string, value string) error {
 	switch opt.Type {
-	case STRING:
+	case STRING, MIXED:
 		return updateStringOption(opt, value)
 
 	case BOOL:
