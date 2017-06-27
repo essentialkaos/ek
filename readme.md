@@ -84,6 +84,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [SourceIndex](https://github.com/essentialkaos/source-index) - Utility for generating an index for source archives
 * [SSLScan Client](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
 * [Terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
+* [vgrepo](https://github.com/gongled/vgrepo) - Simple CLI tool for managing Vagrant repositories
 * [Yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
 
 ## Build Status
