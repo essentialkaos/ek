@@ -79,6 +79,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [RBInstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
 * [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
+* [redis-latency-monitor](https://github.com/essentialkaos/redis-latency-monitor) - Tiny Redis client for latency measurement
 * [SHDoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
 * [SourceIndex](https://github.com/essentialkaos/source-index) - Utility for generating an index for source archives
 * [SSLScan Client](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
