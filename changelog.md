@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.5.0
+
+* `[knf]` Added new getters `GetU`, `GetU64` and `GetI64`
+
 ### 9.4.0
 
 * `[options]` Added support of mixed options (string / bool)
