@@ -163,6 +163,10 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	c.Assert(GetS("test"), check.Equals, "")
 	c.Assert(GetI("test"), check.Equals, 0)
+	c.Assert(GetI("test"), check.Equals, 0)
+	c.Assert(GetU("test"), check.Equals, uint(0))
+	c.Assert(GetI64("test"), check.Equals, int64(0))
+	c.Assert(GetU64("test"), check.Equals, uint64(0))
 	c.Assert(GetF("test"), check.Equals, 0.0)
 	c.Assert(GetB("test"), check.Equals, false)
 	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
@@ -325,6 +329,10 @@ func (s *KNFSuite) TestInteger(c *check.C) {
 	c.Assert(GetF("integer:test8"), check.Equals, 0.0)
 	c.Assert(GetI("integer:test8"), check.Equals, 0)
 	c.Assert(GetF("integer:test9"), check.Equals, 0.0)
+
+	c.Assert(GetU("integer:test1"), check.Equals, uint(1))
+	c.Assert(GetI64("integer:test1"), check.Equals, int64(1))
+	c.Assert(GetU64("integer:test1"), check.Equals, uint64(1))
 }
 
 func (s *KNFSuite) TestFileMode(c *check.C) {
@@ -404,6 +412,9 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetS("string:test100", "fail"), check.Equals, "fail")
 	c.Assert(GetB("boolean:test100", true), check.Equals, true)
 	c.Assert(GetI("integer:test100", 9999), check.Equals, 9999)
+	c.Assert(GetU("integer:test100", 9999), check.Equals, uint(9999))
+	c.Assert(GetI64("integer:test100", 9999), check.Equals, int64(9999))
+	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
@@ -416,6 +427,9 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetS("string:test100", "fail"), check.Equals, "fail")
 	c.Assert(GetB("boolean:test100", true), check.Equals, true)
 	c.Assert(GetI("integer:test100", 9999), check.Equals, 9999)
+	c.Assert(GetU("integer:test100", 9999), check.Equals, uint(9999))
+	c.Assert(GetI64("integer:test100", 9999), check.Equals, int64(9999))
+	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
@@ -425,6 +439,9 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetS("string:test100", "fail"), check.Equals, "fail")
 	c.Assert(nc.GetB("boolean:test100", true), check.Equals, true)
 	c.Assert(nc.GetI("integer:test100", 9999), check.Equals, 9999)
+	c.Assert(nc.GetU("integer:test100", 9999), check.Equals, uint(9999))
+	c.Assert(nc.GetI64("integer:test100", 9999), check.Equals, int64(9999))
+	c.Assert(nc.GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")

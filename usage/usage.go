@@ -81,7 +81,18 @@ type example struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewInfo create new info struct
-func NewInfo(name string, args ...string) *Info {
+func NewInfo(args ...string) *Info {
+	var name string
+
+	if len(args) != 0 {
+		name = args[0]
+		args = args[1:]
+	}
+
+	if name == "" {
+		name = filepath.Base(os.Args[0])
+	}
+
 	info := &Info{
 		name:     name,
 		args:     strings.Join(args, " "),
@@ -92,10 +103,6 @@ func NewInfo(name string, args ...string) *Info {
 		CommandsColorTag: "{y}",
 		OptionsColorTag:  "{g}",
 		Breadcrumbs:      true,
-	}
-
-	if info.name == "" {
-		info.name = filepath.Base(os.Args[0])
 	}
 
 	return info

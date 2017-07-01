@@ -129,7 +129,7 @@ func GetS(name string, defvals ...string) string {
 	return global.GetS(name, defvals...)
 }
 
-// GetI return global config value as string
+// GetI return global config value as int
 func GetI(name string, defvals ...int) int {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -140,6 +140,45 @@ func GetI(name string, defvals ...int) int {
 	}
 
 	return global.GetI(name, defvals...)
+}
+
+// GetI64 return global config value as int64
+func GetI64(name string, defvals ...int64) int64 {
+	if global == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetI64(name, defvals...)
+}
+
+// GetU return global config value as uint
+func GetU(name string, defvals ...uint) uint {
+	if global == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetU(name, defvals...)
+}
+
+// GetU64 return global config value as uint64
+func GetU64(name string, defvals ...uint64) uint64 {
+	if global == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetU64(name, defvals...)
 }
 
 // GetF return global config value as floating number
@@ -279,8 +318,8 @@ func (c *Config) GetS(name string, defvals ...string) string {
 	return val
 }
 
-// GetI return config value as string
-func (c *Config) GetI(name string, defvals ...int) int {
+// GetI64 return config value as int64
+func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	if c == nil {
 		if len(defvals) == 0 {
 			return 0
@@ -307,16 +346,43 @@ func (c *Config) GetI(name string, defvals ...int) int {
 			return 0
 		}
 
-		return int(valHex)
+		return valHex
 	}
 
-	valInt, err := strconv.Atoi(val)
+	valInt, err := strconv.ParseInt(val, 10, 0)
 
 	if err != nil {
 		return 0
 	}
 
 	return valInt
+}
+
+// GetI return config value as int
+func (c *Config) GetI(name string, defvals ...int) int {
+	if len(defvals) != 0 {
+		return int(c.GetI64(name, int64(defvals[0])))
+	}
+
+	return int(c.GetI64(name))
+}
+
+// GetU return config value as uint
+func (c *Config) GetU(name string, defvals ...uint) uint {
+	if len(defvals) != 0 {
+		return uint(c.GetI64(name, int64(defvals[0])))
+	}
+
+	return uint(c.GetI64(name))
+}
+
+// GetU64 return config value as uint64
+func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
+	if len(defvals) != 0 {
+		return uint64(c.GetI64(name, int64(defvals[0])))
+	}
+
+	return uint64(c.GetI64(name))
 }
 
 // GetF return config value as floating number
