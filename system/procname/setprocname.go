@@ -23,9 +23,12 @@ import (
 // ErrWrongSize error occurred if given slice have the wrong size
 var ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
 
+// ErrWrongSize error occurred if one of given arguments is empty
+var ErrWrongArguments = errors.New("Arguments can't be empty")
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Set change current process name
+// Set change current process command in process tree
 func Set(args []string) error {
 	if len(args) != len(os.Args) {
 		return ErrWrongSize
@@ -37,6 +40,21 @@ func Set(args []string) error {
 		}
 
 		changeArgument(i, args[i])
+	}
+
+	return nil
+}
+
+// Replace replace one argument in process command
+func Replace(from, to string) error {
+	if from == "" || to == "" {
+		return ErrWrongArguments
+	}
+
+	for i, arg := range os.Args {
+		if arg == from {
+			changeArgument(i, to)
+		}
 	}
 
 	return nil

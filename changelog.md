@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.6.0
+
+* `[system/procname]` Added method `Replace` which replace just one argument in process command
+
 ### 9.5.0
 
 * `[knf]` Added new getters `GetU`, `GetU64` and `GetI64`
