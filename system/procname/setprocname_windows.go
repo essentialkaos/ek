@@ -9,7 +9,12 @@ package procname
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Set change current process name
+// Set change current process command in process tree
 func Set(args []string) error {
+	return nil
+}
+
+// Replace replace one argument in process command
+func Replace(from, to string) error {
 	return nil
 }
