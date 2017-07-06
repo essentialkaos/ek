@@ -2,11 +2,11 @@
 
 Auxiliary packages for Go.
 
-## Platform support
+### Platform support
 
 Currently we support Linux and Mac OS X (except `system` package). Some packages have stubs for Windows (_for autocomplete_).
 
-## Installation
+### Installation
 
 Before the initial install allows git to use redirects for [pkg.re](https://github.com/essentialkaos/pkgre) service (_reason why you should do this described [here](https://github.com/essentialkaos/pkgre#git-support)_):
 
@@ -26,7 +26,7 @@ If you want to update `EK` to latest stable release, do:
 go get -u pkg.re/essentialkaos/ek.v9
 ```
 
-## Packages
+### Packages
 
 * [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v9/color) - Package provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v9/cron) - Package provides methods for working with cron expressions
@@ -70,7 +70,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v9/uuid) - Package provides methods for generating version 4 and 5 UUID's
 * [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v9/version) - Package provides methods for parsing semver version info
 
-## Projects with `EK`
+### Projects with `EK`
 
 * [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
 * [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
@@ -87,7 +87,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [vgrepo](https://github.com/gongled/vgrepo) - Simple CLI tool for managing Vagrant repositories
 * [Yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
 
-## Build Status
+### Build Status
 
 | Branch | TravisCI |
 |--------|----------|
@@ -98,6 +98,8 @@ go get -u pkg.re/essentialkaos/ek.v9
 
 Before contributing to this project please read our [Contributing Guidelines](https://github.com/essentialkaos/contributing-guidelines#contributing-guidelines).
 
-## License
+### License
 
 [EKOL](https://essentialkaos.com/ekol)
+
+<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.io/ekgh.svg"/></a></p>
