@@ -32,8 +32,8 @@ type T struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Codes map tag -> escape code
-var Codes = map[rune]int{
+// codes map tag -> escape code
+var codes = map[rune]int{
 	// Special
 	'-': -1, // Light colors
 	'!': 0,  // Default
@@ -76,6 +76,39 @@ var DisableColors = false
 // Println formats using the default formats for its operands and writes to standard
 // output. Spaces are always added between operands and a newline is appended. It
 // returns the number of bytes written and any write error encountered.
+//
+// Supported color codes.
+// Modificators:
+//  - Light colors
+//  ! Default
+//  * Bold
+//  ^ Dim
+//  _ Underline
+//  ~ Blink
+//  @ Reverse
+//
+// Foreground colors:
+//  d Black (Dark)
+//  r Red
+//  g Green
+//  y Yellow
+//  b Blue
+//  m Magenta
+//  c Cyan
+//  s Gray (Smokey)
+//  w White
+//
+// Background colors:
+//  D Black (Dark)
+//  R Red
+//  G Green
+//  Y Yellow
+//  B Blue
+//  M Magenta
+//  C Cyan
+//  S Gray (Smokey)
+//  W White
+//
 func Println(a ...interface{}) (int, error) {
 	applyColors(&a, DisableColors)
 	return fmt.Println(a...)
@@ -83,6 +116,39 @@ func Println(a ...interface{}) (int, error) {
 
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
+//
+// Supported color codes.
+// Modificators:
+//  - Light colors
+//  ! Default
+//  * Bold
+//  ^ Dim
+//  _ Underline
+//  ~ Blink
+//  @ Reverse
+//
+// Foreground colors:
+//  d Black (Dark)
+//  r Red
+//  g Green
+//  y Yellow
+//  b Blue
+//  m Magenta
+//  c Cyan
+//  s Gray (Smokey)
+//  w White
+//
+// Background colors:
+//  D Black (Dark)
+//  R Red
+//  G Green
+//  Y Yellow
+//  B Blue
+//  M Magenta
+//  C Cyan
+//  S Gray (Smokey)
+//  W White
+//
 func Printf(f string, a ...interface{}) (int, error) {
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
@@ -182,7 +248,7 @@ func tag2ANSI(tag string, clean bool) string {
 	)
 
 	for _, key := range tag {
-		code := Codes[key]
+		code := codes[key]
 
 		switch key {
 		case '-':
@@ -306,7 +372,7 @@ func getSymbols(symbol string, count int) string {
 
 func isValidTag(tag string) bool {
 	for _, r := range tag {
-		_, hasCode := Codes[r]
+		_, hasCode := codes[r]
 
 		if !hasCode {
 			return false
