@@ -3,6 +3,7 @@
 ### 9.6.1
 
 * `[fmt]` More info about color tags
+* `[knf]` Removing trailing spaces from property values
 
 ### 9.6.0
 
