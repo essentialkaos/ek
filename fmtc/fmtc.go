@@ -32,7 +32,8 @@ type T struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var codes = map[rune]int{
+// Codes map tag -> escape code
+var Codes = map[rune]int{
 	// Special
 	'-': -1, // Light colors
 	'!': 0,  // Default
@@ -181,7 +182,7 @@ func tag2ANSI(tag string, clean bool) string {
 	)
 
 	for _, key := range tag {
-		code := codes[key]
+		code := Codes[key]
 
 		switch key {
 		case '-':
@@ -305,7 +306,7 @@ func getSymbols(symbol string, count int) string {
 
 func isValidTag(tag string) bool {
 	for _, r := range tag {
-		_, hasCode := codes[r]
+		_, hasCode := Codes[r]
 
 		if !hasCode {
 			return false

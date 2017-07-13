@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.6.1
+
+* `[fmt]` More info about color tags
+
 ### 9.6.0
 
 * `[system/procname]` Added method `Replace` which replace just one argument in process command
