@@ -25,7 +25,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// T is struct can be used for printing temporary messages
+// T is struct can be used for printing temporary output
 type T struct {
 	size int
 }
@@ -72,6 +72,11 @@ var codes = map[rune]int{
 var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// NewT create new struct for working with temporary output
+func NewT() *T {
+	return &T{}
+}
 
 // Println formats using the default formats for its operands and writes to standard
 // output. Spaces are always added between operands and a newline is appended. It

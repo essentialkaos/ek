@@ -2,7 +2,8 @@
 
 ### 9.6.1
 
-* `[fmt]` More info about color tags
+* `[fmtc]` More docs about color tags
+* `[fmtc]` Added method `NewT` which creates a new struct for working with the temporary output
 * `[knf]` Removing trailing spaces from property values
 
 ### 9.6.0
