@@ -1,6 +1,6 @@
 ## Changelog
 
-### 9.6.1
+### 9.7.0
 
 * `[fmtc]` More docs about color tags
 * `[fmtc]` Added method `NewT` which creates a new struct for working with the temporary output
