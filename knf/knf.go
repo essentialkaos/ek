@@ -590,6 +590,7 @@ func parseRecord(data string, config *Config) (string, string) {
 
 	propName = strings.TrimLeft(propName, " \t")
 	propValue = strings.TrimLeft(propValue, " \t")
+	propValue = strings.TrimRight(propValue, " ")
 
 	if strings.Contains(propValue, _MACRO_SYMBOL) {
 		macroses := macroRE.FindAllStringSubmatch(propValue, -1)
