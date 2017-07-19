@@ -139,7 +139,7 @@ func (s *FormatSuite) TestMethods(c *C) {
 }
 
 func (s *FormatSuite) TestAux(c *C) {
-	t := &T{}
+	t := NewT()
 
 	t.Printf("TEST %s", "OK")
 	t.Printf("TEST %s", "OK")

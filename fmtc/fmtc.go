@@ -13,6 +13,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -73,7 +75,7 @@ var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewT create new struct for working with temporary output
+// NewT create new struct for working with temporary output in one line
 func NewT() *T {
 	return &T{}
 }
@@ -222,7 +224,7 @@ func (t *T) Printf(f string, a ...interface{}) (int, error) {
 		fmt.Printf(getSymbols(_CODE_BACKSPACE, t.size) + "\033[0K")
 	}
 
-	t.size = len(fmt.Sprintf(searchColors(f, true), a...))
+	t.size = strutil.Len(fmt.Sprintf(searchColors(f, true), a...))
 
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }

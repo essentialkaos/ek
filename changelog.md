@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.7.1
+
+* `[fmtc]` Improved utf8 support in temporary messages
+
 ### 9.7.0
 
 * `[fmtc]` Added method `NewT` which creates a new struct for working with the temporary output
