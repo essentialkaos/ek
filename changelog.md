@@ -2,7 +2,7 @@
 
 ### 9.8.0
 
-* `[initsystem]` _New package for working with different init systems (sysv, upstart, systemd)_
+* `[initsystem]` New package for working with different init systems (sysv, upstart, systemd)
 
 ### 9.7.1
 
