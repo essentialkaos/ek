@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.8.0
+
+* `[initsystem]` _New package for working with different init systems (sysv, upstart, systemd)_
+
 ### 9.7.1
 
 * `[fmtc]` Improved utf8 support in temporary messages
