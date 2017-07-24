@@ -40,6 +40,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fsutil) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
 * [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v9/hash) - Package hash contains different hash algorithms and utilities
 * [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/httputil) - Package provides methods for working with HTTP request/responses
+* [`initsystem`](https://godoc.org/pkg.re/essentialkaos/ek.v9/initsystem) - Package provides methods for working with different init systems (sysv, upstart, systemd)
 * [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/jsonutil) - Package provides methods for working with JSON data
 * [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v9/knf) - Package provides methods for working with configs in KNF format
 * [`kv`](https://godoc.org/pkg.re/essentialkaos/ek.v9/kv) - Package provides simple key-value structs
