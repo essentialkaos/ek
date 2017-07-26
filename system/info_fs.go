@@ -104,9 +104,9 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 			fsInfo.Device = values[0]
 		}
 
-		fsInfo.Total = stats.Blocks * uint64(stats.Bsize)
-		fsInfo.Free = uint64(stats.Bavail) * uint64(stats.Bsize)
-		fsInfo.Used = fsInfo.Total - (stats.Bfree * uint64(stats.Bsize))
+		fsInfo.Used = (stats.Blocks * uint64(stats.Bsize)) - (stats.Bfree * uint64(stats.Bsize))
+		fsInfo.Total = fsInfo.Used + (stats.Bavail * uint64(stats.Bsize))
+		fsInfo.Free = fsInfo.Total - fsInfo.Used
 		fsInfo.IOStats = ios[strings.Replace(fsInfo.Device, "/dev/", "", 1)]
 
 		info[path] = fsInfo

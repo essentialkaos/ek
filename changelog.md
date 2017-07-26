@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.9.0
+
+* `[system]` Improved disk usage calculation (now it similar to `df` command output)
+
 ### 9.8.0
 
 * `[initsystem]` New package for working with different init systems (sysv, upstart, systemd)
