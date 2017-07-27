@@ -67,6 +67,7 @@ type exprInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrMalformedExpression is returned if expression have more on less than 5 tokens
 var ErrMalformedExpression = errors.New("Expression must have 5 tokens")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -137,23 +138,23 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 		t = time.Now()
 	}
 
-	if expr.minutes.index[uint8(t.Minute())] == false {
+	if !expr.minutes.index[uint8(t.Minute())] {
 		return false
 	}
 
-	if expr.hours.index[uint8(t.Hour())] == false {
+	if !expr.hours.index[uint8(t.Hour())] {
 		return false
 	}
 
-	if expr.doms.index[uint8(t.Day())] == false {
+	if !expr.doms.index[uint8(t.Day())] {
 		return false
 	}
 
-	if expr.months.index[uint8(t.Month())] == false {
+	if !expr.months.index[uint8(t.Month())] {
 		return false
 	}
 
-	if expr.dows.index[uint8(t.Weekday())] == false {
+	if !expr.dows.index[uint8(t.Weekday())] {
 		return false
 	}
 
@@ -197,7 +198,7 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 							uint8(d.Day()) != expr.doms.tokens[j],
 							uint8(d.Hour()) != expr.hours.tokens[k],
 							uint8(d.Minute()) != expr.minutes.tokens[l],
-							expr.dows.index[uint8(d.Weekday())] == false:
+							!expr.dows.index[uint8(d.Weekday())]:
 							continue
 						}
 
@@ -252,7 +253,7 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 							uint8(d.Day()) != expr.doms.tokens[j],
 							uint8(d.Hour()) != expr.hours.tokens[k],
 							uint8(d.Minute()) != expr.minutes.tokens[l],
-							expr.dows.index[uint8(d.Weekday())] == false:
+							!expr.dows.index[uint8(d.Weekday())]:
 							continue
 						}
 

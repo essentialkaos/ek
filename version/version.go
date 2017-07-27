@@ -29,8 +29,11 @@ type Version struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrEmpty           = errors.New("Version can't be empty")
-	ErrEmptyBuild      = errors.New("Build number is empty")
+	// ErrEmpty is returned is given version is empty
+	ErrEmpty = errors.New("Version can't be empty")
+	// ErrEmptyBuild is returned if build number is empty
+	ErrEmptyBuild = errors.New("Build number is empty")
+	// ErrEmptyPrerelease is returned is prerelease number is empty
 	ErrEmptyPrerelease = errors.New("Prerelease number is empty")
 )
 
@@ -60,10 +63,10 @@ func Parse(v string) (Version, error) {
 
 		if bs[1] == "" {
 			return Version{}, ErrEmptyBuild
-		} else {
-			v = bs[0]
-			build = bs[1]
 		}
+
+		v = bs[0]
+		build = bs[1]
 	}
 
 	if strings.Contains(v, "-") {
@@ -71,10 +74,10 @@ func Parse(v string) (Version, error) {
 
 		if ps[1] == "" {
 			return Version{}, ErrEmptyPrerelease
-		} else {
-			v = ps[0]
-			preRelease = ps[1]
 		}
+
+		v = ps[0]
+		preRelease = ps[1]
 	}
 
 	for index, version := range strings.Split(v, ".") {
@@ -226,7 +229,7 @@ func (v Version) Contains(version Version) bool {
 	return false
 }
 
-// String return version as integer
+// Int return version as integer
 func (v Version) Int() int {
 	result := v.Major() * 1000000
 	result += v.Minor() * 1000

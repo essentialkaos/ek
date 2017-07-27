@@ -344,16 +344,16 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 
 	if hasPerms {
 		if filter.Perms != "" {
-			match = match && CheckPerms(filter.Perms, fullPath) == true
+			match = match && CheckPerms(filter.Perms, fullPath)
 		}
 
 		if filter.NotPerms != "" {
-			match = match && CheckPerms(filter.NotPerms, fullPath) == false
+			match = match && !CheckPerms(filter.NotPerms, fullPath)
 		}
 	}
 
 	if hasSize {
-		if filter.SizeZero == true {
+		if filter.SizeZero {
 			match = match && GetSize(fullPath) == 0
 		} else {
 			if filter.SizeEqual > 0 {

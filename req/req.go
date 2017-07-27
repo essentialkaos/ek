@@ -151,9 +151,9 @@ type RequestError struct {
 type Engine struct {
 	UserAgent string // UserAgent is default user-agent used for all requests
 
-	Dialer    *net.Dialer     // Dialer default dialer struct
+	Dialer    *net.Dialer     // Dialer is default dialer struct
 	Transport *http.Transport // Transport is default transport struct
-	Client    *http.Client    // Client default client struct
+	Client    *http.Client    // Client is default client struct
 
 	dialTimeout    float64 // dialTimeout is dial timeout in seconds
 	requestTimeout float64 // requestTimeout is request timeout in seconds
@@ -164,17 +164,23 @@ type Engine struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrEngineIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
-	ErrClientIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
-	ErrTransportIsNil    = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
-	ErrDialerIsNil       = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
-	ErrEmptyURL          = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	// ErrEngineIsNil is returned if engine struct is nil
+	ErrEngineIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+	// ErrClientIsNil is returned if client struct is nil
+	ErrClientIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
+	// ErrTransportIsNil is returned if transport is nil
+	ErrTransportIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
+	// ErrDialerIsNil is returned if dialer is nil
+	ErrDialerIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+	// ErrEmptyURL is returned if given URL is empty
+	ErrEmptyURL = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
 	ErrUnsupportedScheme = RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
 )
 
 // Global is global engine used by default for Request.Do, Request.Get, Request.Post,
 // Request.Put, Request.Patch, Request.Head and Request.Delete methods
-var Global *Engine = &Engine{
+var Global = &Engine{
 	dialTimeout: 10.0,
 }
 
