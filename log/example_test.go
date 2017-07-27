@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_Logger() {
+func Example_logger() {
 	logger, err := New("/path/to/file.log", 0644)
 
 	if err != nil {
