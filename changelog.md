@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.9.2
+
+* `[initsystem]` Added stubs for windows
+
 ### 9.9.1
 
 * Code refactoring
