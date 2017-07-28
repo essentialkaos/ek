@@ -21,6 +21,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Service states codes
 const (
 	STATE_STOPPED       = 0
 	STATE_WORKS         = 1
@@ -31,7 +32,7 @@ const (
 
 // SysV if SysV is used on system
 func SysV() bool {
-	return Systemd() == false
+	return !Systemd()
 }
 
 // Upstart if Upstart is used on system
@@ -91,11 +92,7 @@ func hasSysVService(name string) bool {
 	// Default path for BSD
 	initDir = "/usr/local/etc/rc.d"
 
-	if fsutil.CheckPerms("FXS", initDir+"/"+name) {
-		return true
-	}
-
-	return false
+	return fsutil.CheckPerms("FXS", initDir+"/"+name)
 }
 
 func hasUpstartService(name string) bool {

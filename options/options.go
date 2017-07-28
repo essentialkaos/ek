@@ -44,17 +44,18 @@ const (
 
 // V basic option struct
 type V struct {
-	Type      int         // option type
-	Max       float64     // maximum integer option value
-	Min       float64     // minimum integer option value
-	Alias     string      // list of aliases
-	Conflicts string      // list of conflicts options
-	Bound     string      // list of bound options
-	Mergeble  bool        // option supports options value merging
-	Required  bool        // option is required
-	Value     interface{} // default value
+	Type      int     // option type
+	Max       float64 // maximum integer option value
+	Min       float64 // minimum integer option value
+	Alias     string  // list of aliases
+	Conflicts string  // list of conflicts options
+	Bound     string  // list of bound options
+	Mergeble  bool    // option supports options value merging
+	Required  bool    // option is required
 
 	set bool // non-exported field
+
+	Value interface{} // default value
 }
 
 // Map is map with list of options
@@ -62,13 +63,12 @@ type Map map[string]*V
 
 // Options options struct
 type Options struct {
-	full        Map
-	short       map[string]string
-	initialized bool
-
+	short        map[string]string
+	initialized  bool
 	hasRequired  bool
 	hasBound     bool
 	hasConflicts bool
+	full         Map
 }
 
 // OptionError argument parsing error
@@ -326,7 +326,7 @@ func NewOptions() *Options {
 
 // Add add new supported option
 func Add(name string, opt *V) error {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
 
@@ -335,7 +335,7 @@ func Add(name string, opt *V) error {
 
 // AddMap add supported option as map
 func AddMap(optMap Map) []error {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
 
@@ -344,7 +344,7 @@ func AddMap(optMap Map) []error {
 
 // GetS return option value as string
 func GetS(name string) string {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		return ""
 	}
 
@@ -353,7 +353,7 @@ func GetS(name string) string {
 
 // GetI return option value as integer
 func GetI(name string) int {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		return 0
 	}
 
@@ -362,7 +362,7 @@ func GetI(name string) int {
 
 // GetB return option value as boolean
 func GetB(name string) bool {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		return false
 	}
 
@@ -371,7 +371,7 @@ func GetB(name string) bool {
 
 // GetF return option value as floating number
 func GetF(name string) float64 {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		return 0.0
 	}
 
@@ -380,7 +380,7 @@ func GetF(name string) float64 {
 
 // Has check that option exists and set
 func Has(name string) bool {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		return false
 	}
 
@@ -389,7 +389,7 @@ func Has(name string) bool {
 
 // Parse parse options
 func Parse(optMap ...Map) ([]string, []error) {
-	if global == nil || global.initialized == false {
+	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
 
@@ -563,7 +563,7 @@ func (opts *Options) validate() []error {
 	var errorList []error
 
 	for n, v := range opts.full {
-		if v.Required == true && v.Value == nil {
+		if v.Required && v.Value == nil {
 			errorList = append(errorList, OptionError{n, "", ERROR_REQUIRED_NOT_SET})
 		}
 

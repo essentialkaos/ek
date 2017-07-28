@@ -109,7 +109,7 @@ func splitLine(line string) []string {
 			continue
 		}
 
-		if space == true {
+		if space {
 			if buffer != "" {
 				result = append(result, buffer)
 			}

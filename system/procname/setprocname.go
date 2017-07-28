@@ -20,10 +20,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrWrongSize error occurred if given slice have the wrong size
+// ErrWrongSize is returned if given slice have the wrong size
 var ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
 
-// ErrWrongSize error occurred if one of given arguments is empty
+// ErrWrongArguments is returned if one of given arguments is empty
 var ErrWrongArguments = errors.New("Arguments can't be empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //

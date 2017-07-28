@@ -26,8 +26,8 @@ func ExampleGet() {
 
 	// You can use getters for different value formats
 	fmt.Printf("Integer value %s = %d\n", "INT_VALUE", env.GetI("INT_VALUE"))
-	fmt.Printf("Float value %s = %f\n", "FLOAT_VALUE", env.GetI("FLOAT_VALUE"))
-	fmt.Printf("String value %s = %d\n", "STR_VALUE", env.GetS("STR_VALUE"))
+	fmt.Printf("Float value %s = %g\n", "FLOAT_VALUE", env.GetF("FLOAT_VALUE"))
+	fmt.Printf("String value %s = %s\n", "STR_VALUE", env.GetS("STR_VALUE"))
 }
 
 func ExampleWhich() {

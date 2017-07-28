@@ -17,7 +17,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // SeparatorColorTag is fmtc color tag used for separator (light gray by default)
-var SeparatorColorTag string = "{s}"
+var SeparatorColorTag = "{s}"
 
 // SeparatorTitleColorTag is fmtc color tag used for separator title (light gray by default)
 var SeparatorTitleColorTag = "{s}"

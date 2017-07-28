@@ -26,7 +26,6 @@ import (
 const (
 	_IFMT   = 0xf000
 	_IFSOCK = 0xc000
-	_IFLNK  = 0xa000
 	_IFREG  = 0x8000
 	_IFBLK  = 0x6000
 	_IFDIR  = 0x4000

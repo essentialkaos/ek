@@ -29,6 +29,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Table is struct which can be used for table rendering
 type Table struct {
 	Sizes     []int    // Custom columns sizes
 	Headers   []string // Slice with headers

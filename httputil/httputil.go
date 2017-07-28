@@ -48,7 +48,7 @@ func GetRequestPort(r *http.Request) string {
 	return port
 }
 
-// GetRemoteHost return network address that sent the request
+// GetRemoteAddr return network address that sent the request
 func GetRemoteAddr(r *http.Request) (string, string) {
 	addr := r.RemoteAddr
 
@@ -67,7 +67,7 @@ func GetRemoteHost(r *http.Request) string {
 	return host
 }
 
-// GetRemoteHost return host port that sent the request
+// GetRemotePort return host port that sent the request
 func GetRemotePort(r *http.Request) string {
 	_, port := GetRemoteAddr(r)
 	return port

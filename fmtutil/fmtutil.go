@@ -179,11 +179,9 @@ func Wrap(text, indent string, maxLineLength int) string {
 
 // ColorizePassword add different fmtc color tags for numbers and letters
 func ColorizePassword(password, letterTag, numTag, specialTag string) string {
-	var (
-		result  = ""
-		curTag  = ""
-		prevTag = "-"
-	)
+	var result, curTag, prevTag string
+
+	prevTag = "-"
 
 	for _, r := range password {
 		switch {

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.9.1
+
+* Code refactoring
+
 ### 9.9.0
 
 * `[system]` Improved disk usage calculation (now it similar to `df` command output)

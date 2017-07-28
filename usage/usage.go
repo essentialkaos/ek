@@ -59,6 +59,7 @@ type Info struct {
 	curGroup string
 }
 
+// UpdateChecker is a base for all update checkers
 type UpdateChecker struct {
 	Data      string
 	CheckFunc func(app, version, data string) (string, time.Time, bool)
