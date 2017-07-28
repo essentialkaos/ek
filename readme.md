@@ -73,6 +73,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 
 ### Projects with `EK`
 
+* [bibop](https://github.com/essentialkaos/bibop) - Utility for testing command-line tools
 * [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
 * [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
 * [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
