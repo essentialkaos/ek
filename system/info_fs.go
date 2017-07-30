@@ -189,14 +189,13 @@ func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration ti
 
 	// convert duration to jiffies
 	itv := uint64(duration / (time.Millisecond * 10))
-	hz := getHZ()
 
 	for n, f := range fi1 {
 		if fi1[n].IOStats == nil || fi2[n].IOStats == nil {
 			continue
 		}
 
-		util := float64(fi2[n].IOStats.IOMs-fi1[n].IOStats.IOMs) / float64(itv) * hz
+		util := float64(fi2[n].IOStats.IOMs-fi1[n].IOStats.IOMs) / float64(itv) * getHZ()
 
 		util /= 10.0
 
