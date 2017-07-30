@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.10.0
+
+* `[system]` Added method `GetCPUStats` which return basic CPU info from `/proc/stat`
+* `[system]` Improved IO utilization calculation
+
 ### 9.9.2
 
 * `[initsystem]` Added stubs for windows

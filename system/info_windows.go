@@ -51,6 +51,20 @@ type CPUInfo struct {
 	Count  int     `json:"count"`  // Number of CPU cores
 }
 
+// CPUStats contains basic CPU stats
+type CPUStats struct {
+	User   uint64 `json:"user"`
+	Nice   uint64 `json:"nice"`
+	System uint64 `json:"system"`
+	Idle   uint64 `json:"idle"`
+	Wait   uint64 `json:"wait"`
+	IRQ    uint64 `json:"irq"`
+	SRQ    uint64 `json:"srq"`
+	Steal  uint64 `json:"steal"`
+	Total  uint64 `json:"total"`
+	Count  int    `json:"count"`
+}
+
 // FSInfo contains info about fs usage
 type FSInfo struct {
 	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)
@@ -114,6 +128,11 @@ func GetCPUInfo() (*CPUInfo, error) {
 	return nil, nil
 }
 
+// GetCPUStats return basic CPU stats
+func GetCPUStats() (*CPUStats, error) {
+	return nil, nil
+}
+
 // GetFSInfo return info about mounted filesystems
 func GetFSInfo() (map[string]*FSInfo, error) {
 	return map[string]*FSInfo{"/": {}}, nil
@@ -151,7 +170,7 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 }
 
 // CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map[string]*FSInfo) map[string]float64 {
+func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration time.Duration) map[string]float64 {
 	return map[string]float64{"/": 0}
 }
 
