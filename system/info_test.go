@@ -220,11 +220,6 @@ func (s *SystemSuite) TestFS(c *C) {
 	mtabFile = "/etc/mtab"
 	procDiscStatsFile = "/proc/diskstats"
 
-	util, err = GetIOUtil(time.Millisecond)
-
-	c.Assert(err, NotNil)
-	c.Assert(util, IsNil)
-
 	mtabFile = s.CreateTestFile(c, "/dev/abc1 / ext4 rw 0 0")
 
 	fs, err = GetFSInfo()
@@ -233,14 +228,13 @@ func (s *SystemSuite) TestFS(c *C) {
 	c.Assert(fs, NotNil)
 
 	util = CalculateIOUtil(
-		&CPUInfo{24.0, 25.0, 25.0, 25.0, 25.0, 10},
-		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOQueueMs: 1}}},
-		&CPUInfo{25.0, 25.0, 25.0, 25.0, 25.0, 10},
-		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOQueueMs: 3}}},
+		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOMs: 10}}},
+		map[string]*FSInfo{"abc": {Device: "abc", IOStats: &IOStats{IOMs: 1840}}},
+		time.Minute,
 	)
 
 	c.Assert(util, NotNil)
-	c.Assert(util["abc"], Equals, 100.0)
+	c.Assert(util["abc"], Equals, 3.05)
 
 	procStatFile = "/proc/stat"
 }

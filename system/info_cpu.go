@@ -27,18 +27,18 @@ type CPUInfo struct {
 	Count  int     `json:"count"`  // Number of CPU cores
 }
 
-// basicCPUInfo contains basic CPU metrics
-type basicCPUInfo struct {
-	User   uint64
-	Nice   uint64
-	System uint64
-	Idle   uint64
-	Wait   uint64
-	IRQ    uint64
-	SRQ    uint64
-	Steal  uint64
-	Total  uint64
-	Count  int
+// CPUStats contains basic CPU stats
+type CPUStats struct {
+	User   uint64 `json:"user"`
+	Nice   uint64 `json:"nice"`
+	System uint64 `json:"system"`
+	Idle   uint64 `json:"idle"`
+	Wait   uint64 `json:"wait"`
+	IRQ    uint64 `json:"irq"`
+	SRQ    uint64 `json:"srq"`
+	Steal  uint64 `json:"steal"`
+	Total  uint64 `json:"total"`
+	Count  int    `json:"count"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -50,59 +50,57 @@ var procStatFile = "/proc/stat"
 
 // GetCPUInfo return info about CPU usage
 func GetCPUInfo() (*CPUInfo, error) {
-	info, err := getCPUStats()
+	stats, err := GetCPUStats()
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &CPUInfo{
-		System: (float64(info.System) / float64(info.Total)) * 100,
-		User:   (float64(info.User) / float64(info.Total)) * 100,
-		Nice:   (float64(info.Nice) / float64(info.Total)) * 100,
-		Wait:   (float64(info.Wait) / float64(info.Total)) * 100,
-		Idle:   (float64(info.Idle) / float64(info.Total)) * 100,
-		Count:  info.Count,
+		System: (float64(stats.System) / float64(stats.Total)) * 100,
+		User:   (float64(stats.User) / float64(stats.Total)) * 100,
+		Nice:   (float64(stats.Nice) / float64(stats.Total)) * 100,
+		Wait:   (float64(stats.Wait) / float64(stats.Total)) * 100,
+		Idle:   (float64(stats.Idle) / float64(stats.Total)) * 100,
+		Count:  stats.Count,
 	}, nil
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// getCPUStats return basicCPUInfo
-func getCPUStats() (basicCPUInfo, error) {
-	info := basicCPUInfo{}
+// GetCPUStats return basic CPU stats
+func GetCPUStats() (*CPUStats, error) {
+	stats := &CPUStats{}
 
 	content, err := readFileContent(procStatFile)
 
 	if err != nil {
-		return info, errors.New("Can't parse file " + procStatFile)
+		return nil, errors.New("Can't parse file " + procStatFile)
 	}
 
 	for _, line := range content {
 		if strings.HasPrefix(line, "cpu") {
-			info.Count++
+			stats.Count++
 		}
 	}
 
-	info.Count--
+	stats.Count--
 
 	cpuInfo := strings.Replace(content[0], "cpu  ", "", -1)
 	cpuInfoSlice := strings.Split(cpuInfo, " ")
 
 	if len(cpuInfoSlice) < 8 {
-		return info, errors.New("Can't parse file " + procStatFile)
+		return nil, errors.New("Can't parse file " + procStatFile)
 	}
 
-	info.User, _ = strconv.ParseUint(cpuInfoSlice[0], 10, 64)
-	info.Nice, _ = strconv.ParseUint(cpuInfoSlice[1], 10, 64)
-	info.System, _ = strconv.ParseUint(cpuInfoSlice[2], 10, 64)
-	info.Idle, _ = strconv.ParseUint(cpuInfoSlice[3], 10, 64)
-	info.Wait, _ = strconv.ParseUint(cpuInfoSlice[4], 10, 64)
-	info.IRQ, _ = strconv.ParseUint(cpuInfoSlice[5], 10, 64)
-	info.SRQ, _ = strconv.ParseUint(cpuInfoSlice[6], 10, 64)
-	info.Steal, _ = strconv.ParseUint(cpuInfoSlice[7], 10, 64)
+	stats.User, _ = strconv.ParseUint(cpuInfoSlice[0], 10, 64)
+	stats.Nice, _ = strconv.ParseUint(cpuInfoSlice[1], 10, 64)
+	stats.System, _ = strconv.ParseUint(cpuInfoSlice[2], 10, 64)
+	stats.Idle, _ = strconv.ParseUint(cpuInfoSlice[3], 10, 64)
+	stats.Wait, _ = strconv.ParseUint(cpuInfoSlice[4], 10, 64)
+	stats.IRQ, _ = strconv.ParseUint(cpuInfoSlice[5], 10, 64)
+	stats.SRQ, _ = strconv.ParseUint(cpuInfoSlice[6], 10, 64)
+	stats.Steal, _ = strconv.ParseUint(cpuInfoSlice[7], 10, 64)
 
-	info.Total = info.User + info.System + info.Nice + info.Idle + info.Wait + info.IRQ + info.SRQ + info.Steal
+	stats.Total = stats.User + stats.System + stats.Nice + stats.Idle + stats.Wait + stats.IRQ + stats.SRQ + stats.Steal
 
-	return info, nil
+	return stats, nil
 }

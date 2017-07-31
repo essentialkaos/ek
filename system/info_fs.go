@@ -147,17 +147,17 @@ func GetIOStats() (map[string]*IOStats, error) {
 		metrics := stringSliceToUintSlice(lineSlice[3:])
 
 		iostats[device] = &IOStats{
-			ReadComplete:  metrics[0],
-			ReadMerged:    metrics[1],
-			ReadSectors:   metrics[2],
-			ReadMs:        metrics[3],
-			WriteComplete: metrics[4],
-			WriteMerged:   metrics[5],
-			WriteSectors:  metrics[6],
-			WriteMs:       metrics[7],
-			IOPending:     metrics[8],
-			IOMs:          metrics[9],
-			IOQueueMs:     metrics[10],
+			ReadComplete:  metrics[0],  // rd_ios
+			ReadMerged:    metrics[1],  // -
+			ReadSectors:   metrics[2],  // rd_sec
+			ReadMs:        metrics[3],  // rd_ticks
+			WriteComplete: metrics[4],  // wr_ios
+			WriteMerged:   metrics[5],  // -
+			WriteSectors:  metrics[6],  // wr_sec
+			WriteMs:       metrics[7],  // wr_ticks
+			IOPending:     metrics[8],  // -
+			IOMs:          metrics[9],  // tot_ticks
+			IOQueueMs:     metrics[10], // rq_ticks
 		}
 	}
 
@@ -172,12 +172,6 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 		return nil, err
 	}
 
-	ci1, err := GetCPUInfo()
-
-	if err != nil {
-		return nil, err
-	}
-
 	time.Sleep(duration)
 
 	fi2, err := GetFSInfo()
@@ -186,35 +180,30 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 		return nil, err
 	}
 
-	ci2, err := GetCPUInfo()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return CalculateIOUtil(ci1, fi1, ci2, fi2), nil
+	return CalculateIOUtil(fi1, fi2, duration), nil
 }
 
 // CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(ci1 *CPUInfo, fi1 map[string]*FSInfo, ci2 *CPUInfo, fi2 map[string]*FSInfo) map[string]float64 {
+func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration time.Duration) map[string]float64 {
 	result := make(map[string]float64)
 
-	curCPUUsage := float64(ci2.User + ci2.System + ci2.Idle + ci2.Wait)
-	prevCPUUsage := float64(ci1.User + ci1.System + ci1.Idle + ci1.Wait)
-
-	deltams := 1000.0 * (curCPUUsage - prevCPUUsage) / float64(ci2.Count) / getHZ()
+	// convert duration to jiffies
+	itv := uint64(duration / (time.Millisecond * 10))
 
 	for n, f := range fi1 {
-		if fi1[n].IOStats != nil && fi2[n].IOStats != nil {
-			ticks := float64(fi2[n].IOStats.IOQueueMs - fi1[n].IOStats.IOQueueMs)
-			util := 100.0 * ticks / deltams
-
-			if util > 100.0 {
-				util = 100.0
-			}
-
-			result[f.Device] = util
+		if fi1[n].IOStats == nil || fi2[n].IOStats == nil {
+			continue
 		}
+
+		util := float64(fi2[n].IOStats.IOMs-fi1[n].IOStats.IOMs) / float64(itv) * getHZ()
+
+		util /= 10.0
+
+		if util > 100.0 {
+			util = 100.0
+		}
+
+		result[f.Device] = util
 	}
 
 	return result
