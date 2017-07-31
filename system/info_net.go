@@ -100,6 +100,10 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 // CalculateNetworkSpeed calculate network input/output speed in bytes per second for
 // all network interfaces
 func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
+	if ii1 == nil || ii2 == nil {
+		return 0, 0
+	}
+
 	rb1, tb1 := getActiveInterfacesBytes(ii1)
 	rb2, tb2 := getActiveInterfacesBytes(ii2)
 

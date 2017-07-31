@@ -166,7 +166,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 // GetIOUtil return slice (device -> utilization) with IO utilization
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
-	fi1, err := GetFSInfo()
+	io1, err := GetIOStats()
 
 	if err != nil {
 		return nil, err
@@ -174,28 +174,32 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 
 	time.Sleep(duration)
 
-	fi2, err := GetFSInfo()
+	io2, err := GetIOStats()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return CalculateIOUtil(fi1, fi2, duration), nil
+	return CalculateIOUtil(io1, io2, duration), nil
 }
 
 // CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration time.Duration) map[string]float64 {
+func CalculateIOUtil(io1 map[string]*IOStats, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
+	if io1 == nil || io2 == nil {
+		return nil
+	}
+
 	result := make(map[string]float64)
 
 	// convert duration to jiffies
 	itv := uint64(duration / (time.Millisecond * 10))
 
-	for n, f := range fi1 {
-		if fi1[n].IOStats == nil || fi2[n].IOStats == nil {
+	for device := range io1 {
+		if io1[device] == nil || io2[device] == nil {
 			continue
 		}
 
-		util := float64(fi2[n].IOStats.IOMs-fi1[n].IOStats.IOMs) / float64(itv) * getHZ()
+		util := float64(io2[device].IOMs-io1[device].IOMs) / float64(itv) * getHZ()
 
 		util /= 10.0
 
@@ -203,7 +207,7 @@ func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration ti
 			util = 100.0
 		}
 
-		result[f.Device] = util
+		result[device] = util
 	}
 
 	return result
