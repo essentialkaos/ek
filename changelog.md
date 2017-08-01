@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.11.0
+
+* `[system]` Improved IO utilization calculation
+* `[system]` Improved network speed calculation
+
 ### 9.10.0
 
 * `[system]` Added method `GetCPUStats` which return basic CPU info from `/proc/stat`
