@@ -16,6 +16,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -75,21 +77,26 @@ func GetInfo(pid int) (*ProcInfo, error) {
 	}
 
 	info := &ProcInfo{}
+	errs := errutil.NewErrors()
 
-	info.PID, _ = strconv.Atoi(dataSlice[0])
+	info.PID = parseIntField(dataSlice, 0, errs)
 	info.Comm = dataSlice[1]
 	info.State = dataSlice[2]
-	info.PPID, _ = strconv.Atoi(dataSlice[3])
-	info.Session, _ = strconv.Atoi(dataSlice[5])
-	info.TTYNR, _ = strconv.Atoi(dataSlice[6])
-	info.TPGid, _ = strconv.Atoi(dataSlice[7])
-	info.UTime, _ = strconv.ParseUint(dataSlice[13], 10, 64)
-	info.STime, _ = strconv.ParseUint(dataSlice[14], 10, 64)
-	info.CUTime, _ = strconv.ParseUint(dataSlice[15], 10, 64)
-	info.CSTime, _ = strconv.ParseUint(dataSlice[16], 10, 64)
-	info.Priority, _ = strconv.Atoi(dataSlice[17])
-	info.Nice, _ = strconv.Atoi(dataSlice[18])
-	info.NumThreads, _ = strconv.Atoi(dataSlice[19])
+	info.PPID = parseIntField(dataSlice, 3, errs)
+	info.Session = parseIntField(dataSlice, 5, errs)
+	info.TTYNR = parseIntField(dataSlice, 6, errs)
+	info.TPGid = parseIntField(dataSlice, 7, errs)
+	info.UTime = parseUintField(dataSlice, 13, errs)
+	info.STime = parseUintField(dataSlice, 14, errs)
+	info.CUTime = parseUintField(dataSlice, 15, errs)
+	info.CSTime = parseUintField(dataSlice, 16, errs)
+	info.Priority = parseIntField(dataSlice, 17, errs)
+	info.Nice = parseIntField(dataSlice, 18, errs)
+	info.NumThreads = parseIntField(dataSlice, 19, errs)
+
+	if errs.HasErrors() {
+		return nil, errs.Last()
+	}
 
 	return info, nil
 }
@@ -131,4 +138,24 @@ func getHZ() float64 {
 	}
 
 	return hz
+}
+
+func parseIntField(data []string, index int, errs *errutil.Errors) int {
+	value, err := strconv.Atoi(dataSlice[index])
+
+	if err != nil {
+		errs.Add(err)
+	}
+
+	return value
+}
+
+func parseUintField(data []string, index int, errs *errutil.Errors) uint64 {
+	value, err := strconv.ParseUint(dataSlice[index], 10, 64)
+
+	if err != nil {
+		errs.Add(err)
+	}
+
+	return value
 }

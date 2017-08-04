@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.12.0
+
+* `[system/process]` Improved error handling in `GetInfo`
+
 ### 9.11.0
 
 * `[system]` Improved IO utilization calculation
