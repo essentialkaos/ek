@@ -1,6 +1,6 @@
 ## Changelog
 
-### 9.12.0
+### 9.11.1
 
 * `[system/process]` Improved error handling in `GetInfo`
 
