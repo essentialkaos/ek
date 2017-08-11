@@ -141,7 +141,7 @@ func getHZ() float64 {
 }
 
 func parseIntField(data []string, index int, errs *errutil.Errors) int {
-	value, err := strconv.Atoi(dataSlice[index])
+	value, err := strconv.Atoi(data[index])
 
 	if err != nil {
 		errs.Add(err)
@@ -151,7 +151,7 @@ func parseIntField(data []string, index int, errs *errutil.Errors) int {
 }
 
 func parseUintField(data []string, index int, errs *errutil.Errors) uint64 {
-	value, err := strconv.ParseUint(dataSlice[index], 10, 64)
+	value, err := strconv.ParseUint(data[index], 10, 64)
 
 	if err != nil {
 		errs.Add(err)

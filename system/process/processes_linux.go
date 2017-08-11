@@ -11,7 +11,7 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -36,6 +36,16 @@ type ProcessInfo struct {
 
 // GetTree return root process with all subprocesses on system
 func GetTree(pid ...int) (*ProcessInfo, error) {
+	root := 1
+
+	if len(pid) != 0 {
+		root = pid[0]
+	}
+
+	if !fsutil.IsExist("/proc/" + strconv.Itoa(root)) {
+		return nil, fmt.Errorf("Process with PID %d doesn't exist", pid)
+	}
+
 	list, err := findInfo("/proc", make(map[int]string))
 
 	if err != nil {
@@ -43,13 +53,7 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 	}
 
 	if len(list) == 0 {
-		return nil, errors.New("Can't find any processes")
-	}
-
-	root := 1
-
-	if len(pid) != 0 {
-		root = pid[0]
+		return nil, fmt.Errorf("Can't find any processes")
 	}
 
 	return processListToTree(list, root), nil

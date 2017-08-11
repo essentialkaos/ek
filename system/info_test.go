@@ -228,8 +228,8 @@ func (s *SystemSuite) TestFS(c *C) {
 	c.Assert(fs, NotNil)
 
 	util = CalculateIOUtil(
-		map[string]*IOStats{"abc": &IOStats{IOMs: 10}},
-		map[string]*IOStats{"abc": &IOStats{IOMs: 1840}},
+		map[string]*IOStats{"abc": {IOMs: 10}},
+		map[string]*IOStats{"abc": {IOMs: 1840}},
 		time.Minute,
 	)
 

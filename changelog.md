@@ -1,5 +1,11 @@
 ## Changelog
 
+### 9.11.2
+
+* `[system/process]` Fixed bug with parsing CPU data
+* `[system/process]` Increased code coverage (0.0% → 87.5%)
+* `[usage/update]` Increased code coverage (0.0% → 80.0%)
+
 ### 9.11.1
 
 * `[system/process]` Improved error handling in `GetInfo`
