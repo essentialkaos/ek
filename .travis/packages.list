@@ -38,6 +38,6 @@
 + timeutil
 + tmp
 + usage
-- usage/update
+! usage/update
 + uuid
 + version
