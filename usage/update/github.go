@@ -1,4 +1,4 @@
-// Package update contains update checkers
+// Package update contains update checkers for different services
 package update
 
 // ////////////////////////////////////////////////////////////////////////////////// //

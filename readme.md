@@ -68,6 +68,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/timeutil) - Package provides methods for working with time
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v9/tmp) - Package provides methods for working with temporary data
 * [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v9/usage) - Package provides methods for rendering info for command-line tools
+* [`usage/update`](https://godoc.org/pkg.re/essentialkaos/ek.v9/usage/update) - Package contains update checkers for different services
 * [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v9/uuid) - Package provides methods for generating version 4 and 5 UUID's
 * [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v9/version) - Package provides methods for parsing semver version info
 
