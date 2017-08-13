@@ -1,4 +1,4 @@
-// Package update contains update checkers
+// Package update contains update checkers for different services
 package update
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -26,6 +26,10 @@ type githubRelease struct {
 
 // GitHubChecker check new releases on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
+	if version == "" || data == "" {
+		return "", time.Time{}, false
+	}
+
 	ghRelease := getLatestGitHubRelease(app, version, data)
 
 	if ghRelease == nil {
@@ -43,7 +47,7 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 
 	engine.SetDialTimeout(1)
 	engine.SetRequestTimeout(1)
-	engine.SetUserAgent(app, version, "go.ek/6")
+	engine.SetUserAgent(app, version, "go.ek/9")
 
 	response, err := engine.Get(req.Request{
 		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
