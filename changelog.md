@@ -2,6 +2,7 @@
 
 ### 9.12.0
 
+* `[knf]` Added new validators: `NotLen`, `NotPrefix` and `NotSuffix`
 * `[knf]` Validators code refactoring
 
 ### 9.11.2
