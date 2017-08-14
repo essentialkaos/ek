@@ -18,8 +18,26 @@ type PropertyValidator func(config *Config, prop string, value interface{}) erro
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Empty check if given config property is empty or not
-var Empty = func(config *Config, prop string, value interface{}) error {
+var (
+	// Empty check if given config property is empty or not
+	Empty = validatorEmpty
+
+	// NotContains check if given config property contains any value from given slice
+	NotContains = validatorNotContains
+
+	// Less check if given config property is less than defined value or not
+	Less = validatorLess
+
+	// Greater check if given config property is greater than defined value or not
+	Greater = validatorGreater
+
+	// Equals check if given config property equals to defined value or not
+	Equals = validatorEquals
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func validatorEmpty(config *Config, prop string, value interface{}) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s can't be empty", prop)
 	}
@@ -27,8 +45,7 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// NotContains check if given config property contains any value from given slice
-var NotContains = func(config *Config, prop string, value interface{}) error {
+func validatorNotContains(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case []string:
 		currentValue := config.GetS(prop)
@@ -45,8 +62,7 @@ var NotContains = func(config *Config, prop string, value interface{}) error {
 	return getWrongValidatorError(prop)
 }
 
-// Less check if given config property is less than defined value or not
-var Less = func(config *Config, prop string, value interface{}) error {
+func validatorLess(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) < value.(int) {
@@ -63,8 +79,7 @@ var Less = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Greater check if given config property is greater than defined value or not
-var Greater = func(config *Config, prop string, value interface{}) error {
+func validatorGreater(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) > value.(int) {
@@ -83,8 +98,7 @@ var Greater = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Equals check if given config property equals to defined value or not
-var Equals = func(config *Config, prop string, value interface{}) error {
+func validatorEquals(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) == value.(int) {

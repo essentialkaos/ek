@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.12.0
+
+* `[knf]` Validators code refactoring
+
 ### 9.11.2
 
 * `[system/process]` Fixed bug with parsing CPU data
