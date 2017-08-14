@@ -466,6 +466,9 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 		{"integer:test1", Equals, 10},
 		{"integer:test1", Equals, 10.1},
 		{"integer:test1", Equals, "123"},
+		{"string:test3", NotLen, 4},
+		{"string:test3", NotPrefix, "45"},
+		{"string:test3", NotSuffix, "00"},
 	})
 
 	c.Assert(errs, check.HasLen, 0)
@@ -477,9 +480,12 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 		{"integer:test1", Equals, 1},
 		{"integer:test1", Greater, "12345"},
 		{"integer:test1", NotContains, []string{"A", "B", "C"}},
+		{"string:test3", NotLen, 8},
+		{"string:test3", NotPrefix, "AB"},
+		{"string:test3", NotSuffix, "CD"},
 	})
 
-	c.Assert(errs, check.HasLen, 6)
+	c.Assert(errs, check.HasLen, 9)
 
 	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 can't be empty")
 	c.Assert(errs[1].Error(), check.Equals, "Property integer:test1 can't be less than 10")
@@ -487,6 +493,9 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
 	c.Assert(errs[4].Error(), check.Equals, "Wrong validator for property integer:test1")
 	c.Assert(errs[5].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
+	c.Assert(errs[6].Error(), check.Equals, "Property string:test3 must be 8 symbols long")
+	c.Assert(errs[7].Error(), check.Equals, "Property string:test3 must have prefix \"AB\"")
+	c.Assert(errs[8].Error(), check.Equals, "Property string:test3 must have suffix \"CD\"")
 
 	fakeConfig := &Config{
 		data: map[string]string{

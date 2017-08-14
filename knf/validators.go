@@ -9,6 +9,9 @@ package knf
 
 import (
 	"fmt"
+	"strings"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -18,8 +21,35 @@ type PropertyValidator func(config *Config, prop string, value interface{}) erro
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Empty check if given config property is empty or not
-var Empty = func(config *Config, prop string, value interface{}) error {
+var (
+	// Empty return error if config property is empty
+	Empty = validatorEmpty
+
+	// NotContains return error if config property doesn't contains value from given slice
+	NotContains = validatorNotContains
+
+	// Less return error if config property is less than given integer
+	Less = validatorLess
+
+	// Greater return error if config property is greater than given integer
+	Greater = validatorGreater
+
+	// Equals return error if config property is equals to given string
+	Equals = validatorEquals
+
+	// NotLen return error if config property have wrong size
+	NotLen = validatorNotLen
+
+	// NotPrefix return error if config property doesn't have given prefix
+	NotPrefix = validatorNotPrefix
+
+	// NotPrefix return error if config property doesn't have given suffix
+	NotSuffix = validatorNotSuffix
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func validatorEmpty(config *Config, prop string, value interface{}) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s can't be empty", prop)
 	}
@@ -27,8 +57,7 @@ var Empty = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// NotContains check if given config property contains any value from given slice
-var NotContains = func(config *Config, prop string, value interface{}) error {
+func validatorNotContains(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case []string:
 		currentValue := config.GetS(prop)
@@ -45,8 +74,7 @@ var NotContains = func(config *Config, prop string, value interface{}) error {
 	return getWrongValidatorError(prop)
 }
 
-// Less check if given config property is less than defined value or not
-var Less = func(config *Config, prop string, value interface{}) error {
+func validatorLess(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) < value.(int) {
@@ -63,8 +91,7 @@ var Less = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Greater check if given config property is greater than defined value or not
-var Greater = func(config *Config, prop string, value interface{}) error {
+func validatorGreater(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) > value.(int) {
@@ -83,8 +110,7 @@ var Greater = func(config *Config, prop string, value interface{}) error {
 	return nil
 }
 
-// Equals check if given config property equals to defined value or not
-var Equals = func(config *Config, prop string, value interface{}) error {
+func validatorEquals(config *Config, prop string, value interface{}) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) == value.(int) {
@@ -108,6 +134,30 @@ var Equals = func(config *Config, prop string, value interface{}) error {
 
 	default:
 		return getWrongValidatorError(prop)
+	}
+
+	return nil
+}
+
+func validatorNotLen(config *Config, prop string, value interface{}) error {
+	if strutil.Len(config.GetS(prop)) != value.(int) {
+		return fmt.Errorf("Property %s must be %d symbols long", prop, value.(int))
+	}
+
+	return nil
+}
+
+func validatorNotPrefix(config *Config, prop string, value interface{}) error {
+	if !strings.HasPrefix(config.GetS(prop), value.(string)) {
+		return fmt.Errorf("Property %s must have prefix \"%s\"", prop, value.(string))
+	}
+
+	return nil
+}
+
+func validatorNotSuffix(config *Config, prop string, value interface{}) error {
+	if !strings.HasSuffix(config.GetS(prop), value.(string)) {
+		return fmt.Errorf("Property %s must have suffix \"%s\"", prop, value.(string))
 	}
 
 	return nil
