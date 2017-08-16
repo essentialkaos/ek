@@ -10,9 +10,12 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"bufio"
+	"errors"
+	"os"
 	"strconv"
-	"strings"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -37,103 +40,64 @@ type MemInfo struct {
 
 // GetMemInfo return info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
-	data, err := ioutil.ReadFile("/proc/" + strconv.Itoa(pid) + "/status")
+	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/status", os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
 	info := &MemInfo{}
+	errs := errutil.NewErrors()
 
-	for _, line := range strings.Split(string(data), "\n") {
-		lineSlice := splitLine(line)
+	for s.Scan() {
+		text := s.Text()
 
-		if len(lineSlice) < 2 {
+		if len(text) < 2 || text[:2] != "Vm" {
 			continue
 		}
 
-		switch lineSlice[0] {
+		switch readField(text, 0) {
 		case "VmPeak:":
-			info.VmPeak, err = parseSize(lineSlice[1])
+			info.VmPeak = parseSize(readField(text, 1), errs)
 		case "VmSize:":
-			info.VmSize, err = parseSize(lineSlice[1])
+			info.VmSize = parseSize(readField(text, 1), errs)
 		case "VmLck:":
-			info.VmLck, err = parseSize(lineSlice[1])
+			info.VmLck = parseSize(readField(text, 1), errs)
 		case "VmPin:":
-			info.VmPin, err = parseSize(lineSlice[1])
+			info.VmPin = parseSize(readField(text, 1), errs)
 		case "VmHWM:":
-			info.VmHWM, err = parseSize(lineSlice[1])
+			info.VmHWM = parseSize(readField(text, 1), errs)
 		case "VmRSS:":
-			info.VmRSS, err = parseSize(lineSlice[1])
+			info.VmRSS = parseSize(readField(text, 1), errs)
 		case "VmData:":
-			info.VmData, err = parseSize(lineSlice[1])
+			info.VmData = parseSize(readField(text, 1), errs)
 		case "VmStk:":
-			info.VmStk, err = parseSize(lineSlice[1])
+			info.VmStk = parseSize(readField(text, 1), errs)
 		case "VmExe:":
-			info.VmExe, err = parseSize(lineSlice[1])
+			info.VmExe = parseSize(readField(text, 1), errs)
 		case "VmLib:":
-			info.VmLib, err = parseSize(lineSlice[1])
+			info.VmLib = parseSize(readField(text, 1), errs)
 		case "VmPTE:":
-			info.VmPTE, err = parseSize(lineSlice[1])
+			info.VmPTE = parseSize(readField(text, 1), errs)
 		case "VmSwap:":
-			info.VmSwap, err = parseSize(lineSlice[1])
-		default:
-			continue
+			info.VmSwap = parseSize(readField(text, 1), errs)
 		}
 
-		if err != nil {
-			return nil, err
+		if errs.HasErrors() {
+			return nil, errs.Last()
 		}
+	}
+
+	if info.VmPeak+info.VmSize == 0 {
+		return nil, errors.New("Can't parse status file for given process")
 	}
 
 	return info, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// splitLine split line to slice by whitespace symbol
-func splitLine(line string) []string {
-	if line == "" {
-		return nil
-	}
-
-	var (
-		result []string
-		buffer string
-		space  bool
-	)
-
-	for _, r := range line {
-		if r == ' ' || r == '\t' {
-			space = true
-			continue
-		}
-
-		if space {
-			if buffer != "" {
-				result = append(result, buffer)
-			}
-
-			buffer, space = "", false
-		}
-
-		buffer += string(r)
-	}
-
-	if buffer != "" {
-		result = append(result, buffer)
-	}
-
-	return result
-}
-
-// parseSize convert string with size in kb to uint64 bytes
-func parseSize(s string) (uint64, error) {
-	size, err := strconv.ParseUint(s, 10, 64)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return size * 1024, nil
-}

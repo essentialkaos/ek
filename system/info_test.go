@@ -43,7 +43,7 @@ func (s *SystemSuite) TestUptime(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(uptime, Equals, uint64(0))
 
-	procUptimeFile = s.CreateTestFile(c, "CORRUPT")
+	procUptimeFile = s.CreateTestFile(c, "CORRUPTED")
 
 	uptime, err = GetUptime()
 
@@ -57,6 +57,19 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(la, NotNil)
 
+	procLoadAvgFile = s.CreateTestFile(c, "1.15 2.25 3.35 5/234 16354")
+
+	la, err = GetLA()
+
+	c.Assert(err, IsNil)
+	c.Assert(la, NotNil)
+
+	c.Assert(la.Min1, Equals, 1.15)
+	c.Assert(la.Min5, Equals, 2.25)
+	c.Assert(la.Min15, Equals, 3.35)
+	c.Assert(la.RProc, Equals, 5)
+	c.Assert(la.TProc, Equals, 234)
+
 	procLoadAvgFile = ""
 
 	la, err = GetLA()
@@ -64,7 +77,14 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(la, IsNil)
 
-	procLoadAvgFile = s.CreateTestFile(c, "CORRUPT")
+	procLoadAvgFile = s.CreateTestFile(c, "CORRUPTED")
+
+	la, err = GetLA()
+
+	c.Assert(err, NotNil)
+	c.Assert(la, IsNil)
+
+	procLoadAvgFile = s.CreateTestFile(c, "1.15 2.25 3.35 5+234 16354")
 
 	la, err = GetLA()
 
@@ -85,7 +105,7 @@ func (s *SystemSuite) TestCPU(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(cpu, IsNil)
 
-	procStatFile = s.CreateTestFile(c, "CORRUPT")
+	procStatFile = s.CreateTestFile(c, "CORRUPTED")
 
 	cpu, err = GetCPUInfo()
 
@@ -108,11 +128,12 @@ func (s *SystemSuite) TestMemory(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
 
-	procMemInfoFile = s.CreateTestFile(c, "MemTotal:")
+	procMemInfoFile = s.CreateTestFile(c, "")
 
 	mem, err = GetMemInfo()
 
-	c.Assert(err, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(mem, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal: ABC! kB")
 
@@ -148,7 +169,7 @@ func (s *SystemSuite) TestNet(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(net, IsNil)
 
-	procNetFile = s.CreateTestFile(c, "CORRUPT")
+	procNetFile = s.CreateTestFile(c, "CORRUPTED")
 
 	net, err = GetInterfacesInfo()
 
@@ -178,14 +199,14 @@ func (s *SystemSuite) TestFS(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
 
-	mtabFile = s.CreateTestFile(c, "/CORRUPT")
+	mtabFile = s.CreateTestFile(c, "/CORRUPTED")
 
 	fs, err = GetFSInfo()
 
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
 
-	mtabFile = s.CreateTestFile(c, "/CORRUPT 0 0 0")
+	mtabFile = s.CreateTestFile(c, "/CORRUPTED 0 0 0")
 
 	fs, err = GetFSInfo()
 
@@ -199,7 +220,7 @@ func (s *SystemSuite) TestFS(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(stats, IsNil)
 
-	procDiscStatsFile = s.CreateTestFile(c, "CORRUPT")
+	procDiscStatsFile = s.CreateTestFile(c, "CORRUPTED")
 
 	stats, err = GetIOStats()
 
@@ -322,34 +343,15 @@ func (s *SystemSuite) TestUser(c *C) {
 	c.Assert(sess, HasLen, 0)
 }
 
-func (s *SystemSuite) TestInternal(c *C) {
-	tmpDir := c.MkDir()
-	tmpFile1 := tmpDir + "/test1.file"
-	tmpFile2 := tmpDir + "/test2.file"
+func (s *SystemSuite) TestFieldParser(c *C) {
+	data := "    abc \t\t 123     \t         ABC $"
 
-	if ioutil.WriteFile(tmpFile1, []byte("TEST\n1234"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if ioutil.WriteFile(tmpFile2, []byte(""), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	content, err := readFileContent(tmpFile1)
-
-	c.Assert(err, IsNil)
-	c.Assert(content, NotNil)
-	c.Assert(content, HasLen, 2)
-
-	content, err = readFileContent(tmpFile2)
-
-	c.Assert(err, NotNil)
-	c.Assert(content, IsNil)
-
-	content, err = readFileContent("/not_exist")
-
-	c.Assert(err, NotNil)
-	c.Assert(content, IsNil)
+	c.Assert(readField("", 0), Equals, "")
+	c.Assert(readField(data, 0), Equals, "abc")
+	c.Assert(readField(data, 1), Equals, "123")
+	c.Assert(readField(data, 2), Equals, "ABC")
+	c.Assert(readField(data, 3), Equals, "$")
+	c.Assert(readField(data, 4), Equals, "")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

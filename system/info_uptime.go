@@ -10,9 +10,10 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
+	"os"
 	"strconv"
-	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,19 +25,28 @@ var procUptimeFile = "/proc/uptime"
 
 // GetUptime return system uptime in seconds
 func GetUptime() (uint64, error) {
-	content, err := readFileContent(procUptimeFile)
+	fd, err := os.OpenFile(procUptimeFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return 0, err
 	}
 
-	ca := strings.Split(content[0], " ")
+	defer fd.Close()
 
-	if len(ca) != 2 {
+	r := bufio.NewReader(fd)
+	text, err := r.ReadString('\n')
+
+	uptimeStr := readField(text, 0)
+
+	if uptimeStr == "" {
 		return 0, errors.New("Can't parse file " + procUptimeFile)
 	}
 
-	up, _ := strconv.ParseFloat(ca[0], 64)
+	uptimeInt, err := strconv.ParseFloat(uptimeStr, 64)
 
-	return uint64(up), nil
+	if err != nil {
+		return 0, errors.New("Can't parse file " + procUptimeFile)
+	}
+
+	return uint64(uptimeInt), nil
 }

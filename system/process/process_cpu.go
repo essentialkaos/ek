@@ -10,11 +10,11 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"strconv"
-	"strings"
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
@@ -64,35 +64,38 @@ var hz = 0.0
 
 // GetInfo return process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
-	data, err := ioutil.ReadFile("/proc/" + strconv.Itoa(pid) + "/stat")
+	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
-	dataSlice := strings.Split(string(data), " ")
+	defer fd.Close()
 
-	if len(dataSlice) < 20 {
+	r := bufio.NewReader(fd)
+	text, _ := r.ReadString('\n')
+
+	if len(text) < 20 {
 		return nil, errors.New("Can't parse stat file for given process")
 	}
 
 	info := &ProcInfo{}
 	errs := errutil.NewErrors()
 
-	info.PID = parseIntField(dataSlice, 0, errs)
-	info.Comm = dataSlice[1]
-	info.State = dataSlice[2]
-	info.PPID = parseIntField(dataSlice, 3, errs)
-	info.Session = parseIntField(dataSlice, 5, errs)
-	info.TTYNR = parseIntField(dataSlice, 6, errs)
-	info.TPGid = parseIntField(dataSlice, 7, errs)
-	info.UTime = parseUintField(dataSlice, 13, errs)
-	info.STime = parseUintField(dataSlice, 14, errs)
-	info.CUTime = parseUintField(dataSlice, 15, errs)
-	info.CSTime = parseUintField(dataSlice, 16, errs)
-	info.Priority = parseIntField(dataSlice, 17, errs)
-	info.Nice = parseIntField(dataSlice, 18, errs)
-	info.NumThreads = parseIntField(dataSlice, 19, errs)
+	info.PID = parseInt(readField(text, 0), errs)
+	info.Comm = readField(text, 1)
+	info.State = readField(text, 2)
+	info.PPID = parseInt(readField(text, 3), errs)
+	info.Session = parseInt(readField(text, 5), errs)
+	info.TTYNR = parseInt(readField(text, 6), errs)
+	info.TPGid = parseInt(readField(text, 7), errs)
+	info.UTime = parseUint(readField(text, 13), errs)
+	info.STime = parseUint(readField(text, 14), errs)
+	info.CUTime = parseUint(readField(text, 15), errs)
+	info.CSTime = parseUint(readField(text, 16), errs)
+	info.Priority = parseInt(readField(text, 17), errs)
+	info.Nice = parseInt(readField(text, 18), errs)
+	info.NumThreads = parseInt(readField(text, 19), errs)
 
 	if errs.HasErrors() {
 		return nil, errs.Last()
@@ -138,24 +141,4 @@ func getHZ() float64 {
 	}
 
 	return hz
-}
-
-func parseIntField(data []string, index int, errs *errutil.Errors) int {
-	value, err := strconv.Atoi(data[index])
-
-	if err != nil {
-		errs.Add(err)
-	}
-
-	return value
-}
-
-func parseUintField(data []string, index int, errs *errutil.Errors) uint64 {
-	value, err := strconv.ParseUint(data[index], 10, 64)
-
-	if err != nil {
-		errs.Add(err)
-	}
-
-	return value
 }

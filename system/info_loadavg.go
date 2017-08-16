@@ -10,9 +10,12 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
-	"strconv"
+	"os"
 	"strings"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,27 +38,45 @@ var procLoadAvgFile = "/proc/loadavg"
 
 // GetLA return loadavg
 func GetLA() (*LoadAvg, error) {
-	content, err := readFileContent(procLoadAvgFile)
+	fd, err := os.OpenFile(procLoadAvgFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
-	contentSlice := strings.Split(content[0], " ")
+	defer fd.Close()
 
-	if len(contentSlice) != 5 {
+	r := bufio.NewReader(fd)
+	text, _ := r.ReadString('\n')
+
+	if len(text) < 20 {
 		return nil, errors.New("Can't parse file " + procLoadAvgFile)
 	}
 
-	procSlice := strings.Split(contentSlice[3], "/")
-
 	la := &LoadAvg{}
+	errs := errutil.NewErrors()
 
-	la.Min1, _ = strconv.ParseFloat(contentSlice[0], 64)
-	la.Min5, _ = strconv.ParseFloat(contentSlice[1], 64)
-	la.Min15, _ = strconv.ParseFloat(contentSlice[2], 64)
-	la.RProc, _ = strconv.Atoi(procSlice[0])
-	la.TProc, _ = strconv.Atoi(procSlice[1])
+	la.Min1 = parseFloat(readField(text, 0), errs)
+	la.Min5 = parseFloat(readField(text, 1), errs)
+	la.Min15 = parseFloat(readField(text, 2), errs)
+
+	if errs.HasErrors() {
+		return nil, errs.Last()
+	}
+
+	procs := readField(text, 3)
+	delimPosition := strings.IndexRune(procs, '/')
+
+	if delimPosition == -1 {
+		return nil, errors.New("Can't parse file " + procLoadAvgFile)
+	}
+
+	la.RProc = parseInt(procs[:delimPosition], errs)
+	la.TProc = parseInt(procs[delimPosition+1:], errs)
+
+	if errs.HasErrors() {
+		return nil, errs.Last()
+	}
 
 	return la, nil
 }

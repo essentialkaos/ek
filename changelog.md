@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.12.1
+
+* `[system/process]` Code refactoring
+* `[system]` Code refactoring
+
 ### 9.12.0
 
 * `[knf]` Added new validators: `NotLen`, `NotPrefix` and `NotSuffix`

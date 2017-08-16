@@ -10,13 +10,17 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -61,33 +65,36 @@ type IOStats struct {
 
 // GetFSInfo return info about mounted filesystems
 func GetFSInfo() (map[string]*FSInfo, error) {
-	content, err := readFileContent(mtabFile)
+	iostats, err := GetIOStats()
 
 	if err != nil {
 		return nil, err
 	}
 
-	ios, err := GetIOStats()
+	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
+
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
 
 	info := make(map[string]*FSInfo)
 
-	for _, line := range content {
-		if line == "" || line[0:1] == "#" || line[0:1] != "/" {
+	for s.Scan() {
+		text := s.Text()
+
+		if text == "" || text[:1] == "#" || text[:1] != "/" {
 			continue
 		}
 
-		values := strings.Split(line, " ")
+		device := readField(text, 0)
+		path := readField(text, 1)
+		fsInfo := &FSInfo{Type: readField(text, 2)}
 
-		if len(values) < 4 {
-			return nil, errors.New("Can't parse file " + mtabFile)
-		}
-
-		path := values[1]
-		fsInfo := &FSInfo{Type: values[2]}
 		stats := &syscall.Statfs_t{}
 
 		err = syscall.Statfs(path, stats)
@@ -96,20 +103,24 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 			return nil, err
 		}
 
-		fsDevice, err := filepath.EvalSymlinks(values[0])
+		fsDevice, err := filepath.EvalSymlinks(device)
 
 		if err == nil {
 			fsInfo.Device = fsDevice
 		} else {
-			fsInfo.Device = values[0]
+			fsInfo.Device = device
 		}
 
 		fsInfo.Used = (stats.Blocks * uint64(stats.Bsize)) - (stats.Bfree * uint64(stats.Bsize))
 		fsInfo.Total = fsInfo.Used + (stats.Bavail * uint64(stats.Bsize))
 		fsInfo.Free = fsInfo.Total - fsInfo.Used
-		fsInfo.IOStats = ios[strings.Replace(fsInfo.Device, "/dev/", "", 1)]
+		fsInfo.IOStats = iostats[strings.Replace(fsInfo.Device, "/dev/", "", 1)]
 
 		info[path] = fsInfo
+	}
+
+	if len(info) == 0 {
+		return nil, errors.New("Can't parse file " + mtabFile)
 	}
 
 	return info, nil
@@ -117,48 +128,49 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 
 // GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
-	content, err := readFileContent(procDiscStatsFile)
+	fd, err := os.OpenFile(procDiscStatsFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
 	iostats := make(map[string]*IOStats)
+	errs := errutil.NewErrors()
 
-	for _, line := range content {
-		if line == "" {
-			continue
-		}
-
-		lineSlice := splitLine(line)
-
-		if len(lineSlice) != 14 {
-			return nil, errors.New("Can't parse file " + procDiscStatsFile)
-		}
-
-		device := lineSlice[2]
+	for s.Scan() {
+		text := s.Text()
+		device := readField(text, 2)
 
 		if len(device) > 3 {
-			if device[0:3] == "ram" || device[0:3] == "loo" {
+			if device[:3] == "ram" || device[:3] == "loo" {
 				continue
 			}
 		}
 
-		metrics := stringSliceToUintSlice(lineSlice[3:])
+		ios := &IOStats{}
 
-		iostats[device] = &IOStats{
-			ReadComplete:  metrics[0],  // rd_ios
-			ReadMerged:    metrics[1],  // -
-			ReadSectors:   metrics[2],  // rd_sec
-			ReadMs:        metrics[3],  // rd_ticks
-			WriteComplete: metrics[4],  // wr_ios
-			WriteMerged:   metrics[5],  // -
-			WriteSectors:  metrics[6],  // wr_sec
-			WriteMs:       metrics[7],  // wr_ticks
-			IOPending:     metrics[8],  // -
-			IOMs:          metrics[9],  // tot_ticks
-			IOQueueMs:     metrics[10], // rq_ticks
+		ios.ReadComplete = parseUint(readField(text, 3), errs)
+		ios.ReadMerged = parseUint(readField(text, 4), errs)
+		ios.ReadSectors = parseUint(readField(text, 5), errs)
+		ios.ReadMs = parseUint(readField(text, 6), errs)
+		ios.WriteComplete = parseUint(readField(text, 7), errs)
+		ios.WriteMerged = parseUint(readField(text, 8), errs)
+		ios.WriteSectors = parseUint(readField(text, 9), errs)
+		ios.WriteMs = parseUint(readField(text, 10), errs)
+		ios.IOPending = parseUint(readField(text, 11), errs)
+		ios.IOMs = parseUint(readField(text, 12), errs)
+		ios.IOQueueMs = parseUint(readField(text, 13), errs)
+
+		if errs.HasErrors() {
+			return nil, errs.Last()
 		}
+
+		iostats[device] = ios
 	}
 
 	return iostats, nil
@@ -214,18 +226,6 @@ func CalculateIOUtil(io1 map[string]*IOStats, io2 map[string]*IOStats, duration 
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// stringSliceToUintSlice convert string slice to uint64 slice
-func stringSliceToUintSlice(s []string) []uint64 {
-	var result []uint64
-
-	for _, i := range s {
-		iu, _ := strconv.ParseUint(i, 10, 64)
-		result = append(result, iu)
-	}
-
-	return result
-}
 
 // getHZ return number of processor clock ticks per second
 func getHZ() float64 {

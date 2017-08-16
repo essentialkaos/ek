@@ -10,10 +10,13 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
-	"strconv"
+	"os"
 	"strings"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,41 +38,45 @@ var procNetFile = "/proc/net/dev"
 
 // GetInterfacesInfo return info about network interfaces
 func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
-	content, err := readFileContent(procNetFile)
+	fd, err := os.OpenFile(procNetFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if len(content) <= 2 {
-		return nil, errors.New("Can't parse network interfaces info")
-	}
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
 
 	info := make(map[string]*InterfaceInfo)
+	errs := errutil.NewErrors()
 
-	for _, line := range content[2:] {
-		if !strings.Contains(line, ":") {
+	for s.Scan() {
+		text := s.Text()
+
+		if !strings.Contains(text, ":") {
 			continue
 		}
 
-		lineSlice := splitLine(line)
+		ii := &InterfaceInfo{}
 
-		if len(lineSlice) < 11 {
-			continue
+		name := strings.TrimRight(text, ":")
+
+		ii.ReceivedBytes = parseUint(readField(text, 1), errs)
+		ii.ReceivedPackets = parseUint(readField(text, 2), errs)
+		ii.TransmittedBytes = parseUint(readField(text, 9), errs)
+		ii.TransmittedPackets = parseUint(readField(text, 10), errs)
+
+		if errs.HasErrors() {
+			return nil, errs.Last()
 		}
 
-		name := strings.TrimRight(lineSlice[0], ":")
-		receivedBytes, _ := strconv.ParseUint(lineSlice[1], 10, 64)
-		receivedPackets, _ := strconv.ParseUint(lineSlice[2], 10, 64)
-		transmittedBytes, _ := strconv.ParseUint(lineSlice[9], 10, 64)
-		transmittedPackets, _ := strconv.ParseUint(lineSlice[10], 10, 64)
+		info[name] = ii
+	}
 
-		info[name] = &InterfaceInfo{
-			receivedBytes,
-			receivedPackets,
-			transmittedBytes,
-			transmittedPackets,
-		}
+	if len(info) == 0 {
+		return nil, errors.New("Can't parse file " + procNetFile)
 	}
 
 	return info, nil

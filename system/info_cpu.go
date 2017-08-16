@@ -10,9 +10,11 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"errors"
-	"strconv"
-	"strings"
+	"os"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -68,37 +70,47 @@ func GetCPUInfo() (*CPUInfo, error) {
 
 // GetCPUStats return basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
-	stats := &CPUStats{}
-
-	content, err := readFileContent(procStatFile)
+	fd, err := os.OpenFile(procStatFile, os.O_RDONLY, 0)
 
 	if err != nil {
-		return nil, errors.New("Can't parse file " + procStatFile)
+		return nil, err
 	}
 
-	for _, line := range content {
-		if strings.HasPrefix(line, "cpu") {
-			stats.Count++
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	stats := &CPUStats{}
+	errs := errutil.NewErrors()
+
+	for s.Scan() {
+		text := s.Text()
+
+		if len(text) > 4 && text[:3] == "cpu" {
+			if text[:4] == "cpu " {
+				stats.User = parseUint(readField(text, 1), errs)
+				stats.Nice = parseUint(readField(text, 2), errs)
+				stats.System = parseUint(readField(text, 3), errs)
+				stats.Idle = parseUint(readField(text, 4), errs)
+				stats.Wait = parseUint(readField(text, 5), errs)
+				stats.IRQ = parseUint(readField(text, 6), errs)
+				stats.SRQ = parseUint(readField(text, 7), errs)
+				stats.Steal = parseUint(readField(text, 8), errs)
+			} else {
+				stats.Count++
+				continue
+			}
+
+			if errs.HasErrors() {
+				return nil, errs.Last()
+			}
 		}
 	}
 
-	stats.Count--
-
-	cpuInfo := strings.Replace(content[0], "cpu  ", "", -1)
-	cpuInfoSlice := strings.Split(cpuInfo, " ")
-
-	if len(cpuInfoSlice) < 8 {
+	if stats.Count == 0 {
 		return nil, errors.New("Can't parse file " + procStatFile)
 	}
-
-	stats.User, _ = strconv.ParseUint(cpuInfoSlice[0], 10, 64)
-	stats.Nice, _ = strconv.ParseUint(cpuInfoSlice[1], 10, 64)
-	stats.System, _ = strconv.ParseUint(cpuInfoSlice[2], 10, 64)
-	stats.Idle, _ = strconv.ParseUint(cpuInfoSlice[3], 10, 64)
-	stats.Wait, _ = strconv.ParseUint(cpuInfoSlice[4], 10, 64)
-	stats.IRQ, _ = strconv.ParseUint(cpuInfoSlice[5], 10, 64)
-	stats.SRQ, _ = strconv.ParseUint(cpuInfoSlice[6], 10, 64)
-	stats.Steal, _ = strconv.ParseUint(cpuInfoSlice[7], 10, 64)
 
 	stats.Total = stats.User + stats.System + stats.Nice + stats.Idle + stats.Wait + stats.IRQ + stats.SRQ + stats.Steal
 

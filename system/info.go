@@ -11,9 +11,9 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"errors"
-	"io/ioutil"
-	"strings"
+	"strconv"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -45,53 +45,77 @@ type SystemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// readFileContent read file content and split it to slice by new line symbol
-func readFileContent(file string) ([]string, error) {
-	content, err := ioutil.ReadFile(file)
+func parseSize(v string, errs *errutil.Errors) uint64 {
+	size, err := strconv.ParseUint(v, 10, 64)
 
 	if err != nil {
-		return nil, err
+		errs.Add(err)
+		return 0
 	}
 
-	if string(content) == "" {
-		return nil, errors.New("File " + file + " is empty")
-	}
-
-	return strings.Split(string(content), "\n"), nil
+	return size * 1024
 }
 
-// splitLine split line to slice by whitespace symbol
-func splitLine(line string) []string {
-	if line == "" {
-		return nil
+func parseUint(v string, errs *errutil.Errors) uint64 {
+	value, err := strconv.ParseUint(v, 10, 64)
+
+	if err != nil {
+		errs.Add(err)
+		return 0
 	}
 
-	var (
-		result []string
-		buffer string
-		space  bool
-	)
+	return value
+}
 
-	for _, r := range line {
+func parseFloat(v string, errs *errutil.Errors) float64 {
+	value, err := strconv.ParseFloat(v, 64)
+
+	if err != nil {
+		errs.Add(err)
+		return 0.0
+	}
+
+	return value
+}
+
+func parseInt(v string, errs *errutil.Errors) int {
+	value, err := strconv.ParseInt(v, 10, 64)
+
+	if err != nil {
+		errs.Add(err)
+		return 0
+	}
+
+	return int(value)
+}
+
+// readField read field from data
+func readField(data string, index int) string {
+	if data == "" {
+		return ""
+	}
+
+	curIndex, startPointer := -1, -1
+
+	for i, r := range data {
 		if r == ' ' || r == '\t' {
-			space = true
+			if curIndex == index {
+				return data[startPointer:i]
+			}
+
+			startPointer = -1
 			continue
 		}
 
-		if space {
-			if buffer != "" {
-				result = append(result, buffer)
-			}
-
-			buffer, space = "", false
+		if startPointer == -1 {
+			startPointer = i
+			curIndex++
 		}
-
-		buffer += string(r)
 	}
 
-	if buffer != "" {
-		result = append(result, buffer)
+	if index > curIndex {
+		return ""
 	}
 
-	return result
+	return data[startPointer:]
 }
