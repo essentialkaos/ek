@@ -15,7 +15,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// parseSize parse size in kb
+// parseSize parse size in kB
 func parseSize(v string, errs *errutil.Errors) uint64 {
 	size, err := strconv.ParseUint(v, 10, 64)
 
