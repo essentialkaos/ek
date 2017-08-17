@@ -61,7 +61,7 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 
 		ii := &InterfaceInfo{}
 
-		name := strings.TrimRight(text, ":")
+		name := strings.TrimRight(readField(text, 0), ":")
 
 		ii.ReceivedBytes = parseUint(readField(text, 1), errs)
 		ii.ReceivedPackets = parseUint(readField(text, 2), errs)

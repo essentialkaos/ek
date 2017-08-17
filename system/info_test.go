@@ -149,6 +149,18 @@ func (s *SystemSuite) TestNet(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(net, NotNil)
 
+	procNetFile = s.CreateTestFile(c, "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\neth0: 144612532790 216320765    0    0    0     0          0         0 366397171405 154518846    0    0    0     0       0          0\n")
+
+	net, err = GetInterfacesInfo()
+
+	c.Assert(err, IsNil)
+	c.Assert(net, NotNil)
+	c.Assert(net["eth0"], NotNil)
+	c.Assert(net["eth0"].ReceivedBytes, Equals, uint64(144612532790))
+	c.Assert(net["eth0"].ReceivedPackets, Equals, uint64(216320765))
+	c.Assert(net["eth0"].TransmittedBytes, Equals, uint64(366397171405))
+	c.Assert(net["eth0"].TransmittedPackets, Equals, uint64(154518846))
+
 	_, _, err = GetNetworkSpeed(time.Second)
 
 	c.Assert(err, IsNil)
