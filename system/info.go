@@ -45,6 +45,7 @@ type SystemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// parseSize parse size in kB
 func parseSize(v string, errs *errutil.Errors) uint64 {
 	size, err := strconv.ParseUint(v, 10, 64)
 
@@ -56,6 +57,7 @@ func parseSize(v string, errs *errutil.Errors) uint64 {
 	return size * 1024
 }
 
+// parseUint parse uint value
 func parseUint(v string, errs *errutil.Errors) uint64 {
 	value, err := strconv.ParseUint(v, 10, 64)
 
@@ -67,6 +69,7 @@ func parseUint(v string, errs *errutil.Errors) uint64 {
 	return value
 }
 
+// parseFloat parse float value
 func parseFloat(v string, errs *errutil.Errors) float64 {
 	value, err := strconv.ParseFloat(v, 64)
 
@@ -78,6 +81,7 @@ func parseFloat(v string, errs *errutil.Errors) float64 {
 	return value
 }
 
+// parseInt parse int value
 func parseInt(v string, errs *errutil.Errors) int {
 	value, err := strconv.ParseInt(v, 10, 64)
 
