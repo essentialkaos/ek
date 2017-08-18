@@ -16,7 +16,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
@@ -38,12 +37,11 @@ var hz = 0.0
 
 // FSInfo contains info about fs usage
 type FSInfo struct {
-	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)
-	Device  string   `json:"device"`  // Device spec
-	Used    uint64   `json:"used"`    // Used space
-	Free    uint64   `json:"free"`    // Free space
-	Total   uint64   `json:"total"`   // Total space
-	IOStats *IOStats `json:"iostats"` // IO statistics
+	Type   string `json:"type"`   // FS type (ext4/ntfs/etc...)
+	Device string `json:"device"` // Device spec
+	Used   uint64 `json:"used"`   // Used space
+	Free   uint64 `json:"free"`   // Free space
+	Total  uint64 `json:"total"`  // Total space
 }
 
 // IOStats contains information about I/O
@@ -65,12 +63,6 @@ type IOStats struct {
 
 // GetFSInfo return info about mounted filesystems
 func GetFSInfo() (map[string]*FSInfo, error) {
-	iostats, err := GetIOStats()
-
-	if err != nil {
-		return nil, err
-	}
-
 	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -114,7 +106,6 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 		fsInfo.Used = (stats.Blocks * uint64(stats.Bsize)) - (stats.Bfree * uint64(stats.Bsize))
 		fsInfo.Total = fsInfo.Used + (stats.Bavail * uint64(stats.Bsize))
 		fsInfo.Free = fsInfo.Total - fsInfo.Used
-		fsInfo.IOStats = iostats[strings.Replace(fsInfo.Device, "/dev/", "", 1)]
 
 		info[path] = fsInfo
 	}
@@ -170,7 +161,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 			return nil, errs.Last()
 		}
 
-		iostats[device] = ios
+		iostats["/dev/"+device] = ios
 	}
 
 	return iostats, nil
