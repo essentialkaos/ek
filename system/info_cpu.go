@@ -13,6 +13,7 @@ import (
 	"bufio"
 	"errors"
 	"os"
+	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
 )
@@ -21,12 +22,13 @@ import (
 
 // CPUInfo contains info about CPU usage
 type CPUInfo struct {
-	User   float64 `json:"user"`   // Normal processes executing in user mode
-	System float64 `json:"system"` // Processes executing in kernel mode
-	Nice   float64 `json:"nice"`   // Niced processes executing in user mode
-	Idle   float64 `json:"idle"`   // Twiddling thumbs
-	Wait   float64 `json:"wait"`   // Waiting for I/O to complete
-	Count  int     `json:"count"`  // Number of CPU cores
+	User    float64 `json:"user"`     // Normal processes executing in user mode
+	System  float64 `json:"system"`   // Processes executing in kernel mode
+	Nice    float64 `json:"nice"`     // Niced processes executing in user mode
+	Idle    float64 `json:"idle"`     // Twiddling thumbs
+	Wait    float64 `json:"wait"`     // Waiting for I/O to complete
+	Average float64 `json:"avearage"` // Average CPU usage
+	Count   int     `json:"count"`    // Number of CPU cores
 }
 
 // CPUStats contains basic CPU stats
@@ -51,21 +53,47 @@ var procStatFile = "/proc/stat"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetCPUInfo return info about CPU usage
-func GetCPUInfo() (*CPUInfo, error) {
-	stats, err := GetCPUStats()
+func GetCPUInfo(duration time.Duration) (*CPUInfo, error) {
+	c1, err := GetCPUStats()
 
 	if err != nil {
 		return nil, err
 	}
 
+	time.Sleep(duration)
+
+	c2, err := GetCPUStats()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return CalculateCPUInfo(c1, c2), nil
+}
+
+func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
+	prevIdle := c1.Idle + c1.Wait
+	idle := c2.Idle + c2.Wait
+
+	prevNonIdle := c1.User + c1.Nice + c1.System + c1.IRQ + c1.SRQ + c1.Steal
+	nonIdle := c2.User + c2.Nice + c2.System + c2.IRQ + c2.SRQ + c2.Steal
+
+	prevTotal := prevIdle + prevNonIdle
+	total := idle + nonIdle
+
+	totalDiff := float64(total - prevTotal)
+	idleDiff := float64(idle - prevIdle)
+	allTotalDiff := float64(c2.Total - c1.Total)
+
 	return &CPUInfo{
-		System: (float64(stats.System) / float64(stats.Total)) * 100,
-		User:   (float64(stats.User) / float64(stats.Total)) * 100,
-		Nice:   (float64(stats.Nice) / float64(stats.Total)) * 100,
-		Wait:   (float64(stats.Wait) / float64(stats.Total)) * 100,
-		Idle:   (float64(stats.Idle) / float64(stats.Total)) * 100,
-		Count:  stats.Count,
-	}, nil
+		System:  (float64(c2.System-c1.System) / allTotalDiff) * 100,
+		User:    (float64(c2.User-c1.User) / allTotalDiff) * 100,
+		Nice:    (float64(c2.Nice-c1.Nice) / allTotalDiff) * 100,
+		Wait:    (float64(c2.Wait-c1.Wait) / allTotalDiff) * 100,
+		Idle:    (float64(c2.Idle-c1.Idle) / allTotalDiff) * 100,
+		Average: ((totalDiff - idleDiff) / totalDiff) * 100.0,
+		Count:   c2.Count,
+	}
 }
 
 // GetCPUStats return basic CPU stats

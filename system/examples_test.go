@@ -130,7 +130,7 @@ func ExampleGetMemInfo() {
 }
 
 func ExampleGetCPUInfo() {
-	cpuInfo, err := GetCPUInfo()
+	cpuInfo, err := GetCPUInfo(time.Minute)
 
 	if err != nil {
 		return
@@ -142,6 +142,7 @@ func ExampleGetCPUInfo() {
 	fmt.Printf("Nice: %f\n", cpuInfo.Nice)
 	fmt.Printf("Idle: %f\n", cpuInfo.Idle)
 	fmt.Printf("Wait: %f\n", cpuInfo.Wait)
+	fmt.Printf("Average: %f\n", cpuInfo.Average)
 	fmt.Printf("CPU Count: %d\n", cpuInfo.Count)
 }
 

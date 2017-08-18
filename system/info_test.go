@@ -93,21 +93,51 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 }
 
 func (s *SystemSuite) TestCPU(c *C) {
-	cpu, err := GetCPUInfo()
+	cpu, err := GetCPUStats()
 
 	c.Assert(err, IsNil)
 	c.Assert(cpu, NotNil)
 
+	procStatFile = s.CreateTestFile(c, "cpu  10 11 12 13 14 15 16 17 0\ncpu0 0 0 0 0 0 0 0 0 0\ncpu1 0 0 0 0 0 0 0 0 0\n")
+
+	cpu, err = GetCPUStats()
+
+	c.Assert(err, IsNil)
+	c.Assert(cpu, NotNil)
+	c.Assert(cpu.Count, Equals, 2)
+	c.Assert(cpu.User, Equals, uint64(10))
+	c.Assert(cpu.Nice, Equals, uint64(11))
+	c.Assert(cpu.System, Equals, uint64(12))
+	c.Assert(cpu.Idle, Equals, uint64(13))
+	c.Assert(cpu.Wait, Equals, uint64(14))
+	c.Assert(cpu.IRQ, Equals, uint64(15))
+	c.Assert(cpu.SRQ, Equals, uint64(16))
+	c.Assert(cpu.Steal, Equals, uint64(17))
+
+	c1 := &CPUStats{10, 10, 10, 2, 2, 2, 2, 0, 34, 32}
+	c2 := &CPUStats{12, 12, 12, 3, 3, 3, 3, 0, 48, 32}
+
+	cpuInfo := CalculateCPUInfo(c1, c2)
+
+	c.Assert(cpuInfo, NotNil)
+	c.Assert(cpuInfo.System, Equals, 14.285714285714285)
+	c.Assert(cpuInfo.User, Equals, 14.285714285714285)
+	c.Assert(cpuInfo.Nice, Equals, 14.285714285714285)
+	c.Assert(cpuInfo.Wait, Equals, 7.142857142857142)
+	c.Assert(cpuInfo.Idle, Equals, 7.142857142857142)
+	c.Assert(cpuInfo.Average, Equals, 80.0)
+	c.Assert(cpuInfo.Count, Equals, 32)
+
 	procStatFile = ""
 
-	cpu, err = GetCPUInfo()
+	cpu, err = GetCPUStats()
 
 	c.Assert(err, NotNil)
 	c.Assert(cpu, IsNil)
 
 	procStatFile = s.CreateTestFile(c, "CORRUPTED")
 
-	cpu, err = GetCPUInfo()
+	cpu, err = GetCPUStats()
 
 	c.Assert(err, NotNil)
 	c.Assert(cpu, IsNil)
