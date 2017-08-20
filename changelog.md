@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.13.1
+
+* `[system]` Code refactoring
+
 ### 9.13.0
 
 * `[system]` Improved CPU usage calculation
