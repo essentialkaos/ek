@@ -10,7 +10,11 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"strconv"
+	"bufio"
+	"errors"
+	"os"
+
+	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,51 +45,55 @@ var procMemInfoFile = "/proc/meminfo"
 
 // GetMemInfo return memory info
 func GetMemInfo() (*MemInfo, error) {
-	content, err := readFileContent(procMemInfoFile)
+	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
 	}
 
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
 	mem := &MemInfo{}
+	errs := errutil.NewErrors()
 
-	for _, line := range content {
-		lineSlice := splitLine(line)
+	for s.Scan() {
+		text := s.Text()
 
-		if len(lineSlice) < 2 {
-			continue
-		}
-
-		switch lineSlice[0] {
+		switch readField(text, 0) {
 		case "MemTotal:":
-			mem.MemTotal, err = parseSize(lineSlice[1])
+			mem.MemTotal = parseSize(readField(text, 1), errs)
 		case "MemFree:":
-			mem.MemFree, err = parseSize(lineSlice[1])
+			mem.MemFree = parseSize(readField(text, 1), errs)
 		case "Buffers:":
-			mem.Buffers, err = parseSize(lineSlice[1])
+			mem.Buffers = parseSize(readField(text, 1), errs)
 		case "Cached:":
-			mem.Cached, err = parseSize(lineSlice[1])
+			mem.Cached = parseSize(readField(text, 1), errs)
 		case "SwapCached:":
-			mem.SwapCached, err = parseSize(lineSlice[1])
+			mem.SwapCached = parseSize(readField(text, 1), errs)
 		case "Active:":
-			mem.Active, err = parseSize(lineSlice[1])
+			mem.Active = parseSize(readField(text, 1), errs)
 		case "Inactive:":
-			mem.Inactive, err = parseSize(lineSlice[1])
+			mem.Inactive = parseSize(readField(text, 1), errs)
 		case "SwapTotal:":
-			mem.SwapTotal, err = parseSize(lineSlice[1])
+			mem.SwapTotal = parseSize(readField(text, 1), errs)
 		case "SwapFree:":
-			mem.SwapFree, err = parseSize(lineSlice[1])
+			mem.SwapFree = parseSize(readField(text, 1), errs)
 		case "Dirty:":
-			mem.Dirty, err = parseSize(lineSlice[1])
+			mem.Dirty = parseSize(readField(text, 1), errs)
 		case "Slab:":
-			mem.Slab, err = parseSize(lineSlice[1])
-		default:
-			continue
+			mem.Slab = parseSize(readField(text, 1), errs)
 		}
 
-		if err != nil {
-			return nil, err
+		if errs.HasErrors() {
+			return nil, errs.Last()
 		}
+	}
+
+	if mem.MemTotal == 0 {
+		return nil, errors.New("Can't parse file " + procMemInfoFile)
 	}
 
 	mem.MemFree += mem.Cached + mem.Buffers
@@ -96,14 +104,3 @@ func GetMemInfo() (*MemInfo, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// parseSize convert string with size in kb to uint64 bytes
-func parseSize(s string) (uint64, error) {
-	size, err := strconv.ParseUint(s, 10, 64)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return size * 1024, nil
-}

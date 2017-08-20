@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package system provides methods for working with system data (metrics/users)
-package system
+package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -15,33 +12,6 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// OS names
-const (
-	LINUX_ARCH   = "Arch"
-	LINUX_CENTOS = "CentOS"
-	LINUX_DEBIAN = "Debian"
-	LINUX_FEDORA = "Dedora"
-	LINUX_GENTOO = "Gentoo"
-	LINUX_RHEL   = "RHEL"
-	LINUX_SUSE   = "SuSe"
-	LINUX_UBUNTU = "Ubuntu"
-	DARWIN_OSX   = "OSX"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// SystemInfo contains info about a system (hostname, OS, arch...)
-type SystemInfo struct {
-	Hostname     string `json:"hostname"`     // Hostname
-	OS           string `json:"os"`           // OS name
-	Distribution string `json:"distribution"` // OS distribution
-	Version      string `json:"version"`      // OS version
-	Kernel       string `json:"kernel"`       // Kernel version
-	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
-}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 

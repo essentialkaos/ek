@@ -1,5 +1,11 @@
 ## Changelog
 
+### 9.13.0
+
+* `[system]` Improved CPU usage calculation
+* `[system/process]` Code refactoring
+* `[system]` Code refactoring
+
 ### 9.12.0
 
 * `[knf]` Added new validators: `NotLen`, `NotPrefix` and `NotSuffix`
