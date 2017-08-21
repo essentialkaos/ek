@@ -172,6 +172,37 @@ SOURCELOOP:
 	return result
 }
 
+// ReadField read field with given index from data
+func ReadField(data string, index int) string {
+	if data == "" || index < 0 {
+		return ""
+	}
+
+	curIndex, startPointer := -1, -1
+
+	for i, r := range data {
+		if r == ' ' || r == '\t' {
+			if curIndex == index {
+				return data[startPointer:i]
+			}
+
+			startPointer = -1
+			continue
+		}
+
+		if startPointer == -1 {
+			startPointer = i
+			curIndex++
+		}
+	}
+
+	if index > curIndex {
+		return ""
+	}
+
+	return data[startPointer:]
+}
+
 // Fields splits the string data around each instance of one or more
 // consecutive white space or comma characters
 func Fields(data string) []string {

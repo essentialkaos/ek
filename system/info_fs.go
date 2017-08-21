@@ -187,7 +187,7 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 }
 
 // CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(io1 map[string]*IOStats, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
+func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
 	if io1 == nil || io2 == nil {
 		return nil
 	}

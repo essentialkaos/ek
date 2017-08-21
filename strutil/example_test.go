@@ -82,3 +82,10 @@ func ExampleFields() {
 	// Output:
 	// []string{"Bob", "Alice", "Mary Key", "John Dow"}
 }
+
+func ExampleReadField() {
+	fmt.Println(ReadField("Bob    Alice\tJohn Mary", 2))
+
+	// Output:
+	// John
+}

@@ -123,9 +123,23 @@ func (s *StrUtilSuite) TestFields(c *C) {
 	c.Assert(Fields("'1 2' 3 '4 5'"), DeepEquals, []string{"1 2", "3", "4 5"})
 }
 
+func (s *StrUtilSuite) TestReadField(c *C) {
+	c.Assert(ReadField("abc 1234 DEF", -1), Equals, "")
+	c.Assert(ReadField("abc 1234 DEF", 0), Equals, "abc")
+	c.Assert(ReadField("abc 1234 DEF", 1), Equals, "1234")
+	c.Assert(ReadField("abc 1234 DEF", 2), Equals, "DEF")
+	c.Assert(ReadField("abc 1234 DEF", 3), Equals, "")
+}
+
 func (s *StrUtilSuite) BenchmarkFields(c *C) {
 	for i := 0; i < c.N; i++ {
 		Fields("\"1 2\" 3 \"4 5\"")
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkReadField(c *C) {
+	for i := 0; i < c.N; i++ {
+		ReadField("abc 1234 DEF", 2)
 	}
 }
 
