@@ -1,7 +1,8 @@
 ## Changelog
 
-### 9.13.1
+### 9.14.0
 
+* `[strutil]` Added new method `ReadField` for reading space/tab separated fields from given data
 * `[system]` Code refactoring
 
 ### 9.13.0
