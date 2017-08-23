@@ -121,9 +121,10 @@ func hasSystemdService(name string) bool {
 
 func getSysVServiceState(name string) uint8 {
 	cmd := exec.Command("/sbin/service", name, "status")
-	err := cmd.Run()
 
-	if err != nil {
+	cmd.Run()
+
+	if cmd.ProcessState == nil || cmd.ProcessState.Sys() == nil {
 		return STATE_UNKNOWN
 	}
 
