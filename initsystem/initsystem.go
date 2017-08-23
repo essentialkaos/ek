@@ -124,11 +124,17 @@ func getSysVServiceState(name string) uint8 {
 
 	cmd.Run()
 
-	if cmd.ProcessState == nil || cmd.ProcessState.Sys() == nil {
+	if cmd.ProcessState == nil {
 		return STATE_UNKNOWN
 	}
 
-	status, ok := cmd.ProcessState.Sys().(syscall.WaitStatus)
+	waitStatus := cmd.ProcessState.Sys()
+
+	if waitStatus == nil {
+		return STATE_UNKNOWN
+	}
+
+	status, ok := waitStatus.(syscall.WaitStatus)
 
 	if !ok {
 		return STATE_UNKNOWN
