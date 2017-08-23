@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.14.1
+
+* `[initsystem]` Fixed bug in SysV service state determination
+
 ### 9.14.0
 
 * `[strutil]` Added new method `ReadField` for reading space/tab separated fields from given data
