@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.14.2
+
+* `[system]` Fixed windows stubs
+
 ### 9.14.1
 
 * `[initsystem]` Fixed bug in SysV service state determination
