@@ -179,12 +179,9 @@ func getSystemdServiceState(name string) uint8 {
 		return STATE_UNKNOWN
 	}
 
-	switch strings.TrimRight(string(output), "\n\r") {
-	case "active":
+	if strings.TrimRight(string(output), "\n\r") == "active" {
 		return STATE_WORKS
-	case "inactive":
-		return STATE_STOPPED
 	}
 
-	return STATE_UNKNOWN
+	return STATE_STOPPED
 }
