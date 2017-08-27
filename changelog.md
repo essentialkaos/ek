@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.14.3
+
+* `[initsystem]` Fixed bug with checking service state in systemd
+
 ### 9.14.2
 
 * `[system]` Fixed windows stubs

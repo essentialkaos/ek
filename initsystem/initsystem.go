@@ -173,18 +173,11 @@ func getUpstartServiceState(name string) uint8 {
 }
 
 func getSystemdServiceState(name string) uint8 {
-	output, err := exec.Command("/usr/bin/systemctl", "is-active", name).Output()
+	output, _ := exec.Command("/usr/bin/systemctl", "is-active", name).Output()
 
-	if err != nil {
-		return STATE_UNKNOWN
-	}
-
-	switch strings.TrimRight(string(output), "\n\r") {
-	case "active":
+	if strings.TrimRight(string(output), "\n\r") == "active" {
 		return STATE_WORKS
-	case "inactive":
-		return STATE_STOPPED
 	}
 
-	return STATE_UNKNOWN
+	return STATE_STOPPED
 }
