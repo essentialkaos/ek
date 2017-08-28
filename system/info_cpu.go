@@ -20,33 +20,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CPUInfo contains info about CPU usage
-type CPUInfo struct {
-	User    float64 `json:"user"`     // Normal processes executing in user mode
-	System  float64 `json:"system"`   // Processes executing in kernel mode
-	Nice    float64 `json:"nice"`     // Niced processes executing in user mode
-	Idle    float64 `json:"idle"`     // Twiddling thumbs
-	Wait    float64 `json:"wait"`     // Waiting for I/O to complete
-	Average float64 `json:"avearage"` // Average CPU usage
-	Count   int     `json:"count"`    // Number of CPU cores
-}
-
-// CPUStats contains basic CPU stats
-type CPUStats struct {
-	User   uint64 `json:"user"`
-	Nice   uint64 `json:"nice"`
-	System uint64 `json:"system"`
-	Idle   uint64 `json:"idle"`
-	Wait   uint64 `json:"wait"`
-	IRQ    uint64 `json:"irq"`
-	SRQ    uint64 `json:"srq"`
-	Steal  uint64 `json:"steal"`
-	Total  uint64 `json:"total"`
-	Count  int    `json:"count"`
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Path to file with CPU info in procfs
 var procStatFile = "/proc/stat"
 

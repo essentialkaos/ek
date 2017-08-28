@@ -20,17 +20,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// LoadAvg contains information about average system load
-type LoadAvg struct {
-	Min1  float64 `json:"min1"`  // LA in last 1 minute
-	Min5  float64 `json:"min5"`  // LA in last 5 minutes
-	Min15 float64 `json:"min15"` // LA in last 15 minutes
-	RProc int     `json:"rproc"` // Number of currently runnable kernel scheduling entities
-	TProc int     `json:"tproc"` // Number of kernel scheduling entities that currently exist on the system
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Path to file with LA info in procfs
 var procLoadAvgFile = "/proc/loadavg"
 

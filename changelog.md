@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.14.4
+
+* `[system]` Code refactoring
+
 ### 9.14.3
 
 * `[initsystem]` Fixed bug with checking service state in systemd
