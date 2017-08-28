@@ -21,16 +21,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// InterfaceInfo contains info about network interfaces
-type InterfaceInfo struct {
-	ReceivedBytes      uint64 `json:"received_bytes"`
-	ReceivedPackets    uint64 `json:"received_packets"`
-	TransmittedBytes   uint64 `json:"transmitted_bytes"`
-	TransmittedPackets uint64 `json:"transmitted_packets"`
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Path to file with net info in procfs
 var procNetFile = "/proc/net/dev"
 

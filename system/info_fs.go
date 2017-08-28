@@ -35,32 +35,6 @@ var hz = 0.0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// FSInfo contains info about fs usage
-type FSInfo struct {
-	Type   string `json:"type"`   // FS type (ext4/ntfs/etc...)
-	Device string `json:"device"` // Device spec
-	Used   uint64 `json:"used"`   // Used space
-	Free   uint64 `json:"free"`   // Free space
-	Total  uint64 `json:"total"`  // Total space
-}
-
-// IOStats contains information about I/O
-type IOStats struct {
-	ReadComplete  uint64 `json:"read_complete"`  // Reads completed successfully
-	ReadMerged    uint64 `json:"read_merged"`    // Reads merged
-	ReadSectors   uint64 `json:"read_sectors"`   // Sectors read
-	ReadMs        uint64 `json:"read_ms"`        // Time spent reading (ms)
-	WriteComplete uint64 `json:"write_complete"` // Writes completed
-	WriteMerged   uint64 `json:"write_merged"`   // Writes merged
-	WriteSectors  uint64 `json:"write_sectors"`  // Sectors written
-	WriteMs       uint64 `json:"write_ms"`       // Time spent writing (ms)
-	IOPending     uint64 `json:"io_pending"`     // I/Os currently in progress
-	IOMs          uint64 `json:"io_ms"`          // Time spent doing I/Os (ms)
-	IOQueueMs     uint64 `json:"io_queue_ms"`    // Weighted time spent doing I/Os (ms)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // GetFSInfo return info about mounted filesystems
 func GetFSInfo() (map[string]*FSInfo, error) {
 	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
