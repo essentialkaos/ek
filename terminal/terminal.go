@@ -44,9 +44,7 @@ var tmux int8
 
 // ReadUI read user input
 func ReadUI(title string, nonEmpty bool) (string, error) {
-	return readUserInput(
-		colorozeTitle(title), nonEmpty, false,
-	)
+	return readUserInput(title, nonEmpty, false)
 }
 
 // ReadAnswer read user answer for yes/no question
@@ -84,7 +82,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 // ReadPassword read password or some private input which will be hidden
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
-	return readUserInput(colorozeTitle(title), nonEmpty, true)
+	return readUserInput(title, nonEmpty, true)
 }
 
 // PrintErrorMessage print error message
@@ -170,7 +168,7 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
 	if title != "" {
-		fmtc.Println(title)
+		fmtc.Println(colorozeTitle(title))
 	}
 
 	var (

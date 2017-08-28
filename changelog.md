@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.14.5
+
+* `[terminal]` Fixed bug with empty title output
+
 ### 9.14.4
 
 * `[system]` Code refactoring
