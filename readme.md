@@ -14,7 +14,7 @@ Before the initial install allows git to use redirects for [pkg.re](https://gith
 git config --global http.https://pkg.re.followRedirects true
 ```
 
-Make sure you have a working Go 1.6+ workspace ([instructions](https://golang.org/doc/install)), then:
+Make sure you have a working Go 1.7+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
 go get pkg.re/essentialkaos/ek.v9
