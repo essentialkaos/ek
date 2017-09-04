@@ -15,6 +15,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// EllipsisSuffix is ellipsis suffix
+var EllipsisSuffix = "..."
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Concat fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
@@ -78,7 +83,7 @@ func Ellipsis(s string, maxSize int) string {
 		return s
 	}
 
-	return Substr(s, 0, maxSize-3) + "..."
+	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
 // Head return n first symbols from given string

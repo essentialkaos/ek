@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.15.0
+
+* `[strutil]` Added ellipsis suffix customization
+
 ### 9.14.5
 
 * `[terminal]` Fixed bug with empty title output
