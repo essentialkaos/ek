@@ -129,6 +129,9 @@ func (s *StrUtilSuite) TestReadField(c *C) {
 	c.Assert(ReadField("abc 1234 DEF", 1), Equals, "1234")
 	c.Assert(ReadField("abc 1234 DEF", 2), Equals, "DEF")
 	c.Assert(ReadField("abc 1234 DEF", 3), Equals, "")
+
+	c.Assert(ReadField("abc|1234|DEF", 1, "|"), Equals, "1234")
+	c.Assert(ReadField("abc+1234|DEF", 1, "|+"), Equals, "1234")
 }
 
 func (s *StrUtilSuite) BenchmarkFields(c *C) {

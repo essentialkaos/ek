@@ -20,6 +20,10 @@ var EllipsisSuffix = "..."
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var defaultFieldsSeparators = []string{" \t"}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Concat fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
@@ -178,21 +182,28 @@ SOURCELOOP:
 }
 
 // ReadField read field with given index from data
-func ReadField(data string, index int) string {
+func ReadField(data string, index int, separators ...string) string {
 	if data == "" || index < 0 {
 		return ""
 	}
 
+	if len(separators) == 0 {
+		separators = defaultFieldsSeparators
+	}
+
 	curIndex, startPointer := -1, -1
 
+MAINLOOP:
 	for i, r := range data {
-		if r == ' ' || r == '\t' {
-			if curIndex == index {
-				return data[startPointer:i]
-			}
+		for _, s := range separators[0] {
+			if r == s {
+				if curIndex == index {
+					return data[startPointer:i]
+				}
 
-			startPointer = -1
-			continue
+				startPointer = -1
+				continue MAINLOOP
+			}
 		}
 
 		if startPointer == -1 {

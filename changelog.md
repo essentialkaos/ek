@@ -4,6 +4,7 @@
 ### 9.15.0
 
 * `[strutil]` Added ellipsis suffix customization
+* `[strutil]` Added support of custom separators for `ReadField`
 * `[req]` Closing response body after parsing data
 
 ### 9.14.5
