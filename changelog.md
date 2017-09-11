@@ -1,12 +1,10 @@
 ## Changelog
 
-### 9.15.1
-
-* `[req]` Closing response body after parsing data
 
 ### 9.15.0
 
 * `[strutil]` Added ellipsis suffix customization
+* `[req]` Closing response body after parsing data
 
 ### 9.14.5
 
