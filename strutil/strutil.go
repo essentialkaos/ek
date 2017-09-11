@@ -182,7 +182,7 @@ SOURCELOOP:
 }
 
 // ReadField read field with given index from data
-func ReadField(data string, index int, separators ...string) string {
+func ReadField(data string, index int, multiSep bool, separators ...string) string {
 	if data == "" || index < 0 {
 		return ""
 	}
@@ -199,6 +199,12 @@ MAINLOOP:
 			if r == s {
 				if curIndex == index {
 					return data[startPointer:i]
+				}
+
+				if !multiSep {
+					startPointer = i + 1
+					curIndex++
+					continue MAINLOOP
 				}
 
 				startPointer = -1

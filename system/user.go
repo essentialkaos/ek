@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/env"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -73,9 +74,11 @@ func (s sessionsInfo) Swap(i, j int) {
 
 // Errors
 var (
-	ErrEmptyPath      = errors.New("Path is empty")
-	ErrEmptyUserName  = errors.New("User name/id can't be blank")
-	ErrEmptyGroupName = errors.New("Group name/id can't be blank")
+	ErrEmptyPath             = errors.New("Path is empty")
+	ErrEmptyUserName         = errors.New("User name/ID can't be blank")
+	ErrEmptyGroupName        = errors.New("Group name/ID can't be blank")
+	ErrCantParseIdOutput     = errors.New("Can't parse id command output")
+	ErrCantParseGetentOutput = errors.New("Can't parse getent command output")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -125,7 +128,13 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 		return curUser, nil
 	}
 
-	user, err := LookupUser(getCurrentUserName())
+	username, err := getCurrentUserName()
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := LookupUser(username)
 
 	if err != nil {
 		return user, err
@@ -152,7 +161,11 @@ func LookupUser(nameOrID string) (*User, error) {
 		return nil, err
 	}
 
-	appendGroupInfo(user)
+	err = appendGroupInfo(user)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return user, nil
 }
@@ -163,9 +176,7 @@ func LookupGroup(nameOrID string) (*Group, error) {
 		return nil, ErrEmptyGroupName
 	}
 
-	name, gid, err := getGroupInfo(nameOrID)
-
-	return &Group{Name: name, GID: gid}, err
+	return getGroupInfo(nameOrID)
 }
 
 // IsUserExist check if user exist on system or not
@@ -224,42 +235,33 @@ func (u *User) GroupList() []string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getCurrentUserName return name of current user
-func getCurrentUserName() string {
+func getCurrentUserName() (string, error) {
 	cmd := exec.Command("id", "-un")
 
-	out, err := cmd.Output()
+	data, err := cmd.Output()
 
 	if err != nil {
-		return ""
+		return "", ErrCantParseIdOutput
 	}
 
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
+	username := strings.TrimRight(string(data[:]), "\n")
 
-	return sOut
+	return username, nil
 }
 
 // appendGroupInfo append info about groups
-func appendGroupInfo(user *User) {
+func appendGroupInfo(user *User) error {
 	cmd := exec.Command("id", user.Name)
 
-	out, err := cmd.Output()
+	data, err := cmd.Output()
 
 	if err != nil {
-		return
+		return ErrCantParseIdOutput
 	}
 
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-	aOut := strings.Split(sOut, "=")
+	user.Groups = extractGroupsInfo(string(data))
 
-	if len(aOut) < 4 {
-		return
-	}
-
-	for _, info := range strings.Split(aOut[3], ",") {
-		user.Groups = append(user.Groups, parseGroupInfo(info))
-	}
+	return nil
 }
 
 // appendRealUserInfo append real user info when user under sudo
@@ -321,32 +323,16 @@ func getRealUserFromEnv() (string, int, int) {
 }
 
 // getGroupInfo return group info by name or id
-func getGroupInfo(nameOrID string) (string, int, error) {
+func getGroupInfo(nameOrID string) (*Group, error) {
 	cmd := exec.Command("getent", "group", nameOrID)
 
-	out, err := cmd.Output()
+	data, err := cmd.Output()
 
 	if err != nil {
-		return "", -1, fmt.Errorf("Group with this name/id %s does not exist", nameOrID)
+		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
 	}
 
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-	aOut := strings.Split(sOut, ":")
-
-	gid, _ := strconv.Atoi(aOut[1])
-
-	return aOut[0], gid, nil
-}
-
-// parseGroupInfo remove bracket symbols, parse value as number and return result
-func parseGroupInfo(info string) *Group {
-	ai := strings.Split(info, "(")
-
-	gid, _ := strconv.Atoi(ai[0])
-	name := strings.TrimRight(ai[1], ")")
-
-	return &Group{name, gid}
+	return parseGetentGroupOutput(string(data))
 }
 
 // getOwner return file or directory owner UID
@@ -446,4 +432,71 @@ func getSessionInfo(pts string) (*SessionInfo, error) {
 		LoginTime:        ctime,
 		LastActivityTime: mtime,
 	}, nil
+}
+
+// extractGroupsFromIdInfo extracts info from id command output
+func extractGroupsInfo(data string) []*Group {
+	var field int
+	var result []*Group
+
+	groupsInfo := strutil.ReadField(data, 3, false, "=")
+
+	if groupsInfo == "" {
+		return nil
+	}
+
+	for {
+		groupInfo := strutil.ReadField(groupsInfo, field, false, ",")
+
+		if groupInfo == "" {
+			break
+		}
+
+		group, err := parseGroupInfo(groupInfo)
+
+		if err == nil {
+			result = append(result, group)
+		}
+
+		field++
+	}
+
+	return result
+}
+
+// parseGroupInfo parse group info from 'id' command
+func parseGroupInfo(data string) (*Group, error) {
+	id := strutil.ReadField(data, 0, false, "(")
+	name := strutil.ReadField(data, 1, false, "(")
+	gid, _ := strconv.Atoi(id)
+
+	if len(name) == 0 {
+		group, err := LookupGroup(id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return group, nil
+	}
+
+	return &Group{GID: gid, Name: name[:len(name)-1]}, nil
+}
+
+// parseGetentGroupOutput parse 'getent group' command output
+func parseGetentGroupOutput(data string) (*Group, error) {
+	name := strutil.ReadField(data, 0, false, ":")
+	id := strutil.ReadField(data, 2, false, ":")
+
+	if name == "" || id == "" {
+		return nil, ErrCantParseGetentOutput
+	}
+
+	gid, err := strconv.Atoi(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Group{name, gid}, nil
 }

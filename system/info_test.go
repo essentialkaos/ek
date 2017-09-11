@@ -364,9 +364,30 @@ func (s *SystemSuite) TestUser(c *C) {
 		c.Assert(uid, Equals, 1234)
 		c.Assert(gid, Equals, 1234)
 
-		_, _, err = getGroupInfo("_UNKNOWN_")
+		groups := extractGroupsInfo("uid=10123(john) gid=10123(john) groups=10123(john),10200(admins),10201(developers)")
 
-		c.Assert(err, NotNil)
+		c.Assert(groups[0].Name, Equals, "john")
+		c.Assert(groups[0].GID, Equals, 10123)
+		c.Assert(groups[2].Name, Equals, "developers")
+		c.Assert(groups[2].GID, Equals, 10201)
+
+		group, err = parseGetentGroupOutput("developers:*:10201:bob,john")
+
+		c.Assert(err, IsNil)
+		c.Assert(group, NotNil)
+		c.Assert(group.Name, Equals, "developers")
+		c.Assert(group.GID, Equals, 10201)
+
+		user, err = parseGetentPasswdOutput("bob:*:10567:10567::/home/bob:/bin/zsh")
+
+		c.Assert(err, IsNil)
+		c.Assert(user, NotNil)
+		c.Assert(user.Name, Equals, "bob")
+		c.Assert(user.UID, Equals, 10567)
+		c.Assert(user.GID, Equals, 10567)
+		c.Assert(user.Comment, Equals, "")
+		c.Assert(user.HomeDir, Equals, "/home/bob")
+		c.Assert(user.Shell, Equals, "/bin/zsh")
 
 		_, err = getOwner("")
 

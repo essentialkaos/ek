@@ -6,6 +6,8 @@
 * `[strutil]` Added ellipsis suffix customization
 * `[strutil]` Added support of custom separators for `ReadField`
 * `[req]` Closing response body after parsing data
+* `[system]` Fixed bug with parsing `id` command output with empty group names
+* `[system]` Improved `id` and `getent` commands output parsing
 
 ### 9.14.5
 
