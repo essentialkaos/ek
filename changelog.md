@@ -6,6 +6,7 @@
 * `[strutil]` Added support of custom separators for `ReadField`
 * `[req]` Closing response body after parsing data
 * `[system]` Fixed bug with parsing `id` command output with empty group names
+* `[system]` Fixed bug with calculating transfered bytes on active interfaces
 * `[system]` Improved `id` and `getent` commands output parsing
 * `[system]` Code refactoring
 

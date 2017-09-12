@@ -124,7 +124,7 @@ func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {
 	)
 
 	for name, info := range is {
-		if len(name) < 3 || name[0:3] != "eth" {
+		if strings.HasPrefix(name, "lo") || strings.HasPrefix(name, "bond") {
 			continue
 		}
 
