@@ -16,6 +16,7 @@ import (
 	"strconv"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -61,31 +62,31 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 			continue
 		}
 
-		switch readField(text, 0) {
+		switch strutil.ReadField(text, 0, true) {
 		case "VmPeak:":
-			info.VmPeak = parseSize(readField(text, 1), errs)
+			info.VmPeak = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmSize:":
-			info.VmSize = parseSize(readField(text, 1), errs)
+			info.VmSize = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmLck:":
-			info.VmLck = parseSize(readField(text, 1), errs)
+			info.VmLck = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmPin:":
-			info.VmPin = parseSize(readField(text, 1), errs)
+			info.VmPin = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmHWM:":
-			info.VmHWM = parseSize(readField(text, 1), errs)
+			info.VmHWM = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmRSS:":
-			info.VmRSS = parseSize(readField(text, 1), errs)
+			info.VmRSS = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmData:":
-			info.VmData = parseSize(readField(text, 1), errs)
+			info.VmData = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmStk:":
-			info.VmStk = parseSize(readField(text, 1), errs)
+			info.VmStk = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmExe:":
-			info.VmExe = parseSize(readField(text, 1), errs)
+			info.VmExe = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmLib:":
-			info.VmLib = parseSize(readField(text, 1), errs)
+			info.VmLib = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmPTE:":
-			info.VmPTE = parseSize(readField(text, 1), errs)
+			info.VmPTE = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "VmSwap:":
-			info.VmSwap = parseSize(readField(text, 1), errs)
+			info.VmSwap = parseSize(strutil.ReadField(text, 1, true), errs)
 		}
 
 		if errs.HasErrors() {

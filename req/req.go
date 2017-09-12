@@ -317,11 +317,13 @@ func (r *Response) Discard() {
 
 // JSON decode json encoded body
 func (r *Response) JSON(v interface{}) error {
+	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
 // String read response body as string
 func (r *Response) String() string {
+	defer r.Body.Close()
 	result, _ := ioutil.ReadAll(r.Body)
 	return string(result)
 }

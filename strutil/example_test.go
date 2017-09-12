@@ -84,8 +84,10 @@ func ExampleFields() {
 }
 
 func ExampleReadField() {
-	fmt.Println(ReadField("Bob    Alice\tJohn Mary", 2))
+	fmt.Println(ReadField("Bob    Alice\tJohn Mary", 2, true))
+	fmt.Println(ReadField("Bob:::Mary:John:", 3, false, ":"))
 
 	// Output:
 	// John
+	// Mary
 }

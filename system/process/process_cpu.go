@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -82,20 +83,20 @@ func GetInfo(pid int) (*ProcInfo, error) {
 	info := &ProcInfo{}
 	errs := errutil.NewErrors()
 
-	info.PID = parseInt(readField(text, 0), errs)
-	info.Comm = readField(text, 1)
-	info.State = readField(text, 2)
-	info.PPID = parseInt(readField(text, 3), errs)
-	info.Session = parseInt(readField(text, 5), errs)
-	info.TTYNR = parseInt(readField(text, 6), errs)
-	info.TPGid = parseInt(readField(text, 7), errs)
-	info.UTime = parseUint(readField(text, 13), errs)
-	info.STime = parseUint(readField(text, 14), errs)
-	info.CUTime = parseUint(readField(text, 15), errs)
-	info.CSTime = parseUint(readField(text, 16), errs)
-	info.Priority = parseInt(readField(text, 17), errs)
-	info.Nice = parseInt(readField(text, 18), errs)
-	info.NumThreads = parseInt(readField(text, 19), errs)
+	info.PID = parseInt(strutil.ReadField(text, 0, true), errs)
+	info.Comm = strutil.ReadField(text, 1, true)
+	info.State = strutil.ReadField(text, 2, true)
+	info.PPID = parseInt(strutil.ReadField(text, 3, true), errs)
+	info.Session = parseInt(strutil.ReadField(text, 5, true), errs)
+	info.TTYNR = parseInt(strutil.ReadField(text, 6, true), errs)
+	info.TPGid = parseInt(strutil.ReadField(text, 7, true), errs)
+	info.UTime = parseUint(strutil.ReadField(text, 13, true), errs)
+	info.STime = parseUint(strutil.ReadField(text, 14, true), errs)
+	info.CUTime = parseUint(strutil.ReadField(text, 15, true), errs)
+	info.CSTime = parseUint(strutil.ReadField(text, 16, true), errs)
+	info.Priority = parseInt(strutil.ReadField(text, 17, true), errs)
+	info.Nice = parseInt(strutil.ReadField(text, 18, true), errs)
+	info.NumThreads = parseInt(strutil.ReadField(text, 19, true), errs)
 
 	if errs.HasErrors() {
 		return nil, errs.Last()

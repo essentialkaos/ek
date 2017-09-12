@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -45,15 +46,15 @@ func GetLA() (*LoadAvg, error) {
 	la := &LoadAvg{}
 	errs := errutil.NewErrors()
 
-	la.Min1 = parseFloat(readField(text, 0), errs)
-	la.Min5 = parseFloat(readField(text, 1), errs)
-	la.Min15 = parseFloat(readField(text, 2), errs)
+	la.Min1 = parseFloat(strutil.ReadField(text, 0, true), errs)
+	la.Min5 = parseFloat(strutil.ReadField(text, 1, true), errs)
+	la.Min15 = parseFloat(strutil.ReadField(text, 2, true), errs)
 
 	if errs.HasErrors() {
 		return nil, errs.Last()
 	}
 
-	procs := readField(text, 3)
+	procs := strutil.ReadField(text, 3, true)
 	delimPosition := strings.IndexRune(procs, '/')
 
 	if delimPosition == -1 {

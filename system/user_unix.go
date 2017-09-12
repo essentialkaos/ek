@@ -13,36 +13,47 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
-	"strings"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getUserInfo find user info by name or id
+// getUserInfo find user info by name or ID
 func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("getent", "passwd", nameOrID)
 
-	out, err := cmd.Output()
+	data, err := cmd.Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("User with this name/id %s does not exist", nameOrID)
+		return nil, fmt.Errorf("User with name/ID %s does not exist", nameOrID)
 	}
 
-	sOut := string(out[:])
-	sOut = strings.Trim(sOut, "\n")
-	aOut := strings.Split(sOut, ":")
+	return parseGetentPasswdOutput(string(data))
+}
 
-	uid, _ := strconv.Atoi(aOut[2])
-	gid, _ := strconv.Atoi(aOut[3])
+// parseGetentGroupOutput parse 'getent passwd' command output
+func parseGetentPasswdOutput(data string) (*User, error) {
+	uid, err := strconv.Atoi(strutil.ReadField(data, 2, false, ":"))
+
+	if err != nil {
+		return nil, ErrCantParseGetentOutput
+	}
+
+	gid, err := strconv.Atoi(strutil.ReadField(data, 3, false, ":"))
+
+	if err != nil {
+		return nil, ErrCantParseGetentOutput
+	}
 
 	return &User{
-		Name:     aOut[0],
+		Name:     strutil.ReadField(data, 0, false, ":"),
 		UID:      uid,
 		GID:      gid,
-		Comment:  aOut[4],
-		HomeDir:  aOut[5],
-		Shell:    aOut[6],
-		RealName: aOut[0],
+		Comment:  strutil.ReadField(data, 4, false, ":"),
+		HomeDir:  strutil.ReadField(data, 5, false, ":"),
+		Shell:    strutil.ReadField(data, 6, false, ":"),
+		RealName: strutil.ReadField(data, 0, false, ":"),
 		RealUID:  uid,
 		RealGID:  gid,
 	}, nil

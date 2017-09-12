@@ -15,6 +15,7 @@ import (
 	"os"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -43,29 +44,29 @@ func GetMemInfo() (*MemInfo, error) {
 	for s.Scan() {
 		text := s.Text()
 
-		switch readField(text, 0) {
+		switch strutil.ReadField(text, 0, true) {
 		case "MemTotal:":
-			mem.MemTotal = parseSize(readField(text, 1), errs)
+			mem.MemTotal = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "MemFree:":
-			mem.MemFree = parseSize(readField(text, 1), errs)
+			mem.MemFree = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Buffers:":
-			mem.Buffers = parseSize(readField(text, 1), errs)
+			mem.Buffers = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Cached:":
-			mem.Cached = parseSize(readField(text, 1), errs)
+			mem.Cached = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "SwapCached:":
-			mem.SwapCached = parseSize(readField(text, 1), errs)
+			mem.SwapCached = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Active:":
-			mem.Active = parseSize(readField(text, 1), errs)
+			mem.Active = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Inactive:":
-			mem.Inactive = parseSize(readField(text, 1), errs)
+			mem.Inactive = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "SwapTotal:":
-			mem.SwapTotal = parseSize(readField(text, 1), errs)
+			mem.SwapTotal = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "SwapFree:":
-			mem.SwapFree = parseSize(readField(text, 1), errs)
+			mem.SwapFree = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Dirty:":
-			mem.Dirty = parseSize(readField(text, 1), errs)
+			mem.Dirty = parseSize(strutil.ReadField(text, 1, true), errs)
 		case "Slab:":
-			mem.Slab = parseSize(readField(text, 1), errs)
+			mem.Slab = parseSize(strutil.ReadField(text, 1, true), errs)
 		}
 
 		if errs.HasErrors() {

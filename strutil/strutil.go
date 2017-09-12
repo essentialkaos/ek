@@ -15,6 +15,15 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// EllipsisSuffix is ellipsis suffix
+var EllipsisSuffix = "..."
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var defaultFieldsSeparators = []string{" \t"}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Concat fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
@@ -78,7 +87,7 @@ func Ellipsis(s string, maxSize int) string {
 		return s
 	}
 
-	return Substr(s, 0, maxSize-3) + "..."
+	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
 // Head return n first symbols from given string
@@ -173,21 +182,34 @@ SOURCELOOP:
 }
 
 // ReadField read field with given index from data
-func ReadField(data string, index int) string {
+func ReadField(data string, index int, multiSep bool, separators ...string) string {
 	if data == "" || index < 0 {
 		return ""
 	}
 
+	if len(separators) == 0 {
+		separators = defaultFieldsSeparators
+	}
+
 	curIndex, startPointer := -1, -1
 
+MAINLOOP:
 	for i, r := range data {
-		if r == ' ' || r == '\t' {
-			if curIndex == index {
-				return data[startPointer:i]
-			}
+		for _, s := range separators[0] {
+			if r == s {
+				if curIndex == index {
+					return data[startPointer:i]
+				}
 
-			startPointer = -1
-			continue
+				if !multiSep {
+					startPointer = i + 1
+					curIndex++
+					continue MAINLOOP
+				}
+
+				startPointer = -1
+				continue MAINLOOP
+			}
 		}
 
 		if startPointer == -1 {

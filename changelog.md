@@ -1,5 +1,15 @@
 ## Changelog
 
+### 9.15.0
+
+* `[strutil]` Added ellipsis suffix customization
+* `[strutil]` Added support of custom separators for `ReadField`
+* `[req]` Closing response body after parsing data
+* `[system]` Fixed bug with parsing `id` command output with empty group names
+* `[system]` Fixed bug with calculating transferred bytes on active interfaces
+* `[system]` Improved `id` and `getent` commands output parsing
+* `[system]` Code refactoring
+
 ### 9.14.5
 
 * `[terminal]` Fixed bug with empty title output

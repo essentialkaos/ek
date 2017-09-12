@@ -14,6 +14,8 @@ import (
 	"errors"
 	"os"
 	"strconv"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,7 +38,7 @@ func GetUptime() (uint64, error) {
 	r := bufio.NewReader(fd)
 	text, err := r.ReadString('\n')
 
-	uptimeStr := readField(text, 0)
+	uptimeStr := strutil.ReadField(text, 0, true)
 
 	if uptimeStr == "" {
 		return 0, errors.New("Can't parse file " + procUptimeFile)
