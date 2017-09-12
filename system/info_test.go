@@ -410,17 +410,6 @@ func (s *SystemSuite) TestUser(c *C) {
 	}
 }
 
-func (s *SystemSuite) TestFieldParser(c *C) {
-	data := "    abc \t\t 123     \t         ABC $"
-
-	c.Assert(readField("", 0), Equals, "")
-	c.Assert(readField(data, 0), Equals, "abc")
-	c.Assert(readField(data, 1), Equals, "123")
-	c.Assert(readField(data, 2), Equals, "ABC")
-	c.Assert(readField(data, 3), Equals, "$")
-	c.Assert(readField(data, 4), Equals, "")
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SystemSuite) CreateTestFile(c *C, data string) string {

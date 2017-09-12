@@ -1,6 +1,5 @@
 ## Changelog
 
-
 ### 9.15.0
 
 * `[strutil]` Added ellipsis suffix customization
@@ -8,6 +7,7 @@
 * `[req]` Closing response body after parsing data
 * `[system]` Fixed bug with parsing `id` command output with empty group names
 * `[system]` Improved `id` and `getent` commands output parsing
+* `[system]` Code refactoring
 
 ### 9.14.5
 

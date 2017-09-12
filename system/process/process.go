@@ -62,34 +62,3 @@ func parseInt(v string, errs *errutil.Errors) int {
 
 	return int(value)
 }
-
-// readField read field from data
-func readField(data string, index int) string {
-	if data == "" {
-		return ""
-	}
-
-	curIndex, startPointer := -1, -1
-
-	for i, r := range data {
-		if r == ' ' || r == '\t' {
-			if curIndex == index {
-				return data[startPointer:i]
-			}
-
-			startPointer = -1
-			continue
-		}
-
-		if startPointer == -1 {
-			startPointer = i
-			curIndex++
-		}
-	}
-
-	if index > curIndex {
-		return ""
-	}
-
-	return data[startPointer:]
-}

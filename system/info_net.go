@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -51,12 +52,12 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 
 		ii := &InterfaceInfo{}
 
-		name := strings.TrimRight(readField(text, 0), ":")
+		name := strings.TrimRight(strutil.ReadField(text, 0, true), ":")
 
-		ii.ReceivedBytes = parseUint(readField(text, 1), errs)
-		ii.ReceivedPackets = parseUint(readField(text, 2), errs)
-		ii.TransmittedBytes = parseUint(readField(text, 9), errs)
-		ii.TransmittedPackets = parseUint(readField(text, 10), errs)
+		ii.ReceivedBytes = parseUint(strutil.ReadField(text, 1, true), errs)
+		ii.ReceivedPackets = parseUint(strutil.ReadField(text, 2, true), errs)
+		ii.TransmittedBytes = parseUint(strutil.ReadField(text, 9, true), errs)
+		ii.TransmittedPackets = parseUint(strutil.ReadField(text, 10, true), errs)
 
 		if errs.HasErrors() {
 			return nil, errs.Last()

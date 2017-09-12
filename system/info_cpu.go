@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -90,14 +91,14 @@ func GetCPUStats() (*CPUStats, error) {
 
 		if len(text) > 4 && text[:3] == "cpu" {
 			if text[:4] == "cpu " {
-				stats.User = parseUint(readField(text, 1), errs)
-				stats.Nice = parseUint(readField(text, 2), errs)
-				stats.System = parseUint(readField(text, 3), errs)
-				stats.Idle = parseUint(readField(text, 4), errs)
-				stats.Wait = parseUint(readField(text, 5), errs)
-				stats.IRQ = parseUint(readField(text, 6), errs)
-				stats.SRQ = parseUint(readField(text, 7), errs)
-				stats.Steal = parseUint(readField(text, 8), errs)
+				stats.User = parseUint(strutil.ReadField(text, 1, true), errs)
+				stats.Nice = parseUint(strutil.ReadField(text, 2, true), errs)
+				stats.System = parseUint(strutil.ReadField(text, 3, true), errs)
+				stats.Idle = parseUint(strutil.ReadField(text, 4, true), errs)
+				stats.Wait = parseUint(strutil.ReadField(text, 5, true), errs)
+				stats.IRQ = parseUint(strutil.ReadField(text, 6, true), errs)
+				stats.SRQ = parseUint(strutil.ReadField(text, 7, true), errs)
+				stats.Steal = parseUint(strutil.ReadField(text, 8, true), errs)
 			} else {
 				stats.Count++
 				continue

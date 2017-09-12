@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/errutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,9 +58,9 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 			continue
 		}
 
-		device := readField(text, 0)
-		path := readField(text, 1)
-		fsInfo := &FSInfo{Type: readField(text, 2)}
+		device := strutil.ReadField(text, 0, true)
+		path := strutil.ReadField(text, 1, true)
+		fsInfo := &FSInfo{Type: strutil.ReadField(text, 2, true)}
 
 		stats := &syscall.Statfs_t{}
 
@@ -109,7 +110,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 	for s.Scan() {
 		text := s.Text()
-		device := readField(text, 2)
+		device := strutil.ReadField(text, 2, true)
 
 		if len(device) > 3 {
 			if device[:3] == "ram" || device[:3] == "loo" {
@@ -119,17 +120,17 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 		ios := &IOStats{}
 
-		ios.ReadComplete = parseUint(readField(text, 3), errs)
-		ios.ReadMerged = parseUint(readField(text, 4), errs)
-		ios.ReadSectors = parseUint(readField(text, 5), errs)
-		ios.ReadMs = parseUint(readField(text, 6), errs)
-		ios.WriteComplete = parseUint(readField(text, 7), errs)
-		ios.WriteMerged = parseUint(readField(text, 8), errs)
-		ios.WriteSectors = parseUint(readField(text, 9), errs)
-		ios.WriteMs = parseUint(readField(text, 10), errs)
-		ios.IOPending = parseUint(readField(text, 11), errs)
-		ios.IOMs = parseUint(readField(text, 12), errs)
-		ios.IOQueueMs = parseUint(readField(text, 13), errs)
+		ios.ReadComplete = parseUint(strutil.ReadField(text, 3, true), errs)
+		ios.ReadMerged = parseUint(strutil.ReadField(text, 4, true), errs)
+		ios.ReadSectors = parseUint(strutil.ReadField(text, 5, true), errs)
+		ios.ReadMs = parseUint(strutil.ReadField(text, 6, true), errs)
+		ios.WriteComplete = parseUint(strutil.ReadField(text, 7, true), errs)
+		ios.WriteMerged = parseUint(strutil.ReadField(text, 8, true), errs)
+		ios.WriteSectors = parseUint(strutil.ReadField(text, 9, true), errs)
+		ios.WriteMs = parseUint(strutil.ReadField(text, 10, true), errs)
+		ios.IOPending = parseUint(strutil.ReadField(text, 11, true), errs)
+		ios.IOMs = parseUint(strutil.ReadField(text, 12, true), errs)
+		ios.IOQueueMs = parseUint(strutil.ReadField(text, 13, true), errs)
 
 		if errs.HasErrors() {
 			return nil, errs.Last()
