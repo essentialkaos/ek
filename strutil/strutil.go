@@ -236,7 +236,7 @@ func Fields(data string) []string {
 
 	for _, char := range data {
 		switch char {
-		case '"', '\'', '`':
+		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»':
 			if !waitQuote {
 				waitQuote = true
 			} else {
@@ -244,7 +244,7 @@ func Fields(data string) []string {
 				item, waitQuote = "", false
 			}
 
-		case ',', ' ':
+		case ',', ';', ' ':
 			if waitQuote {
 				item += string(char)
 			} else {

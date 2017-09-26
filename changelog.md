@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.16.0
+
+* `[strutil]` Improved `Fields` parsing
+
 ### 9.15.0
 
 * `[strutil]` Added ellipsis suffix customization

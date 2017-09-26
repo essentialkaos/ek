@@ -118,9 +118,13 @@ func (s *StrUtilSuite) TestFields(c *C) {
 	c.Assert(Fields(""), HasLen, 0)
 	c.Assert(Fields("1 2 3 4 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1,2,3,4,5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
+	c.Assert(Fields("1;2;3;4;5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1,  2, 3,   4, 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("\"1 2\" 3 \"4 5\""), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("'1 2' 3 '4 5'"), DeepEquals, []string{"1 2", "3", "4 5"})
+	c.Assert(Fields("‘1 2’ 3 ‘4 5’"), DeepEquals, []string{"1 2", "3", "4 5"})
+	c.Assert(Fields("“1 2” 3 “4 5”"), DeepEquals, []string{"1 2", "3", "4 5"})
+	c.Assert(Fields("«1 2» 3 «4 5»"), DeepEquals, []string{"1 2", "3", "4 5"})
 }
 
 func (s *StrUtilSuite) TestReadField(c *C) {
