@@ -155,6 +155,15 @@ func (t *Table) Separator() *Table {
 	return t
 }
 
+// RenderHeaders force headers rendering
+func (t *Table) RenderHeaders() {
+	if len(t.columnSizes) == 0 {
+		calculateColumnSizes(t)
+	}
+
+	renderHeaders(t)
+}
+
 // Render render data
 func (t *Table) Render() *Table {
 	if t == nil {
