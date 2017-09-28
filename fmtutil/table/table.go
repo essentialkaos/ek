@@ -155,6 +155,11 @@ func (t *Table) Separator() *Table {
 	return t
 }
 
+// RenderHeaders force headers rendering
+func (t *Table) RenderHeaders() {
+	renderHeaders(t)
+}
+
 // Render render data
 func (t *Table) Render() *Table {
 	if t == nil {

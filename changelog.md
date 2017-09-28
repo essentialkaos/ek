@@ -3,6 +3,7 @@
 ### 9.16.0
 
 * `[strutil]` Improved `Fields` parsing
+* `[fmtutil/table]` Added method `RenderHeaders` for forced headers rendering
 
 ### 9.15.0
 
