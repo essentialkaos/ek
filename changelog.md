@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.17.0
+
+* `[netutil]` Ignore TUN/TAP interfaces while searching main IP address
+
 ### 9.16.0
 
 * `[strutil]` Improved `Fields` parsing
