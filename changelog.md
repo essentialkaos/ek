@@ -3,6 +3,8 @@
 ### 9.17.0
 
 * `[netutil]` Ignore TUN/TAP interfaces while searching main IP address
+* `[initsystem]` Added method `IsEnabled` which return info about service autostart
+* `[initsystem]` Method `GetServiceState` renamed to `IsServiceWorks`
 
 ### 9.16.0
 

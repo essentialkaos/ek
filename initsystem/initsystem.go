@@ -11,21 +11,15 @@ package initsystem
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"syscall"
 
 	"pkg.re/essentialkaos/ek.v9/env"
 	"pkg.re/essentialkaos/ek.v9/fsutil"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Service states codes
-const (
-	STATE_STOPPED       = 0
-	STATE_WORKS         = 1
-	STATE_UNKNOWN uint8 = 255
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -62,8 +56,8 @@ func HasService(name string) bool {
 	return false
 }
 
-// GetServiceState return service state
-func GetServiceState(name string) uint8 {
+// IsServiceWorks return service state
+func IsServiceWorks(name string) (bool, error) {
 	if hasSystemdService(name) {
 		return getSystemdServiceState(name)
 	}
@@ -76,7 +70,28 @@ func GetServiceState(name string) uint8 {
 		return getSysVServiceState(name)
 	}
 
-	return STATE_UNKNOWN
+	return false, fmt.Errorf("Can't find service state")
+}
+
+// IsEnabled return true if auto start enabled for given service
+func IsEnabled(name string) (bool, error) {
+	if !HasService(name) {
+		return false, fmt.Errorf("Service doesn't exist on this system")
+	}
+
+	if hasSystemdService(name) {
+		return isSystemdEnabled(name)
+	}
+
+	if hasUpstartService(name) {
+		return isUpstartEnabled(name)
+	}
+
+	if hasSysVService(name) {
+		return isSysVEnabled(name)
+	}
+
+	return false, fmt.Errorf("Can't find service state")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -119,38 +134,40 @@ func hasSystemdService(name string) bool {
 	return fsutil.IsExist("/usr/lib/systemd/system/" + name)
 }
 
-func getSysVServiceState(name string) uint8 {
+func getSysVServiceState(name string) (bool, error) {
 	cmd := exec.Command("/sbin/service", name, "status")
 
 	cmd.Run()
 
 	if cmd.ProcessState == nil {
-		return STATE_UNKNOWN
+		return false, fmt.Errorf("Can't get service command process state")
 	}
 
 	waitStatus := cmd.ProcessState.Sys()
 
 	if waitStatus == nil {
-		return STATE_UNKNOWN
+		return false, fmt.Errorf("Can't get service command process state")
 	}
 
 	status, ok := waitStatus.(syscall.WaitStatus)
 
 	if !ok {
-		return STATE_UNKNOWN
+		return false, fmt.Errorf("Can't get service command exit code")
 	}
 
-	switch status.ExitStatus() {
+	exitStatus := status.ExitStatus()
+
+	switch exitStatus {
 	case 0:
-		return STATE_WORKS
+		return true, nil
 	case 3:
-		return STATE_STOPPED
+		return false, nil
 	}
 
-	return STATE_UNKNOWN
+	return false, fmt.Errorf("service command return unsupported exit code (%d)", exitStatus)
 }
 
-func getUpstartServiceState(name string) uint8 {
+func getUpstartServiceState(name string) (bool, error) {
 	if strings.HasSuffix(name, ".conf") {
 		name = strings.Replace(name, ".conf", "", -1)
 	}
@@ -158,26 +175,93 @@ func getUpstartServiceState(name string) uint8 {
 	output, err := exec.Command("/sbin/status", name).Output()
 
 	if err != nil {
-		return STATE_UNKNOWN
+		return false, fmt.Errorf("upstart return error: %v", err)
 	}
 
 	if strings.Contains(string(output), "start/running") {
-		return STATE_WORKS
+		return true, nil
 	}
 
 	if strings.Contains(string(output), "stop/waiting") {
-		return STATE_STOPPED
+		return false, nil
 	}
 
-	return STATE_UNKNOWN
+	return false, fmt.Errorf("Can't parse upstart output")
 }
 
-func getSystemdServiceState(name string) uint8 {
-	output, _ := exec.Command("/usr/bin/systemctl", "is-active", name).Output()
+func getSystemdServiceState(name string) (bool, error) {
+	output, err := exec.Command("/usr/bin/systemctl", "is-active", name).Output()
 
-	if strings.TrimRight(string(output), "\n\r") == "active" {
-		return STATE_WORKS
+	if err != nil {
+		return false, fmt.Errorf("systemd return error: %v", err)
 	}
 
-	return STATE_STOPPED
+	if strings.TrimRight(string(output), "\n\r") == "active" {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func isSysVEnabled(name string) (bool, error) {
+	output, err := exec.Command("/sbin/chkconfig", "--list", name).Output()
+
+	if err != nil {
+		return false, fmt.Errorf("chkconfig return error: %v", err)
+	}
+
+	if strings.Contains(string(output), ":on") {
+		return true, nil
+	}
+
+	if strings.Contains(string(output), ":off") {
+		return false, nil
+	}
+
+	return false, fmt.Errorf("Can't parse chkconfig output")
+}
+
+func isUpstartEnabled(name string) (bool, error) {
+	if !strings.HasSuffix(name, ".conf") {
+		name = name + ".conf"
+	}
+
+	fd, err := os.OpenFile("/etc/init/"+name, os.O_RDONLY, 0)
+
+	if err != nil {
+		return false, fmt.Errorf("Can't read service unit file")
+	}
+
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	for s.Scan() {
+		text := strings.TrimLeft(s.Text(), " ")
+
+		if strings.HasPrefix(text, "#") {
+			continue
+		}
+
+		if strings.Contains(text, "start on") {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func isSystemdEnabled(name string) (bool, error) {
+	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", name).Output()
+
+	if err != nil {
+		return false, fmt.Errorf("systemd return error: %v", err)
+	}
+
+	if strings.TrimRight(string(output), "\n\r") == "enabled" {
+		return true, nil
+	}
+
+	return false, nil
 }
