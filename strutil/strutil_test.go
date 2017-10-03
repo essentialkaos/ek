@@ -139,6 +139,11 @@ func (s *StrUtilSuite) TestReadField(c *C) {
 	c.Assert(ReadField("abc::1234:::DEF:", 5, false, ":"), Equals, "DEF")
 }
 
+func (s *StrUtilSuite) TestCopy(c *C) {
+	c.Assert(Copy(""), Equals, "")
+	c.Assert(Copy("ABCD1234"), Equals, "ABCD1234")
+}
+
 func (s *StrUtilSuite) BenchmarkFields(c *C) {
 	for i := 0; i < c.N; i++ {
 		Fields("\"1 2\" 3 \"4 5\"")

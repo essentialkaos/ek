@@ -16,6 +16,8 @@ import (
 	"reflect"
 	"strings"
 	"unsafe"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -39,21 +41,30 @@ func Set(args []string) error {
 			continue
 		}
 
-		changeArgument(i, args[i])
+		argValue := strutil.Copy(args[i])
+
+		changeArgument(i, argValue)
 	}
 
 	return nil
 }
 
 // Replace replace one argument in process command
+//
+// WARNING: Be careful with using os.Args or options.Parse result
+// as 'from' argument. After using this method given variable content
+// will be replaced. Use strutil.Copy method in this case.
 func Replace(from, to string) error {
 	if from == "" || to == "" {
 		return ErrWrongArguments
 	}
 
+	// Copy "from" property
+	fromValue := strutil.Copy(from)
+
 	for i, arg := range os.Args {
 		if arg == from {
-			changeArgument(i, to)
+			changeArgument(i, fromValue)
 		}
 	}
 

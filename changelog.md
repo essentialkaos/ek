@@ -5,6 +5,8 @@
 * `[netutil]` Ignore TUN/TAP interfaces while searching main IP address
 * `[initsystem]` Added method `IsEnabled` which return info about service autostart
 * `[initsystem]` Method `GetServiceState` renamed to `IsServiceWorks`
+* `[system/procname]` Added copying `from` variable content before use in `Replace`
+* `[strutil]` Added method `Copy` for forced copying of strings
 
 ### 9.16.0
 
