@@ -16,8 +16,6 @@ import (
 	"reflect"
 	"strings"
 	"unsafe"
-
-	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,9 +39,7 @@ func Set(args []string) error {
 			continue
 		}
 
-		argValue := strutil.Copy(args[i])
-
-		changeArgument(i, argValue)
+		changeArgument(i, args[i])
 	}
 
 	return nil
@@ -59,12 +55,9 @@ func Replace(from, to string) error {
 		return ErrWrongArguments
 	}
 
-	// Copy "from" property
-	fromValue := strutil.Copy(from)
-
 	for i, arg := range os.Args {
 		if arg == from {
-			changeArgument(i, fromValue)
+			changeArgument(i, to)
 		}
 	}
 
