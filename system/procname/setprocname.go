@@ -46,6 +46,10 @@ func Set(args []string) error {
 }
 
 // Replace replace one argument in process command
+//
+// WARNING: Be careful with using os.Args or options.Parse result
+// as 'from' argument. After using this method given variable content
+// will be replaced. Use strutil.Copy method in this case.
 func Replace(from, to string) error {
 	if from == "" || to == "" {
 		return ErrWrongArguments

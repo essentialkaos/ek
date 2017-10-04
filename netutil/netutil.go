@@ -35,6 +35,11 @@ func getMainIP(v6 bool) string {
 	}
 
 	for i := len(interfaces) - 1; i >= 0; i-- {
+		// Ignore TUN/TAP interfaces
+		if strings.HasPrefix(interfaces[i].Name, "t") {
+			continue
+		}
+
 		addr, err := interfaces[i].Addrs()
 
 		if err != nil || len(addr) == 0 {

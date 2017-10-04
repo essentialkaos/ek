@@ -264,6 +264,11 @@ func Fields(data string) []string {
 	return formatItems(result)
 }
 
+// Copy force copy string
+func Copy(v string) string {
+	return (v + " ")[:len(v)]
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func formatItems(data []string) []string {

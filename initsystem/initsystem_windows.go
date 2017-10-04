@@ -10,15 +10,6 @@ package initsystem
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Service states codes
-const (
-	STATE_STOPPED       = 0
-	STATE_WORKS         = 1
-	STATE_UNKNOWN uint8 = 255
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // SysV if SysV is used on system
 func SysV() bool {
 	return false
@@ -39,7 +30,12 @@ func HasService(name string) bool {
 	return false
 }
 
-// GetServiceState return service state
-func GetServiceState(name string) uint8 {
-	return STATE_UNKNOWN
+// IsServiceWorks return service state
+func IsServiceWorks(name string) (bool, error) {
+	return false, nil
+}
+
+// IsEnabled return true if auto start enabled for given service
+func IsEnabled(name string) (bool, error) {
+	return false, nil
 }

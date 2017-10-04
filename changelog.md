@@ -1,5 +1,12 @@
 ## Changelog
 
+### 9.17.0
+
+* `[netutil]` Ignore TUN/TAP interfaces while searching main IP address
+* `[initsystem]` Added method `IsEnabled` which return info about service autostart
+* `[initsystem]` Method `GetServiceState` renamed to `IsServiceWorks`
+* `[strutil]` Added method `Copy` for forced copying of strings
+
 ### 9.16.0
 
 * `[strutil]` Improved `Fields` parsing

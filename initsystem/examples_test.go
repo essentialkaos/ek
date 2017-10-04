@@ -44,12 +44,31 @@ func ExampleHasService() {
 func ExampleGetServiceState() {
 	serviceName := "crond"
 
-	switch GetServiceState(serviceName) {
-	case STATE_STOPPED:
-		fmt.Printf("Service %s is stopped\n", serviceName)
-	case STATE_WORKS:
+	works, err := IsServiceWorks(serviceName)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+
+	if works {
 		fmt.Printf("Service %s is working\n", serviceName)
-	default:
-		fmt.Printf("Unknown service %s\n", serviceName)
+	} else {
+		fmt.Printf("Service %s is stopped\n", serviceName)
+	}
+}
+
+func ExampleIsEnabled() {
+	serviceName := "crond"
+
+	enabled, err := IsEnabled(serviceName)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+
+	if enabled {
+		fmt.Printf("Service %s is enabled\n", serviceName)
+	} else {
+		fmt.Printf("Service %s is not enabled\n", serviceName)
 	}
 }
