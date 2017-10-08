@@ -91,3 +91,10 @@ func ExampleReadField() {
 	// John
 	// Mary
 }
+
+func ExampleCopy() {
+	fmt.Println(Copy("abc"))
+
+	// Output:
+	// abc
+}
