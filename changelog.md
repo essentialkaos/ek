@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.17.2
+
+* `[netutil]` Improved main IP search
+
 ### 9.17.1
 
 * `[strutil]` Added usage example for `Copy` method
