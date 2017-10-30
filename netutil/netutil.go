@@ -9,8 +9,12 @@ package netutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"net"
+	"os"
 	"strings"
+
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -34,9 +38,15 @@ func getMainIP(v6 bool) string {
 		return ""
 	}
 
+	defaultInterface := getDefaultRouteInterface()
+
 	for i := len(interfaces) - 1; i >= 0; i-- {
 		// Ignore TUN/TAP interfaces
 		if strings.HasPrefix(interfaces[i].Name, "t") {
+			continue
+		}
+
+		if defaultInterface != "" && interfaces[i].Name != defaultInterface {
 			continue
 		}
 
@@ -52,6 +62,34 @@ func getMainIP(v6 bool) string {
 			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
 				return ipnet.IP.String()
 			}
+		}
+	}
+
+	return ""
+}
+
+func getDefaultRouteInterface() string {
+	fd, err := os.OpenFile("/proc/net/route", os.O_RDONLY, 0)
+
+	if err != nil {
+		return ""
+	}
+
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	var header bool
+
+	for s.Scan() {
+		if !header {
+			header = true
+			continue
+		}
+
+		if strutil.ReadField(s.Text(), 1, true) == "00000000" {
+			return strutil.ReadField(s.Text(), 0, true)
 		}
 	}
 
