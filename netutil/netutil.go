@@ -19,6 +19,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Path to file with routes info in procfs
+var procRouteFile = "/proc/net/route"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // GetIP return main IPv4 address
 func GetIP() string {
 	return getMainIP(false)
@@ -69,7 +74,7 @@ func getMainIP(v6 bool) string {
 }
 
 func getDefaultRouteInterface() string {
-	fd, err := os.OpenFile("/proc/net/route", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procRouteFile, os.O_RDONLY, 0)
 
 	if err != nil {
 		return ""

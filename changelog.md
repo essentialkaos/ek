@@ -3,6 +3,8 @@
 ### 9.17.3
 
 * `[options]` Fixed bug with using `Bound` or `Conflict` fields for options (thx to @gongled)
+* `[netutil]` Code refactoring
+* `[netutil]` Increased code coverage (78.8% → 87.9%)
 
 ### 9.17.2
 
