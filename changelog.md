@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.17.3
+
+* `[options]` Fixed bug with using `Bound` and `Conflict` for options (thx to @gongled)
+
 ### 9.17.2
 
 * `[netutil]` Improved main IP search
