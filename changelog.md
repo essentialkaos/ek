@@ -2,7 +2,7 @@
 
 ### 9.17.3
 
-* `[options]` Fixed bug with using `Bound` and `Conflict` for options (thx to @gongled)
+* `[options]` Fixed bug with using `Bound` or `Conflict` fields for options (thx to @gongled)
 
 ### 9.17.2
 
