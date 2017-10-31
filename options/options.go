@@ -571,7 +571,7 @@ func (opts *Options) validate() []error {
 			conflicts := parseOptionsList(v.Conflicts)
 
 			for _, c := range conflicts {
-				if opts.Has(c.Long) {
+				if opts.Has(c.Long) && opts.Has(n) {
 					errorList = append(errorList, OptionError{n, c.Long, ERROR_CONFLICT})
 				}
 			}
@@ -581,7 +581,7 @@ func (opts *Options) validate() []error {
 			bound := parseOptionsList(v.Bound)
 
 			for _, b := range bound {
-				if !opts.Has(b.Long) {
+				if !opts.Has(b.Long) && opts.Has(n) {
 					errorList = append(errorList, OptionError{n, b.Long, ERROR_BOUND_NOT_SET})
 				}
 			}
