@@ -146,6 +146,19 @@ func (s *OptUtilSuite) TestConflicts(c *C) {
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0].(OptionError).Type, Equals, ERROR_CONFLICT)
 	c.Assert(errs[0].Error(), Equals, "Option test1 conflicts with option test2")
+
+	argline = "--test0 xyz"
+
+	optMap = Map{
+		"test0": {},
+		"test1": {Conflicts: "test2"},
+		"test2": {},
+	}
+
+	opts = NewOptions()
+	_, errs = opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(errs, HasLen, 0)
 }
 
 func (s *OptUtilSuite) TestBound(c *C) {
@@ -162,6 +175,19 @@ func (s *OptUtilSuite) TestBound(c *C) {
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0].(OptionError).Type, Equals, ERROR_BOUND_NOT_SET)
 	c.Assert(errs[0].Error(), Equals, "Option test2 must be defined with option test1")
+
+	argline = "--test0 xyz"
+
+	optMap = Map{
+		"test0": {},
+		"test1": {Bound: "test2"},
+		"test2": {},
+	}
+
+	opts = NewOptions()
+	_, errs = opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(errs, HasLen, 0)
 }
 
 func (s *OptUtilSuite) TestGetters(c *C) {
