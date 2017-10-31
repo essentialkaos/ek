@@ -9,6 +9,7 @@ package netutil
 
 import (
 	"io/ioutil"
+	"os"
 	"runtime"
 	"testing"
 
@@ -46,7 +47,10 @@ func (s *NetUtilSuite) TestGetIP(c *C) {
 }
 
 func (s *NetUtilSuite) TestGetIP6(c *C) {
-	c.Assert(GetIP6(), Not(Equals), "")
+	// Some Travis workers doesn't have
+	if os.Getenv("TRAVIS") != "1" {
+		c.Assert(GetIP6(), Not(Equals), "")
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
