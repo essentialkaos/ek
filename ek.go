@@ -7,3 +7,16 @@ package ek
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+import (
+	"golang.org/x/crypto/bcrypt"
+	"pkg.re/essentialkaos/go-linenoise.v3"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// worthless is used as dependency fix
+func worthless() {
+	linenoise.Clear()
+	bcrypt.Cost(nil)
+}
