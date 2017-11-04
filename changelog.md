@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.17.4
+
+* Dependencies now download with initial `go get` command
+
 ### 9.17.3
 
 * `[options]` Fixed bug with using `Bound` or `Conflict` fields for options (thx to @gongled)
