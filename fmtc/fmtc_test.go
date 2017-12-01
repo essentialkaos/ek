@@ -139,12 +139,11 @@ func (s *FormatSuite) TestMethods(c *C) {
 }
 
 func (s *FormatSuite) TestAux(c *C) {
-	t := NewT()
+	TPrintf("TEST %s", "OK")
+	TPrintf("")
+	TPrintf("TEST %s", "OK")
 
-	t.Printf("TEST %s", "OK")
-	t.Printf("TEST %s", "OK")
-
-	t.Println("TEST OK")
+	TPrintln("TEST OK")
 
 	Bell()
 	NewLine()

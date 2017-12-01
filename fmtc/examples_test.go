@@ -97,10 +97,7 @@ func ExampleClean() {
 	// Output: Text
 }
 
-func ExampleT_printf() {
-	// You should create new T struct for each line
-	t := NewT()
-
-	t.Printf("This is temporary text")
-	t.Printf("This message replace previous message")
+func ExampleTprintf() {
+	TPrintf("This is temporary text")
+	TPrintf("This message replace previous message")
 }

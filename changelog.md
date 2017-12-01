@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.18.0
+
+* `[fmtc]` Temporary output feature moved from T struct to `TPrintf` and `TPrintln`
+
 ### 9.17.4
 
 * Dependencies now download with initial `go get` command
