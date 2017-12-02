@@ -21,6 +21,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - go: tip
+    - os: osx
 
 env:
   - EK_TEST_PORT=8080

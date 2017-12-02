@@ -27,11 +27,6 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// T is struct can be used for printing temporary output
-type T struct {
-	size int
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codes map tag -> escape code
@@ -75,10 +70,10 @@ var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewT create new struct for working with temporary output in one line
-func NewT() *T {
-	return &T{}
-}
+// tmpSize is size of temporary output
+var tmpSize int
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Println formats using the default formats for its operands and writes to standard
 // output. Spaces are always added between operands and a newline is appended. It
@@ -218,24 +213,29 @@ func Bell() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Printf remove the previous message (if printed) and print new message
-func (t *T) Printf(f string, a ...interface{}) (int, error) {
-	if t.size != 0 {
-		fmt.Printf(getSymbols(_CODE_BACKSPACE, t.size) + "\033[0K")
+// TPrintf remove the previous message (if printed) and print new message
+func TPrintf(f string, a ...interface{}) (int, error) {
+	if tmpSize != 0 {
+		fmt.Printf(getSymbols(_CODE_BACKSPACE, tmpSize) + "\033[0K")
 	}
 
-	t.size = strutil.Len(fmt.Sprintf(searchColors(f, true), a...))
+	if f == "" && len(a) == 0 {
+		tmpSize = 0
+		return 0, nil
+	}
+
+	tmpSize = strutil.Len(fmt.Sprintf(searchColors(f, true), a...))
 
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
 
-// Println remove the previous message (if printed) and print new message
-func (t *T) Println(a ...interface{}) (int, error) {
-	if t.size != 0 {
-		fmt.Printf(getSymbols(_CODE_BACKSPACE, t.size) + "\033[0K")
+// TPrintln remove the previous message (if printed) and print new message
+func TPrintln(a ...interface{}) (int, error) {
+	if tmpSize != 0 {
+		fmt.Printf(getSymbols(_CODE_BACKSPACE, tmpSize) + "\033[0K")
 	}
 
-	t.size = 0
+	tmpSize = 0
 
 	return Println(a...)
 }
