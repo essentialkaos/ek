@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.18.1
+
+* `[system]` Fixed bug with extra new line symbol in user `Shell` field
+
 ### 9.18.0
 
 * `[fmtc]` Temporary output feature moved from T struct to `TPrintf` and `TPrintln`

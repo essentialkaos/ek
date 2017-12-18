@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
@@ -34,6 +35,8 @@ func getUserInfo(nameOrID string) (*User, error) {
 
 // parseGetentGroupOutput parse 'getent passwd' command output
 func parseGetentPasswdOutput(data string) (*User, error) {
+	data = strings.TrimRight(data, "\r\n")
+
 	uid, err := strconv.Atoi(strutil.ReadField(data, 2, false, ":"))
 
 	if err != nil {
