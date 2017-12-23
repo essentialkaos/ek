@@ -1,7 +1,5 @@
 # Contributing Guidelines
 
-Contributing guidelines for open-source EK projects.
-
 **IMPORTANT! Contribute your code only if you have an excellent understanding of project idea and all existing code base. Otherwise, a nicely formatted issue will be more helpful to us.**
 
 ### Issues
