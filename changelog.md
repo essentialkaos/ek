@@ -1,5 +1,11 @@
 ## Changelog
 
+### 9.19.0
+
+* `fmtc` Improved color tags syntax
+* `fmtc` Added tags for resetting modificators (e.g. `{!*}`)
+* `fmtc` Removed color tags overriding (i.e. now `{*}{r} == {r*}`)
+
 ### 9.18.1
 
 * `[system]` Fixed bug with extra new line symbol in user `Shell` field

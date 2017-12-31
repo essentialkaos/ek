@@ -26,38 +26,50 @@ type FormatSuite struct{}
 var _ = Suite(&FormatSuite{})
 
 func (s *FormatSuite) TestColors(c *C) {
-	c.Assert(Sprint("{r}W{!}"), Equals, "\x1b[0;31;49mW\x1b[0m")
-	c.Assert(Sprint("{g}W{!}"), Equals, "\x1b[0;32;49mW\x1b[0m")
-	c.Assert(Sprint("{y}W{!}"), Equals, "\x1b[0;33;49mW\x1b[0m")
-	c.Assert(Sprint("{b}W{!}"), Equals, "\x1b[0;34;49mW\x1b[0m")
-	c.Assert(Sprint("{m}W{!}"), Equals, "\x1b[0;35;49mW\x1b[0m")
-	c.Assert(Sprint("{c}W{!}"), Equals, "\x1b[0;36;49mW\x1b[0m")
-	c.Assert(Sprint("{s}W{!}"), Equals, "\x1b[0;37;49mW\x1b[0m")
-	c.Assert(Sprint("{w}W{!}"), Equals, "\x1b[0;97;49mW\x1b[0m")
-	c.Assert(Sprint("{r-}W{!}"), Equals, "\x1b[0;91;49mW\x1b[0m")
-	c.Assert(Sprint("{g-}W{!}"), Equals, "\x1b[0;92;49mW\x1b[0m")
-	c.Assert(Sprint("{y-}W{!}"), Equals, "\x1b[0;93;49mW\x1b[0m")
-	c.Assert(Sprint("{b-}W{!}"), Equals, "\x1b[0;94;49mW\x1b[0m")
-	c.Assert(Sprint("{m-}W{!}"), Equals, "\x1b[0;95;49mW\x1b[0m")
-	c.Assert(Sprint("{c-}W{!}"), Equals, "\x1b[0;96;49mW\x1b[0m")
-	c.Assert(Sprint("{s-}W{!}"), Equals, "\x1b[0;90;49mW\x1b[0m")
-	c.Assert(Sprint("{w-}W{!}"), Equals, "\x1b[0;97;49mW\x1b[0m")
+	c.Assert(Sprint("{r}W{!}"), Equals, "\x1b[31mW\x1b[0m")
+	c.Assert(Sprint("{g}W{!}"), Equals, "\x1b[32mW\x1b[0m")
+	c.Assert(Sprint("{y}W{!}"), Equals, "\x1b[33mW\x1b[0m")
+	c.Assert(Sprint("{b}W{!}"), Equals, "\x1b[34mW\x1b[0m")
+	c.Assert(Sprint("{m}W{!}"), Equals, "\x1b[35mW\x1b[0m")
+	c.Assert(Sprint("{c}W{!}"), Equals, "\x1b[36mW\x1b[0m")
+	c.Assert(Sprint("{s}W{!}"), Equals, "\x1b[37mW\x1b[0m")
+	c.Assert(Sprint("{w}W{!}"), Equals, "\x1b[97mW\x1b[0m")
+	c.Assert(Sprint("{r-}W{!}"), Equals, "\x1b[91mW\x1b[0m")
+	c.Assert(Sprint("{g-}W{!}"), Equals, "\x1b[92mW\x1b[0m")
+	c.Assert(Sprint("{y-}W{!}"), Equals, "\x1b[93mW\x1b[0m")
+	c.Assert(Sprint("{b-}W{!}"), Equals, "\x1b[94mW\x1b[0m")
+	c.Assert(Sprint("{m-}W{!}"), Equals, "\x1b[95mW\x1b[0m")
+	c.Assert(Sprint("{c-}W{!}"), Equals, "\x1b[96mW\x1b[0m")
+	c.Assert(Sprint("{s-}W{!}"), Equals, "\x1b[90mW\x1b[0m")
+	c.Assert(Sprint("{w-}W{!}"), Equals, "\x1b[97mW\x1b[0m")
 }
 
 func (s *FormatSuite) TestBackgrounds(c *C) {
-	c.Assert(Sprint("{R}W{!}"), Equals, "\x1b[0;39;41mW\x1b[0m")
-	c.Assert(Sprint("{G}W{!}"), Equals, "\x1b[0;39;42mW\x1b[0m")
-	c.Assert(Sprint("{Y}W{!}"), Equals, "\x1b[0;39;43mW\x1b[0m")
-	c.Assert(Sprint("{B}W{!}"), Equals, "\x1b[0;39;44mW\x1b[0m")
-	c.Assert(Sprint("{M}W{!}"), Equals, "\x1b[0;39;45mW\x1b[0m")
-	c.Assert(Sprint("{C}W{!}"), Equals, "\x1b[0;39;46mW\x1b[0m")
-	c.Assert(Sprint("{S}W{!}"), Equals, "\x1b[0;39;47mW\x1b[0m")
-	c.Assert(Sprint("{W}W{!}"), Equals, "\x1b[0;39;107mW\x1b[0m")
+	c.Assert(Sprint("{R}W{!}"), Equals, "\x1b[41mW\x1b[0m")
+	c.Assert(Sprint("{G}W{!}"), Equals, "\x1b[42mW\x1b[0m")
+	c.Assert(Sprint("{Y}W{!}"), Equals, "\x1b[43mW\x1b[0m")
+	c.Assert(Sprint("{B}W{!}"), Equals, "\x1b[44mW\x1b[0m")
+	c.Assert(Sprint("{M}W{!}"), Equals, "\x1b[45mW\x1b[0m")
+	c.Assert(Sprint("{C}W{!}"), Equals, "\x1b[46mW\x1b[0m")
+	c.Assert(Sprint("{S}W{!}"), Equals, "\x1b[47mW\x1b[0m")
+	c.Assert(Sprint("{W}W{!}"), Equals, "\x1b[107mW\x1b[0m")
 }
 
-func (s *FormatSuite) TestSpecial(c *C) {
-	c.Assert(Sprint("{_}W{!}"), Equals, "\x1b[4;39;49mW\x1b[0m")
-	c.Assert(Sprint("{*}W{!}"), Equals, "\x1b[1;39;49mW\x1b[0m")
+func (s *FormatSuite) TestModificators(c *C) {
+	c.Assert(Sprint("{!}"), Equals, "\x1b[0m")
+	c.Assert(Sprint("{*}W{!}"), Equals, "\x1b[1mW\x1b[0m")
+	c.Assert(Sprint("{^}W{!}"), Equals, "\x1b[2mW\x1b[0m")
+	c.Assert(Sprint("{_}W{!}"), Equals, "\x1b[4mW\x1b[0m")
+	c.Assert(Sprint("{~}W{!}"), Equals, "\x1b[5mW\x1b[0m")
+	c.Assert(Sprint("{@}W{!}"), Equals, "\x1b[7mW\x1b[0m")
+}
+
+func (s *FormatSuite) TestReset(c *C) {
+	c.Assert(Sprint("{*}W{!*}K{!}"), Equals, "\x1b[1mW\x1b[22mK\x1b[0m")
+	c.Assert(Sprint("{^}W{!^}K{!}"), Equals, "\x1b[2mW\x1b[22mK\x1b[0m")
+	c.Assert(Sprint("{_}W{!_}K{!}"), Equals, "\x1b[4mW\x1b[24mK\x1b[0m")
+	c.Assert(Sprint("{~}W{!~}K{!}"), Equals, "\x1b[5mW\x1b[25mK\x1b[0m")
+	c.Assert(Sprint("{@}W{!@}K{!}"), Equals, "\x1b[7mW\x1b[27mK\x1b[0m")
 }
 
 func (s *FormatSuite) TestParsing(c *C) {
@@ -66,8 +78,8 @@ func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint("{"), Equals, "{")
 	c.Assert(Sprint("{r"), Equals, "{r")
 	c.Assert(Sprint("{J}W"), Equals, "{J}W")
-	c.Assert(Sprint("{r}W"), Equals, "\x1b[0;31;49mW\x1b[0m")
-	c.Assert(Sprint("{{r}W{!}}"), Equals, "{\x1b[0;31;49mW\x1b[0m}")
+	c.Assert(Sprint("{r}W"), Equals, "\x1b[31mW\x1b[0m")
+	c.Assert(Sprint("{{r}W{!}}"), Equals, "{\x1b[31mW\x1b[0m}")
 	c.Assert(Sprint("Test"+string(rune(65533))), Equals, "Test")
 }
 

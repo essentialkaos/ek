@@ -13,6 +13,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
@@ -247,40 +249,56 @@ func tag2ANSI(tag string, clean bool) string {
 		return ""
 	}
 
-	var (
-		modificator = 0
-		charColor   = 39
-		bgColor     = 49
-		light       = false
-	)
+	light := strings.Contains(tag, "-")
+	reset := strings.Contains(tag, "!")
+
+	var chars string
 
 	for _, key := range tag {
 		code := codes[key]
 
+		// Light gray = Dark gray
+		if light && code == 37 {
+			chars += "90;"
+			continue
+		}
+
+		// Light white = white
+		if light && code == 97 {
+			chars += "97;"
+			continue
+		}
+
 		switch key {
 		case '-':
-			light = true
-		case '!', '*', '^', '_', '~', '@':
-			modificator = code
-		case 'd', 'r', 'g', 'y', 'b', 'm', 'c', 's', 'w':
-			charColor = code
+		case '!':
+		case '*':
+			if reset {
+				chars += "2" + strconv.Itoa(code+1) + ";"
+			} else {
+				chars += strconv.Itoa(code) + ";"
+			}
+
+		case '^', '_', '~', '@':
+			if reset {
+				chars += "2" + strconv.Itoa(code) + ";"
+			} else {
+				chars += strconv.Itoa(code) + ";"
+			}
+
 		case 'D', 'R', 'G', 'Y', 'B', 'M', 'C', 'S', 'W':
-			bgColor = code
+			chars += strconv.Itoa(code) + ";"
+
+		case 'd', 'r', 'g', 'y', 'b', 'm', 'c', 's', 'w':
+			if light {
+				chars += strconv.Itoa(code+60) + ";"
+			} else {
+				chars += strconv.Itoa(code) + ";"
+			}
 		}
 	}
 
-	if light {
-		switch charColor {
-		case 97:
-			break
-		case 37:
-			charColor = 90
-		default:
-			charColor += 60
-		}
-	}
-
-	return fmt.Sprintf("\033[%d;%d;%dm", modificator, charColor, bgColor)
+	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
 }
 
 func replaceColorTags(input, output *bytes.Buffer, clean bool) bool {
