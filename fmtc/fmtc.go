@@ -257,48 +257,48 @@ func tag2ANSI(tag string, clean bool) string {
 	for _, key := range tag {
 		code := codes[key]
 
-		// Light gray = Dark gray
-		if light && code == 37 {
+		switch {
+		case light && code == 37: // Light gray = Dark gray
 			chars += "90;"
 			continue
-		}
-
-		// Light white = white
-		if light && code == 97 {
+		case light && code == 97: // Light gray = Dark gray
 			chars += "97;"
 			continue
 		}
 
 		switch key {
-		case '-':
-		case '!':
-		case '*':
+		case '-', '!':
+			continue
+		case '*', '^', '_', '~', '@':
 			if reset {
-				chars += "2" + strconv.Itoa(code+1) + ";"
+				chars += getResetCode(code)
 			} else {
-				chars += strconv.Itoa(code) + ";"
-			}
-
-		case '^', '_', '~', '@':
-			if reset {
-				chars += "2" + strconv.Itoa(code) + ";"
-			} else {
-				chars += strconv.Itoa(code) + ";"
+				chars += strconv.Itoa(code)
 			}
 
 		case 'D', 'R', 'G', 'Y', 'B', 'M', 'C', 'S', 'W':
-			chars += strconv.Itoa(code) + ";"
+			chars += strconv.Itoa(code)
 
 		case 'd', 'r', 'g', 'y', 'b', 'm', 'c', 's', 'w':
 			if light {
-				chars += strconv.Itoa(code+60) + ";"
+				chars += strconv.Itoa(code + 60)
 			} else {
-				chars += strconv.Itoa(code) + ";"
+				chars += strconv.Itoa(code)
 			}
 		}
+
+		chars += ";"
 	}
 
 	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
+}
+
+func getResetCode(code int) string {
+	if code == codes['*'] {
+		code++
+	}
+
+	return "2" + strconv.Itoa(code)
 }
 
 func replaceColorTags(input, output *bytes.Buffer, clean bool) bool {
