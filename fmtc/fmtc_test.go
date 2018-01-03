@@ -10,6 +10,7 @@ package fmtc
 import (
 	"bytes"
 	"errors"
+	"os"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -84,7 +85,12 @@ func (s *FormatSuite) TestParsing(c *C) {
 }
 
 func (s *FormatSuite) Test256Colors(c *C) {
-	c.Assert(Is256ColorsSupported(), Equals, true)
+	if os.Getenv("TRAVIS") != "1" {
+		c.Assert(Is256ColorsSupported(), Equals, true)
+	} else {
+		c.Assert(Is256ColorsSupported(), Equals, false)
+	}
+
 	c.Assert(Sprint("{#214}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
 	c.Assert(Sprint("{%214}O{!}"), Equals, "\x1b[48;5;214mO\x1b[0m")
 
