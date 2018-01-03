@@ -83,6 +83,16 @@ func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint("Test"+string(rune(65533))), Equals, "Test")
 }
 
+func (s *FormatSuite) Test256Colors(c *C) {
+	c.Assert(Is256ColorsSupported(), Equals, true)
+	c.Assert(Sprint("{#214}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
+	c.Assert(Sprint("{%214}O{!}"), Equals, "\x1b[48;5;214mO\x1b[0m")
+
+	c.Assert(Sprint("{#}o"), Equals, "{#}o")
+	c.Assert(Sprint("{#257}o"), Equals, "{#257}o")
+	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
+}
+
 func (s *FormatSuite) TestZDisable(c *C) {
 	DisableColors = true
 

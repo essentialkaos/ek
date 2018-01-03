@@ -121,3 +121,14 @@ func (s *ColorSuite) TestRGBACheck(c *C) {
 	c.Assert(IsRGBA(0xFFAABB), Equals, false)
 	c.Assert(IsRGBA(0xFFAABB01), Equals, true)
 }
+
+func (s *ColorSuite) TestRGB2Term(c *C) {
+	c.Assert(RGB2Term(0, 175, 175), Equals, 37)
+	c.Assert(RGB2Term(255, 255, 0), Equals, 226)
+	c.Assert(RGB2Term(135, 175, 215), Equals, 110)
+	// grayscale
+	c.Assert(RGB2Term(175, 175, 175), Equals, 145)
+	c.Assert(RGB2Term(18, 18, 18), Equals, 233)
+	c.Assert(RGB2Term(48, 48, 48), Equals, 236)
+	c.Assert(RGB2Term(238, 238, 238), Equals, 255)
+}

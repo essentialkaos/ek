@@ -2,9 +2,12 @@
 
 ### 9.19.0
 
+* `fmtc` 256 colors support with new tags (foreground: `{#000}`, background: `{%000}`)
+* `fmtc` Added method `Is256ColorsSupported` for checking support of 256 color output
 * `fmtc` Improved color tags syntax
 * `fmtc` Added tags for resetting modificators (e.g. `{!*}`)
 * `fmtc` Removed color tags overriding (i.e. now `{*}{r} == {r*}`)
+* `color` Added method `RGB2Term` for converting RGB colors to terminal color codes
 
 ### 9.18.1
 

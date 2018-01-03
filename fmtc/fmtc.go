@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"pkg.re/essentialkaos/ek.v9/env"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -213,6 +214,11 @@ func Bell() {
 	fmt.Printf(_CODE_BELL)
 }
 
+// Is256ColorsSupported return true if 256 colors is supported
+func Is256ColorsSupported() bool {
+	return strings.Contains(env.Get().GetS("TERM"), "256color")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // TPrintf remove the previous message (if printed) and print new message
@@ -249,6 +255,10 @@ func tag2ANSI(tag string, clean bool) string {
 		return ""
 	}
 
+	if isExtendedColorTag(tag) {
+		return parseExtendedColor(tag)
+	}
+
 	light := strings.Contains(tag, "-")
 	reset := strings.Contains(tag, "!")
 
@@ -269,6 +279,7 @@ func tag2ANSI(tag string, clean bool) string {
 		switch key {
 		case '-', '!':
 			continue
+
 		case '*', '^', '_', '~', '@':
 			if reset {
 				chars += getResetCode(code)
@@ -291,6 +302,16 @@ func tag2ANSI(tag string, clean bool) string {
 	}
 
 	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
+}
+
+func parseExtendedColor(tag string) string {
+	// Foreground
+	if strings.HasPrefix(tag, "#") {
+		return "\033[38;5;" + tag[1:] + "m"
+	}
+
+	// Background
+	return "\033[48;5;" + tag[1:] + "m"
 }
 
 func getResetCode(code int) string {
@@ -396,12 +417,35 @@ func getSymbols(symbol string, count int) string {
 }
 
 func isValidTag(tag string) bool {
+	if isValidExtendedTag(tag) {
+		return true
+	}
+
 	for _, r := range tag {
 		_, hasCode := codes[r]
 
 		if !hasCode {
 			return false
 		}
+	}
+
+	return true
+}
+
+func isExtendedColorTag(tag string) bool {
+	return strings.HasPrefix(tag, "#") || strings.HasPrefix(tag, "%")
+}
+
+func isValidExtendedTag(tag string) bool {
+	if !isExtendedColorTag(tag) {
+		return false
+	}
+
+	tag = strings.TrimLeft(tag, "#%")
+	color, err := strconv.Atoi(tag)
+
+	if err != nil || color < 0 || color > 256 {
+		return false
 	}
 
 	return true
