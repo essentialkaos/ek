@@ -158,9 +158,9 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf("{c}%s ({c*}Y{c}/n){!}", title)
+		return fmt.Sprintf("{c}%s ({c*}Y{!*}/n){!}", title)
 	case "N":
-		return fmt.Sprintf("{c}%s (y/{c*}N{c}){!}", title)
+		return fmt.Sprintf("{c}%s (y/{c*}N{!*}){!}", title)
 	default:
 		return fmt.Sprintf("{c}%s (y/n){!}", title)
 	}
