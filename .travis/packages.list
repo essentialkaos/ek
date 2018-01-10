@@ -4,6 +4,7 @@
 + easing
 + env
 + errutil
++ directio
 + fmtc
 + fmtutil
 + fmtutil/table

@@ -2,6 +2,7 @@
 
 ### 9.19.0
 
+* `directio` Added sub-package `directio` for writing/reading data with using direct IO
 * `fmtc` 256 colors support with new tags (foreground: `{#000}`, background: `{%000}`)
 * `fmtc` Added method `Is256ColorsSupported` for checking support of 256 color output
 * `fmtc` Improved color tags syntax
