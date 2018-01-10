@@ -161,6 +161,9 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 	return true
 }
 
+// I don't have an idea who to implement this without this conditions
+// codebeat:disable[BLOCK_NESTING,LOC,CYCLO]
+
 // Next get time of next matched moment
 func (expr *Expr) Next(args ...time.Time) time.Time {
 	var t time.Time
@@ -270,6 +273,8 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 
 	return time.Unix(0, 0)
 }
+
+// codebeat:enable[BLOCK_NESTING,LOC,CYCLO]
 
 // String return raw expression
 func (expr *Expr) String() string {

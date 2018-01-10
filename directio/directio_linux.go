@@ -1,4 +1,4 @@
-package env
+package directio
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,30 +8,19 @@ package env
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
+	"os"
+	"syscall"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleGet() {
-	env := Get()
+const (
+	BLOCK_SIZE = 4096 // Minimal block size
+	ALIGN_SIZE = 4096 // Align size
+)
 
-	// Print PATH environment variable
-	fmt.Println(env["PATH"])
+// ////////////////////////////////////////////////////////////////////////////////// //
 
-	// Path return PATH variable as slice
-	for i, p := range env.Path() {
-		fmt.Printf("%d %s\n", i, p)
-	}
-
-	// You can use getters for different value formats
-	fmt.Printf("Integer value %s = %d\n", "INT_VALUE", env.GetI("INT_VALUE"))
-	fmt.Printf("Float value %s = %g\n", "FLOAT_VALUE", env.GetF("FLOAT_VALUE"))
-	fmt.Printf("String value %s = %s\n", "STR_VALUE", env.GetS("STR_VALUE"))
-}
-
-func ExampleWhich() {
-	echoPath := Which("echo")
-
-	fmt.Printf("Full path to echo binary is %s\n", echoPath)
+func openFile(file string, flag int, perm os.FileMode) (*os.File, error) {
+	return os.OpenFile(file, syscall.O_DIRECT|flag, perm)
 }

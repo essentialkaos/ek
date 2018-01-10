@@ -65,6 +65,16 @@ func ExamplePrintln() {
 	// many tags at once
 	// underline, cyan text with the red background
 	Println("{cR_}text{!}")
+
+	// many tags in once
+	Println("{r}{*}red and bold{!}")
+
+	// modificator reset
+	Println("{r}{*}red and bold {!*}just red{!}")
+
+	// 256 colors
+	Println("{#201}pink text{!}")
+	Println("{%201}pink background{!}")
 }
 
 func ExamplePrintf() {

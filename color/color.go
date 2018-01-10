@@ -117,3 +117,18 @@ func HSB2RGB(h, s, b int) (int, int, int) {
 func IsRGBA(h int) bool {
 	return h > 0xFFFFFF
 }
+
+// RGB2Term convert rgb color to terminal color code
+// https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
+func RGB2Term(r, g, b int) int {
+	// grayscale
+	if r == g && g == b {
+		if r == 175 {
+			return 145
+		}
+
+		return (r / 10) + 232
+	}
+
+	return 36*(r/51) + 6*(g/51) + (b / 51) + 16
+}

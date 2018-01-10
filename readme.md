@@ -34,6 +34,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v9/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
 * [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v9/env) - Package provides methods for working with environment variables
 * [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/errutil) - Package provides methods for working with errors
+* [`directio`](https://godoc.org/pkg.re/essentialkaos/ek.v9/directio) - Package provides methods for reading/writing files with direct io
 * [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtc) - Package provides methods similar to fmt for colored output
 * [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtutil) - Package provides methods for output formatting
 * [`fmtutil/table`](https://godoc.org/pkg.re/essentialkaos/ek.v9/fmtutil/table) - Package table contains methods and structs for rendering data as a table

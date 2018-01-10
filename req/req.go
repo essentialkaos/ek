@@ -342,6 +342,10 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// This method has a lot of actions to prepare request for executing, so it is ok to
+// have so many conditions
+// codebeat:disable[CYCLO,ABC]
+
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	// Lazy engine initialization
 	if e != nil && !e.initialized {
@@ -404,6 +408,8 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	return result, nil
 }
+
+// codebeat:enable[CYCLO,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
