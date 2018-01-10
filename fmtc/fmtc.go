@@ -250,6 +250,7 @@ func TPrintln(a ...interface{}) (int, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[LOC,BLOCK_NESTING]
 func tag2ANSI(tag string, clean bool) string {
 	if clean {
 		return ""
