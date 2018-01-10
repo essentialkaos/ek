@@ -409,6 +409,11 @@ func Q(opts ...string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// I think it is ok to have such a long and complicated method for parsing data because
+// it has a lot of logic which can be separated into different methods without losing
+// code readability
+// codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
+
 func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 	if len(rawOpts) == 0 {
 		return nil, opts.validate()
@@ -512,6 +517,8 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 
 	return nonOptList, errorList
 }
+
+// codebeat:enable[LOC,BLOCK_NESTING,CYCLO]
 
 func (opts *Options) parseLongOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {

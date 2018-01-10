@@ -45,6 +45,9 @@ func GetCPUInfo(duration time.Duration) (*CPUInfo, error) {
 	return CalculateCPUInfo(c1, c2), nil
 }
 
+// It's ok to have so complex method for calculation
+// codebeat:disable[CYCLO]
+
 func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
 	prevIdle := c1.Idle + c1.Wait
 	idle := c2.Idle + c2.Wait
@@ -69,6 +72,8 @@ func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
 		Count:   c2.Count,
 	}
 }
+
+// codebeat:enable[CYCLO]
 
 // GetCPUStats return basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
