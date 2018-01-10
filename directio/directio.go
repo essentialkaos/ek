@@ -122,7 +122,7 @@ func allocateBlock() []byte {
 
 	var offset int
 
-	alg := alignment(block)
+	alg := alignment(block, ALIGN_SIZE)
 
 	if alg != 0 {
 		offset = ALIGN_SIZE - alg
@@ -135,6 +135,6 @@ func freeBlock(block []byte) {
 	blockPool.Put(block)
 }
 
-func alignment(block []byte) int {
-	return int(uintptr(unsafe.Pointer(&block[0])) & uintptr(ALIGN_SIZE-1))
+func alignment(block []byte, alignment int) int {
+	return int(uintptr(unsafe.Pointer(&block[0])) & uintptr(alignment-1))
 }
