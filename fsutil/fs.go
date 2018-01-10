@@ -74,7 +74,11 @@ func CheckPerms(props, path string) bool {
 		return false
 	}
 
-	var user *system.User
+	user, err := system.CurrentUser()
+
+	if err != nil {
+		return false
+	}
 
 	for _, k := range props {
 		switch k {
@@ -95,40 +99,16 @@ func CheckPerms(props, path string) bool {
 			}
 
 		case 'X':
-			if user == nil {
-				user, err = system.CurrentUser()
-
-				if err != nil {
-					return false
-				}
-			}
-
 			if !isExecutableStat(stat, user.UID, getGIDList(user)) {
 				return false
 			}
 
 		case 'W':
-			if user == nil {
-				user, err = system.CurrentUser()
-
-				if err != nil {
-					return false
-				}
-			}
-
 			if !isWritableStat(stat, user.UID, getGIDList(user)) {
 				return false
 			}
 
 		case 'R':
-			if user == nil {
-				user, err = system.CurrentUser()
-
-				if err != nil {
-					return false
-				}
-			}
-
 			if !isReadableStat(stat, user.UID, getGIDList(user)) {
 				return false
 			}

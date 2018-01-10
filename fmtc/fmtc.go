@@ -251,6 +251,7 @@ func TPrintln(a ...interface{}) (int, error) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // codebeat:disable[LOC,BLOCK_NESTING]
+
 func tag2ANSI(tag string, clean bool) string {
 	if clean {
 		return ""
@@ -304,6 +305,8 @@ func tag2ANSI(tag string, clean bool) string {
 
 	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
 }
+
+// codebeat:enable[LOC,BLOCK_NESTING]
 
 func parseExtendedColor(tag string) string {
 	// Foreground
