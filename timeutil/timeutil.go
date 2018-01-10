@@ -29,6 +29,9 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// It's ok to have so nested blocks in this method
+// codebeat:disable[BLOCK_NESTING]
+
 // PrettyDuration return pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
 	var (
@@ -86,6 +89,8 @@ func PrettyDuration(d interface{}) string {
 
 	return result[0]
 }
+
+// codebeat:enable[BLOCK_NESTING]
 
 // Format return formatted date as string
 //
@@ -215,6 +220,9 @@ func ParseDuration(dur string) int64 {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// It's ok to have so long method here
+// codebeat:disable[LOC,ABC]
+
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	r, _, err := input.ReadRune()
 
@@ -315,6 +323,8 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 		output.WriteRune(r)
 	}
 }
+
+// codebeat:enable[LOC,ABC]
 
 func getShortWeekday(d time.Weekday) string {
 	long := getLongWeekday(d)
