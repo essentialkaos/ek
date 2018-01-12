@@ -19,25 +19,25 @@ import (
 
 // Options types
 const (
-	STRING = 0
-	INT    = 1
-	BOOL   = 2
-	FLOAT  = 3
-	MIXED  = 4 // string or bool
+	STRING = iota
+	INT
+	BOOL
+	FLOAT
+	MIXED // string or bool
 )
 
 // Error codes
 const (
-	ERROR_UNSUPPORTED         = 0
-	ERROR_NO_NAME             = 1
-	ERROR_DUPLICATE_LONGNAME  = 2
-	ERROR_DUPLICATE_SHORTNAME = 3
-	ERROR_OPTION_IS_NIL       = 4
-	ERROR_EMPTY_VALUE         = 5
-	ERROR_REQUIRED_NOT_SET    = 6
-	ERROR_WRONG_FORMAT        = 7
-	ERROR_CONFLICT            = 8
-	ERROR_BOUND_NOT_SET       = 9
+	ERROR_UNSUPPORTED = iota
+	ERROR_NO_NAME
+	ERROR_DUPLICATE_LONGNAME
+	ERROR_DUPLICATE_SHORTNAME
+	ERROR_OPTION_IS_NIL
+	ERROR_EMPTY_VALUE
+	ERROR_REQUIRED_NOT_SET
+	ERROR_WRONG_FORMAT
+	ERROR_CONFLICT
+	ERROR_BOUND_NOT_SET
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

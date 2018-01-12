@@ -1,5 +1,8 @@
 ## Changelog
 
+### 9.20.0
+* `options` Code refactoring
+
 ### 9.19.0
 
 * `directio` Added sub-package `directio` for writing/reading data with using direct IO
