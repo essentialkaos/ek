@@ -1,6 +1,6 @@
 ## Changelog
 
-### 9.20.0
+### 9.19.1
 * `options` Code refactoring
 
 ### 9.19.0
