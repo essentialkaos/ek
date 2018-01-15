@@ -78,11 +78,11 @@ var tmpSize int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Println formats using the default formats for its operands and writes to standard
-// output. Spaces are always added between operands and a newline is appended. It
-// returns the number of bytes written and any write error encountered.
+// Print formats using the default formats for its operands and writes to standard
+// output. Spaces are added between operands when neither is a string. It returns
+// the number of bytes written and any write error encountered.
 //
-// Supported color codes.
+// Supported color codes:
 // Modificators:
 //  - Light colors
 //  ! Default
@@ -113,7 +113,14 @@ var tmpSize int
 //  C Cyan
 //  S Gray (Smokey)
 //  W White
-//
+func Print(a ...interface{}) (int, error) {
+	applyColors(&a, DisableColors)
+	return fmt.Print(a...)
+}
+
+// Println formats using the default formats for its operands and writes to standard
+// output. Spaces are always added between operands and a newline is appended. It
+// returns the number of bytes written and any write error encountered.
 func Println(a ...interface{}) (int, error) {
 	applyColors(&a, DisableColors)
 	return fmt.Println(a...)
@@ -121,39 +128,6 @@ func Println(a ...interface{}) (int, error) {
 
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
-//
-// Supported color codes.
-// Modificators:
-//  - Light colors
-//  ! Default
-//  * Bold
-//  ^ Dim
-//  _ Underline
-//  ~ Blink
-//  @ Reverse
-//
-// Foreground colors:
-//  d Black (Dark)
-//  r Red
-//  g Green
-//  y Yellow
-//  b Blue
-//  m Magenta
-//  c Cyan
-//  s Gray (Smokey)
-//  w White
-//
-// Background colors:
-//  D Black (Dark)
-//  R Red
-//  G Green
-//  Y Yellow
-//  B Blue
-//  M Magenta
-//  C Cyan
-//  S Gray (Smokey)
-//  W White
-//
 func Printf(f string, a ...interface{}) (int, error) {
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
@@ -191,6 +165,14 @@ func Sprint(a ...interface{}) string {
 // string.
 func Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(searchColors(f, DisableColors), a...)
+}
+
+// Sprintln formats using the default formats for its operands and returns the
+// resulting string. Spaces are always added between operands and a newline is
+// appended.
+func Sprintln(a ...interface{}) string {
+	applyColors(&a, DisableColors)
+	return fmt.Sprintln(a...)
 }
 
 // Errorf formats according to a format specifier and returns the string as a

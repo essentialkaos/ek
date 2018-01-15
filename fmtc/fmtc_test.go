@@ -144,6 +144,7 @@ func (s *FormatSuite) TestClean(c *C) {
 func (s *FormatSuite) TestMethods(c *C) {
 	c.Assert(Errorf("Test %s", "OK"), DeepEquals, errors.New("Test OK"))
 	c.Assert(Sprintf("Test %s", "OK"), Equals, "Test OK")
+	c.Assert(Sprintln("Test OK"), Equals, "Test OK\n")
 
 	w := bytes.NewBufferString("")
 
@@ -164,6 +165,7 @@ func (s *FormatSuite) TestMethods(c *C) {
 	c.Assert(w.String(), Equals, "TEST OK")
 
 	Printf("TEST %s\n", "OK")
+	Print("TEST OK\n")
 }
 
 func (s *FormatSuite) TestAux(c *C) {

@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.20.0
+
+* `fmtc` Added methods `Print` and `Sprintln` for better compatibility with `fmt` package
+* `[fmtutil/table]` Fixed minor bug with output formatting
+
 ### 9.19.1
 * `options` Code refactoring
 
