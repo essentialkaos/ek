@@ -264,9 +264,9 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 		}
 
 		if strutil.Len(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
-			fmtc.Printf(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
+			fmtc.Print(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
 		} else {
-			fmtc.Printf(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+			fmtc.Print(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
 		}
 
 		if columnIndex+1 != totalColumns {
