@@ -113,6 +113,10 @@ var tmpSize int
 //  C Cyan
 //  S Gray (Smokey)
 //  W White
+//
+// 256 colors:
+//  #code foreground color
+//  %code background color
 func Print(a ...interface{}) (int, error) {
 	applyColors(&a, DisableColors)
 	return fmt.Print(a...)
