@@ -34,7 +34,7 @@ var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrettyNum show pretty num (e.g. 1234567 -> 1,234,567)
+// PrettyNum show pretty num (e.g 1234567 -> 1,234,567)
 func PrettyNum(i interface{}) string {
 	var str string
 
@@ -51,7 +51,18 @@ func PrettyNum(i interface{}) string {
 	return appendPrettySymbol(str)
 }
 
-// PrettySize show pretty size (e.g. 1478182 -> 1.34 Mb)
+// PrettyNum show pretty percent (e.g 12.3423 -> 12.3%)
+func PrettyPerc(i float64) string {
+	i = Float(i)
+
+	if i < 0.01 {
+		return "< 0.01%"
+	}
+
+	return PrettyNum(i) + "%"
+}
+
+// PrettySize show pretty size (e.g 1478182 -> 1.34 Mb)
 func PrettySize(i interface{}) string {
 	var f float64
 
