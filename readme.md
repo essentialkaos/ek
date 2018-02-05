@@ -1,4 +1,4 @@
-# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v9) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
+# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v9) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
 
 Auxiliary packages for Go.
 
@@ -108,4 +108,4 @@ Before contributing to this project please read our [Contributing Guidelines](ht
 
 [EKOL](https://essentialkaos.com/ekol)
 
-<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.io/ekgh.svg"/></a></p>
+<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.st/ekgh.svg"/></a></p>
