@@ -2,7 +2,7 @@ package fmtutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -54,6 +54,26 @@ func ExamplePrettyNum() {
 	// 5000 → 5,000
 	// 6128750.26 → 6,128,750.26
 	// 6128750.26 → 6 128 750.26
+}
+
+func ExamplePrettyPerc() {
+	var (
+		n1 float64 = 0.123
+		n2 float64 = 10.24
+		n3 float64 = 1294.193
+	)
+
+	OrderSeparator = ","
+
+	fmt.Printf("%f → %s\n", n1, PrettyPerc(n1))
+	fmt.Printf("%f → %s\n", n2, PrettyPerc(n2))
+	fmt.Printf("%f → %s\n", n3, PrettyPerc(n3))
+
+	// Output:
+	// 0.123000 → 0.12%
+	// 10.240000 → 10.2%
+	// 1294.193000 → 1,294.2%
+
 }
 
 func ExamplePrettySize() {

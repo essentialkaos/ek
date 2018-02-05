@@ -3,7 +3,7 @@ package fmtutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -34,12 +34,35 @@ var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrettyNum show pretty num (e.g. 1234567 -> 1,234,567)
+// PrettyNum show pretty num (e.g 1234567 -> 1,234,567)
 func PrettyNum(i interface{}) string {
-	return getPrettyNum(i)
+	var str string
+
+	switch v := i.(type) {
+	case int, int32, int64, uint, uint32, uint64:
+		str = fmt.Sprintf("%d", v)
+
+	case float32, float64:
+		str = fmt.Sprintf("%.3f", v)
+
+		return formatPrettyFloat(str)
+	}
+
+	return appendPrettySymbol(str)
 }
 
-// PrettySize show pretty size (e.g. 1478182 -> 1.34 Mb)
+// PrettyNum show pretty percent (e.g 12.3423 -> 12.3%)
+func PrettyPerc(i float64) string {
+	i = Float(i)
+
+	if i < 0.01 {
+		return "< 0.01%"
+	}
+
+	return PrettyNum(i) + "%"
+}
+
+// PrettySize show pretty size (e.g 1478182 -> 1.34 Mb)
 func PrettySize(i interface{}) string {
 	var f float64
 
@@ -220,22 +243,6 @@ func CountDigits(i int) int {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func getPrettyNum(i interface{}) string {
-	var str string
-
-	switch v := i.(type) {
-	case int, int32, int64, uint, uint32, uint64:
-		str = fmt.Sprintf("%d", v)
-
-	case float32, float64:
-		str = fmt.Sprintf("%.3f", v)
-
-		return formatPrettyFloat(str)
-	}
-
-	return appendPrettySymbol(str)
-}
 
 func formatPrettyFloat(str string) string {
 	slc := strings.Split(str, ".")

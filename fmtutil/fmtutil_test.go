@@ -2,7 +2,7 @@ package fmtutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,6 +35,15 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(2500.00), Equals, "2,500")
 	c.Assert(PrettyNum(1.23), Equals, "1.23")
 	c.Assert(PrettyNum(-1000), Equals, "-1,000")
+}
+
+func (s *FmtUtilSuite) TestPretyPerc(c *C) {
+	c.Assert(PrettyPerc(0.12), Equals, "0.12%")
+	c.Assert(PrettyPerc(1), Equals, "1%")
+	c.Assert(PrettyPerc(1.123), Equals, "1.12%")
+	c.Assert(PrettyPerc(12.100), Equals, "12.1%")
+	c.Assert(PrettyPerc(123.123), Equals, "123.1%")
+	c.Assert(PrettyPerc(0.0002), Equals, "< 0.01%")
 }
 
 func (s *FmtUtilSuite) TestPretySize(c *C) {

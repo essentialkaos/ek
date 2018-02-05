@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.20.1
+
+* `[fmtutil]` Added method `PrettyPerc` for formatting values in percentages
+
 ### 9.20.0
 
 * `[fmtc]` Added methods `Print` and `Sprintln` for better compatibility with `fmt` package
