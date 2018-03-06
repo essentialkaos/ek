@@ -15,7 +15,6 @@ import (
 	"os"
 	"strconv"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -53,7 +52,6 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 	s := bufio.NewScanner(r)
 
 	info := &MemInfo{}
-	errs := errutil.NewErrors()
 
 	for s.Scan() {
 		text := s.Text()
@@ -64,33 +62,33 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 
 		switch strutil.ReadField(text, 0, true) {
 		case "VmPeak:":
-			info.VmPeak = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmPeak, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmSize:":
-			info.VmSize = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmSize, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmLck:":
-			info.VmLck = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmLck, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmPin:":
-			info.VmPin = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmPin, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmHWM:":
-			info.VmHWM = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmHWM, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmRSS:":
-			info.VmRSS = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmRSS, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmData:":
-			info.VmData = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmData, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmStk:":
-			info.VmStk = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmStk, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmExe:":
-			info.VmExe = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmExe, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmLib:":
-			info.VmLib = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmLib, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmPTE:":
-			info.VmPTE = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmPTE, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmSwap:":
-			info.VmSwap = parseSize(strutil.ReadField(text, 1, true), errs)
+			info.VmSwap, err = parseSize(strutil.ReadField(text, 1, true))
 		}
 
-		if errs.HasErrors() {
-			return nil, errs.Last()
+		if err != nil {
+			return nil, errors.New("Can't parse status file for given process")
 		}
 	}
 
@@ -102,3 +100,14 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// parseSize parse size in kB
+func parseSize(v string) (uint64, error) {
+	size, err := strconv.ParseUint(v, 10, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return size * 1024, nil
+}
