@@ -127,18 +127,6 @@ type SystemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// parseSize parse size in kB
-func parseSize(v string, errs *errutil.Errors) uint64 {
-	size, err := strconv.ParseUint(v, 10, 64)
-
-	if err != nil {
-		errs.Add(err)
-		return 0
-	}
-
-	return size * 1024
-}
-
 // parseUint parse uint value
 func parseUint(v string, errs *errutil.Errors) uint64 {
 	value, err := strconv.ParseUint(v, 10, 64)
