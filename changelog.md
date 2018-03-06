@@ -3,8 +3,8 @@
 ### 9.21.0
 
 * `[system/process]` Added new type `ProcSample` as a lightweight analog of ProcInfo for CPU usage calculation
-* `[system/process]` Refactored CPU usage calculation
-* `[system/process]` Refactored stat data parsing
+* `[system/process]` Code refactoring
+* `[system/process]` Increased code coverage (75.5% → 82.4%)
 
 ### 9.20.1
 
