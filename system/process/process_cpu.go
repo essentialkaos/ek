@@ -17,7 +17,6 @@ import (
 	"strconv"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -56,10 +55,20 @@ type ProcInfo struct {
 	NumThreads int    `json:"num_threads"` // Number of threads in this process
 }
 
+// ProcSample contains value for usage calculation
+type ProcSample uint
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Ticks per second
 var hz = 0.0
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ToSample convert ProcInfo to ProcSample for CPU usage calculation
+func (pi *ProcInfo) ToSample() ProcSample {
+	return ProcSample(pi.UTime + pi.STime + pi.CUTime + pi.CSTime)
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -80,47 +89,145 @@ func GetInfo(pid int) (*ProcInfo, error) {
 		return nil, errors.New("Can't parse stat file for given process")
 	}
 
-	info := &ProcInfo{}
-	errs := errutil.NewErrors()
+	return parseStatData(text)
+}
 
-	info.PID = parseInt(strutil.ReadField(text, 0, true), errs)
-	info.Comm = strutil.ReadField(text, 1, true)
-	info.State = strutil.ReadField(text, 2, true)
-	info.PPID = parseInt(strutil.ReadField(text, 3, true), errs)
-	info.Session = parseInt(strutil.ReadField(text, 5, true), errs)
-	info.TTYNR = parseInt(strutil.ReadField(text, 6, true), errs)
-	info.TPGid = parseInt(strutil.ReadField(text, 7, true), errs)
-	info.UTime = parseUint(strutil.ReadField(text, 13, true), errs)
-	info.STime = parseUint(strutil.ReadField(text, 14, true), errs)
-	info.CUTime = parseUint(strutil.ReadField(text, 15, true), errs)
-	info.CSTime = parseUint(strutil.ReadField(text, 16, true), errs)
-	info.Priority = parseInt(strutil.ReadField(text, 17, true), errs)
-	info.Nice = parseInt(strutil.ReadField(text, 18, true), errs)
-	info.NumThreads = parseInt(strutil.ReadField(text, 19, true), errs)
+// GetSample return ProcSample for CPU usage calculation
+func GetSample(pid int) (ProcSample, error) {
+	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
-	if errs.HasErrors() {
-		return nil, errs.Last()
+	if err != nil {
+		return 0, err
 	}
 
-	return info, nil
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	text, _ := r.ReadString('\n')
+
+	if len(text) < 20 {
+		return 0, errors.New("Can't parse stat file for given process")
+	}
+
+	utime, err := strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
+
+	if err != nil {
+		return 0, errors.New("Can't parse stat field 13")
+	}
+
+	stime, err := strconv.ParseUint(strutil.ReadField(text, 14, true), 10, 64)
+
+	if err != nil {
+		return 0, errors.New("Can't parse stat field 14")
+	}
+
+	cutime, err := strconv.ParseUint(strutil.ReadField(text, 15, true), 10, 64)
+
+	if err != nil {
+		return 0, errors.New("Can't parse stat field 15")
+	}
+
+	cstime, err := strconv.ParseUint(strutil.ReadField(text, 16, true), 10, 64)
+
+	if err != nil {
+		return 0, errors.New("Can't parse stat field 16")
+	}
+
+	return ProcSample(utime + stime + cutime + cstime), nil
 }
 
 // CalculateCPUUsage calculate CPU usage
-func CalculateCPUUsage(i1, i2 *ProcInfo, duration time.Duration) float64 {
-	if i1 == nil || i2 == nil {
-		return 0.0
-	}
-
-	i1Total := i1.UTime + i1.STime + i1.CUTime + i1.CSTime
-	i2Total := i2.UTime + i2.STime + i2.CUTime + i2.CSTime
-
-	total := float64(i2Total - i1Total)
+func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
+	total := float64(s2 - s1)
 	seconds := float64(duration) / float64(time.Second)
 
 	return 100.0 * ((total / getHZ()) / seconds)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func parseStatData(text string) (*ProcInfo, error) {
+	var err error
+
+	info := &ProcInfo{}
+
+	info.Comm = strutil.ReadField(text, 1, true)
+	info.State = strutil.ReadField(text, 2, true)
+
+	info.PID, err = strconv.Atoi(strutil.ReadField(text, 0, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 0")
+	}
+
+	info.PPID, err = strconv.Atoi(strutil.ReadField(text, 3, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 3")
+	}
+
+	info.Session, err = strconv.Atoi(strutil.ReadField(text, 5, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 5")
+	}
+
+	info.TTYNR, err = strconv.Atoi(strutil.ReadField(text, 6, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 6")
+	}
+
+	info.TPGid, err = strconv.Atoi(strutil.ReadField(text, 7, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 7")
+	}
+
+	info.UTime, err = strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 13")
+	}
+
+	info.STime, err = strconv.ParseUint(strutil.ReadField(text, 14, true), 10, 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 14")
+	}
+
+	info.CUTime, err = strconv.ParseUint(strutil.ReadField(text, 15, true), 10, 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 15")
+	}
+
+	info.CSTime, err = strconv.ParseUint(strutil.ReadField(text, 16, true), 10, 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 16")
+	}
+
+	info.Priority, err = strconv.Atoi(strutil.ReadField(text, 17, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 17")
+	}
+
+	info.Nice, err = strconv.Atoi(strutil.ReadField(text, 18, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 18")
+	}
+
+	info.NumThreads, err = strconv.Atoi(strutil.ReadField(text, 19, true))
+
+	if err != nil {
+		return nil, errors.New("Can't parse stat field 19")
+	}
+
+	return info, nil
+}
 
 func getHZ() float64 {
 	if hz != 0.0 {

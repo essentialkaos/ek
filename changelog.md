@@ -1,5 +1,11 @@
 ## Changelog
 
+### 9.21.0
+
+* `[system/process]` Added new type `ProcSample` as a lightweight analog of ProcInfo for CPU usage calculation
+* `[system/process]` Refactored CPU usage calculation
+* `[system/process]` Refactored stat data parsing
+
 ### 9.20.1
 
 * `[fmtutil]` Added method `PrettyPerc` for formatting values in percentages
