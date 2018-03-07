@@ -19,7 +19,6 @@ import (
 	"syscall"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -92,6 +91,8 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	return info, nil
 }
 
+// codebeat:disable[LOC,ABC]
+
 // GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
 	fd, err := os.OpenFile(procDiscStatsFile, os.O_RDONLY, 0)
@@ -106,7 +107,6 @@ func GetIOStats() (map[string]*IOStats, error) {
 	s := bufio.NewScanner(r)
 
 	iostats := make(map[string]*IOStats)
-	errs := errutil.NewErrors()
 
 	for s.Scan() {
 		text := s.Text()
@@ -120,20 +120,70 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 		ios := &IOStats{}
 
-		ios.ReadComplete = parseUint(strutil.ReadField(text, 3, true), errs)
-		ios.ReadMerged = parseUint(strutil.ReadField(text, 4, true), errs)
-		ios.ReadSectors = parseUint(strutil.ReadField(text, 5, true), errs)
-		ios.ReadMs = parseUint(strutil.ReadField(text, 6, true), errs)
-		ios.WriteComplete = parseUint(strutil.ReadField(text, 7, true), errs)
-		ios.WriteMerged = parseUint(strutil.ReadField(text, 8, true), errs)
-		ios.WriteSectors = parseUint(strutil.ReadField(text, 9, true), errs)
-		ios.WriteMs = parseUint(strutil.ReadField(text, 10, true), errs)
-		ios.IOPending = parseUint(strutil.ReadField(text, 11, true), errs)
-		ios.IOMs = parseUint(strutil.ReadField(text, 12, true), errs)
-		ios.IOQueueMs = parseUint(strutil.ReadField(text, 13, true), errs)
+		ios.ReadComplete, err = strconv.ParseUint(strutil.ReadField(text, 3, true), 10, 64)
 
-		if errs.HasErrors() {
-			return nil, errs.Last()
+		if err != nil {
+			return nil, errors.New("Can't parse field 3 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.ReadMerged, err = strconv.ParseUint(strutil.ReadField(text, 4, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 4 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.ReadSectors, err = strconv.ParseUint(strutil.ReadField(text, 5, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 5 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.ReadMs, err = strconv.ParseUint(strutil.ReadField(text, 6, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 6 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.WriteComplete, err = strconv.ParseUint(strutil.ReadField(text, 7, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 7 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.WriteMerged, err = strconv.ParseUint(strutil.ReadField(text, 8, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 8 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.WriteSectors, err = strconv.ParseUint(strutil.ReadField(text, 9, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 9 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.WriteMs, err = strconv.ParseUint(strutil.ReadField(text, 10, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 10 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.IOPending, err = strconv.ParseUint(strutil.ReadField(text, 11, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 11 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.IOMs, err = strconv.ParseUint(strutil.ReadField(text, 12, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 12 as unsigned integer in " + procDiscStatsFile)
+		}
+
+		ios.IOQueueMs, err = strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 13 as unsigned integer in " + procDiscStatsFile)
 		}
 
 		iostats["/dev/"+device] = ios
@@ -141,6 +191,8 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 	return iostats, nil
 }
+
+// codebeat:enable[LOC,ABC]
 
 // GetIOUtil return slice (device -> utilization) with IO utilization
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {

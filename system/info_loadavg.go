@@ -13,9 +13,9 @@ import (
 	"bufio"
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -25,6 +25,8 @@ import (
 var procLoadAvgFile = "/proc/loadavg"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
 
 // GetLA return loadavg
 func GetLA() (*LoadAvg, error) {
@@ -44,29 +46,45 @@ func GetLA() (*LoadAvg, error) {
 	}
 
 	la := &LoadAvg{}
-	errs := errutil.NewErrors()
 
-	la.Min1 = parseFloat(strutil.ReadField(text, 0, true), errs)
-	la.Min5 = parseFloat(strutil.ReadField(text, 1, true), errs)
-	la.Min15 = parseFloat(strutil.ReadField(text, 2, true), errs)
+	la.Min1, err = strconv.ParseFloat(strutil.ReadField(text, 0, true), 64)
 
-	if errs.HasErrors() {
-		return nil, errs.Last()
+	if err != nil {
+		return nil, errors.New("Can't parse field 0 as float number in " + procLoadAvgFile)
+	}
+
+	la.Min5, err = strconv.ParseFloat(strutil.ReadField(text, 1, true), 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse field 1 as float number in " + procLoadAvgFile)
+	}
+
+	la.Min15, err = strconv.ParseFloat(strutil.ReadField(text, 2, true), 64)
+
+	if err != nil {
+		return nil, errors.New("Can't parse field 2 as float number in " + procLoadAvgFile)
 	}
 
 	procs := strutil.ReadField(text, 3, true)
 	delimPosition := strings.IndexRune(procs, '/')
 
 	if delimPosition == -1 {
-		return nil, errors.New("Can't parse file " + procLoadAvgFile)
+		return nil, errors.New("Can't parse field 3 in " + procLoadAvgFile)
 	}
 
-	la.RProc = parseInt(procs[:delimPosition], errs)
-	la.TProc = parseInt(procs[delimPosition+1:], errs)
+	la.RProc, err = strconv.Atoi(procs[:delimPosition])
 
-	if errs.HasErrors() {
-		return nil, errs.Last()
+	if err != nil {
+		return nil, errors.New("Can't parse processes number in " + procLoadAvgFile)
+	}
+
+	la.TProc, err = strconv.Atoi(procs[delimPosition+1:])
+
+	if err != nil {
+		return nil, errors.New("Can't parse processes number in " + procLoadAvgFile)
 	}
 
 	return la, nil
 }
+
+// codebeat:enable[LOC,ABC]

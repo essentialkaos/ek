@@ -13,7 +13,6 @@ import (
 	"bufio"
 	"errors"
 	"os"
-	"strconv"
 
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
@@ -87,16 +86,3 @@ func GetMemInfo() (*MemInfo, error) {
 }
 
 // codebeat:enable[LOC,ABC]
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// parseSize parse size in kB
-func parseSize(v string) (uint64, error) {
-	size, err := strconv.ParseUint(v, 10, 64)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return size * 1024, nil
-}

@@ -13,9 +13,9 @@ import (
 	"bufio"
 	"errors"
 	"os"
+	"strconv"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -75,6 +75,8 @@ func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
 
 // codebeat:enable[CYCLO]
 
+// codebeat:disable[LOC,ABC]
+
 // GetCPUStats return basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
 	fd, err := os.OpenFile(procStatFile, os.O_RDONLY, 0)
@@ -89,30 +91,67 @@ func GetCPUStats() (*CPUStats, error) {
 	s := bufio.NewScanner(r)
 
 	stats := &CPUStats{}
-	errs := errutil.NewErrors()
 
 	for s.Scan() {
 		text := s.Text()
 
-		if len(text) > 4 && text[:3] == "cpu" {
-			if text[:4] == "cpu " {
-				stats.User = parseUint(strutil.ReadField(text, 1, true), errs)
-				stats.Nice = parseUint(strutil.ReadField(text, 2, true), errs)
-				stats.System = parseUint(strutil.ReadField(text, 3, true), errs)
-				stats.Idle = parseUint(strutil.ReadField(text, 4, true), errs)
-				stats.Wait = parseUint(strutil.ReadField(text, 5, true), errs)
-				stats.IRQ = parseUint(strutil.ReadField(text, 6, true), errs)
-				stats.SRQ = parseUint(strutil.ReadField(text, 7, true), errs)
-				stats.Steal = parseUint(strutil.ReadField(text, 8, true), errs)
-			} else {
-				stats.Count++
-				continue
-			}
-
-			if errs.HasErrors() {
-				return nil, errs.Last()
-			}
+		if len(text) < 3 || text[:3] != "cpu" {
+			continue
 		}
+
+		if text[:4] != "cpu " {
+			stats.Count++
+			continue
+		}
+
+		stats.User, err = strconv.ParseUint(strutil.ReadField(text, 1, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 1 as unsigned integer in " + procStatFile)
+		}
+
+		stats.Nice, err = strconv.ParseUint(strutil.ReadField(text, 2, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 2 as unsigned integer in " + procStatFile)
+		}
+
+		stats.System, err = strconv.ParseUint(strutil.ReadField(text, 3, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 3 as unsigned integer in " + procStatFile)
+		}
+
+		stats.Idle, err = strconv.ParseUint(strutil.ReadField(text, 4, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 4 as unsigned integer in " + procStatFile)
+		}
+
+		stats.Wait, err = strconv.ParseUint(strutil.ReadField(text, 5, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 5 as unsigned integer in " + procStatFile)
+		}
+
+		stats.IRQ, err = strconv.ParseUint(strutil.ReadField(text, 6, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 6 as unsigned integer in " + procStatFile)
+		}
+
+		stats.SRQ, err = strconv.ParseUint(strutil.ReadField(text, 7, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 7 as unsigned integer in " + procStatFile)
+		}
+
+		stats.Steal, err = strconv.ParseUint(strutil.ReadField(text, 8, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 8 as unsigned integer in " + procStatFile)
+		}
+
 	}
 
 	if stats.Count == 0 {
@@ -123,3 +162,5 @@ func GetCPUStats() (*CPUStats, error) {
 
 	return stats, nil
 }
+
+// codebeat:enable[LOC,ABC]

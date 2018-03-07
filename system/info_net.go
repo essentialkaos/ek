@@ -13,10 +13,10 @@ import (
 	"bufio"
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -26,6 +26,8 @@ import (
 var procNetFile = "/proc/net/dev"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
 
 // GetInterfacesInfo return info about network interfaces
 func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
@@ -41,7 +43,6 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 	s := bufio.NewScanner(r)
 
 	info := make(map[string]*InterfaceInfo)
-	errs := errutil.NewErrors()
 
 	for s.Scan() {
 		text := s.Text()
@@ -54,13 +55,28 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 
 		name := strings.TrimRight(strutil.ReadField(text, 0, true), ":")
 
-		ii.ReceivedBytes = parseUint(strutil.ReadField(text, 1, true), errs)
-		ii.ReceivedPackets = parseUint(strutil.ReadField(text, 2, true), errs)
-		ii.TransmittedBytes = parseUint(strutil.ReadField(text, 9, true), errs)
-		ii.TransmittedPackets = parseUint(strutil.ReadField(text, 10, true), errs)
+		ii.ReceivedBytes, err = strconv.ParseUint(strutil.ReadField(text, 1, true), 10, 64)
 
-		if errs.HasErrors() {
-			return nil, errs.Last()
+		if err != nil {
+			return nil, errors.New("Can't parse field 1 as unsigned integer in " + procNetFile)
+		}
+
+		ii.ReceivedPackets, err = strconv.ParseUint(strutil.ReadField(text, 2, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 2 as unsigned integer in " + procNetFile)
+		}
+
+		ii.TransmittedBytes, err = strconv.ParseUint(strutil.ReadField(text, 9, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 9 as unsigned integer in " + procNetFile)
+		}
+
+		ii.TransmittedPackets, err = strconv.ParseUint(strutil.ReadField(text, 10, true), 10, 64)
+
+		if err != nil {
+			return nil, errors.New("Can't parse field 10 as unsigned integer in " + procNetFile)
 		}
 
 		info[name] = ii
@@ -72,6 +88,8 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 
 	return info, nil
 }
+
+// codebeat:enable[LOC,ABC]
 
 // GetNetworkSpeed return network input/output speed in bytes per second for
 // all network interfaces
