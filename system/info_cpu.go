@@ -75,7 +75,7 @@ func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
 
 // codebeat:enable[CYCLO]
 
-// codebeat:disable[LOC,ABC]
+// codebeat:disable[LOC,ABC,CYCLO]
 
 // GetCPUStats return basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
@@ -163,4 +163,4 @@ func GetCPUStats() (*CPUStats, error) {
 	return stats, nil
 }
 
-// codebeat:enable[LOC,ABC]
+// codebeat:enable[LOC,ABC,CYCLO]

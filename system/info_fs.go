@@ -91,7 +91,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	return info, nil
 }
 
-// codebeat:disable[LOC,ABC]
+// codebeat:disable[LOC,ABC,CYCLO]
 
 // GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
@@ -192,7 +192,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 	return iostats, nil
 }
 
-// codebeat:enable[LOC,ABC]
+// codebeat:enable[LOC,ABC,CYCLO]
 
 // GetIOUtil return slice (device -> utilization) with IO utilization
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
