@@ -11,6 +11,7 @@ package process
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,4 +36,15 @@ func Example_getList() {
 
 	// processes is slice with info about all active processes
 	fmt.Println(processes)
+}
+
+func Example_calculateCPUUsage() {
+	pid := 1345
+	duration := time.Second * 15
+
+	sample1, _ := GetSample(pid)
+	time.Sleep(duration)
+	sample2, _ := GetSample(pid)
+
+	fmt.Printf("CPU Usage: %g%%\n", CalculateCPUUsage(sample1, sample2, duration))
 }

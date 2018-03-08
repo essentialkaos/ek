@@ -10,8 +10,6 @@ package system
 
 import (
 	"strconv"
-
-	"pkg.re/essentialkaos/ek.v9/errutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -128,49 +126,12 @@ type SystemInfo struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // parseSize parse size in kB
-func parseSize(v string, errs *errutil.Errors) uint64 {
+func parseSize(v string) (uint64, error) {
 	size, err := strconv.ParseUint(v, 10, 64)
 
 	if err != nil {
-		errs.Add(err)
-		return 0
+		return 0, err
 	}
 
-	return size * 1024
-}
-
-// parseUint parse uint value
-func parseUint(v string, errs *errutil.Errors) uint64 {
-	value, err := strconv.ParseUint(v, 10, 64)
-
-	if err != nil {
-		errs.Add(err)
-		return 0
-	}
-
-	return value
-}
-
-// parseFloat parse float value
-func parseFloat(v string, errs *errutil.Errors) float64 {
-	value, err := strconv.ParseFloat(v, 64)
-
-	if err != nil {
-		errs.Add(err)
-		return 0.0
-	}
-
-	return value
-}
-
-// parseInt parse int value
-func parseInt(v string, errs *errutil.Errors) int {
-	value, err := strconv.ParseInt(v, 10, 64)
-
-	if err != nil {
-		errs.Add(err)
-		return 0
-	}
-
-	return int(value)
+	return size * 1024, nil
 }

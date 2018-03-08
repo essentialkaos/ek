@@ -60,6 +60,23 @@ func (s *ProcessSuite) TestGetInfo(c *C) {
 	c.Assert(err, IsNil)
 }
 
+func (s *ProcessSuite) TestGetSample(c *C) {
+	_, err := GetSample(66000)
+
+	c.Assert(err, NotNil)
+
+	_, err = GetSample(1)
+
+	c.Assert(err, IsNil)
+}
+
+func (s *ProcessSuite) TestInfoToSample(c *C) {
+	pi := &ProcInfo{UTime: 10, STime: 1, CUTime: 1, CSTime: 1}
+	ps := pi.ToSample()
+
+	c.Assert(ps, Equals, ProcSample(13))
+}
+
 func (s *ProcessSuite) TestGetMemInfo(c *C) {
 	info, err := GetMemInfo(66000)
 
@@ -73,12 +90,8 @@ func (s *ProcessSuite) TestGetMemInfo(c *C) {
 }
 
 func (s *ProcessSuite) TestCalculateCPUUsage(c *C) {
-	i1 := &ProcInfo{UTime: 10, STime: 1, CUTime: 1, CSTime: 1}
-	i2 := &ProcInfo{UTime: 60, STime: 2, CUTime: 2, CSTime: 2}
+	s1 := ProcSample(13)
+	s2 := ProcSample(66)
 
-	c.Assert(CalculateCPUUsage(nil, nil, time.Second), Equals, 0.0)
-	c.Assert(CalculateCPUUsage(i1, nil, time.Second), Equals, 0.0)
-	c.Assert(CalculateCPUUsage(nil, i2, time.Second), Equals, 0.0)
-
-	c.Assert(CalculateCPUUsage(i1, i2, time.Second), Equals, 53.0)
+	c.Assert(CalculateCPUUsage(s1, s2, time.Second), Equals, 53.0)
 }

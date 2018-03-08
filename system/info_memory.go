@@ -14,7 +14,6 @@ import (
 	"errors"
 	"os"
 
-	"pkg.re/essentialkaos/ek.v9/errutil"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
@@ -24,6 +23,8 @@ import (
 var procMemInfoFile = "/proc/meminfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
 
 // GetMemInfo return memory info
 func GetMemInfo() (*MemInfo, error) {
@@ -39,38 +40,37 @@ func GetMemInfo() (*MemInfo, error) {
 	s := bufio.NewScanner(r)
 
 	mem := &MemInfo{}
-	errs := errutil.NewErrors()
 
 	for s.Scan() {
 		text := s.Text()
 
 		switch strutil.ReadField(text, 0, true) {
 		case "MemTotal:":
-			mem.MemTotal = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.MemTotal, err = parseSize(strutil.ReadField(text, 1, true))
 		case "MemFree:":
-			mem.MemFree = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.MemFree, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Buffers:":
-			mem.Buffers = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Buffers, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Cached:":
-			mem.Cached = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Cached, err = parseSize(strutil.ReadField(text, 1, true))
 		case "SwapCached:":
-			mem.SwapCached = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.SwapCached, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Active:":
-			mem.Active = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Active, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Inactive:":
-			mem.Inactive = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Inactive, err = parseSize(strutil.ReadField(text, 1, true))
 		case "SwapTotal:":
-			mem.SwapTotal = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.SwapTotal, err = parseSize(strutil.ReadField(text, 1, true))
 		case "SwapFree:":
-			mem.SwapFree = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.SwapFree, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Dirty:":
-			mem.Dirty = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Dirty, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Slab:":
-			mem.Slab = parseSize(strutil.ReadField(text, 1, true), errs)
+			mem.Slab, err = parseSize(strutil.ReadField(text, 1, true))
 		}
 
-		if errs.HasErrors() {
-			return nil, errs.Last()
+		if err != nil {
+			return nil, errors.New("Can't parse file " + procMemInfoFile)
 		}
 	}
 
@@ -85,4 +85,4 @@ func GetMemInfo() (*MemInfo, error) {
 	return mem, nil
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// codebeat:enable[LOC,ABC]
