@@ -17,8 +17,3 @@ func Push(dir string) string {
 func Pop() string {
 	return ""
 }
-
-// Current return current working directory
-func Current() string {
-	return ""
-}

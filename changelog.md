@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.21.1
+
+* `[fsutil]` Removed useless method `Current`
+
 ### 9.21.0
 
 * `[system/process]` Added new type `ProcSample` as a lightweight analog of ProcInfo for CPU usage calculation

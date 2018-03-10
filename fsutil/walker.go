@@ -21,8 +21,11 @@ var dirStack []string
 
 // Push change current working directory and add previous working directory to stack
 func Push(dir string) string {
+	var wd string
+
 	if dirStack == nil {
-		dirStack = append(dirStack, Current())
+		wd, _ = os.Getwd()
+		dirStack = append(dirStack, wd)
 	}
 
 	err := os.Chdir(dir)
@@ -31,7 +34,7 @@ func Push(dir string) string {
 		return ""
 	}
 
-	wd, _ := os.Getwd()
+	wd, _ = os.Getwd()
 
 	dirStack = append(dirStack, wd)
 
@@ -40,8 +43,11 @@ func Push(dir string) string {
 
 // Pop change current working directory to previous in stack
 func Pop() string {
+	var wd string
+
 	if dirStack == nil {
-		dirStack = append(dirStack, Current())
+		wd, _ = os.Getwd()
+		dirStack = append(dirStack, wd)
 	}
 
 	dl := len(dirStack)
@@ -61,13 +67,7 @@ func Pop() string {
 		dirStack = dirStack[0 : dl-1]
 	}
 
-	wd, _ := os.Getwd()
+	wd, _ = os.Getwd()
 
-	return wd
-}
-
-// Current return current working directory
-func Current() string {
-	wd, _ := os.Getwd()
 	return wd
 }

@@ -241,7 +241,6 @@ func (s *FSSuite) TestWalker(c *check.C) {
 	os.MkdirAll(tmpDir+"/dir1/dir2/dir3/dir4", 0755)
 	os.Chdir(tmpDir)
 
-	c.Assert(Current(), check.Equals, tmpDir)
 	c.Assert(Pop(), check.Equals, tmpDir)
 
 	dirStack = nil
