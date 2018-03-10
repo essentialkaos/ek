@@ -54,6 +54,43 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 		}
 	}
 
+	return copyFile(from, to, perms)
+}
+
+// MoveFile move file
+func MoveFile(from, to string, perms ...os.FileMode) error {
+	if !_disableMoveFileChecks {
+		targetExist := IsExist(to)
+		dir := path.Dir(to)
+
+		switch {
+		case from == "":
+			return errors.New("Source file can't be blank")
+		case to == "":
+			return errors.New("Target file can't be blank")
+
+		case !IsExist(from):
+			return errors.New("File " + from + " does not exists")
+		case !IsRegular(from):
+			return errors.New("File " + from + " is not a regular file")
+		case !IsReadable(from):
+			return errors.New("File " + from + " is not readable")
+
+		case !targetExist && !IsExist(dir):
+			return errors.New("Directory " + dir + " does not exists")
+		case !targetExist && !IsWritable(dir):
+			return errors.New("Directory " + dir + " is not writable")
+		}
+	}
+
+	return moveFile(from, to, perms)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func copyFile(from, to string, perms []os.FileMode) error {
+	var targetExist bool
+
 	if IsExist(to) {
 		targetExist = true
 	}
@@ -95,32 +132,7 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 	return nil
 }
 
-// MoveFile move file
-func MoveFile(from, to string, perms ...os.FileMode) error {
-	if !_disableMoveFileChecks {
-		targetExist := IsExist(to)
-		dir := path.Dir(to)
-
-		switch {
-		case from == "":
-			return errors.New("Source file can't be blank")
-		case to == "":
-			return errors.New("Target file can't be blank")
-
-		case !IsExist(from):
-			return errors.New("File " + from + " does not exists")
-		case !IsRegular(from):
-			return errors.New("File " + from + " is not a regular file")
-		case !IsReadable(from):
-			return errors.New("File " + from + " is not readable")
-
-		case !targetExist && !IsExist(dir):
-			return errors.New("Directory " + dir + " does not exists")
-		case !targetExist && !IsWritable(dir):
-			return errors.New("Directory " + dir + " is not writable")
-		}
-	}
-
+func moveFile(from, to string, perms []os.FileMode) error {
 	err := os.Rename(from, to)
 
 	if err != nil {

@@ -3,6 +3,7 @@
 ### 9.21.1
 
 * `[fsutil]` Removed useless method `Current`
+* `[fsutil]` Code refactoring
 
 ### 9.21.0
 
