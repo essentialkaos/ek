@@ -1,3 +1,5 @@
+// +build !windows
+
 package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -17,8 +19,9 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _disableCopyFileChecks bool // Flags for testing purposes only
-var _disableMoveFileChecks bool // Flags for testing purposes only
+var _disableCopyFileChecks bool // Flag for testing purposes only
+var _disableMoveFileChecks bool // Flag for testing purposes only
+var _disableCopyDirChecks bool  // Flag for testing purposes only
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -86,18 +89,46 @@ func MoveFile(from, to string, perms ...os.FileMode) error {
 	return moveFile(from, to, perms)
 }
 
+// CopyDir copy directory content recursively to target directory
+func CopyDir(from, to string) error {
+	if !_disableCopyDirChecks {
+		switch {
+		case from == "":
+			return errors.New("Source directory can't be blank")
+		case to == "":
+			return errors.New("Target directory can't be blank")
+
+		case !IsExist(from):
+			return errors.New("Directory " + from + " does not exists")
+		case !IsDir(from):
+			return errors.New("Target " + from + " is not a directory")
+		case !IsReadable(from):
+			return errors.New("Directory " + from + " is not readable")
+		}
+	}
+
+	err := os.Mkdir(to, GetPerms(from))
+
+	if err != nil {
+		return err
+	}
+
+	return copyDir(from, to)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func copyFile(from, to string, perms []os.FileMode) error {
 	var targetExist bool
+	var perm os.FileMode
 
 	if IsExist(to) {
 		targetExist = true
 	}
 
-	var perm os.FileMode = 0644
-
-	if len(perms) != 0 {
+	if len(perms) == 0 {
+		perm = GetPerms(from)
+	} else {
 		perm = perms[0]
 	}
 
@@ -144,4 +175,35 @@ func moveFile(from, to string, perms []os.FileMode) error {
 	}
 
 	return os.Chmod(to, perms[0])
+}
+
+func copyDir(from, to string) error {
+	var err error
+
+	for _, target := range List(from, false) {
+		fp := from + "/" + target
+		tp := to + "/" + target
+
+		if IsDir(fp) {
+			err = os.Mkdir(tp, GetPerms(fp))
+
+			if err != nil {
+				return err
+			}
+
+			err = copyDir(fp, tp)
+
+			if err != nil {
+				return err
+			}
+		} else {
+			err = CopyFile(fp, tp)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

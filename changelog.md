@@ -1,8 +1,10 @@
 ## Changelog
 
-### 9.21.1
+### 9.22.0
 
+* `[fsutil]` Added method `CopyDir` for recursive directories copying
 * `[fsutil]` Removed useless method `Current`
+* `[fsutil]` Tests refactoring
 * `[fsutil]` Code refactoring
 
 ### 9.21.0
