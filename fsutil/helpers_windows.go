@@ -1,5 +1,3 @@
-// +build windows
-
 package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -9,11 +7,25 @@ package fsutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Push(dir string) string {
-	return ""
+import (
+	"os"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// CopyFile simple file copying with bufio
+func CopyFile(from, to string, perms ...os.FileMode) error {
+	return nil
 }
 
-// Pop change current working directory to previous in stack
-func Pop() string {
-	return ""
+// MoveFile move file
+func MoveFile(from, to string, perms ...os.FileMode) error {
+	return nil
 }
+
+// CopyDir copy directory content recursively to target directory
+func CopyDir(from, to string) error {
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //

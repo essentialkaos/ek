@@ -34,20 +34,20 @@ var _ = check.Suite(&FSSuite{})
 func (s *FSSuite) TestList(c *check.C) {
 	tmpDir := c.MkDir()
 
-	os.Mkdir(tmpDir+"/.dir0", 0755)
+	c.Assert(os.Mkdir(tmpDir+"/.dir0", 0755), check.IsNil)
 
 	os.Create(tmpDir + "/.file0")
 
-	ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 644)
-	ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 644)
+	c.Assert(ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 644), check.IsNil)
 
-	os.Mkdir(tmpDir+"/dir1", 0755)
-	os.Mkdir(tmpDir+"/dir2", 0755)
+	c.Assert(os.Mkdir(tmpDir+"/dir1", 0755), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir+"/dir2", 0755), check.IsNil)
 
 	os.Create(tmpDir + "/dir1/file3.mp3")
 	os.Create(tmpDir + "/dir2/file4.wav")
 
-	os.Mkdir(tmpDir+"/dir1/dir3", 0755)
+	c.Assert(os.Mkdir(tmpDir+"/dir1/dir3", 0755), check.IsNil)
 
 	listing1 := List(tmpDir, false)
 	listing2 := List(tmpDir, true)
@@ -234,14 +234,13 @@ func (s *FSSuite) TestProperPath(c *check.C) {
 func (s *FSSuite) TestWalker(c *check.C) {
 	tmpDir := c.MkDir()
 
-	os.Chdir(tmpDir)
+	c.Assert(os.Chdir(tmpDir), check.IsNil)
 
 	tmpDir, _ = os.Getwd()
 
-	os.MkdirAll(tmpDir+"/dir1/dir2/dir3/dir4", 0755)
-	os.Chdir(tmpDir)
+	c.Assert(os.MkdirAll(tmpDir+"/dir1/dir2/dir3/dir4", 0755), check.IsNil)
+	c.Assert(os.Chdir(tmpDir), check.IsNil)
 
-	c.Assert(Current(), check.Equals, tmpDir)
 	c.Assert(Pop(), check.Equals, tmpDir)
 
 	dirStack = nil
@@ -267,9 +266,7 @@ func (s *FSSuite) TestGetSize(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	c.Assert(GetSize(""), check.Equals, int64(-1))
 	c.Assert(GetSize("/not_exist"), check.Equals, int64(-1))
@@ -280,9 +277,7 @@ func (s *FSSuite) TestGetTime(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	at, mt, ct, err := GetTimes(tmpFile)
 
@@ -363,9 +358,7 @@ func (s *FSSuite) TestGetOwner(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	uid, gid, err := GetOwner(tmpFile)
 
@@ -392,9 +385,7 @@ func (s *FSSuite) TestIsEmptyDir(c *check.C) {
 	tmpDir2 := c.MkDir()
 	tmpFile := tmpDir1 + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	c.Assert(IsEmptyDir(tmpDir1), check.Equals, false)
 	c.Assert(IsEmptyDir(tmpDir2), check.Equals, true)
@@ -407,13 +398,8 @@ func (s *FSSuite) TestIsNonEmpty(c *check.C) {
 	tmpFile1 := tmpDir + "/test1.file"
 	tmpFile2 := tmpDir + "/test2.file"
 
-	if ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if ioutil.WriteFile(tmpFile2, []byte(""), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile2, []byte(""), 0644), check.IsNil)
 
 	c.Assert(IsNonEmpty(""), check.Equals, false)
 	c.Assert(IsNonEmpty("/not_exist"), check.Equals, false)
@@ -426,13 +412,8 @@ func (s *FSSuite) TestTypeChecks(c *check.C) {
 	tmpFile := tmpDir + "/test.file"
 	tmpLink := tmpDir + "/test.link"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if os.Symlink("123", tmpLink) != nil {
-		c.Fatal("Can't create link")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.Symlink("123", tmpLink), check.IsNil)
 
 	c.Assert(IsExist(""), check.Equals, false)
 	c.Assert(IsExist("/not_exist"), check.Equals, false)
@@ -499,9 +480,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	tmpFile9 := tmpDir + "/test9.file"
 
 	for i := 1; i <= 9; i++ {
-		if ioutil.WriteFile(fmt.Sprintf("%s/test%d.file", tmpDir, i), []byte(""), 0644) != nil {
-			c.Fatal("Can't create temporary file")
-		}
+		c.Assert(ioutil.WriteFile(fmt.Sprintf("%s/test%d.file", tmpDir, i), []byte(""), 0644), check.IsNil)
 	}
 
 	os.Chmod(tmpFile1, 0400)
@@ -539,13 +518,8 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	tmpFile := tmpDir + "/test.file"
 	tmpLink := tmpDir + "/test.link"
 
-	if ioutil.WriteFile(tmpFile, []byte(""), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if os.Symlink("123", tmpLink) != nil {
-		c.Fatal("Can't create link")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte(""), 0644), check.IsNil)
+	c.Assert(os.Symlink("123", tmpLink), check.IsNil)
 
 	c.Assert(CheckPerms("", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("FR", ""), check.Equals, false)
@@ -565,9 +539,7 @@ func (s *FSSuite) TestGetPerms(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0764) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0764), check.IsNil)
 
 	os.Chmod(tmpFile, 0764)
 
@@ -579,9 +551,7 @@ func (s *FSSuite) TestLineCount(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644), check.IsNil)
 
 	c.Assert(LineCount(""), check.Equals, -1)
 	c.Assert(LineCount("/not_exist"), check.Equals, -1)
@@ -596,17 +566,9 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	tmpFile2 := tmpDir2 + "/test2.file"
 	tmpFile3 := tmpDir1 + "/test3.file"
 
-	if ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if ioutil.WriteFile(tmpFile2, []byte("TEST1234TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if ioutil.WriteFile(tmpFile3, []byte(""), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST1234TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile3, []byte(""), 0644), check.IsNil)
 
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir3, 0500)
@@ -644,13 +606,8 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	tmpFile2 := tmpDir + "/test2.file"
 	tmpFile3 := tmpDir + "/test3.file"
 
-	if ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
-
-	if ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644) != nil {
-		c.Fatal("Can't create temporary file")
-	}
+	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
 
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir2, 0500)
@@ -669,6 +626,51 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	_disableMoveFileChecks = true
 
 	c.Assert(MoveFile("", tmpFile2), check.NotNil)
+}
+
+func (s *FSSuite) TestCopyDir(c *check.C) {
+	sourceDir := c.MkDir()
+	targetDir := c.MkDir() + "/data"
+
+	tmpDir1 := sourceDir + "/test1"
+	tmpDir2 := sourceDir + "/test2"
+	tmpDir3 := sourceDir + "/.test3"
+	tmpDir4 := tmpDir2 + "/test4"
+	tmpFile1 := sourceDir + "/test1.file"
+	tmpFile2 := tmpDir2 + "/test2.file"
+	tmpFile3 := tmpDir2 + "/.test3.file"
+
+	tmpDir5 := c.MkDir() + "/test5"
+
+	c.Assert(os.Mkdir(tmpDir1, 0775), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir2, 0770), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir3, 0770), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir4, 0775), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir5, 0200), check.IsNil)
+
+	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST\n"), 0660), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0600), check.IsNil)
+
+	c.Assert(CopyDir(sourceDir, targetDir), check.IsNil)
+
+	list1 := ListAll(sourceDir, false)
+	list2 := ListAll(targetDir, false)
+
+	sort.Strings(list1)
+	sort.Strings(list2)
+
+	c.Assert(list1, check.DeepEquals, list2)
+
+	c.Assert(CopyDir("", targetDir), check.NotNil)
+	c.Assert(CopyDir(sourceDir, ""), check.NotNil)
+	c.Assert(CopyDir(sourceDir+"1", targetDir), check.NotNil)
+	c.Assert(CopyDir(tmpFile1, targetDir), check.NotNil)
+	c.Assert(CopyDir(tmpDir5, targetDir), check.NotNil)
+
+	_disableCopyDirChecks = true
+
+	c.Assert(CopyDir("", tmpFile2), check.NotNil)
 }
 
 func (s *FSSuite) TestInternal(c *check.C) {

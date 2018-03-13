@@ -1,5 +1,12 @@
 ## Changelog
 
+### 9.22.0
+
+* `[fsutil]` Added method `CopyDir` for recursive directories copying
+* `[fsutil]` Removed useless method `Current`
+* `[fsutil]` Tests refactoring
+* `[fsutil]` Code refactoring
+
 ### 9.21.0
 
 * `[system/process]` Added new type `ProcSample` as a lightweight analog of ProcInfo for CPU usage calculation
