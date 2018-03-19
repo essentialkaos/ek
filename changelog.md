@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.22.1
+
+* `[fsutil]` Improved `CopyDir` method
+
 ### 9.22.0
 
 * `[fsutil]` Added method `CopyDir` for recursive directories copying

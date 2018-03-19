@@ -104,13 +104,19 @@ func CopyDir(from, to string) error {
 			return errors.New("Target " + from + " is not a directory")
 		case !IsReadable(from):
 			return errors.New("Directory " + from + " is not readable")
+		case IsExist(to) && !IsDir(to):
+			return errors.New("Target " + to + " is not a directory")
+		case IsExist(to) && !IsWritable(to):
+			return errors.New("Directory " + to + " is not writable")
 		}
 	}
 
-	err := os.Mkdir(to, GetPerms(from))
+	if !IsExist(to) {
+		err := os.Mkdir(to, GetPerms(from))
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	return copyDir(from, to)
