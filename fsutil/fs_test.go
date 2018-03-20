@@ -641,12 +641,14 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 	tmpFile3 := tmpDir2 + "/.test3.file"
 
 	tmpDir5 := c.MkDir() + "/test5"
+	tmpDir6 := c.MkDir() + "/test6"
 
 	c.Assert(os.Mkdir(tmpDir1, 0775), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir2, 0770), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir3, 0770), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir4, 0775), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir5, 0200), check.IsNil)
+	c.Assert(os.Mkdir(tmpDir6, 0400), check.IsNil)
 
 	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
 	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST\n"), 0660), check.IsNil)
@@ -667,10 +669,12 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 	c.Assert(CopyDir(sourceDir+"1", targetDir), check.NotNil)
 	c.Assert(CopyDir(tmpFile1, targetDir), check.NotNil)
 	c.Assert(CopyDir(tmpDir5, targetDir), check.NotNil)
+	c.Assert(CopyDir(tmpDir1, tmpFile2), check.NotNil)
+	c.Assert(CopyDir(tmpDir1, tmpDir6), check.NotNil)
 
 	_disableCopyDirChecks = true
 
-	c.Assert(CopyDir("", tmpFile2), check.NotNil)
+	c.Assert(CopyDir(tmpDir1, "/root/abcd"), check.NotNil)
 }
 
 func (s *FSSuite) TestInternal(c *check.C) {
