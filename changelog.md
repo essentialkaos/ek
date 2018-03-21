@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.22.2
+
+* `[system/process]` Fixed windows stubs
+
 ### 9.22.1
 
 * `[fsutil]` Improved `CopyDir` method

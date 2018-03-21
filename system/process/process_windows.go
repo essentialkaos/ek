@@ -29,6 +29,9 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ProcSample contains value for usage calculation
+type ProcSample uint
+
 // ProcInfo contains partial info from /proc/[PID]/stat
 type ProcInfo struct {
 	PID        int    `json:"pid"`         // The process ID
@@ -65,13 +68,25 @@ type MemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ToSample convert ProcInfo to ProcSample for CPU usage calculation
+func (pi *ProcInfo) ToSample() ProcSample {
+	return 0
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // GetInfo return process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
 	return nil, nil
 }
 
-// CalculateCPUUsage calculate cpu usage
-func CalculateCPUUsage(i1, i2 *ProcInfo, duration time.Duration) float64 {
+// GetSample return ProcSample for CPU usage calculation
+func GetSample(pid int) (ProcSample, error) {
+	return 0, nil
+}
+
+// CalculateCPUUsage calculate CPU usage
+func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	return 0.0
 }
 
