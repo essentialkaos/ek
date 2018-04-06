@@ -3,6 +3,8 @@
 ### 9.22.3
 
 * `[usage]` Fixed bug with aligning option info with Unicode symbols
+* `[options]` Guess option type by default value type
+* `[options]` Added check for unsupported default value type
 
 ### 9.22.2
 
