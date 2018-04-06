@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.22.3
+
+* `[usage]` Fixed bug with aligning option info with Unicode symbols
+
 ### 9.22.2
 
 * `[system/process]` Fixed windows stubs

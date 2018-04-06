@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v9/fmtc"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 	"pkg.re/essentialkaos/ek.v9/version"
 )
 
@@ -364,16 +365,16 @@ func getEntitySize(entity *entity) int {
 	var size int
 
 	if strings.Contains(entity.name, ":") {
-		size += len(entity.name) + 4
+		size += strutil.Len(entity.name) + 4
 	} else {
-		size += len(entity.name) + 2
+		size += strutil.Len(entity.name) + 2
 	}
 
 	for _, arg := range entity.args {
 		if strings.HasPrefix(arg, "?") {
-			size += len(arg)
+			size += strutil.Len(arg)
 		} else {
-			size += len(arg) + 1
+			size += strutil.Len(arg) + 1
 		}
 	}
 
