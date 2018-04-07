@@ -428,6 +428,13 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
+	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Value: []string{}}})
+
+	c.Assert(errs, Not(HasLen), 0)
+	c.Assert(errs[0].Error(), Equals, "Option test contains unsupported default value")
+
+	// //////////////////////////////////////////////////////////////////////////////// //
+
 	_, errs = NewOptions().Parse([]string{}, Map{"": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
@@ -438,4 +445,12 @@ func (s *OptUtilSuite) TestMerging(c *C) {
 	c.Assert(Q(), Equals, "")
 	c.Assert(Q("test"), Equals, "test")
 	c.Assert(Q("test1", "test2"), Equals, "test1 test2")
+}
+
+func (s *OptUtilSuite) TestGuessType(c *C) {
+	c.Assert(guessType(nil), Equals, STRING)
+	c.Assert(guessType("test"), Equals, STRING)
+	c.Assert(guessType(4), Equals, INT)
+	c.Assert(guessType(true), Equals, BOOL)
+	c.Assert(guessType(3.3), Equals, FLOAT)
 }

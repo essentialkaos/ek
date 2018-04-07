@@ -38,6 +38,7 @@ const (
 	ERROR_WRONG_FORMAT
 	ERROR_CONFLICT
 	ERROR_BOUND_NOT_SET
+	ERROR_UNSUPPORTED_VALUE
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -63,12 +64,9 @@ type Map map[string]*V
 
 // Options options struct
 type Options struct {
-	short        map[string]string
-	initialized  bool
-	hasRequired  bool
-	hasBound     bool
-	hasConflicts bool
-	full         Map
+	short       map[string]string
+	initialized bool
+	full        Map
 }
 
 // OptionError argument parsing error
@@ -109,18 +107,6 @@ func (opts *Options) Add(name string, option *V) error {
 		return OptionError{"--" + optName.Long, "", ERROR_DUPLICATE_LONGNAME}
 	case optName.Short != "" && opts.short[optName.Short] != "":
 		return OptionError{"-" + optName.Short, "", ERROR_DUPLICATE_SHORTNAME}
-	}
-
-	if option.Required {
-		opts.hasRequired = true
-	}
-
-	if option.Bound != "" {
-		opts.hasBound = true
-	}
-
-	if option.Conflicts != "" {
-		opts.hasConflicts = true
 	}
 
 	opts.full[optName.Long] = option
@@ -415,6 +401,8 @@ func Q(opts ...string) string {
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
 func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
+	opts.prepare()
+
 	if len(rawOpts) == 0 {
 		return nil, opts.validate()
 	}
@@ -562,14 +550,23 @@ func (opts *Options) parseShortOption(opt string) (string, string, error) {
 	return opts.short[opt], "", nil
 }
 
-func (opts *Options) validate() []error {
-	if !opts.hasRequired && !opts.hasBound && !opts.hasConflicts {
-		return nil
+func (opts *Options) prepare() {
+	for _, v := range opts.full {
+		// String is default type
+		if v.Type == STRING && v.Value != nil {
+			v.Type = guessType(v.Value)
+		}
 	}
+}
 
+func (opts *Options) validate() []error {
 	var errorList []error
 
 	for n, v := range opts.full {
+		if !isSupportedType(v.Value) {
+			errorList = append(errorList, OptionError{n, "", ERROR_UNSUPPORTED_VALUE})
+		}
+
 		if v.Required && v.Value == nil {
 			errorList = append(errorList, OptionError{n, "", ERROR_REQUIRED_NOT_SET})
 		}
@@ -742,6 +739,32 @@ func betweenFloat(val, min, max float64) float64 {
 	}
 }
 
+func isSupportedType(v interface{}) bool {
+	switch v.(type) {
+	case nil, string, bool, int, float64:
+		return true
+	}
+
+	return false
+}
+
+func guessType(v interface{}) int {
+	switch v.(type) {
+	case string:
+		return STRING
+	case bool:
+		return BOOL
+	case int:
+		return INT
+	case float64:
+		return FLOAT
+	}
+
+	return STRING
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (e OptionError) Error() string {
 	switch e.Type {
 	default:
@@ -762,6 +785,8 @@ func (e OptionError) Error() string {
 		return fmt.Sprintf("Option %s conflicts with option %s", e.Option, e.BoundOption)
 	case ERROR_BOUND_NOT_SET:
 		return fmt.Sprintf("Option %s must be defined with option %s", e.BoundOption, e.Option)
+	case ERROR_UNSUPPORTED_VALUE:
+		return fmt.Sprintf("Option %s contains unsupported default value", e.Option)
 	}
 }
 
