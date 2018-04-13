@@ -426,3 +426,35 @@ func (ls *LogSuite) TestBufIO(c *C) {
 
 	c.Assert(fsutil.GetSize(logfile), Not(Equals), fileSize)
 }
+
+func (ls *LogSuite) TestStdLogger(c *C) {
+	l := &Logger{}
+	l.Set(ls.TempDir+"/file5.log", 0644)
+
+	std := &StdLogger{l}
+
+	stdExitFunc = func(code int) { return }
+	stdPanicFunc = func(message string) { return }
+
+	c.Assert(std.Output(2, "test1"), IsNil)
+
+	std.Fatal("test2")
+	std.Fatalf("%s", "test3")
+	std.Fatalln("test4")
+	std.Panic("test5")
+	std.Panicf("%s", "test6")
+	std.Panicln("test7")
+	std.Print("test8")
+	std.Printf("%s", "test9")
+	std.Println("test10")
+
+	data, err := ioutil.ReadFile(ls.TempDir + "/file5.log")
+
+	if err != nil {
+		c.Fatal(err)
+	}
+
+	dataSlice := strings.Split(string(data), "\n")
+
+	c.Assert(len(dataSlice), Equals, 11)
+}
