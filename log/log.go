@@ -279,22 +279,7 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 		return 0, nil
 	}
 
-	var w io.Writer
-
-	if l.fd == nil {
-		switch level {
-		case ERROR, CRIT:
-			w = os.Stderr
-		default:
-			w = os.Stdout
-		}
-	} else {
-		if l.w != nil {
-			w = l.w
-		} else {
-			w = l.fd
-		}
-	}
+	w := l.getWritter(level)
 
 	var showPrefixes bool
 
@@ -401,6 +386,27 @@ func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func (l *Logger) getWritter(level int) io.Writer {
+	var w io.Writer
+
+	if l.fd == nil {
+		switch level {
+		case ERROR, CRIT:
+			w = os.Stderr
+		default:
+			w = os.Stdout
+		}
+	} else {
+		if l.w != nil {
+			w = l.w
+		} else {
+			w = l.fd
+		}
+	}
+
+	return w
+}
 
 func (l *Logger) flushDaemon(interval time.Duration) {
 	for range time.NewTicker(interval).C {
