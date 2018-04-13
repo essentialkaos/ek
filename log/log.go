@@ -15,6 +15,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -98,6 +99,8 @@ var logLevelsNames = map[string]int{
 	"crit":     4,
 	"critical": 4,
 }
+
+var rwMutex = &sync.RWMutex{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -308,11 +311,20 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 		f += "\n"
 	}
 
+	var err error
+	var n int
+
+	rwMutex.RLock()
+
 	if showPrefixes {
-		return fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+	} else {
+		n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
 	}
 
-	return fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+	rwMutex.RUnlock()
+
+	return n, err
 }
 
 // Flush write buffered data to file
@@ -325,7 +337,13 @@ func (l *Logger) Flush() error {
 		return nil
 	}
 
-	return l.w.Flush()
+	rwMutex.Lock()
+
+	err := l.w.Flush()
+
+	rwMutex.Unlock()
+
+	return err
 }
 
 // Debug write debug message to logger output
