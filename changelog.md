@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.23.0
+
+* `[log]` Added wrapper for compatibility with stdlib logger
+* `[log]` Fixed race condition issue
+
 ### 9.22.3
 
 * `[usage]` Fixed bug with aligning option info with Unicode symbols
