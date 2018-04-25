@@ -11,6 +11,8 @@ import (
 	"bytes"
 	"net"
 	"net/http"
+	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -436,11 +438,6 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	c.Assert(e1.Error(), Equals, "Can't encode request body (Test 1)")
 	c.Assert(e2.Error(), Equals, "Can't create request struct (Test 2)")
 	c.Assert(e3.Error(), Equals, "Can't send request (Test 3)")
-
-	resp, err = Request{URL: "http://127.0.0.1", Query: Query{"t": []string{}}}.Do()
-
-	c.Assert(resp, IsNil)
-	c.Assert(err, NotNil)
 }
 
 func (s *ReqSuite) TestEngineInit(c *C) {
@@ -496,6 +493,24 @@ func (s *ReqSuite) TestIsURL(c *C) {
 	c.Assert(isURL("https://domain.com"), Equals, true)
 	c.Assert(isURL("ftp://domain.com"), Equals, true)
 	c.Assert(isURL("test://domain.com"), Equals, false)
+}
+
+func (s *ReqSuite) TestQueryEncoding(c *C) {
+	q := Query{}
+	c.Assert(q.String(), Equals, "")
+
+	q = Query{
+		"a": 1,
+		"b": "abcd",
+		"c": "",
+		"d": nil,
+	}
+
+	qr := strings.Split(q.String(), "&")
+	sort.Strings(qr)
+	qrs := strings.Join(qr, "&")
+
+	c.Assert(qrs, Equals, "a=1&b=abcd&c&d")
 }
 
 func (s *ReqSuite) BenchmarkGetOk(c *C) {
