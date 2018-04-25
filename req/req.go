@@ -342,6 +342,34 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// String convert query struct to string
+func (q Query) String() string {
+	var result string
+
+	for k, v := range q {
+		switch v.(type) {
+		case string:
+			if v == "" {
+				result += k + "&"
+			} else {
+				result += k + "=" + url.QueryEscape(v.(string)) + "&"
+			}
+		case nil:
+			result += k + "&"
+		default:
+			result += k + "=" + fmt.Sprintf("%v", v) + "&"
+		}
+	}
+
+	if result == "" {
+		return ""
+	}
+
+	return result[:len(result)-1]
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // This method has a lot of actions to prepare request for executing, so it is ok to
 // have so many conditions
 // codebeat:disable[CYCLO,ABC]
@@ -373,13 +401,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	}
 
 	if r.Query != nil && len(r.Query) != 0 {
-		query, err := encodeQuery(r.Query)
-
-		if err != nil {
-			return nil, err
-		}
-
-		r.URL += "?" + query
+		r.URL += "?" + r.Query.String()
 	}
 
 	bodyReader, err := getBodyReader(r.Body)
@@ -538,53 +560,6 @@ func getBodyReader(body interface{}) (io.Reader, error) {
 
 		return nil, err
 	}
-}
-
-func encodeQuery(query Query) (string, error) {
-	var result string
-
-	for k, v := range query {
-		switch v.(type) {
-		case string:
-			if v == "" {
-				result += k + "&"
-			} else {
-				result += k + "=" + url.QueryEscape(v.(string)) + "&"
-			}
-		case nil:
-			result += k + "&"
-		case bool:
-			result += k + "=" + fmt.Sprintf("%t", v.(bool)) + "&"
-		case int:
-			result += k + "=" + fmt.Sprintf("%d", v.(int)) + "&"
-		case int8:
-			result += k + "=" + fmt.Sprintf("%d", v.(int8)) + "&"
-		case int16:
-			result += k + "=" + fmt.Sprintf("%d", v.(int16)) + "&"
-		case int32:
-			result += k + "=" + fmt.Sprintf("%d", v.(int32)) + "&"
-		case int64:
-			result += k + "=" + fmt.Sprintf("%d", v.(int64)) + "&"
-		case uint:
-			result += k + "=" + fmt.Sprintf("%d", v.(uint)) + "&"
-		case uint8:
-			result += k + "=" + fmt.Sprintf("%d", v.(uint8)) + "&"
-		case uint16:
-			result += k + "=" + fmt.Sprintf("%d", v.(uint16)) + "&"
-		case uint32:
-			result += k + "=" + fmt.Sprintf("%d", v.(uint32)) + "&"
-		case uint64:
-			result += k + "=" + fmt.Sprintf("%d", v.(uint64)) + "&"
-		case float32:
-			result += k + "=" + fmt.Sprintf("%g", v.(float32)) + "&"
-		case float64:
-			result += k + "=" + fmt.Sprintf("%g", v.(float64)) + "&"
-		default:
-			return "", fmt.Errorf("Can't encode query - unsupported value type")
-		}
-	}
-
-	return result[:len(result)-1], nil
 }
 
 func isURL(url string) bool {

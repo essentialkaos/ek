@@ -1,5 +1,8 @@
 ## Changelog
 
+### 9.24.0
+* `[req]` Added method `String` for `Query` struct for query encoding
+
 ### 9.23.0
 
 * `[log]` Added wrapper for compatibility with stdlib logger
