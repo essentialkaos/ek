@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.25.0
+
+* `[req]` Added constants with status codes
+
 ### 9.24.0
 * `[req]` Added method `String` for `Query` struct for query encoding
 
