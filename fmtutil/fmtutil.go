@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v9/mathutil"
+	"pkg.re/essentialkaos/ek.v9/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -44,6 +45,10 @@ func PrettyNum(i interface{}) string {
 
 	case float32, float64:
 		str = fmt.Sprintf("%.3f", v)
+
+		if str == "NaN" {
+			return "0"
+		}
 
 		return formatPrettyFloat(str)
 	}
@@ -83,6 +88,10 @@ func PrettySize(i interface{}) string {
 		f = float64(i.(float32))
 	case float64:
 		f = i.(float64)
+	}
+
+	if math.IsNaN(f) {
+		return "0" + SizeSeparator + "B"
 	}
 
 	switch {
@@ -147,6 +156,10 @@ func ParseSize(size string) uint64 {
 
 // Float floating number pretty formating
 func Float(f float64) float64 {
+	if math.IsNaN(f) {
+		return 0.0
+	}
+
 	if f < 10.0 {
 		return mathutil.Round(f, 2)
 	}
@@ -245,14 +258,13 @@ func CountDigits(i int) int {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func formatPrettyFloat(str string) string {
-	slc := strings.Split(str, ".")
-	flt := strings.TrimRight(slc[1], "0")
+	flt := strings.TrimRight(strutil.ReadField(str, 1, false, "."), "0")
 
 	if flt == "" {
-		return appendPrettySymbol(slc[0])
+		return appendPrettySymbol(strutil.ReadField(str, 0, false, "."))
 	}
 
-	return appendPrettySymbol(slc[0]) + "." + flt
+	return appendPrettySymbol(strutil.ReadField(str, 0, false, ".")) + "." + flt
 }
 
 func appendPrettySymbol(str string) string {
