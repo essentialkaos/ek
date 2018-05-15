@@ -2,7 +2,7 @@
 
 ### 9.25.1
 
-* `[fmtutil]` Fixed bugs with processing NaN values
+* `[fmtutil]` Fixed various bugs with processing NaN values
 
 ### 9.25.0
 
