@@ -1,5 +1,8 @@
 ## Changelog
 
+### 9.25.2
+* `[fmtutil]` Improved size parser
+
 ### 9.25.1
 
 * `[fmtutil]` Fixed various bugs with processing NaN values
