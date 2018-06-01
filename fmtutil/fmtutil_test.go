@@ -67,9 +67,13 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 
 func (s *FmtUtilSuite) TestParseSize(c *C) {
 	c.Assert(ParseSize("1 MB"), Equals, uint64(1024*1024))
+	c.Assert(ParseSize("1 M"), Equals, uint64(1000*1000))
 	c.Assert(ParseSize("2tb"), Equals, uint64(2*1024*1024*1024*1024))
+	c.Assert(ParseSize("2t"), Equals, uint64(2*1000*1000*1000*1000))
 	c.Assert(ParseSize("5gB"), Equals, uint64(5*1024*1024*1024))
+	c.Assert(ParseSize("5g"), Equals, uint64(5*1000*1000*1000))
 	c.Assert(ParseSize("13kb"), Equals, uint64(13*1024))
+	c.Assert(ParseSize("13k"), Equals, uint64(13*1000))
 	c.Assert(ParseSize("512"), Equals, uint64(512))
 	c.Assert(ParseSize("kb"), Equals, uint64(0))
 	c.Assert(ParseSize("123!"), Equals, uint64(0))

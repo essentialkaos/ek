@@ -110,32 +110,10 @@ func PrettySize(i interface{}) string {
 
 // ParseSize parse pretty size and return size in bytes
 func ParseSize(size string) uint64 {
-	var (
-		mlt uint64
-		pfx string
-	)
-
 	ns := strings.ToLower(strings.Replace(size, " ", "", -1))
+	mlt, sfx := extractSizeInfo(ns)
 
-	switch {
-	case strings.Contains(ns, "tb"):
-		mlt = 1099511627776
-		pfx = "tb"
-	case strings.Contains(ns, "gb"):
-		mlt = 1073741824
-		pfx = "gb"
-	case strings.Contains(ns, "mb"):
-		mlt = 1048576
-		pfx = "mb"
-	case strings.Contains(ns, "kb"):
-		mlt = 1024
-		pfx = "kb"
-	case strings.Contains(ns, "b"):
-		mlt = 1
-		pfx = "b"
-	}
-
-	if pfx == "" {
+	if sfx == "" {
 		num, err := strconv.ParseUint(size, 10, 64)
 
 		if err != nil {
@@ -145,7 +123,8 @@ func ParseSize(size string) uint64 {
 		return num
 	}
 
-	numFlt, err := strconv.ParseFloat(strings.TrimRight(ns, pfx), 64)
+	ns = strings.TrimRight(ns, sfx)
+	numFlt, err := strconv.ParseFloat(ns, 64)
 
 	if err != nil {
 		return 0
@@ -290,4 +269,41 @@ func appendPrettySymbol(str string) string {
 	}
 
 	return rs
+}
+
+func extractSizeInfo(s string) (uint64, string) {
+	var mlt uint64
+	var sfx string
+
+	switch {
+	case strings.HasSuffix(s, "tb"):
+		mlt = 1024 * 1024 * 1024 * 1024
+		sfx = "tb"
+	case strings.HasSuffix(s, "t"):
+		mlt = 1000 * 1000 * 1000 * 1000
+		sfx = "t"
+	case strings.HasSuffix(s, "gb"):
+		mlt = 1024 * 1024 * 1024
+		sfx = "gb"
+	case strings.HasSuffix(s, "g"):
+		mlt = 1000 * 1000 * 1000
+		sfx = "g"
+	case strings.HasSuffix(s, "mb"):
+		mlt = 1024 * 1024
+		sfx = "mb"
+	case strings.HasSuffix(s, "m"):
+		mlt = 1000 * 1000
+		sfx = "m"
+	case strings.HasSuffix(s, "kb"):
+		mlt = 1024
+		sfx = "kb"
+	case strings.HasSuffix(s, "k"):
+		mlt = 1000
+		sfx = "k"
+	case strings.HasSuffix(s, "b"):
+		mlt = 1
+		sfx = "b"
+	}
+
+	return mlt, sfx
 }
