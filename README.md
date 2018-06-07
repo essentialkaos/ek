@@ -83,12 +83,17 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [kikky](https://github.com/gongled/kikky) - Small HTTP server and CLI utility which renders Kickstart configurations for Anaconda
 * [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
 * [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
+* [perfecto](https://github.com/essentialkaos/perfecto) - Tool for checking perfectly written RPM specs
+* [pkg.re Morpher](https://github.com/essentialkaos/pkgre) - Part of [pkg.re](https://pkg.re) service (_provides versioned URLs for Go_)
 * [RBInstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
-* [redis-cli-monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
-* [redis-latency-monitor](https://github.com/essentialkaos/redis-latency-monitor) - Tiny Redis client for latency measurement
+* [Redis Monitor Top](https://github.com/essentialkaos/redis-monitor-top) - Tiny Redis client for aggregating stats from MONITOR flow
+* [Redis CLI Monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
+* [Redis Latency Monitor](https://github.com/essentialkaos/redis-latency-monitor) - Tiny Redis client for latency measurement
 * [SHDoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
+* [Sonar](https://github.com/essentialkaos/sonar) - Utility for showing user Slack status in Atlassian Jira
 * [SourceIndex](https://github.com/essentialkaos/source-index) - Utility for generating an index for source archives
 * [SSLScan Client](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
+* [swptop](https://github.com/essentialkaos/swptop) - Simple utility for viewing swap consumption of processes
 * [Terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
 * [vgrepo](https://github.com/gongled/vgrepo) - Simple CLI tool for managing Vagrant repositories
 * [Yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
