@@ -1,6 +1,11 @@
 ## Changelog
 
+### 9.26.0
+
+* `[sliceutil]` Added method `Index` which return index of give item in slice
+
 ### 9.25.2
+
 * `[fmtutil]` Improved size parser
 
 ### 9.25.1
