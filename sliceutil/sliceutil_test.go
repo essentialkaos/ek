@@ -64,6 +64,14 @@ func (s *SliceSuite) TestError2String(c *C) {
 	c.Assert(result, DeepEquals, []string{"A", "B", "C"})
 }
 
+func (s *SliceSuite) TestIndex(c *C) {
+	source := []string{"1", "2", "3"}
+
+	c.Assert(Index(source, "2"), Equals, 1)
+	c.Assert(Index(source, "4"), Equals, -1)
+	c.Assert(Index([]string{}, "1"), Equals, -1)
+}
+
 func (s *SliceSuite) TestContains(c *C) {
 	source := []string{"1", "2", "3"}
 

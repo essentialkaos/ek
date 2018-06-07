@@ -58,19 +58,24 @@ func ErrorToString(data []error) []string {
 	return result
 }
 
-// Contains check if string slice contains some value
-func Contains(slice []string, value string) bool {
+// Index return index of given item in a slice or -1 otherwise
+func Index(slice []string, item string) int {
 	if len(slice) == 0 {
-		return false
+		return -1
 	}
 
-	for _, v := range slice {
-		if v == value {
-			return true
+	for i, v := range slice {
+		if v == item {
+			return i
 		}
 	}
 
-	return false
+	return -1
+}
+
+// Contains check if string slice contains some value
+func Contains(slice []string, value string) bool {
+	return Index(slice, value) != -1
 }
 
 // Exclude return slice without items in second given slice
