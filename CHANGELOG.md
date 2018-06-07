@@ -2,7 +2,7 @@
 
 ### 9.26.0
 
-* `[sliceutil]` Added method `Index` which return index of give item in slice
+* `[sliceutil]` Added method `Index` which return index of given item in slice
 
 ### 9.25.2
 
