@@ -41,6 +41,11 @@ func (s *TableSuite) TestSetHeaders(c *C) {
 	c.Assert(t.Headers, HasLen, 3)
 }
 
+func (s *TableSuite) TestRenderHeaders(c *C) {
+	t := NewTable("abc", "def")
+	t.RenderHeaders()
+}
+
 func (s *TableSuite) TestSetSizes(c *C) {
 	var t *Table
 
@@ -138,6 +143,11 @@ func (s *TableSuite) TestRender(c *C) {
 	c.Assert(t.Render(), NotNil)
 
 	HeaderCapitalize = false
+}
+
+func (s *TableSuite) TestPrintWithoutInit(c *C) {
+	t := NewTable()
+	t.Print("abcd", 1234)
 }
 
 func (s *TableSuite) TestAuxi(c *C) {

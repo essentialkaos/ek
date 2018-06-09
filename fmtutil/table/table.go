@@ -125,8 +125,12 @@ func (t *Table) Print(data ...interface{}) *Table {
 		return nil
 	}
 
-	if len(data) == 0 && len(t.Headers) == 0 && len(t.Sizes) == 0 {
+	if len(data) == 0 {
 		return t
+	}
+
+	if len(t.Headers) == 0 && len(t.Sizes) == 0 {
+		setColumnsSizes(t, len(data))
 	}
 
 	prepareRender(t)
@@ -333,6 +337,28 @@ func calculateColumnSizes(t *Table) {
 		}
 
 		fullSize += columnSize
+	}
+}
+
+// setColumnsSizes set columns sizes by number of columns
+func setColumnsSizes(t *Table, columns int) {
+	windowWidth := getWindowWidth()
+	t.columnSizes = make([]int, columns)
+
+	totalSize := 0
+	columnSize := (windowWidth / columns) - 3
+
+	for index := range t.columnSizes {
+		t.columnSizes[index] = columnSize
+		totalSize += columnSize
+
+		if index+1 == columns {
+			if totalSize+(columns*3) < windowWidth {
+				t.columnSizes[index]++
+			}
+
+			t.columnSizes[index]++
+		}
 	}
 }
 
