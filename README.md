@@ -1,4 +1,15 @@
-# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v9) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
+<p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
+
+<p align="center"><a href="#platform-support">Platform support</a> • <a href="#installation">Installation</a> • <a href="#sub-packages">Sub-packages</a> • <a href="#projects-with-ek">Projects with EK</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
+
+<p align="center">
+  <a href="https://godoc.org/pkg.re/essentialkaos/ek.v9"><img src="https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg"></a>
+  <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek"></a>
+  <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
+  <a href="https://travis-ci.org/essentialkaos/ek"><img src="https://travis-ci.org/essentialkaos/ek.svg"></a>
+  <a href='https://coveralls.io/github/essentialkaos/ek'><img src='https://coveralls.io/repos/github/essentialkaos/ek/badge.svg' alt='Coverage Status' /></a>
+  <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
+</p>
 
 Auxiliary packages for Go.
 
@@ -26,7 +37,7 @@ If you want to update `EK` to latest stable release, do:
 go get -u pkg.re/essentialkaos/ek.v9
 ```
 
-### Packages
+### Sub-packages
 
 * [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v9/color) - Package provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v9/cron) - Package provides methods for working with cron expressions
