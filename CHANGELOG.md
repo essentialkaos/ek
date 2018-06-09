@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.26.1
+
+* `[fmtutil/table]` Fixed bug with rendering data using not-configured table
+
 ### 9.26.0
 
 * `[sliceutil]` Added method `Index` which return index of given item in slice

@@ -1,4 +1,4 @@
-# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v9) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
+# `EK` [![GoDoc](https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg)](https://godoc.org/pkg.re/essentialkaos/ek.v9) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/ek)](https://goreportcard.com/report/github.com/essentialkaos/ek) [![codebeat badge](https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec)](https://codebeat.co/projects/github-com-essentialkaos-ek) [![Build Status](https://travis-ci.org/essentialkaos/ek.svg?branch=master)](https://travis-ci.org/essentialkaos/ek) [![Coverage Status](https://coveralls.io/repos/github/essentialkaos/ek/badge.svg?branch=develop)](https://coveralls.io/github/essentialkaos/ek?branch=develop) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
 
 Auxiliary packages for Go.
 
@@ -14,7 +14,7 @@ Before the initial install allows git to use redirects for [pkg.re](https://gith
 git config --global http.https://pkg.re.followRedirects true
 ```
 
-Make sure you have a working Go 1.8+ workspace ([instructions](https://golang.org/doc/install)), then:
+Make sure you have a working Go 1.8+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
 go get pkg.re/essentialkaos/ek.v9
