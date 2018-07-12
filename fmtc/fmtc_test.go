@@ -75,6 +75,8 @@ func (s *FormatSuite) TestReset(c *C) {
 
 func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint(""), Equals, "")
+	c.Assert(Sprint("{}"), Equals, "{}")
+	c.Assert(Sprint("{-}"), Equals, "{-}")
 	c.Assert(Sprint("W"), Equals, "W")
 	c.Assert(Sprint("{"), Equals, "{")
 	c.Assert(Sprint("{r"), Equals, "{r")
