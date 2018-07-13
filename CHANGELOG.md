@@ -1,5 +1,10 @@
 ## Changelog
 
+### 9.26.2
+
+* `[fmtc]` Fixed bug with parsing `{}` and `{-}` as valid color tags
+* `[fmtc]` Added fuzz testing
+
 ### 9.26.1
 
 * `[fmtutil/table]` Fixed bug with rendering data using not-configured table

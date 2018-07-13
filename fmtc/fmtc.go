@@ -407,6 +407,10 @@ func getSymbols(symbol string, count int) string {
 }
 
 func isValidTag(tag string) bool {
+	if tag == "" || tag == "-" {
+		return false
+	}
+
 	if isValidExtendedTag(tag) {
 		return true
 	}
