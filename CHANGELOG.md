@@ -3,6 +3,7 @@
 ### 9.26.3
 
 * `[strutil]` Optimization and improvements for `ReadField` method
+* `[strutil]` Code refactoring
 
 ### 9.26.2
 

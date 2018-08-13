@@ -36,7 +36,7 @@ func Concat(s ...string) string {
 }
 
 // Substr return substring from given string
-func Substr(s string, start int, end int) string {
+func Substr(s string, start, end int) string {
 	if s == "" {
 		return ""
 	}
