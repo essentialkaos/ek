@@ -135,7 +135,7 @@ func (s *StrUtilSuite) TestReadField(c *C) {
 	c.Assert(ReadField("abc 1234 DEF", 3, true), Equals, "")
 
 	c.Assert(ReadField("abc|||||1234||DEF", 1, true, "|"), Equals, "1234")
-	c.Assert(ReadField("abc+1234|DEF", 1, true, "|+"), Equals, "1234")
+	c.Assert(ReadField("abc+1234|DEF", 1, true, "|", "+"), Equals, "1234")
 	c.Assert(ReadField("abc::1234:::DEF:", 5, false, ":"), Equals, "DEF")
 }
 

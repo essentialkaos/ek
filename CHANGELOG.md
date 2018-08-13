@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.26.3
+
+* `[strutil]` Optimization and improvements for `ReadField` method
+
 ### 9.26.2
 
 * `[fmtc]` Fixed bug with parsing `{}` and `{-}` as valid color tags
