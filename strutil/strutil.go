@@ -20,7 +20,7 @@ var EllipsisSuffix = "..."
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var defaultFieldsSeparators = []string{" \t"}
+var defaultFieldsSeparators = []string{" ", "\t"}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -36,7 +36,7 @@ func Concat(s ...string) string {
 }
 
 // Substr return substring from given string
-func Substr(s string, start int, end int) string {
+func Substr(s string, start, end int) string {
 	if s == "" {
 		return ""
 	}
@@ -195,8 +195,8 @@ func ReadField(data string, index int, multiSep bool, separators ...string) stri
 
 MAINLOOP:
 	for i, r := range data {
-		for _, s := range separators[0] {
-			if r == s {
+		for _, s := range separators {
+			if r == rune(s[0]) {
 				if curIndex == index {
 					return data[startPointer:i]
 				}

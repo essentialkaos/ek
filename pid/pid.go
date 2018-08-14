@@ -79,7 +79,7 @@ func Get(name string) int {
 		return -1
 	}
 
-	pid, err := strconv.Atoi(strings.TrimRight(string(data[:]), "\n"))
+	pid, err := strconv.Atoi(strings.TrimRight(string(data), "\n"))
 
 	if err != nil {
 		return -1

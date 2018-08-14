@@ -58,11 +58,11 @@ func validatorEmpty(config *Config, prop string, value interface{}) error {
 }
 
 func validatorNotContains(config *Config, prop string, value interface{}) error {
-	switch value.(type) {
+	switch u := value.(type) {
 	case []string:
 		currentValue := config.GetS(prop)
 
-		for _, v := range value.([]string) {
+		for _, v := range u {
 			if v == currentValue {
 				return nil
 			}

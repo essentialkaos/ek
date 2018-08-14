@@ -38,7 +38,7 @@ func Run(command string, args ...string) error {
 }
 
 // RunAsUser run command as some user
-func RunAsUser(user, logFile string, command string, args ...string) error {
+func RunAsUser(user, logFile, command string, args ...string) error {
 	var logFd *os.File
 	var err error
 

@@ -79,7 +79,7 @@ func Contains(slice []string, value string) bool {
 }
 
 // Exclude return slice without items in second given slice
-func Exclude(slice []string, items []string) []string {
+func Exclude(slice, items []string) []string {
 	var result []string
 
 LOOP:

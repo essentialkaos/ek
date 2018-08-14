@@ -24,12 +24,13 @@ func BounceOut(t, b, c, d float64) float64 {
 
 	t /= d
 
-	if t < 1/2.75 {
+	switch {
+	case t < 1/2.75:
 		return c*(7.5625*t*t) + b
-	} else if t < 2/2.75 {
+	case t < 2/2.75:
 		t -= 1.5 / 2.75
 		return c*(7.5625*t*t+0.75) + b
-	} else if t < 2.5/2.75 {
+	case t < 2.5/2.75:
 		t -= 2.25 / 2.75
 		return c*(7.5625*t*t+0.9375) + b
 	}

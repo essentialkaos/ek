@@ -421,43 +421,43 @@ func getTime() string {
 }
 
 func convertMinLevelValue(level interface{}) (int, error) {
-	switch level.(type) {
+	switch u := level.(type) {
 
 	case int:
-		return level.(int), nil
+		return int(u), nil
 
 	case int8:
-		return int(level.(int8)), nil
+		return int(u), nil
 
 	case int16:
-		return int(level.(int16)), nil
+		return int(u), nil
 
 	case int32:
-		return int(level.(int32)), nil
+		return int(u), nil
 
 	case int64:
-		return int(level.(int64)), nil
+		return int(u), nil
 
 	case uint:
-		return int(level.(uint)), nil
+		return int(u), nil
 
 	case uint8:
-		return int(level.(uint8)), nil
+		return int(u), nil
 
 	case uint16:
-		return int(level.(uint16)), nil
+		return int(u), nil
 
 	case uint32:
-		return int(level.(uint32)), nil
+		return int(u), nil
 
 	case uint64:
-		return int(level.(uint64)), nil
+		return int(u), nil
 
 	case float32:
-		return int(level.(float32)), nil
+		return int(u), nil
 
 	case float64:
-		return int(level.(float64)), nil
+		return int(u), nil
 
 	case string:
 		code, ok := logLevelsNames[strings.ToLower(level.(string))]
