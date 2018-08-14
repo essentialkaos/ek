@@ -3,7 +3,19 @@
 ### 9.26.3
 
 * `[strutil]` Optimization and improvements for `ReadField` method
+* `[easing]` Code refactoring
+* `[fmtutil]` Code refactoring
+* `[knf]` Code refactoring
+* `[log]` Code refactoring
+* `[options]` Code refactoring
+* `[pid]` Code refactoring
+* `[req]` Code refactoring
+* `[sliceutil]` Code refactoring
 * `[strutil]` Code refactoring
+* `[system]` Code refactoring
+* `[terminal]` Code refactoring
+* `[timeutil]` Code refactoring
+* `[uuid]` Code refactoring
 
 ### 9.26.2
 

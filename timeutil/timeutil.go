@@ -39,44 +39,46 @@ func PrettyDuration(d interface{}) string {
 		duration int
 	)
 
-	switch d.(type) {
+	switch u := d.(type) {
 	case time.Duration:
-		duration = int(d.(time.Duration).Seconds())
+		duration = int(u.Seconds())
 	case int8:
-		duration = int(d.(int8))
+		duration = int(u)
 	case int16:
-		duration = int(d.(int16))
+		duration = int(u)
 	case int32:
-		duration = int(d.(int32))
+		duration = int(u)
 	case int64:
-		duration = int(d.(int64))
+		duration = int(u)
 	case int:
-		duration = d.(int)
+		duration = u
 	default:
 		return "Wrong duration value"
 	}
 
+MAINLOOP:
 	for i := 0; i < 5; i++ {
-		if duration >= _WEEK {
+		switch {
+		case duration >= _WEEK:
 			weeks := duration / _WEEK
 			duration = duration % _WEEK
 			result = append(result, pluralize.PluralizeSpecial(pluralize.En, weeks, "week", "weeks"))
-		} else if duration >= _DAY {
+		case duration >= _DAY:
 			days := duration / _DAY
 			duration = duration % _DAY
 			result = append(result, pluralize.PluralizeSpecial(pluralize.En, days, "day", "days"))
-		} else if duration >= _HOUR {
+		case duration >= _HOUR:
 			hours := duration / _HOUR
 			duration = duration % _HOUR
 			result = append(result, pluralize.PluralizeSpecial(pluralize.En, hours, "hour", "hours"))
-		} else if duration >= _MINUTE {
+		case duration >= _MINUTE:
 			minutes := duration / _MINUTE
 			duration = duration % _MINUTE
 			result = append(result, pluralize.PluralizeSpecial(pluralize.En, minutes, "minute", "minutes"))
-		} else if duration >= 1 {
+		case duration >= 1:
 			result = append(result, pluralize.PluralizeSpecial(pluralize.En, duration, "second", "seconds"))
-			break
-		} else if duration <= 0 && len(result) == 0 {
+			break MAINLOOP
+		case duration <= 0 && len(result) == 0:
 			return "< 1 second"
 		}
 	}
@@ -401,11 +403,14 @@ func getLongMonth(m time.Month) string {
 func getAMPMHour(d time.Time) int {
 	h := d.Hour()
 
-	if h == 0 || h == 12 {
+	switch {
+	case h == 0 || h == 12:
 		return 12
-	} else if h < 12 {
+
+	case h < 12:
 		return h
-	} else {
+
+	default:
 		return h - 12
 	}
 }

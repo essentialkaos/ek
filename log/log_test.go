@@ -224,7 +224,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
 
-	dataSlice := strings.Split(string(data[:]), "\n")
+	dataSlice := strings.Split(string(data), "\n")
 
 	c.Assert(len(dataSlice), Equals, 17)
 
@@ -292,7 +292,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
 
-	dataSlice := strings.Split(string(data[:]), "\n")
+	dataSlice := strings.Split(string(data), "\n")
 
 	c.Assert(len(dataSlice), Equals, 19)
 
@@ -369,7 +369,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
 
-	dataSlice := strings.Split(string(data[:]), "\n")
+	dataSlice := strings.Split(string(data), "\n")
 
 	c.Assert(len(dataSlice), Equals, 19)
 

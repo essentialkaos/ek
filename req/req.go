@@ -410,12 +410,12 @@ func (q Query) String() string {
 	var result string
 
 	for k, v := range q {
-		switch v.(type) {
+		switch u := v.(type) {
 		case string:
 			if v == "" {
 				result += k + "&"
 			} else {
-				result += k + "=" + url.QueryEscape(v.(string)) + "&"
+				result += k + "=" + url.QueryEscape(u) + "&"
 			}
 		case nil:
 			result += k + "&"
@@ -605,15 +605,15 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, e
 }
 
 func getBodyReader(body interface{}) (io.Reader, error) {
-	switch body.(type) {
+	switch u := body.(type) {
 	case nil:
 		return nil, nil
 	case string:
-		return strings.NewReader(body.(string)), nil
+		return strings.NewReader(u), nil
 	case io.Reader:
-		return body.(io.Reader), nil
+		return u, nil
 	case []byte:
-		return bytes.NewReader(body.([]byte)), nil
+		return bytes.NewReader(u), nil
 	default:
 		jsonBody, err := json.MarshalIndent(body, "", "  ")
 

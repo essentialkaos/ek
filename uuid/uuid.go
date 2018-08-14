@@ -48,10 +48,10 @@ func GenUUID5(ns []byte, name string) string {
 	uuid := make([]byte, 16)
 
 	hash := sha1.New()
-	hash.Write(ns[:])
+	hash.Write(ns)
 	hash.Write([]byte(name))
 
-	copy(uuid[:], hash.Sum(nil))
+	copy(uuid, hash.Sum(nil))
 
 	uuid[6] = (uuid[6] & 0x0f) | 0x50
 	uuid[8] = (uuid[8] & 0x3f) | 0x80

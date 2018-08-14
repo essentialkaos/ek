@@ -244,7 +244,7 @@ func getCurrentUserName() (string, error) {
 		return "", ErrCantParseIdOutput
 	}
 
-	username := strings.TrimRight(string(data[:]), "\n")
+	username := strings.TrimRight(string(data), "\n")
 
 	return username, nil
 }

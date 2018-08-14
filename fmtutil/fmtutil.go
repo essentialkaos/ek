@@ -71,21 +71,21 @@ func PrettyPerc(i float64) string {
 func PrettySize(i interface{}) string {
 	var f float64
 
-	switch i.(type) {
+	switch u := i.(type) {
 	case int:
-		f = float64(i.(int))
+		f = float64(u)
 	case int32:
-		f = float64(i.(int32))
+		f = float64(u)
 	case int64:
-		f = float64(i.(int64))
+		f = float64(u)
 	case uint:
-		f = float64(i.(uint))
+		f = float64(u)
 	case uint32:
-		f = float64(i.(uint32))
+		f = float64(u)
 	case uint64:
-		f = float64(i.(uint64))
+		f = float64(u)
 	case float32:
-		f = float64(i.(float32))
+		f = float64(u)
 	case float64:
 		f = i.(float64)
 	}

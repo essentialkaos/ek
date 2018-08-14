@@ -166,7 +166,7 @@ func getAnswerTitle(title, defaultAnswer string) string {
 	}
 }
 
-func readUserInput(title string, nonEmpty bool, private bool) (string, error) {
+func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	if title != "" {
 		fmtc.Println(colorozeTitle(title))
 	}
