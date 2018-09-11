@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://godoc.org/pkg.re/essentialkaos/ek.v9"><img src="https://godoc.org/pkg.re/essentialkaos/ek.v9?status.svg"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek"></a>
+<a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fessentialkaos%2Fek?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fessentialkaos%2Fek.svg?type=shield"/></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://travis-ci.org/essentialkaos/ek"><img src="https://travis-ci.org/essentialkaos/ek.svg"></a>
   <a href='https://coveralls.io/github/essentialkaos/ek'><img src='https://coveralls.io/repos/github/essentialkaos/ek/badge.svg' alt='Coverage Status' /></a>
@@ -125,3 +126,6 @@ Before contributing to this project please read our [Contributing Guidelines](ht
 [EKOL](https://essentialkaos.com/ekol)
 
 <p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.st/ekgh.svg"/></a></p>
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fessentialkaos%2Fek.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fessentialkaos%2Fek?ref=badge_large)
