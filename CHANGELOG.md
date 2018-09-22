@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.27.0
+
+* `[system/sensors]` Added package for collecting sensors data
+
 ### 9.26.3
 
 * `[strutil]` Optimization and improvements for `ReadField` method
