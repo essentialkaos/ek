@@ -118,8 +118,8 @@ func (s *TempSensor) String() string {
 
 func hasSensorsData(dir string) bool {
 	switch {
-	case fsutil.IsExist(dir + "/temp1_label"),
-		fsutil.IsExist(dir + "/temp2_label"):
+	case fsutil.IsExist(dir + "/temp1_input"),
+		fsutil.IsExist(dir + "/temp2_input"):
 		return true
 	}
 
@@ -162,7 +162,7 @@ func collectTempInfo(dir string) ([]*TempSensor, error) {
 	for i := 1; i < 128; i++ {
 		filePrefix := dir + "/temp" + strconv.Itoa(i)
 
-		if !fsutil.IsExist(filePrefix + "_label") {
+		if !fsutil.IsExist(filePrefix + "_input") {
 			break
 		}
 
@@ -183,10 +183,6 @@ func getSensorInfo(filePrefix string) (*TempSensor, error) {
 
 	sensor := &TempSensor{}
 	sensor.Name, err = readSensorLabel(filePrefix + "_label")
-
-	if err != nil {
-		return nil, err
-	}
 
 	sensor.Cur, err = readTempSensorValue(filePrefix + "_input")
 
