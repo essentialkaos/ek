@@ -3,6 +3,7 @@
 ### 9.27.0
 
 * `[system/sensors]` Added package for collecting sensors data
+* `[strutil]` Code refactoring
 
 ### 9.26.3
 

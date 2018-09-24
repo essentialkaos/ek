@@ -35,8 +35,8 @@ func Concat(s ...string) string {
 	return buffer.String()
 }
 
-// Substr return substring from given string
-func Substr(s string, start, end int) string {
+// Substr returns substring from given string
+func Substr(s string, start, length int) string {
 	if s == "" {
 		return ""
 	}
@@ -49,7 +49,7 @@ func Substr(s string, start, end int) string {
 			startIndex = i
 		}
 
-		if count == end {
+		if count == length {
 			return s[startIndex:i]
 		}
 
@@ -66,7 +66,7 @@ func Substr(s string, start, end int) string {
 	return s
 }
 
-// Len return number of symbols in string
+// Len returns number of symbols in string
 func Len(s string) int {
 	if s == "" {
 		return 0
@@ -90,7 +90,7 @@ func Ellipsis(s string, maxSize int) string {
 	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
-// Head return n first symbols from given string
+// Head returns n first symbols from given string
 func Head(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -105,7 +105,7 @@ func Head(s string, n int) string {
 	return Substr(s, 0, n)
 }
 
-// Tail return n last symbols from given string
+// Tail returns n last symbols from given string
 func Tail(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -120,7 +120,7 @@ func Tail(s string, n int) string {
 	return Substr(s, l-n, l)
 }
 
-// PrefixSize return prefix size
+// PrefixSize returns prefix size
 func PrefixSize(str string, prefix rune) int {
 	if str == "" {
 		return 0
@@ -139,7 +139,7 @@ func PrefixSize(str string, prefix rune) int {
 	return result
 }
 
-// SuffixSize return suffix size
+// SuffixSize returns suffix size
 func SuffixSize(str string, suffix rune) int {
 	if str == "" {
 		return 0
@@ -158,7 +158,7 @@ func SuffixSize(str string, suffix rune) int {
 	return result
 }
 
-// ReplaceAll replace all symbols in given string
+// ReplaceAll replaces all symbols in given string
 func ReplaceAll(source, from, to string) string {
 	if source == "" {
 		return ""
@@ -181,7 +181,7 @@ SOURCELOOP:
 	return result
 }
 
-// ReadField read field with given index from data
+// ReadField reads field with given index from data
 func ReadField(data string, index int, multiSep bool, separators ...string) string {
 	if data == "" || index < 0 {
 		return ""
