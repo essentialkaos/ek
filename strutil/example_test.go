@@ -28,10 +28,17 @@ func ExampleEllipsis() {
 }
 
 func ExampleSubstr() {
-	fmt.Println(Substr("This is funny message", 8, 13))
+	fmt.Println(Substr("This is funny message", 8, 5))
 
 	// Output:
 	// funny
+}
+
+func ExampleSubstring() {
+	fmt.Println(Substr("This is funny message", 8, 13))
+
+	// Output:
+	// funny message
 }
 
 func ExampleLen() {

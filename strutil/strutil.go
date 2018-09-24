@@ -35,10 +35,15 @@ func Concat(s ...string) string {
 	return buffer.String()
 }
 
-// Substr returns substring from given string
+// Substr returns the part of a string between the start index and a number
+// of characters after it
 func Substr(s string, start, length int) string {
 	if s == "" {
 		return ""
+	}
+
+	if start < 0 {
+		start = 0
 	}
 
 	var count int
@@ -49,7 +54,47 @@ func Substr(s string, start, length int) string {
 			startIndex = i
 		}
 
-		if count == length {
+		if count-start == length {
+			return s[startIndex:i]
+		}
+
+		count++
+	}
+
+	switch {
+	case count < start:
+		return ""
+	case startIndex != 0:
+		return s[startIndex:]
+	}
+
+	return s
+}
+
+// Substring returns the part of the string between the start and end
+func Substring(s string, start, end int) string {
+	if s == "" {
+		return ""
+	}
+
+	if start < 0 {
+		start = 0
+	}
+
+	if end < 0 {
+		end = start
+		start = 0
+	}
+
+	var count int
+	var startIndex int
+
+	for i := range s {
+		if count == start {
+			startIndex = i
+		}
+
+		if count == end {
 			return s[startIndex:i]
 		}
 
