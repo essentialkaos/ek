@@ -4,7 +4,9 @@
 
 * `[system/sensors]` Added package for collecting sensors data
 * `[strutil]` Added method `Substring` for safe substring extraction
+* `[strutil]` Added method `Extract` for safe substring extraction
 * `[strutil]` Fixed tests and example for `Substr` method
+* `[strutil]` Improved tests
 * `[strutil]` Code refactoring
 
 ### 9.26.3
