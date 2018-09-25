@@ -1,4 +1,4 @@
-// Package sensors collect sensors information
+// Package sensors provide methods for collecting sensors information
 package sensors
 
 // ////////////////////////////////////////////////////////////////////////////////// //
