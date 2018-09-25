@@ -57,6 +57,13 @@ func (s *StrUtilSuite) TestSubstring(c *C) {
 	c.Assert(Substring("Пример", -1, 2), Equals, "Пр")
 }
 
+func (s *StrUtilSuite) TestExtract(c *C) {
+	c.Assert(Extract("", 1, 10), Equals, "")
+	c.Assert(Extract("test1234TEST", -10, 4), Equals, "test")
+	c.Assert(Extract("test1234TEST", 8, 100), Equals, "TEST")
+	c.Assert(Extract("test1234TEST", 4, 8), Equals, "1234")
+}
+
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
 	for i := 0; i < c.N; i++ {
 		Substr("test1234TEST", 4, 8)

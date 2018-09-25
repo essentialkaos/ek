@@ -36,7 +36,7 @@ func Concat(s ...string) string {
 }
 
 // Substr returns the part of a string between the start index and a number
-// of characters after it
+// of characters after it (unicode supported)
 func Substr(s string, start, length int) string {
 	if s == "" {
 		return ""
@@ -55,6 +55,7 @@ func Substr(s string, start, length int) string {
 		}
 
 		if count-start == length {
+
 			return s[startIndex:i]
 		}
 
@@ -71,7 +72,7 @@ func Substr(s string, start, length int) string {
 	return s
 }
 
-// Substring returns the part of the string between the start and end
+// Substring returns the part of the string between the start and end (unicode supported)
 func Substring(s string, start, end int) string {
 	if s == "" {
 		return ""
@@ -111,7 +112,24 @@ func Substring(s string, start, end int) string {
 	return s
 }
 
-// Len returns number of symbols in string
+// Extract extracts a substring safely (unicode NOT supported)
+func Extract(s string, start, end int) string {
+	if s == "" || end < start {
+		return ""
+	}
+
+	if start < 0 {
+		start = 0
+	}
+
+	if end > len(s) {
+		end = len(s)
+	}
+
+	return s[start:end]
+}
+
+// Len returns number of symbols in string (unicode supported)
 func Len(s string) int {
 	if s == "" {
 		return 0
@@ -126,7 +144,7 @@ func Len(s string) int {
 	return count
 }
 
-// Ellipsis trims given string
+// Ellipsis trims given string (unicode supported)
 func Ellipsis(s string, maxSize int) string {
 	if Len(s) <= maxSize {
 		return s
@@ -135,7 +153,7 @@ func Ellipsis(s string, maxSize int) string {
 	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
-// Head returns n first symbols from given string
+// Head returns n first symbols from given string (unicode supported)
 func Head(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -150,7 +168,7 @@ func Head(s string, n int) string {
 	return Substr(s, 0, n)
 }
 
-// Tail returns n last symbols from given string
+// Tail returns n last symbols from given string (unicode supported)
 func Tail(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
