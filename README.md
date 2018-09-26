@@ -93,7 +93,6 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
 * [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
 * [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
-* [kikky](https://github.com/gongled/kikky) - Small HTTP server and CLI utility which renders Kickstart configurations for Anaconda
 * [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
 * [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [perfecto](https://github.com/essentialkaos/perfecto) - Tool for checking perfectly written RPM specs
