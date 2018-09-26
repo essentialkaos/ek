@@ -35,10 +35,55 @@ func Concat(s ...string) string {
 	return buffer.String()
 }
 
-// Substr return substring from given string
-func Substr(s string, start, end int) string {
+// Substr returns the part of a string between the start index and a number
+// of characters after it (unicode supported)
+func Substr(s string, start, length int) string {
+	if s == "" || length <= 0 {
+		return ""
+	}
+
+	if start < 0 {
+		start = 0
+	}
+
+	var count int
+	var startIndex int
+
+	for i := range s {
+		if count == start {
+			startIndex = i
+		}
+
+		if count-start == length {
+			return s[startIndex:i]
+		}
+
+		count++
+	}
+
+	switch {
+	case count < start:
+		return ""
+	case startIndex != 0:
+		return s[startIndex:]
+	}
+
+	return s
+}
+
+// Substring returns the part of the string between the start and end (unicode supported)
+func Substring(s string, start, end int) string {
 	if s == "" {
 		return ""
+	}
+
+	if start < 0 {
+		start = 0
+	}
+
+	if end < 0 {
+		end = start
+		start = 0
 	}
 
 	var count int
@@ -66,7 +111,24 @@ func Substr(s string, start, end int) string {
 	return s
 }
 
-// Len return number of symbols in string
+// Extract extracts a substring safely (unicode NOT supported)
+func Extract(s string, start, end int) string {
+	if s == "" || end < start {
+		return ""
+	}
+
+	if start < 0 {
+		start = 0
+	}
+
+	if end > len(s) {
+		end = len(s)
+	}
+
+	return s[start:end]
+}
+
+// Len returns number of symbols in string (unicode supported)
 func Len(s string) int {
 	if s == "" {
 		return 0
@@ -81,7 +143,7 @@ func Len(s string) int {
 	return count
 }
 
-// Ellipsis trims given string
+// Ellipsis trims given string (unicode supported)
 func Ellipsis(s string, maxSize int) string {
 	if Len(s) <= maxSize {
 		return s
@@ -90,7 +152,7 @@ func Ellipsis(s string, maxSize int) string {
 	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
-// Head return n first symbols from given string
+// Head returns n first symbols from given string (unicode supported)
 func Head(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -105,7 +167,7 @@ func Head(s string, n int) string {
 	return Substr(s, 0, n)
 }
 
-// Tail return n last symbols from given string
+// Tail returns n last symbols from given string (unicode supported)
 func Tail(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -120,7 +182,7 @@ func Tail(s string, n int) string {
 	return Substr(s, l-n, l)
 }
 
-// PrefixSize return prefix size
+// PrefixSize returns prefix size
 func PrefixSize(str string, prefix rune) int {
 	if str == "" {
 		return 0
@@ -139,7 +201,7 @@ func PrefixSize(str string, prefix rune) int {
 	return result
 }
 
-// SuffixSize return suffix size
+// SuffixSize returns suffix size
 func SuffixSize(str string, suffix rune) int {
 	if str == "" {
 		return 0
@@ -158,7 +220,7 @@ func SuffixSize(str string, suffix rune) int {
 	return result
 }
 
-// ReplaceAll replace all symbols in given string
+// ReplaceAll replaces all symbols in given string
 func ReplaceAll(source, from, to string) string {
 	if source == "" {
 		return ""
@@ -181,7 +243,7 @@ SOURCELOOP:
 	return result
 }
 
-// ReadField read field with given index from data
+// ReadField reads field with given index from data
 func ReadField(data string, index int, multiSep bool, separators ...string) string {
 	if data == "" || index < 0 {
 		return ""

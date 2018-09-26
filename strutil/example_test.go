@@ -28,17 +28,31 @@ func ExampleEllipsis() {
 }
 
 func ExampleSubstr() {
-	fmt.Println(Substr("This is funny message", 8, 13))
+	fmt.Println(Substr("Пример 例子 例 მაგალითად", 7, 2))
+
+	// Output:
+	// 例子
+}
+
+func ExampleSubstring() {
+	fmt.Println(Substring("Пример 例子 例 მაგალითად", 7, 9))
+
+	// Output:
+	// 例子
+}
+
+func ExampleExtract() {
+	fmt.Println(Extract("This is funny message", 8, 13))
 
 	// Output:
 	// funny
 }
 
 func ExampleLen() {
-	fmt.Println(Len("Пример 例子 例"))
+	fmt.Println(Len("Пример 例子 例 მაგალითად"))
 
 	// Output:
-	// 11
+	// 21
 }
 
 func ExampleHead() {

@@ -39,9 +39,29 @@ func (s *StrUtilSuite) TestSubstr(c *C) {
 	c.Assert(Substr("test1234TEST", 30, 32), Equals, "")
 	c.Assert(Substr("test1234TEST", 0, 8), Equals, "test1234")
 	c.Assert(Substr("test1234TEST", 0, 999), Equals, "test1234TEST")
-	c.Assert(Substr("test1234TEST", 4, 8), Equals, "1234")
+	c.Assert(Substr("test1234TEST", 4, 4), Equals, "1234")
 	c.Assert(Substr("test1234TEST", 8, 16), Equals, "TEST")
 	c.Assert(Substr("test1234TEST", -1, 4), Equals, "test")
+	c.Assert(Substr("简单的消息", -1, 2), Equals, "简单")
+	c.Assert(Substr("Пример", -1, 2), Equals, "Пр")
+}
+
+func (s *StrUtilSuite) TestSubstring(c *C) {
+	c.Assert(Substring("", 1, 2), Equals, "")
+	c.Assert(Substring("test1234TEST", 30, 32), Equals, "")
+	c.Assert(Substring("test1234TEST", 0, 999), Equals, "test1234TEST")
+	c.Assert(Substring("test1234TEST", 4, 8), Equals, "1234")
+	c.Assert(Substring("test1234TEST", 8, 100), Equals, "TEST")
+	c.Assert(Substring("test1234TEST", 6, -10), Equals, "test12")
+	c.Assert(Substring("简单的消息", -1, 2), Equals, "简单")
+	c.Assert(Substring("Пример", -1, 2), Equals, "Пр")
+}
+
+func (s *StrUtilSuite) TestExtract(c *C) {
+	c.Assert(Extract("", 1, 10), Equals, "")
+	c.Assert(Extract("test1234TEST", -10, 4), Equals, "test")
+	c.Assert(Extract("test1234TEST", 8, 100), Equals, "TEST")
+	c.Assert(Extract("test1234TEST", 4, 8), Equals, "1234")
 }
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {

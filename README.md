@@ -75,6 +75,7 @@ go get -u pkg.re/essentialkaos/ek.v9
 * [`system/exec`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for executing commands
 * [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for getting information about active processes
 * [`system/procname`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/process) - Package provides methods for changing process name in the process tree
+* [`system/sensors`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system/sensors) - Package sensors provide methods for collecting sensors information
 * [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v9/system) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal) - Package provides methods for working with user input
 * [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v9/terminal/window) - Package provides methods for working terminal window
