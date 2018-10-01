@@ -33,8 +33,8 @@ var hz = 0.0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetFSInfo return info about mounted filesystems
-func GetFSInfo() (map[string]*FSInfo, error) {
+// GetFSUsage return info about mounted filesystems
+func GetFSUsage() (map[string]*FSUsage, error) {
 	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -46,7 +46,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 	r := bufio.NewReader(fd)
 	s := bufio.NewScanner(r)
 
-	info := make(map[string]*FSInfo)
+	info := make(map[string]*FSUsage)
 
 	for s.Scan() {
 		text := s.Text()
@@ -57,7 +57,7 @@ func GetFSInfo() (map[string]*FSInfo, error) {
 
 		device := strutil.ReadField(text, 0, true)
 		path := strutil.ReadField(text, 1, true)
-		fsInfo := &FSInfo{Type: strutil.ReadField(text, 2, true)}
+		fsInfo := &FSUsage{Type: strutil.ReadField(text, 2, true)}
 
 		stats := &syscall.Statfs_t{}
 

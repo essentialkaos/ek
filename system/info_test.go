@@ -117,7 +117,7 @@ func (s *SystemSuite) TestCPU(c *C) {
 	c1 := &CPUStats{10, 10, 10, 2, 2, 2, 2, 0, 34, 32}
 	c2 := &CPUStats{12, 12, 12, 3, 3, 3, 3, 0, 48, 32}
 
-	cpuInfo := CalculateCPUInfo(c1, c2)
+	cpuInfo := CalculateCPUUsage(c1, c2)
 
 	c.Assert(cpuInfo, NotNil)
 	c.Assert(cpuInfo.System, Equals, 14.285714285714285)
@@ -148,7 +148,7 @@ func (s *SystemSuite) TestCPU(c *C) {
 func (s *SystemSuite) TestMemory(c *C) {
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal:       32653288 kB\nMemFree:          531664 kB\nMemAvailable:   31243272 kB\nBuffers:            7912 kB\nCached:         28485940 kB\nSwapCached:          889 kB\nActive:         15379084 kB\nInactive:       13340308 kB\nActive(anon):     143408 kB\nInactive(anon):   247048 kB\nActive(file):   15235676 kB\nInactive(file): 13093260 kB\nUnevictable:          16 kB\nMlocked:              16 kB\nSwapTotal:       4194300 kB\nSwapFree:        2739454 kB\nDirty:              6744 kB\nWriteback:             0 kB\nAnonPages:        225604 kB\nMapped:            46404 kB\nShmem:            164916 kB\nSlab:            3021828 kB\nSReclaimable:    2789624 kB\nSUnreclaim:       232204 kB\nKernelStack:        3696 kB\n")
 
-	mem, err := GetMemInfo()
+	mem, err := GetMemUsage()
 
 	c.Assert(err, IsNil)
 	c.Assert(mem, NotNil)
@@ -170,21 +170,21 @@ func (s *SystemSuite) TestMemory(c *C) {
 
 	procMemInfoFile = ""
 
-	mem, err = GetMemInfo()
+	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "")
 
-	mem, err = GetMemInfo()
+	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal: ABC! kB")
 
-	mem, err = GetMemInfo()
+	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
@@ -241,7 +241,7 @@ func (s *SystemSuite) TestNet(c *C) {
 }
 
 func (s *SystemSuite) TestFS(c *C) {
-	fs, err := GetFSInfo()
+	fs, err := GetFSUsage()
 
 	c.Assert(err, IsNil)
 	c.Assert(fs, NotNil)
@@ -253,21 +253,21 @@ func (s *SystemSuite) TestFS(c *C) {
 
 	mtabFile = ""
 
-	fs, err = GetFSInfo()
+	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
 
 	mtabFile = s.CreateTestFile(c, "/CORRUPTED")
 
-	fs, err = GetFSInfo()
+	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
 
 	mtabFile = s.CreateTestFile(c, "/CORRUPTED 0 0 0")
 
-	fs, err = GetFSInfo()
+	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
@@ -286,7 +286,7 @@ func (s *SystemSuite) TestFS(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(stats, IsNil)
 
-	fs, err = GetFSInfo()
+	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
@@ -302,7 +302,7 @@ func (s *SystemSuite) TestFS(c *C) {
 
 	mtabFile = s.CreateTestFile(c, "/dev/abc1 / ext4 rw 0 0")
 
-	fs, err = GetFSInfo()
+	fs, err = GetFSUsage()
 
 	c.Assert(err, IsNil)
 	c.Assert(fs, NotNil)
