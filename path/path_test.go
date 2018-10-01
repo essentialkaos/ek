@@ -8,7 +8,7 @@ package path
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"pkg.re/essentialkaos/ek.v9/env"
+	"pkg.re/essentialkaos/ek.v10/env"
 	"testing"
 
 	. "pkg.re/check.v1"

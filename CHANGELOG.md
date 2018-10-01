@@ -1,5 +1,7 @@
 ## Changelog
 
+---
+
 ### 9.28.0
 
 * `[system]` Improved memory usage calculation

@@ -12,10 +12,10 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/fmtc"
-	"pkg.re/essentialkaos/ek.v9/mathutil"
-	"pkg.re/essentialkaos/ek.v9/strutil"
-	"pkg.re/essentialkaos/ek.v9/terminal/window"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/mathutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v10/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

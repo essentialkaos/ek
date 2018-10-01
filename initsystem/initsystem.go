@@ -18,8 +18,8 @@ import (
 	"strings"
 	"syscall"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/fsutil"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
