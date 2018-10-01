@@ -146,10 +146,27 @@ func (s *SystemSuite) TestCPU(c *C) {
 }
 
 func (s *SystemSuite) TestMemory(c *C) {
+	procMemInfoFile = s.CreateTestFile(c, "MemTotal:       32653288 kB\nMemFree:          531664 kB\nMemAvailable:   31243272 kB\nBuffers:            7912 kB\nCached:         28485940 kB\nSwapCached:          889 kB\nActive:         15379084 kB\nInactive:       13340308 kB\nActive(anon):     143408 kB\nInactive(anon):   247048 kB\nActive(file):   15235676 kB\nInactive(file): 13093260 kB\nUnevictable:          16 kB\nMlocked:              16 kB\nSwapTotal:       4194300 kB\nSwapFree:        2739454 kB\nDirty:              6744 kB\nWriteback:             0 kB\nAnonPages:        225604 kB\nMapped:            46404 kB\nShmem:            164916 kB\nSlab:            3021828 kB\nSReclaimable:    2789624 kB\nSUnreclaim:       232204 kB\nKernelStack:        3696 kB\n")
+
 	mem, err := GetMemInfo()
 
 	c.Assert(err, IsNil)
 	c.Assert(mem, NotNil)
+	c.Assert(mem.MemTotal, Equals, uint64(1024*32653288))
+	c.Assert(mem.MemFree, Equals, uint64(1024*31650224))
+	c.Assert(mem.MemUsed, Equals, uint64(1024*1003064))
+	c.Assert(mem.Buffers, Equals, uint64(1024*7912))
+	c.Assert(mem.Cached, Equals, uint64(1024*28485940))
+	c.Assert(mem.Active, Equals, uint64(1024*15379084))
+	c.Assert(mem.Inactive, Equals, uint64(1024*13340308))
+	c.Assert(mem.SwapTotal, Equals, uint64(1024*4194300))
+	c.Assert(mem.SwapFree, Equals, uint64(1024*2739454))
+	c.Assert(mem.SwapUsed, Equals, uint64(1024*1454846))
+	c.Assert(mem.SwapCached, Equals, uint64(1024*889))
+	c.Assert(mem.Dirty, Equals, uint64(1024*6744))
+	c.Assert(mem.Shmem, Equals, uint64(1024*164916))
+	c.Assert(mem.Slab, Equals, uint64(1024*3021828))
+	c.Assert(mem.SReclaimable, Equals, uint64(1024*2789624))
 
 	procMemInfoFile = ""
 

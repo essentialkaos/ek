@@ -1,5 +1,11 @@
 ## Changelog
 
+### 9.28.0
+
+* `[system]` Improved memory usage calculation
+* `[system]` Added `Shmem` and `SReclaimable` values to `MemInfo` struct
+* `[system]` Improved tests
+
 ### 9.27.0
 
 * `[system/sensors]` Added package for collecting sensors data
