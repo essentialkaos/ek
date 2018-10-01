@@ -50,7 +50,7 @@ type MemInfo struct {
 	SwapTotal    uint64 `json:"swap_total"`   // Total amount of swap space available
 	SwapFree     uint64 `json:"swap_free"`    // Memory which has been evicted from RAM, and is temporarily on the disk still also is in the swapfile
 	SwapUsed     uint64 `json:"swap_used"`    // SwapTotal - SwapFree
-	SwapCached   uint64 `json:"spaw_cached"`  // Memory that once was swapped out, is swapped back in but
+	SwapCached   uint64 `json:"swap_cached"`  // Memory that once was swapped out, is swapped back in but
 	Dirty        uint64 `json:"dirty"`        // Memory which is waiting to get written back to the disk
 	Shmem        uint64 `json:"shmem"`        // Total used shared memory
 	Slab         uint64 `json:"slab"`         // In-kernel data structures cache
