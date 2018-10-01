@@ -191,14 +191,14 @@ func (s *SystemSuite) TestMemory(c *C) {
 }
 
 func (s *SystemSuite) TestNet(c *C) {
-	net, err := GetInterfacesInfo()
+	net, err := GetInterfacesStats()
 
 	c.Assert(err, IsNil)
 	c.Assert(net, NotNil)
 
 	procNetFile = s.CreateTestFile(c, "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\neth0: 144612532790 216320765    0    0    0     0          0         0 366397171405 154518846    0    0    0     0       0          0\n")
 
-	net, err = GetInterfacesInfo()
+	net, err = GetInterfacesStats()
 
 	c.Assert(err, IsNil)
 	c.Assert(net, NotNil)
@@ -223,14 +223,14 @@ func (s *SystemSuite) TestNet(c *C) {
 
 	procNetFile = ""
 
-	net, err = GetInterfacesInfo()
+	net, err = GetInterfacesStats()
 
 	c.Assert(err, NotNil)
 	c.Assert(net, IsNil)
 
 	procNetFile = s.CreateTestFile(c, "CORRUPTED")
 
-	net, err = GetInterfacesInfo()
+	net, err = GetInterfacesStats()
 
 	c.Assert(err, NotNil)
 	c.Assert(net, IsNil)
