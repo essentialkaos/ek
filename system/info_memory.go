@@ -65,8 +65,12 @@ func GetMemInfo() (*MemInfo, error) {
 			mem.SwapFree, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Dirty:":
 			mem.Dirty, err = parseSize(strutil.ReadField(text, 1, true))
+		case "Shmem:":
+			mem.Shmem, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Slab:":
 			mem.Slab, err = parseSize(strutil.ReadField(text, 1, true))
+		case "SReclaimable:":
+			mem.SReclaimable, err = parseSize(strutil.ReadField(text, 1, true))
 		}
 
 		if err != nil {
@@ -78,7 +82,7 @@ func GetMemInfo() (*MemInfo, error) {
 		return nil, errors.New("Can't parse file " + procMemInfoFile)
 	}
 
-	mem.MemFree += mem.Cached + mem.Buffers
+	mem.MemFree += (mem.Cached + mem.Buffers + mem.SReclaimable) - mem.Shmem
 	mem.MemUsed = mem.MemTotal - mem.MemFree
 	mem.SwapUsed = mem.SwapTotal - mem.SwapFree
 
