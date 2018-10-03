@@ -59,13 +59,13 @@ type MemInfo struct {
 
 // CPUInfo contains info about CPU usage
 type CPUInfo struct {
-	User    float64 `json:"user"`     // Normal processes executing in user mode
-	System  float64 `json:"system"`   // Processes executing in kernel mode
-	Nice    float64 `json:"nice"`     // Niced processes executing in user mode
-	Idle    float64 `json:"idle"`     // Twiddling thumbs
-	Wait    float64 `json:"wait"`     // Waiting for I/O to complete
-	Average float64 `json:"avearage"` // Average CPU usage
-	Count   int     `json:"count"`    // Number of CPU cores
+	User    float64 `json:"user"`    // Normal processes executing in user mode
+	System  float64 `json:"system"`  // Processes executing in kernel mode
+	Nice    float64 `json:"nice"`    // Niced processes executing in user mode
+	Idle    float64 `json:"idle"`    // Twiddling thumbs
+	Wait    float64 `json:"wait"`    // Waiting for I/O to complete
+	Average float64 `json:"average"` // Average CPU usage
+	Count   int     `json:"count"`   // Number of CPU cores
 }
 
 // CPUStats contains basic CPU stats
