@@ -1,5 +1,9 @@
 ## Changelog
 
+### 9.28.1
+
+* `[initsystem]` Improved application state checking in systemd
+
 ### 9.28.0
 
 * `[system]` Improved memory usage calculation
