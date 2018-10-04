@@ -64,7 +64,7 @@ type CPUUsage struct {
 	Nice    float64 `json:"nice"`     // Niced processes executing in user mode
 	Idle    float64 `json:"idle"`     // Twiddling thumbs
 	Wait    float64 `json:"wait"`     // Waiting for I/O to complete
-	Average float64 `json:"avearage"` // Average CPU usage
+	Average float64 `json:"average"`  // Average CPU usage
 	Count   int     `json:"count"`    // Number of CPU cores
 }
 
