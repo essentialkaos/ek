@@ -175,7 +175,7 @@ func getUpstartServiceState(name string) (bool, error) {
 	output, err := exec.Command("/sbin/status", name).Output()
 
 	if err != nil {
-		return false, fmt.Errorf("upstart return error: %v", err)
+		return false, fmt.Errorf("upstart returned an error")
 	}
 
 	if strings.Contains(string(output), "start/running") {
@@ -190,24 +190,32 @@ func getUpstartServiceState(name string) (bool, error) {
 }
 
 func getSystemdServiceState(name string) (bool, error) {
-	output, err := exec.Command("/usr/bin/systemctl", "is-active", name).Output()
+	output, err := exec.Command("/usr/bin/systemctl", "show", name, "-p", "ActiveState", "-p", "LoadState").Output()
 
 	if err != nil {
-		return false, fmt.Errorf("systemd return error: %v", err)
+		return false, fmt.Errorf("systemd return an error")
 	}
 
-	if strings.TrimRight(string(output), "\n\r") == "active" {
+	switch {
+	case strings.Contains(string(output), "LoadState=not-found"):
+		return false, fmt.Errorf("Unit %s could not be found ", name)
+
+	case strings.Contains(string(output), "ActiveState=active"):
 		return true, nil
+
+	case strings.Contains(string(output), "ActiveState=inactive"):
+		return false, nil
+
 	}
 
-	return false, nil
+	return false, fmt.Errorf("Can't parse systemd output")
 }
 
 func isSysVEnabled(name string) (bool, error) {
 	output, err := exec.Command("/sbin/chkconfig", "--list", name).Output()
 
 	if err != nil {
-		return false, fmt.Errorf("chkconfig return error: %v", err)
+		return false, fmt.Errorf("chkconfig returned an error")
 	}
 
 	if strings.Contains(string(output), ":on") {

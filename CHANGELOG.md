@@ -13,6 +13,12 @@
 
 ---
 
+### 9.28.1
+
+* `[initsystem]` Improved application state checking in systemd
+* `[system]` Fixed typo in json tag for `CPUInfo.Average`
+
+
 ### 9.28.0
 
 * `[system]` Improved memory usage calculation
