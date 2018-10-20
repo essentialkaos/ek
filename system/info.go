@@ -59,23 +59,23 @@ type MemUsage struct {
 
 // CPUUsage contains info about CPU usage
 type CPUUsage struct {
-	User    float64 `json:"user"`     // Normal processes executing in user mode
-	System  float64 `json:"system"`   // Processes executing in kernel mode
-	Nice    float64 `json:"nice"`     // Niced processes executing in user mode
-	Idle    float64 `json:"idle"`     // Twiddling thumbs
-	Wait    float64 `json:"wait"`     // Waiting for I/O to complete
-	Average float64 `json:"average"`  // Average CPU usage
-	Count   int     `json:"count"`    // Number of CPU cores
+	User    float64 `json:"user"`    // Normal processes executing in user mode
+	System  float64 `json:"system"`  // Processes executing in kernel mode
+	Nice    float64 `json:"nice"`    // Niced processes executing in user mode
+	Idle    float64 `json:"idle"`    // Twiddling thumbs
+	Wait    float64 `json:"wait"`    // Waiting for I/O to complete
+	Average float64 `json:"average"` // Average CPU usage
+	Count   int     `json:"count"`   // Number of CPU cores
 }
 
 // CPUInfo contains info about CPU
 type CPUInfo struct {
-	Vendor    string    `json:"vendor"`
-	Model     string    `json:"model"`
-	Cores     int       `json:"cores"`
-	Siblings  int       `json:"siblings"`
-	CacheSize uint64    `json:"cache"`
-	Speed     []float64 `json:"speed"`
+	Vendor    string    `json:"vendor"`     // Processor vandor name
+	Model     string    `json:"model"`      // Common name of the processor
+	Cores     int       `json:"cores"`      // Number of cores
+	Siblings  int       `json:"siblings"`   // Total number of sibling CPUs on the same physical CPU
+	CacheSize uint64    `json:"cache_size"` // Amount of level 2 memory cache available to the processor
+	Speed     []float64 `json:"speed"`      // Speed in megahertz for the processor
 }
 
 // CPUStats contains basic CPU stats
