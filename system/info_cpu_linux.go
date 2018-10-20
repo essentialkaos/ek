@@ -12,6 +12,7 @@ import (
 	"errors"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"pkg.re/essentialkaos/ek.v10/strutil"
@@ -19,8 +20,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path to file with CPU info in procfs
+// Path to file with CPU stats in procfs
 var procStatFile = "/proc/stat"
+
+// Path to file with info about CPU
+var cpuInfoFile = "/proc/cpuinfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -162,3 +166,72 @@ func GetCPUStats() (*CPUStats, error) {
 }
 
 // codebeat:enable[LOC,ABC,CYCLO]
+
+// GetCPUInfo returns slice with info about CPUs
+func GetCPUInfo() ([]*CPUInfo, error) {
+	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	var (
+		info     []*CPUInfo
+		vendor   string
+		model    string
+		siblings int
+		cores    int
+		cache    uint64
+		speed    float64
+		id       int
+	)
+
+	for s.Scan() {
+		text := s.Text()
+
+		switch {
+		case strings.HasPrefix(text, "vendor_id"):
+			vendor = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+
+		case strings.HasPrefix(text, "model name"):
+			model = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+
+		case strings.HasPrefix(text, "cache size"):
+			cache, err = parseSize(strings.Trim(strutil.ReadField(text, 1, false, ":"), " KB"))
+
+		case strings.HasPrefix(text, "cpu MHz"):
+			speed, err = strconv.ParseFloat(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "), 64)
+
+		case strings.HasPrefix(text, "physical id"):
+			id, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "siblings"):
+			siblings, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "cpu cores"):
+			cores, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "flags"):
+			if len(info) < id+1 {
+				info = append(info, &CPUInfo{vendor, model, cores, siblings, cache, nil})
+			}
+
+			info[id].Speed = append(info[id].Speed, speed)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if vendor == "" && model == "" {
+		return nil, errors.New("Can't parse cpuinfo file")
+	}
+
+	return info, nil
+}

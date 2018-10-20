@@ -68,6 +68,16 @@ type CPUUsage struct {
 	Count   int     `json:"count"`    // Number of CPU cores
 }
 
+// CPUInfo contains info about CPU
+type CPUInfo struct {
+	Vendor    string    `json:"vendor"`
+	Model     string    `json:"model"`
+	Cores     int       `json:"cores"`
+	Siblings  int       `json:"siblings"`
+	CacheSize uint64    `json:"cache"`
+	Speed     []float64 `json:"speed"`
+}
+
 // CPUStats contains basic CPU stats
 type CPUStats struct {
 	User   uint64 `json:"user"`
