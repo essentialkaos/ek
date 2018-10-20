@@ -9,6 +9,7 @@
 * `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
 
 ---
 
