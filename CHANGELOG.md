@@ -10,6 +10,7 @@
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
 * `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
+* `[system]` Increased code coverage (73.8% → 77.3%)
 
 ---
 
@@ -17,7 +18,6 @@
 
 * `[initsystem]` Improved application state checking in systemd
 * `[system]` Fixed typo in json tag for `CPUInfo.Average`
-
 
 ### 9.28.0
 
