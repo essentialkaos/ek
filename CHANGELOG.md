@@ -10,7 +10,7 @@
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
 * `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
-* `[system]` Increased code coverage (73.8% → 77.3%)
+* `[system]` Increased code coverage (73.8% → 79.0%)
 
 ---
 

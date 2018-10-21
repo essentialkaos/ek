@@ -337,14 +337,14 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(fs, IsNil)
 
-	procDiscStatsFile = ""
+	procDiskStatsFile = ""
 
 	stats, err := GetIOStats()
 
 	c.Assert(err, NotNil)
 	c.Assert(stats, IsNil)
 
-	procDiscStatsFile = s.CreateTestFile(c, "CORRUPTED")
+	procDiskStatsFile = s.CreateTestFile(c, "CORRUPTED")
 
 	stats, err = GetIOStats()
 
@@ -363,7 +363,7 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 
 	procStatFile = ""
 	mtabFile = "/etc/mtab"
-	procDiscStatsFile = "/proc/diskstats"
+	procDiskStatsFile = "/proc/diskstats"
 
 	mtabFile = s.CreateTestFile(c, "/dev/abc1 / ext4 rw 0 0")
 
@@ -382,6 +382,23 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(util["abc"], Equals, 3.05)
 
 	procStatFile = "/proc/stat"
+}
+
+func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
+	for i := 0; i < 11; i++ {
+		data := "   8       0 sda X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10"
+		data = strings.Replace(data, "X"+strconv.Itoa(i), "A", -1)
+		data = strings.Replace(data, "X", "", -1)
+
+		procDiskStatsFile = s.CreateTestFile(c, data)
+
+		stats, err := GetIOStats()
+
+		c.Assert(err, NotNil)
+		c.Assert(stats, IsNil)
+	}
+
+	procDiskStatsFile = "/proc/diskstats"
 }
 
 func (s *SystemSuite) TestUser(c *C) {
