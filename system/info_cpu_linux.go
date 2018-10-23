@@ -1,5 +1,3 @@
-// +build linux
-
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -14,20 +12,24 @@ import (
 	"errors"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path to file with CPU info in procfs
+// Path to file with CPU stats in procfs
 var procStatFile = "/proc/stat"
+
+// Path to file with info about CPU
+var cpuInfoFile = "/proc/cpuinfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetCPUInfo return info about CPU usage
-func GetCPUInfo(duration time.Duration) (*CPUInfo, error) {
+// GetCPUUsage return info about CPU usage
+func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	c1, err := GetCPUStats()
 
 	if err != nil {
@@ -42,13 +44,13 @@ func GetCPUInfo(duration time.Duration) (*CPUInfo, error) {
 		return nil, err
 	}
 
-	return CalculateCPUInfo(c1, c2), nil
+	return CalculateCPUUsage(c1, c2), nil
 }
 
 // It's ok to have so complex method for calculation
 // codebeat:disable[CYCLO]
 
-func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
+func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	prevIdle := c1.Idle + c1.Wait
 	idle := c2.Idle + c2.Wait
 
@@ -62,7 +64,7 @@ func CalculateCPUInfo(c1, c2 *CPUStats) *CPUInfo {
 	idleDiff := float64(idle - prevIdle)
 	allTotalDiff := float64(c2.Total - c1.Total)
 
-	return &CPUInfo{
+	return &CPUUsage{
 		System:  (float64(c2.System-c1.System) / allTotalDiff) * 100,
 		User:    (float64(c2.User-c1.User) / allTotalDiff) * 100,
 		Nice:    (float64(c2.Nice-c1.Nice) / allTotalDiff) * 100,
@@ -164,3 +166,72 @@ func GetCPUStats() (*CPUStats, error) {
 }
 
 // codebeat:enable[LOC,ABC,CYCLO]
+
+// GetCPUInfo returns slice with info about CPUs
+func GetCPUInfo() ([]*CPUInfo, error) {
+	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	var (
+		info     []*CPUInfo
+		vendor   string
+		model    string
+		siblings int
+		cores    int
+		cache    uint64
+		speed    float64
+		id       int
+	)
+
+	for s.Scan() {
+		text := s.Text()
+
+		switch {
+		case strings.HasPrefix(text, "vendor_id"):
+			vendor = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+
+		case strings.HasPrefix(text, "model name"):
+			model = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+
+		case strings.HasPrefix(text, "cache size"):
+			cache, err = parseSize(strings.Trim(strutil.ReadField(text, 1, false, ":"), " KB"))
+
+		case strings.HasPrefix(text, "cpu MHz"):
+			speed, err = strconv.ParseFloat(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "), 64)
+
+		case strings.HasPrefix(text, "physical id"):
+			id, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "siblings"):
+			siblings, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "cpu cores"):
+			cores, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+
+		case strings.HasPrefix(text, "flags"):
+			if len(info) < id+1 {
+				info = append(info, &CPUInfo{vendor, model, cores, siblings, cache, nil})
+			}
+
+			info[id].Speed = append(info[id].Speed, speed)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if vendor == "" && model == "" {
+		return nil, errors.New("Can't parse cpuinfo file")
+	}
+
+	return info, nil
+}

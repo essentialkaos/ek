@@ -16,8 +16,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleGetFSInfo() {
-	fsInfo, err := GetFSInfo()
+func ExampleGetFSUsage() {
+	fsInfo, err := GetFSUsage()
 
 	if err != nil {
 		return
@@ -106,44 +106,44 @@ func ExampleGetLA() {
 	fmt.Printf("Min1: %g Min5: %g Min15: %g\n", la.Min1, la.Min5, la.Min15)
 }
 
-func ExampleGetMemInfo() {
-	memInfo, err := GetMemInfo()
+func ExampleGetMemUsage() {
+	usage, err := GetMemUsage()
 
 	if err != nil {
 		return
 	}
 
 	// print all available memory info
-	fmt.Printf("MemTotal: %d\n", memInfo.MemTotal)
-	fmt.Printf("MemFree: %d\n", memInfo.MemFree)
-	fmt.Printf("MemUsed: %d\n", memInfo.MemUsed)
-	fmt.Printf("Buffers: %d\n", memInfo.Buffers)
-	fmt.Printf("Cached: %d\n", memInfo.Cached)
-	fmt.Printf("Active: %d\n", memInfo.Active)
-	fmt.Printf("Inactive: %d\n", memInfo.Inactive)
-	fmt.Printf("SwapTotal: %d\n", memInfo.SwapTotal)
-	fmt.Printf("SwapFree: %d\n", memInfo.SwapFree)
-	fmt.Printf("SwapUsed: %d\n", memInfo.SwapUsed)
-	fmt.Printf("SwapCached: %d\n", memInfo.SwapCached)
-	fmt.Printf("Dirty: %d\n", memInfo.Dirty)
-	fmt.Printf("Slab: %d\n", memInfo.Slab)
+	fmt.Printf("MemTotal: %d\n", usage.MemTotal)
+	fmt.Printf("MemFree: %d\n", usage.MemFree)
+	fmt.Printf("MemUsed: %d\n", usage.MemUsed)
+	fmt.Printf("Buffers: %d\n", usage.Buffers)
+	fmt.Printf("Cached: %d\n", usage.Cached)
+	fmt.Printf("Active: %d\n", usage.Active)
+	fmt.Printf("Inactive: %d\n", usage.Inactive)
+	fmt.Printf("SwapTotal: %d\n", usage.SwapTotal)
+	fmt.Printf("SwapFree: %d\n", usage.SwapFree)
+	fmt.Printf("SwapUsed: %d\n", usage.SwapUsed)
+	fmt.Printf("SwapCached: %d\n", usage.SwapCached)
+	fmt.Printf("Dirty: %d\n", usage.Dirty)
+	fmt.Printf("Slab: %d\n", usage.Slab)
 }
 
-func ExampleGetCPUInfo() {
-	cpuInfo, err := GetCPUInfo(time.Minute)
+func ExampleGetCPUUsage() {
+	usage, err := GetCPUUsage(time.Minute)
 
 	if err != nil {
 		return
 	}
 
 	// print all available CPU info
-	fmt.Printf("User: %f\n", cpuInfo.User)
-	fmt.Printf("System: %f\n", cpuInfo.System)
-	fmt.Printf("Nice: %f\n", cpuInfo.Nice)
-	fmt.Printf("Idle: %f\n", cpuInfo.Idle)
-	fmt.Printf("Wait: %f\n", cpuInfo.Wait)
-	fmt.Printf("Average: %f\n", cpuInfo.Average)
-	fmt.Printf("CPU Count: %d\n", cpuInfo.Count)
+	fmt.Printf("User: %f\n", usage.User)
+	fmt.Printf("System: %f\n", usage.System)
+	fmt.Printf("Nice: %f\n", usage.Nice)
+	fmt.Printf("Idle: %f\n", usage.Idle)
+	fmt.Printf("Wait: %f\n", usage.Wait)
+	fmt.Printf("Average: %f\n", usage.Average)
+	fmt.Printf("CPU Count: %d\n", usage.Count)
 }
 
 func ExampleGetSystemInfo() {

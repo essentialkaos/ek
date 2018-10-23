@@ -1,5 +1,19 @@
 ## Changelog
 
+### 10.0.0
+
+* `[system]` `FSInfo` now is `FSUsage` (_incompatible changes_)
+* `[system]` `MemInfo` now is `MemUsage` (_incompatible changes_)
+* `[system]` `CPUInfo` now is `CPUUsage` (_incompatible changes_)
+* `[system]` `GetFSInfo()` now is `GetFSUsage()` (_incompatible changes_)
+* `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
+* `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
+* `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
+* `[system]` Increased code coverage (73.8% → 79.0%)
+
+---
+
 ### 9.28.1
 
 * `[initsystem]` Improved application state checking in systemd

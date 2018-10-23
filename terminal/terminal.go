@@ -18,8 +18,8 @@ import (
 
 	"pkg.re/essentialkaos/go-linenoise.v3"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/fmtc"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

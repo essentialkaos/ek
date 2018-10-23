@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

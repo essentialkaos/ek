@@ -1,5 +1,3 @@
-// +build linux
-
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -14,7 +12,7 @@ import (
 	"errors"
 	"os"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -26,8 +24,8 @@ var procMemInfoFile = "/proc/meminfo"
 
 // codebeat:disable[LOC,ABC]
 
-// GetMemInfo return memory info
-func GetMemInfo() (*MemInfo, error) {
+// GetMemUsage return memory usage info
+func GetMemUsage() (*MemUsage, error) {
 	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -39,7 +37,7 @@ func GetMemInfo() (*MemInfo, error) {
 	r := bufio.NewReader(fd)
 	s := bufio.NewScanner(r)
 
-	mem := &MemInfo{}
+	mem := &MemUsage{}
 
 	for s.Scan() {
 		text := s.Text()

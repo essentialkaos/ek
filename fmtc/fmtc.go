@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
