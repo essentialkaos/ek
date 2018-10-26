@@ -232,7 +232,9 @@ func parseCPUInfo(r io.Reader) ([]*CPUInfo, error) {
 				info = append(info, &CPUInfo{vendor, model, cores, siblings, cache, nil})
 			}
 
-			info[id].Speed = append(info[id].Speed, speed)
+			if info[id] != nil {
+				info[id].Speed = append(info[id].Speed, speed)
+			}
 		}
 
 		if err != nil {
