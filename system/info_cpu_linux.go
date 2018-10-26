@@ -118,7 +118,7 @@ func parseCPUStats(r io.Reader) (*CPUStats, error) {
 	for s.Scan() {
 		text := s.Text()
 
-		if len(text) < 3 || text[:3] != "cpu" {
+		if !strings.HasPrefix(text, "cpu") {
 			continue
 		}
 
