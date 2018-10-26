@@ -10,6 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -77,8 +78,6 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 
 // codebeat:enable[CYCLO]
 
-// codebeat:disable[LOC,ABC,CYCLO]
-
 // GetCPUStats return basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
 	fd, err := os.OpenFile(procStatFile, os.O_RDONLY, 0)
@@ -89,9 +88,31 @@ func GetCPUStats() (*CPUStats, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	return parseCPUStats(bufio.NewReader(fd))
+}
 
+// GetCPUInfo returns slice with info about CPUs
+func GetCPUInfo() ([]*CPUInfo, error) {
+	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	return parseCPUInfo(bufio.NewReader(fd))
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC,CYCLO]
+
+// parseCPUStats parses cpu stats data
+func parseCPUStats(r io.Reader) (*CPUStats, error) {
+	var err error
+
+	s := bufio.NewScanner(r)
 	stats := &CPUStats{}
 
 	for s.Scan() {
@@ -165,20 +186,10 @@ func GetCPUStats() (*CPUStats, error) {
 	return stats, nil
 }
 
-// GetCPUInfo returns slice with info about CPUs
-func GetCPUInfo() ([]*CPUInfo, error) {
-	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer fd.Close()
-
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
-
+// parseCPUInfo parses cpu info data
+func parseCPUInfo(r io.Reader) ([]*CPUInfo, error) {
 	var (
+		err      error
 		info     []*CPUInfo
 		vendor   string
 		model    string
@@ -188,6 +199,8 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 		speed    float64
 		id       int
 	)
+
+	s := bufio.NewScanner(r)
 
 	for s.Scan() {
 		text := s.Text()

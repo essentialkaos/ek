@@ -10,6 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -43,53 +44,8 @@ func GetFSUsage() (map[string]*FSUsage, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
-
-	info := make(map[string]*FSUsage)
-
-	for s.Scan() {
-		text := s.Text()
-
-		if text == "" || text[:1] == "#" || text[:1] != "/" {
-			continue
-		}
-
-		device := strutil.ReadField(text, 0, true)
-		path := strutil.ReadField(text, 1, true)
-		fsInfo := &FSUsage{Type: strutil.ReadField(text, 2, true)}
-
-		stats := &syscall.Statfs_t{}
-
-		err = syscall.Statfs(path, stats)
-
-		if err != nil {
-			return nil, err
-		}
-
-		fsDevice, err := filepath.EvalSymlinks(device)
-
-		if err == nil {
-			fsInfo.Device = fsDevice
-		} else {
-			fsInfo.Device = device
-		}
-
-		fsInfo.Used = (stats.Blocks * uint64(stats.Bsize)) - (stats.Bfree * uint64(stats.Bsize))
-		fsInfo.Total = fsInfo.Used + (stats.Bavail * uint64(stats.Bsize))
-		fsInfo.Free = fsInfo.Total - fsInfo.Used
-
-		info[path] = fsInfo
-	}
-
-	if len(info) == 0 {
-		return nil, errors.New("Can't parse file " + mtabFile)
-	}
-
-	return info, nil
+	return parseFSInfo(bufio.NewReader(fd), true)
 }
-
-// codebeat:disable[LOC,ABC,CYCLO]
 
 // GetIOStats return IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
@@ -101,7 +57,66 @@ func GetIOStats() (map[string]*IOStats, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
+	return parseIOStats(bufio.NewReader(fd))
+}
+
+// GetIOUtil return slice (device -> utilization) with IO utilization
+func GetIOUtil(duration time.Duration) (map[string]float64, error) {
+	io1, err := GetIOStats()
+
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(duration)
+
+	io2, err := GetIOStats()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return CalculateIOUtil(io1, io2, duration), nil
+}
+
+// CalculateIOUtil calculate IO utilization for all devices
+func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
+	if io1 == nil || io2 == nil {
+		return nil
+	}
+
+	result := make(map[string]float64)
+
+	// convert duration to jiffies
+	itv := uint64(duration / (time.Millisecond * 10))
+
+	for device := range io1 {
+		if io1[device] == nil || io2[device] == nil {
+			continue
+		}
+
+		util := float64(io2[device].IOMs-io1[device].IOMs) / float64(itv) * getHZ()
+
+		util /= 10.0
+
+		if util > 100.0 {
+			util = 100.0
+		}
+
+		result[device] = util
+	}
+
+	return result
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC,CYCLO]
+
+// parseIOStats parses IO stats data
+func parseIOStats(r io.Reader) (map[string]*IOStats, error) {
+	var err error
+
 	s := bufio.NewScanner(r)
 
 	iostats := make(map[string]*IOStats)
@@ -190,58 +205,60 @@ func GetIOStats() (map[string]*IOStats, error) {
 	return iostats, nil
 }
 
-// codebeat:enable[LOC,ABC,CYCLO]
+// parseFSInfo parses fs info data
+func parseFSInfo(r io.Reader, calculateStats bool) (map[string]*FSUsage, error) {
+	var err error
 
-// GetIOUtil return slice (device -> utilization) with IO utilization
-func GetIOUtil(duration time.Duration) (map[string]float64, error) {
-	io1, err := GetIOStats()
+	s := bufio.NewScanner(r)
 
-	if err != nil {
-		return nil, err
-	}
+	info := make(map[string]*FSUsage)
 
-	time.Sleep(duration)
+	for s.Scan() {
+		text := s.Text()
 
-	io2, err := GetIOStats()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return CalculateIOUtil(io1, io2, duration), nil
-}
-
-// CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
-	if io1 == nil || io2 == nil {
-		return nil
-	}
-
-	result := make(map[string]float64)
-
-	// convert duration to jiffies
-	itv := uint64(duration / (time.Millisecond * 10))
-
-	for device := range io1 {
-		if io1[device] == nil || io2[device] == nil {
+		if text == "" || text[:1] == "#" || text[:1] != "/" {
 			continue
 		}
 
-		util := float64(io2[device].IOMs-io1[device].IOMs) / float64(itv) * getHZ()
+		device := strutil.ReadField(text, 0, true)
+		path := strutil.ReadField(text, 1, true)
+		fsInfo := &FSUsage{Type: strutil.ReadField(text, 2, true)}
 
-		util /= 10.0
-
-		if util > 100.0 {
-			util = 100.0
+		if !calculateStats {
+			continue
 		}
 
-		result[device] = util
+		stats := &syscall.Statfs_t{}
+
+		err = syscall.Statfs(path, stats)
+
+		if err != nil {
+			return nil, err
+		}
+
+		fsDevice, err := filepath.EvalSymlinks(device)
+
+		if err == nil {
+			fsInfo.Device = fsDevice
+		} else {
+			fsInfo.Device = device
+		}
+
+		fsInfo.Used = (stats.Blocks * uint64(stats.Bsize)) - (stats.Bfree * uint64(stats.Bsize))
+		fsInfo.Total = fsInfo.Used + (stats.Bavail * uint64(stats.Bsize))
+		fsInfo.Free = fsInfo.Total - fsInfo.Used
+
+		info[path] = fsInfo
 	}
 
-	return result
+	if len(info) == 0 {
+		return nil, errors.New("Can't parse file " + mtabFile)
+	}
+
+	return info, nil
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// enable:disable[LOC,ABC,CYCLO]
 
 // getHZ return number of processor clock ticks per second
 func getHZ() float64 {
