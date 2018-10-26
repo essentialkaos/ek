@@ -165,8 +165,6 @@ func GetCPUStats() (*CPUStats, error) {
 	return stats, nil
 }
 
-// codebeat:enable[LOC,ABC,CYCLO]
-
 // GetCPUInfo returns slice with info about CPUs
 func GetCPUInfo() ([]*CPUInfo, error) {
 	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
@@ -235,3 +233,5 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 
 	return info, nil
 }
+
+// codebeat:enable[LOC,ABC,CYCLO]
