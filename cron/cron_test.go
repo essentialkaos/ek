@@ -127,10 +127,14 @@ func (s *CronSuite) TestParsing(c *C) {
 		time.Unix(0, 0),
 	)
 
-	e11, err := Parse("45 17 7 0-99999 1")
+	e11, err := Parse("45 17 7 0-5 1")
 
 	c.Assert(err, IsNil)
 	c.Assert(e11, NotNil)
+
+	c.Assert(between(1, 5, 10), Equals, uint8(5))
+	c.Assert(between(15, 5, 10), Equals, uint8(10))
+	c.Assert(between(7, 5, 10), Equals, uint8(7))
 }
 
 func (s *CronSuite) TestAliases(c *C) {
@@ -218,4 +222,36 @@ func (s *CronSuite) TestNearIndex(c *C) {
 	c.Assert(getNearPrevIndex(items, 5), Equals, 3)
 	c.Assert(getNearPrevIndex(items, 6), Equals, 4)
 	c.Assert(getNearPrevIndex(items, 0), Equals, 7)
+}
+
+func (s *CronSuite) TestErrors(c *C) {
+	e, err := Parse("0-A * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
+	e, err = Parse("A-1 * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
+	e, err = Parse("*/A * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
+	e, err = Parse("A * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
+	e, err = Parse("0,1,A * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
+	e, err = Parse("0,1,2-A * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
 }

@@ -92,6 +92,7 @@ func Parse(expr string) (*Expr, error) {
 
 	for tn, ei := range info {
 		var data []uint8
+		var err error
 
 		token := strutil.ReadField(expr, tn, true, " ")
 
@@ -99,16 +100,17 @@ func Parse(expr string) (*Expr, error) {
 		case isAnyToken(token):
 			data = fillUintSlice(ei.min, ei.max, 1)
 		case isEnumToken(token):
-			data = getEnumFromToken(token, ei.nt)
+			data, err = parseEnumToken(token, ei)
 		case isPeriodToken(token):
-			ts, te := getPeriodFromToken(token, ei.nt)
-			ts = between(ts, ei.min, ei.max)
-			te = between(te, ei.min, ei.max)
-			data = fillUintSlice(ts, te, 1)
+			data, err = parsePeriodToken(token, ei)
 		case isIntervalToken(token):
-			data = fillUintSlice(ei.min, ei.max, getIntervalFromToken(token))
+			data, err = parseIntervalToken(token, ei)
 		default:
-			data = []uint8{parseToken(token, ei.nt)}
+			data, err = parseSimpleToken(token, ei)
+		}
+
+		if err != nil {
+			return nil, err
 		}
 
 		switch tn {
@@ -301,32 +303,75 @@ func isIntervalToken(t string) bool {
 	return strings.Contains(t, _SYMBOL_INTERVAL)
 }
 
-func getEnumFromToken(t string, nt uint8) []uint8 {
+func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 	var result []uint8
 
 	for _, tt := range strings.Split(t, _SYMBOL_ENUM) {
 		switch {
 		case isPeriodToken(tt):
-			ts, te := getPeriodFromToken(tt, nt)
-			result = append(result, fillUintSlice(ts, te, 1)...)
+			d, err := parsePeriodToken(tt, ei)
+
+			if err != nil {
+				return nil, err
+			}
+
+			result = append(result, d...)
+
 		default:
-			result = append(result, parseToken(tt, nt))
+			t, err := parseToken(tt, ei.nt)
+
+			if err != nil {
+				return nil, err
+			}
+
+			result = append(result, t)
 		}
 	}
 
-	return result
+	return result, nil
 }
 
-func getPeriodFromToken(t string, nt uint8) (uint8, uint8) {
+func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
 	ts := strings.Split(t, _SYMBOL_PERIOD)
 
-	return parseToken(ts[0], nt), parseToken(ts[1], nt)
+	t1, err := parseToken(ts[0], ei.nt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	t2, err := parseToken(ts[1], ei.nt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fillUintSlice(
+		between(t1, ei.min, ei.max),
+		between(t2, ei.min, ei.max),
+		1,
+	), nil
 }
 
-func getIntervalFromToken(t string) uint8 {
+func parseIntervalToken(t string, ei exprInfo) ([]uint8, error) {
 	ts := strings.Split(t, _SYMBOL_INTERVAL)
+	i, err := str2uint(ts[1])
 
-	return str2uint(ts[1])
+	if err != nil {
+		return nil, err
+	}
+
+	return fillUintSlice(ei.min, ei.max, i), nil
+}
+
+func parseSimpleToken(t string, ei exprInfo) ([]uint8, error) {
+	v, err := parseToken(t, ei.nt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return []uint8{v}, nil
 }
 
 func getAliasExpression(expr string) string {
@@ -348,18 +393,18 @@ func getAliasExpression(expr string) string {
 	return expr
 }
 
-func parseToken(t string, nt uint8) uint8 {
+func parseToken(t string, nt uint8) (uint8, error) {
 	switch nt {
 	case _NAMES_DAYS:
 		tu, ok := getDayNumByName(t)
 		if ok {
-			return tu
+			return tu, nil
 		}
 
 	case _NAMES_MONTHS:
 		tu, ok := getMonthNumByName(t)
 		if ok {
-			return tu
+			return tu, nil
 		}
 	}
 
@@ -428,9 +473,14 @@ func fillUintSlice(start, end, interval uint8) []uint8 {
 	return result
 }
 
-func str2uint(t string) uint8 {
-	u, _ := strconv.ParseUint(t, 10, 8)
-	return uint8(u)
+func str2uint(t string) (uint8, error) {
+	u, err := strconv.ParseUint(t, 10, 8)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint8(u), nil
 }
 
 func getNearNextIndex(items []uint8, item uint8) int {
