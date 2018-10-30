@@ -81,6 +81,8 @@ var info = []exprInfo{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[LOC,ABC]
+
 // Parse parse cron expression
 func Parse(expr string) (*Expr, error) {
 	expr = strings.Replace(expr, "\t", " ", -1)
@@ -132,7 +134,11 @@ func Parse(expr string) (*Expr, error) {
 	return result, nil
 }
 
+// codebeat:enable[LOC,ABC]
+
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC]
 
 // IsDue check if current moment is match for expression
 func (expr *Expr) IsDue(args ...time.Time) bool {
@@ -167,7 +173,7 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 	return true
 }
 
-// I don't have an idea who to implement this without this conditions
+// I don't have an idea how we can implement this without this conditions
 // codebeat:disable[BLOCK_NESTING,LOC,CYCLO]
 
 // Next get time of next matched moment
