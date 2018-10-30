@@ -13,6 +13,7 @@
 * `[fmtc]` Fixed bug with parsing reset and modification tags (_found by go-fuzz_)
 * `[system]` Added fuzz testing
 * `[cron]` Code refactoring
+* `[timeutil]` Code refactoring
 * `[system]` Increased code coverage (73.8% → 79.0%)
 
 ---
