@@ -24,6 +24,9 @@ test: ## Run tests
 	go get -v pkg.re/check.v1
 	go test -covermode=count ./...
 
+gen-fuzz: ## Generate go-fuzz archives for all packages
+	bash .scripts/fuzz-gen.sh
+
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
 
