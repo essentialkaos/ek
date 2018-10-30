@@ -240,6 +240,11 @@ func (s *CronSuite) TestErrors(c *C) {
 	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
 
+	e, err = Parse("*/0 * * * *")
+
+	c.Assert(e, IsNil)
+	c.Assert(err, NotNil)
+
 	e, err = Parse("A * * * *")
 
 	c.Assert(e, IsNil)
