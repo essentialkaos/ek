@@ -50,6 +50,10 @@ main() {
     src_path=$(echo "$src" | sed 's#\/fuzz.go##' | sed 's#\.\/##')
     src_name=$(echo "$src_path" | sed 's#\/#-#g')
 
+    if [[ -n "$1" && "$1" != "$src_package" ]] ; then
+      continue
+    fi
+
     while read src_func ; do
       src_func=$(echo "$src_func" | cut -f2 -d " " | sed 's/(//')
       

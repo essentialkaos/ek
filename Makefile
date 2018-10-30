@@ -25,7 +25,7 @@ test: ## Run tests
 	go test -covermode=count ./...
 
 gen-fuzz: ## Generate go-fuzz archives for all packages
-	bash .scripts/fuzz-gen.sh
+	bash .scripts/fuzz-gen.sh ${PACKAGE}
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
