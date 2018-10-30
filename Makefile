@@ -5,7 +5,7 @@ export EK_TEST_PORT=8080
 ########################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = test fmt deps deps-test help
+.PHONY = test fmt deps deps-test clean help
 
 ########################################################################################
 
@@ -29,6 +29,9 @@ gen-fuzz: ## Generate go-fuzz archives for all packages
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
+
+clean: ## Remove all generated data
+	rm -f *.zip
 
 help: ## Show this info
 	@echo -e '\nSupported targets:\n'
