@@ -64,8 +64,10 @@ type exprInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrMalformedExpression is returned if expression have more on less than 5 tokens
-var ErrMalformedExpression = errors.New("Expression must have 5 tokens")
+var (
+	ErrMalformedExpression = errors.New("Expression must have 5 tokens")
+	ErrZeroInterval        = errors.New("Interval can't be less or equals 0")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -358,6 +360,10 @@ func parseIntervalToken(t string, ei exprInfo) ([]uint8, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if i == 0 {
+		return nil, ErrZeroInterval
 	}
 
 	return fillUintSlice(ei.min, ei.max, i), nil
