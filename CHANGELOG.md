@@ -2,8 +2,6 @@
 
 ### 10.0.0
 * `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
-* `[system]` Added fuzz testing
-* `[system]` Fixed bug with parsing CPU stats data (_found by go-fuzz_)
 * `[system]` `FSInfo` now is `FSUsage` (_incompatible changes_)
 * `[system]` `MemInfo` now is `MemUsage` (_incompatible changes_)
 * `[system]` `CPUInfo` now is `CPUUsage` (_incompatible changes_)
@@ -11,6 +9,9 @@
 * `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[system]` Fixed bug with parsing CPU stats data (_found by go-fuzz_)
+* `[fmtc]` Fixed bug with parsing reset and modification tags (_found by go-fuzz_)
+* `[system]` Added fuzz testing
 * `[cron]` Code refactoring
 * `[system]` Increased code coverage (73.8% → 79.0%)
 

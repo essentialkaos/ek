@@ -407,7 +407,7 @@ func getSymbols(symbol string, count int) string {
 }
 
 func isValidTag(tag string) bool {
-	if tag == "" || tag == "-" {
+	if tag == "" || strings.Trim(tag, "-") == "" || strings.Count(tag, "!") > 1 {
 		return false
 	}
 

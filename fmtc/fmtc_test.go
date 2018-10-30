@@ -180,3 +180,8 @@ func (s *FormatSuite) TestAux(c *C) {
 	Bell()
 	NewLine()
 }
+
+func (s *FormatSuite) TestFuzzFixes(c *C) {
+	c.Assert(isValidTag("!!!"), Equals, false)
+	c.Assert(isValidTag("---"), Equals, false)
+}
