@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -47,16 +49,11 @@ const (
 // Expr cron expression struct
 type Expr struct {
 	expression string
-	minutes    *exprPart
-	hours      *exprPart
-	doms       *exprPart
-	months     *exprPart
-	dows       *exprPart
-}
-
-type exprPart struct {
-	index  map[uint8]bool
-	tokens []uint8
+	minutes    []uint8
+	hours      []uint8
+	doms       []uint8
+	months     []uint8
+	dows       []uint8
 }
 
 type exprInfo struct {
@@ -84,44 +81,49 @@ var info = []exprInfo{
 
 // Parse parse cron expression
 func Parse(expr string) (*Expr, error) {
-	result := &Expr{expression: expr}
-
 	expr = strings.Replace(expr, "\t", " ", -1)
 	expr = getAliasExpression(expr)
 
-	exprAr := strings.Split(expr, " ")
-
-	if len(exprAr) != 5 {
+	if strings.Count(expr, " ") < 4 {
 		return nil, ErrMalformedExpression
 	}
 
-	data := make([][]uint8, 5)
+	result := &Expr{expression: expr}
 
 	for tn, ei := range info {
-		token := exprAr[tn]
+		var data []uint8
+
+		token := strutil.ReadField(expr, tn, true, " ")
 
 		switch {
 		case isAnyToken(token):
-			data[tn] = fillUintSlice(ei.min, ei.max, 1)
+			data = fillUintSlice(ei.min, ei.max, 1)
 		case isEnumToken(token):
-			data[tn] = getEnumFromToken(token, ei.nt)
+			data = getEnumFromToken(token, ei.nt)
 		case isPeriodToken(token):
 			ts, te := getPeriodFromToken(token, ei.nt)
 			ts = between(ts, ei.min, ei.max)
 			te = between(te, ei.min, ei.max)
-			data[tn] = fillUintSlice(ts, te, 1)
+			data = fillUintSlice(ts, te, 1)
 		case isIntervalToken(token):
-			data[tn] = fillUintSlice(ei.min, ei.max, getIntervalFromToken(token))
+			data = fillUintSlice(ei.min, ei.max, getIntervalFromToken(token))
 		default:
-			data[tn] = []uint8{parseToken(token, ei.nt)}
+			data = []uint8{parseToken(token, ei.nt)}
+		}
+
+		switch tn {
+		case 0:
+			result.minutes = data
+		case 1:
+			result.hours = data
+		case 2:
+			result.doms = data
+		case 3:
+			result.months = data
+		case 4:
+			result.dows = data
 		}
 	}
-
-	result.minutes = &exprPart{slice2map(data[0]), data[0]}
-	result.hours = &exprPart{slice2map(data[1]), data[1]}
-	result.doms = &exprPart{slice2map(data[2]), data[2]}
-	result.months = &exprPart{slice2map(data[3]), data[3]}
-	result.dows = &exprPart{slice2map(data[4]), data[4]}
 
 	return result, nil
 }
@@ -138,23 +140,23 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 		t = time.Now()
 	}
 
-	if !expr.minutes.index[uint8(t.Minute())] {
+	if !contains(expr.minutes, uint8(t.Minute())) {
 		return false
 	}
 
-	if !expr.hours.index[uint8(t.Hour())] {
+	if !contains(expr.hours, uint8(t.Hour())) {
 		return false
 	}
 
-	if !expr.doms.index[uint8(t.Day())] {
+	if !contains(expr.doms, uint8(t.Day())) {
 		return false
 	}
 
-	if !expr.months.index[uint8(t.Month())] {
+	if !contains(expr.months, uint8(t.Month())) {
 		return false
 	}
 
-	if !expr.dows.index[uint8(t.Weekday())] {
+	if !contains(expr.dows, uint8(t.Weekday())) {
 		return false
 	}
 
@@ -176,20 +178,20 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 
 	year := t.Year()
 
-	mStart := getNearPrevIndex(expr.months.tokens, uint8(t.Month()))
-	dStart := getNearPrevIndex(expr.doms.tokens, uint8(t.Day()))
+	mStart := getNearPrevIndex(expr.months, uint8(t.Month()))
+	dStart := getNearPrevIndex(expr.doms, uint8(t.Day()))
 
 	for y := year; y < year+5; y++ {
-		for i := mStart; i < len(expr.months.tokens); i++ {
-			for j := dStart; j < len(expr.doms.tokens); j++ {
-				for k := 0; k < len(expr.hours.tokens); k++ {
-					for l := 0; l < len(expr.minutes.tokens); l++ {
+		for i := mStart; i < len(expr.months); i++ {
+			for j := dStart; j < len(expr.doms); j++ {
+				for k := 0; k < len(expr.hours); k++ {
+					for l := 0; l < len(expr.minutes); l++ {
 						d := time.Date(
 							y,
-							time.Month(expr.months.tokens[i]),
-							int(expr.doms.tokens[j]),
-							int(expr.hours.tokens[k]),
-							int(expr.minutes.tokens[l]),
+							time.Month(expr.months[i]),
+							int(expr.doms[j]),
+							int(expr.hours[k]),
+							int(expr.minutes[l]),
 							0, 0, t.Location())
 
 						if d.Unix() <= t.Unix() {
@@ -197,11 +199,11 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 						}
 
 						switch {
-						case uint8(d.Month()) != expr.months.tokens[i],
-							uint8(d.Day()) != expr.doms.tokens[j],
-							uint8(d.Hour()) != expr.hours.tokens[k],
-							uint8(d.Minute()) != expr.minutes.tokens[l],
-							!expr.dows.index[uint8(d.Weekday())]:
+						case uint8(d.Month()) != expr.months[i],
+							uint8(d.Day()) != expr.doms[j],
+							uint8(d.Hour()) != expr.hours[k],
+							uint8(d.Minute()) != expr.minutes[l],
+							!contains(expr.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -231,20 +233,20 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 
 	year := t.Year()
 
-	mStart := getNearNextIndex(expr.months.tokens, uint8(t.Month()))
-	dStart := getNearNextIndex(expr.doms.tokens, uint8(t.Day()))
+	mStart := getNearNextIndex(expr.months, uint8(t.Month()))
+	dStart := getNearNextIndex(expr.doms, uint8(t.Day()))
 
 	for y := year; y >= year-5; y-- {
 		for i := mStart; i >= 0; i-- {
 			for j := dStart; j >= 0; j-- {
-				for k := len(expr.hours.tokens) - 1; k >= 0; k-- {
-					for l := len(expr.minutes.tokens) - 1; l >= 0; l-- {
+				for k := len(expr.hours) - 1; k >= 0; k-- {
+					for l := len(expr.minutes) - 1; l >= 0; l-- {
 						d := time.Date(
 							y,
-							time.Month(expr.months.tokens[i]),
-							int(expr.doms.tokens[j]),
-							int(expr.hours.tokens[k]),
-							int(expr.minutes.tokens[l]),
+							time.Month(expr.months[i]),
+							int(expr.doms[j]),
+							int(expr.hours[k]),
+							int(expr.minutes[l]),
 							0, 0, t.Location())
 
 						if d.Unix() >= t.Unix() {
@@ -252,11 +254,11 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 						}
 
 						switch {
-						case uint8(d.Month()) != expr.months.tokens[i],
-							uint8(d.Day()) != expr.doms.tokens[j],
-							uint8(d.Hour()) != expr.hours.tokens[k],
-							uint8(d.Minute()) != expr.minutes.tokens[l],
-							!expr.dows.index[uint8(d.Weekday())]:
+						case uint8(d.Month()) != expr.months[i],
+							uint8(d.Day()) != expr.doms[j],
+							uint8(d.Hour()) != expr.hours[k],
+							uint8(d.Minute()) != expr.minutes[l],
+							!contains(expr.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -265,10 +267,10 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 				}
 			}
 
-			dStart = len(expr.doms.tokens) - 1
+			dStart = len(expr.doms) - 1
 		}
 
-		mStart = len(expr.months.tokens) - 1
+		mStart = len(expr.months) - 1
 	}
 
 	return time.Unix(0, 0)
@@ -426,16 +428,6 @@ func fillUintSlice(start, end, interval uint8) []uint8 {
 	return result
 }
 
-func slice2map(s []uint8) map[uint8]bool {
-	result := make(map[uint8]bool)
-
-	for _, u := range s {
-		result[u] = true
-	}
-
-	return result
-}
-
 func str2uint(t string) uint8 {
 	u, _ := strconv.ParseUint(t, 10, 8)
 	return uint8(u)
@@ -470,4 +462,14 @@ func between(val, min, max uint8) uint8 {
 	default:
 		return val
 	}
+}
+
+func contains(data []uint8, item uint8) bool {
+	for _, v := range data {
+		if item == v {
+			return true
+		}
+	}
+
+	return false
 }

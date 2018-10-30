@@ -28,7 +28,7 @@ var _ = Suite(&CronSuite{})
 
 func (s *CronSuite) TestParsing(c *C) {
 
-	e0, err := Parse("* * * * * *")
+	e0, err := Parse("* * * *")
 
 	c.Assert(err, NotNil)
 	c.Assert(e0, IsNil)

@@ -11,6 +11,7 @@
 * `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[cron]` Code refactoring
 * `[system]` Increased code coverage (73.8% → 79.0%)
 
 ---
