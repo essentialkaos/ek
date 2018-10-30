@@ -306,7 +306,9 @@ func isIntervalToken(t string) bool {
 func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 	var result []uint8
 
-	for _, tt := range strings.Split(t, _SYMBOL_ENUM) {
+	for i := 0; i <= strings.Count(t, _SYMBOL_ENUM); i++ {
+		tt := strutil.ReadField(t, i, false, _SYMBOL_ENUM)
+
 		switch {
 		case isPeriodToken(tt):
 			d, err := parsePeriodToken(tt, ei)
@@ -332,15 +334,13 @@ func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 }
 
 func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
-	ts := strings.Split(t, _SYMBOL_PERIOD)
-
-	t1, err := parseToken(ts[0], ei.nt)
+	t1, err := parseToken(strutil.ReadField(t, 0, false, _SYMBOL_PERIOD), ei.nt)
 
 	if err != nil {
 		return nil, err
 	}
 
-	t2, err := parseToken(ts[1], ei.nt)
+	t2, err := parseToken(strutil.ReadField(t, 1, false, _SYMBOL_PERIOD), ei.nt)
 
 	if err != nil {
 		return nil, err
@@ -354,8 +354,7 @@ func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
 }
 
 func parseIntervalToken(t string, ei exprInfo) ([]uint8, error) {
-	ts := strings.Split(t, _SYMBOL_INTERVAL)
-	i, err := str2uint(ts[1])
+	i, err := str2uint(strutil.ReadField(t, 1, false, _SYMBOL_INTERVAL))
 
 	if err != nil {
 		return nil, err
