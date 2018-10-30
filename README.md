@@ -8,7 +8,6 @@
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://travis-ci.org/essentialkaos/ek"><img src="https://travis-ci.org/essentialkaos/ek.svg"></a>
   <a href='https://coveralls.io/github/essentialkaos/ek'><img src='https://coveralls.io/repos/github/essentialkaos/ek/badge.svg' alt='Coverage Status' /></a>
-  <a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fessentialkaos%2Fek?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fessentialkaos%2Fek.svg?type=shield"/></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
