@@ -13,6 +13,8 @@ import (
 	"bytes"
 )
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func FuzzCPUStats(data []byte) int {
 	r := bytes.NewReader(data)
 	_, err := parseCPUStats(r)
