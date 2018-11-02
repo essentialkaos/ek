@@ -2,6 +2,7 @@
 
 ### 10.0.0
 * `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
+* `[fmtutil/table]` Added global variable `MaxWidth` for configuration of maximum table width
 * `[system]` `FSInfo` now is `FSUsage` (_incompatible changes_)
 * `[system]` `MemInfo` now is `MemUsage` (_incompatible changes_)
 * `[system]` `CPUInfo` now is `CPUUsage` (_incompatible changes_)
@@ -15,6 +16,7 @@
 * `[cron]` Code refactoring
 * `[timeutil]` Code refactoring
 * `[fmtutil]` Increased code coverage (97.9% → 100.0%)
+* `[fmtutil/table]` Increased code coverage (99.4% → 100.0%)
 * `[knf]` Increased code coverage (99.6% → 100.0%)
 * `[req]` Increased code coverage (97.1% → 100.0%)
 * `[pid]` Increased code coverage (97.4% → 100.0%)

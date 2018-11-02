@@ -62,6 +62,9 @@ var SeparatorSymbol = "-"
 // ColumnSeparatorSymbol is column separator symbol
 var ColumnSeparatorSymbol = "|"
 
+// MaxWidth is a maximum table width
+var MaxWidth = 0
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTable create new table struct
@@ -440,5 +443,9 @@ func getSeparatorSize(t *Table) int {
 
 // getWindowWidth return window width
 func getWindowWidth() int {
-	return mathutil.Between(window.GetWidth(), 88, 9999)
+	if MaxWidth > 0 {
+		return mathutil.Between(MaxWidth, 80, 9999)
+	}
+
+	return mathutil.Between(window.GetWidth(), 80, 9999)
 }
