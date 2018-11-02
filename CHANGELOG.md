@@ -14,6 +14,7 @@
 * `[system]` Added fuzz testing
 * `[cron]` Code refactoring
 * `[timeutil]` Code refactoring
+* `[fmtutil]` Increased code coverage (97.9% → 100.0%)
 * `[knf]` Increased code coverage (99.6% → 100.0%)
 * `[req]` Increased code coverage (97.1% → 100.0%)
 * `[pid]` Increased code coverage (97.4% → 100.0%)
