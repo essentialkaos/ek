@@ -14,6 +14,7 @@
 * `[system]` Added fuzz testing
 * `[cron]` Code refactoring
 * `[timeutil]` Code refactoring
+* `[req]` Increased code coverage (97.1% → 100.0%)
 * `[system]` Increased code coverage (73.8% → 79.0%)
 
 ---
