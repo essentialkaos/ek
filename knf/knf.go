@@ -85,11 +85,9 @@ func Read(file string) (*Config, error) {
 		return nil, errors.New("File " + file + " is empty")
 	}
 
-	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
-
-	if err != nil {
-		return nil, err
-	}
+	// We don't check for errors because we checked configuration file
+	// earlier and getting an error is only possible if we use O_CREATE flag
+	fd, _ := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
 
 	defer fd.Close()
 
@@ -98,7 +96,7 @@ func Read(file string) (*Config, error) {
 		file: file,
 	}
 
-	err = readConfigData(config, fd, file)
+	err := readConfigData(config, fd, file)
 
 	if err != nil {
 		return nil, err
