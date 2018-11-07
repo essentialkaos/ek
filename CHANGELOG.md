@@ -10,8 +10,12 @@
 * `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
 * `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[initsystem]` `HasService` now is `IsPresent` (_incompatible changes_)
+* `[initsystem]` `IsServiceWorks` now is `IsWorks` (_incompatible changes_)
 * `[system]` Fixed bug with parsing CPU stats data (_found by go-fuzz_)
 * `[fmtc]` Fixed bug with parsing reset and modification tags (_found by go-fuzz_)
+* `[initsystem]` Fixed examples
+* `[fmtc]` Fixed examples
 * `[system]` Added fuzz testing
 * `[cron]` Code refactoring
 * `[timeutil]` Code refactoring
