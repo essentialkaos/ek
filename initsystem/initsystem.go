@@ -18,29 +18,29 @@ import (
 	"strings"
 	"syscall"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/fsutil"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SysV if SysV is used on system
+// SysV returns true if SysV is used on system
 func SysV() bool {
 	return !Systemd()
 }
 
-// Upstart if Upstart is used on system
+// Upstart returns true if Upstart is used on system
 func Upstart() bool {
 	return env.Which("initctl") != ""
 }
 
-// Systemd if Systemd is used on system
+// Systemd returns true if Systemd is used on system
 func Systemd() bool {
 	return env.Which("systemctl") != ""
 }
 
-// HasService return true if service is present in any init system
-func HasService(name string) bool {
+// IsPresent returns true if service is present in any init system
+func IsPresent(name string) bool {
 	if hasSystemdService(name) {
 		return true
 	}
@@ -56,8 +56,8 @@ func HasService(name string) bool {
 	return false
 }
 
-// IsServiceWorks return service state
-func IsServiceWorks(name string) (bool, error) {
+// IsWorks returns service state
+func IsWorks(name string) (bool, error) {
 	if hasSystemdService(name) {
 		return getSystemdServiceState(name)
 	}
@@ -73,9 +73,9 @@ func IsServiceWorks(name string) (bool, error) {
 	return false, fmt.Errorf("Can't find service state")
 }
 
-// IsEnabled return true if auto start enabled for given service
+// IsEnabled returns true if auto start enabled for given service
 func IsEnabled(name string) (bool, error) {
-	if !HasService(name) {
+	if !IsPresent(name) {
 		return false, fmt.Errorf("Service doesn't exist on this system")
 	}
 

@@ -12,10 +12,10 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/fmtc"
-	"pkg.re/essentialkaos/ek.v9/mathutil"
-	"pkg.re/essentialkaos/ek.v9/strutil"
-	"pkg.re/essentialkaos/ek.v9/terminal/window"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/mathutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v10/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -61,6 +61,9 @@ var SeparatorSymbol = "-"
 
 // ColumnSeparatorSymbol is column separator symbol
 var ColumnSeparatorSymbol = "|"
+
+// MaxWidth is a maximum table width
+var MaxWidth = 0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -440,5 +443,9 @@ func getSeparatorSize(t *Table) int {
 
 // getWindowWidth return window width
 func getWindowWidth() int {
-	return mathutil.Between(window.GetWidth(), 88, 9999)
+	if MaxWidth > 0 {
+		return mathutil.Between(MaxWidth, 80, 9999)
+	}
+
+	return mathutil.Between(window.GetWidth(), 80, 9999)
 }

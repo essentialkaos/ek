@@ -33,20 +33,20 @@ func ExampleSystemd() {
 	}
 }
 
-func ExampleHasService() {
+func ExampleIsPresent() {
 	serviceName := "crond"
 
-	if HasService(serviceName) {
+	if IsPresent(serviceName) {
 		fmt.Printf("Service %s is present\n", serviceName)
 	} else {
 		fmt.Printf("Unknown service %s\n", serviceName)
 	}
 }
 
-func ExampleGetServiceState() {
+func ExampleIsWorks() {
 	serviceName := "crond"
 
-	works, err := IsServiceWorks(serviceName)
+	works, err := IsWorks(serviceName)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)

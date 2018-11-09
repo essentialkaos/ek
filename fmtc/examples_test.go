@@ -107,7 +107,7 @@ func ExampleClean() {
 	// Output: Text
 }
 
-func ExampleTprintf() {
+func ExampleTPrintf() {
 	TPrintf("This is temporary text")
 	TPrintf("This message replace previous message")
 }

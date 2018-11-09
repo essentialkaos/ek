@@ -1,5 +1,33 @@
 ## Changelog
 
+### 10.0.0
+* `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
+* `[fmtutil/table]` Added global variable `MaxWidth` for configuration of maximum table width
+* `[system]` `FSInfo` now is `FSUsage` (_incompatible changes_)
+* `[system]` `MemInfo` now is `MemUsage` (_incompatible changes_)
+* `[system]` `CPUInfo` now is `CPUUsage` (_incompatible changes_)
+* `[system]` `GetFSInfo()` now is `GetFSUsage()` (_incompatible changes_)
+* `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
+* `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
+* `[system]` `GetInterfacesInfo()` now is `GetInterfacesStats()` (_incompatible changes_)
+* `[initsystem]` `HasService()` now is `IsPresent()` (_incompatible changes_)
+* `[initsystem]` `IsServiceWorks()` now is `IsWorks()` (_incompatible changes_)
+* `[system]` Fixed bug with parsing CPU stats data (_found by go-fuzz_)
+* `[fmtc]` Fixed bug with parsing reset and modification tags (_found by go-fuzz_)
+* `[initsystem]` Fixed examples
+* `[fmtc]` Fixed examples
+* `[system]` Added fuzz testing
+* `[cron]` Code refactoring
+* `[timeutil]` Code refactoring
+* `[fmtutil]` Increased code coverage (97.9% → 100.0%)
+* `[fmtutil/table]` Increased code coverage (99.4% → 100.0%)
+* `[knf]` Increased code coverage (99.6% → 100.0%)
+* `[req]` Increased code coverage (97.1% → 100.0%)
+* `[pid]` Increased code coverage (97.4% → 100.0%)
+* `[system]` Increased code coverage (73.8% → 79.0%)
+
+---
+
 ### 9.28.1
 
 * `[initsystem]` Improved application state checking in systemd

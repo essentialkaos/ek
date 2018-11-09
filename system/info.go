@@ -38,8 +38,8 @@ type LoadAvg struct {
 	TProc int     `json:"tproc"` // Number of kernel scheduling entities that currently exist on the system
 }
 
-// MemInfo contains info about system memory
-type MemInfo struct {
+// MemUsage contains info about system memory usage
+type MemUsage struct {
 	MemTotal     uint64 `json:"total"`        // Total usable ram (i.e. physical ram minus a few reserved bits and the kernel binary code)
 	MemFree      uint64 `json:"free"`         // The sum of MemFree - (Buffers + Cached)
 	MemUsed      uint64 `json:"used"`         // MemTotal - MemFree
@@ -57,8 +57,8 @@ type MemInfo struct {
 	SReclaimable uint64 `json:"sreclaimable"` // The part of the Slab that might be reclaimed (such as caches)
 }
 
-// CPUInfo contains info about CPU usage
-type CPUInfo struct {
+// CPUUsage contains info about CPU usage
+type CPUUsage struct {
 	User    float64 `json:"user"`    // Normal processes executing in user mode
 	System  float64 `json:"system"`  // Processes executing in kernel mode
 	Nice    float64 `json:"nice"`    // Niced processes executing in user mode
@@ -66,6 +66,16 @@ type CPUInfo struct {
 	Wait    float64 `json:"wait"`    // Waiting for I/O to complete
 	Average float64 `json:"average"` // Average CPU usage
 	Count   int     `json:"count"`   // Number of CPU cores
+}
+
+// CPUInfo contains info about CPU
+type CPUInfo struct {
+	Vendor    string    `json:"vendor"`     // Processor vandor name
+	Model     string    `json:"model"`      // Common name of the processor
+	Cores     int       `json:"cores"`      // Number of cores
+	Siblings  int       `json:"siblings"`   // Total number of sibling CPUs on the same physical CPU
+	CacheSize uint64    `json:"cache_size"` // Amount of level 2 memory cache available to the processor
+	Speed     []float64 `json:"speed"`      // Speed in megahertz for the processor
 }
 
 // CPUStats contains basic CPU stats
@@ -82,8 +92,8 @@ type CPUStats struct {
 	Count  int    `json:"count"`
 }
 
-// FSInfo contains info about fs usage
-type FSInfo struct {
+// FSUsage contains info about FS usage
+type FSUsage struct {
 	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)
 	Device  string   `json:"device"`  // Device spec
 	Used    uint64   `json:"used"`    // Used space

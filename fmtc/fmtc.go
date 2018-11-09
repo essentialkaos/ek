@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -407,7 +407,7 @@ func getSymbols(symbol string, count int) string {
 }
 
 func isValidTag(tag string) bool {
-	if tag == "" || tag == "-" {
+	if tag == "" || strings.Trim(tag, "-") == "" || strings.Count(tag, "!") > 1 {
 		return false
 	}
 

@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -111,7 +111,7 @@ func validatorGreater(config *Config, prop string, value interface{}) error {
 }
 
 func validatorEquals(config *Config, prop string, value interface{}) error {
-	switch value.(type) {
+	switch u := value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) == value.(int) {
 			return fmt.Errorf("Property %s can't be equal %d", prop, value.(int))
@@ -123,12 +123,12 @@ func validatorEquals(config *Config, prop string, value interface{}) error {
 		}
 
 	case bool:
-		if config.GetB(prop) == value.(bool) {
+		if config.GetB(prop) == u {
 			return fmt.Errorf("Property %s can't be equal %t", prop, value.(bool))
 		}
 
 	case string:
-		if config.GetS(prop) == value.(string) {
+		if config.GetS(prop) == u {
 			return fmt.Errorf("Property %s can't be equal %s", prop, value.(string))
 		}
 

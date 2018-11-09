@@ -8,6 +8,7 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -35,6 +36,7 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(2500.00), Equals, "2,500")
 	c.Assert(PrettyNum(1.23), Equals, "1.23")
 	c.Assert(PrettyNum(-1000), Equals, "-1,000")
+	c.Assert(PrettyNum(math.NaN()), Equals, "0")
 }
 
 func (s *FmtUtilSuite) TestPretyPerc(c *C) {
@@ -63,6 +65,7 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 	c.Assert(PrettySize(uint64(3000125)), Equals, "2.86MB")
 	c.Assert(PrettySize(float32(3000125)), Equals, "2.86MB")
 	c.Assert(PrettySize(float64(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(math.NaN()), Equals, "0B")
 }
 
 func (s *FmtUtilSuite) TestParseSize(c *C) {
@@ -89,6 +92,7 @@ func (s *FmtUtilSuite) TestFloat(c *C) {
 	c.Assert(Float(0.01), Equals, 0.01)
 	c.Assert(Float(0.001), Equals, 0.0)
 	c.Assert(Float(0.0001), Equals, 0.0)
+	c.Assert(Float(math.NaN()), Equals, 0.0)
 }
 
 func (s *FmtUtilSuite) TestWrap(c *C) {

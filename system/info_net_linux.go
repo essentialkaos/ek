@@ -1,5 +1,3 @@
-// +build linux
-
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -12,12 +10,13 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -27,10 +26,8 @@ var procNetFile = "/proc/net/dev"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
-// GetInterfacesInfo return info about network interfaces
-func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
+// GetInterfacesStats return info about network interfaces
+func GetInterfacesStats() (map[string]*InterfaceInfo, error) {
 	fd, err := os.OpenFile(procNetFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -39,10 +36,61 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
+	return parseInterfacesStats(bufio.NewReader(fd))
+}
+
+// GetNetworkSpeed return network input/output speed in bytes per second for
+// all network interfaces
+func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
+	ii1, err := GetInterfacesStats()
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	time.Sleep(duration)
+
+	ii2, err := GetInterfacesStats()
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	in, out := CalculateNetworkSpeed(ii1, ii2, duration)
+
+	return in, out, nil
+}
+
+// CalculateNetworkSpeed calculate network input/output speed in bytes per second for
+// all network interfaces
+func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
+	if ii1 == nil || ii2 == nil {
+		return 0, 0
+	}
+
+	rb1, tb1 := getActiveInterfacesBytes(ii1)
+	rb2, tb2 := getActiveInterfacesBytes(ii2)
+
+	if rb1+tb1 == 0 || rb2+tb2 == 0 {
+		return 0, 0
+	}
+
+	durationSec := uint64(duration / time.Second)
+
+	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
+
+// parseInterfacesStats parses interfaces stats data
+func parseInterfacesStats(r io.Reader) (map[string]*InterfaceInfo, error) {
+	var err error
+
 	s := bufio.NewScanner(r)
 
-	info := make(map[string]*InterfaceInfo)
+	stats := make(map[string]*InterfaceInfo)
 
 	for s.Scan() {
 		text := s.Text()
@@ -79,60 +127,17 @@ func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
 			return nil, errors.New("Can't parse field 10 as unsigned integer in " + procNetFile)
 		}
 
-		info[name] = ii
+		stats[name] = ii
 	}
 
-	if len(info) == 0 {
+	if len(stats) == 0 {
 		return nil, errors.New("Can't parse file " + procNetFile)
 	}
 
-	return info, nil
+	return stats, nil
 }
 
 // codebeat:enable[LOC,ABC]
-
-// GetNetworkSpeed return network input/output speed in bytes per second for
-// all network interfaces
-func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
-	ii1, err := GetInterfacesInfo()
-
-	if err != nil {
-		return 0, 0, err
-	}
-
-	time.Sleep(duration)
-
-	ii2, err := GetInterfacesInfo()
-
-	if err != nil {
-		return 0, 0, err
-	}
-
-	in, out := CalculateNetworkSpeed(ii1, ii2, duration)
-
-	return in, out, nil
-}
-
-// CalculateNetworkSpeed calculate network input/output speed in bytes per second for
-// all network interfaces
-func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
-	if ii1 == nil || ii2 == nil {
-		return 0, 0
-	}
-
-	rb1, tb1 := getActiveInterfacesBytes(ii1)
-	rb2, tb2 := getActiveInterfacesBytes(ii2)
-
-	if rb1+tb1 == 0 || rb2+tb2 == 0 {
-		return 0, 0
-	}
-
-	durationSec := uint64(duration / time.Second)
-
-	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
 
 // getActiveInterfacesBytes calculate received and transmitted bytes on all interfaces
 func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {

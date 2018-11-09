@@ -1,5 +1,3 @@
-// +build linux
-
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -12,11 +10,12 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,8 +24,6 @@ import (
 var procLoadAvgFile = "/proc/loadavg"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// codebeat:disable[LOC,ABC]
 
 // GetLA return loadavg
 func GetLA() (*LoadAvg, error) {
@@ -38,8 +35,22 @@ func GetLA() (*LoadAvg, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	text, _ := r.ReadString('\n')
+	text, err := bufio.NewReader(fd).ReadString('\n')
+
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return parseLAInfo(text)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
+
+// parseLAInfo parses loadavg data
+func parseLAInfo(text string) (*LoadAvg, error) {
+	var err error
 
 	if len(text) < 20 {
 		return nil, errors.New("Can't parse file " + procLoadAvgFile)

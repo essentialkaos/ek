@@ -18,7 +18,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v9/env"
+	"pkg.re/essentialkaos/ek.v10/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -408,6 +408,14 @@ func (s *ReqSuite) TestEncoding(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(resp, NotNil)
+
+	resp, err = Request{
+		URL:  s.url + "/404",
+		Body: func() { return },
+	}.Do()
+
+	c.Assert(err, NotNil)
+	c.Assert(resp, IsNil)
 }
 
 func (s *ReqSuite) TestRequestErrors(c *C) {
@@ -427,6 +435,11 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	c.Assert(err, NotNil)
 
 	resp, err = Request{URL: "%gh&%ij"}.Do()
+
+	c.Assert(resp, IsNil)
+	c.Assert(err, NotNil)
+
+	resp, err = Request{Method: "ЩУП", URL: "http://127.0.0.1"}.Do()
 
 	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)

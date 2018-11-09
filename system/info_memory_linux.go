@@ -1,5 +1,3 @@
-// +build linux
-
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -12,9 +10,10 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,10 +23,8 @@ var procMemInfoFile = "/proc/meminfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
-// GetMemInfo return memory info
-func GetMemInfo() (*MemInfo, error) {
+// GetMemUsage return memory usage info
+func GetMemUsage() (*MemUsage, error) {
 	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -36,10 +33,19 @@ func GetMemInfo() (*MemInfo, error) {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	return parseMemUsage(bufio.NewReader(fd))
+}
 
-	mem := &MemInfo{}
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// codebeat:disable[LOC,ABC]
+
+// parseMemUsage parses memory usage info
+func parseMemUsage(r io.Reader) (*MemUsage, error) {
+	var err error
+
+	s := bufio.NewScanner(r)
+	mem := &MemUsage{}
 
 	for s.Scan() {
 		text := s.Text()

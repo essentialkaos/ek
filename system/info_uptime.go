@@ -12,10 +12,11 @@ package system
 import (
 	"bufio"
 	"errors"
+	"io"
 	"os"
 	"strconv"
 
-	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,6 +39,17 @@ func GetUptime() (uint64, error) {
 	r := bufio.NewReader(fd)
 	text, err := r.ReadString('\n')
 
+	if err != nil && err != io.EOF {
+		return 0, err
+	}
+
+	return parseUptime(text)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// parseUptime parses uptime data
+func parseUptime(text string) (uint64, error) {
 	uptimeStr := strutil.ReadField(text, 0, true)
 
 	if uptimeStr == "" {

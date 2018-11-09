@@ -1,4 +1,6 @@
-package system
+// +build gofuzz
+
+package timeutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,28 +10,21 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"syscall"
 	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getTimes is copy of fsutil.GetTimes
-func getTimes(path string) (time.Time, time.Time, time.Time, error) {
-	if path == "" {
-		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
+var fuzzTestDate = time.Now()
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func Fuzz(data []byte) int {
+	f := Format(fuzzTestDate, string(data))
+
+	if f != "" {
+		return 0
 	}
 
-	var stat = &syscall.Stat_t{}
-
-	err := syscall.Stat(path, stat)
-
-	if err != nil {
-		return time.Time{}, time.Time{}, time.Time{}, err
-	}
-
-	return time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec)),
-		time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec)),
-		time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec)),
-		nil
+	return 1
 }

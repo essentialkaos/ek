@@ -154,4 +154,16 @@ func (s *TableSuite) TestAuxi(c *C) {
 	t := &Table{Sizes: []int{1, 2, 3, 4}}
 
 	c.Assert(getColumnsNum(t), Equals, len(t.Sizes))
+
+	t = &Table{columnSizes: []int{4, 4}}
+	renderRowData(t, []string{"ABCDABCDABCD", "ABCDABCDABCD"}, 2)
+
+	MaxWidth = 80
+
+	setColumnsSizes(t, 3)
+	c.Assert(t.columnSizes[0], Equals, 23)
+	c.Assert(t.columnSizes[1], Equals, 23)
+	c.Assert(t.columnSizes[2], Equals, 25)
+
+	MaxWidth = 0
 }
