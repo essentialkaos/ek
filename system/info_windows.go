@@ -25,14 +25,19 @@ func GetLA() (*LoadAvg, error) {
 	return nil, nil
 }
 
-// GetMemInfo return memory info
-func GetMemInfo() (*MemInfo, error) {
+// GetMemUsage return memory usage info
+func GetMemUsage() (*MemUsage, error) {
 	return nil, nil
 }
 
-// GetCPUInfo return info about CPU usage
-func GetCPUInfo() (*CPUInfo, error) {
+// GetCPUUsage return info about CPU usage
+func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	return nil, nil
+}
+
+// CalculateCPUUsage calcualtes CPU usage based on CPUStats
+func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
+	return nil
 }
 
 // GetCPUStats return basic CPU stats
@@ -40,9 +45,14 @@ func GetCPUStats() (*CPUStats, error) {
 	return nil, nil
 }
 
-// GetFSInfo return info about mounted filesystems
-func GetFSInfo() (map[string]*FSInfo, error) {
-	return map[string]*FSInfo{"/": {}}, nil
+// GetCPUInfo returns slice with info about CPUs
+func GetCPUInfo() ([]*CPUInfo, error) {
+	return nil, nil
+}
+
+// GetFSUsage return info about mounted filesystems
+func GetFSUsage() (map[string]*FSUsage, error) {
+	return map[string]*FSUsage{"/": {}}, nil
 }
 
 // GetIOStats return I/O stats
@@ -55,9 +65,9 @@ func GetSystemInfo() (*SystemInfo, error) {
 	return nil, nil
 }
 
-// GetInterfacesInfo return info about network interfaces
-func GetInterfacesInfo() (map[string]*InterfaceInfo, error) {
-	return map[string]*InterfaceInfo{"eth0": {}}, nil
+// GetInterfacesStats return info about network interfaces
+func GetInterfacesStats() (map[string]*InterfaceStats, error) {
+	return map[string]*InterfaceStats{"eth0": {}}, nil
 }
 
 // GetNetworkSpeed return input/output speed in bytes per second
@@ -67,7 +77,7 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 
 // CalculateNetworkSpeed calculate network input/output speed in bytes per second for
 // all network interfaces
-func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
+func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Duration) (uint64, uint64) {
 	return 0, 0
 }
 
@@ -77,7 +87,7 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 }
 
 // CalculateIOUtil calculate IO utilization for all devices
-func CalculateIOUtil(fi1 map[string]*FSInfo, fi2 map[string]*FSInfo, duration time.Duration) map[string]float64 {
+func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
 	return map[string]float64{"/": 0}
 }
 

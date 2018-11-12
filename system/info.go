@@ -117,8 +117,8 @@ type IOStats struct {
 	IOQueueMs     uint64 `json:"io_queue_ms"`    // Weighted time spent doing I/Os (ms)
 }
 
-// InterfaceInfo contains info about network interfaces
-type InterfaceInfo struct {
+// InterfaceStats contains stats about network interfaces usage
+type InterfaceStats struct {
 	ReceivedBytes      uint64 `json:"received_bytes"`
 	ReceivedPackets    uint64 `json:"received_packets"`
 	TransmittedBytes   uint64 `json:"transmitted_bytes"`

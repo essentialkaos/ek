@@ -27,7 +27,7 @@ var procNetFile = "/proc/net/dev"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetInterfacesStats return info about network interfaces
-func GetInterfacesStats() (map[string]*InterfaceInfo, error) {
+func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	fd, err := os.OpenFile(procNetFile, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -63,7 +63,7 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 
 // CalculateNetworkSpeed calculate network input/output speed in bytes per second for
 // all network interfaces
-func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Duration) (uint64, uint64) {
+func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Duration) (uint64, uint64) {
 	if ii1 == nil || ii2 == nil {
 		return 0, 0
 	}
@@ -85,12 +85,12 @@ func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceInfo, duration time.Dur
 // codebeat:disable[LOC,ABC]
 
 // parseInterfacesStats parses interfaces stats data
-func parseInterfacesStats(r io.Reader) (map[string]*InterfaceInfo, error) {
+func parseInterfacesStats(r io.Reader) (map[string]*InterfaceStats, error) {
 	var err error
 
 	s := bufio.NewScanner(r)
 
-	stats := make(map[string]*InterfaceInfo)
+	stats := make(map[string]*InterfaceStats)
 
 	for s.Scan() {
 		text := s.Text()
@@ -99,7 +99,7 @@ func parseInterfacesStats(r io.Reader) (map[string]*InterfaceInfo, error) {
 			continue
 		}
 
-		ii := &InterfaceInfo{}
+		ii := &InterfaceStats{}
 
 		name := strings.TrimRight(strutil.ReadField(text, 0, true), ":")
 
@@ -140,7 +140,7 @@ func parseInterfacesStats(r io.Reader) (map[string]*InterfaceInfo, error) {
 // codebeat:enable[LOC,ABC]
 
 // getActiveInterfacesBytes calculate received and transmitted bytes on all interfaces
-func getActiveInterfacesBytes(is map[string]*InterfaceInfo) (uint64, uint64) {
+func getActiveInterfacesBytes(is map[string]*InterfaceStats) (uint64, uint64) {
 	var (
 		received    uint64
 		transmitted uint64
