@@ -28,7 +28,6 @@ makeLink() {
 # Download required dependencies
 downloadDeps() {
   git config --global http.https://pkg.re.followRedirects true
-  go get -v pkg.re/essentialkaos/go-linenoise.v3
   go get -v golang.org/x/crypto/bcrypt
 }
 
