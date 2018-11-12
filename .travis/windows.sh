@@ -27,7 +27,8 @@ makeLink() {
 
 # Download required dependencies
 downloadDeps() {
-  go get -v .
+  go get -v pkg.re/essentialkaos/go-linenoise.v3
+  go get -v golang.org/x/crypto/bcrypt
 }
 
 # Check package installation
