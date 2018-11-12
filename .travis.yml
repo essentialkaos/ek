@@ -35,4 +35,4 @@ before_install:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then .travis/script.sh 10 ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]] ; then go install ./... ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]] ; then .travis/windows.sh 10 ; fi
