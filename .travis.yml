@@ -23,7 +23,6 @@ matrix:
   fast_finish: true
   allow_failures:
     - go: tip
-    - os: osx
     - os: windows
 
 env:

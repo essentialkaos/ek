@@ -2,6 +2,7 @@
 
 main() {
   makeLink "$1"
+  downloadDeps
   checkInstall
 }
 
@@ -24,6 +25,12 @@ makeLink() {
   ln -sf $GOPATH/src/github.com/essentialkaos/ek $GOPATH/src/${pkg_dir}
 }
 
+# Download required dependencies
+downloadDeps() {
+  go get -v .
+}
+
+# Check package installation
 checkInstall() {
   go install ./...
   exit $?
