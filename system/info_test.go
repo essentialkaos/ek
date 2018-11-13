@@ -278,8 +278,8 @@ func (s *SystemSuite) TestNet(c *C) {
 	c.Assert(err, IsNil)
 
 	in, out := CalculateNetworkSpeed(
-		map[string]*InterfaceInfo{"eth0": {0, 0, 0, 0}},
-		map[string]*InterfaceInfo{"eth0": {0, 0, 0, 0}},
+		map[string]*InterfaceStats{"eth0": {0, 0, 0, 0}},
+		map[string]*InterfaceStats{"eth0": {0, 0, 0, 0}},
 		time.Second,
 	)
 

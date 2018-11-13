@@ -16,20 +16,22 @@ branches:
 
 os:
   - linux
+  - windows
   - osx
 
 matrix:
   fast_finish: true
   allow_failures:
     - go: tip
-    - os: osx
+    - os: windows
 
 env:
   - EK_TEST_PORT=8080
 
 before_install:
-  - make deps
-  - make deps-test
+  - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps ; fi
+  - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps-test ; fi
 
 script:
-  - .travis/script.sh 10
+  - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then .travis/script.sh 10 ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]] ; then .travis/windows.sh 10 ; fi

@@ -6,6 +6,7 @@
 * `[system]` `FSInfo` now is `FSUsage` (_incompatible changes_)
 * `[system]` `MemInfo` now is `MemUsage` (_incompatible changes_)
 * `[system]` `CPUInfo` now is `CPUUsage` (_incompatible changes_)
+* `[system]` `InterfaceInfo` now is `InterfaceStats` (_incompatible changes_)
 * `[system]` `GetFSInfo()` now is `GetFSUsage()` (_incompatible changes_)
 * `[system]` `GetMemInfo()` now is `GetMemUsage()` (_incompatible changes_)
 * `[system]` `GetCPUInfo()` now is `GetCPUUsage()` (_incompatible changes_)
