@@ -27,8 +27,7 @@ makeLink() {
 
 # Download required dependencies
 downloadDeps() {
-  git config --global http.https://pkg.re.followRedirects true
-  go get -v golang.org/x/crypto/bcrypt
+  go get -v -d golang.org/x/crypto/bcrypt
 }
 
 # Check package installation
