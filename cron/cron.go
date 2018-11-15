@@ -202,7 +202,8 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 							int(expr.doms[j]),
 							int(expr.hours[k]),
 							int(expr.minutes[l]),
-							0, 0, t.Location())
+							0, 0, t.Location(),
+						)
 
 						if d.Unix() <= t.Unix() {
 							continue
@@ -257,7 +258,8 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 							int(expr.doms[j]),
 							int(expr.hours[k]),
 							int(expr.minutes[l]),
-							0, 0, t.Location())
+							0, 0, t.Location(),
+						)
 
 						if d.Unix() >= t.Unix() {
 							continue

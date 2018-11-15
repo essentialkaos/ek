@@ -34,10 +34,10 @@ type Temp struct {
 var Dir = "/tmp"
 
 // DefaultDirPerms is default permissions for directories
-var DefaultDirPerms os.FileMode = 0750
+var DefaultDirPerms = os.FileMode(0750)
 
 // DefaultFilePerms is default permissions for files
-var DefaultFilePerms os.FileMode = 0640
+var DefaultFilePerms = os.FileMode(0640)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 

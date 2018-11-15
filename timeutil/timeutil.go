@@ -254,7 +254,8 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 			d.Minute(),
 			d.Second(),
 			getAMPM(d, true),
-			zn)
+			zn,
+		)
 	case 'C', 'g':
 		output.WriteString(strconv.Itoa(d.Year())[0:2])
 	case 'd':

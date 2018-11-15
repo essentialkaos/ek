@@ -37,8 +37,8 @@ func GenUUID4() string {
 
 	rand.Read(uuid)
 
-	uuid[6] = (uuid[6] & 0x0f) | 0x40
-	uuid[8] = (uuid[8] & 0x3f) | 0x80
+	uuid[6] = (uuid[6] & 0X0F) | 0X40
+	uuid[8] = (uuid[8] & 0X3F) | 0X80
 
 	return toString(uuid)
 }
@@ -53,8 +53,8 @@ func GenUUID5(ns []byte, name string) string {
 
 	copy(uuid, hash.Sum(nil))
 
-	uuid[6] = (uuid[6] & 0x0f) | 0x50
-	uuid[8] = (uuid[8] & 0x3f) | 0x80
+	uuid[6] = (uuid[6] & 0X0F) | 0x50
+	uuid[8] = (uuid[8] & 0X3F) | 0x80
 
 	return toString(uuid)
 }

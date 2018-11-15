@@ -19,7 +19,7 @@ func ExampleRGB2Hex() {
 }
 
 func ExampleHex2RGB() {
-	r, g, b := Hex2RGB(0x7f194b)
+	r, g, b := Hex2RGB(0X7F194B)
 
 	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
 
@@ -27,7 +27,7 @@ func ExampleHex2RGB() {
 }
 
 func ExampleHex2RGBA() {
-	r, g, b, a := Hex2RGBA(0x7f194bcc)
+	r, g, b, a := Hex2RGBA(0X7F194BCC)
 
 	fmt.Printf("r:%d g:%d b:%d a:%d\n", r, g, b, a)
 
