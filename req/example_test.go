@@ -20,7 +20,7 @@ func ExampleRequest_Do() {
 		Balance float64 `json:"balance"`
 	}{}
 
-	// Configure global enagine
+	// Configure global engine
 	SetUserAgent("my-supper-app", "1.0")
 	SetDialTimeout(30.0)
 	SetRequestTimeout(30.0)
@@ -46,7 +46,7 @@ func ExampleRequest_Do() {
 	// print status code
 	fmt.Printf("Status code: %d\n", resp.StatusCode)
 
-	// decode json encoded response
+	// decode JSON encoded response
 	err = resp.JSON(response)
 
 	if err != nil {
@@ -115,7 +115,7 @@ func ExampleRequest_Post() {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	// decode json encoded response
+	// decode JSON encoded response
 	err = resp.JSON(response)
 
 	if err != nil {
