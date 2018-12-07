@@ -29,10 +29,10 @@ var _ = Suite(&DirectIOSuite{})
 
 func (s *DirectIOSuite) TestReading(c *C) {
 	tmpDir := c.MkDir()
-	tmpFile := "/var/tmp/tmp_data"
-	payload := []byte(strings.Repeat("DATA1", 2049))
+	tmpFile := tmpDir + "/tmp_data"
+	payload := []byte(strings.Repeat("DATA1", 6543))
 
-	err := ioutil.WriteFile(tmpFile, payload, 0664)
+	err := ioutil.WriteFile(tmpFile, payload, 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())
@@ -43,7 +43,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(data, NotNil)
 
-	c.Assert(string(data), Equals, strings.Repeat("DATA1", 2049))
+	c.Assert(string(data), Equals, strings.Repeat("DATA1", 6543))
 
 	data, err = ReadFile(tmpDir + "/not_exist")
 
@@ -54,7 +54,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 func (s *DirectIOSuite) TestWriting(c *C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/tmp_data"
-	payload := []byte(strings.Repeat("DATA", 2049))
+	payload := []byte(strings.Repeat("DATA", 6543))
 
 	err := WriteFile(tmpFile, payload, 0644)
 
