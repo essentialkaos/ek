@@ -29,7 +29,7 @@ var _ = Suite(&DirectIOSuite{})
 
 func (s *DirectIOSuite) TestReading(c *C) {
 	tmpDir := c.MkDir()
-	tmpFile := tmpDir + "/tmp_data"
+	tmpFile := "/var/tmp/tmp_data"
 	payload := []byte(strings.Repeat("DATA1", 2049))
 
 	err := ioutil.WriteFile(tmpFile, payload, 0664)
