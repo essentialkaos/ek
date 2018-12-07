@@ -62,7 +62,8 @@ func WriteFile(file string, data []byte, perms os.FileMode) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
-	buf := make([]byte, 0)
+	var buf []byte
+
 	block := allocateBlock()
 	blockSize := len(block)
 	chunks := (int(info.Size()) / blockSize) + 1

@@ -96,11 +96,8 @@ func NewInfo(args ...string) *Info {
 	}
 
 	info := &Info{
-		name:     name,
-		args:     strings.Join(args, " "),
-		commands: make([]*entity, 0),
-		options:  make([]*entity, 0),
-		examples: make([]*example, 0),
+		name: name,
+		args: strings.Join(args, " "),
 
 		CommandsColorTag: "{y}",
 		OptionsColorTag:  "{g}",
@@ -206,11 +203,13 @@ func (about *About) Render() {
 		if about.Year == 0 {
 			fmtc.Printf(
 				"{s-}Copyright (C) %d %s{!}\n",
-				time.Now().Year(), about.Owner)
+				time.Now().Year(), about.Owner,
+			)
 		} else {
 			fmtc.Printf(
 				"{s-}Copyright (C) %d-%d %s{!}\n",
-				about.Year, time.Now().Year(), about.Owner)
+				about.Year, time.Now().Year(), about.Owner,
+			)
 		}
 	}
 

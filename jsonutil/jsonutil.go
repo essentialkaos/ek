@@ -28,7 +28,7 @@ func EncodeToFile(file string, v interface{}, perms ...os.FileMode) error {
 		jsonData = append(jsonData, byte('\n'))
 	}
 
-	var perm os.FileMode = 0644
+	var perm = os.FileMode(0644)
 
 	if len(perms) > 0 {
 		perm = perms[0]

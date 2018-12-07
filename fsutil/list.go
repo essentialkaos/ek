@@ -168,7 +168,7 @@ func readDir(dir string) []string {
 }
 
 func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) []string {
-	var result = make([]string, 0)
+	var result []string
 
 	names := readDir(path)
 
@@ -206,7 +206,7 @@ func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) [
 }
 
 func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) []string {
-	var result = make([]string, 0)
+	var result []string
 
 	names := readDir(path)
 
@@ -234,7 +234,7 @@ func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) 
 }
 
 func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter) []string {
-	var result = make([]string, 0)
+	var result []string
 
 	names := readDir(path)
 

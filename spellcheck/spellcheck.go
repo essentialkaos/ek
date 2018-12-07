@@ -49,7 +49,7 @@ var threshold = 2
 
 // Train train words by given string slice
 func Train(words []string) *Model {
-	model := &Model{terms: make([]string, 0)}
+	model := &Model{}
 
 	if len(words) == 0 {
 		return model
