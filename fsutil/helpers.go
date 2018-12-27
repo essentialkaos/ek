@@ -60,7 +60,7 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 	return copyFile(from, to, perms)
 }
 
-// MoveFile move file
+// MoveFile moves file
 func MoveFile(from, to string, perms ...os.FileMode) error {
 	if !_disableMoveFileChecks {
 		targetExist := IsExist(to)
