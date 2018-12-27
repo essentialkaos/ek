@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.1.0
+
+* `[system]` Improved OS version search
+* `[tmp]` Package refactoring
+
 ### 10.0.0
 * `[system]` Added method `GetCPUInfo` for fetching info about CPUs from procfs
 * `[fmtutil/table]` Added global variable `MaxWidth` for configuration of maximum table width
