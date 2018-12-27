@@ -42,11 +42,11 @@ var DefaultFilePerms = os.FileMode(0640)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTemp create new Temp structure
-func NewTemp(args ...string) (*Temp, error) {
+func NewTemp(dir ...string) (*Temp, error) {
 	tempDir := path.Clean(Dir)
 
-	if len(args) != 0 {
-		tempDir = path.Clean(args[0])
+	if len(dirs) != 0 {
+		tempDir = path.Clean(dirs[0])
 	}
 
 	if !fsutil.IsExist(tempDir) {
@@ -71,15 +71,15 @@ func NewTemp(args ...string) (*Temp, error) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // MkDir make temporary directory
-func (t *Temp) MkDir(args ...string) (string, error) {
+func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	if t == nil {
 		return "", fmt.Errorf("Temp struct is nil")
 	}
 
 	name := ""
 
-	if len(args) != 0 {
-		name = args[0]
+	if len(nameSuffix) != 0 {
+		name = nameSuffix[0]
 	}
 
 	tmpDir := getTempName(t.Dir, name)
@@ -95,15 +95,15 @@ func (t *Temp) MkDir(args ...string) (string, error) {
 }
 
 // MkFile make temporary file
-func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
+func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	if t == nil {
 		return nil, "", fmt.Errorf("Temp struct is nil")
 	}
 
 	name := ""
 
-	if len(args) != 0 {
-		name = args[0]
+	if len(nameSuffix) != 0 {
+		name = nameSuffix[0]
 	}
 
 	tmpFile := getTempName(t.Dir, name)
@@ -119,11 +119,11 @@ func (t *Temp) MkFile(args ...string) (*os.File, string, error) {
 }
 
 // MkName return name for temporary object
-func (t *Temp) MkName(args ...string) string {
+func (t *Temp) MkName(nameSuffix ...string) string {
 	name := ""
 
-	if len(args) != 0 {
-		name = args[0]
+	if len(nameSuffix) != 0 {
+		name = nameSuffix[0]
 	}
 
 	tmpObj := getTempName(t.Dir, name)
