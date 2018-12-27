@@ -50,6 +50,14 @@ func getDistributionInfo() (string, string) {
 		distribution = LINUX_ARCH
 		version = getRawRelease("/etc/arch-release")
 
+	case isFileExist("/etc/centos-release") && isFileExist("/etc/redhat-release.5"):
+		distribution = LINUX_CENTOS
+		version = getReleasePart("/etc/redhat-release.5")
+
+	case isFileExist("/etc/centos-release") && isFileExist("/etc/redhat-release.6"):
+		distribution = LINUX_CENTOS
+		version = getReleasePart("/etc/redhat-release.6")
+
 	case isFileExist("/etc/centos-release"):
 		distribution = LINUX_CENTOS
 		version = getReleasePart("/etc/centos-release")
