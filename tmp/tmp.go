@@ -45,8 +45,8 @@ var DefaultFilePerms = os.FileMode(0640)
 func NewTemp(dir ...string) (*Temp, error) {
 	tempDir := path.Clean(Dir)
 
-	if len(dirs) != 0 {
-		tempDir = path.Clean(dirs[0])
+	if len(dir) != 0 {
+		tempDir = path.Clean(dir[0])
 	}
 
 	if !fsutil.IsExist(tempDir) {
