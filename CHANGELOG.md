@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.2.0
+
+* `[version]` Added method `Simple()` which returns simple version
+* `[version]` More usage examples added
+
 ### 10.1.0
 
 * `[system]` Improved OS version search

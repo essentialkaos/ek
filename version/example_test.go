@@ -35,6 +35,60 @@ func ExampleParse() {
 	// Build: exp.sha.5114f85
 }
 
+func ExampleVersion_Major() {
+	v, _ := Parse("4.12.7")
+
+	fmt.Println(v.Major())
+
+	// Output:
+	// 4
+}
+
+func ExampleVersion_Minor() {
+	v, _ := Parse("4.12.7")
+
+	fmt.Println(v.Minor())
+
+	// Output:
+	// 12
+}
+
+func ExampleVersion_Patch() {
+	v, _ := Parse("4.12.7")
+
+	fmt.Println(v.Patch())
+
+	// Output:
+	// 7
+}
+
+func ExampleVersion_PreRelease() {
+	v, _ := Parse("4.12.7-rc1")
+
+	fmt.Println(v.PreRelease())
+
+	// Output:
+	// rc1
+}
+
+func ExampleVersion_Build() {
+	v, _ := Parse("4.12.7+2f6c6ea6287d2f14")
+
+	fmt.Println(v.Build())
+
+	// Output:
+	// 2f6c6ea6287d2f14
+}
+
+func ExampleVersion_String() {
+	v, _ := Parse("6.12.1-beta2+exp.sha.5114f85")
+
+	fmt.Println(v.String())
+
+	// Output:
+	// 6.12.1-beta2+exp.sha.5114f85
+}
+
 func ExampleVersion_Int() {
 	v, _ := Parse("14.8.22")
 
