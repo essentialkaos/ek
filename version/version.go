@@ -104,7 +104,7 @@ func Parse(v string) (Version, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Major return major version
+// Major returns major version
 func (v Version) Major() int {
 	if v.raw == "" || len(v.slice) == 0 {
 		return -1
@@ -113,7 +113,7 @@ func (v Version) Major() int {
 	return v.slice[0]
 }
 
-// Minor return minor version
+// Minor returns minor version
 func (v Version) Minor() int {
 	if v.raw == "" || len(v.slice) == 0 {
 		return -1
@@ -122,7 +122,7 @@ func (v Version) Minor() int {
 	return v.slice[1]
 }
 
-// Patch return patch version
+// Patch returns patch version
 func (v Version) Patch() int {
 	if v.raw == "" || len(v.slice) == 0 {
 		return -1
@@ -131,7 +131,7 @@ func (v Version) Patch() int {
 	return v.slice[2]
 }
 
-// PreRelease return prerelease version
+// PreRelease returns prerelease version
 func (v Version) PreRelease() string {
 	if v.raw == "" {
 		return ""
@@ -140,13 +140,23 @@ func (v Version) PreRelease() string {
 	return v.preRelease
 }
 
-// Build return build
+// Build returns build string
 func (v Version) Build() string {
 	if v.raw == "" {
 		return ""
 	}
 
 	return v.build
+}
+
+// Simple returns simple version (without prerelease and build info,
+// with major, minor and patch)
+func (v Version) Simple() string {
+	if v.raw == "" || len(v.slice) == 0 {
+		return "0.0.0"
+	}
+
+	return strconv.Itoa(v.slice[0]) + "." + strconv.Itoa(v.slice[1]) + "." + strconv.Itoa(v.slice[2])
 }
 
 // Equal return true if version are equal to given

@@ -119,6 +119,22 @@ func (s *VersionSuite) TestBuild(c *C) {
 	c.Assert(v6.Build(), Equals, "exp.sha.5114f85")
 }
 
+func (s *VersionSuite) TestSimple(c *C) {
+	v1, _ := Parse("1")
+	v2, _ := Parse("2.1")
+	v3, _ := Parse("3.4.5")
+	v4, _ := Parse("4-alpha1")
+	v5, _ := Parse("5-beta1+sha:5114f85")
+	v6, _ := Parse("6.12.1-beta2+exp.sha.5114f85")
+
+	c.Assert(v1.Simple(), Equals, "1.0.0")
+	c.Assert(v2.Simple(), Equals, "2.1.0")
+	c.Assert(v3.Simple(), Equals, "3.4.5")
+	c.Assert(v4.Simple(), Equals, "4.0.0")
+	c.Assert(v5.Simple(), Equals, "5.0.0")
+	c.Assert(v6.Simple(), Equals, "6.12.1")
+}
+
 func (s *VersionSuite) TestString(c *C) {
 	v1, _ := Parse("1")
 	v2, _ := Parse("2.1")
@@ -163,6 +179,7 @@ func (s *VersionSuite) TestErrors(c *C) {
 	c.Assert(v1.PreRelease(), Equals, "")
 	c.Assert(v1.Build(), Equals, "")
 	c.Assert(v1.String(), Equals, "")
+	c.Assert(v1.Simple(), Equals, "0.0.0")
 
 	c.Assert(v2.Major(), Equals, -1)
 	c.Assert(v2.Minor(), Equals, -1)
@@ -170,6 +187,7 @@ func (s *VersionSuite) TestErrors(c *C) {
 	c.Assert(v2.PreRelease(), Equals, "")
 	c.Assert(v2.Build(), Equals, "")
 	c.Assert(v2.String(), Equals, "")
+	c.Assert(v2.Simple(), Equals, "0.0.0")
 }
 
 func (s *VersionSuite) TestComparison(c *C) {
