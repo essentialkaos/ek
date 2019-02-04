@@ -529,58 +529,6 @@ func getMode(path string) uint32 {
 	return uint32(stat.Mode)
 }
 
-func isReadable(path string, user *system.User) bool {
-	if path == "" {
-		return false
-	}
-
-	path = PATH.Clean(path)
-
-	var stat = &syscall.Stat_t{}
-
-	err := syscall.Stat(path, stat)
-
-	if err != nil {
-		return false
-	}
-
-	return isReadableStat(stat, user.UID, getGIDList(user))
-}
-
-func isWritable(path string, user *system.User) bool {
-	if path == "" {
-		return false
-	}
-
-	path = PATH.Clean(path)
-
-	var stat = &syscall.Stat_t{}
-
-	err := syscall.Stat(path, stat)
-
-	if err != nil {
-		return false
-	}
-
-	return isWritableStat(stat, user.UID, getGIDList(user))
-}
-
-func isExecutable(path string, user *system.User) bool {
-	if path == "" {
-		return false
-	}
-
-	path = PATH.Clean(path)
-
-	var stat = &syscall.Stat_t{}
-
-	err := syscall.Stat(path, stat)
-
-	if err != nil {
-		return false
-	}
-}
-
 func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	if uid == 0 {
 		return true
