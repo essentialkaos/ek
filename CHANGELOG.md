@@ -1,5 +1,11 @@
 ## Changelog
 
+### 10.3.0
+
+* `[fsutil]` Added method `IsReadableByUser` for checking read permission for some user
+* `[fsutil]` Added method `IsWritableByUser` for checking write permission for some user
+* `[fsutil]` Added method `IsExecutableByUser` for checking execution permission for some user
+
 ### 10.2.0
 
 * `[version]` Added method `Simple()` which returns simple version

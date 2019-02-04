@@ -44,90 +44,127 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CheckPerms check many props at once
 func CheckPerms(perms, path string) bool {
 	return false
 }
 
+// ProperPath returns the first proper path from a given slice
 func ProperPath(props string, paths []string) string {
 	return ""
 }
 
+// IsExist returns true if the given object is exist
 func IsExist(path string) bool {
 	return false
 }
 
+// IsRegular returns true if the given object is a regular file
 func IsRegular(path string) bool {
 	return false
 }
 
+// IsSocket returns true if the given object is a socket
 func IsSocket(path string) bool {
 	return false
 }
 
+// IsBlockDevice returns true if the given object is a device
 func IsBlockDevice(path string) bool {
 	return false
 }
 
+// IsCharacterDevice returns true if the given object is a character device
 func IsCharacterDevice(path string) bool {
 	return false
 }
 
+// IsDir returns true if the given object is a directory
 func IsDir(path string) bool {
 	return false
 }
 
+// IsLink returns true if the given object is a link
 func IsLink(path string) bool {
 	return false
 }
 
+// IsReadable returns true if given object is readable by current user
 func IsReadable(path string) bool {
 	return false
 }
 
+// IsReadableByUser returns true if given object is readable by some user
+func IsReadableByUser(path, userName string) bool {
+	return false
+}
+
+// IsWritable returns true if given object is writable by current user
 func IsWritable(path string) bool {
 	return false
 }
 
+// IsWritableByUser returns true if given object is writable by some user
+func IsWritableByUser(path, userName string) bool {
+	return false
+}
+
+// IsExecutable returns true if given object is executable by current user
 func IsExecutable(path string) bool {
 	return false
 }
 
+// IsExecutableByUser returns true if given object is executable by some user
+func IsExecutableByUser(path, userName string) bool {
+	return false
+}
+
+// IsNonEmpty returns true if given file is not empty
 func IsNonEmpty(path string) bool {
 	return false
 }
 
+// IsEmptyDir returns true if given directory es empty
 func IsEmptyDir(path string) bool {
 	return false
 }
 
+// GetOwner returns object owner UID and GID
 func GetOwner(path string) (int, int, error) {
 	return 0, 0, nil
 }
 
+// GetATime returns time of last access
 func GetATime(path string) (time.Time, error) {
 	return time.Time{}, nil
 }
 
+// GetCTime returns time of creation
 func GetCTime(path string) (time.Time, error) {
 	return time.Time{}, nil
 }
 
+// GetMTime returns time of modification
 func GetMTime(path string) (time.Time, error) {
 	return time.Time{}, nil
 }
 
+// GetSize returns file size in bytes
 func GetSize(path string) int64 {
 	return -1
 }
 
+// GetPerms returns file permissions
 func GetPerms(path string) os.FileMode {
 	return 0
 }
 
+// GetTimes returns time of access, modification, and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	return time.Time{}, time.Time{}, time.Time{}, nil
 }
 
+// GetTimestamps returns time of access, modification, and creation at once as unix timestamp
 func GetTimestamps(path string) (int64, int64, int64, error) {
 	return -1, -1, -1, nil
 }

@@ -27,6 +27,8 @@ env:
   - EK_TEST_PORT=8080
 
 before_install:
+  - whoami
+  - cat /etc/passwd
   - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps ; fi
   - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps-test ; fi
 
