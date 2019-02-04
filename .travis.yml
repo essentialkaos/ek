@@ -27,7 +27,6 @@ env:
   - EK_TEST_PORT=8080
 
 before_install:
-  - ls -la /etc
   - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps ; fi
   - if [[ "$TRAVIS_OS_NAME" =~ (osx|linux) ]] ; then make deps-test ; fi
 

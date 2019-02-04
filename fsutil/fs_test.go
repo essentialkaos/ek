@@ -14,6 +14,8 @@ import (
 	"sort"
 	"testing"
 
+	"pkg.re/essentialkaos/ek.v10/system"
+
 	check "pkg.re/check.v1"
 )
 
@@ -493,11 +495,23 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	os.Chmod(tmpFile8, 0010)
 	os.Chmod(tmpFile9, 0001)
 
+	curUser, err := system.CurrentUser(true)
+
+	if err != nil {
+		c.Fatal(err.Error())
+	}
+
 	c.Assert(IsReadable(""), check.Equals, false)
 	c.Assert(IsReadable("/not_exist"), check.Equals, false)
 	c.Assert(IsReadable(tmpFile1), check.Equals, true)
 	c.Assert(IsReadable(tmpFile2), check.Equals, true)
 	c.Assert(IsReadable(tmpFile3), check.Equals, true)
+
+	c.Assert(IsReadableByUser("", curUser.Name), check.Equals, false)
+	c.Assert(IsReadableByUser("/not_exist", curUser.Name), check.Equals, false)
+	c.Assert(IsReadableByUser(tmpFile1, curUser.Name), check.Equals, true)
+	c.Assert(IsReadableByUser(tmpFile2, curUser.Name), check.Equals, true)
+	c.Assert(IsReadableByUser(tmpFile3, curUser.Name), check.Equals, true)
 
 	c.Assert(IsWritable(""), check.Equals, false)
 	c.Assert(IsWritable("/not_exist"), check.Equals, false)
@@ -505,12 +519,25 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsWritable(tmpFile5), check.Equals, true)
 	c.Assert(IsWritable(tmpFile6), check.Equals, true)
 
+	c.Assert(IsWritableByUser("", curUser.Name), check.Equals, false)
+	c.Assert(IsWritableByUser("/not_exist", curUser.Name), check.Equals, false)
+	c.Assert(IsWritableByUser(tmpFile4, curUser.Name), check.Equals, true)
+	c.Assert(IsWritableByUser(tmpFile5, curUser.Name), check.Equals, true)
+	c.Assert(IsWritableByUser(tmpFile6, curUser.Name), check.Equals, true)
+
 	c.Assert(IsExecutable(""), check.Equals, false)
 	c.Assert(IsExecutable("/not_exist"), check.Equals, false)
 	c.Assert(IsExecutable(tmpFile7), check.Equals, true)
 	c.Assert(IsExecutable(tmpFile8), check.Equals, true)
 	c.Assert(IsExecutable(tmpFile9), check.Equals, true)
 	c.Assert(IsExecutable(tmpFile1), check.Equals, false)
+
+	c.Assert(IsExecutableByUser("", curUser.Name), check.Equals, false)
+	c.Assert(IsExecutableByUser("/not_exist", curUser.Name), check.Equals, false)
+	c.Assert(IsExecutableByUser(tmpFile7, curUser.Name), check.Equals, true)
+	c.Assert(IsExecutableByUser(tmpFile8, curUser.Name), check.Equals, true)
+	c.Assert(IsExecutableByUser(tmpFile9, curUser.Name), check.Equals, true)
+	c.Assert(IsExecutableByUser(tmpFile1, curUser.Name), check.Equals, false)
 }
 
 func (s *FSSuite) TestCheckPerms(c *check.C) {
