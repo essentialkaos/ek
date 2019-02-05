@@ -48,7 +48,7 @@ var ErrEmptyPath = errors.New("Path is empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms check many props at once.
+// CheckPerms check many props at once
 //
 // F - is file
 // D - is directory
@@ -123,7 +123,7 @@ func CheckPerms(props, path string) bool {
 	return true
 }
 
-// ProperPath return first proper path from given slice
+// ProperPath returns the first proper path from a given slice
 func ProperPath(props string, paths []string) string {
 	for _, path := range paths {
 		path = PATH.Clean(path)
@@ -136,7 +136,7 @@ func ProperPath(props string, paths []string) string {
 	return ""
 }
 
-// IsExist check if target exists
+// IsExist returns true if the given object is exist
 func IsExist(path string) bool {
 	if path == "" {
 		return false
@@ -147,7 +147,7 @@ func IsExist(path string) bool {
 	return syscall.Access(path, syscall.F_OK) == nil
 }
 
-// IsRegular check if target is regular file or not
+// IsRegular returns true if the given object is a regular file
 func IsRegular(path string) bool {
 	if path == "" {
 		return false
@@ -163,7 +163,7 @@ func IsRegular(path string) bool {
 	return mode&_IFMT == _IFREG
 }
 
-// IsSocket check if target is socket or not
+// IsSocket returns true if the given object is a socket
 func IsSocket(path string) bool {
 	if path == "" {
 		return false
@@ -179,7 +179,7 @@ func IsSocket(path string) bool {
 	return mode&_IFMT == _IFSOCK
 }
 
-// IsBlockDevice check if target is block device or not
+// IsBlockDevice returns true if the given object is a device
 func IsBlockDevice(path string) bool {
 	if path == "" {
 		return false
@@ -195,7 +195,7 @@ func IsBlockDevice(path string) bool {
 	return mode&_IFMT == _IFBLK
 }
 
-// IsCharacterDevice check if target is character device or not
+// IsCharacterDevice returns true if the given object is a character device
 func IsCharacterDevice(path string) bool {
 	if path == "" {
 		return false
@@ -211,7 +211,7 @@ func IsCharacterDevice(path string) bool {
 	return mode&_IFMT == _IFCHR
 }
 
-// IsDir check if target is directory or not
+// IsDir returns true if the given object is a directory
 func IsDir(path string) bool {
 	if path == "" {
 		return false
@@ -227,7 +227,7 @@ func IsDir(path string) bool {
 	return mode&_IFMT == _IFDIR
 }
 
-// IsLink check if file is link or not
+// IsLink returns true if the given object is a link
 func IsLink(path string) bool {
 	if path == "" {
 		return false
@@ -241,7 +241,7 @@ func IsLink(path string) bool {
 	return err == nil
 }
 
-// IsReadable check if file is readable or not
+// IsReadable returns true if given object is readable by current user
 func IsReadable(path string) bool {
 	if path == "" {
 		return false
@@ -266,7 +266,32 @@ func IsReadable(path string) bool {
 	return isReadableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsWritable check if file is writable or not
+// IsReadableByUser returns true if given object is readable by some user
+func IsReadableByUser(path, userName string) bool {
+	if path == "" {
+		return false
+	}
+
+	path = PATH.Clean(path)
+
+	var stat = &syscall.Stat_t{}
+
+	err := syscall.Stat(path, stat)
+
+	if err != nil {
+		return false
+	}
+
+	user, err := system.LookupUser(userName)
+
+	if err != nil {
+		return false
+	}
+
+	return isReadableStat(stat, user.UID, getGIDList(user))
+}
+
+// IsWritable returns true if given object is writable by current user
 func IsWritable(path string) bool {
 	if path == "" {
 		return false
@@ -291,7 +316,32 @@ func IsWritable(path string) bool {
 	return isWritableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsExecutable check if file is executable or not
+// IsWritableByUser returns true if given object is writable by some user
+func IsWritableByUser(path, userName string) bool {
+	if path == "" {
+		return false
+	}
+
+	path = PATH.Clean(path)
+
+	var stat = &syscall.Stat_t{}
+
+	err := syscall.Stat(path, stat)
+
+	if err != nil {
+		return false
+	}
+
+	user, err := system.LookupUser(userName)
+
+	if err != nil {
+		return false
+	}
+
+	return isWritableStat(stat, user.UID, getGIDList(user))
+}
+
+// IsExecutable returns true if given object is executable by current user
 func IsExecutable(path string) bool {
 	if path == "" {
 		return false
@@ -316,7 +366,32 @@ func IsExecutable(path string) bool {
 	return isExecutableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsNonEmpty check if file is empty or not
+// IsExecutableByUser returns true if given object is executable by some user
+func IsExecutableByUser(path, userName string) bool {
+	if path == "" {
+		return false
+	}
+
+	path = PATH.Clean(path)
+
+	var stat = &syscall.Stat_t{}
+
+	err := syscall.Stat(path, stat)
+
+	if err != nil {
+		return false
+	}
+
+	user, err := system.LookupUser(userName)
+
+	if err != nil {
+		return false
+	}
+
+	return isExecutableStat(stat, user.UID, getGIDList(user))
+}
+
+// IsNonEmpty returns true if given file is not empty
 func IsNonEmpty(path string) bool {
 	if path == "" {
 		return false
@@ -327,7 +402,7 @@ func IsNonEmpty(path string) bool {
 	return GetSize(path) > 0
 }
 
-// IsEmptyDir check if directory empty or not
+// IsEmptyDir returns true if given directory es empty
 func IsEmptyDir(path string) bool {
 	if path == "" {
 		return false
@@ -352,7 +427,7 @@ func IsEmptyDir(path string) bool {
 	return false
 }
 
-// GetOwner return object owner UID and GID
+// GetOwner returns object owner UID and GID
 func GetOwner(path string) (int, int, error) {
 	if path == "" {
 		return -1, -1, ErrEmptyPath
@@ -371,7 +446,7 @@ func GetOwner(path string) (int, int, error) {
 	return int(stat.Uid), int(stat.Gid), nil
 }
 
-// GetATime return time of last access
+// GetATime returns time of last access
 func GetATime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -384,7 +459,7 @@ func GetATime(path string) (time.Time, error) {
 	return atime, err
 }
 
-// GetCTime return time of creation
+// GetCTime returns time of creation
 func GetCTime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -397,7 +472,7 @@ func GetCTime(path string) (time.Time, error) {
 	return ctime, err
 }
 
-// GetMTime return time of modification
+// GetMTime returns time of modification
 func GetMTime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -410,7 +485,7 @@ func GetMTime(path string) (time.Time, error) {
 	return mtime, err
 }
 
-// GetSize return file size in bytes
+// GetSize returns file size in bytes
 func GetSize(path string) int64 {
 	if path == "" {
 		return -1
@@ -429,7 +504,7 @@ func GetSize(path string) int64 {
 	return stat.Size
 }
 
-// GetPerms return file permissions
+// GetPerms returns file permissions
 func GetPerms(path string) os.FileMode {
 	if path == "" {
 		return 0

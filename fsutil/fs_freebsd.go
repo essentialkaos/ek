@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTimes return time of access, modification, and creation at once
+// GetTimes returns time of access, modification, and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
 		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
@@ -40,7 +40,7 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// GetTimestamps return time of access, modification, and creation at once as unix timestamp
+// GetTimestamps returns time of access, modification, and creation at once as unix timestamp
 func GetTimestamps(path string) (int64, int64, int64, error) {
 	if path == "" {
 		return -1, -1, -1, ErrEmptyPath
