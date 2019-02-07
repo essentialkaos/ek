@@ -17,18 +17,16 @@ import (
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v10/env"
-	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_CODE_RESET     = "\033[0m"
-	_CODE_BACKSPACE = "\b"
-	_CODE_BELL      = "\a"
+	_CODE_RESET      = "\033[0m"
+	_CODE_CLEAN_LINE = "\033[2K\r"
+	_CODE_BACKSPACE  = "\b"
+	_CODE_BELL       = "\a"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -73,8 +71,8 @@ var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// tmpSize is size of temporary output
-var tmpSize int
+// hasTmpOutput contains true if we have some temporary output on the screen
+var hasTmpOutput bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -209,27 +207,26 @@ func Is256ColorsSupported() bool {
 
 // TPrintf remove the previous message (if printed) and print new message
 func TPrintf(f string, a ...interface{}) (int, error) {
-	if tmpSize != 0 {
-		fmt.Printf(getSymbols(_CODE_BACKSPACE, tmpSize) + "\033[0K")
+	if hasTmpOutput {
+		fmt.Printf(_CODE_CLEAN_LINE)
 	}
 
-	if f == "" && len(a) == 0 {
-		tmpSize = 0
-		return 0, nil
+	if (f == "" && len(a) == 0) || strings.Contains(f, "\n") {
+		hasTmpOutput = false
+	} else {
+		hasTmpOutput = true
 	}
-
-	tmpSize = strutil.Len(fmt.Sprintf(searchColors(f, true), a...))
 
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
 
 // TPrintln remove the previous message (if printed) and print new message
 func TPrintln(a ...interface{}) (int, error) {
-	if tmpSize != 0 {
-		fmt.Printf(getSymbols(_CODE_BACKSPACE, tmpSize) + "\033[0K")
+	if hasTmpOutput {
+		fmt.Printf(_CODE_CLEAN_LINE)
 	}
 
-	tmpSize = 0
+	hasTmpOutput = false
 
 	return Println(a...)
 }
@@ -394,16 +391,6 @@ func applyColors(a *[]interface{}, clean bool) {
 			(*a)[i] = searchColors(s, clean)
 		}
 	}
-}
-
-func getSymbols(symbol string, count int) string {
-	result := ""
-
-	for i := 0; i < count; i++ {
-		result += symbol
-	}
-
-	return result
 }
 
 func isValidTag(tag string) bool {
