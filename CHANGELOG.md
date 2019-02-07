@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.4.0
+
+* `[fmtc]` Improved work with temporary output (`TPrintf`, `TPrintln`)
+
 ### 10.3.0
 
 * `[fsutil]` Added method `IsReadableByUser` for checking read permission for some user
