@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.4.1
+
+* `[fmtc]` Code refactoring
+
 ### 10.4.0
 
 * `[fmtc]` Improved work with temporary output (`TPrintf`, `TPrintln`)

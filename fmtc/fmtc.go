@@ -71,11 +71,6 @@ var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// hasTmpOutput contains true if we have some temporary output on the screen
-var hasTmpOutput bool
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Print formats using the default formats for its operands and writes to standard
 // output. Spaces are added between operands when neither is a string. It returns
 // the number of bytes written and any write error encountered.
@@ -205,29 +200,16 @@ func Is256ColorsSupported() bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// TPrintf remove the previous message (if printed) and print new message
+// TPrintf removes all content on the current line and prints the new message
 func TPrintf(f string, a ...interface{}) (int, error) {
-	if hasTmpOutput {
-		fmt.Printf(_CODE_CLEAN_LINE)
-	}
-
-	if (f == "" && len(a) == 0) || strings.Contains(f, "\n") {
-		hasTmpOutput = false
-	} else {
-		hasTmpOutput = true
-	}
-
+	fmt.Printf(_CODE_CLEAN_LINE)
 	return fmt.Printf(searchColors(f, DisableColors), a...)
 }
 
-// TPrintln remove the previous message (if printed) and print new message
+// TPrintln removes all content on the current line and prints the new message
+// with new line symbol at the end
 func TPrintln(a ...interface{}) (int, error) {
-	if hasTmpOutput {
-		fmt.Printf(_CODE_CLEAN_LINE)
-	}
-
-	hasTmpOutput = false
-
+	fmt.Printf(_CODE_CLEAN_LINE)
 	return Println(a...)
 }
 
