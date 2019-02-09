@@ -166,22 +166,34 @@ func (s *FormatSuite) TestMethods(c *C) {
 
 	c.Assert(w.String(), Equals, "TEST OK")
 
-	Printf("TEST %s\n", "OK")
-	Print("TEST OK\n")
+	Printf("Printf: %s\n", "OK")
+	Print("Print: OK\n")
+
+	LPrintf(11, "LPrintf: %s NOTOK", "OK")
+	NewLine()
+	LPrintln(12, "LPrintln: OK NOTOK")
 }
 
 func (s *FormatSuite) TestAux(c *C) {
-	TPrintf("TEST %s", "OK")
+	TPrintf("TPrint: %s", "OK")
 	TPrintf("")
-	TPrintf("TEST %s", "OK")
+	TPrintf("TPrint: %s", "OK")
 
-	TPrintln("TEST OK")
+	TPrintln("TPrint: OK")
+
+	TLPrintf(11, "TLPrint: %s NOTOK", "OK")
+	TLPrintf(11, "")
+	TLPrintf(11, "TLPrint: %s NOTOK", "OK")
+
+	TLPrintln(11, "TLPrint: OK NOTOK")
 
 	Bell()
-	NewLine()
 }
 
 func (s *FormatSuite) TestFuzzFixes(c *C) {
 	c.Assert(isValidTag("!!!"), Equals, false)
 	c.Assert(isValidTag("---"), Equals, false)
+	c.Assert(isValidTag("-!"), Equals, false)
+	c.Assert(isValidTag("!--"), Equals, false)
+	c.Assert(tag2ANSI("-!", false), Equals, "")
 }

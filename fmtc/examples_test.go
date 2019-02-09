@@ -9,6 +9,7 @@ package fmtc
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -72,7 +73,7 @@ func ExamplePrintln() {
 	// modificator reset
 	Println("{r}{*}red and bold {!*}just red{!}")
 
-	// 256 colors
+	// 256 colors. # for foreground, % for background
 	Println("{#201}pink text{!}")
 	Println("{%201}pink background{!}")
 }
@@ -109,5 +110,18 @@ func ExampleClean() {
 
 func ExampleTPrintf() {
 	TPrintf("This is temporary text")
-	TPrintf("This message replace previous message")
+	time.Sleep(time.Second)
+	TPrintf("This message replace previous message after 1 sec")
+}
+
+func ExampleTLPrintf() {
+	// Power of TPrintf and LPrintf in one method
+	TLPrintf(22, "This is temporary text")
+	time.Sleep(time.Second)
+	TLPrintf(22, "This message replace previous message after 1 sec")
+}
+
+func ExampleLPrintf() {
+	// Only "This is text" will be shown
+	LPrintf(12, "{r}This is %s {g} with colors{!}", "text")
 }

@@ -1,7 +1,9 @@
 ## Changelog
 
-### 10.4.1
+### 10.5.0
 
+* `[fmtc]` Added new methods `LPrintf`, `LPrintln`, `TLPrintf` and `TLPrintln`
+* `[fmtc]` Fixed bug with parsing reset and modification tags (_found by go-fuzz_)
 * `[fmtc]` Code refactoring
 
 ### 10.4.0
