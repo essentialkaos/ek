@@ -71,11 +71,6 @@ var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// hasTmpOutput contains true if we have some temporary output on the screen
-var hasTmpOutput bool
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Print formats using the default formats for its operands and writes to standard
 // output. Spaces are added between operands when neither is a string. It returns
 // the number of bytes written and any write error encountered.
@@ -116,7 +111,7 @@ var hasTmpOutput bool
 //  #code foreground color
 //  %code background color
 func Print(a ...interface{}) (int, error) {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Print(a...)
 }
 
@@ -124,21 +119,21 @@ func Print(a ...interface{}) (int, error) {
 // output. Spaces are always added between operands and a newline is appended. It
 // returns the number of bytes written and any write error encountered.
 func Println(a ...interface{}) (int, error) {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Println(a...)
 }
 
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
 func Printf(f string, a ...interface{}) (int, error) {
-	return fmt.Printf(searchColors(f, DisableColors), a...)
+	return fmt.Printf(searchColors(f, -1, DisableColors), a...)
 }
 
 // Fprint formats using the default formats for its operands and writes to w.
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
 func Fprint(w io.Writer, a ...interface{}) (int, error) {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Fprint(w, a...)
 }
 
@@ -146,34 +141,34 @@ func Fprint(w io.Writer, a ...interface{}) (int, error) {
 // Spaces are always added between operands and a newline is appended. It returns
 // the number of bytes written and any write error encountered.
 func Fprintln(w io.Writer, a ...interface{}) (int, error) {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Fprintln(w, a...)
 }
 
 // Fprintf formats according to a format specifier and writes to w. It returns
 // the number of bytes written and any write error encountered.
 func Fprintf(w io.Writer, f string, a ...interface{}) (int, error) {
-	return fmt.Fprintf(w, searchColors(f, DisableColors), a...)
+	return fmt.Fprintf(w, searchColors(f, -1, DisableColors), a...)
 }
 
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
 func Sprint(a ...interface{}) string {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Sprint(a...)
 }
 
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
 func Sprintf(f string, a ...interface{}) string {
-	return fmt.Sprintf(searchColors(f, DisableColors), a...)
+	return fmt.Sprintf(searchColors(f, -1, DisableColors), a...)
 }
 
 // Sprintln formats using the default formats for its operands and returns the
 // resulting string. Spaces are always added between operands and a newline is
 // appended.
 func Sprintln(a ...interface{}) string {
-	applyColors(&a, DisableColors)
+	applyColors(&a, -1, DisableColors)
 	return fmt.Sprintln(a...)
 }
 
@@ -183,6 +178,46 @@ func Errorf(f string, a ...interface{}) error {
 	return errors.New(Sprintf(f, a...))
 }
 
+// TPrintf removes all content on the current line and prints the new message
+func TPrintf(f string, a ...interface{}) (int, error) {
+	fmt.Printf(_CODE_CLEAN_LINE)
+	return Printf(f, a...)
+}
+
+// TPrintln removes all content on the current line and prints the new message
+// with a new line symbol at the end
+func TPrintln(a ...interface{}) (int, error) {
+	fmt.Printf(_CODE_CLEAN_LINE)
+	return Println(a...)
+}
+
+// LPrintf formats according to a format specifier and writes to standard output
+// limited by the text size
+func LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+	return fmt.Printf(searchColors(f, maxSize, DisableColors), a...)
+}
+
+// LPrintln formats using the default formats for its operands and writes to standard
+// output limited by the text size
+func LPrintln(maxSize int, a ...interface{}) (int, error) {
+	applyColors(&a, maxSize, DisableColors)
+	return fmt.Println(a...)
+}
+
+// TLPrintf removes all content on the current line and prints the new message
+// limited by the text size
+func TLPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+	fmt.Printf(_CODE_CLEAN_LINE)
+	return LPrintf(maxSize, f, a...)
+}
+
+// TPrintln removes all content on the current line and prints the new message
+// limited by the text size with a new line symbol at the end
+func TLPrintln(maxSize int, a ...interface{}) (int, error) {
+	fmt.Printf(_CODE_CLEAN_LINE)
+	return LPrintln(maxSize, a...)
+}
+
 // NewLine prints a newline to standard output
 func NewLine() (int, error) {
 	return fmt.Println("")
@@ -190,7 +225,7 @@ func NewLine() (int, error) {
 
 // Clean return string without color tags
 func Clean(s string) string {
-	return searchColors(s, true)
+	return searchColors(s, -1, true)
 }
 
 // Bell print alert symbol
@@ -201,34 +236,6 @@ func Bell() {
 // Is256ColorsSupported return true if 256 colors is supported
 func Is256ColorsSupported() bool {
 	return strings.Contains(env.Get().GetS("TERM"), "256color")
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// TPrintf remove the previous message (if printed) and print new message
-func TPrintf(f string, a ...interface{}) (int, error) {
-	if hasTmpOutput {
-		fmt.Printf(_CODE_CLEAN_LINE)
-	}
-
-	if (f == "" && len(a) == 0) || strings.Contains(f, "\n") {
-		hasTmpOutput = false
-	} else {
-		hasTmpOutput = true
-	}
-
-	return fmt.Printf(searchColors(f, DisableColors), a...)
-}
-
-// TPrintln remove the previous message (if printed) and print new message
-func TPrintln(a ...interface{}) (int, error) {
-	if hasTmpOutput {
-		fmt.Printf(_CODE_CLEAN_LINE)
-	}
-
-	hasTmpOutput = false
-
-	return Println(a...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -284,6 +291,10 @@ func tag2ANSI(tag string, clean bool) string {
 		}
 
 		chars += ";"
+	}
+
+	if chars == "" {
+		return ""
 	}
 
 	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
@@ -352,12 +363,13 @@ LOOP:
 	return false
 }
 
-func searchColors(text string, clean bool) string {
+func searchColors(text string, limit int, clean bool) string {
 	if text == "" {
 		return ""
 	}
 
 	closed := true
+	counter := 0
 	input := bytes.NewBufferString(text)
 	output := bytes.NewBufferString("")
 
@@ -375,6 +387,11 @@ func searchColors(text string, clean bool) string {
 			continue
 		default:
 			output.WriteRune(i)
+			counter++
+		}
+
+		if counter == limit {
+			break
 		}
 	}
 
@@ -385,16 +402,20 @@ func searchColors(text string, clean bool) string {
 	return output.String()
 }
 
-func applyColors(a *[]interface{}, clean bool) {
+func applyColors(a *[]interface{}, limit int, clean bool) {
 	for i, x := range *a {
 		if s, ok := x.(string); ok {
-			(*a)[i] = searchColors(s, clean)
+			(*a)[i] = searchColors(s, limit, clean)
 		}
 	}
 }
 
 func isValidTag(tag string) bool {
-	if tag == "" || strings.Trim(tag, "-") == "" || strings.Count(tag, "!") > 1 {
+	switch {
+	case tag == "",
+		strings.Trim(tag, "-") == "",
+		strings.Count(tag, "!") > 1,
+		strings.Contains(tag, "!") && strings.Contains(tag, "-"):
 		return false
 	}
 
