@@ -194,7 +194,8 @@ func TPrintln(a ...interface{}) (int, error) {
 // LPrintf formats according to a format specifier and writes to standard output
 // limited by the text size
 func LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
-	return fmt.Printf(searchColors(f, maxSize, DisableColors), a...)
+	s := fmt.Sprintf(f, a...)
+	return fmt.Printf(searchColors(s, maxSize, DisableColors))
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard
