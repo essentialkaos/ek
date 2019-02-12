@@ -20,6 +20,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v10/env"
 	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v10/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -178,15 +179,7 @@ func getUpstartServiceState(name string) (bool, error) {
 		return false, fmt.Errorf("upstart returned an error")
 	}
 
-	if strings.Contains(string(output), "start/running") {
-		return true, nil
-	}
-
-	if strings.Contains(string(output), "stop/waiting") {
-		return false, nil
-	}
-
-	return false, fmt.Errorf("Can't parse upstart output")
+	return parseUpstartStatusOutput(string(output))
 }
 
 func getSystemdServiceState(name string) (bool, error) {
@@ -196,19 +189,7 @@ func getSystemdServiceState(name string) (bool, error) {
 		return false, fmt.Errorf("systemd return an error")
 	}
 
-	switch {
-	case strings.Contains(string(output), "LoadState=not-found"):
-		return false, fmt.Errorf("Unit %s could not be found ", name)
-
-	case strings.Contains(string(output), "ActiveState=active"):
-		return true, nil
-
-	case strings.Contains(string(output), "ActiveState=inactive"):
-		return false, nil
-
-	}
-
-	return false, fmt.Errorf("Can't parse systemd output")
+	return parseSystemdStatusOutput(name, string(output))
 }
 
 func isSysVEnabled(name string) (bool, error) {
@@ -218,15 +199,7 @@ func isSysVEnabled(name string) (bool, error) {
 		return false, fmt.Errorf("chkconfig returned an error")
 	}
 
-	if strings.Contains(string(output), ":on") {
-		return true, nil
-	}
-
-	if strings.Contains(string(output), ":off") {
-		return false, nil
-	}
-
-	return false, fmt.Errorf("Can't parse chkconfig output")
+	return parseSysvEnabledOutput(string(output))
 }
 
 func isUpstartEnabled(name string) (bool, error) {
@@ -234,7 +207,27 @@ func isUpstartEnabled(name string) (bool, error) {
 		name = name + ".conf"
 	}
 
-	fd, err := os.OpenFile("/etc/init/"+name, os.O_RDONLY, 0)
+	return parseUpstartEnabledData("/etc/init/" + name)
+}
+
+func isSystemdEnabled(name string) (bool, error) {
+	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", name).Output()
+
+	if err != nil {
+		return false, fmt.Errorf("systemd return error: %v", err)
+	}
+
+	return parseSystemdEnabledOutput(string(output)), nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func parseSystemdEnabledOutput(data string) bool {
+	return strings.TrimRight(data, "\n\r") == "enabled"
+}
+
+func parseUpstartEnabledData(file string) (bool, error) {
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
 
 	if err != nil {
 		return false, fmt.Errorf("Can't read service unit file")
@@ -260,16 +253,53 @@ func isUpstartEnabled(name string) (bool, error) {
 	return false, nil
 }
 
-func isSystemdEnabled(name string) (bool, error) {
-	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", name).Output()
-
-	if err != nil {
-		return false, fmt.Errorf("systemd return error: %v", err)
-	}
-
-	if strings.TrimRight(string(output), "\n\r") == "enabled" {
+func parseSysvEnabledOutput(data string) (bool, error) {
+	switch {
+	case strings.Contains(data, ":on"):
 		return true, nil
+
+	case strings.Contains(data, ":off"):
+		return false, nil
+
+	default:
+		return false, fmt.Errorf("Can't parse chkconfig output")
+	}
+}
+
+func parseSystemdStatusOutput(name, data string) (bool, error) {
+	loadState := strutil.ReadField(data, 0, false, "\n")
+	loadStateValue := strutil.ReadField(loadState, 1, false, "=")
+
+	if strings.Trim(loadStateValue, "\r\n") == "not-found" {
+		return false, fmt.Errorf("Unit %s could not be found", name)
 	}
 
-	return false, nil
+	activeState := strutil.ReadField(data, 1, false, "\n")
+	activeStateValue := strutil.ReadField(activeState, 1, false, "=")
+
+	switch strings.Trim(activeStateValue, "\r\n") {
+	case "active", "activating":
+		return true, nil
+
+	case "inactive", "deactivating", "failed":
+		return false, nil
+	}
+
+	return false, fmt.Errorf("Can't parse systemd output")
+}
+
+func parseUpstartStatusOutput(data string) (bool, error) {
+	data = strings.TrimRight(data, "\r\n")
+	status := strutil.ReadField(data, 1, false, " ")
+
+	switch status {
+	case "start/running":
+		return true, nil
+
+	case "stop/waiting":
+		return false, nil
+
+	default:
+		return false, fmt.Errorf("Can't parse upstart output")
+	}
 }
