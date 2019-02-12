@@ -1,5 +1,11 @@
 ## Changelog
 
+### 10.5.1
+
+* `[initsystem]` Fixed bug with parsing systemd's `failed` ActiveState status
+* `[initsystem]` Added tests for output parsers
+* `[initsystem]` Code refactoring
+
 ### 10.5.0
 
 * `[fmtc]` Added new methods `LPrintf`, `LPrintln`, `TLPrintf` and `TLPrintln`
