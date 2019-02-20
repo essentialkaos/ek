@@ -291,23 +291,25 @@ MAINLOOP:
 // consecutive white space or comma characters
 func Fields(data string) []string {
 	var (
-		result    []string
-		item      string
-		waitQuote bool
+		result   []string
+		item     string
+		waitChar rune
 	)
 
 	for _, char := range data {
 		switch char {
-		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»':
-			if !waitQuote {
-				waitQuote = true
-			} else {
+		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»', '„':
+			if waitChar == 0 {
+				waitChar = getClosingChar(char)
+			} else if waitChar != 0 && waitChar == char {
 				result = append(result, item)
-				item, waitQuote = "", false
+				item, waitChar = "", 0
+			} else {
+				item += string(char)
 			}
 
 		case ',', ';', ' ':
-			if waitQuote {
+			if waitChar != 0 {
 				item += string(char)
 			} else {
 				result = append(result, item)
@@ -345,4 +347,19 @@ func formatItems(data []string) []string {
 	}
 
 	return result
+}
+
+func getClosingChar(r rune) rune {
+	switch r {
+	case '“':
+		return '”'
+	case '„':
+		return '“'
+	case '‘':
+		return '’'
+	case '«':
+		return '»'
+	default:
+		return r
+	}
 }

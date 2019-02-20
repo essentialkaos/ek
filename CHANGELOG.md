@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.6.0
+
+* `[strutil]` Improved parsing logic for the `Fields` method
+* `[strutil]` Added additional supported quotation marks types
+
 ### 10.5.1
 
 * `[initsystem]` Fixed bug with parsing systemd's `failed` ActiveState status
