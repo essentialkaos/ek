@@ -1,5 +1,12 @@
 ## Changelog
 
+### 10.7.0
+
+* `[jsonutil]` Added `Write` as alias for `EncodeToFile`
+* `[jsonutil]` Added `Read` as alias for `DecodeFile`
+* `[jsonutil]` Added `WriteGz` for writing gzipped JSON data
+* `[jsonutil]` Added `ReadGz` for reading gzipped JSON data
+
 ### 10.6.0
 
 * `[strutil]` Improved parsing logic for the `Fields` method

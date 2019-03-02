@@ -8,6 +8,7 @@ package jsonutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -45,6 +46,18 @@ type JSONSuite struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var _ = Suite(&JSONSuite{})
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type ErrReaderWriter struct{}
+
+func (e *ErrReaderWriter) Read(p []byte) (n int, err error) {
+	return 0, errors.New("ERROR")
+}
+
+func (e *ErrReaderWriter) Write(p []byte) (n int, err error) {
+	return 0, nil
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -100,4 +113,40 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	err = EncodeToFile(jsonFile, map[float64]int{3.14: 123})
 
 	c.Assert(err, NotNil)
+}
+
+func (s *JSONSuite) TestCompression(c *C) {
+	jsonFile := s.TmpDir + "/file3.gz"
+
+	testStruct := &TestStruct{
+		String:  "test",
+		Integer: 912,
+		Boolean: true,
+	}
+
+	err := WriteGz(jsonFile, testStruct)
+
+	c.Assert(err, IsNil)
+	c.Assert(fsutil.IsNonEmpty(jsonFile), Equals, true)
+
+	testStructDec := &TestStruct{}
+
+	err = ReadGz(jsonFile, testStructDec)
+
+	c.Assert(err, IsNil)
+	c.Assert(testStruct.String, Equals, testStructDec.String)
+	c.Assert(testStruct.Integer, Equals, testStructDec.Integer)
+	c.Assert(testStruct.Boolean, Equals, testStructDec.Boolean)
+}
+
+func (s *JSONSuite) TestAux(c *C) {
+	erw := &ErrReaderWriter{}
+
+	err := readData(erw, nil, true)
+	c.Assert(err, NotNil)
+
+	GzipLevel = -15
+	err = writeData(erw, nil, true)
+	c.Assert(err, NotNil)
+	GzipLevel = 1
 }
