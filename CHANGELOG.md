@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.7.1
+
+* `[fmtutil]` Fixed bug with formatting small float numbers using `PrettySize` method
+
 ### 10.7.0
 
 * `[jsonutil]` Added `Write` as alias for `EncodeToFile`
