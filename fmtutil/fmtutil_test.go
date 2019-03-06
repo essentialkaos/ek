@@ -65,6 +65,8 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 	c.Assert(PrettySize(uint64(3000125)), Equals, "2.86MB")
 	c.Assert(PrettySize(float32(3000125)), Equals, "2.86MB")
 	c.Assert(PrettySize(float64(3000125)), Equals, "2.86MB")
+	c.Assert(PrettySize(float64(1.1)), Equals, "1B")
+	c.Assert(PrettySize(float64(1.6)), Equals, "2B")
 	c.Assert(PrettySize(math.NaN()), Equals, "0B")
 }
 

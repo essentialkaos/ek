@@ -104,7 +104,7 @@ func PrettySize(i interface{}) string {
 	case f >= _KILO:
 		return fmt.Sprintf("%g", Float(f/_KILO)) + SizeSeparator + "KB"
 	default:
-		return fmt.Sprintf("%d", i) + SizeSeparator + "B"
+		return fmt.Sprintf("%g", mathutil.Round(f, 0)) + SizeSeparator + "B"
 	}
 }
 
