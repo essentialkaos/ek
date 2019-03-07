@@ -90,6 +90,7 @@ go get -u pkg.re/essentialkaos/ek.v10
 * [Bastion](https://github.com/essentialkaos/bastion) - Utility for temporary disabling access to server
 * [bibop](https://github.com/essentialkaos/bibop) - Utility for testing command-line tools
 * [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
+* [fz](https://github.com/essentialkaos/fz) - Simple tool for formatting `go-fuzz` output
 * [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
 * [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
 * [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
