@@ -243,6 +243,34 @@ SOURCELOOP:
 	return result
 }
 
+// Exclude excludes substring from given string
+// It little bit faster than strings.ReplaceAll
+func Exclude(data, substr string) string {
+	if len(data) == 0 || len(substr) == 0 {
+		return data
+	}
+
+	k := strings.Count(data, substr)
+
+	if k == 0 {
+		return data
+	}
+
+	b := make([]byte, len(data)-(len(substr)*k))
+	p, w := 0, 0
+
+	for i := 0; i < k; i++ {
+		j := p
+		j += strings.Index(data[p:], substr)
+		w += copy(b[w:], data[p:j])
+		p = j + len(substr)
+	}
+
+	w += copy(b[w:], data[p:])
+
+	return string(b[0:w])
+}
+
 // ReadField reads field with given index from data
 func ReadField(data string, index int, multiSep bool, separators ...string) string {
 	if data == "" || index < 0 {

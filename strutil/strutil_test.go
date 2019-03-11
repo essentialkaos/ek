@@ -8,6 +8,7 @@ package strutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strings"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -111,6 +112,25 @@ func (s *StrUtilSuite) BenchmarkTail(c *C) {
 	}
 }
 
+func (s *StrUtilSuite) TestExclude(c *C) {
+	c.Assert(Exclude("ABCD1234abcd1234ABCD", ""), Equals, "ABCD1234abcd1234ABCD")
+	c.Assert(Exclude("", "1234"), Equals, "")
+	c.Assert(Exclude("ABCD1234abcd1234ABCD", "5678"), Equals, "ABCD1234abcd1234ABCD")
+	c.Assert(Exclude("ABCD1234abcd1234ABCD", "1234"), Equals, "ABCDabcdABCD")
+}
+
+func (s *StrUtilSuite) BenchmarkStdlibReplace(c *C) {
+	for i := 0; i < c.N; i++ {
+		strings.Replace("ABCD1234abcd1234ABCD", "1234", "", -1)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkExclude(c *C) {
+	for i := 0; i < c.N; i++ {
+		Exclude("ABCD1234abcd1234ABCD", "1234")
+	}
+}
+
 func (s *StrUtilSuite) TestSize(c *C) {
 	c.Assert(PrefixSize("", ' '), Equals, 0)
 	c.Assert(PrefixSize("abcd", ' '), Equals, 0)
@@ -128,6 +148,7 @@ func (s *StrUtilSuite) BenchmarkSize(c *C) {
 		PrefixSize("    abcd", ' ')
 	}
 }
+
 func (s *StrUtilSuite) TestReplaceAll(c *C) {
 	c.Assert(ReplaceAll("ABCDABCD12341234", "AB12", "?"), Equals, "??CD??CD??34??34")
 	c.Assert(ReplaceAll("", "AB12", "?"), Equals, "")
