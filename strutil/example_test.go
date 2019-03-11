@@ -48,6 +48,13 @@ func ExampleExtract() {
 	// funny
 }
 
+func ExampleExclude() {
+	fmt.Println(Exclude("This is funny message", " funny"))
+
+	// Output:
+	// This is message
+}
+
 func ExampleLen() {
 	fmt.Println(Len("Пример 例子 例 მაგალითად"))
 

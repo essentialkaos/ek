@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.8.0
+
+* `[strutil]` Added method `Exclude` as the faster replacement for `strings.ReplaceAll`
+
 ### 10.7.1
 
 * `[fmtutil]` Fixed bug with formatting small float numbers using `PrettySize` method
