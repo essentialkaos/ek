@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.9.0
+
+* `[usage]` Code refactoring
+
 ### 10.8.0
 
 * `[strutil]` Added method `Exclude` as the faster replacement for `strings.ReplaceAll`

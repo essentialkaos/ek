@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/mathutil"
 	"pkg.re/essentialkaos/ek.v10/strutil"
 	"pkg.re/essentialkaos/ek.v10/version"
 )
@@ -51,12 +52,14 @@ type Info struct {
 	OptionsColorTag  string // OptionsColor contains default options color
 	Breadcrumbs      bool   // Use bread crumbs for commands and options output
 
-	name     string
-	args     string
-	spoiler  string
-	commands []*entity
-	options  []*entity
-	examples []*example
+	Name    string
+	Args    []string
+	Spoiler string
+
+	Commands []*Command
+	Options  []*Option
+	Examples []*Example
+
 	curGroup string
 }
 
@@ -68,16 +71,22 @@ type UpdateChecker struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type entity struct {
-	name  string
-	desc  string
-	args  []string
-	group string
+type Command struct {
+	Name  string
+	Desc  string
+	Args  []string
+	Group string
 }
 
-type example struct {
-	cmd  string
-	desc string
+type Option struct {
+	Name string
+	Desc string
+	Args []string
+}
+
+type Example struct {
+	Cmd  string
+	Desc string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -96,8 +105,8 @@ func NewInfo(args ...string) *Info {
 	}
 
 	info := &Info{
-		name: name,
-		args: strings.Join(args, " "),
+		Name: name,
+		Args: args,
 
 		CommandsColorTag: "{y}",
 		OptionsColorTag:  "{g}",
@@ -120,12 +129,35 @@ func (info *Info) AddCommand(a ...string) {
 		group = info.curGroup
 	}
 
-	appendEntity(a, &info.commands, group)
+	if len(a) < 2 {
+		return
+	}
+
+	info.Commands = append(
+		info.Commands,
+		&Command{
+			Name:  a[0],
+			Desc:  a[1],
+			Args:  a[2:],
+			Group: group,
+		},
+	)
 }
 
 // AddOption add option (name, description, args)
 func (info *Info) AddOption(a ...string) {
-	appendEntity(a, &info.options, "Options")
+	if len(a) < 2 {
+		return
+	}
+
+	info.Options = append(
+		info.Options,
+		&Option{
+			Name: a[0],
+			Desc: a[1],
+			Args: a[2:],
+		},
+	)
 }
 
 // AddExample add example for some command (command, description)
@@ -136,46 +168,46 @@ func (info *Info) AddExample(a ...string) {
 
 	a = append(a, "")
 
-	info.examples = append(info.examples, &example{cmd: a[0], desc: a[1]})
+	info.Examples = append(info.Examples, &Example{a[0], a[1]})
 }
 
 // AddSpoiler add spoiler
 func (info *Info) AddSpoiler(spoiler string) {
-	info.spoiler = spoiler
+	info.Spoiler = spoiler
 }
 
 // Render print usage info to console
 func (info *Info) Render() {
-	usageMessage := "\n{*}Usage:{!} " + info.name
+	usageMessage := "\n{*}Usage:{!} " + info.Name
 
-	if len(info.options) != 0 {
+	if len(info.Options) != 0 {
 		usageMessage += " " + info.OptionsColorTag + "{options}{!}"
 	}
 
-	if len(info.commands) != 0 {
+	if len(info.Commands) != 0 {
 		usageMessage += " " + info.CommandsColorTag + "{command}{!}"
 	}
 
-	if info.args != "" {
-		usageMessage += " " + info.args
+	if len(info.Args) != 0 {
+		usageMessage += " " + strings.Join(info.Args, " ")
 	}
 
 	fmtc.Println(usageMessage)
 
-	if info.spoiler != "" {
+	if info.Spoiler != "" {
 		fmtc.NewLine()
-		fmtc.Println(info.spoiler)
+		fmtc.Println(info.Spoiler)
 	}
 
-	if len(info.commands) != 0 {
-		renderEntities(info.commands, info.CommandsColorTag, info.Breadcrumbs)
+	if len(info.Commands) != 0 {
+		renderCommands(info)
 	}
 
-	if len(info.options) != 0 {
-		renderEntities(info.options, info.OptionsColorTag, info.Breadcrumbs)
+	if len(info.Options) != 0 {
+		renderOptions(info)
 	}
 
-	if len(info.examples) != 0 {
+	if len(info.Examples) != 0 {
 		renderExamples(info)
 	}
 
@@ -234,65 +266,48 @@ func (about *About) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// appendEntity append new entity to given slice
-func appendEntity(data []string, entities *[]*entity, group string) {
-	if len(data) < 2 {
-		return
-	}
+func renderCommands(info *Info) {
+	maxSize := getMaxCommandSize(info.Commands)
 
-	var args []string
-
-	if len(data) >= 3 {
-		args = data[2:]
-	}
-
-	var name = data[0]
-
-	*entities = append(*entities,
-		&entity{
-			name:  name,
-			desc:  data[1],
-			args:  args,
-			group: group,
-		},
-	)
-}
-
-// formatOption format entity name
-func formatOption(entity *entity) string {
-	if strings.Contains(entity.name, ":") {
-		optionSlice := strings.Split(entity.name, ":")
-		return "--" + optionSlice[1] + ", -" + optionSlice[0]
-	}
-
-	return "--" + entity.name
-}
-
-// renderEntities render entities
-func renderEntities(entities []*entity, colorTag string, breadcrumbs bool) {
 	var curGroup string
-	var maxSize int
 
-	maxSize = getMaxEntitySize(entities)
-
-	for _, entity := range entities {
-		if curGroup != entity.group {
-			printGroupHeader(entity.group)
-			curGroup = entity.group
+	for _, command := range info.Commands {
+		if curGroup != command.Group {
+			printGroupHeader(command.Group)
+			curGroup = command.Group
 		}
 
-		if entity.group == "Options" {
-			fmtc.Printf("  "+colorTag+"%s{!}", formatOption(entity))
-		} else {
-			fmtc.Printf("  "+colorTag+"%s{!}", entity.name)
+		fmtc.Printf("  "+info.CommandsColorTag+"%s{!}", command.Name)
+
+		if len(command.Args) != 0 {
+			fmtc.Printf(" " + renderArgs(command.Args))
 		}
 
-		if len(entity.args) != 0 {
-			fmtc.Printf(" " + renderArgs(entity.args))
+		size := getItemSize(command.Name, command.Args)
+
+		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
+		fmtc.Printf(command.Desc)
+
+		fmtc.NewLine()
+	}
+}
+
+func renderOptions(info *Info) {
+	maxSize := getMaxOptionSize(info.Options)
+
+	printGroupHeader("Options")
+
+	for _, option := range info.Options {
+		fmtc.Printf("  "+info.OptionsColorTag+"%s{!}", formatOptionName(option.Name))
+
+		if len(option.Args) != 0 {
+			fmtc.Printf(" " + renderArgs(option.Args))
 		}
 
-		fmtc.Printf(getEntitySeparator(entity, maxSize, breadcrumbs))
-		fmtc.Printf(entity.desc)
+		size := getItemSize(option.Name, option.Args)
+
+		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
+		fmtc.Printf(option.Desc)
 
 		fmtc.NewLine()
 	}
@@ -302,13 +317,13 @@ func renderEntities(entities []*entity, colorTag string, breadcrumbs bool) {
 func renderExamples(info *Info) {
 	printGroupHeader("Examples")
 
-	total := len(info.examples)
+	total := len(info.Examples)
 
-	for index, example := range info.examples {
-		fmtc.Printf("  %s %s\n", info.name, example.cmd)
+	for index, example := range info.Examples {
+		fmtc.Printf("  %s %s\n", info.Name, example.Cmd)
 
-		if example.desc != "" {
-			fmtc.Printf("  {s-}%s{!}\n", example.desc)
+		if example.Desc != "" {
+			fmtc.Printf("  {s-}%s{!}\n", example.Desc)
 		}
 
 		if index < total-1 {
@@ -332,44 +347,59 @@ func renderArgs(args []string) string {
 	return fmtc.Sprintf(strings.TrimRight(result, " "))
 }
 
-// getEntitySeparator return bread crumbs (or spaces if colors are disabled) for
-// entity name aligning
-func getEntitySeparator(entity *entity, maxSize int, breadcrumbs bool) string {
-	entLen := getEntitySize(entity)
+// formatOptionName format option name
+func formatOptionName(name string) string {
+	if strings.Contains(name, ":") {
+		return "--" + strutil.ReadField(name, 1, false, ":") +
+			", -" + strutil.ReadField(name, 0, false, ":")
+	}
 
+	return "--" + name
+}
+
+// getSeparator return bread crumbs (or spaces if colors are disabled) for
+// item name aligning
+func getSeparator(size, maxSize int, breadcrumbs bool) string {
 	if breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
-		return " {s-}" + _DOTS[:maxSize-entLen] + "{!} "
+		return " {s-}" + _DOTS[:maxSize-size] + "{!} "
 	}
 
-	return " " + _SPACES[:maxSize-entLen] + " "
+	return " " + _SPACES[:maxSize-size] + " "
 }
 
-// getMaxEntitySize return longest entity name size
-func getMaxEntitySize(entities []*entity) int {
-	var result int
-
-	for _, entity := range entities {
-		entLen := getEntitySize(entity) + 2
-
-		if entLen > result {
-			result = entLen
-		}
-	}
-
-	return result
-}
-
-// getEntitySize calculate rendered entity size
-func getEntitySize(entity *entity) int {
+// getMaxCommandSize returns the biggest command size
+func getMaxCommandSize(commands []*Command) int {
 	var size int
 
-	if strings.Contains(entity.name, ":") {
-		size += strutil.Len(entity.name) + 4
-	} else {
-		size += strutil.Len(entity.name) + 2
+	for _, command := range commands {
+		size = mathutil.Max(size, getItemSize(command.Name, command.Args)+2)
 	}
 
-	for _, arg := range entity.args {
+	return size
+}
+
+// getMaxOptionSize returns the biggest option size
+func getMaxOptionSize(options []*Option) int {
+	var size int
+
+	for _, option := range options {
+		size = mathutil.Max(size, getItemSize(option.Name, option.Args)+2)
+	}
+
+	return size
+}
+
+// getItemSize calculate rendered item size
+func getItemSize(name string, args []string) int {
+	var size int
+
+	if strings.Contains(name, ":") {
+		size += strutil.Len(name) + 4
+	} else {
+		size += strutil.Len(name) + 2
+	}
+
+	for _, arg := range args {
 		if strings.HasPrefix(arg, "?") {
 			size += strutil.Len(arg)
 		} else {

@@ -67,10 +67,12 @@ func (s *UsageSuite) TestUsage(c *C) {
 
 	info.AddGroup("Command group")
 
+	info.AddCommand("read")
 	info.AddCommand("read", "Read command")
 	info.AddCommand("read1", "Read command with arguments", "arg1", "arg2")
 	info.AddCommand("read2", "Read command with optional argument", "?arg")
 
+	info.AddOption("t:test")
 	info.AddOption("t:test", "Test option ")
 	info.AddOption("test1", "Test option with argument", "arg")
 	info.AddOption("test2", "Test option with optional argument", "?arg")
