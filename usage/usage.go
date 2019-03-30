@@ -72,10 +72,11 @@ type UpdateChecker struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Command struct {
-	Name  string
-	Desc  string
-	Args  []string
-	Group string
+	Name         string
+	Desc         string
+	Group        string
+	Args         []string
+	BoundOptions []string
 }
 
 type Option struct {
@@ -117,24 +118,24 @@ func NewInfo(args ...string) *Info {
 }
 
 // AddGroup add new command group
-func (info *Info) AddGroup(group string) {
-	info.curGroup = group
+func (i *Info) AddGroup(group string) {
+	i.curGroup = group
 }
 
 // AddCommand add command (name, description, args)
-func (info *Info) AddCommand(a ...string) {
+func (i *Info) AddCommand(a ...string) {
 	group := "Commands"
 
-	if info.curGroup != "" {
-		group = info.curGroup
+	if i.curGroup != "" {
+		group = i.curGroup
 	}
 
 	if len(a) < 2 {
 		return
 	}
 
-	info.Commands = append(
-		info.Commands,
+	i.Commands = append(
+		i.Commands,
 		&Command{
 			Name:  a[0],
 			Desc:  a[1],
@@ -145,13 +146,13 @@ func (info *Info) AddCommand(a ...string) {
 }
 
 // AddOption add option (name, description, args)
-func (info *Info) AddOption(a ...string) {
+func (i *Info) AddOption(a ...string) {
 	if len(a) < 2 {
 		return
 	}
 
-	info.Options = append(
-		info.Options,
+	i.Options = append(
+		i.Options,
 		&Option{
 			Name: a[0],
 			Desc: a[1],
@@ -161,103 +162,142 @@ func (info *Info) AddOption(a ...string) {
 }
 
 // AddExample add example for some command (command, description)
-func (info *Info) AddExample(a ...string) {
+func (i *Info) AddExample(a ...string) {
 	if len(a) == 0 {
 		return
 	}
 
 	a = append(a, "")
 
-	info.Examples = append(info.Examples, &Example{a[0], a[1]})
+	i.Examples = append(i.Examples, &Example{a[0], a[1]})
 }
 
 // AddSpoiler add spoiler
-func (info *Info) AddSpoiler(spoiler string) {
-	info.Spoiler = spoiler
+func (i *Info) AddSpoiler(spoiler string) {
+	i.Spoiler = spoiler
+}
+
+// BoundOptions bounds command with options
+func (i *Info) BoundOptions(cmd string, options ...string) {
+	for _, command := range i.Commands {
+		if command.Name == cmd {
+			command.BoundOptions = append(command.BoundOptions, options...)
+		}
+	}
+}
+
+// GetCommand tries to find command with given name
+func (i *Info) GetCommand(name string) *Command {
+	for _, command := range i.Commands {
+		if command.Name == name {
+			return command
+		}
+	}
+
+	return nil
+}
+
+// GetOption tries to find option with given name
+func (i *Info) GetOption(name string) *Option {
+	for _, option := range i.Options {
+		if option.Name == name {
+			return option
+		}
+
+		if strings.Contains(option.Name, ":") {
+			switch {
+			case strutil.ReadField(option.Name, 0, false, ":") == name,
+				strutil.ReadField(option.Name, 1, false, ":") == name:
+				return option
+			}
+		}
+	}
+
+	return nil
 }
 
 // Render print usage info to console
-func (info *Info) Render() {
-	usageMessage := "\n{*}Usage:{!} " + info.Name
+func (i *Info) Render() {
+	usageMessage := "\n{*}Usage:{!} " + i.Name
 
-	if len(info.Options) != 0 {
-		usageMessage += " " + info.OptionsColorTag + "{options}{!}"
+	if len(i.Options) != 0 {
+		usageMessage += " " + i.OptionsColorTag + "{options}{!}"
 	}
 
-	if len(info.Commands) != 0 {
-		usageMessage += " " + info.CommandsColorTag + "{command}{!}"
+	if len(i.Commands) != 0 {
+		usageMessage += " " + i.CommandsColorTag + "{command}{!}"
 	}
 
-	if len(info.Args) != 0 {
-		usageMessage += " " + strings.Join(info.Args, " ")
+	if len(i.Args) != 0 {
+		usageMessage += " " + strings.Join(i.Args, " ")
 	}
 
 	fmtc.Println(usageMessage)
 
-	if info.Spoiler != "" {
+	if i.Spoiler != "" {
 		fmtc.NewLine()
-		fmtc.Println(info.Spoiler)
+		fmtc.Println(i.Spoiler)
 	}
 
-	if len(info.Commands) != 0 {
-		renderCommands(info)
+	if len(i.Commands) != 0 {
+		renderCommands(i)
 	}
 
-	if len(info.Options) != 0 {
-		renderOptions(info)
+	if len(i.Options) != 0 {
+		renderOptions(i)
 	}
 
-	if len(info.Examples) != 0 {
-		renderExamples(info)
+	if len(i.Examples) != 0 {
+		renderExamples(i)
 	}
 
 	fmtc.NewLine()
 }
 
 // Render print version info to console
-func (about *About) Render() {
+func (a *About) Render() {
 	switch {
-	case about.Build != "":
+	case a.Build != "":
 		fmtc.Printf(
 			"\n{*c}%s {c}%s{!}{s}%s{!} {s-}(%s){!} - %s\n\n",
-			about.App, about.Version,
-			about.Release, about.Build, about.Desc,
+			a.App, a.Version,
+			a.Release, a.Build, a.Desc,
 		)
 	default:
 		fmtc.Printf(
 			"\n{*c}%s {c}%s{!}{s}%s{!} - %s\n\n",
-			about.App, about.Version,
-			about.Release, about.Desc,
+			a.App, a.Version,
+			a.Release, a.Desc,
 		)
 	}
 
-	if about.Owner != "" {
-		if about.Year == 0 {
+	if a.Owner != "" {
+		if a.Year == 0 {
 			fmtc.Printf(
 				"{s-}Copyright (C) %d %s{!}\n",
-				time.Now().Year(), about.Owner,
+				time.Now().Year(), a.Owner,
 			)
 		} else {
 			fmtc.Printf(
 				"{s-}Copyright (C) %d-%d %s{!}\n",
-				about.Year, time.Now().Year(), about.Owner,
+				a.Year, time.Now().Year(), a.Owner,
 			)
 		}
 	}
 
-	if about.License != "" {
-		fmtc.Printf("{s-}%s{!}\n", about.License)
+	if a.License != "" {
+		fmtc.Printf("{s-}%s{!}\n", a.License)
 	}
 
-	if about.UpdateChecker.CheckFunc != nil && about.UpdateChecker.Data != "" {
-		newVersion, releaseDate, hasUpdate := about.UpdateChecker.CheckFunc(
-			about.App,
-			about.Version,
-			about.UpdateChecker.Data,
+	if a.UpdateChecker.CheckFunc != nil && a.UpdateChecker.Data != "" {
+		newVersion, releaseDate, hasUpdate := a.UpdateChecker.CheckFunc(
+			a.App,
+			a.Version,
+			a.UpdateChecker.Data,
 		)
 
-		if hasUpdate && isNewerVersion(about.Version, newVersion) {
-			printNewVersionInfo(about.Version, newVersion, releaseDate)
+		if hasUpdate && isNewerVersion(a.Version, newVersion) {
+			printNewVersionInfo(a.Version, newVersion, releaseDate)
 		}
 	}
 

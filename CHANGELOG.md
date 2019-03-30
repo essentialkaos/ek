@@ -2,6 +2,7 @@
 
 ### 10.9.0
 
+* `[usage]` Added method `info.BoundOptions` for linking command with options
 * `[usage]` Code refactoring
 
 ### 10.8.0

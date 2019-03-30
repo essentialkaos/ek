@@ -77,6 +77,8 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.AddOption("test1", "Test option with argument", "arg")
 	info.AddOption("test2", "Test option with optional argument", "?arg")
 
+	info.BoundOptions("read", "t:test", "test1")
+
 	info.AddExample() // will be ignored
 	info.AddExample("abc")
 	info.AddExample("abcd", "Example with description")
@@ -88,6 +90,13 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.OptionsColorTag = "{b}"
 
 	info.Render()
+
+	c.Assert(info.GetCommand("read"), NotNil)
+	c.Assert(info.GetCommand("read999"), IsNil)
+
+	c.Assert(info.GetOption("t:test"), NotNil)
+	c.Assert(info.GetOption("test"), NotNil)
+	c.Assert(info.GetOption("test999"), IsNil)
 }
 
 func (s *UsageSuite) TestVersionInfo(c *C) {
