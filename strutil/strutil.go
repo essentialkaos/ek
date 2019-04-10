@@ -367,7 +367,7 @@ func formatItems(data []string) []string {
 	var result []string
 
 	for _, v := range data {
-		item := strings.Replace(strings.TrimSpace(v), "\"", "", -1)
+		item := strings.TrimSpace(v)
 
 		if item != "" {
 			result = append(result, item)

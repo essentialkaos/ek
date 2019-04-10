@@ -3,6 +3,7 @@
 ### 10.9.0
 
 * `[usage]` Added method `info.BoundOptions` for linking command with options
+* `[strutil]` Fixed bug in `Fields` method
 * `[usage]` Code refactoring
 
 ### 10.8.0

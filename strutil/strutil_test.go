@@ -158,6 +158,7 @@ func (s *StrUtilSuite) TestFields(c *C) {
 	c.Assert(Fields(""), IsNil)
 	c.Assert(Fields(""), HasLen, 0)
 	c.Assert(Fields("1 2 3 4 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
+	c.Assert(Fields(`abc 123 'k:"42"'`), DeepEquals, []string{"abc", "123", `k:"42"`})
 	c.Assert(Fields("1,2,3,4,5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1;2;3;4;5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1,  2, 3,   4, 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
