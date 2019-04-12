@@ -12,6 +12,7 @@ package initsystem
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -187,7 +188,11 @@ func hasSystemdService(name string) bool {
 func getSysVServiceState(name string) (bool, error) {
 	cmd := exec.Command("/sbin/service", name, "status")
 
-	cmd.Run()
+	output, _ := cmd.Output()
+
+	if bytes.Contains(output, []byte("ExecStart")) {
+		return getSystemdServiceState(name)
+	}
 
 	if cmd.ProcessState == nil {
 		return false, fmt.Errorf("Can't get service command process state")

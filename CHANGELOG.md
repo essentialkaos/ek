@@ -5,6 +5,7 @@
 * `[usage]` Added method `info.BoundOptions` for linking command with options
 * `[strutil]` Fixed bug in `Fields` method
 * `[initsystem]` Added caching for initsystem usage status
+* `[initsystem]` Improved service state search for SysV scripts on systems with Systemd
 * `[usage]` Code refactoring
 
 ### 10.8.0
