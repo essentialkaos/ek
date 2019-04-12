@@ -4,6 +4,7 @@
 
 * `[usage]` Added method `info.BoundOptions` for linking command with options
 * `[strutil]` Fixed bug in `Fields` method
+* `[initsystem]` Added caching for initsystem usage status
 * `[usage]` Code refactoring
 
 ### 10.8.0
