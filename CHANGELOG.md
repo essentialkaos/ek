@@ -3,6 +3,7 @@
 ### 10.9.0
 
 * `[usage]` Added method `info.BoundOptions` for linking command with options
+* `[csv]` Added method `reader.ReadTo` for reading CSV data into slice
 * `[strutil]` Fixed bug in `Fields` method
 * `[initsystem]` Added caching for initsystem usage status
 * `[initsystem]` Improved service state search for SysV scripts on systems with Systemd

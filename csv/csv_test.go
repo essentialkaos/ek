@@ -49,7 +49,7 @@ func (s *CSVSuite) SetUpSuite(c *C) {
 	}
 }
 
-func (s *CSVSuite) TestParsing(c *C) {
+func (s *CSVSuite) TestRead(c *C) {
 	fd, err := os.Open(s.dataFile)
 
 	c.Assert(fd, NotNil)
@@ -85,10 +85,62 @@ func (s *CSVSuite) TestParsing(c *C) {
 	}
 }
 
-func (s *CSVSuite) BenchmarkRead(c *C) {
-	fd, _ := os.Open(s.dataFile)
+func (s *CSVSuite) TestReadTo(c *C) {
+	fd, err := os.Open(s.dataFile)
+
+	c.Assert(fd, NotNil)
+	c.Assert(err, IsNil)
 
 	defer fd.Close()
+
+	reader := NewReader(fd)
+	reader.Comma = ','
+
+	count := 0
+
+	var rec []string
+
+	for {
+		err := reader.ReadTo(rec)
+
+		if rec == nil {
+			c.Assert(err, NotNil)
+			rec = make([]string, 8)
+			continue
+		}
+
+		if err == io.EOF {
+			break
+		}
+
+		switch count {
+		case 0:
+			c.Assert(rec, DeepEquals, []string{"123", "ABC", "A_C", "A C", "", "", "", ""})
+		case 1:
+			c.Assert(rec, DeepEquals, []string{"123", "ABC", "", "", "", "", "", ""})
+		case 2:
+			c.Assert(rec, DeepEquals, []string{"123", "ABC", "A_C", "A C", "123", "ABC", "A_C", "A C"})
+		}
+
+		count++
+	}
+}
+
+func (s *CSVSuite) TestLineParser(c *C) {
+	data := make([]string, 2)
+
+	parseAndFill("ABCD", data, ";")
+	c.Assert(data, DeepEquals, []string{"ABCD", ""})
+
+	parseAndFill("", data, ";")
+	c.Assert(data, DeepEquals, []string{"", ""})
+
+	parseAndFill("A;B;C;D;E", data, ";")
+	c.Assert(data, DeepEquals, []string{"A", "B"})
+}
+
+func (s *CSVSuite) BenchmarkRead(c *C) {
+	fd, _ := os.Open(s.dataFile)
 
 	for i := 0; i < c.N; i++ {
 		reader := NewReader(fd)
@@ -102,4 +154,27 @@ func (s *CSVSuite) BenchmarkRead(c *C) {
 			}
 		}
 	}
+
+	fd.Close()
+}
+
+func (s *CSVSuite) BenchmarkReadTo(c *C) {
+	fd, _ := os.Open(s.dataFile)
+
+	for i := 0; i < c.N; i++ {
+		reader := NewReader(fd)
+		reader.Comma = ','
+
+		k := make([]string, 10)
+
+		for {
+			err := reader.ReadTo(k)
+
+			if err == io.EOF {
+				break
+			}
+		}
+	}
+
+	fd.Close()
 }
