@@ -89,6 +89,7 @@ go get -u pkg.re/essentialkaos/ek.v10
 
 ### Projects with `EK`
 
+* [aligo](https://github.com/essentialkaos/aligo) - Utility for checking and viewing Golang struct alignment info
 * [Bastion](https://github.com/essentialkaos/bastion) - Utility for temporary disabling access to server
 * [bibop](https://github.com/essentialkaos/bibop) - Utility for testing command-line tools
 * [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
