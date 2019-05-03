@@ -82,6 +82,8 @@ go get -u pkg.re/essentialkaos/ek.v10
 * [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v10/tmp) - Package provides methods for working with temporary data
 * [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v10/usage) - Package provides methods for rendering info for command-line tools
 * [`usage/update`](https://godoc.org/pkg.re/essentialkaos/ek.v10/usage/update) - Package contains update checkers for different services
+* [`usage/completion/bash`](https://godoc.org/pkg.re/essentialkaos/ek.v10/usage/completion/bash) - Package bash provides methods for generating bash completion
+* [`usage/completion/zsh`](https://godoc.org/pkg.re/essentialkaos/ek.v10/usage/completion/zsh) - Package zsh provides methods for generating zsh completion
 * [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v10/uuid) - Package provides methods for generating version 4 and 5 UUID's
 * [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v10/version) - Package provides methods for parsing semver version info
 

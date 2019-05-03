@@ -60,7 +60,7 @@ func (s *UsageSuite) TestAbout(c *C) {
 func (s *UsageSuite) TestUsage(c *C) {
 	info := NewInfo("", "file")
 
-	info.AddSpoiler("This is usage spoiler with {g}c{c}o{r}l{m}o{b}r{g}s{!} support")
+	info.AddSpoiler("This is usage of spoiler with {g}c{c}o{r}l{m}o{b}r{g}s{!} support")
 
 	info.AddCommand() // will be ignored
 	info.AddCommand("print", "Print command")

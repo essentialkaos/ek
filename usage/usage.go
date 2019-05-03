@@ -80,9 +80,10 @@ type Command struct {
 }
 
 type Option struct {
-	Name string
-	Desc string
-	Args []string
+	Short string
+	Long  string
+	Desc  string
+	Arg   string
 }
 
 type Example struct {
@@ -151,12 +152,15 @@ func (i *Info) AddOption(a ...string) {
 		return
 	}
 
+	long, short := parseOptionName(a[0])
+
 	i.Options = append(
 		i.Options,
 		&Option{
-			Name: a[0],
-			Desc: a[1],
-			Args: a[2:],
+			Long:  long,
+			Short: short,
+			Desc:  a[1],
+			Arg:   strings.Join(a[2:], " "),
 		},
 	)
 }
@@ -181,7 +185,12 @@ func (i *Info) AddSpoiler(spoiler string) {
 func (i *Info) BoundOptions(cmd string, options ...string) {
 	for _, command := range i.Commands {
 		if command.Name == cmd {
-			command.BoundOptions = append(command.BoundOptions, options...)
+			for _, opt := range options {
+				longOption, _ := parseOptionName(opt)
+				command.BoundOptions = append(command.BoundOptions, longOption)
+			}
+
+			return
 		}
 	}
 }
@@ -199,17 +208,11 @@ func (i *Info) GetCommand(name string) *Command {
 
 // GetOption tries to find option with given name
 func (i *Info) GetOption(name string) *Option {
-	for _, option := range i.Options {
-		if option.Name == name {
-			return option
-		}
+	name, _ = parseOptionName(name)
 
-		if strings.Contains(option.Name, ":") {
-			switch {
-			case strutil.ReadField(option.Name, 0, false, ":") == name,
-				strutil.ReadField(option.Name, 1, false, ":") == name:
-				return option
-			}
+	for _, option := range i.Options {
+		if option.Long == name {
+			return option
 		}
 	}
 
@@ -320,10 +323,10 @@ func renderCommands(info *Info) {
 		fmtc.Printf("  "+info.CommandsColorTag+"%s{!}", command.Name)
 
 		if len(command.Args) != 0 {
-			fmtc.Printf(" " + renderArgs(command.Args))
+			fmtc.Printf(" " + renderArgs(command.Args...))
 		}
 
-		size := getItemSize(command.Name, command.Args)
+		size := getCommandSize(command)
 
 		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
 		fmtc.Printf(command.Desc)
@@ -338,13 +341,13 @@ func renderOptions(info *Info) {
 	printGroupHeader("Options")
 
 	for _, option := range info.Options {
-		fmtc.Printf("  "+info.OptionsColorTag+"%s{!}", formatOptionName(option.Name))
+		fmtc.Printf("  "+info.OptionsColorTag+"%s{!}", formatOptionName(option))
 
-		if len(option.Args) != 0 {
-			fmtc.Printf(" " + renderArgs(option.Args))
+		if option.Arg != "" {
+			fmtc.Printf(" " + renderArgs(option.Arg))
 		}
 
-		size := getItemSize(option.Name, option.Args)
+		size := getOptionSize(option)
 
 		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
 		fmtc.Printf(option.Desc)
@@ -373,7 +376,7 @@ func renderExamples(info *Info) {
 }
 
 // renderArgs render args with colors
-func renderArgs(args []string) string {
+func renderArgs(args ...string) string {
 	var result string
 
 	for _, a := range args {
@@ -388,13 +391,22 @@ func renderArgs(args []string) string {
 }
 
 // formatOptionName format option name
-func formatOptionName(name string) string {
-	if strings.Contains(name, ":") {
-		return "--" + strutil.ReadField(name, 1, false, ":") +
-			", -" + strutil.ReadField(name, 0, false, ":")
+func formatOptionName(opt *Option) string {
+	if opt.Short != "" {
+		return "--" + opt.Long + ", -" + opt.Short
 	}
 
-	return "--" + name
+	return "--" + opt.Long
+}
+
+// parseOptionName parses option name
+func parseOptionName(name string) (string, string) {
+	if strings.Contains(name, ":") {
+		return strutil.ReadField(name, 1, false, ":"),
+			strutil.ReadField(name, 0, false, ":")
+	}
+
+	return name, ""
 }
 
 // getSeparator return bread crumbs (or spaces if colors are disabled) for
@@ -412,7 +424,7 @@ func getMaxCommandSize(commands []*Command) int {
 	var size int
 
 	for _, command := range commands {
-		size = mathutil.Max(size, getItemSize(command.Name, command.Args)+2)
+		size = mathutil.Max(size, getCommandSize(command)+2)
 	}
 
 	return size
@@ -423,28 +435,41 @@ func getMaxOptionSize(options []*Option) int {
 	var size int
 
 	for _, option := range options {
-		size = mathutil.Max(size, getItemSize(option.Name, option.Args)+2)
+		size = mathutil.Max(size, getOptionSize(option)+2)
 	}
 
 	return size
 }
 
-// getItemSize calculate rendered item size
-func getItemSize(name string, args []string) int {
-	var size int
+// getOptionSize calculate rendered command size
+func getCommandSize(cmd *Command) int {
+	size := strutil.Len(cmd.Name) + 2
 
-	if strings.Contains(name, ":") {
-		size += strutil.Len(name) + 4
-	} else {
-		size += strutil.Len(name) + 2
-	}
-
-	for _, arg := range args {
+	for _, arg := range cmd.Args {
 		if strings.HasPrefix(arg, "?") {
 			size += strutil.Len(arg)
 		} else {
 			size += strutil.Len(arg) + 1
 		}
+	}
+
+	return size
+}
+
+// getOptionSize calculate rendered option size
+func getOptionSize(opt *Option) int {
+	var size int
+
+	if opt.Short != "" {
+		size += strutil.Len(opt.Long) + strutil.Len(opt.Short) + 4
+	} else {
+		size += strutil.Len(opt.Long) + 2
+	}
+
+	size += strutil.Len(opt.Arg)
+
+	if !strings.HasPrefix(opt.Arg, "?") {
+		size++
 	}
 
 	return size

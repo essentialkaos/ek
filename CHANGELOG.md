@@ -2,6 +2,8 @@
 
 ### 10.9.0
 
+* `[usage/completion/bash]` Added bash completion generator
+* `[usage/completion/zsh]` Added zsh completion generator
 * `[usage]` Added method `info.BoundOptions` for linking command with options
 * `[csv]` Added method `reader.ReadTo` for reading CSV data into slice
 * `[strutil]` Fixed bug in `Fields` method
