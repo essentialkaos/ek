@@ -88,7 +88,6 @@ func genOptionDesc(opt *usage.Option, opts options.Map, prefixSize int) string {
 
 	optV := opts[getOptionFullName(opt)]
 	optLong := opt.Long
-	optDesc := fmtc.Clean(opt.Desc)
 
 	if optV.Type != options.BOOL {
 		optLong += "="
@@ -96,6 +95,7 @@ func genOptionDesc(opt *usage.Option, opts options.Map, prefixSize int) string {
 
 	if !optV.Mergeble {
 		var exclusion string
+
 		if opt.Short != "" {
 			exclusion = fmt.Sprintf("-%s --%s", opt.Short, optLong)
 		} else {
@@ -113,7 +113,7 @@ func genOptionDesc(opt *usage.Option, opts options.Map, prefixSize int) string {
 		result += fmt.Sprintf("--%s", opt.Long)
 	}
 
-	result += fmt.Sprintf("'[%s]'", optDesc)
+	result += fmt.Sprintf("'[%s]'", fmtc.Clean(opt.Desc))
 	result += " \\\n"
 
 	return result
@@ -173,7 +173,7 @@ func genCommandsFunc(info *usage.Info) string {
 	result += "  commands=(\n"
 
 	for _, cmd := range info.Commands {
-		result += fmt.Sprintf("    '%s:%s'\n", cmd.Name, cmd.Desc)
+		result += fmt.Sprintf("    '%s:%s'\n", cmd.Name, fmtc.Clean(cmd.Desc))
 	}
 
 	result += "  )\n"
