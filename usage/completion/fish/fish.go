@@ -21,7 +21,7 @@ import (
 const _FISH_TEMPLATE = `# Completion for {{COMPNAME}}
 # This completion is automatically generated
 
-function __fish_bundle_no_command
+function __fish_{{COMPNAME_SAFE}}_no_command
   set cmd (commandline -opc)
   if [ (count $cmd) -eq 1 ]
     return 0
@@ -29,7 +29,7 @@ function __fish_bundle_no_command
   return 1
 end
 
-function __fish_bundle_using_command
+function __fish_{{COMPNAME_SAFE}}_using_command
   set cmd (commandline -opc)
   if [ (count $cmd) -gt 1 ]
     if [ $argv[1] = $cmd[2] ]
@@ -51,6 +51,10 @@ func Generate(info *usage.Info, name string) string {
 	result = strings.Replace(result, "{{GLOBAL_OPTS}}", genGlobalOptionCompletion(info, name), -1)
 	result = strings.Replace(result, "{{COMMANDS}}", genCommandsCompletion(info, name), -1)
 	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
+
+	nameSafe := strings.Replace(name, "-", "_", -1)
+
+	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
 
 	return result
 }
@@ -118,9 +122,9 @@ func genOptionCompletion(opt *usage.Option, name, cmd string) string {
 	var result string
 
 	if cmd == "" {
-		result = "complete -f -n '__fish_bundle_no_command' "
+		result = "complete -f -n '__fish_{{COMPNAME_SAFE}}_no_command' "
 	} else {
-		result = fmt.Sprintf("complete -f -n '__fish_bundle_using_command %s' ", cmd)
+		result = fmt.Sprintf("complete -f -n '__fish_{{COMPNAME_SAFE}}_using_command %s' ", cmd)
 	}
 
 	result += fmt.Sprintf("-c %s ", name)
@@ -137,7 +141,7 @@ func genOptionCompletion(opt *usage.Option, name, cmd string) string {
 
 // genCommandCompletion generates completion for command
 func genCommandCompletion(cmd *usage.Command, name string) string {
-	result := "complete -f -n '__fish_bundle_no_command' "
+	result := "complete -f -n '__fish_{{COMPNAME}}_no_command' "
 	result += fmt.Sprintf("-c %s ", name)
 	result += fmt.Sprintf("-a '%s' ", cmd.Name)
 	result += fmt.Sprintf("-d '%s'\n", fmtc.Clean(cmd.Desc))

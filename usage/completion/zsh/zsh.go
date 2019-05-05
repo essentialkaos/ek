@@ -48,6 +48,10 @@ func Generate(info *usage.Info, opts options.Map, name string) string {
 	result = strings.Replace(result, "{{COMMANDS_FUNC}}", genCommandsFunc(info), -1)
 	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
 
+	nameSafe := strings.Replace(name, "-", "_", -1)
+
+	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
+
 	return result
 }
 
@@ -74,7 +78,7 @@ func genGlobalOptionList(info *usage.Info, opts options.Map) string {
 	}
 
 	if len(info.Commands) != 0 {
-		result += "    '1: :_{{COMPNAME}}_cmds' \\\n"
+		result += "    '1: :_{{COMPNAME_SAFE}}_cmds' \\\n"
 	}
 
 	result += "    '*:: :->cmd_args' && ret=0"
@@ -86,23 +90,32 @@ func genGlobalOptionList(info *usage.Info, opts options.Map) string {
 func genOptionDesc(opt *usage.Option, opts options.Map, prefixSize int) string {
 	result := strings.Repeat(" ", prefixSize)
 
+	var isBool, isMergeble bool
+
 	optV := opts[getOptionFullName(opt)]
 	optLong := opt.Long
 
-	if optV.Type != options.BOOL {
+	if optV != nil {
+		isBool = optV.Type == options.BOOL
+		isMergeble = optV.Mergeble
+	}
+
+	if !isBool {
 		optLong += "="
 	}
 
-	if !optV.Mergeble {
+	if !isMergeble {
 		var exclusion string
 
 		if opt.Short != "" {
 			exclusion = fmt.Sprintf("-%s --%s", opt.Short, optLong)
 		} else {
-			exclusion = fmt.Sprintf("--%s", opt.Long)
+			exclusion = fmt.Sprintf("--%s", optLong)
 		}
 
-		exclusion += genConflictsExclusion(optV.Conflicts)
+		if optV != nil && optV.Conflicts != "" {
+			exclusion += genConflictsExclusion(optV.Conflicts)
+		}
 
 		result += "'(" + exclusion + ")'"
 	}
@@ -168,7 +181,7 @@ func genCommandsFunc(info *usage.Info) string {
 		return ""
 	}
 
-	result := "_{{COMPNAME}}_cmds() {\n"
+	result := "_{{COMPNAME_SAFE}}_cmds() {\n"
 	result += "  local -a commands\n"
 	result += "  commands=(\n"
 
@@ -185,10 +198,6 @@ func genCommandsFunc(info *usage.Info) string {
 
 // genConflictsExclusion generates list with conflicts exlusions
 func genConflictsExclusion(opts string) string {
-	if opts == "" {
-		return ""
-	}
-
 	var result []string
 
 	for _, opt := range strings.Split(opts, " ") {

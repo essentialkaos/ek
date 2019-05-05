@@ -17,7 +17,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // _BASH_TEMPLATE is template used for completion generation
-const _BASH_TEMPLATE = `_{{COMPNAME}}() {
+const _BASH_TEMPLATE = `# Completion for {{COMPNAME}}
+# This completion is automatically generated
+
+_{{COMPNAME_SAFE}}() {
   local cur prev cmds opts
 
   COMPREPLY=()
@@ -37,7 +40,7 @@ const _BASH_TEMPLATE = `_{{COMPNAME}}() {
   fi
 }
 
-complete -F _{{COMPNAME}} {{COMPNAME}} -o nosort
+complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} -o nosort
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -49,9 +52,13 @@ func Generate(info *usage.Info, name string) string {
 	commands := strings.Join(getCommandsSlice(info), " ")
 	options := strings.Join(getOptionsSlice(info), " ")
 
-	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
 	result = strings.Replace(result, "{{COMMANDS}}", commands, -1)
 	result = strings.Replace(result, "{{OPTIONS}}", options, -1)
+	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
+
+	nameSafe := strings.Replace(name, "-", "_", -1)
+
+	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
 
 	return result
 }
