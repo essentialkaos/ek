@@ -91,9 +91,13 @@ func genOptionDesc(opt *usage.Option, opts options.Map, prefixSize int) string {
 	result := strings.Repeat(" ", prefixSize)
 
 	var isBool, isMergeble bool
+	var optV *options.V
 
-	optV := opts[getOptionFullName(opt)]
 	optLong := opt.Long
+
+	if opts != nil {
+		optV = opts[getOptionFullName(opt)]
+	}
 
 	if optV != nil {
 		isBool = optV.Type == options.BOOL
