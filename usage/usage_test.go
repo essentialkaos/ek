@@ -60,20 +60,24 @@ func (s *UsageSuite) TestAbout(c *C) {
 func (s *UsageSuite) TestUsage(c *C) {
 	info := NewInfo("", "file")
 
-	info.AddSpoiler("This is usage spoiler with {g}c{c}o{r}l{m}o{b}r{g}s{!} support")
+	info.AddSpoiler("This is usage of spoiler with {g}c{c}o{r}l{m}o{b}r{g}s{!} support")
 
 	info.AddCommand() // will be ignored
 	info.AddCommand("print", "Print command")
 
 	info.AddGroup("Command group")
 
+	info.AddCommand("read")
 	info.AddCommand("read", "Read command")
 	info.AddCommand("read1", "Read command with arguments", "arg1", "arg2")
 	info.AddCommand("read2", "Read command with optional argument", "?arg")
 
+	info.AddOption("t:test")
 	info.AddOption("t:test", "Test option ")
 	info.AddOption("test1", "Test option with argument", "arg")
 	info.AddOption("test2", "Test option with optional argument", "?arg")
+
+	info.BoundOptions("read", "t:test", "test1")
 
 	info.AddExample() // will be ignored
 	info.AddExample("abc")
@@ -86,6 +90,13 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.OptionsColorTag = "{b}"
 
 	info.Render()
+
+	c.Assert(info.GetCommand("read"), NotNil)
+	c.Assert(info.GetCommand("read999"), IsNil)
+
+	c.Assert(info.GetOption("t:test"), NotNil)
+	c.Assert(info.GetOption("test"), NotNil)
+	c.Assert(info.GetOption("test999"), IsNil)
 }
 
 func (s *UsageSuite) TestVersionInfo(c *C) {

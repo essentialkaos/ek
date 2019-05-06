@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package fish
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,27 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"pkg.re/essentialkaos/ek.v10/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "10.9.0"
+func ExampleGenerate() {
+	info := usage.NewInfo()
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	info.AddCommand("test", "Test data")
+	info.AddCommand("clean", "Clean data")
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	info.AddOption("d:dir", "Path to working directory", "dir")
+
+	info.BoundOptions("test", "d:dir")
+	info.BoundOptions("clean", "d:dir")
+
+	info.AddOption("nc:no-color", "Disable colors in output")
+	info.AddOption("h:help", "Show this help message")
+	info.AddOption("v:version", "Show version")
+
+	fmt.Println(Generate(info, "app"))
 }

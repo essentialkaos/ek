@@ -12,6 +12,7 @@ package initsystem
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -25,19 +26,68 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	_STATUS_UNKNOWN     = 0
+	_STATUS_PRESENT     = 1
+	_STATUS_NOT_PRESENT = 2
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var (
+	sysvStatus    = _STATUS_UNKNOWN
+	upstartStatus = _STATUS_UNKNOWN
+	systemdStatus = _STATUS_UNKNOWN
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // SysV returns true if SysV is used on system
 func SysV() bool {
-	return !Systemd()
+	if sysvStatus != _STATUS_UNKNOWN {
+		return sysvStatus == _STATUS_PRESENT
+	}
+
+	switch Systemd() {
+	case true:
+		sysvStatus = _STATUS_NOT_PRESENT
+	default:
+		sysvStatus = _STATUS_PRESENT
+	}
+
+	return sysvStatus == _STATUS_PRESENT
 }
 
 // Upstart returns true if Upstart is used on system
 func Upstart() bool {
-	return env.Which("initctl") != ""
+	if upstartStatus != _STATUS_UNKNOWN {
+		return upstartStatus == _STATUS_PRESENT
+	}
+
+	switch env.Which("initctl") {
+	case "":
+		upstartStatus = _STATUS_NOT_PRESENT
+	default:
+		upstartStatus = _STATUS_PRESENT
+	}
+
+	return upstartStatus == _STATUS_PRESENT
 }
 
 // Systemd returns true if Systemd is used on system
 func Systemd() bool {
-	return env.Which("systemctl") != ""
+	if systemdStatus != _STATUS_UNKNOWN {
+		return systemdStatus == _STATUS_PRESENT
+	}
+
+	switch env.Which("systemctl") {
+	case "":
+		systemdStatus = _STATUS_NOT_PRESENT
+	default:
+		systemdStatus = _STATUS_PRESENT
+	}
+
+	return systemdStatus == _STATUS_PRESENT
 }
 
 // IsPresent returns true if service is present in any init system
@@ -138,7 +188,11 @@ func hasSystemdService(name string) bool {
 func getSysVServiceState(name string) (bool, error) {
 	cmd := exec.Command("/sbin/service", name, "status")
 
-	cmd.Run()
+	output, _ := cmd.Output()
+
+	if bytes.Contains(output, []byte("ExecStart")) {
+		return getSystemdServiceState(name)
+	}
 
 	if cmd.ProcessState == nil {
 		return false, fmt.Errorf("Can't get service command process state")

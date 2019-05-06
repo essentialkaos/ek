@@ -10,6 +10,7 @@ package csv
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"strings"
 )
@@ -21,6 +22,10 @@ type Reader struct {
 	Comma rune
 	br    *bufio.Reader
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -43,4 +48,64 @@ func (r *Reader) Read() ([]string, error) {
 	}
 
 	return strings.Split(string(str), string(r.Comma)), nil
+}
+
+// ReadTo reads data to given slice
+func (r *Reader) ReadTo(dst []string) error {
+	if len(dst) == 0 {
+		return ErrEmptyDest
+	}
+
+	str, _, err := r.br.ReadLine()
+
+	if err != nil {
+		return err
+	}
+
+	parseAndFill(string(str), dst, string(r.Comma))
+
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func parseAndFill(src string, dst []string, sep string) {
+	l := len(dst)
+
+	if src == "" {
+		clean(dst, 0, l)
+		return
+	}
+
+	n := strings.Count(src, sep)
+	i := 0
+
+	if n == 0 {
+		dst[0] = src
+		clean(dst, 1, l)
+		return
+	}
+
+	for i < n && i < l {
+		m := strings.Index(src, sep)
+
+		dst[i] = src[:m]
+		src = src[m+1:]
+
+		i++
+	}
+
+	if src != "" && i != l {
+		dst[i] = src
+	}
+
+	if i < l-1 {
+		clean(dst, i, l)
+	}
+}
+
+func clean(dst []string, since, to int) {
+	for i := since; i < to; i++ {
+		dst[i] = ""
+	}
 }

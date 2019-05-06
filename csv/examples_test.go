@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package csv
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,59 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"fmt"
+	"io"
+	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "10.9.0"
+func ExampleReader_Read() {
+	fd, err := os.Open("file.csv")
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	defer fd.Close()
+
+	reader := NewReader(fd)
+	reader.Comma = ','
+
+	for {
+		data, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		fmt.Printf("%#v\n", data)
+	}
+}
+
+func ExampleReader_ReadTo() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	reader := NewReader(fd)
+	reader.Comma = ','
+
+	data := make([]string, 10)
+
+	for {
+		err := reader.ReadTo(data)
+
+		if err == io.EOF {
+			break
+		}
+
+		fmt.Printf("%#v\n", data)
+	}
 }

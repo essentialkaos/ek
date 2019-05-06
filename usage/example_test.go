@@ -47,6 +47,9 @@ func ExampleInfo_Render() {
 	// You can define option argument name
 	info.AddOption("o:output", "Output", "file")
 
+	// Link command and options (will be used for completion generation)
+	info.BoundOptions("publish", "o:output")
+
 	// First part with application name will be automatically added
 	info.AddExample("add file.dat")
 
