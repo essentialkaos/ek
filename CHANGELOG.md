@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.9.1
+
+* `[usage/completion/bash]` Improved bash completion generation
+
 ### 10.9.0
 
 * `[usage/completion/bash]` Added bash completion generator

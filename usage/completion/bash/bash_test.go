@@ -28,16 +28,41 @@ _test() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
 
   cmds="print clean"
-  opts="--option-aaa --option-bbb --option-ccc --option-ddd --option-eee"
+  opts="--option-aaa --option-bbb --option-ccc"
+
+  case $prev in
+    clean)
+      opts="--option-ddd --option-eee"
+      COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+      return 0
+      ;;
+
+  esac
 
   if [[ $cur == -* ]] ; then
     COMPREPLY=($(compgen -W "$opts" -- "$cur"))
     return 0
   fi
 
-  if [[ -z "$prev" ]] ; then
-    COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts")' -- "$cur"))
+}
+
+_test_filter() {
+  if [[ -z "$1" ]] ; then
+    echo "$2" && return 0
   fi
+
+  local cmd1 cmd2
+
+  for cmd1 in $1 ; do
+    for cmd2 in ${COMP_WORDS[*]} ; do
+      if [[ "$cmd1" == "$cmd2" ]] ; then
+        echo "$2" && return 0
+      fi
+    done
+  done
+
+  echo "$1" && return 0
 }
 
 complete -F _test test -o nosort
@@ -60,6 +85,13 @@ func (s *BashSuite) TestGenerator(c *C) {
 	c.Assert(data, Equals, _RESULT)
 }
 
+func (s *BashSuite) TestAuxi(c *C) {
+	info := usage.NewInfo("")
+
+	c.Assert(isCommandHandlersRequired(info), Equals, false)
+	c.Assert(genCommandsHandlers(info), Equals, "")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func genTestUsageInfo() *usage.Info {
@@ -75,7 +107,7 @@ func genTestUsageInfo() *usage.Info {
 	info.AddOption("d:option-ddd", "Test option D")
 	info.AddOption("e:option-eee", "Test option E")
 
-	info.BoundOptions("clean", "d:option-ddd", "e:option-eee")
+	info.BoundOptions("clean", "d:option-ddd", "e:option-eee", "unknown")
 
 	return info
 }
