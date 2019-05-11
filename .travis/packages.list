@@ -2,6 +2,7 @@
 + cron
 + csv
 + easing
++ emoji
 + env
 + errutil
 ! directio
