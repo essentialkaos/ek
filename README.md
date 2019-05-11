@@ -43,6 +43,7 @@ go get -u pkg.re/essentialkaos/ek.v10
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v10/cron) - Package provides methods for working with cron expressions
 * [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v10/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
 * [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v10/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
+* [`emoji`](https://godoc.org/pkg.re/essentialkaos/ek.v10/emoji) - Package provides methods for working with emojis
 * [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v10/env) - Package provides methods for working with environment variables
 * [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v10/errutil) - Package provides methods for working with errors
 * [`directio`](https://godoc.org/pkg.re/essentialkaos/ek.v10/directio) - Package provides methods for reading/writing files with direct io

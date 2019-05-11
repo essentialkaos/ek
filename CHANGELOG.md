@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.10.0
+
+* `[emoji]` New package for working with emojis
+
 ### 10.9.1
 
 * `[usage/completion/bash]` Improved bash completion generation
