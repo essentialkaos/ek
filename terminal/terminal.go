@@ -18,8 +18,8 @@ import (
 
 	"pkg.re/essentialkaos/go-linenoise.v3"
 
-	"pkg.re/essentialkaos/ek.v10/env"
 	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -135,22 +135,26 @@ func SetHintHandler(h func(input string) string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getPrivateHider(message string) string {
+// getMask returns mask for password
+func getMask(message string) string {
 	var masking string
 
 	prefix := strings.Repeat(" ", utf8.RuneCountInString(Prompt))
 
-	checkTmux()
-
-	if tmux == 1 {
+	if isTmuxSession() {
 		masking = strings.Repeat("*", utf8.RuneCountInString(message))
 	} else {
 		masking = strings.Repeat(MaskSymbol, utf8.RuneCountInString(message))
 	}
 
+	if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
+		return Prompt + masking
+	}
+
 	return fmt.Sprintf("%s\033[1A%s", prefix, masking)
 }
 
+// getAnswerTitle returns title with info about default answer
 func getAnswerTitle(title, defaultAnswer string) string {
 	if title == "" {
 		return ""
@@ -166,15 +170,14 @@ func getAnswerTitle(title, defaultAnswer string) string {
 	}
 }
 
+// readUserInput reads user input
 func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	if title != "" {
-		fmtc.Println(colorozeTitle(title))
+		fmtc.Println("{c}" + title + "{!}")
 	}
 
-	var (
-		input string
-		err   error
-	)
+	var input string
+	var err error
 
 	for {
 		input, err = linenoise.Line(Prompt)
@@ -190,9 +193,13 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 
 		if private && input != "" {
 			if MaskSymbolColorTag == "" {
-				fmt.Println(getPrivateHider(input))
+				fmt.Println(getMask(input))
 			} else {
-				fmtc.Println(MaskSymbolColorTag + getPrivateHider(input) + "{!}")
+				fmtc.Println(MaskSymbolColorTag + getMask(input) + "{!}")
+			}
+		} else {
+			if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
+				fmt.Println(Prompt + input)
 			}
 		}
 
@@ -202,16 +209,15 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	return input, err
 }
 
-func colorozeTitle(title string) string {
-	return "{c}" + title + "{!}"
-}
-
-func checkTmux() {
+// isTmuxSession returns true if we work in tmux session
+func isTmuxSession() bool {
 	if tmux == 0 {
-		if env.Get().GetS("TMUX") == "" {
+		if os.Getenv("TMUX") == "" {
 			tmux = -1
 		} else {
 			tmux = 1
 		}
 	}
+
+	return tmux == 1
 }

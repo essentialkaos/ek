@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.10.2
+
+* `[terminal]` Reading user input now is more stdin friendly (_you can pass input through the stdin_)
+
 ### 10.10.1
 
 * `[usage]` Fixed bug with formatting options
