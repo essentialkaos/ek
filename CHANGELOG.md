@@ -3,6 +3,7 @@
 ### 10.10.1
 
 * `[usage]` Fixed bug with formatting options
+* `[fmtutil/table]` More copy&paste friendly table rendering
 
 ### 10.10.0
 
