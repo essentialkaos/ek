@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.10.1
+
+* `[usage]` Fixed bug with formatting options
+
 ### 10.10.0
 
 * `[emoji]` New package for working with emojis
