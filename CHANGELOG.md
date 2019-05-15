@@ -2,7 +2,7 @@
 
 ### 10.10.2
 
-* `[terminal]` Reading user input now is more stdin friendly (_you can pass input through the stdin_)
+* `[terminal]` Reading user input now is more stdin friendly (_you can pass the input through the stdin_)
 
 ### 10.10.1
 
