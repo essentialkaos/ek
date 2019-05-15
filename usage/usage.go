@@ -466,10 +466,12 @@ func getOptionSize(opt *Option) int {
 		size += strutil.Len(opt.Long) + 2
 	}
 
-	size += strutil.Len(opt.Arg)
+	if opt.Arg != "" {
+		size += strutil.Len(opt.Arg)
 
-	if !strings.HasPrefix(opt.Arg, "?") {
-		size++
+		if !strings.HasPrefix(opt.Arg, "?") {
+			size++
+		}
 	}
 
 	return size

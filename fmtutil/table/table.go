@@ -273,7 +273,11 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 		if strutil.Len(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
 			fmtc.Print(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
 		} else {
-			fmtc.Print(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+			if columnIndex+1 == totalColumns && getAlignment(t, columnIndex) == ALIGN_LEFT {
+				fmtc.Print(" " + formatText(columnData, -1, ALIGN_LEFT))
+			} else {
+				fmtc.Print(" " + formatText(columnData, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + " ")
+			}
 		}
 
 		if columnIndex+1 != totalColumns {
