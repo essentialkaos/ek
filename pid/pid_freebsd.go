@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process pid is not -1
+// IsWorks returns true if process with PID from PID file is works
 func IsWorks(name string) bool {
 	pid := Get(name)
 
@@ -22,7 +22,10 @@ func IsWorks(name string) bool {
 		return false
 	}
 
-	err := exec.Command("/usr/bin/procstat", strconv.Itoa(pid)).Run()
+	return IsProcessWorks(pid)
+}
 
-	return err == nil
+// IsProcessWorks returns true if process with given PID is works
+func IsProcessWorks(pid int) bool {
+	return exec.Command("/usr/bin/procstat", strconv.Itoa(pid)).Run() == nil
 }

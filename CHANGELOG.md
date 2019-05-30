@@ -1,5 +1,11 @@
 ## Changelog
 
+### 10.11.0
+
+* `[pid]` Added method `IsProcessWorks` for checking process state by PID
+* `[pid]` Improved process state check
+* `[pid]` Improved Mac OS X support
+
 ### 10.10.2
 
 * `[terminal]` Reading user input now is more stdin friendly (_you can pass the input through the stdin_)

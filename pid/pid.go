@@ -26,19 +26,19 @@ var Dir = "/var/run"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Create create file with process PID file
+// Create creates file with process PID file
 func Create(name string) error {
-	err := checkPidDir(Dir)
+	err := checkPIDDir(Dir, true)
 
 	if err != nil {
 		return err
 	}
 
 	if name == "" {
-		return errors.New("Pid file name can't be blank")
+		return errors.New("PID file name can't be blank")
 	}
 
-	pidFile := Dir + "/" + normalizePidFilename(name)
+	pidFile := Dir + "/" + normalizePIDFilename(name)
 
 	if fsutil.IsExist(pidFile) {
 		os.Remove(pidFile)
@@ -53,26 +53,26 @@ func Create(name string) error {
 
 // Remove remove file with process PID file
 func Remove(name string) error {
-	err := checkPidDir(Dir)
+	err := checkPIDDir(Dir, true)
 
 	if err != nil {
 		return err
 	}
 
-	pidFile := Dir + "/" + normalizePidFilename(name)
+	pidFile := Dir + "/" + normalizePIDFilename(name)
 
 	return os.Remove(pidFile)
 }
 
 // Get return PID from PID file
 func Get(name string) int {
-	err := checkPidDir(Dir)
+	err := checkPIDDir(Dir, false)
 
 	if err != nil {
 		return -1
 	}
 
-	pidFile := Dir + "/" + normalizePidFilename(name)
+	pidFile := Dir + "/" + normalizePIDFilename(name)
 	data, err := ioutil.ReadFile(pidFile)
 
 	if err != nil {
@@ -90,24 +90,27 @@ func Get(name string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// checkPidDir check directory path and return error if directory not ok
-func checkPidDir(path string) error {
+// checkPIDDir checks directory path and return error if directory not ok
+func checkPIDDir(path string, requireModify bool) error {
 	switch {
-	case fsutil.IsExist(path) == false:
+	case !fsutil.IsExist(path):
 		return errors.New("Directory " + path + " does not exist")
-	case fsutil.IsDir(path) == false:
+
+	case !fsutil.IsDir(path):
 		return errors.New(path + " is not directory")
-	case fsutil.IsWritable(path) == false:
+
+	case !fsutil.IsWritable(path) && requireModify:
 		return errors.New("Directory " + path + " is not writable")
-	case fsutil.IsReadable(path) == false:
+
+	case !fsutil.IsReadable(path):
 		return errors.New("Directory " + path + " is not readable")
 	}
 
 	return nil
 }
 
-// normalizePidFilename return PID file name with extension
-func normalizePidFilename(name string) string {
+// normalizePIDFilename returns PID file name with extension
+func normalizePIDFilename(name string) string {
 	if !strings.Contains(name, ".pid") {
 		return name + ".pid"
 	}
