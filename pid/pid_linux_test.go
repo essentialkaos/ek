@@ -54,3 +54,8 @@ func (s *PidSuite) TestIsWorks(c *C) {
 
 	c.Assert(IsWorks("test"), Equals, false)
 }
+
+func (s *PidSuite) TestIsProcessWorks(c *C) {
+	c.Assert(IsProcessWorks(os.Getpid()), Equals, true)
+	c.Assert(IsProcessWorks(999999), Equals, false)
+}

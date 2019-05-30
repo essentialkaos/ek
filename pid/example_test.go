@@ -45,3 +45,21 @@ func ExampleGet() {
 
 	fmt.Printf("PID is %d\n", pid)
 }
+
+func ExampleIsProcessWorks() {
+	pid := 1234
+
+	if IsProcessWorks(pid) {
+		fmt.Printf("Process with PID %d is works\n", pid)
+	} else {
+		fmt.Printf("Process with PID %d isn't working\n", pid)
+	}
+}
+
+func ExampleIsWorks() {
+	if IsWorks("servicename") {
+		fmt.Println("Process is works")
+	} else {
+		fmt.Println("Process isn't working")
+	}
+}

@@ -9,6 +9,8 @@ package pid
 
 import (
 	"fmt"
+	"os"
+	"syscall"
 
 	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
@@ -20,7 +22,7 @@ var procfsDir = "/proc"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks return if process with PID from PID file is works
+// IsWorks returns true if process with PID from PID file is works
 func IsWorks(name string) bool {
 	pid := Get(name)
 
@@ -39,5 +41,13 @@ func IsWorks(name string) bool {
 		return false
 	}
 
-	return true
+	return IsProcessWorks(pid)
+}
+
+// IsProcessWorks returns true if process with given PID is works
+func IsProcessWorks(pid int) bool {
+	// On Unix systems, FindProcess always succeeds and returns a Process
+	// for the given pid, regardless of whether the process exists.
+	pr, _ := os.FindProcess(pid)
+	return pr.Signal(syscall.Signal(0)) == nil
 }

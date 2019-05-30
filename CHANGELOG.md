@@ -1,7 +1,8 @@
 ## Changelog
 
-### 10.10.3
+### 10.11.0
 
+* `[pid]` Added method `IsProcessWorks` for checking process state by PID
 * `[pid]` Improved process state check
 
 ### 10.10.2
