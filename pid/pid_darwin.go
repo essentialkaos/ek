@@ -1,5 +1,9 @@
 package pid
 
+import (
+	"os"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
 //                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
@@ -9,10 +13,22 @@ package pid
 
 // IsWorks returns true if process with PID from PID file is works
 func IsWorks(name string) bool {
-	return Get(name) != -1
+	pid := Get(name)
+
+	if pid == -1 {
+		return false
+	}
+
+	return IsProcessWorks(pid)
 }
 
 // IsProcessWorks returns true if process with given PID is works
 func IsProcessWorks(pid int) bool {
-	return Get(name) != -1
+	pr, err := os.FindProcess(pid)
+
+	if pr == nil || err != nil {
+		return false
+	}
+
+	return true
 }
