@@ -11,6 +11,7 @@ package pid
 
 import (
 	"io/ioutil"
+	"os"
 
 	. "pkg.re/check.v1"
 )
@@ -31,7 +32,12 @@ func (s *PidSuite) TestIsWorks(c *C) {
 	c.Assert(IsWorks("test"), Equals, false)
 
 	// Write fake pid to pid file
-	ioutil.WriteFile(s.Dir+"/test.pid", []byte("9736163"), 0644)
+	ioutil.WriteFile(s.Dir+"/test.pid", []byte("999999\n"), 0644)
 
-	c.Assert(IsWorks("test"), Equals, true)
+	c.Assert(IsWorks("test"), Equals, false)
+}
+
+func (s *PidSuite) TestIsProcessWorks(c *C) {
+	c.Assert(IsProcessWorks(os.Getpid()), Equals, true)
+	c.Assert(IsProcessWorks(999999), Equals, false)
 }

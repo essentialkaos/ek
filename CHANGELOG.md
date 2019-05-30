@@ -4,6 +4,7 @@
 
 * `[pid]` Added method `IsProcessWorks` for checking process state by PID
 * `[pid]` Improved process state check
+* `[pid]` Improved Mac OS X support
 
 ### 10.10.2
 

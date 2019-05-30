@@ -2,6 +2,7 @@ package pid
 
 import (
 	"os"
+	"syscall"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,11 +25,8 @@ func IsWorks(name string) bool {
 
 // IsProcessWorks returns true if process with given PID is works
 func IsProcessWorks(pid int) bool {
-	pr, err := os.FindProcess(pid)
-
-	if pr == nil || err != nil {
-		return false
-	}
-
-	return true
+	// On Unix systems, FindProcess always succeeds and returns a Process
+	// for the given pid, regardless of whether the process exists.
+	pr, _ := os.FindProcess(pid)
+	return pr.Signal(syscall.Signal(0)) == nil
 }
