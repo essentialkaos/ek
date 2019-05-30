@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.10.3
+
+* `[pid]` Improved process state check
+
 ### 10.10.2
 
 * `[terminal]` Reading user input now is more stdin friendly (_you can pass the input through the stdin_)
