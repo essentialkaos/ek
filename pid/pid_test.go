@@ -84,7 +84,7 @@ func (s *PidSuite) TestErrors(c *C) {
 	err = Create("")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Pid file name can't be blank")
+	c.Assert(err.Error(), Equals, "PID file name can't be blank")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -112,6 +112,7 @@ func (s *PidSuite) TestErrors(c *C) {
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, fmt.Sprintf("Directory %s is not readable", nonReadableDir))
+	c.Assert(Get("test.pid"), Equals, -1)
 }
 
 func (s *PidSuite) TestPidFuncs(c *C) {
