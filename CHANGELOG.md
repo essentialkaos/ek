@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.11.1
+
+* `[fsutil]` Fixed bug with filtering listing data
+
 ### 10.11.0
 
 * `[pid]` Added method `IsProcessWorks` for checking process state by PID
