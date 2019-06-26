@@ -9,6 +9,9 @@ package req
 
 import (
 	"bytes"
+	"errors"
+	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"sort"
@@ -26,6 +29,7 @@ import (
 const (
 	_URL_GET          = "/get"
 	_URL_POST         = "/post"
+	_URL_POST_MULTI   = "/post-multi"
 	_URL_PUT          = "/put"
 	_URL_HEAD         = "/head"
 	_URL_PATCH        = "/patch"
@@ -143,6 +147,35 @@ func (s *ReqSuite) TestMethodPost(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
+}
+
+func (s *ReqSuite) TestMethodPostFile(c *C) {
+	tmpDir := c.MkDir()
+	tmpFile := tmpDir + "/testMultipart.bin"
+
+	err := ioutil.WriteFile(tmpFile, []byte(`DATA8913FIN`), 0644)
+
+	r := Request{URL: s.url + _URL_POST_MULTI, Method: POST}
+	postResp, err := r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+
+	c.Assert(err, IsNil)
+	c.Assert(postResp.StatusCode, Equals, 200)
+
+	postResp, err = r.PostFile(tmpDir+"/unknown", "file", map[string]string{"abc": "123"})
+
+	c.Assert(err, NotNil)
+
+	useFakeFormGenerator = true
+	postResp, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+
+	c.Assert(err, NotNil)
+
+	useFakeFormGenerator = false
+
+	ioCopyFunc = func(dst io.Writer, src io.Reader) (int64, error) { return 0, errors.New("") }
+	postResp, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+
+	c.Assert(err, NotNil)
 }
 
 func (s *ReqSuite) TestMethodPut(c *C) {
@@ -568,6 +601,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_GET, getRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_POST, postRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_POST_MULTI, postMultiRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_PUT, putRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_HEAD, headRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_PATCH, patchRequestHandler)
@@ -601,6 +635,32 @@ func getRequestHandler(w http.ResponseWriter, r *http.Request) {
 func postRequestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != POST {
 		w.WriteHeader(802)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
+func postMultiRequestHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != POST {
+		w.WriteHeader(802)
+		return
+	}
+
+	f, h, err := r.FormFile("file")
+
+	if f == nil {
+		w.WriteHeader(851)
+		return
+	}
+
+	if h == nil {
+		w.WriteHeader(852)
+		return
+	}
+
+	if err != nil {
+		w.WriteHeader(853)
 		return
 	}
 
