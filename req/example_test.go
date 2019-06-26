@@ -128,3 +128,27 @@ func ExampleRequest_Post() {
 		response.User, response.ID, response.Balance,
 	)
 }
+
+func ExampleRequest_PostFile() {
+	extraFields := map[string]string{
+		"user": "john",
+		"desc": "My photo",
+	}
+
+	// send multipart request with image
+	resp, err := Request{
+		URL: "https://my.domain.com",
+	}.PostFile("/tmp/image.jpg", "file", extraFields)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Printf("Can't upload file: %v\n", err)
+		return
+	}
+
+	fmt.Printf("File successfully uploaded!\n")
+}

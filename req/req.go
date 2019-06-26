@@ -14,9 +14,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -249,6 +252,11 @@ var Global = &Engine{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var ioCopyFunc = io.Copy
+var useFakeFormGenerator = false
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // SetUserAgent set user agent based on app name and version for global engine
 func SetUserAgent(app, version string, subs ...string) {
 	Global.SetUserAgent(app, version, subs...)
@@ -294,6 +302,17 @@ func (e *Engine) Head(r Request) (*Response, error) {
 // Patch send PATCH request and process response
 func (e *Engine) Patch(r Request) (*Response, error) {
 	return e.doRequest(r, PATCH)
+}
+
+// PostFile sends multipart POST request with file data
+func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
+	err := configureMultipartRequest(&r, file, fieldName, extraFields)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return e.doRequest(r, POST)
 }
 
 // Delete send DELETE request and process response
@@ -345,32 +364,37 @@ func (r Request) Do() (*Response, error) {
 
 // Get send GET request and process response
 func (r Request) Get() (*Response, error) {
-	return Global.doRequest(r, GET)
+	return Global.Get(r)
 }
 
 // Post send POST request and process response
 func (r Request) Post() (*Response, error) {
-	return Global.doRequest(r, POST)
+	return Global.Post(r)
 }
 
 // Put send PUT request and process response
 func (r Request) Put() (*Response, error) {
-	return Global.doRequest(r, PUT)
+	return Global.Put(r)
 }
 
 // Head send HEAD request and process response
 func (r Request) Head() (*Response, error) {
-	return Global.doRequest(r, HEAD)
+	return Global.Head(r)
 }
 
 // Patch send PATCH request and process response
 func (r Request) Patch() (*Response, error) {
-	return Global.doRequest(r, PATCH)
+	return Global.Patch(r)
 }
 
 // Delete send DELETE request and process response
 func (r Request) Delete() (*Response, error) {
-	return Global.doRequest(r, DELETE)
+	return Global.Delete(r)
+}
+
+// PostFile sends multipart POST request with file data
+func (r Request) PostFile(file, fieldName string, extraFields map[string]string) (*Response, error) {
+	return Global.PostFile(r, file, fieldName, extraFields)
 }
 
 // Discard reads response body for closing connection
@@ -602,6 +626,51 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, e
 	}
 
 	return req, nil
+}
+
+func configureMultipartRequest(r *Request, file, fieldName string, extraFields map[string]string) error {
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+
+	if err != nil {
+		return err
+	}
+
+	buf := &bytes.Buffer{}
+	w := multipart.NewWriter(buf)
+	part, err := createFormFile(w, fieldName, file)
+
+	if err != nil {
+		fd.Close()
+		return err
+	}
+
+	_, err = ioCopyFunc(part, fd)
+
+	if err != nil {
+		fd.Close()
+		return err
+	}
+
+	if extraFields != nil {
+		for k, v := range extraFields {
+			w.WriteField(k, v)
+		}
+	}
+
+	w.Close()
+
+	r.ContentType = w.FormDataContentType()
+	r.Body = buf
+
+	return nil
+}
+
+func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, error) {
+	if useFakeFormGenerator {
+		return nil, fmt.Errorf("")
+	}
+
+	return w.CreateFormFile(fieldName, filepath.Base(file))
 }
 
 func getBodyReader(body interface{}) (io.Reader, error) {

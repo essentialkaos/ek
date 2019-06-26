@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.12.0
+
+* `[req]` Added method `PostFile` for multipart file uploading
+
 ### 10.11.1
 
 * `[fsutil]` Fixed bug with filtering listing data
