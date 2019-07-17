@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.12.1
+
+* `[usage]` Fixed bug with formatting options without short name
+
 ### 10.12.0
 
 * `[req]` Added method `PostFile` for multipart file uploading

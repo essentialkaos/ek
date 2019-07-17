@@ -463,7 +463,7 @@ func getOptionSize(opt *Option) int {
 	if opt.Short != "" {
 		size += strutil.Len(opt.Long) + strutil.Len(opt.Short) + 4
 	} else {
-		size += strutil.Len(opt.Long) + 2
+		size += strutil.Len(opt.Long) + 1
 	}
 
 	if opt.Arg != "" {
