@@ -177,6 +177,9 @@ const (
 	STATUS_NETWORK_AUTHENTICATION_REQUIRED = 511 // RFC 6585, 6
 )
 
+// USER_AGENT
+const USER_AGENT = "go-ek-req"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Query is a map[string]interface{} used for query
@@ -551,7 +554,7 @@ func initEngine(e *Engine) {
 	}
 
 	if e.UserAgent == "" {
-		e.SetUserAgent("goek-http-client", "9")
+		e.SetUserAgent(USER_AGENT, "10")
 	}
 
 	e.dialTimeout = 0

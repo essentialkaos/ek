@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.12.2
+
+* `[req]` Changed default user-agent to `go-ek-req/10`
+
 ### 10.12.1
 
 * `[usage]` Fixed bug with formatting options without short name
