@@ -2,7 +2,7 @@
 
 ### 10.12.2
 
-* `[req]` Changes default user-agent to `go-ek-req/10`
+* `[req]` Changed default user-agent to `go-ek-req/10`
 
 ### 10.12.1
 
