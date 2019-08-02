@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.13.1
+
+* `[errutil]` Method `Add` now allows adding slices with errors
+
 ### 10.13.0
 
 * `[errutil]` Added possibility to limit the number of errors to store

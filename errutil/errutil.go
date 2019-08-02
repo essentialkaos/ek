@@ -59,6 +59,8 @@ func (e *Errors) Add(errs ...interface{}) *Errors {
 		switch v := err.(type) {
 		case *Errors:
 			e.errors = append(e.errors, v.errors...)
+		case []error:
+			e.errors = append(e.errors, v...)
 		case error:
 			e.errors = append(e.errors, v)
 		}
