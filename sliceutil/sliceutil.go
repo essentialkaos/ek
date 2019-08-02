@@ -96,28 +96,24 @@ LOOP:
 	return result
 }
 
-// Deduplicate return slice without duplicates. Given slice must be sorted
-// before deduplication
+// Deduplicate removes duplicates from slice.
+// Slice must be sorted before deduplication.
 func Deduplicate(slice []string) []string {
-	sliceLen := len(slice)
-
-	if sliceLen <= 1 {
+	if len(slice) <= 1 {
 		return slice
 	}
 
-	var (
-		result   []string
-		lastItem string
-	)
+	j := 0
 
-	for _, v := range slice {
-		if lastItem == v {
+	for i := 1; i < len(slice); i++ {
+		if slice[j] == slice[i] {
 			continue
 		}
 
-		result = append(result, v)
-		lastItem = v
+		j++
+
+		slice[j] = slice[i]
 	}
 
-	return result
+	return slice[:j+1]
 }

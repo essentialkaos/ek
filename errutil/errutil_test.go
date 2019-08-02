@@ -54,6 +54,52 @@ func (s *ErrSuite) TestPositive(c *C) {
 	c.Assert(errs.Error(), Equals, "  1\n  2\n  3\n  4\n  5\n")
 }
 
+func (s *ErrSuite) TestSizeLimit(c *C) {
+	errs := NewErrors(3)
+
+	errs.Add(errors.New("1"))
+	errs.Add(errors.New("2"))
+
+	c.Assert(errs.HasErrors(), Equals, true)
+	c.Assert(errs.Num(), Equals, 2)
+	c.Assert(errs.All(), HasLen, 2)
+
+	errs.Add(errors.New("3"))
+	errs.Add(errors.New("4"))
+	errs.Add(errors.New("5"))
+	errs.Add(errors.New("6"))
+
+	c.Assert(errs.HasErrors(), Equals, true)
+	c.Assert(errs.Num(), Equals, 3)
+	c.Assert(errs.All(), HasLen, 3)
+
+	errList := errs.All()
+
+	c.Assert(errList[0].Error(), Equals, "4")
+	c.Assert(errList[2].Error(), Equals, "6")
+
+	errs = NewErrors(-10)
+
+	c.Assert(errs.maxSize, Equals, 0)
+}
+
+func (s *ErrSuite) TestAdd(c *C) {
+	errs1 := NewErrors()
+	errs2 := NewErrors()
+
+	errs1.Add(errors.New("1"))
+	errs1.Add(errors.New("2"))
+
+	errs2.Add(errors.New("3"))
+	errs2.Add(errors.New("4"))
+
+	errs1.Add(errs2)
+
+	c.Assert(errs1.HasErrors(), Equals, true)
+	c.Assert(errs1.Num(), Equals, 4)
+	c.Assert(errs1.All(), HasLen, 4)
+}
+
 func (s *ErrSuite) TestNegative(c *C) {
 	errs := NewErrors()
 

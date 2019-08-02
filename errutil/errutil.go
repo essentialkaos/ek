@@ -10,15 +10,25 @@ package errutil
 
 // Errors is struct for handling many errors at once
 type Errors struct {
-	num    int
-	errors []error
+	maxSize int
+	errors  []error
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewErrors creates new struct
-func NewErrors() *Errors {
-	return &Errors{}
+func NewErrors(maxSize ...int) *Errors {
+	if len(maxSize) == 0 {
+		return &Errors{}
+	}
+
+	size := maxSize[0]
+
+	if size < 0 {
+		size = 0
+	}
+
+	return &Errors{maxSize: size}
 }
 
 // Chain execute functions in chain and if one of them return error
@@ -40,31 +50,37 @@ func Chain(funcs ...func() error) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds new error to slice
-func (e *Errors) Add(errs ...error) *Errors {
+func (e *Errors) Add(errs ...interface{}) *Errors {
 	if errs == nil {
 		return e
 	}
 
 	for _, err := range errs {
-		if err != nil {
-			e.errors = append(e.errors, err)
-			e.num++
+		switch v := err.(type) {
+		case *Errors:
+			e.errors = append(e.errors, v.errors...)
+		case error:
+			e.errors = append(e.errors, v)
 		}
+	}
+
+	if e.maxSize > 0 && len(e.errors) > e.maxSize {
+		e.errors = e.errors[len(e.errors)-e.maxSize:]
 	}
 
 	return e
 }
 
-// Last return last error in slice
+// Last returns last error in slice
 func (e *Errors) Last() error {
-	if e == nil || e.num == 0 || e.errors == nil {
+	if e == nil || e.errors == nil {
 		return nil
 	}
 
-	return e.errors[e.num-1]
+	return e.errors[len(e.errors)-1]
 }
 
-// All return all errors in slice
+// All returns all errors in slice
 func (e *Errors) All() []error {
 	if e == nil || e.errors == nil {
 		return nil
@@ -79,21 +95,21 @@ func (e *Errors) HasErrors() bool {
 		return false
 	}
 
-	return e.num != 0
+	return len(e.errors) != 0
 }
 
-// Num return number of errors
+// Num returns number of errors
 func (e *Errors) Num() int {
 	if e == nil {
 		return 0
 	}
 
-	return e.num
+	return len(e.errors)
 }
 
-// Error return text of all errors
+// Error returns text of all errors
 func (e *Errors) Error() string {
-	if e == nil || e.num == 0 {
+	if e == nil || len(e.errors) == 0 {
 		return ""
 	}
 

@@ -9,6 +9,7 @@ package sliceutil
 
 import (
 	"errors"
+	"sort"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -89,8 +90,12 @@ func (s *SliceSuite) TestExclude(c *C) {
 }
 
 func (s *SliceSuite) TestDeduplicate(c *C) {
-	source := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
+	source1 := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
+	source2 := []string{"abc", "ABC", "A", "B", "C", "abc", "D", "E", "ABC"}
 
-	c.Assert(Deduplicate(source), DeepEquals, []string{"1", "2", "3", "4", "5", "6"})
+	sort.Strings(source2)
+
+	c.Assert(Deduplicate(source1), DeepEquals, []string{"1", "2", "3", "4", "5", "6"})
+	c.Assert(Deduplicate(source2), DeepEquals, []string{"A", "ABC", "B", "C", "D", "E", "abc"})
 	c.Assert(Deduplicate([]string{"1"}), DeepEquals, []string{"1"})
 }
