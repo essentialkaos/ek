@@ -4,6 +4,7 @@
 
 * `[errutil]` Added possibility to limit the number of errors to store
 * `[errutil]` Method `Add` now allows adding errors from other Errors struct
+* `[sliceutil]` Using in-place deduplication in `Deduplicate` method
 
 ### 10.12.2
 
