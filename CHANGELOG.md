@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.13.0
+
+* `[errutil]` Added possibility to limit the number of errors to store
+* `[errutil]` Method `Add` now allows adding errors from other Errors struct
+
 ### 10.12.2
 
 * `[req]` Changed default user-agent to `go-ek-req/10`
