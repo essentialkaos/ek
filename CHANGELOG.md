@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.14.0
+
+* `[version]` Added method `IsZero` for checking empty version struct
+
 ### 10.13.1
 
 * `[errutil]` Method `Add` now allows adding slices with errors

@@ -248,6 +248,11 @@ func (v Version) Int() int {
 	return result
 }
 
+// IsZero returns if version is zero (0.0.0)
+func (v Version) IsZero() bool {
+	return v.raw == ""
+}
+
 // String return version as string
 func (v Version) String() string {
 	return v.raw

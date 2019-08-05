@@ -149,6 +149,15 @@ func (s *VersionSuite) TestString(c *C) {
 	c.Assert(v5.String(), Equals, "6.12.1-beta2+exp.sha.5114f85")
 }
 
+func (s *VersionSuite) TestIsZero(c *C) {
+	var v1 Version
+
+	v2, _ := Parse("1")
+
+	c.Assert(v1.IsZero(), Equals, true)
+	c.Assert(v2.IsZero(), Equals, false)
+}
+
 func (s *VersionSuite) TestErrors(c *C) {
 	var err error
 
