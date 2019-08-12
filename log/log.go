@@ -17,6 +17,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v10/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -46,6 +48,8 @@ type Logger struct {
 	PrefixError bool // Prefix for error messages
 	PrefixCrit  bool // Prefix for critical error messages
 
+	UseColors bool // Enable ASNSII colors in output
+
 	file     string
 	fd       *os.File
 	w        *bufio.Writer
@@ -74,6 +78,15 @@ var PrefixMap = map[uint8]string{
 	WARN:  "[WARNING]",
 	ERROR: "[ERROR]",
 	CRIT:  "[CRITICAL]",
+}
+
+// Colors colors is map with fmtc color tags for every level
+var Colors = map[uint8]string{
+	DEBUG: "{s}",
+	INFO:  "",
+	WARN:  "{y}",
+	ERROR: "{r}",
+	CRIT:  "{m}",
 }
 
 // TimeFormat contains format string for time in logs
@@ -218,10 +231,7 @@ func (l *Logger) MinLevel(level interface{}) error {
 		return err
 	}
 
-	switch {
-	case levelCode < DEBUG:
-		levelCode = DEBUG
-	case levelCode > CRIT:
+	if levelCode > CRIT {
 		levelCode = CRIT
 	}
 
@@ -301,10 +311,19 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
 
 	rwMutex.RLock()
 
-	if showPrefixes {
-		n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+	if l.UseColors {
+		c := Colors[level]
+		if showPrefixes {
+			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		} else {
+			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s{!}", getTime(), fmt.Sprintf(f, a...))
+		}
 	} else {
-		n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+		if showPrefixes {
+			n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		} else {
+			n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+		}
 	}
 
 	rwMutex.RUnlock()

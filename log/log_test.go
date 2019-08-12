@@ -180,6 +180,17 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 	_, err = l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
+
+	l.UseColors = true
+	l.PrefixError = true
+
+	_, err = l.Print(INFO, "info")
+
+	c.Assert(err, IsNil)
+
+	_, err = l.Print(ERROR, "error")
+
+	c.Assert(err, IsNil)
 }
 
 func (ls *LogSuite) TestWithoutPrefixes(c *C) {
