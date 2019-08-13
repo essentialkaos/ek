@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.15.0
+
+* `[log]` Added support of ANSII colors in the output
+* `[log]` Using `uint8` for level codes instead of `int`
+
 ### 10.14.0
 
 * `[version]` Added method `IsZero` for checking empty version struct

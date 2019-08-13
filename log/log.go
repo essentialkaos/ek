@@ -17,6 +17,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"pkg.re/essentialkaos/ek.v10/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -28,12 +30,12 @@ import (
 // CRIT critical error messages
 // AUX unskipable messages (separators, headers, etc...)
 const (
-	DEBUG = 0
-	INFO  = 1
-	WARN  = 2
-	ERROR = 3
-	CRIT  = 4
-	AUX   = 99
+	DEBUG uint8 = 0
+	INFO        = 1
+	WARN        = 2
+	ERROR       = 3
+	CRIT        = 4
+	AUX         = 99
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -46,10 +48,12 @@ type Logger struct {
 	PrefixError bool // Prefix for error messages
 	PrefixCrit  bool // Prefix for critical error messages
 
+	UseColors bool // Enable ASNSII colors in output
+
 	file     string
 	fd       *os.File
 	w        *bufio.Writer
-	level    int
+	level    uint8
 	perms    os.FileMode
 	useBufIO bool
 }
@@ -68,12 +72,21 @@ var Global = &Logger{
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrefixMap is map with messages prefixes
-var PrefixMap = map[int]string{
+var PrefixMap = map[uint8]string{
 	DEBUG: "[DEBUG]",
 	INFO:  "[INFO]",
 	WARN:  "[WARNING]",
 	ERROR: "[ERROR]",
 	CRIT:  "[CRITICAL]",
+}
+
+// Colors colors is map with fmtc color tags for every level
+var Colors = map[uint8]string{
+	DEBUG: "{s}",
+	INFO:  "",
+	WARN:  "{y}",
+	ERROR: "{r}",
+	CRIT:  "{m}",
 }
 
 // TimeFormat contains format string for time in logs
@@ -90,7 +103,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var logLevelsNames = map[string]int{
+var logLevelsNames = map[string]uint8{
 	"debug":    0,
 	"info":     1,
 	"warn":     2,
@@ -150,7 +163,7 @@ func Flush() error {
 }
 
 // Print write message to global logger output
-func Print(level int, f string, a ...interface{}) (int, error) {
+func Print(level uint8, f string, a ...interface{}) (int, error) {
 	return Global.Print(level, f, a...)
 }
 
@@ -218,10 +231,7 @@ func (l *Logger) MinLevel(level interface{}) error {
 		return err
 	}
 
-	switch {
-	case levelCode < DEBUG:
-		levelCode = DEBUG
-	case levelCode > CRIT:
+	if levelCode > CRIT {
 		levelCode = CRIT
 	}
 
@@ -270,7 +280,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 }
 
 // Print write message to logger output
-func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
+func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
 	if l == nil {
 		return -1, ErrLoggerIsNil
 	}
@@ -301,10 +311,19 @@ func (l *Logger) Print(level int, f string, a ...interface{}) (int, error) {
 
 	rwMutex.RLock()
 
-	if showPrefixes {
-		n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+	if l.UseColors {
+		c := Colors[level]
+		if showPrefixes {
+			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		} else {
+			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s{!}", getTime(), fmt.Sprintf(f, a...))
+		}
 	} else {
-		n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+		if showPrefixes {
+			n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		} else {
+			n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+		}
 	}
 
 	rwMutex.RUnlock()
@@ -387,7 +406,7 @@ func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (l *Logger) getWritter(level int) io.Writer {
+func (l *Logger) getWritter(level uint8) io.Writer {
 	var w io.Writer
 
 	if l.fd == nil {
@@ -420,54 +439,54 @@ func getTime() string {
 	return "[ " + time.Now().Format(TimeFormat) + " ]"
 }
 
-func convertMinLevelValue(level interface{}) (int, error) {
+func convertMinLevelValue(level interface{}) (uint8, error) {
 	switch u := level.(type) {
 
 	case int:
-		return int(u), nil
+		return uint8(u), nil
 
 	case int8:
-		return int(u), nil
+		return uint8(u), nil
 
 	case int16:
-		return int(u), nil
+		return uint8(u), nil
 
 	case int32:
-		return int(u), nil
+		return uint8(u), nil
 
 	case int64:
-		return int(u), nil
+		return uint8(u), nil
 
 	case uint:
-		return int(u), nil
+		return uint8(u), nil
 
 	case uint8:
-		return int(u), nil
+		return uint8(u), nil
 
 	case uint16:
-		return int(u), nil
+		return uint8(u), nil
 
 	case uint32:
-		return int(u), nil
+		return uint8(u), nil
 
 	case uint64:
-		return int(u), nil
+		return uint8(u), nil
 
 	case float32:
-		return int(u), nil
+		return uint8(u), nil
 
 	case float64:
-		return int(u), nil
+		return uint8(u), nil
 
 	case string:
 		code, ok := logLevelsNames[strings.ToLower(level.(string))]
 
 		if !ok {
-			return -1, errors.New("Unknown level " + level.(string))
+			return 255, errors.New("Unknown level " + level.(string))
 		}
 
 		return code, nil
 	}
 
-	return -1, ErrUnexpectedLevel
+	return 255, ErrUnexpectedLevel
 }
