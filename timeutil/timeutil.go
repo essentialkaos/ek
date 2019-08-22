@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"pkg.re/essentialkaos/ek.v10/mathutil"
 	"pkg.re/essentialkaos/ek.v10/pluralize"
 )
 
@@ -32,7 +33,7 @@ const (
 // It's ok to have so nested blocks in this method
 // codebeat:disable[BLOCK_NESTING]
 
-// PrettyDuration return pretty duration (e.g. 1 hour 45 seconds)
+// PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
 	var (
 		result   []string
@@ -41,6 +42,10 @@ func PrettyDuration(d interface{}) string {
 
 	switch u := d.(type) {
 	case time.Duration:
+		if u < time.Second {
+			return getShortDuration(u)
+		}
+
 		duration = int(u.Seconds())
 	case int8:
 		duration = int(u)
@@ -471,4 +476,30 @@ func getTimezone(d time.Time, separator bool) string {
 
 		return fmt.Sprintf("+%02d%02d", hours, minutes)
 	}
+}
+
+func getShortDuration(d time.Duration) string {
+	var duration float64
+
+	switch {
+	case d > time.Millisecond:
+		duration = float64(d) / float64(time.Millisecond)
+		return fmt.Sprintf("%g ms", formatFloat(duration))
+
+	case d > time.Microsecond:
+		duration = float64(d) / float64(time.Microsecond)
+		return fmt.Sprintf("%g μs", formatFloat(duration))
+
+	default:
+		return fmt.Sprintf("%d ns", d.Nanoseconds())
+
+	}
+}
+
+func formatFloat(f float64) float64 {
+	if f < 10.0 {
+		return mathutil.Round(f, 2)
+	}
+
+	return mathutil.Round(f, 1)
 }
