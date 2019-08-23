@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.16.0
+
+* `[timeutil]` Added support of short durations (_milliseconds, microseconds or nanoseconds_) to `PrettyDuration` method
+
 ### 10.15.0
 
 * `[log]` Added support of ANSII colors in the output
