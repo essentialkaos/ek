@@ -5,7 +5,7 @@
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://travis-ci.org/essentialkaos/ek"><img src="https://travis-ci.org/essentialkaos/ek.svg"></a>
-  <a href='https://coveralls.io/github/essentialkaos/ek'><img src='https://coveralls.io/repos/github/essentialkaos/ek/badge.svg' alt='Coverage Status' /></a>
+  <a href="https://coveralls.io/github/essentialkaos/ek"><img src="https://coveralls.io/repos/github/essentialkaos/ek/badge.svg" alt="Coverage Status" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
@@ -41,6 +41,7 @@ go get -u pkg.re/essentialkaos/ek.v10
 
 ### Sub-packages
 
+* [`cache`](https://godoc.org/pkg.re/essentialkaos/ek.v10/cache) - Package provides simple in-memory key:value store
 * [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v10/color) - Package provides methods for working with colors
 * [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v10/cron) - Package provides methods for working with cron expressions
 * [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v10/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 10.17.0
+
+* `[cache]` Added package which provides simple in-memory key:value store
+
 ### 10.16.0
 
 * `[timeutil]` Added support of short durations (_milliseconds, microseconds or nanoseconds_) to `PrettyDuration` method
