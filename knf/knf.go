@@ -432,8 +432,8 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 		return defvals[0]
 	}
 
-	switch {
-	case val == "", val == "0", val == "false":
+	switch val {
+	case "", "0", "false", "no":
 		return false
 	default:
 		return true

@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.18.0
+
+* `[knf]` Added `no` as a valid boolean value for `GetB`
+* `[knf]` Code refactoring
+
 ### 10.17.0
 
 * `[cache]` Added package which provides simple in-memory key:value store

@@ -40,6 +40,7 @@ test1:      1
   test4: 1
   test5:
   test6: example for test
+  test7: no
 
 [integer]
   test1: 1
@@ -309,6 +310,7 @@ func (s *KNFSuite) TestBoolean(c *check.C) {
 	c.Assert(GetB("boolean:test4"), check.Equals, true)
 	c.Assert(GetB("boolean:test5"), check.Equals, false)
 	c.Assert(GetB("boolean:test6"), check.Equals, true)
+	c.Assert(GetB("boolean:test7"), check.Equals, false)
 }
 
 func (s *KNFSuite) TestInteger(c *check.C) {
