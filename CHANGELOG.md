@@ -3,6 +3,7 @@
 ### 10.18.0
 
 * `[knf]` Added `no` as a valid boolean value for `GetB`
+* `[knf]` Added new validators for property type validation
 * `[knf]` Code refactoring
 
 ### 10.17.0

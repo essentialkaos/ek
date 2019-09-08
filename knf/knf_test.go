@@ -449,7 +449,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
-func (s *KNFSuite) TestValidation(c *check.C) {
+func (s *KNFSuite) TestBasicValidators(c *check.C) {
 	var err error
 
 	err = Global(s.ConfigPath)
@@ -540,4 +540,53 @@ func (s *KNFSuite) TestValidation(c *check.C) {
 	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
 	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
 	c.Assert(NotContains(fakeConfig, "test:string", 0), check.NotNil)
+}
+
+func (s *KNFSuite) TestTypeValidators(c *check.C) {
+	fakeConfig := &Config{
+		data: map[string]string{
+			"boolean:test1": "",
+			"boolean:test2": "0",
+			"boolean:test3": "1",
+			"boolean:test4": "True",
+			"boolean:test5": "false",
+			"boolean:test6": "Yes",
+			"boolean:test7": "no",
+			"boolean:test8": "disabled",
+
+			"num:test1": "",
+			"num:test2": "0",
+			"num:test3": "-100",
+			"num:test4": "657",
+			"num:test5": "ABCD",
+
+			"float:test1": "",
+			"float:test2": "0",
+			"float:test3": "0.6",
+			"float:test4": "-0.45",
+			"float:test5": "ABCD",
+		},
+	}
+
+	c.Assert(TypeBool(fakeConfig, "boolean:test1", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test2", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test3", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test4", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test5", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test6", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test7", nil), check.IsNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test8", nil), check.NotNil)
+
+	c.Assert(TypeNum(fakeConfig, "num:test1", nil), check.IsNil)
+	c.Assert(TypeNum(fakeConfig, "num:test2", nil), check.IsNil)
+	c.Assert(TypeNum(fakeConfig, "num:test3", nil), check.IsNil)
+	c.Assert(TypeNum(fakeConfig, "num:test4", nil), check.IsNil)
+	c.Assert(TypeNum(fakeConfig, "num:test5", nil), check.NotNil)
+	c.Assert(TypeNum(fakeConfig, "float:test3", nil), check.NotNil)
+
+	c.Assert(TypeFloat(fakeConfig, "float:test1", nil), check.IsNil)
+	c.Assert(TypeFloat(fakeConfig, "float:test2", nil), check.IsNil)
+	c.Assert(TypeFloat(fakeConfig, "float:test3", nil), check.IsNil)
+	c.Assert(TypeFloat(fakeConfig, "float:test4", nil), check.IsNil)
+	c.Assert(TypeFloat(fakeConfig, "float:test5", nil), check.NotNil)
 }

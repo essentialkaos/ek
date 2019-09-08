@@ -9,6 +9,7 @@ package knf
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v10/strutil"
@@ -22,29 +23,38 @@ type PropertyValidator func(config *Config, prop string, value interface{}) erro
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Empty return error if config property is empty
+	// Empty returns error if config property is empty
 	Empty = validatorEmpty
 
-	// NotContains return error if config property doesn't contains value from given slice
+	// NotContains returns error if config property doesn't contains value from given slice
 	NotContains = validatorNotContains
 
-	// Less return error if config property is less than given integer
+	// Less returns error if config property is less than given integer
 	Less = validatorLess
 
-	// Greater return error if config property is greater than given integer
+	// Greater returns error if config property is greater than given integer
 	Greater = validatorGreater
 
-	// Equals return error if config property is equals to given string
+	// Equals returns error if config property is equals to given string
 	Equals = validatorEquals
 
-	// NotLen return error if config property have wrong size
+	// NotLen returns error if config property have wrong size
 	NotLen = validatorNotLen
 
-	// NotPrefix return error if config property doesn't have given prefix
+	// NotPrefix returns error if config property doesn't have given prefix
 	NotPrefix = validatorNotPrefix
 
-	// NotPrefix return error if config property doesn't have given suffix
+	// NotPrefix returns error if config property doesn't have given suffix
 	NotSuffix = validatorNotSuffix
+
+	// TypeBool returns error if config property contains non-boolean value
+	TypeBool = validatorTypeBool
+
+	// TypeNum returns error if config property contains non-numeric (int/uint) value
+	TypeNum = validatorTypeNum
+
+	// TypeNum returns error if config property contains non-float value
+	TypeFloat = validatorTypeFloat
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -52,6 +62,58 @@ var (
 func validatorEmpty(config *Config, prop string, value interface{}) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s can't be empty", prop)
+	}
+
+	return nil
+}
+
+func validatorTypeBool(config *Config, prop string, value interface{}) error {
+	propValue := config.GetS(prop)
+
+	switch strings.ToLower(propValue) {
+	case "", "0", "1", "true", "false", "yes", "no":
+		return nil
+	default:
+		return fmt.Errorf(
+			"Property %s contains unsupported boolean value (%s)",
+			prop, propValue,
+		)
+	}
+}
+
+func validatorTypeNum(config *Config, prop string, value interface{}) error {
+	propValue := config.GetS(prop)
+
+	if propValue == "" {
+		return nil
+	}
+
+	_, err := strconv.Atoi(propValue)
+
+	if err != nil {
+		return fmt.Errorf(
+			"Property %s contains unsupported numeric value (%s)",
+			prop, propValue,
+		)
+	}
+
+	return nil
+}
+
+func validatorTypeFloat(config *Config, prop string, value interface{}) error {
+	propValue := config.GetS(prop)
+
+	if propValue == "" {
+		return nil
+	}
+
+	_, err := strconv.ParseFloat(propValue, 64)
+
+	if err != nil {
+		return fmt.Errorf(
+			"Property %s contains unsupported float value (%s)",
+			prop, propValue,
+		)
 	}
 
 	return nil
