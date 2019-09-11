@@ -61,10 +61,7 @@ func Substr(s string, start, length int) string {
 		count++
 	}
 
-	switch {
-	case count < start:
-		return ""
-	case startIndex != 0:
+	if startIndex != 0 {
 		return s[startIndex:]
 	}
 
@@ -101,10 +98,7 @@ func Substring(s string, start, end int) string {
 		count++
 	}
 
-	switch {
-	case count < start:
-		return ""
-	case startIndex != 0:
+	if startIndex != 0 {
 		return s[startIndex:]
 	}
 
