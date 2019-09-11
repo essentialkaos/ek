@@ -38,7 +38,7 @@ func Concat(s ...string) string {
 // Substr returns the part of a string between the start index and a number
 // of characters after it (unicode supported)
 func Substr(s string, start, length int) string {
-	if s == "" || length <= 0 {
+	if s == "" || length <= 0 || start >= Len(s) {
 		return ""
 	}
 
@@ -61,10 +61,7 @@ func Substr(s string, start, length int) string {
 		count++
 	}
 
-	switch {
-	case count < start:
-		return ""
-	case startIndex != 0:
+	if startIndex != 0 {
 		return s[startIndex:]
 	}
 
@@ -73,7 +70,7 @@ func Substr(s string, start, length int) string {
 
 // Substring returns the part of the string between the start and end (unicode supported)
 func Substring(s string, start, end int) string {
-	if s == "" {
+	if s == "" || start == end || start >= Len(s) {
 		return ""
 	}
 
@@ -101,10 +98,7 @@ func Substring(s string, start, end int) string {
 		count++
 	}
 
-	switch {
-	case count < start:
-		return ""
-	case startIndex != 0:
+	if startIndex != 0 {
 		return s[startIndex:]
 	}
 

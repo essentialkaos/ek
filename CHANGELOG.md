@@ -1,5 +1,10 @@
 ## Changelog
 
+### 10.18.1
+
+* `[strutil]` Fixed bug in `Substr` method for a situation when the index of start symbol is greater than the length of the string
+* `[strutil]` Fixed bug in `Substring` method for a situation when the index of start symbol is greater than the length of the string
+
 ### 10.18.0
 
 * `[knf]` Added `no` as a valid boolean value for `GetB`
