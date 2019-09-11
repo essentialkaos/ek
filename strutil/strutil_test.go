@@ -54,6 +54,7 @@ func (s *StrUtilSuite) TestSubstring(c *C) {
 	c.Assert(Substring("test1234TEST", 30, 32), Equals, "")
 	c.Assert(Substring("test1234TEST", 0, 999), Equals, "test1234TEST")
 	c.Assert(Substring("test1234TEST", 4, 8), Equals, "1234")
+	c.Assert(Substring("test1234TEST", 4, 4), Equals, "")
 	c.Assert(Substring("test1234TEST", 8, 100), Equals, "TEST")
 	c.Assert(Substring("test1234TEST", 6, -10), Equals, "test12")
 	c.Assert(Substring("简单的消息", -1, 2), Equals, "简单")

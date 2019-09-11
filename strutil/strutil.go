@@ -73,7 +73,7 @@ func Substr(s string, start, length int) string {
 
 // Substring returns the part of the string between the start and end (unicode supported)
 func Substring(s string, start, end int) string {
-	if s == "" || start >= Len(s) {
+	if s == "" || start == end || start >= Len(s) {
 		return ""
 	}
 
