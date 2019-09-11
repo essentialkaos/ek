@@ -45,6 +45,8 @@ func (s *StrUtilSuite) TestSubstr(c *C) {
 	c.Assert(Substr("test1234TEST", -1, 4), Equals, "test")
 	c.Assert(Substr("简单的消息", -1, 2), Equals, "简单")
 	c.Assert(Substr("Пример", -1, 2), Equals, "Пр")
+	c.Assert(Substr("test1234TEST", 12, 16), Equals, "")
+	c.Assert(Substr("test1234TEST", 11, 16), Equals, "T")
 }
 
 func (s *StrUtilSuite) TestSubstring(c *C) {
@@ -56,6 +58,8 @@ func (s *StrUtilSuite) TestSubstring(c *C) {
 	c.Assert(Substring("test1234TEST", 6, -10), Equals, "test12")
 	c.Assert(Substring("简单的消息", -1, 2), Equals, "简单")
 	c.Assert(Substring("Пример", -1, 2), Equals, "Пр")
+	c.Assert(Substring("test1234TEST", 12, 99), Equals, "")
+	c.Assert(Substring("test1234TEST", 11, 99), Equals, "T")
 }
 
 func (s *StrUtilSuite) TestExtract(c *C) {
