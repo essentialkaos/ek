@@ -14,7 +14,7 @@ import (
 	"sort"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v10/system"
+	"pkg.re/essentialkaos/ek.v11/system"
 
 	check "pkg.re/check.v1"
 )

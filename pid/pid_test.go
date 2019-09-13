@@ -15,7 +15,7 @@ import (
 
 	. "pkg.re/check.v1"
 
-	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v11/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

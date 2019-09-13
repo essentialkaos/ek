@@ -17,8 +17,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -50,6 +48,9 @@ type Validator struct {
 	Value    interface{}       // Expected value
 }
 
+// PropertyValidator is default type of property validation function
+type PropertyValidator func(config *Config, prop string, value interface{}) error
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // RegExp struct for searching and parsing macroses
@@ -76,18 +77,11 @@ func Global(file string) error {
 
 // Read reads and parse config file
 func Read(file string) (*Config, error) {
-	switch {
-	case fsutil.IsExist(file) == false:
-		return nil, errors.New("File " + file + " does not exist")
-	case fsutil.IsReadable(file) == false:
-		return nil, errors.New("File " + file + " is not readable")
-	case fsutil.IsNonEmpty(file) == false:
-		return nil, errors.New("File " + file + " is empty")
-	}
+	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
 
-	// We don't check for errors because we checked configuration file
-	// earlier and getting an error is only possible if we use O_CREATE flag
-	fd, _ := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
+	if err != nil {
+		return nil, err
+	}
 
 	defer fd.Close()
 
@@ -96,7 +90,7 @@ func Read(file string) (*Config, error) {
 		file: file,
 	}
 
-	err := readConfigData(config, fd, file)
+	err = readConfigData(config, fd, file)
 
 	if err != nil {
 		return nil, err
@@ -548,8 +542,12 @@ func readConfigData(config *Config, fd io.Reader, file string) error {
 	reader := bufio.NewReader(fd)
 	scanner := bufio.NewScanner(reader)
 
+	var isDataRead bool
+
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		isDataRead = true
 
 		if line == "" || strings.Trim(line, " \t") == "" {
 			continue
@@ -575,6 +573,10 @@ func readConfigData(config *Config, fd io.Reader, file string) error {
 
 		config.props = append(config.props, fullPropName)
 		config.data[fullPropName] = propValue
+	}
+
+	if !isDataRead {
+		return errors.New("Configuration file " + file + " is empty")
 	}
 
 	return scanner.Err()

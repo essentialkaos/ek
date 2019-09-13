@@ -14,7 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

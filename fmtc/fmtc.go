@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v11/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

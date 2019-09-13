@@ -16,7 +16,6 @@
 ! initsystem
 + jsonutil
 + knf
-+ kv
 + log
 + mathutil
 - netutil

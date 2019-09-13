@@ -106,6 +106,8 @@ func Test(t *testing.T) {
 	check.TestingT(t)
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *KNFSuite) SetUpSuite(c *check.C) {
 	tmpdir := c.MkDir()
 
@@ -137,19 +139,13 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	global = nil
 
 	err := Global("/_not_exists_")
-
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "File /_not_exists_ does not exist")
 
 	err = Global(s.EmptyConfigPath)
-
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, fmt.Sprintf("File %s is empty", s.EmptyConfigPath))
 
 	err = Global(s.NonReadableConfigPath)
-
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, fmt.Sprintf("File %s is not readable", s.NonReadableConfigPath))
 
 	err = Global(s.MalformedConfigPath)
 
@@ -203,7 +199,6 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "File /_not_exists_ does not exist")
 }
 
 func (s *KNFSuite) TestParsing(c *check.C) {
@@ -449,144 +444,23 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
-func (s *KNFSuite) TestBasicValidators(c *check.C) {
-	var err error
-
-	err = Global(s.ConfigPath)
+func (s *KNFSuite) TestSimpleValidator(c *check.C) {
+	err := Global(s.ConfigPath)
 
 	c.Assert(global, check.NotNil)
 	c.Assert(err, check.IsNil)
 
-	var errs []error
+	var simpleValidator = func(config *Config, prop string, value interface{}) error {
+		if prop == "string:test2" {
+			return fmt.Errorf("ERROR")
+		}
 
-	errs = Validate([]*Validator{
-		{"integer:test1", Empty, nil},
-		{"integer:test1", Less, 0},
-		{"integer:test1", Less, 0.5},
-		{"integer:test1", Greater, 10},
-		{"integer:test1", Greater, 10.1},
-		{"integer:test1", Equals, 10},
-		{"integer:test1", Equals, 10.1},
-		{"integer:test1", Equals, "123"},
-		{"string:test3", NotLen, 4},
-		{"string:test3", NotPrefix, "45"},
-		{"string:test3", NotSuffix, "00"},
-	})
-
-	c.Assert(errs, check.HasLen, 0)
-
-	errs = Validate([]*Validator{
-		{"boolean:test5", Empty, nil},
-		{"integer:test1", Less, 10},
-		{"integer:test1", Greater, 0},
-		{"integer:test1", Equals, 1},
-		{"integer:test1", Greater, "12345"},
-		{"integer:test1", NotContains, []string{"A", "B", "C"}},
-		{"string:test3", NotLen, 8},
-		{"string:test3", NotPrefix, "AB"},
-		{"string:test3", NotSuffix, "CD"},
-	})
-
-	c.Assert(errs, check.HasLen, 9)
-
-	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 can't be empty")
-	c.Assert(errs[1].Error(), check.Equals, "Property integer:test1 can't be less than 10")
-	c.Assert(errs[2].Error(), check.Equals, "Property integer:test1 can't be greater than 0")
-	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
-	c.Assert(errs[4].Error(), check.Equals, "Wrong validator for property integer:test1")
-	c.Assert(errs[5].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
-	c.Assert(errs[6].Error(), check.Equals, "Property string:test3 must be 8 symbols long")
-	c.Assert(errs[7].Error(), check.Equals, "Property string:test3 must have prefix \"AB\"")
-	c.Assert(errs[8].Error(), check.Equals, "Property string:test3 must have suffix \"CD\"")
-
-	fakeConfig := &Config{
-		data: map[string]string{
-			"test:empty":   "",
-			"test:string":  "test",
-			"test:integer": "10",
-			"test:float":   "10.0",
-			"test:boolean": "false",
-		},
+		return nil
 	}
 
-	c.Assert(Empty(fakeConfig, "test:empty", nil), check.NotNil)
-	c.Assert(Empty(fakeConfig, "test:string", nil), check.IsNil)
+	errs := Validate([]*Validator{
+		{"string:test2", simpleValidator, nil},
+	})
 
-	c.Assert(Less(fakeConfig, "test:integer", 30), check.NotNil)
-	c.Assert(Less(fakeConfig, "test:integer", 5), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:float", 30.0), check.NotNil)
-	c.Assert(Less(fakeConfig, "test:float", 5.0), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:string", "30"), check.NotNil)
-
-	c.Assert(Greater(fakeConfig, "test:integer", 5), check.NotNil)
-	c.Assert(Greater(fakeConfig, "test:integer", 30), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:float", 5.0), check.NotNil)
-	c.Assert(Greater(fakeConfig, "test:float", 30.0), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:string", "30"), check.NotNil)
-
-	c.Assert(Equals(fakeConfig, "test:empty", ""), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:string", "test"), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:integer", 10), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:float", 10.0), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:boolean", false), check.NotNil)
-
-	c.Assert(Equals(fakeConfig, "test:empty", []string{}), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:empty", "1"), check.IsNil)
-	c.Assert(Equals(fakeConfig, "test:string", "testtest"), check.IsNil)
-	c.Assert(Equals(fakeConfig, "test:integer", 15), check.IsNil)
-	c.Assert(Equals(fakeConfig, "test:float", 130.0), check.IsNil)
-	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
-
-	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
-	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
-	c.Assert(NotContains(fakeConfig, "test:string", 0), check.NotNil)
-}
-
-func (s *KNFSuite) TestTypeValidators(c *check.C) {
-	fakeConfig := &Config{
-		data: map[string]string{
-			"boolean:test1": "",
-			"boolean:test2": "0",
-			"boolean:test3": "1",
-			"boolean:test4": "True",
-			"boolean:test5": "false",
-			"boolean:test6": "Yes",
-			"boolean:test7": "no",
-			"boolean:test8": "disabled",
-
-			"num:test1": "",
-			"num:test2": "0",
-			"num:test3": "-100",
-			"num:test4": "657",
-			"num:test5": "ABCD",
-
-			"float:test1": "",
-			"float:test2": "0",
-			"float:test3": "0.6",
-			"float:test4": "-0.45",
-			"float:test5": "ABCD",
-		},
-	}
-
-	c.Assert(TypeBool(fakeConfig, "boolean:test1", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test2", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test3", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test4", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test5", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test6", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test7", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test8", nil), check.NotNil)
-
-	c.Assert(TypeNum(fakeConfig, "num:test1", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test2", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test3", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test4", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test5", nil), check.NotNil)
-	c.Assert(TypeNum(fakeConfig, "float:test3", nil), check.NotNil)
-
-	c.Assert(TypeFloat(fakeConfig, "float:test1", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test2", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test3", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test4", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test5", nil), check.NotNil)
+	c.Assert(errs, check.HasLen, 1)
 }

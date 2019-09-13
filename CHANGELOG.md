@@ -1,5 +1,13 @@
 ## Changelog
 
+### 11.0.0
+
+* `[knf]` Validators moved to sub-package (_incompatible changes_)
+* `[knf]` Removed useless dependencies
+* `[kv]` Package removed
+
+---
+
 ### 10.18.1
 
 * `[strutil]` Fixed bug in `Substr` method for a situation when the index of start symbol is greater than the length of the string

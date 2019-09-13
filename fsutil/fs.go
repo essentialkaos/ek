@@ -17,8 +17,8 @@ import (
 	"syscall"
 	"time"
 
-	PATH "pkg.re/essentialkaos/ek.v10/path"
-	"pkg.re/essentialkaos/ek.v10/system"
+	PATH "pkg.re/essentialkaos/ek.v11/path"
+	"pkg.re/essentialkaos/ek.v11/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

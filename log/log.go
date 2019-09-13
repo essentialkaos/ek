@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v11/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

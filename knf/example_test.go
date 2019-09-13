@@ -54,29 +54,6 @@ func ExampleGlobal() {
 	Props("section")
 }
 
-func ExampleValidate() {
-	err := Global("/path/to/your/config.knf")
-
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		return
-	}
-
-	errs := Validate([]*Validator{
-		{"section:property1", Empty, nil},                      // Return error if value is empty
-		{"section:property1", Less, 10},                        // Return error if value less than 10
-		{"section:property1", Greater, 50},                     // Return error if value greater than 50
-		{"section:property1", Equals, 33},                      // Return error if value equals 33
-		{"section:property2", NotContains, []string{"a", "b"}}, // Return error if value not in given slice
-	})
-
-	if len(errs) != 0 {
-		for _, err = range errs {
-			fmt.Printf("Error: %v\n", err)
-		}
-	}
-}
-
 func ExampleReload() {
 	err := Global("/path/to/your/config.knf")
 
