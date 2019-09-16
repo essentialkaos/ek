@@ -562,7 +562,7 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	c.Assert(CheckPerms("R", tmpFile), check.Equals, true)
 }
 
-func (s *FSSuite) TestGetPerms(c *check.C) {
+func (s *FSSuite) TestGetMode(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
@@ -570,8 +570,8 @@ func (s *FSSuite) TestGetPerms(c *check.C) {
 
 	os.Chmod(tmpFile, 0764)
 
-	c.Assert(GetPerms(""), check.Equals, os.FileMode(0))
-	c.Assert(GetPerms(tmpFile), check.Equals, os.FileMode(0764))
+	c.Assert(GetMode(""), check.Equals, os.FileMode(0))
+	c.Assert(GetMode(tmpFile), check.Equals, os.FileMode(0764))
 }
 
 func (s *FSSuite) TestLineCount(c *check.C) {
@@ -612,13 +612,13 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
-	c.Assert(GetPerms(tmpFile2), check.Equals, os.FileMode(0600))
+	c.Assert(GetMode(tmpFile2), check.Equals, os.FileMode(0600))
 
 	os.Remove(tmpFile2)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
-	c.Assert(GetPerms(tmpFile2), check.Equals, os.FileMode(0600))
+	c.Assert(GetMode(tmpFile2), check.Equals, os.FileMode(0600))
 
 	_disableCopyFileChecks = true
 

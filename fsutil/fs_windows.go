@@ -154,8 +154,8 @@ func GetSize(path string) int64 {
 	return -1
 }
 
-// GetPerms returns file permissions
-func GetPerms(path string) os.FileMode {
+// GetMode returns file mode bits
+func GetMode(path string) os.FileMode {
 	return 0
 }
 

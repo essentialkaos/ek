@@ -208,7 +208,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	l.PrefixError = false
 	l.PrefixCrit = false
 
-	c.Assert(fsutil.GetPerms(logfile), Equals, os.FileMode(0644))
+	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	l.Print(DEBUG, "Test debug %d", DEBUG)
 	l.Print(INFO, "Test info %d", INFO)
@@ -275,7 +275,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	Global.PrefixError = true
 	Global.PrefixCrit = true
 
-	c.Assert(fsutil.GetPerms(logfile), Equals, os.FileMode(0644))
+	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	Print(DEBUG, "Test debug %d", DEBUG)
 	Print(INFO, "Test info %d", INFO)
@@ -344,7 +344,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 	Global.PrefixError = true
 	Global.PrefixCrit = true
 
-	c.Assert(fsutil.GetPerms(logfile), Equals, os.FileMode(0644))
+	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	EnableBufIO(250 * time.Millisecond)
 
@@ -413,7 +413,7 @@ func (ls *LogSuite) TestBufIO(c *C) {
 	c.Assert(Global, Not(IsNil))
 	c.Assert(err, IsNil)
 
-	c.Assert(fsutil.GetPerms(logfile), Equals, os.FileMode(0644))
+	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	EnableBufIO(time.Minute)
 

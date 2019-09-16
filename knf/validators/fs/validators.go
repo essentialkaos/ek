@@ -117,7 +117,7 @@ func validateOwnerGroup(config *knf.Config, prop string, value interface{}) erro
 func validateFileMode(config *knf.Config, prop string, value interface{}) error {
 	perms := value.(os.FileMode)
 	target := config.GetS(prop)
-	targetPerms := fsutil.GetPerms(target)
+	targetPerms := fsutil.GetMode(target)
 
 	if targetPerms == 0 {
 		return fmt.Errorf("Can't get mode for %s", target)

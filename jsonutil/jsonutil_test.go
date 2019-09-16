@@ -98,7 +98,7 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	err := EncodeToFile(jsonFile, testStruct, 0640)
 
 	c.Assert(err, IsNil)
-	c.Assert(fsutil.GetPerms(jsonFile), Equals, os.FileMode(0640))
+	c.Assert(fsutil.GetMode(jsonFile), Equals, os.FileMode(0640))
 
 	data, err := ioutil.ReadFile(jsonFile)
 
