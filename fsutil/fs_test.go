@@ -512,6 +512,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsReadableByUser(tmpFile1, curUser.Name), check.Equals, true)
 	c.Assert(IsReadableByUser(tmpFile2, curUser.Name), check.Equals, true)
 	c.Assert(IsReadableByUser(tmpFile3, curUser.Name), check.Equals, true)
+	c.Assert(IsReadableByUser(tmpFile3, "somerandomuser"), check.Equals, false)
 
 	c.Assert(IsWritable(""), check.Equals, false)
 	c.Assert(IsWritable("/not_exist"), check.Equals, false)
@@ -524,6 +525,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsWritableByUser(tmpFile4, curUser.Name), check.Equals, true)
 	c.Assert(IsWritableByUser(tmpFile5, curUser.Name), check.Equals, true)
 	c.Assert(IsWritableByUser(tmpFile6, curUser.Name), check.Equals, true)
+	c.Assert(IsWritableByUser(tmpFile6, "somerandomuser"), check.Equals, false)
 
 	c.Assert(IsExecutable(""), check.Equals, false)
 	c.Assert(IsExecutable("/not_exist"), check.Equals, false)
@@ -537,6 +539,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsExecutableByUser(tmpFile7, curUser.Name), check.Equals, true)
 	c.Assert(IsExecutableByUser(tmpFile8, curUser.Name), check.Equals, true)
 	c.Assert(IsExecutableByUser(tmpFile9, curUser.Name), check.Equals, true)
+	c.Assert(IsExecutableByUser(tmpFile9, "somerandomuser"), check.Equals, false)
 	c.Assert(IsExecutableByUser(tmpFile1, curUser.Name), check.Equals, false)
 }
 

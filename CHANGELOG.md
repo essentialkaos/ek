@@ -6,6 +6,7 @@
 * `[fsutil]` Added support of checking for character and block devices (`C` and `B`)
 * `[knf]` Validators moved to sub-package (_incompatible changes_)
 * `[knf]` Removed useless dependencies
+* `[fsutil]` Increased code coverage (97.4% → 98.0%)
 * `[kv]` Package removed
 
 ---
