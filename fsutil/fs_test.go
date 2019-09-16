@@ -557,6 +557,8 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	c.Assert(CheckPerms("L", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("X", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("S", tmpFile), check.Equals, false)
+	c.Assert(CheckPerms("B", tmpFile), check.Equals, false)
+	c.Assert(CheckPerms("C", tmpFile), check.Equals, false)
 
 	c.Assert(CheckPerms("W", tmpFile), check.Equals, true)
 	c.Assert(CheckPerms("R", tmpFile), check.Equals, true)

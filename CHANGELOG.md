@@ -3,6 +3,7 @@
 ### 11.0.0
 
 * `[fsutil]` `GetPerms` renamed to `GetMode`
+* `[fsutil]` Added support of checking for character and block devices (`C` and `B`)
 * `[knf]` Validators moved to sub-package (_incompatible changes_)
 * `[knf]` Removed useless dependencies
 * `[kv]` Package removed

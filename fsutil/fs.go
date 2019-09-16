@@ -56,6 +56,8 @@ var ErrEmptyPath = errors.New("Path is empty")
 // L - is link
 // W - is writable
 // R - is readable
+// B - is block device
+// C - is character device
 // S - not empty (only for files)
 //
 func CheckPerms(props, path string) bool {
@@ -90,6 +92,16 @@ func CheckPerms(props, path string) bool {
 
 		case 'D':
 			if stat.Mode&_IFMT != _IFDIR {
+				return false
+			}
+
+		case 'B':
+			if stat.Mode&_IFMT != _IFBLK {
+				return false
+			}
+
+		case 'C':
+			if stat.Mode&_IFMT != _IFCHR {
 				return false
 			}
 
