@@ -108,6 +108,7 @@ func (s *HTTPUtilSuite) TestGetDescCode(c *C) {
 	c.Assert(GetDescByCode(503), Equals, "Service Unavailable")
 	c.Assert(GetDescByCode(504), Equals, "Gateway Timeout")
 	c.Assert(GetDescByCode(505), Equals, "HTTP Version Not Supported")
+	c.Assert(GetDescByCode(999), Equals, "Unknown")
 }
 
 func (s *HTTPUtilSuite) TestURLCheck(c *C) {

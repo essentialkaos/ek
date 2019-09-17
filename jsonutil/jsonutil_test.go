@@ -74,11 +74,11 @@ func (s *JSONSuite) TestDecoding(c *C) {
 
 	testStruct := &TestStruct{}
 
-	err = DecodeFile(s.TmpDir+"/file-not-exists.json", &TestStruct{})
+	err = Read(s.TmpDir+"/file-not-exists.json", &TestStruct{})
 
 	c.Assert(err, NotNil)
 
-	err = DecodeFile(s.TmpDir+"/file1.json", testStruct)
+	err = Read(s.TmpDir+"/file1.json", testStruct)
 
 	c.Assert(err, IsNil)
 	c.Assert(testStruct.String, Equals, "test")
@@ -95,7 +95,7 @@ func (s *JSONSuite) TestEncoding(c *C) {
 		Boolean: true,
 	}
 
-	err := EncodeToFile(jsonFile, testStruct, 0640)
+	err := Write(jsonFile, testStruct, 0640)
 
 	c.Assert(err, IsNil)
 	c.Assert(fsutil.GetMode(jsonFile), Equals, os.FileMode(0640))
@@ -106,11 +106,11 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	c.Assert(string(data), Equals, _JSON_DATA)
 	c.Assert(string(data), Equals, _JSON_DATA)
 
-	err = EncodeToFile("/test.json", testStruct)
+	err = Write("/test.json", testStruct)
 
 	c.Assert(err, NotNil)
 
-	err = EncodeToFile(jsonFile, map[float64]int{3.14: 123})
+	err = Write(jsonFile, map[float64]int{3.14: 123})
 
 	c.Assert(err, NotNil)
 }
