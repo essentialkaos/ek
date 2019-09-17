@@ -49,7 +49,7 @@ func (d *Device) Temperature() (float64, float64, float64) {
 	return 0.0, 0.0, 0.0
 }
 
-// String format sensor data as string
+// String formats sensor data as a string
 func (s *TempSensor) String() string {
 	return ""
 }

@@ -33,7 +33,7 @@ var SeparatorSize = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Separator print separator to output
+// Separator renders separator to console
 func Separator(tiny bool, args ...string) {
 	var separator string
 	var size int

@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getUserInfo find user info by name or ID
+// getUserInfo tries to find user info by name or UID
 func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("getent", "passwd", nameOrID)
 

@@ -93,7 +93,7 @@ type Example struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewInfo create new info struct
+// NewInfo creates new info struct
 func NewInfo(args ...string) *Info {
 	var name string
 
@@ -118,12 +118,12 @@ func NewInfo(args ...string) *Info {
 	return info
 }
 
-// AddGroup add new command group
+// AddGroup adds new command group
 func (i *Info) AddGroup(group string) {
 	i.curGroup = group
 }
 
-// AddCommand add command (name, description, args)
+// AddCommand adds command (name, description, args)
 func (i *Info) AddCommand(a ...string) {
 	group := "Commands"
 
@@ -146,7 +146,7 @@ func (i *Info) AddCommand(a ...string) {
 	)
 }
 
-// AddOption add option (name, description, args)
+// AddOption adds option (name, description, args)
 func (i *Info) AddOption(a ...string) {
 	if len(a) < 2 {
 		return
@@ -165,7 +165,7 @@ func (i *Info) AddOption(a ...string) {
 	)
 }
 
-// AddExample add example for some command (command, description)
+// AddExample adds example for some command (command, description)
 func (i *Info) AddExample(a ...string) {
 	if len(a) == 0 {
 		return
@@ -176,7 +176,7 @@ func (i *Info) AddExample(a ...string) {
 	i.Examples = append(i.Examples, &Example{a[0], a[1]})
 }
 
-// AddSpoiler add spoiler
+// AddSpoiler adds spoiler
 func (i *Info) AddSpoiler(spoiler string) {
 	i.Spoiler = spoiler
 }
@@ -219,7 +219,7 @@ func (i *Info) GetOption(name string) *Option {
 	return nil
 }
 
-// Render print usage info to console
+// Render prints usage info to console
 func (i *Info) Render() {
 	usageMessage := "\n{*}Usage:{!} " + i.Name
 
@@ -257,7 +257,7 @@ func (i *Info) Render() {
 	fmtc.NewLine()
 }
 
-// Render print version info to console
+// Render prints version info to console
 func (a *About) Render() {
 	switch {
 	case a.Build != "":

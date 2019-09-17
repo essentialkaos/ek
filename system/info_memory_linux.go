@@ -23,7 +23,7 @@ var procMemInfoFile = "/proc/meminfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMemUsage return memory usage info
+// GetMemUsage returns memory usage info
 func GetMemUsage() (*MemUsage, error) {
 	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
 

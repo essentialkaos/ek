@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Between return value between min and max values
+// Between returns value between min and max values
 func Between(val, min, max int) int {
 	switch {
 	case val < min:
@@ -26,7 +26,7 @@ func Between(val, min, max int) int {
 	}
 }
 
-// Min return a smaller value
+// Min returns a smaller value
 func Min(val1, val2 int) int {
 	if val1 < val2 {
 		return val1
@@ -35,7 +35,7 @@ func Min(val1, val2 int) int {
 	return val2
 }
 
-// Max return a greater value
+// Max returns a greater value
 func Max(val1, val2 int) int {
 	if val1 > val2 {
 		return val1
@@ -44,7 +44,7 @@ func Max(val1, val2 int) int {
 	return val2
 }
 
-// BetweenU return value between min and max values
+// BetweenU returns value between min and max values
 func BetweenU(val, min, max uint) uint {
 	switch {
 	case val < min:
@@ -56,7 +56,7 @@ func BetweenU(val, min, max uint) uint {
 	}
 }
 
-// MinU return a smaller value
+// MinU returns a smaller value
 func MinU(val1, val2 uint) uint {
 	if val1 < val2 {
 		return val1
@@ -65,7 +65,7 @@ func MinU(val1, val2 uint) uint {
 	return val2
 }
 
-// MaxU return a greater value
+// MaxU returns a greater value
 func MaxU(val1, val2 uint) uint {
 	if val1 > val2 {
 		return val1
@@ -74,7 +74,7 @@ func MaxU(val1, val2 uint) uint {
 	return val2
 }
 
-// Between8 return value between min and max values
+// Between8 returns value between min and max values
 func Between8(val, min, max int8) int8 {
 	switch {
 	case val < min:
@@ -86,7 +86,7 @@ func Between8(val, min, max int8) int8 {
 	}
 }
 
-// Min8 return a smaller value
+// Min8 returns a smaller value
 func Min8(val1, val2 int8) int8 {
 	if val1 < val2 {
 		return val1
@@ -95,7 +95,7 @@ func Min8(val1, val2 int8) int8 {
 	return val2
 }
 
-// Max8 return a greater value
+// Max8 returns a greater value
 func Max8(val1, val2 int8) int8 {
 	if val1 > val2 {
 		return val1
@@ -104,7 +104,7 @@ func Max8(val1, val2 int8) int8 {
 	return val2
 }
 
-// Between16 return value between min and max values
+// Between16 returns value between min and max values
 func Between16(val, min, max int16) int16 {
 	switch {
 	case val < min:
@@ -116,7 +116,7 @@ func Between16(val, min, max int16) int16 {
 	}
 }
 
-// Min16 return a smaller value
+// Min16 returns a smaller value
 func Min16(val1, val2 int16) int16 {
 	if val1 < val2 {
 		return val1
@@ -125,7 +125,7 @@ func Min16(val1, val2 int16) int16 {
 	return val2
 }
 
-// Max16 return a greater value
+// Max16 returns a greater value
 func Max16(val1, val2 int16) int16 {
 	if val1 > val2 {
 		return val1
@@ -134,7 +134,7 @@ func Max16(val1, val2 int16) int16 {
 	return val2
 }
 
-// Between32 return value between min and max values
+// Between32 returns value between min and max values
 func Between32(val, min, max int32) int32 {
 	switch {
 	case val < min:
@@ -146,7 +146,7 @@ func Between32(val, min, max int32) int32 {
 	}
 }
 
-// Min32 return a smaller value
+// Min32 returns a smaller value
 func Min32(val1, val2 int32) int32 {
 	if val1 < val2 {
 		return val1
@@ -155,7 +155,7 @@ func Min32(val1, val2 int32) int32 {
 	return val2
 }
 
-// Max32 return a greater value
+// Max32 returns a greater value
 func Max32(val1, val2 int32) int32 {
 	if val1 > val2 {
 		return val1
@@ -164,7 +164,7 @@ func Max32(val1, val2 int32) int32 {
 	return val2
 }
 
-// Between64 return value between min and max values
+// Between64 returns value between min and max values
 func Between64(val, min, max int64) int64 {
 	switch {
 	case val < min:
@@ -176,7 +176,7 @@ func Between64(val, min, max int64) int64 {
 	}
 }
 
-// Min64 return a smaller value
+// Min64 returns a smaller value
 func Min64(val1, val2 int64) int64 {
 	if val1 < val2 {
 		return val1
@@ -185,7 +185,7 @@ func Min64(val1, val2 int64) int64 {
 	return val2
 }
 
-// Max64 return a greater value
+// Max64 returns a greater value
 func Max64(val1, val2 int64) int64 {
 	if val1 > val2 {
 		return val1
@@ -194,7 +194,7 @@ func Max64(val1, val2 int64) int64 {
 	return val2
 }
 
-// BetweenU8 return value between min and max values
+// BetweenU8 returns value between min and max values
 func BetweenU8(val, min, max uint8) uint8 {
 	switch {
 	case val < min:
@@ -206,7 +206,7 @@ func BetweenU8(val, min, max uint8) uint8 {
 	}
 }
 
-// MinU8 return a smaller value
+// MinU8 returns a smaller value
 func MinU8(val1, val2 uint8) uint8 {
 	if val1 < val2 {
 		return val1
@@ -215,7 +215,7 @@ func MinU8(val1, val2 uint8) uint8 {
 	return val2
 }
 
-// MaxU8 return a greater value
+// MaxU8 returns a greater value
 func MaxU8(val1, val2 uint8) uint8 {
 	if val1 > val2 {
 		return val1
@@ -224,7 +224,7 @@ func MaxU8(val1, val2 uint8) uint8 {
 	return val2
 }
 
-// BetweenU16 return value between min and max values
+// BetweenU16 returns value between min and max values
 func BetweenU16(val, min, max uint16) uint16 {
 	switch {
 	case val < min:
@@ -236,7 +236,7 @@ func BetweenU16(val, min, max uint16) uint16 {
 	}
 }
 
-// MinU16 return a smaller value
+// MinU16 returns a smaller value
 func MinU16(val1, val2 uint16) uint16 {
 	if val1 < val2 {
 		return val1
@@ -245,7 +245,7 @@ func MinU16(val1, val2 uint16) uint16 {
 	return val2
 }
 
-// MaxU16 return a greater value
+// MaxU16 returns a greater value
 func MaxU16(val1, val2 uint16) uint16 {
 	if val1 > val2 {
 		return val1
@@ -254,7 +254,7 @@ func MaxU16(val1, val2 uint16) uint16 {
 	return val2
 }
 
-// BetweenU32 return value between min and max values
+// BetweenU32 returns value between min and max values
 func BetweenU32(val, min, max uint32) uint32 {
 	switch {
 	case val < min:
@@ -266,7 +266,7 @@ func BetweenU32(val, min, max uint32) uint32 {
 	}
 }
 
-// MinU32 return a smaller value
+// MinU32 returns a smaller value
 func MinU32(val1, val2 uint32) uint32 {
 	if val1 < val2 {
 		return val1
@@ -275,7 +275,7 @@ func MinU32(val1, val2 uint32) uint32 {
 	return val2
 }
 
-// MaxU32 return a greater value
+// MaxU32 returns a greater value
 func MaxU32(val1, val2 uint32) uint32 {
 	if val1 > val2 {
 		return val1
@@ -284,7 +284,7 @@ func MaxU32(val1, val2 uint32) uint32 {
 	return val2
 }
 
-// BetweenU64 return value between min and max values
+// BetweenU64 returns value between min and max values
 func BetweenU64(val, min, max uint64) uint64 {
 	switch {
 	case val < min:
@@ -296,7 +296,7 @@ func BetweenU64(val, min, max uint64) uint64 {
 	}
 }
 
-// MinU64 return a smaller value
+// MinU64 returns a smaller value
 func MinU64(val1, val2 uint64) uint64 {
 	if val1 < val2 {
 		return val1
@@ -305,7 +305,7 @@ func MinU64(val1, val2 uint64) uint64 {
 	return val2
 }
 
-// MaxU64 return a greater value
+// MaxU64 returns a greater value
 func MaxU64(val1, val2 uint64) uint64 {
 	if val1 > val2 {
 		return val1
@@ -314,12 +314,12 @@ func MaxU64(val1, val2 uint64) uint64 {
 	return val2
 }
 
-// BetweenF return value between min and max values
+// BetweenF returns value between min and max values
 func BetweenF(val, min, max float64) float64 {
 	return BetweenF64(val, min, max)
 }
 
-// BetweenF32 return value between min and max values
+// BetweenF32 returns value between min and max values
 func BetweenF32(val, min, max float32) float32 {
 	switch {
 	case val < min:
@@ -331,7 +331,7 @@ func BetweenF32(val, min, max float32) float32 {
 	}
 }
 
-// BetweenF64 return value between min and max values
+// BetweenF64 returns value between min and max values
 func BetweenF64(val, min, max float64) float64 {
 	switch {
 	case val < min:
@@ -343,7 +343,7 @@ func BetweenF64(val, min, max float64) float64 {
 	}
 }
 
-// Abs return absolute value
+// Abs returns absolute value
 func Abs(val int) int {
 	if val < 0 {
 		return val * -1
@@ -352,7 +352,7 @@ func Abs(val int) int {
 	return val
 }
 
-// Abs8 return absolute value
+// Abs8 returns absolute value
 func Abs8(val int8) int8 {
 	if val < 0 {
 		return val * -1
@@ -361,7 +361,7 @@ func Abs8(val int8) int8 {
 	return val
 }
 
-// Abs16 return absolute value
+// Abs16 returns absolute value
 func Abs16(val int16) int16 {
 	if val < 0 {
 		return val * -1
@@ -370,7 +370,7 @@ func Abs16(val int16) int16 {
 	return val
 }
 
-// Abs32 return absolute value
+// Abs32 returns absolute value
 func Abs32(val int32) int32 {
 	if val < 0 {
 		return val * -1
@@ -379,7 +379,7 @@ func Abs32(val int32) int32 {
 	return val
 }
 
-// Abs64 return absolute value
+// Abs64 returns absolute value
 func Abs64(val int64) int64 {
 	if val < 0 {
 		return val * -1
@@ -388,12 +388,12 @@ func Abs64(val int64) int64 {
 	return val
 }
 
-// AbsF return absolute value
+// AbsF returns absolute value
 func AbsF(val float64) float64 {
 	return AbsF64(val)
 }
 
-// AbsF32 return absolute value
+// AbsF32 returns absolute value
 func AbsF32(val float32) float32 {
 	if val < 0 {
 		return val * -1
@@ -402,7 +402,7 @@ func AbsF32(val float32) float32 {
 	return val
 }
 
-// AbsF64 return absolute value
+// AbsF64 returns absolute value
 func AbsF64(val float64) float64 {
 	if val < 0 {
 		return val * -1
@@ -411,7 +411,7 @@ func AbsF64(val float64) float64 {
 	return val
 }
 
-// Round return rounded value
+// Round returns rounded value
 func Round(v float64, p int) float64 {
 	pow := math.Pow(10, float64(p))
 	digit := pow * v

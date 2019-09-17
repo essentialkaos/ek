@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo return system info
+// GetSystemInfo returns system info
 func GetSystemInfo() (*SystemInfo, error) {
 	hostname, err := syscall.Sysctl("kern.hostname")
 

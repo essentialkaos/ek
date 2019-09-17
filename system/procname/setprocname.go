@@ -20,15 +20,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrWrongSize is returned if given slice have the wrong size
-var ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
+var (
+	// ErrWrongSize is returned if given slice have the wrong size
+	ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
 
-// ErrWrongArguments is returned if one of given arguments is empty
-var ErrWrongArguments = errors.New("Arguments can't be empty")
+	// ErrWrongArguments is returned if one of given arguments is empty
+	ErrWrongArguments = errors.New("Arguments can't be empty")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Set change current process command in process tree
+// Set changes current process command in process tree
 func Set(args []string) error {
 	if len(args) != len(os.Args) {
 		return ErrWrongSize
@@ -45,7 +47,7 @@ func Set(args []string) error {
 	return nil
 }
 
-// Replace replace one argument in process command
+// Replace replaces one argument in process command
 //
 // WARNING: Be careful with using os.Args or options.Parse result
 // as 'from' argument. After using this method given variable content

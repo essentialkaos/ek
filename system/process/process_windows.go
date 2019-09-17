@@ -68,19 +68,19 @@ type MemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToSample convert ProcInfo to ProcSample for CPU usage calculation
+// ToSample converts ProcInfo to ProcSample for CPU usage calculation
 func (pi *ProcInfo) ToSample() ProcSample {
 	return 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInfo return process info from procfs
+// GetInfo returns process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
 	return nil, nil
 }
 
-// GetSample return ProcSample for CPU usage calculation
+// GetSample returns ProcSample for CPU usage calculation
 func GetSample(pid int) (ProcSample, error) {
 	return 0, nil
 }
@@ -90,7 +90,7 @@ func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	return 0.0
 }
 
-// GetMemInfo return info about process memory usage
+// GetMemInfo returns info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
 	return nil, nil
 }

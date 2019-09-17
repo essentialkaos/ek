@@ -43,6 +43,8 @@ func WriteGz(file string, v interface{}, perms ...os.FileMode) error {
 	return writeFile(file, v, perms, true)
 }
 
+// TODO: REMOVE THIS CODE
+
 // EncodeToFile encodes data to JSON and save to file
 func EncodeToFile(file string, v interface{}, perms ...os.FileMode) error {
 	return Write(file, v, perms...)

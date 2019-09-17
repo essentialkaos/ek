@@ -43,7 +43,7 @@ var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Parse parse version string and return version struct
+// Parse parses version string and return version struct
 func Parse(v string) (Version, error) {
 	if v == "" {
 		return Version{}, ErrEmpty
@@ -184,7 +184,7 @@ func (v Version) Equal(version Version) bool {
 	return true
 }
 
-// Less return true if given version is greater
+// Less returns true if given version is greater
 func (v Version) Less(version Version) bool {
 	if v.Int() < version.Int() {
 		return true
@@ -199,7 +199,7 @@ func (v Version) Less(version Version) bool {
 	return false
 }
 
-// Greater return true if given version is less
+// Greater returns true if given version is less
 func (v Version) Greater(version Version) bool {
 	if v.Int() > version.Int() {
 		return true
@@ -214,7 +214,7 @@ func (v Version) Greater(version Version) bool {
 	return false
 }
 
-// Contains check is current version contains given version
+// Contains checks is current version contains given version
 func (v Version) Contains(version Version) bool {
 	if v.Major() != version.Major() {
 		return false
@@ -239,7 +239,7 @@ func (v Version) Contains(version Version) bool {
 	return false
 }
 
-// Int return version as integer
+// Int returns version as integer
 func (v Version) Int() int {
 	result := v.Major() * 1000000
 	result += v.Minor() * 1000
@@ -253,7 +253,7 @@ func (v Version) IsZero() bool {
 	return v.raw == ""
 }
 
-// String return version as string
+// String returns version as string
 func (v Version) String() string {
 	return v.raw
 }

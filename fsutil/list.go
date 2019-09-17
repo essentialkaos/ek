@@ -114,7 +114,7 @@ func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []str
 	return readDirRecFiles(dir, "", ignoreHidden, filters[0])
 }
 
-// ListToAbsolute convert slice with relative paths to slice with absolute paths
+// ListToAbsolute converts slice with relative paths to slice with absolute paths
 func ListToAbsolute(path string, list []string) {
 	for i, t := range list {
 		list[i] = path + "/" + t

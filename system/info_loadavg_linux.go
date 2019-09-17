@@ -25,7 +25,7 @@ var procLoadAvgFile = "/proc/loadavg"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetLA return loadavg
+// GetLA returns loadavg
 func GetLA() (*LoadAvg, error) {
 	fd, err := os.OpenFile(procLoadAvgFile, os.O_RDONLY, 0)
 

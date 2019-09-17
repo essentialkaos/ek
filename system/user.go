@@ -74,10 +74,19 @@ func (s sessionsInfo) Swap(i, j int) {
 
 // Errors
 var (
-	ErrEmptyPath             = errors.New("Path is empty")
-	ErrEmptyUserName         = errors.New("User name/ID can't be blank")
-	ErrEmptyGroupName        = errors.New("Group name/ID can't be blank")
-	ErrCantParseIdOutput     = errors.New("Can't parse id command output")
+	// ErrEmptyPath is returned if given path is empty
+	ErrEmptyPath = errors.New("Path is empty")
+
+	// ErrEmptyUserName is returned if given user name or uid is empty
+	ErrEmptyUserName = errors.New("User name/ID can't be blank")
+
+	// ErrEmptyGroupName is returned if given group name of gid is empty
+	ErrEmptyGroupName = errors.New("Group name/ID can't be blank")
+
+	// ErrCantParseIdOutput is returned if id command output has unsupported format
+	ErrCantParseIdOutput = errors.New("Can't parse id command output")
+
+	// ErrCantParseGetentOutput is returned if getent command output has unsupported format
 	ErrCantParseGetentOutput = errors.New("Can't parse getent command output")
 )
 
@@ -91,7 +100,7 @@ var ptsDir = "/dev/pts"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Who return info about all active sessions sorted by login time
+// Who returns info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	var result []*SessionInfo
 
@@ -122,7 +131,7 @@ func Who() ([]*SessionInfo, error) {
 	return result, nil
 }
 
-// CurrentUser return struct with info about current user
+// CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	if len(avoidCache) == 0 && curUser != nil {
 		return curUser, nil
@@ -149,7 +158,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	return user, nil
 }
 
-// LookupUser search user info by given name
+// LookupUser searches user info by given name
 func LookupUser(nameOrID string) (*User, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyUserName
@@ -170,7 +179,7 @@ func LookupUser(nameOrID string) (*User, error) {
 	return user, nil
 }
 
-// LookupGroup search group info by given name
+// LookupGroup searches group info by given name
 func LookupGroup(nameOrID string) (*Group, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyGroupName
@@ -179,7 +188,7 @@ func LookupGroup(nameOrID string) (*Group, error) {
 	return getGroupInfo(nameOrID)
 }
 
-// IsUserExist check if user exist on system or not
+// IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
 	cmd := exec.Command("getent", "passwd", name)
 
@@ -188,7 +197,7 @@ func IsUserExist(name string) bool {
 	return err == nil
 }
 
-// IsGroupExist check if group exist on system or not
+// IsGroupExist checks if group exist on system or not
 func IsGroupExist(name string) bool {
 	cmd := exec.Command("getent", "group", name)
 
@@ -197,7 +206,7 @@ func IsGroupExist(name string) bool {
 	return err == nil
 }
 
-// CurrentTTY return current tty or empty string if error occurred
+// CurrentTTY returns current tty or empty string if error occurred
 func CurrentTTY() string {
 	pid := strconv.Itoa(os.Getpid())
 	fdLink, err := os.Readlink("/proc/" + pid + "/fd/0")
@@ -211,17 +220,17 @@ func CurrentTTY() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsRoot check if current user is root
+// IsRoot checks if current user is root
 func (u *User) IsRoot() bool {
 	return u.UID == 0 && u.GID == 0
 }
 
-// IsSudo check if it user over sudo command
+// IsSudo checks if it user over sudo command
 func (u *User) IsSudo() bool {
 	return u.IsRoot() && u.RealUID != 0 && u.RealGID != 0
 }
 
-// GroupList return slice with user groups names
+// GroupList returns slice with user groups names
 func (u *User) GroupList() []string {
 	var result []string
 
@@ -234,7 +243,7 @@ func (u *User) GroupList() []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getCurrentUserName return name of current user
+// getCurrentUserName returns name of current user
 func getCurrentUserName() (string, error) {
 	cmd := exec.Command("id", "-un")
 
@@ -277,7 +286,7 @@ func appendRealUserInfo(user *User) {
 	user.RealGID = gid
 }
 
-// getUserInfo return UID associated with current TTY
+// getUserInfo returns UID associated with current TTY
 func getTDOwnerID() (int, bool) {
 	tty := CurrentTTY()
 
@@ -322,7 +331,7 @@ func getRealUserFromEnv() (string, int, int) {
 	return user, uid, gid
 }
 
-// getGroupInfo return group info by name or id
+// getGroupInfo returns group info by name or id
 func getGroupInfo(nameOrID string) (*Group, error) {
 	cmd := exec.Command("getent", "group", nameOrID)
 
@@ -335,7 +344,7 @@ func getGroupInfo(nameOrID string) (*Group, error) {
 	return parseGetentGroupOutput(string(data))
 }
 
-// getOwner return file or directory owner UID
+// getOwner returns file or directory owner UID
 func getOwner(path string) (int, error) {
 	if path == "" {
 		return -1, ErrEmptyPath
@@ -352,7 +361,7 @@ func getOwner(path string) (int, error) {
 	return int(stat.Uid), nil
 }
 
-// readDir return list of files in given directory
+// readDir returns list of files in given directory
 func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 

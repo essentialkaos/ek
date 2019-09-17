@@ -7,7 +7,7 @@ package hash
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// JCHash generate Google's Jump Consistent Hash
+// JCHash generates Google's Jump Consistent Hash
 // More info: http://arxiv.org/abs/1406.2294
 func JCHash(key uint64, buckets int) int {
 	var b, j int64

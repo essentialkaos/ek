@@ -24,7 +24,7 @@ type githubRelease struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitHubChecker check new releases on GitHub
+// GitHubChecker checks new releases on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" {
 		return "", time.Time{}, false
@@ -41,7 +41,7 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestRelease fetch the latest release from GitHub
+// getLatestRelease fetches the latest release from GitHub
 func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine := req.Engine{}
 

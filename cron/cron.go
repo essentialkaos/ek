@@ -56,6 +56,8 @@ type Expr struct {
 	dows       []uint8
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 type exprInfo struct {
 	min uint8
 	max uint8
@@ -65,8 +67,12 @@ type exprInfo struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
+	// ErrMalformedExpression is returned by the Parse method if given cron expression has
+	// wrong or unsupported format
 	ErrMalformedExpression = errors.New("Expression must have 5 tokens")
-	ErrZeroInterval        = errors.New("Interval can't be less or equals 0")
+
+	// ErrZeroInterval is returned if interval part of expression is empty
+	ErrZeroInterval = errors.New("Interval can't be less or equals 0")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

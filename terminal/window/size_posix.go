@@ -32,7 +32,7 @@ var tty = "/dev/tty"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize return window width and height
+// GetSize returns window width and height
 func GetSize() (int, int) {
 	t, err := os.OpenFile(tty, syscall.O_RDONLY, 0)
 
@@ -51,13 +51,13 @@ func GetSize() (int, int) {
 	return int(sz.cols), int(sz.rows)
 }
 
-// GetWidth return window width
+// GetWidth returns window width
 func GetWidth() int {
 	w, _ := GetSize()
 	return w
 }
 
-// GetHeight return window height
+// GetHeight returns window height
 func GetHeight() int {
 	_, h := GetSize()
 	return h

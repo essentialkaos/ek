@@ -19,7 +19,7 @@ var dirStack []string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Push change current working directory and add previous working directory to stack
+// Push changes current working directory and add previous working directory to stack
 func Push(dir string) string {
 	var wd string
 
@@ -41,7 +41,7 @@ func Push(dir string) string {
 	return wd
 }
 
-// Pop change current working directory to previous in stack
+// Pop changes current working directory to previous in stack
 func Pop() string {
 	var wd string
 

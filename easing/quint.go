@@ -7,7 +7,7 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// QuintIn Accelerating from zero velocity
+// QuintIn accelerating from zero velocity
 func QuintIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -17,7 +17,7 @@ func QuintIn(t, b, c, d float64) float64 {
 	return c*t*t*t*t*t + b
 }
 
-// QuintOut Decelerating to zero velocity
+// QuintOut decelerating to zero velocity
 func QuintOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -29,7 +29,7 @@ func QuintOut(t, b, c, d float64) float64 {
 	return c*(t*t*t*t*t+1) + b
 }
 
-// QuintInOut Acceleration until halfway, then deceleration
+// QuintInOut acceleration until halfway, then deceleration
 func QuintInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

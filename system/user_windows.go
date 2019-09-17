@@ -42,49 +42,49 @@ type SessionInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Who return info about all active sessions sorted by login time
+// Who returns info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	return nil, nil
 }
 
-// CurrentUser return struct with info about current user
+// CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	return nil, nil
 }
 
-// LookupUser search user info by given name
+// LookupUser searches user info by given name
 func LookupUser(name string) (*User, error) {
 	return nil, nil
 }
 
-// LookupGroup search group info by given name
+// LookupGroup searches group info by given name
 func LookupGroup(name string) (*Group, error) {
 	return nil, nil
 }
 
-// IsUserExist check if user exist on system or not
+// IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
 	return false
 }
 
-// IsGroupExist check if group exist on system or not
+// IsGroupExist checks if group exist on system or not
 func IsGroupExist(name string) bool {
 	return false
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsRoot check if current user is root
+// IsRoot checks if current user is root
 func (u *User) IsRoot() bool {
 	return false
 }
 
-// IsSudo check if it user over sudo command
+// IsSudo checks if it user over sudo command
 func (u *User) IsSudo() bool {
 	return false
 }
 
-// GroupList return slice with user groups names
+// GroupList returns slice with user groups names
 func (u *User) GroupList() []string {
 	return nil
 }

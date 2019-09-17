@@ -42,12 +42,12 @@ var tmux int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ReadUI read user input
+// ReadUI reads user input
 func ReadUI(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, false)
 }
 
-// ReadAnswer read user answer for yes/no question
+// ReadAnswer reads user answer for yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	var defaultAnswer string
 
@@ -79,13 +79,13 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	}
 }
 
-// ReadPassword read password or some private input which will be hidden
+// ReadPassword reads password or some private input which will be hidden
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, true)
 }
 
-// PrintErrorMessage print error message
+// PrintErrorMessage prints error message
 func PrintErrorMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
 		fmtc.Fprintf(os.Stderr, "{r}%s{!}\n", message)
@@ -94,7 +94,7 @@ func PrintErrorMessage(message string, args ...interface{}) {
 	}
 }
 
-// PrintWarnMessage print warning message
+// PrintWarnMessage prints warning message
 func PrintWarnMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
 		fmtc.Fprintf(os.Stderr, "{y}%s{!}\n", message)
@@ -103,12 +103,12 @@ func PrintWarnMessage(message string, args ...interface{}) {
 	}
 }
 
-// PrintActionMessage print message about action currently in progress
+// PrintActionMessage prints message about action currently in progress
 func PrintActionMessage(message string) {
 	fmtc.Printf("{*}%s:{!} ", message)
 }
 
-// PrintActionStatus print message with action execution status
+// PrintActionStatus prints message with action execution status
 func PrintActionStatus(status int) {
 	switch status {
 	case 0:
@@ -118,17 +118,17 @@ func PrintActionStatus(status int) {
 	}
 }
 
-// AddHistory add line to input history
+// AddHistory adds line to input history
 func AddHistory(data string) {
 	linenoise.AddHistory(data)
 }
 
-// SetCompletionHandler add function for autocompletion
+// SetCompletionHandler adds function for autocompletion
 func SetCompletionHandler(h func(input string) []string) {
 	linenoise.SetCompletionHandler(h)
 }
 
-// SetHintHandler add function for input hints
+// SetHintHandler adds function for input hints
 func SetHintHandler(h func(input string) string) {
 	linenoise.SetHintHandler(h)
 }

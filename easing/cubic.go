@@ -7,7 +7,7 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CubicIn Accelerating from zero velocity
+// CubicIn accelerating from zero velocity
 func CubicIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -18,7 +18,7 @@ func CubicIn(t, b, c, d float64) float64 {
 	return c*t*t*t + b
 }
 
-// CubicOut Decelerating to zero velocity
+// CubicOut decelerating to zero velocity
 func CubicOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -30,7 +30,7 @@ func CubicOut(t, b, c, d float64) float64 {
 	return c*(t*t*t+1) + b
 }
 
-// CubicInOut Acceleration until halfway, then deceleration
+// CubicInOut acceleration until halfway, then deceleration
 func CubicInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

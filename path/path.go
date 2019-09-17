@@ -22,7 +22,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 //ErrBadPattern indicates a globbing pattern was malformed
-var ErrBadPattern = errors.New("syntax error in pattern")
+var ErrBadPattern = errors.New("Syntax error in pattern")
 
 // unsafePaths is slice with unsafe paths
 var unsafePaths = []string{
@@ -92,7 +92,7 @@ func Split(path string) (dir, file string) {
 	return PATH.Split(path)
 }
 
-// IsSafe return true is given path is safe to use (not points to system dirs)
+// IsSafe returns true is given path is safe to use (not points to system dirs)
 func IsSafe(path string) bool {
 	if path == "" {
 		return false
@@ -113,7 +113,7 @@ func IsSafe(path string) bool {
 	return true
 }
 
-// IsDotfile return true if file name begins with a full stop
+// IsDotfile returns true if file name begins with a full stop
 func IsDotfile(path string) bool {
 	if path == "" {
 		return false

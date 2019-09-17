@@ -99,7 +99,7 @@ MAINLOOP:
 
 // codebeat:enable[BLOCK_NESTING]
 
-// Format return formatted date as string
+// Format returns formatted date as a string
 //
 // Interpreted sequences:
 //	'%%' a literal %
@@ -168,7 +168,7 @@ func Format(d time.Time, f string) string {
 	return output.String()
 }
 
-// DurationToSeconds convert duration to seconds
+// DurationToSeconds converts duration to seconds
 func DurationToSeconds(d time.Duration) int64 {
 	return int64(d / 1000000000)
 }

@@ -47,7 +47,7 @@ var threshold = 2
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Train train words by given string slice
+// Train trains words by given string slice
 func Train(words []string) *Model {
 	model := &Model{}
 
@@ -95,7 +95,7 @@ func (m *Model) Correct(word string) string {
 	return result.term
 }
 
-// Suggest suggest words for given word or word part
+// Suggest suggests words for given word or word part
 func (m *Model) Suggest(word string, max int) []string {
 	if len(m.terms) == 0 {
 		return []string{word}

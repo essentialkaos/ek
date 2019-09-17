@@ -25,7 +25,7 @@ var _disableCopyDirChecks bool  // Flag for testing purposes only
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CopyFile simple file copying with bufio
+// CopyFile copies file using bufio
 func CopyFile(from, to string, perms ...os.FileMode) error {
 	var targetExist = IsExist(to)
 
@@ -89,7 +89,7 @@ func MoveFile(from, to string, perms ...os.FileMode) error {
 	return moveFile(from, to, perms)
 }
 
-// CopyDir copy directory content recursively to target directory
+// CopyDir copies directory content recursively to target directory
 func CopyDir(from, to string) error {
 	if !_disableCopyDirChecks {
 		switch {

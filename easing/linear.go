@@ -7,7 +7,7 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Linear No easing, no acceleration
+// Linear no easing and no acceleration
 func Linear(t, b, c, d float64) float64 {
 	if t > d {
 		return c

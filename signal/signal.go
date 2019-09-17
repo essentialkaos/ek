@@ -59,14 +59,14 @@ type Handlers map[os.Signal]func()
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Send send given signal to process
+// Send sends given signal to process
 func Send(pid int, signal syscall.Signal) error {
 	return syscall.Kill(pid, signal)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Track catch signal and execute handler for this signal
+// Track catches signal and executes handler for this signal
 func (h Handlers) Track() {
 	c := make(chan os.Signal)
 
@@ -87,7 +87,7 @@ func (h Handlers) Track() {
 	}()
 }
 
-// TrackAsync catch signal and execute async handler for this signal
+// TrackAsync catches signal and executes async handler for this signal
 func (h Handlers) TrackAsync() {
 	c := make(chan os.Signal)
 

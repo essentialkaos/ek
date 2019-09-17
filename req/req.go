@@ -177,7 +177,7 @@ const (
 	STATUS_NETWORK_AUTHENTICATION_REQUIRED = 511 // RFC 6585, 6
 )
 
-// USER_AGENT
+// USER_AGENT is default user agent
 const USER_AGENT = "go-ek-req"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -204,13 +204,13 @@ type Request struct {
 	Close             bool        // Close indicates whether to close the connection after sending request
 }
 
-// Response struct contains response data and properties
+// Response is struct contains response data and properties
 type Response struct {
 	*http.Response
 	URL string
 }
 
-// RequestError error struct
+// RequestError is error struct
 type RequestError struct {
 	class int
 	desc  string
@@ -235,14 +235,19 @@ type Engine struct {
 var (
 	// ErrEngineIsNil is returned if engine struct is nil
 	ErrEngineIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+
 	// ErrClientIsNil is returned if client struct is nil
 	ErrClientIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
+
 	// ErrTransportIsNil is returned if transport is nil
 	ErrTransportIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
+
 	// ErrDialerIsNil is returned if dialer is nil
 	ErrDialerIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+
 	// ErrEmptyURL is returned if given URL is empty
 	ErrEmptyURL = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+
 	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
 	ErrUnsupportedScheme = RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
 )
@@ -260,49 +265,49 @@ var useFakeFormGenerator = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetUserAgent set user agent based on app name and version for global engine
+// SetUserAgent sets user agent based on app name and version for global engine
 func SetUserAgent(app, version string, subs ...string) {
 	Global.SetUserAgent(app, version, subs...)
 }
 
-// SetDialTimeout set dial timeout for global engine
+// SetDialTimeout sets dial timeout for global engine
 func SetDialTimeout(timeout float64) {
 	Global.SetDialTimeout(timeout)
 }
 
-// SetRequestTimeout set request timeout for global engine
+// SetRequestTimeout sets request timeout for global engine
 func SetRequestTimeout(timeout float64) {
 	Global.SetRequestTimeout(timeout)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Do send request and process response
+// Do sends request and process response
 func (e *Engine) Do(r Request) (*Response, error) {
 	return e.doRequest(r, "")
 }
 
-// Get send GET request and process response
+// Get sends GET request and process response
 func (e *Engine) Get(r Request) (*Response, error) {
 	return e.doRequest(r, GET)
 }
 
-// Post send POST request and process response
+// Post sends POST request and process response
 func (e *Engine) Post(r Request) (*Response, error) {
 	return e.doRequest(r, POST)
 }
 
-// Put send PUT request and process response
+// Put sends PUT request and process response
 func (e *Engine) Put(r Request) (*Response, error) {
 	return e.doRequest(r, PUT)
 }
 
-// Head send HEAD request and process response
+// Head sends HEAD request and process response
 func (e *Engine) Head(r Request) (*Response, error) {
 	return e.doRequest(r, HEAD)
 }
 
-// Patch send PATCH request and process response
+// Patch sends PATCH request and process response
 func (e *Engine) Patch(r Request) (*Response, error) {
 	return e.doRequest(r, PATCH)
 }
@@ -318,12 +323,12 @@ func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[str
 	return e.doRequest(r, POST)
 }
 
-// Delete send DELETE request and process response
+// Delete sends DELETE request and process response
 func (e *Engine) Delete(r Request) (*Response, error) {
 	return e.doRequest(r, DELETE)
 }
 
-// SetUserAgent set user agent based on app name and version
+// SetUserAgent sets user agent based on app name and version
 func (e *Engine) SetUserAgent(app, version string, subs ...string) {
 	if e != nil {
 		e.UserAgent = fmt.Sprintf(
@@ -338,7 +343,7 @@ func (e *Engine) SetUserAgent(app, version string, subs ...string) {
 	}
 }
 
-// SetDialTimeout set dial timeout
+// SetDialTimeout sets dial timeout
 func (e *Engine) SetDialTimeout(timeout float64) {
 	if e != nil && timeout > 0 {
 		if e.Dialer == nil {
@@ -349,7 +354,7 @@ func (e *Engine) SetDialTimeout(timeout float64) {
 	}
 }
 
-// SetRequestTimeout set request timeout
+// SetRequestTimeout sets request timeout
 func (e *Engine) SetRequestTimeout(timeout float64) {
 	if e != nil && timeout > 0 {
 		if e.Dialer == nil {
@@ -360,37 +365,37 @@ func (e *Engine) SetRequestTimeout(timeout float64) {
 	}
 }
 
-// Do send request and process response
+// Do sends request and process response
 func (r Request) Do() (*Response, error) {
 	return Global.doRequest(r, "")
 }
 
-// Get send GET request and process response
+// Get sends GET request and process response
 func (r Request) Get() (*Response, error) {
 	return Global.Get(r)
 }
 
-// Post send POST request and process response
+// Post sends POST request and process response
 func (r Request) Post() (*Response, error) {
 	return Global.Post(r)
 }
 
-// Put send PUT request and process response
+// Put sends PUT request and process response
 func (r Request) Put() (*Response, error) {
 	return Global.Put(r)
 }
 
-// Head send HEAD request and process response
+// Head sends HEAD request and process response
 func (r Request) Head() (*Response, error) {
 	return Global.Head(r)
 }
 
-// Patch send PATCH request and process response
+// Patch sends PATCH request and process response
 func (r Request) Patch() (*Response, error) {
 	return Global.Patch(r)
 }
 
-// Delete send DELETE request and process response
+// Delete sends DELETE request and process response
 func (r Request) Delete() (*Response, error) {
 	return Global.Delete(r)
 }
@@ -405,20 +410,20 @@ func (r *Response) Discard() {
 	io.Copy(ioutil.Discard, r.Body)
 }
 
-// JSON decode json encoded body
+// JSON decodes json encoded body
 func (r *Response) JSON(v interface{}) error {
 	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
-// String read response body as string
+// String reads response body as string
 func (r *Response) String() string {
 	defer r.Body.Close()
 	result, _ := ioutil.ReadAll(r.Body)
 	return string(result)
 }
 
-// Error show error message
+// Error shows error message
 func (e RequestError) Error() string {
 	switch e.class {
 	case ERROR_BODY_ENCODE:
@@ -432,7 +437,7 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String convert query struct to string
+// String converts query struct to string
 func (q Query) String() string {
 	var result string
 

@@ -43,12 +43,13 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrEmptyPath error
+// ErrEmptyPath can be returned by different methods if given path is empty and can't be
+// used
 var ErrEmptyPath = errors.New("Path is empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms check many props at once
+// CheckPerms checks many props at once
 //
 // F - is file
 // D - is directory

@@ -66,7 +66,7 @@ var codes = map[rune]int{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DisableColors disable all colors and modificators in output
+// DisableColors disables all colors and modificators in output
 var DisableColors = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -224,17 +224,17 @@ func NewLine() (int, error) {
 	return fmt.Println("")
 }
 
-// Clean return string without color tags
+// Clean returns string without color tags
 func Clean(s string) string {
 	return searchColors(s, -1, true)
 }
 
-// Bell print alert symbol
+// Bell prints alert (bell) symbol
 func Bell() {
 	fmt.Printf(_CODE_BELL)
 }
 
-// Is256ColorsSupported return true if 256 colors is supported
+// Is256ColorsSupported returns true if 256 colors is supported
 func Is256ColorsSupported() bool {
 	return strings.Contains(env.Get().GetS("TERM"), "256color")
 }

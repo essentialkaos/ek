@@ -19,7 +19,7 @@ var symbols = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String return string with random chars
+// String returns string with random chars
 func String(length int) string {
 	if length <= 0 {
 		return ""
@@ -37,13 +37,13 @@ func String(length int) string {
 	return string(result)
 }
 
-// Int return random int
+// Int returns random int
 func Int(n int) int {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(n)
 }
 
-// Slice return slice with random chars
+// Slice returns slice with random chars
 func Slice(length int) []string {
 	if length == 0 {
 		return []string{}

@@ -20,7 +20,7 @@ var statusDesc map[int]string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetRequestAddr return host and port info from request
+// GetRequestAddr returns host and port info from request
 func GetRequestAddr(r *http.Request) (string, string) {
 	if r.Host == "" {
 		return "", ""
@@ -36,19 +36,19 @@ func GetRequestAddr(r *http.Request) (string, string) {
 	}
 }
 
-// GetRequestHost return host from request struct
+// GetRequestHost returns host from request struct
 func GetRequestHost(r *http.Request) string {
 	host, _ := GetRequestAddr(r)
 	return host
 }
 
-// GetRequestPort return port from request struct
+// GetRequestPort returns port from request struct
 func GetRequestPort(r *http.Request) string {
 	_, port := GetRequestAddr(r)
 	return port
 }
 
-// GetRemoteAddr return network address that sent the request
+// GetRemoteAddr returns network address that sent the request
 func GetRemoteAddr(r *http.Request) (string, string) {
 	addr := r.RemoteAddr
 
@@ -61,20 +61,22 @@ func GetRemoteAddr(r *http.Request) (string, string) {
 	return addrSlice[0], addrSlice[1]
 }
 
-// GetRemoteHost return host that sent the request
+// GetRemoteHost returns host that sent the request
 func GetRemoteHost(r *http.Request) string {
 	host, _ := GetRemoteAddr(r)
 	return host
 }
 
-// GetRemotePort return host port that sent the request
+// GetRemotePort returns port of the host that sent the request
 func GetRemotePort(r *http.Request) string {
 	_, port := GetRemoteAddr(r)
 	return port
 }
 
-// GetDescByCode return response code description
+// GetDescByCode returns response code description
 func GetDescByCode(code int) string {
+	// TODO: REPLACE BY SWITCH + CASE
+
 	if !hasDesc {
 		statusDesc = map[int]string{
 			100: "Continue",

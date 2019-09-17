@@ -7,7 +7,7 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// QuadIn Accelerating from zero velocity
+// QuadIn accelerating from zero velocity
 func QuadIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -18,7 +18,7 @@ func QuadIn(t, b, c, d float64) float64 {
 	return c*t*t + b
 }
 
-// QuadOut Decelerating to zero velocity
+// QuadOut decelerating to zero velocity
 func QuadOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -29,7 +29,7 @@ func QuadOut(t, b, c, d float64) float64 {
 	return -c*t*(t-2) + b
 }
 
-// QuadInOut Acceleration until halfway, then deceleration
+// QuadInOut acceleration until halfway, then deceleration
 func QuadInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

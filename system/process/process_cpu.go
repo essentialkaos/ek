@@ -65,14 +65,14 @@ var hz = 0.0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToSample convert ProcInfo to ProcSample for CPU usage calculation
+// ToSample converts ProcInfo to ProcSample for CPU usage calculation
 func (pi *ProcInfo) ToSample() ProcSample {
 	return ProcSample(pi.UTime + pi.STime + pi.CUTime + pi.CSTime)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInfo return process info from procfs
+// GetInfo returns process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
 	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
@@ -94,7 +94,7 @@ func GetInfo(pid int) (*ProcInfo, error) {
 
 // codebeat:disable[LOC,ABC]
 
-// GetSample return ProcSample for CPU usage calculation
+// GetSample returns ProcSample for CPU usage calculation
 func GetSample(pid int) (ProcSample, error) {
 	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
@@ -140,7 +140,7 @@ func GetSample(pid int) (ProcSample, error) {
 
 // codebeat:enable[LOC,ABC]
 
-// CalculateCPUUsage calculate CPU usage
+// CalculateCPUUsage calculates CPU usage
 func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	total := float64(s2 - s1)
 	seconds := float64(duration) / float64(time.Second)

@@ -35,7 +35,7 @@ func (s stringSlice) Less(i, j int) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Versions sort versions slice
+// Versions sorts versions slice
 func Versions(s []string) {
 	sort.Sort(versionSlice(s))
 }
@@ -84,7 +84,7 @@ func VersionCompare(v1, v2 string) bool {
 	return true
 }
 
-// Strings sort strings slice and support case insensitive mode
+// Strings sorts strings slice and support case insensitive mode
 func Strings(s []string, caseInsensitive bool) {
 	if caseInsensitive {
 		sort.Sort(stringSlice(s))

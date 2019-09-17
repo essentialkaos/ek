@@ -34,7 +34,7 @@ type ProcessInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTree return root process with all subprocesses on system
+// GetTree returns root process with all subprocesses on the system
 func GetTree(pid ...int) (*ProcessInfo, error) {
 	root := 1
 
@@ -59,7 +59,7 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 	return processListToTree(list, root), nil
 }
 
-// GetList return slice with all active processes on system
+// GetList returns slice with all active processes on the system
 func GetList() ([]*ProcessInfo, error) {
 	return findInfo("/proc", make(map[int]string))
 }

@@ -26,12 +26,12 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GenUUID generate v4 UUID (Universally Unique Identifier)
+// GenUUID generates v4 UUID (Universally Unique Identifier)
 func GenUUID() string {
 	return GenUUID4()
 }
 
-// GenUUID4 generate random generated UUID
+// GenUUID4 generates random generated UUID
 func GenUUID4() string {
 	uuid := make([]byte, 16)
 
@@ -43,7 +43,7 @@ func GenUUID4() string {
 	return toString(uuid)
 }
 
-// GenUUID5 generate UUID based on SHA-1 hash of namespace UUID and name
+// GenUUID5 generates UUID based on SHA-1 hash of namespace UUID and name
 func GenUUID5(ns []byte, name string) string {
 	uuid := make([]byte, 16)
 

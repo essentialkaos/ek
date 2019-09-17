@@ -31,7 +31,7 @@ func NewErrors(maxSize ...int) *Errors {
 	return &Errors{maxSize: size}
 }
 
-// Chain execute functions in chain and if one of them return error
+// Chain executes functions in chain and if one of them return error
 // this function stop chain execution and return this error
 func Chain(funcs ...func() error) error {
 	var err error
@@ -91,7 +91,7 @@ func (e *Errors) All() []error {
 	return e.errors
 }
 
-// HasErrors check if slice contains errors
+// HasErrors checks if slice contains errors
 func (e *Errors) HasErrors() bool {
 	if e == nil || e.errors == nil {
 		return false

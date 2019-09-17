@@ -34,7 +34,7 @@ var hz = 0.0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetFSUsage return info about mounted filesystems
+// GetFSUsage returns info about mounted filesystems
 func GetFSUsage() (map[string]*FSUsage, error) {
 	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
 
@@ -47,7 +47,7 @@ func GetFSUsage() (map[string]*FSUsage, error) {
 	return parseFSInfo(bufio.NewReader(fd), true)
 }
 
-// GetIOStats return IO statistics as map device -> statistics
+// GetIOStats returns IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
 	fd, err := os.OpenFile(procDiskStatsFile, os.O_RDONLY, 0)
 
@@ -60,7 +60,7 @@ func GetIOStats() (map[string]*IOStats, error) {
 	return parseIOStats(bufio.NewReader(fd))
 }
 
-// GetIOUtil return slice (device -> utilization) with IO utilization
+// GetIOUtil returns slice (device -> utilization) with IO utilization
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	io1, err := GetIOStats()
 
@@ -79,7 +79,7 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	return CalculateIOUtil(io1, io2, duration), nil
 }
 
-// CalculateIOUtil calculate IO utilization for all devices
+// CalculateIOUtil calculates IO utilization for all devices
 func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
 	if io1 == nil || io2 == nil {
 		return nil
