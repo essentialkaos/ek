@@ -1,4 +1,5 @@
-package validators
+// Package network provides KNF validators for checking items related to network
+package network
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //

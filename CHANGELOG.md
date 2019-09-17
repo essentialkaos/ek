@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.0.1
+
+* `[knf]` Minor documentation fixes
+
 ### 11.0.0
 
 * `[fsutil]` `GetPerms` renamed to `GetMode`

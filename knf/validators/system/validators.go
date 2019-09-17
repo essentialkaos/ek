@@ -1,3 +1,5 @@
+// Package system provides KNF validators for checking system items (user, groups,
+// network interfaces)
 package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //

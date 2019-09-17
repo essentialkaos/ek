@@ -1,4 +1,5 @@
-package validators
+// Package fs provides KNF validators for checking file-system items
+package fs
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //

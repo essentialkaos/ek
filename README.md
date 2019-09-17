@@ -59,7 +59,6 @@ go get -u pkg.re/essentialkaos/ek.v11
 * [`initsystem`](https://godoc.org/pkg.re/essentialkaos/ek.v11/initsystem) - Package provides methods for working with different init systems (sysv, upstart, systemd)
 * [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v11/jsonutil) - Package provides methods for working with JSON data
 * [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v11/knf) - Package provides methods for working with configs in KNF format
-* [`kv`](https://godoc.org/pkg.re/essentialkaos/ek.v11/kv) - Package provides simple key-value structs
 * [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v11/log) - Package with an improved logger
 * [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v11/mathutil) - Package with math utils
 * [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v11/netutil) - Package with network utils
