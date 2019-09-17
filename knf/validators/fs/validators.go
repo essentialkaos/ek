@@ -42,6 +42,10 @@ func validatePerms(config *knf.Config, prop string, value interface{}) error {
 	perms := value.(string)
 	target := config.GetS(prop)
 
+	if target == "" {
+		return nil
+	}
+
 	if !fsutil.CheckPerms(perms, target) {
 		switch perms {
 		case "F":
@@ -71,14 +75,19 @@ func validatePerms(config *knf.Config, prop string, value interface{}) error {
 }
 
 func validateOwner(config *knf.Config, prop string, value interface{}) error {
+	target := config.GetS(prop)
 	owner := value.(string)
+
+	if target == "" {
+		return nil
+	}
+
 	user, err := system.LookupUser(owner)
 
 	if err != nil {
 		return fmt.Errorf("Can't find user %s on system", owner)
 	}
 
-	target := config.GetS(prop)
 	uid, _, err := fsutil.GetOwner(target)
 
 	if err != nil {
@@ -93,14 +102,19 @@ func validateOwner(config *knf.Config, prop string, value interface{}) error {
 }
 
 func validateOwnerGroup(config *knf.Config, prop string, value interface{}) error {
+	target := config.GetS(prop)
 	ownerGroup := value.(string)
+
+	if target == "" {
+		return nil
+	}
+
 	group, err := system.LookupGroup(ownerGroup)
 
 	if err != nil {
 		return fmt.Errorf("Can't find group %s on system", ownerGroup)
 	}
 
-	target := config.GetS(prop)
 	_, gid, err := fsutil.GetOwner(target)
 
 	if err != nil {
@@ -117,6 +131,11 @@ func validateOwnerGroup(config *knf.Config, prop string, value interface{}) erro
 func validateFileMode(config *knf.Config, prop string, value interface{}) error {
 	perms := value.(os.FileMode)
 	target := config.GetS(prop)
+
+	if target == "" {
+		return nil
+	}
+
 	targetPerms := fsutil.GetMode(target)
 
 	if targetPerms == 0 {

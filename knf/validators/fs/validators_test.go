@@ -22,7 +22,8 @@ import (
 
 const _CONFIG_TEMPLATE = `
 [test]
-	test: %s
+	test0:
+	test1: %s
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,7 +49,8 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs := knf.Validate([]*knf.Validator{
-		{"test:test", Perms, "FR"},
+		{"test:test0", Perms, "FR"},
+		{"test:test1", Perms, "FR"},
 	})
 
 	c.Assert(errs, HasLen, 0)
@@ -59,17 +61,17 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", Perms, "F"},
-		{"test:test", Perms, "FR"},
-		{"test:test", Perms, "FW"},
-		{"test:test", Perms, "FX"},
-		{"test:test", Perms, "FRW"},
-		{"test:test", Perms, "DX"},
-		{"test:test", Perms, "DRX"},
-		{"test:test", Perms, "DRX"},
-		{"test:test", Perms, "DWX"},
-		{"test:test", Perms, "DRWX"},
-		{"test:test", Perms, "WX"},
+		{"test:test1", Perms, "F"},
+		{"test:test1", Perms, "FR"},
+		{"test:test1", Perms, "FW"},
+		{"test:test1", Perms, "FX"},
+		{"test:test1", Perms, "FRW"},
+		{"test:test1", Perms, "DX"},
+		{"test:test1", Perms, "DRX"},
+		{"test:test1", Perms, "DRX"},
+		{"test:test1", Perms, "DWX"},
+		{"test:test1", Perms, "DRWX"},
+		{"test:test1", Perms, "WX"},
 	})
 
 	c.Assert(errs, HasLen, 11)
@@ -82,14 +84,15 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs := knf.Validate([]*knf.Validator{
-		{"test:test", Owner, "root"},
+		{"test:test0", Owner, "root"},
+		{"test:test1", Owner, "root"},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", Owner, "ftp"},
-		{"test:test", Owner, "somerandomuser"},
+		{"test:test1", Owner, "ftp"},
+		{"test:test1", Owner, "somerandomuser"},
 	})
 
 	c.Assert(errs, HasLen, 2)
@@ -100,7 +103,7 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", Owner, "root"},
+		{"test:test1", Owner, "root"},
 	})
 
 	c.Assert(errs, HasLen, 1)
@@ -113,14 +116,15 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs := knf.Validate([]*knf.Validator{
-		{"test:test", OwnerGroup, "root"},
+		{"test:test0", OwnerGroup, "root"},
+		{"test:test1", OwnerGroup, "root"},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", OwnerGroup, "ftp"},
-		{"test:test", OwnerGroup, "somerandomuser"},
+		{"test:test1", OwnerGroup, "ftp"},
+		{"test:test1", OwnerGroup, "somerandomuser"},
 	})
 
 	c.Assert(errs, HasLen, 2)
@@ -131,7 +135,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", OwnerGroup, "root"},
+		{"test:test1", OwnerGroup, "root"},
 	})
 
 	c.Assert(errs, HasLen, 1)
@@ -144,13 +148,14 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs := knf.Validate([]*knf.Validator{
-		{"test:test", FileMode, os.FileMode(0644)},
+		{"test:test0", FileMode, os.FileMode(0644)},
+		{"test:test1", FileMode, os.FileMode(0644)},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", FileMode, os.FileMode(0777)},
+		{"test:test1", FileMode, os.FileMode(0777)},
 	})
 
 	c.Assert(errs, HasLen, 1)
@@ -161,7 +166,7 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test", FileMode, os.FileMode(0644)},
+		{"test:test1", FileMode, os.FileMode(0644)},
 	})
 
 	c.Assert(errs, HasLen, 1)
