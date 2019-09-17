@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// StringToInterface convert slice with strings to slice with interface{}
+// StringToInterface converts slice with strings to slice with interface{}
 func StringToInterface(data []string) []interface{} {
 	var result []interface{}
 
@@ -25,7 +25,7 @@ func StringToInterface(data []string) []interface{} {
 	return result
 }
 
-// IntToInterface convert slice with ints to slice with interface{}
+// IntToInterface converts slice with ints to slice with interface{}
 func IntToInterface(data []int) []interface{} {
 	var result []interface{}
 
@@ -36,7 +36,7 @@ func IntToInterface(data []int) []interface{} {
 	return result
 }
 
-// StringToError convert slice with strings to slice with errors
+// StringToError converts slice with strings to slice with errors
 func StringToError(data []string) []error {
 	var result []error
 
@@ -47,7 +47,7 @@ func StringToError(data []string) []error {
 	return result
 }
 
-// ErrorToString convert slice with errors to slice with strings
+// ErrorToString converts slice with errors to slice with strings
 func ErrorToString(data []error) []string {
 	var result []string
 
@@ -58,7 +58,7 @@ func ErrorToString(data []error) []string {
 	return result
 }
 
-// Index return index of given item in a slice or -1 otherwise
+// Index returns index of given item in a slice or -1 otherwise
 func Index(slice []string, item string) int {
 	if len(slice) == 0 {
 		return -1
@@ -73,12 +73,12 @@ func Index(slice []string, item string) int {
 	return -1
 }
 
-// Contains check if string slice contains some value
+// Contains checks if string slice contains some value
 func Contains(slice []string, value string) bool {
 	return Index(slice, value) != -1
 }
 
-// Exclude return slice without items in second given slice
+// Exclude returns slice without items in second given slice
 func Exclude(slice, items []string) []string {
 	var result []string
 

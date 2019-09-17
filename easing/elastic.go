@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ElasticIn Accelerating from zero velocity
+// ElasticIn accelerating from zero velocity
 func ElasticIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -44,7 +44,7 @@ func ElasticIn(t, b, c, d float64) float64 {
 	return -(a * math.Pow(2, 10*t) * math.Sin((t*d-s)*DoublePi/p)) + b
 }
 
-// ElasticOut Decelerating to zero velocity
+// ElasticOut decelerating to zero velocity
 func ElasticOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -73,7 +73,7 @@ func ElasticOut(t, b, c, d float64) float64 {
 	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DoublePi/p) + c + b
 }
 
-// ElasticInOut Acceleration until halfway, then deceleration
+// ElasticInOut acceleration until halfway, then deceleration
 func ElasticInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

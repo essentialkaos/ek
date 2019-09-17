@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v11/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -106,7 +106,7 @@ func (d *Device) Temperature() (float64, float64, float64) {
 	return min, max, tot / float64(len(d.TempSensors))
 }
 
-// String format sensor data as string
+// String formats sensor data as a string
 func (s *TempSensor) String() string {
 	return fmt.Sprintf(
 		"[Name:%s Cur:%g Min:%g Mid:%g Max:%g Crit:%g]",

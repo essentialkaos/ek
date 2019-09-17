@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/mathutil"
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/mathutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -27,15 +27,17 @@ const (
 	_TERA = 1099511627776
 )
 
-// OrderSeparator default order separator
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// OrderSeparator is a default order separator
 var OrderSeparator = ","
 
-// SizeSeparator default size separator
+// SizeSeparator is a default size separator
 var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrettyNum show pretty num (e.g 1234567 -> 1,234,567)
+// PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
 func PrettyNum(i interface{}) string {
 	var str string
 
@@ -56,7 +58,7 @@ func PrettyNum(i interface{}) string {
 	return appendPrettySymbol(str)
 }
 
-// PrettyNum show pretty percent (e.g 12.3423 -> 12.3%)
+// PrettyNum formats float value to "pretty" percent form (e.g 12.3423 -> 12.3%)
 func PrettyPerc(i float64) string {
 	i = Float(i)
 
@@ -67,7 +69,7 @@ func PrettyPerc(i float64) string {
 	return PrettyNum(i) + "%"
 }
 
-// PrettySize show pretty size (e.g 1478182 -> 1.34 Mb)
+// PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
 func PrettySize(i interface{}) string {
 	var f float64
 
@@ -108,7 +110,7 @@ func PrettySize(i interface{}) string {
 	}
 }
 
-// ParseSize parse pretty size and return size in bytes
+// ParseSize parses size and return it in bytes (e.g 1.34 Mb -> 1478182)
 func ParseSize(size string) uint64 {
 	ns := strings.ToLower(strings.Replace(size, " ", "", -1))
 	mlt, sfx := extractSizeInfo(ns)
@@ -133,7 +135,7 @@ func ParseSize(size string) uint64 {
 	return uint64(numFlt * float64(mlt))
 }
 
-// Float floating number pretty formating
+// Float formats float numbers more nicely
 func Float(f float64) float64 {
 	if math.IsNaN(f) {
 		return 0.0
@@ -192,7 +194,7 @@ func Wrap(text, indent string, maxLineLength int) string {
 	return result
 }
 
-// ColorizePassword add different fmtc color tags for numbers and letters
+// ColorizePassword adds different fmtc color tags for numbers and letters
 func ColorizePassword(password, letterTag, numTag, specialTag string) string {
 	var result, curTag, prevTag string
 
@@ -225,7 +227,7 @@ func ColorizePassword(password, letterTag, numTag, specialTag string) string {
 	return result + "{!}"
 }
 
-// CountDigits return number of digits in integer
+// CountDigits returns number of digits in integer
 func CountDigits(i int) int {
 	if i < 0 {
 		return int(math.Log10(math.Abs(float64(i)))) + 2

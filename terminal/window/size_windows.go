@@ -9,17 +9,17 @@ package window
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize return window width and height
+// GetSize returns window width and height
 func GetSize() (int, int) {
 	return -1, -1
 }
 
-// GetWidth return window width
+// GetWidth returns window width
 func GetWidth() int {
 	return -1
 }
 
-// GetHeight return window height
+// GetHeight returns window height
 func GetHeight() int {
 	return -1
 }

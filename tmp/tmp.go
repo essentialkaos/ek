@@ -13,8 +13,8 @@ import (
 	"os"
 	"path"
 
-	"pkg.re/essentialkaos/ek.v10/fsutil"
-	"pkg.re/essentialkaos/ek.v10/rand"
+	"pkg.re/essentialkaos/ek.v11/fsutil"
+	"pkg.re/essentialkaos/ek.v11/rand"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,7 +41,7 @@ var DefaultFilePerms = os.FileMode(0640)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewTemp create new Temp structure
+// NewTemp creates new Temp structure
 func NewTemp(dir ...string) (*Temp, error) {
 	tempDir := path.Clean(Dir)
 
@@ -70,7 +70,7 @@ func NewTemp(dir ...string) (*Temp, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MkDir make temporary directory
+// MkDir makes temporary directory
 func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	if t == nil {
 		return "", fmt.Errorf("Temp struct is nil")
@@ -94,7 +94,7 @@ func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	return tmpDir, err
 }
 
-// MkFile make temporary file
+// MkFile makes temporary file
 func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	if t == nil {
 		return nil, "", fmt.Errorf("Temp struct is nil")
@@ -118,7 +118,7 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	return fd, tmpFile, nil
 }
 
-// MkName return name for temporary object
+// MkName returns name for temporary object
 func (t *Temp) MkName(nameSuffix ...string) string {
 	name := ""
 
@@ -132,7 +132,7 @@ func (t *Temp) MkName(nameSuffix ...string) string {
 	return tmpObj
 }
 
-// Clean remove all temporary targets
+// Clean removes all temporary targets
 func (t *Temp) Clean() {
 	if t == nil || t.targets == nil || len(t.targets) == 0 {
 		return
@@ -145,7 +145,7 @@ func (t *Temp) Clean() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getTempName return name of temporary file
+// getTempName returns name of temporary file
 func getTempName(dir, name string) string {
 	var result string
 

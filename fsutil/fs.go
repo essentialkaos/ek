@@ -17,8 +17,8 @@ import (
 	"syscall"
 	"time"
 
-	PATH "pkg.re/essentialkaos/ek.v10/path"
-	"pkg.re/essentialkaos/ek.v10/system"
+	PATH "pkg.re/essentialkaos/ek.v11/path"
+	"pkg.re/essentialkaos/ek.v11/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -43,12 +43,13 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrEmptyPath error
+// ErrEmptyPath can be returned by different methods if given path is empty and can't be
+// used
 var ErrEmptyPath = errors.New("Path is empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms check many props at once
+// CheckPerms checks many props at once
 //
 // F - is file
 // D - is directory
@@ -56,6 +57,8 @@ var ErrEmptyPath = errors.New("Path is empty")
 // L - is link
 // W - is writable
 // R - is readable
+// B - is block device
+// C - is character device
 // S - not empty (only for files)
 //
 func CheckPerms(props, path string) bool {
@@ -90,6 +93,16 @@ func CheckPerms(props, path string) bool {
 
 		case 'D':
 			if stat.Mode&_IFMT != _IFDIR {
+				return false
+			}
+
+		case 'B':
+			if stat.Mode&_IFMT != _IFBLK {
+				return false
+			}
+
+		case 'C':
+			if stat.Mode&_IFMT != _IFCHR {
 				return false
 			}
 
@@ -504,8 +517,8 @@ func GetSize(path string) int64 {
 	return stat.Size
 }
 
-// GetPerms returns file permissions
-func GetPerms(path string) os.FileMode {
+// GetMode returns file mode bits
+func GetMode(path string) os.FileMode {
 	if path == "" {
 		return 0
 	}

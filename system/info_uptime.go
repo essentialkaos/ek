@@ -16,7 +16,7 @@ import (
 	"os"
 	"strconv"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -26,7 +26,7 @@ var procUptimeFile = "/proc/uptime"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUptime return system uptime in seconds
+// GetUptime returns system uptime in seconds
 func GetUptime() (uint64, error) {
 	fd, err := os.OpenFile(procUptimeFile, os.O_RDONLY, 0)
 

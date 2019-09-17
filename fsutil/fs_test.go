@@ -14,7 +14,7 @@ import (
 	"sort"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v10/system"
+	"pkg.re/essentialkaos/ek.v11/system"
 
 	check "pkg.re/check.v1"
 )
@@ -512,6 +512,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsReadableByUser(tmpFile1, curUser.Name), check.Equals, true)
 	c.Assert(IsReadableByUser(tmpFile2, curUser.Name), check.Equals, true)
 	c.Assert(IsReadableByUser(tmpFile3, curUser.Name), check.Equals, true)
+	c.Assert(IsReadableByUser(tmpFile3, "somerandomuser"), check.Equals, false)
 
 	c.Assert(IsWritable(""), check.Equals, false)
 	c.Assert(IsWritable("/not_exist"), check.Equals, false)
@@ -524,6 +525,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsWritableByUser(tmpFile4, curUser.Name), check.Equals, true)
 	c.Assert(IsWritableByUser(tmpFile5, curUser.Name), check.Equals, true)
 	c.Assert(IsWritableByUser(tmpFile6, curUser.Name), check.Equals, true)
+	c.Assert(IsWritableByUser(tmpFile6, "somerandomuser"), check.Equals, false)
 
 	c.Assert(IsExecutable(""), check.Equals, false)
 	c.Assert(IsExecutable("/not_exist"), check.Equals, false)
@@ -537,6 +539,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsExecutableByUser(tmpFile7, curUser.Name), check.Equals, true)
 	c.Assert(IsExecutableByUser(tmpFile8, curUser.Name), check.Equals, true)
 	c.Assert(IsExecutableByUser(tmpFile9, curUser.Name), check.Equals, true)
+	c.Assert(IsExecutableByUser(tmpFile9, "somerandomuser"), check.Equals, false)
 	c.Assert(IsExecutableByUser(tmpFile1, curUser.Name), check.Equals, false)
 }
 
@@ -557,12 +560,14 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	c.Assert(CheckPerms("L", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("X", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("S", tmpFile), check.Equals, false)
+	c.Assert(CheckPerms("B", tmpFile), check.Equals, false)
+	c.Assert(CheckPerms("C", tmpFile), check.Equals, false)
 
 	c.Assert(CheckPerms("W", tmpFile), check.Equals, true)
 	c.Assert(CheckPerms("R", tmpFile), check.Equals, true)
 }
 
-func (s *FSSuite) TestGetPerms(c *check.C) {
+func (s *FSSuite) TestGetMode(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
@@ -570,8 +575,8 @@ func (s *FSSuite) TestGetPerms(c *check.C) {
 
 	os.Chmod(tmpFile, 0764)
 
-	c.Assert(GetPerms(""), check.Equals, os.FileMode(0))
-	c.Assert(GetPerms(tmpFile), check.Equals, os.FileMode(0764))
+	c.Assert(GetMode(""), check.Equals, os.FileMode(0))
+	c.Assert(GetMode(tmpFile), check.Equals, os.FileMode(0764))
 }
 
 func (s *FSSuite) TestLineCount(c *check.C) {
@@ -612,13 +617,13 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
-	c.Assert(GetPerms(tmpFile2), check.Equals, os.FileMode(0600))
+	c.Assert(GetMode(tmpFile2), check.Equals, os.FileMode(0600))
 
 	os.Remove(tmpFile2)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
-	c.Assert(GetPerms(tmpFile2), check.Equals, os.FileMode(0600))
+	c.Assert(GetMode(tmpFile2), check.Equals, os.FileMode(0600))
 
 	_disableCopyFileChecks = true
 

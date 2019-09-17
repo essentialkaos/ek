@@ -19,11 +19,11 @@ import (
 
 // Options types
 const (
-	STRING = iota
-	INT
-	BOOL
-	FLOAT
-	MIXED // string or bool
+	STRING = iota // String option
+	INT           // Int/Uint option
+	BOOL          // Boolean option
+	FLOAT         // Floating number option
+	MIXED         // String or boolean option
 )
 
 // Error codes
@@ -43,7 +43,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// V basic option struct
+// V is basic option struct
 type V struct {
 	Type      int     // option type
 	Max       float64 // maximum integer option value
@@ -62,14 +62,14 @@ type V struct {
 // Map is map with list of options
 type Map map[string]*V
 
-// Options options struct
+// Options is options struct
 type Options struct {
 	short       map[string]string
 	initialized bool
 	full        Map
 }
 
-// OptionError argument parsing error
+// OptionError is argument parsing error
 type OptionError struct {
 	Option      string
 	BoundOption string
@@ -90,7 +90,7 @@ var global *Options
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add add a new supported option
+// Add adds a new supported option
 func (opts *Options) Add(name string, option *V) error {
 	if !opts.initialized {
 		initOptions(opts)
@@ -130,7 +130,7 @@ func (opts *Options) Add(name string, option *V) error {
 	return nil
 }
 
-// AddMap add supported options as map
+// AddMap adds supported options as map
 func (opts *Options) AddMap(optMap Map) []error {
 	var errs []error
 
@@ -145,7 +145,7 @@ func (opts *Options) AddMap(optMap Map) []error {
 	return errs
 }
 
-// GetS return option value as string
+// GetS returns option value as string
 func (opts *Options) GetS(name string) string {
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
@@ -166,7 +166,7 @@ func (opts *Options) GetS(name string) string {
 	}
 }
 
-// GetI return option value as integer
+// GetI returns option value as integer
 func (opts *Options) GetI(name string) int {
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
@@ -199,7 +199,7 @@ func (opts *Options) GetI(name string) int {
 	}
 }
 
-// GetB return option value as boolean
+// GetB returns option value as boolean
 func (opts *Options) GetB(name string) bool {
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
@@ -234,7 +234,7 @@ func (opts *Options) GetB(name string) bool {
 	}
 }
 
-// GetF return option value as floating number
+// GetF returns option value as floating number
 func (opts *Options) GetF(name string) float64 {
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
@@ -328,7 +328,7 @@ func AddMap(optMap Map) []error {
 	return global.AddMap(optMap)
 }
 
-// GetS return option value as string
+// GetS returns option value as string
 func GetS(name string) string {
 	if global == nil || !global.initialized {
 		return ""
@@ -337,7 +337,7 @@ func GetS(name string) string {
 	return global.GetS(name)
 }
 
-// GetI return option value as integer
+// GetI returns option value as integer
 func GetI(name string) int {
 	if global == nil || !global.initialized {
 		return 0
@@ -346,7 +346,7 @@ func GetI(name string) int {
 	return global.GetI(name)
 }
 
-// GetB return option value as boolean
+// GetB returns option value as boolean
 func GetB(name string) bool {
 	if global == nil || !global.initialized {
 		return false
@@ -355,7 +355,7 @@ func GetB(name string) bool {
 	return global.GetB(name)
 }
 
-// GetF return option value as floating number
+// GetF returns option value as floating number
 func GetF(name string) float64 {
 	if global == nil || !global.initialized {
 		return 0.0
@@ -382,22 +382,22 @@ func Parse(optMap ...Map) ([]string, []error) {
 	return global.Parse(os.Args[1:], optMap...)
 }
 
-// ParseOptionName parse combined name and return long and short options
+// ParseOptionName parses combined name and returns long and short options
 func ParseOptionName(name string) (string, string) {
 	a := parseName(name)
 	return a.Long, a.Short
 }
 
-// Q merge several options to string
+// Q merges several options to string
 func Q(opts ...string) string {
 	return strings.Join(opts, " ")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// I think it is ok to have such a long and complicated method for parsing data because
-// it has a lot of logic which can be separated into different methods without losing
-// code readability
+// I think it is okay to have such a long and complicated method for parsing data
+// because it has a lot of logic which can't be separated into different methods
+// without losing code readability
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
 func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {

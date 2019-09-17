@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CircIn Accelerating from zero velocity
+// CircIn accelerating from zero velocity
 func CircIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -24,7 +24,7 @@ func CircIn(t, b, c, d float64) float64 {
 	return -c*(math.Sqrt(1-t*t)-1) + b
 }
 
-// CircOut Decelerating to zero velocity
+// CircOut decelerating to zero velocity
 func CircOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -36,7 +36,7 @@ func CircOut(t, b, c, d float64) float64 {
 	return c*math.Sqrt(1-t*t) + b
 }
 
-// CircInOut Acceleration until halfway, then deceleration
+// CircInOut acceleration until halfway, then deceleration
 func CircInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Sudo execute some command with sudo
+// Sudo executes command with sudo
 func Sudo(user string, args ...string) error {
 	var cmdArgs []string
 
@@ -28,7 +28,7 @@ func Sudo(user string, args ...string) error {
 	return Run("sudo", cmdArgs...)
 }
 
-// Run execute some command
+// Run executes command
 func Run(command string, args ...string) error {
 	var cmd = exec.Command(command)
 
@@ -37,7 +37,7 @@ func Run(command string, args ...string) error {
 	return cmd.Run()
 }
 
-// RunAsUser run command as some user
+// RunAsUser runs command as a given user
 func RunAsUser(user, logFile, command string, args ...string) error {
 	var logFd *os.File
 	var err error

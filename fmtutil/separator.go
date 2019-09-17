@@ -10,8 +10,8 @@ package fmtutil
 import (
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/fmtc"
-	"pkg.re/essentialkaos/ek.v10/terminal/window"
+	"pkg.re/essentialkaos/ek.v11/fmtc"
+	"pkg.re/essentialkaos/ek.v11/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -33,7 +33,7 @@ var SeparatorSize = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Separator print separator to output
+// Separator renders separator to console
 func Separator(tiny bool, args ...string) {
 	var separator string
 	var size int

@@ -16,12 +16,12 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v11/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is path to directory with PID files
+// Dir is a path to directory with PID files
 var Dir = "/var/run"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -51,7 +51,7 @@ func Create(name string) error {
 	)
 }
 
-// Remove remove file with process PID file
+// Remove removes file with process PID file
 func Remove(name string) error {
 	err := checkPIDDir(Dir, true)
 
@@ -64,7 +64,7 @@ func Remove(name string) error {
 	return os.Remove(pidFile)
 }
 
-// Get return PID from PID file
+// Get returns PID from PID file
 func Get(name string) int {
 	err := checkPIDDir(Dir, false)
 

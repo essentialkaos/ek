@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -29,7 +29,7 @@ var cpuInfoFile = "/proc/cpuinfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetCPUUsage return info about CPU usage
+// GetCPUUsage returns info about CPU usage
 func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	c1, err := GetCPUStats()
 
@@ -79,7 +79,7 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 
 // codebeat:enable[CYCLO]
 
-// GetCPUStats return basic CPU stats
+// GetCPUStats returns basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
 	fd, err := os.OpenFile(procStatFile, os.O_RDONLY, 0)
 

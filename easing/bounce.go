@@ -7,7 +7,7 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// BounceIn Accelerating from zero velocity
+// BounceIn accelerating from zero velocity
 func BounceIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -39,7 +39,7 @@ func BounceOut(t, b, c, d float64) float64 {
 	return c*(7.5625*t*t+0.984375) + b
 }
 
-// BounceInOut Acceleration until halfway, then deceleration
+// BounceInOut acceleration until halfway, then deceleration
 func BounceInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

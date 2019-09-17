@@ -18,24 +18,18 @@ import (
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v11/fmtc"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DEBUG debug messages
-// INFO info messages
-// WARN warning messages
-// ERROR error messages
-// CRIT critical error messages
-// AUX unskipable messages (separators, headers, etc...)
 const (
-	DEBUG uint8 = 0
-	INFO        = 1
-	WARN        = 2
-	ERROR       = 3
-	CRIT        = 4
-	AUX         = 99
+	DEBUG uint8 = 0  // DEBUG debug messages
+	INFO        = 1  // INFO info messages
+	WARN        = 2  // WARN warning messages
+	ERROR       = 3  // ERROR error messages
+	CRIT        = 4  // CRIT critical error messages
+	AUX         = 99 // AUX unskipable messages (separators, headers, etc...)
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -96,9 +90,14 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 
 // Errors
 var (
-	ErrLoggerIsNil     = errors.New("Logger is nil")
+	// ErrLoggerIsNil is returned by Logger struct methods if struct is nil
+	ErrLoggerIsNil = errors.New("Logger is nil")
+
+	// ErrUnexpectedLevel is returned by the MinLevel method if given level is unknown
 	ErrUnexpectedLevel = errors.New("Unexpected level type")
-	ErrOutputNotSet    = errors.New("Output file is not set")
+
+	// ErrOutputNotSet is returned by the Reopen method if output file is not set
+	ErrOutputNotSet = errors.New("Output file is not set")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

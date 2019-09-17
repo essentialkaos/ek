@@ -1,5 +1,17 @@
 ## Changelog
 
+### 11.0.0
+
+* `[fsutil]` `GetPerms` renamed to `GetMode`
+* `[fsutil]` Added support of checking for character and block devices (`C` and `B`)
+* `[knf]` Validators moved to sub-package (_incompatible changes_)
+* `[knf]` Added more validators
+* `[knf]` Removed useless dependencies
+* `[fsutil]` Increased code coverage (97.4% → 98.0%)
+* `[kv]` Package removed
+
+---
+
 ### 10.18.1
 
 * `[strutil]` Fixed bug in `Substr` method for a situation when the index of start symbol is greater than the length of the string

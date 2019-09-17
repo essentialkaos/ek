@@ -17,8 +17,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"pkg.re/essentialkaos/ek.v10/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -50,6 +48,9 @@ type Validator struct {
 	Value    interface{}       // Expected value
 }
 
+// PropertyValidator is default type of property validation function
+type PropertyValidator func(config *Config, prop string, value interface{}) error
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // RegExp struct for searching and parsing macroses
@@ -60,7 +61,7 @@ var global *Config
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Global read and parse config file
+// Global reads and parses config file
 // Global config will be accessible globally from any part of the code
 func Global(file string) error {
 	config, err := Read(file)
@@ -76,18 +77,11 @@ func Global(file string) error {
 
 // Read reads and parse config file
 func Read(file string) (*Config, error) {
-	switch {
-	case fsutil.IsExist(file) == false:
-		return nil, errors.New("File " + file + " does not exist")
-	case fsutil.IsReadable(file) == false:
-		return nil, errors.New("File " + file + " is not readable")
-	case fsutil.IsNonEmpty(file) == false:
-		return nil, errors.New("File " + file + " is empty")
-	}
+	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
 
-	// We don't check for errors because we checked configuration file
-	// earlier and getting an error is only possible if we use O_CREATE flag
-	fd, _ := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
+	if err != nil {
+		return nil, err
+	}
 
 	defer fd.Close()
 
@@ -96,7 +90,7 @@ func Read(file string) (*Config, error) {
 		file: file,
 	}
 
-	err := readConfigData(config, fd, file)
+	err = readConfigData(config, fd, file)
 
 	if err != nil {
 		return nil, err
@@ -114,7 +108,7 @@ func Reload() (map[string]bool, error) {
 	return global.Reload()
 }
 
-// GetS return global config value as string
+// GetS returns global config value as string
 func GetS(name string, defvals ...string) string {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -127,7 +121,7 @@ func GetS(name string, defvals ...string) string {
 	return global.GetS(name, defvals...)
 }
 
-// GetI return global config value as int
+// GetI returns global config value as int
 func GetI(name string, defvals ...int) int {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -140,7 +134,7 @@ func GetI(name string, defvals ...int) int {
 	return global.GetI(name, defvals...)
 }
 
-// GetI64 return global config value as int64
+// GetI64 returns global config value as int64
 func GetI64(name string, defvals ...int64) int64 {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -153,7 +147,7 @@ func GetI64(name string, defvals ...int64) int64 {
 	return global.GetI64(name, defvals...)
 }
 
-// GetU return global config value as uint
+// GetU returns global config value as uint
 func GetU(name string, defvals ...uint) uint {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -166,7 +160,7 @@ func GetU(name string, defvals ...uint) uint {
 	return global.GetU(name, defvals...)
 }
 
-// GetU64 return global config value as uint64
+// GetU64 returns global config value as uint64
 func GetU64(name string, defvals ...uint64) uint64 {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -179,7 +173,7 @@ func GetU64(name string, defvals ...uint64) uint64 {
 	return global.GetU64(name, defvals...)
 }
 
-// GetF return global config value as floating number
+// GetF returns global config value as floating number
 func GetF(name string, defvals ...float64) float64 {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -192,7 +186,7 @@ func GetF(name string, defvals ...float64) float64 {
 	return global.GetF(name, defvals...)
 }
 
-// GetB return global config value as boolean
+// GetB returns global config value as boolean
 func GetB(name string, defvals ...bool) bool {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -205,7 +199,7 @@ func GetB(name string, defvals ...bool) bool {
 	return global.GetB(name, defvals...)
 }
 
-// GetM return global config value as file mode
+// GetM returns global config value as file mode
 func GetM(name string, defvals ...os.FileMode) os.FileMode {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -236,7 +230,7 @@ func HasProp(name string) bool {
 	return global.HasProp(name)
 }
 
-// Sections return slice with section names
+// Sections returns slice with section names
 func Sections() []string {
 	if global == nil {
 		return []string{}
@@ -245,7 +239,7 @@ func Sections() []string {
 	return global.Sections()
 }
 
-// Props return slice with properties names in some section
+// Props returns slice with properties names in some section
 func Props(section string) []string {
 	if global == nil {
 		return []string{}
@@ -255,7 +249,7 @@ func Props(section string) []string {
 }
 
 // Validate require slice with pointers to validators and
-// return slice with validation errors
+// returns slice with validation errors
 func Validate(validators []*Validator) []error {
 	if global == nil {
 		return []error{errors.New("Global config struct is nil")}
@@ -293,7 +287,7 @@ func (c *Config) Reload() (map[string]bool, error) {
 	return changes, nil
 }
 
-// GetS return config value as string
+// GetS returns config value as string
 func (c *Config) GetS(name string, defvals ...string) string {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -316,7 +310,7 @@ func (c *Config) GetS(name string, defvals ...string) string {
 	return val
 }
 
-// GetI64 return config value as int64
+// GetI64 returns config value as int64
 func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -356,7 +350,7 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	return valInt
 }
 
-// GetI return config value as int
+// GetI returns config value as int
 func (c *Config) GetI(name string, defvals ...int) int {
 	if len(defvals) != 0 {
 		return int(c.GetI64(name, int64(defvals[0])))
@@ -365,7 +359,7 @@ func (c *Config) GetI(name string, defvals ...int) int {
 	return int(c.GetI64(name))
 }
 
-// GetU return config value as uint
+// GetU returns config value as uint
 func (c *Config) GetU(name string, defvals ...uint) uint {
 	if len(defvals) != 0 {
 		return uint(c.GetI64(name, int64(defvals[0])))
@@ -374,7 +368,7 @@ func (c *Config) GetU(name string, defvals ...uint) uint {
 	return uint(c.GetI64(name))
 }
 
-// GetU64 return config value as uint64
+// GetU64 returns config value as uint64
 func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
 	if len(defvals) != 0 {
 		return uint64(c.GetI64(name, int64(defvals[0])))
@@ -383,7 +377,7 @@ func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
 	return uint64(c.GetI64(name))
 }
 
-// GetF return config value as floating number
+// GetF returns config value as floating number
 func (c *Config) GetF(name string, defvals ...float64) float64 {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -412,7 +406,7 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 	return valFl
 }
 
-// GetB return config value as boolean
+// GetB returns config value as boolean
 func (c *Config) GetB(name string, defvals ...bool) bool {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -440,7 +434,7 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 	}
 }
 
-// GetM return config value as file mode
+// GetM returns config value as file mode
 func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -487,7 +481,7 @@ func (c *Config) HasProp(name string) bool {
 	return c.data[name] != ""
 }
 
-// Sections return slice with section names
+// Sections returns slice with section names
 func (c *Config) Sections() []string {
 	if c == nil {
 		return []string{}
@@ -496,7 +490,7 @@ func (c *Config) Sections() []string {
 	return c.sections
 }
 
-// Props return slice with properties names in some section
+// Props returns slice with properties names in some section
 func (c *Config) Props(section string) []string {
 	if c == nil || !c.HasSection(section) {
 		return []string{}
@@ -520,8 +514,8 @@ func (c *Config) Props(section string) []string {
 	return result
 }
 
-// Validate require slice with pointers to validators and
-// return slice with validation errors
+// Validate executes all given validators and
+// returns slice with validation errors
 func (c *Config) Validate(validators []*Validator) []error {
 	if c == nil {
 		return []error{errors.New("Config is nil")}
@@ -548,8 +542,12 @@ func readConfigData(config *Config, fd io.Reader, file string) error {
 	reader := bufio.NewReader(fd)
 	scanner := bufio.NewScanner(reader)
 
+	var isDataRead bool
+
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		isDataRead = true
 
 		if line == "" || strings.Trim(line, " \t") == "" {
 			continue
@@ -575,6 +573,10 @@ func readConfigData(config *Config, fd io.Reader, file string) error {
 
 		config.props = append(config.props, fullPropName)
 		config.data[fullPropName] = propValue
+	}
+
+	if !isDataRead {
+		return errors.New("Configuration file " + file + " is empty")
 	}
 
 	return scanner.Err()

@@ -24,7 +24,7 @@ var defaultFieldsSeparators = []string{" ", "\t"}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Concat fast string concatenation
+// Concat is method for fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
 
@@ -350,7 +350,7 @@ func Fields(data string) []string {
 	return formatItems(result)
 }
 
-// Copy force copy string
+// Copy is method for force string copying
 func Copy(v string) string {
 	return (v + " ")[:len(v)]
 }

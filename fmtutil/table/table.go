@@ -12,10 +12,10 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/fmtc"
-	"pkg.re/essentialkaos/ek.v10/mathutil"
-	"pkg.re/essentialkaos/ek.v10/strutil"
-	"pkg.re/essentialkaos/ek.v10/terminal/window"
+	"pkg.re/essentialkaos/ek.v11/fmtc"
+	"pkg.re/essentialkaos/ek.v11/mathutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
+	"pkg.re/essentialkaos/ek.v11/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -67,14 +67,14 @@ var MaxWidth = 0
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewTable create new table struct
+// NewTable creates new table struct
 func NewTable(headers ...string) *Table {
 	return &Table{Headers: headers}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetHeaders allow to set columns headers
+// SetHeaders sets headers
 func (t *Table) SetHeaders(headers ...string) *Table {
 	if t == nil {
 		return nil
@@ -85,7 +85,7 @@ func (t *Table) SetHeaders(headers ...string) *Table {
 	return t
 }
 
-// SetSizes allow to set column sizes
+// SetSizes sets size of columns
 func (t *Table) SetSizes(sizes ...int) *Table {
 	if t == nil {
 		return nil
@@ -96,7 +96,7 @@ func (t *Table) SetSizes(sizes ...int) *Table {
 	return t
 }
 
-// SetAlignments allow to set column alignment
+// SetAlignments sets aligment of columns
 func (t *Table) SetAlignments(align ...uint8) *Table {
 	if t == nil {
 		return nil
@@ -107,7 +107,7 @@ func (t *Table) SetAlignments(align ...uint8) *Table {
 	return t
 }
 
-// Add add given data to stack
+// Add adds given data to stack
 func (t *Table) Add(data ...interface{}) *Table {
 	if t == nil {
 		return nil
@@ -122,7 +122,7 @@ func (t *Table) Add(data ...interface{}) *Table {
 	return t
 }
 
-// Print print given data
+// Print renders given data
 func (t *Table) Print(data ...interface{}) *Table {
 	if t == nil {
 		return nil
@@ -142,12 +142,12 @@ func (t *Table) Print(data ...interface{}) *Table {
 	return t
 }
 
-// HasData return true if table have some data
+// HasData returns true if table stack has some data
 func (t *Table) HasData() bool {
 	return t != nil && len(t.data) != 0
 }
 
-// Separator print separator
+// Separator renders separator
 func (t *Table) Separator() *Table {
 	if t == nil {
 		return nil
@@ -162,7 +162,7 @@ func (t *Table) Separator() *Table {
 	return t
 }
 
-// RenderHeaders force headers rendering
+// RenderHeaders renders headers
 func (t *Table) RenderHeaders() {
 	if len(t.columnSizes) == 0 {
 		calculateColumnSizes(t)
@@ -171,7 +171,7 @@ func (t *Table) RenderHeaders() {
 	renderHeaders(t)
 }
 
-// Render render data
+// Render renders data
 func (t *Table) Render() *Table {
 	if t == nil {
 		return nil

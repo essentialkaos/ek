@@ -17,7 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo return system info
+// GetSystemInfo returns system info
 func GetSystemInfo() (*SystemInfo, error) {
 	info := &syscall.Utsname{}
 	err := syscall.Uname(info)
@@ -40,7 +40,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getDistributionInfo try to find current OS distribution and version
+// getDistributionInfo tries to find current OS distribution and version
 func getDistributionInfo() (string, string) {
 	var distribution string
 	var version string

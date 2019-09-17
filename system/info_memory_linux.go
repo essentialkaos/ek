@@ -13,7 +13,7 @@ import (
 	"io"
 	"os"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -23,7 +23,7 @@ var procMemInfoFile = "/proc/meminfo"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMemUsage return memory usage info
+// GetMemUsage returns memory usage info
 func GetMemUsage() (*MemUsage, error) {
 	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
 

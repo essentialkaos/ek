@@ -26,12 +26,13 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Password strength
 const (
-	STRENGTH_WEAK = iota
-	STRENGTH_MEDIUM
-	STRENGTH_STRONG
+	STRENGTH_WEAK   = iota // Only lowercase English alphabet characters
+	STRENGTH_MEDIUM        // Lowercase and uppercase English alphabet characters, digits
+	STRENGTH_STRONG        // Lowercase and uppercase English alphabet characters, digits, special symbols
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	_SYMBOLS_WEAK   = "abcdefghijklmnopqrstuvwxyz"
@@ -41,7 +42,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encrypt hash and encrypt password with salt and pepper
+// Encrypt creates hash and encrypts password with salt and pepper
 func Encrypt(password, pepper string) (string, error) {
 	switch {
 	case password == "":
@@ -86,7 +87,7 @@ func Encrypt(password, pepper string) (string, error) {
 	return removeBase64Padding(base64.URLEncoding.EncodeToString(ct)), nil
 }
 
-// Check compare password and hash
+// Check compares password and encrypted hash
 func Check(password, pepper, hash string) bool {
 	if password == "" || hash == "" || !isValidPepper(pepper) {
 		return false
@@ -132,12 +133,12 @@ func Check(password, pepper, hash string) bool {
 	return bcrypt.CompareHashAndPassword(h, hasher.Sum(nil)) == nil
 }
 
-// GenPassword generate random password
+// GenPassword generates random password
 func GenPassword(length, strength int) string {
 	return getRandomPassword(length, between(strength, 0, 2))
 }
 
-// GetPasswordStrength return password strength
+// GetPasswordStrength returns password strength
 func GetPasswordStrength(password string) int {
 	if password == "" {
 		return STRENGTH_WEAK

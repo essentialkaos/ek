@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -26,7 +26,7 @@ var procNetFile = "/proc/net/dev"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInterfacesStats return info about network interfaces
+// GetInterfacesStats returns info about network interfaces
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	fd, err := os.OpenFile(procNetFile, os.O_RDONLY, 0)
 
@@ -39,7 +39,7 @@ func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	return parseInterfacesStats(bufio.NewReader(fd))
 }
 
-// GetNetworkSpeed return network input/output speed in bytes per second for
+// GetNetworkSpeed returns network input/output speed in bytes per second for
 // all network interfaces
 func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	ii1, err := GetInterfacesStats()
@@ -61,7 +61,7 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	return in, out, nil
 }
 
-// CalculateNetworkSpeed calculate network input/output speed in bytes per second for
+// CalculateNetworkSpeed calculates network input/output speed in bytes per second for
 // all network interfaces
 func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Duration) (uint64, uint64) {
 	if ii1 == nil || ii2 == nil {

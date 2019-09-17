@@ -14,7 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v11/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,12 +24,12 @@ var procRouteFile = "/proc/net/route"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP return main IPv4 address
+// GetIP returns main IPv4 address
 func GetIP() string {
 	return getMainIP(false)
 }
 
-// GetIP6 return main IPv6 address
+// GetIP6 returns main IPv6 address
 func GetIP6() string {
 	return getMainIP(true)
 }
