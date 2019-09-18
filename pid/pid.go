@@ -73,6 +73,12 @@ func Get(name string) int {
 	}
 
 	pidFile := Dir + "/" + normalizePIDFilename(name)
+
+	return Read(pidFile)
+}
+
+// Read just reads PID from PID file
+func Read(pidFile string) int {
 	data, err := ioutil.ReadFile(pidFile)
 
 	if err != nil {
