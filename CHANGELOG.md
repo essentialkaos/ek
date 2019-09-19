@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.1.0
+
+* `[pid]` Added method `Read` for reading PID files without any configuration
+
 ### 11.0.1
 
 * `[knf]` Minor documentation fixes

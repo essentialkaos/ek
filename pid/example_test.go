@@ -23,7 +23,7 @@ func ExampleCreate() {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	fmt.Println("Pid file created!")
+	fmt.Println("PID file created!")
 }
 
 func ExampleRemove() {
@@ -33,14 +33,24 @@ func ExampleRemove() {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	fmt.Println("Pid file removed!")
+	fmt.Println("PID file removed!")
 }
 
 func ExampleGet() {
 	pid := Get("servicename")
 
 	if pid == -1 {
-		fmt.Println("Can't read pid from pid file")
+		fmt.Println("Can't read PID from PID file")
+	}
+
+	fmt.Printf("PID is %d\n", pid)
+}
+
+func ExampleRead() {
+	pid := Read("/var/run/httpd.pid")
+
+	if pid == -1 {
+		fmt.Println("Can't read PID from PID file")
 	}
 
 	fmt.Printf("PID is %d\n", pid)
