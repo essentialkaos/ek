@@ -34,7 +34,9 @@ func New(defaultExpiration, cleanupInterval time.Duration) *Store {
 		mu:         &sync.RWMutex{},
 	}
 
-	go store.janitor(cleanupInterval)
+	if cleanupInterval != 0 {
+		go store.janitor(cleanupInterval)
+	}
 
 	return store
 }

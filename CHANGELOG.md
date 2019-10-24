@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.2.0
+
+* `[cache]` Janitor thread will not run if the cleaning interval is equal to 0
+
 ### 11.1.0
 
 * `[pid]` Added method `Read` for reading PID files without any configuration
