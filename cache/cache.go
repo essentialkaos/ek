@@ -43,6 +43,21 @@ func New(defaultExpiration, cleanupInterval time.Duration) *Store {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Has returns true if store contains data for given key
+func (s *Store) Has(key string) bool {
+	if s == nil {
+		return false
+	}
+
+	s.mu.RLock()
+
+	_, ok := s.data[key]
+
+	s.mu.RUnlock()
+
+	return ok
+}
+
 // Set adds or updates item in store
 func (s *Store) Set(key string, data interface{}) {
 	if s == nil {

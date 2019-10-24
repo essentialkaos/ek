@@ -2,6 +2,7 @@
 
 ### 11.2.0
 
+* `[cache]` Added method `Has` for checking item existence
 * `[cache]` Janitor thread will not run if the cleaning interval is equal to 0
 
 ### 11.1.0
