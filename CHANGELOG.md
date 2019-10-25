@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.2.1
+
+* `[cache]` Added data removal from cache with disabled janitor
+
 ### 11.2.0
 
 * `[cache]` Added method `Has` for checking item existence

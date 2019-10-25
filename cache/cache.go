@@ -17,17 +17,18 @@ import (
 
 // Store is cache store
 type Store struct {
-	expiration time.Duration
-	data       map[string]interface{}
-	expiry     map[string]int64
-	mu         *sync.RWMutex
+	expiration     time.Duration
+	data           map[string]interface{}
+	expiry         map[string]int64
+	mu             *sync.RWMutex
+	isJanitorWorks bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // New creates new store instance
 func New(defaultExpiration, cleanupInterval time.Duration) *Store {
-	store := &Store{
+	s := &Store{
 		expiration: defaultExpiration,
 		data:       make(map[string]interface{}),
 		expiry:     make(map[string]int64),
@@ -35,10 +36,11 @@ func New(defaultExpiration, cleanupInterval time.Duration) *Store {
 	}
 
 	if cleanupInterval != 0 {
-		go store.janitor(cleanupInterval)
+		s.isJanitorWorks = true
+		go s.janitor(cleanupInterval)
 	}
 
-	return store
+	return s
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -51,7 +53,22 @@ func (s *Store) Has(key string) bool {
 
 	s.mu.RLock()
 
-	_, ok := s.data[key]
+	expiration, ok := s.expiry[key]
+
+	if !ok {
+		s.mu.RUnlock()
+		return false
+	}
+
+	if time.Now().UnixNano() > expiration {
+		s.mu.RUnlock()
+
+		if !s.isJanitorWorks {
+			s.Delete(key)
+		}
+
+		return false
+	}
 
 	s.mu.RUnlock()
 
@@ -89,6 +106,11 @@ func (s *Store) Get(key string) interface{} {
 
 	if time.Now().UnixNano() > expiration {
 		s.mu.RUnlock()
+
+		if !s.isJanitorWorks {
+			s.Delete(key)
+		}
+
 		return nil
 	}
 
@@ -116,6 +138,11 @@ func (s *Store) GetWithExpiration(key string) (interface{}, time.Time) {
 
 	if time.Now().UnixNano() > expiration {
 		s.mu.RUnlock()
+
+		if !s.isJanitorWorks {
+			s.Delete(key)
+		}
+
 		return nil, time.Time{}
 	}
 
