@@ -37,6 +37,9 @@ func (s *CacheSuite) TestStore(c *C) {
 	c.Assert(store.Get("1"), Equals, "TEST")
 	c.Assert(store.Get("2"), Equals, "TEST")
 
+	c.Assert(store.Has("2"), Equals, true)
+	c.Assert(store.Has("3"), Equals, false)
+
 	item, exp := store.GetWithExpiration("1")
 
 	c.Assert(item, Equals, "TEST")
@@ -77,6 +80,7 @@ func (s *CacheSuite) TestNil(c *C) {
 	store.Flush()
 
 	c.Assert(store.Get("1"), Equals, nil)
+	c.Assert(store.Has("1"), Equals, false)
 
 	item, exp := store.GetWithExpiration("1")
 	c.Assert(item, Equals, nil)

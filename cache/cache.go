@@ -34,12 +34,29 @@ func New(defaultExpiration, cleanupInterval time.Duration) *Store {
 		mu:         &sync.RWMutex{},
 	}
 
-	go store.janitor(cleanupInterval)
+	if cleanupInterval != 0 {
+		go store.janitor(cleanupInterval)
+	}
 
 	return store
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Has returns true if store contains data for given key
+func (s *Store) Has(key string) bool {
+	if s == nil {
+		return false
+	}
+
+	s.mu.RLock()
+
+	_, ok := s.data[key]
+
+	s.mu.RUnlock()
+
+	return ok
+}
 
 // Set adds or updates item in store
 func (s *Store) Set(key string, data interface{}) {
