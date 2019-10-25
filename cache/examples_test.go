@@ -32,6 +32,15 @@ func ExampleStore_Set() {
 	// Output: ABCD
 }
 
+func ExampleStore_Has() {
+	store := New(time.Second, time.Minute)
+
+	store.Set("test", "ABCD")
+
+	fmt.Println(store.Has("test"))
+	// Output: true
+}
+
 func ExampleStore_Get() {
 	store := New(time.Second, time.Minute)
 

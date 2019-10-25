@@ -59,6 +59,26 @@ func (s *CacheSuite) TestStore(c *C) {
 	store.Flush()
 }
 
+func (s *CacheSuite) TestStoreWithoutJanitor(c *C) {
+	store := New(time.Second/32, 0)
+
+	store.Set("1", "TEST")
+	store.Set("2", "TEST")
+	store.Set("3", "TEST")
+
+	c.Assert(store.Has("2"), Equals, true)
+	c.Assert(store.Has("0"), Equals, false)
+
+	time.Sleep(time.Second / 16)
+
+	c.Assert(store.Has("1"), Equals, false)
+	c.Assert(store.Get("2"), Equals, nil)
+
+	data, _ := store.GetWithExpiration("3")
+
+	c.Assert(data, Equals, nil)
+}
+
 func (s *CacheSuite) TestExpiration(c *C) {
 	store := New(time.Second/16, time.Minute)
 
