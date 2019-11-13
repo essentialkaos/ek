@@ -42,7 +42,7 @@ type Logger struct {
 	PrefixError bool // Prefix for error messages
 	PrefixCrit  bool // Prefix for critical error messages
 
-	UseColors bool // Enable ASNSII colors in output
+	UseColors bool // Enable ANSI escape codes for colors in output
 
 	file     string
 	fd       *os.File
@@ -76,7 +76,7 @@ var PrefixMap = map[uint8]string{
 
 // Colors colors is map with fmtc color tags for every level
 var Colors = map[uint8]string{
-	DEBUG: "{s}",
+	DEBUG: "{s-}",
 	INFO:  "",
 	WARN:  "{y}",
 	ERROR: "{r}",
