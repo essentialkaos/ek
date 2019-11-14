@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.2.2
+
+* `[log]` Default color for debug messages set to light gray
+
 ### 11.2.1
 
 * `[cache]` Added data removal from cache with disabled janitor
@@ -50,7 +54,7 @@
 
 ### 10.15.0
 
-* `[log]` Added support of ANSII colors in the output
+* `[log]` Added support of ANSI colors in the output
 * `[log]` Using `uint8` for level codes instead of `int`
 
 ### 10.14.0
