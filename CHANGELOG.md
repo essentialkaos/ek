@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.3.0
+
+* `[log]` Logger is now more concurrency friendly
+
 ### 11.2.2
 
 * `[log]` Default color for debug messages set to light gray

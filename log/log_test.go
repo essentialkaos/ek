@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -46,6 +47,7 @@ func (ls *LogSuite) SetUpTest(c *C) {
 		PrefixCrit:  true,
 
 		level: INFO,
+		mu:    &sync.Mutex{},
 	}
 }
 
@@ -113,7 +115,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
-	l := &Logger{level: WARN}
+	l := &Logger{level: WARN, mu: &sync.Mutex{}}
 
 	c.Assert(l.MinLevel(-1), IsNil)
 	c.Assert(l.MinLevel(6), IsNil)
@@ -147,7 +149,7 @@ func (ls *LogSuite) TestLevel(c *C) {
 }
 
 func (ls *LogSuite) TestFlush(c *C) {
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 
 	err := l.Flush()
 
@@ -171,7 +173,7 @@ func (ls *LogSuite) TestReopenAndSet(c *C) {
 func (ls *LogSuite) TestStdOutput(c *C) {
 	var err error
 
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 
 	_, err = l.Print(INFO, "info")
 
@@ -439,7 +441,7 @@ func (ls *LogSuite) TestBufIO(c *C) {
 }
 
 func (ls *LogSuite) TestStdLogger(c *C) {
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 	l.Set(ls.TempDir+"/file5.log", 0644)
 
 	std := &StdLogger{l}
