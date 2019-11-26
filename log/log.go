@@ -47,6 +47,7 @@ type Logger struct {
 	file     string
 	fd       *os.File
 	w        *bufio.Writer
+	mu       *sync.Mutex
 	level    uint8
 	perms    os.FileMode
 	useBufIO bool
@@ -61,6 +62,7 @@ var Global = &Logger{
 	PrefixCrit:  true,
 
 	level: INFO,
+	mu:    &sync.Mutex{},
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -91,7 +93,7 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 // Errors
 var (
 	// ErrLoggerIsNil is returned by Logger struct methods if struct is nil
-	ErrLoggerIsNil = errors.New("Logger is nil")
+	ErrLoggerIsNil = errors.New("Logger is nil or not created properly")
 
 	// ErrUnexpectedLevel is returned by the MinLevel method if given level is unknown
 	ErrUnexpectedLevel = errors.New("Unexpected level type")
@@ -112,8 +114,6 @@ var logLevelsNames = map[string]uint8{
 	"critical": 4,
 }
 
-var rwMutex = &sync.RWMutex{}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // New creates new logger struct
@@ -124,6 +124,7 @@ func New(file string, perms os.FileMode) (*Logger, error) {
 		PrefixError: true,
 
 		level: INFO,
+		mu:    &sync.Mutex{},
 	}
 
 	err := logger.Set(file, perms)
@@ -201,11 +202,14 @@ func Aux(f string, a ...interface{}) (int, error) {
 // Reopen close file descriptor and open again
 // Useful for log rotation
 func (l *Logger) Reopen() error {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
 
+	l.mu.Lock()
+
 	if l.fd == nil {
+		l.mu.Unlock()
 		return ErrOutputNotSet
 	}
 
@@ -214,15 +218,19 @@ func (l *Logger) Reopen() error {
 	}
 
 	l.fd.Close()
+	l.mu.Unlock()
 
 	return l.Set(l.file, l.perms)
 }
 
 // MinLevel defines minimal logging level
 func (l *Logger) MinLevel(level interface{}) error {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
 
 	levelCode, err := convertMinLevelValue(level)
 
@@ -241,6 +249,13 @@ func (l *Logger) MinLevel(level interface{}) error {
 
 // EnableBufIO enable buffered I/O support
 func (l *Logger) EnableBufIO(interval time.Duration) {
+	if l == nil || l.mu == nil {
+		return
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	l.useBufIO = true
 
 	if l.fd != nil {
@@ -252,6 +267,13 @@ func (l *Logger) EnableBufIO(interval time.Duration) {
 
 // Set change logger output target
 func (l *Logger) Set(file string, perms os.FileMode) error {
+	if l == nil || l.mu == nil {
+		return ErrLoggerIsNil
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	fd, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, perms)
 
 	if err != nil {
@@ -280,9 +302,12 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 
 // Print write message to logger output
 func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
 
 	if l.level > level {
 		return 0, nil
@@ -308,8 +333,6 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
 	var err error
 	var n int
 
-	rwMutex.RLock()
-
 	if l.UseColors {
 		c := Colors[level]
 		if showPrefixes {
@@ -325,33 +348,32 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
 		}
 	}
 
-	rwMutex.RUnlock()
-
 	return n, err
 }
 
 // Flush write buffered data to file
 func (l *Logger) Flush() error {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
 
+	l.mu.Lock()
+
 	if l.w == nil {
+		l.mu.Unlock()
 		return nil
 	}
 
-	rwMutex.Lock()
-
 	err := l.w.Flush()
 
-	rwMutex.Unlock()
+	l.mu.Unlock()
 
 	return err
 }
 
 // Debug write debug message to logger output
 func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 
@@ -360,7 +382,7 @@ func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
 
 // Info write info message to logger output
 func (l *Logger) Info(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 
@@ -369,7 +391,7 @@ func (l *Logger) Info(f string, a ...interface{}) (int, error) {
 
 // Warn write warning message to logger output
 func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 
@@ -378,7 +400,7 @@ func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
 
 // Error write error message to logger output
 func (l *Logger) Error(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 
@@ -387,7 +409,7 @@ func (l *Logger) Error(f string, a ...interface{}) (int, error) {
 
 // Crit write critical message to logger output
 func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 
@@ -396,7 +418,7 @@ func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
 
 // Aux write unfiltered message (for separators/headers) to logger output
 func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
-	if l == nil {
+	if l == nil || l.mu == nil {
 		return -1, ErrLoggerIsNil
 	}
 

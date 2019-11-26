@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -46,6 +47,7 @@ func (ls *LogSuite) SetUpTest(c *C) {
 		PrefixCrit:  true,
 
 		level: INFO,
+		mu:    &sync.Mutex{},
 	}
 }
 
@@ -59,47 +61,52 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err := l.Flush()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	err = l.Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Debug("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Info("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Warn("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Error("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Crit("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Aux("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+
+	err = l.Set("", 0)
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = New("/_not_exist_", 0644)
 
@@ -109,11 +116,13 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err = Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Output file is not set")
+	c.Assert(err.Error(), Equals, ErrOutputNotSet.Error())
+
+	l.EnableBufIO(time.Second)
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
-	l := &Logger{level: WARN}
+	l := &Logger{level: WARN, mu: &sync.Mutex{}}
 
 	c.Assert(l.MinLevel(-1), IsNil)
 	c.Assert(l.MinLevel(6), IsNil)
@@ -147,7 +156,7 @@ func (ls *LogSuite) TestLevel(c *C) {
 }
 
 func (ls *LogSuite) TestFlush(c *C) {
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 
 	err := l.Flush()
 
@@ -171,7 +180,7 @@ func (ls *LogSuite) TestReopenAndSet(c *C) {
 func (ls *LogSuite) TestStdOutput(c *C) {
 	var err error
 
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 
 	_, err = l.Print(INFO, "info")
 
@@ -439,7 +448,7 @@ func (ls *LogSuite) TestBufIO(c *C) {
 }
 
 func (ls *LogSuite) TestStdLogger(c *C) {
-	l := &Logger{}
+	l := &Logger{mu: &sync.Mutex{}}
 	l.Set(ls.TempDir+"/file5.log", 0644)
 
 	std := &StdLogger{l}
