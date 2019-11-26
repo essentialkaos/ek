@@ -218,7 +218,6 @@ func (l *Logger) Reopen() error {
 	}
 
 	l.fd.Close()
-
 	l.mu.Unlock()
 
 	return l.Set(l.file, l.perms)

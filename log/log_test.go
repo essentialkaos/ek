@@ -103,6 +103,11 @@ func (ls *LogSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Logger is nil")
 
+	err = l.Set("", 0)
+
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Logger is nil")
+
 	_, err = New("/_not_exist_", 0644)
 
 	c.Assert(err, NotNil)
@@ -112,6 +117,8 @@ func (ls *LogSuite) TestErrors(c *C) {
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Output file is not set")
+
+	l.EnableBufIO(time.Second)
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
