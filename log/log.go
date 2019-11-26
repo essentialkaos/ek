@@ -93,7 +93,7 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 // Errors
 var (
 	// ErrLoggerIsNil is returned by Logger struct methods if struct is nil
-	ErrLoggerIsNil = errors.New("Logger is nil")
+	ErrLoggerIsNil = errors.New("Logger is nil or not created properly")
 
 	// ErrUnexpectedLevel is returned by the MinLevel method if given level is unknown
 	ErrUnexpectedLevel = errors.New("Unexpected level type")

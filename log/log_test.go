@@ -61,52 +61,52 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err := l.Flush()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	err = l.Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Debug("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Info("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Warn("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Error("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Crit("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = l.Aux("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Logger is nil")
+	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
 	_, err = New("/_not_exist_", 0644)
 
@@ -116,7 +116,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err = Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Output file is not set")
+	c.Assert(err.Error(), Equals, ErrOutputNotSet.Error())
 
 	l.EnableBufIO(time.Second)
 }
