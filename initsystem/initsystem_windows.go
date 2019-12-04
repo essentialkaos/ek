@@ -25,17 +25,17 @@ func Systemd() bool {
 	return false
 }
 
-// HasService return true if service is present in any init system
-func HasService(name string) bool {
+// IsPresent returns true if service is present in any init system
+func IsPresent(name string) bool {
 	return false
 }
 
-// IsServiceWorks return service state
-func IsServiceWorks(name string) (bool, error) {
+// IsWorks returns service state
+func IsWorks(name string) (bool, error) {
 	return false, nil
 }
 
-// IsEnabled return true if auto start enabled for given service
+// IsEnabled returns true if auto start enabled for given service
 func IsEnabled(name string) (bool, error) {
 	return false, nil
 }

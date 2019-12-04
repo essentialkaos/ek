@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.3.1
+
+* `[initsystem]` Fixed stubs for Windows
+
 ### 11.3.0
 
 * `[log]` Logger is now more concurrency friendly
