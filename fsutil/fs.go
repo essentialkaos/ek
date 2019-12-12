@@ -12,6 +12,7 @@ package fsutil
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"syscall"
@@ -62,7 +63,7 @@ var ErrEmptyPath = errors.New("Path is empty")
 // S - not empty (only for files)
 //
 func CheckPerms(props, path string) bool {
-	if len(props) == 0 || path == "" {
+	if props == "" || path == "" {
 		return false
 	}
 
@@ -77,7 +78,7 @@ func CheckPerms(props, path string) bool {
 		return false
 	}
 
-	user, err := system.CurrentUser()
+	user, err := getCurrentUser()
 
 	if err != nil {
 		return false
@@ -134,6 +135,82 @@ func CheckPerms(props, path string) bool {
 	}
 
 	return true
+}
+
+// ValidatePerms validates permissions for file or directory
+func ValidatePerms(props, path string) error {
+	if props == "" || path == "" {
+		return errors.New("Props or path to object is empty")
+	}
+
+	path = PATH.Clean(path)
+	props = strings.ToUpper(props)
+
+	var stat = &syscall.Stat_t{}
+
+	err := syscall.Stat(path, stat)
+
+	if err != nil {
+		return fmt.Errorf("Object %s doesn't exist or not accessible", path)
+	}
+
+	user, err := getCurrentUser()
+
+	if err != nil {
+		return errors.New("Can't get information about the current user")
+	}
+
+	for _, k := range props {
+		switch k {
+
+		case 'F':
+			if stat.Mode&_IFMT != _IFREG {
+				return fmt.Errorf("%s is not a file", path)
+			}
+
+		case 'D':
+			if stat.Mode&_IFMT != _IFDIR {
+				return fmt.Errorf("%s is not a directory", path)
+			}
+
+		case 'B':
+			if stat.Mode&_IFMT != _IFBLK {
+				return fmt.Errorf("%s is not a block device", path)
+			}
+
+		case 'C':
+			if stat.Mode&_IFMT != _IFCHR {
+				return fmt.Errorf("%s is not a character device", path)
+			}
+
+		case 'L':
+			if !IsLink(path) {
+				return fmt.Errorf("%s is not a link", path)
+			}
+
+		case 'X':
+			if !isExecutableStat(stat, user.UID, getGIDList(user)) {
+				return fmt.Errorf("%s is not executable", path)
+			}
+
+		case 'W':
+			if !isWritableStat(stat, user.UID, getGIDList(user)) {
+				return fmt.Errorf("%s is not writable", path)
+			}
+
+		case 'R':
+			if !isReadableStat(stat, user.UID, getGIDList(user)) {
+				return fmt.Errorf("%s is not readable", path)
+			}
+
+		case 'S':
+			if stat.Size == 0 {
+				return fmt.Errorf("%s is empty", path)
+			}
+		}
+	}
+
+	return nil
 }
 
 // ProperPath returns the first proper path from a given slice
@@ -270,7 +347,7 @@ func IsReadable(path string) bool {
 		return false
 	}
 
-	user, err := system.CurrentUser()
+	user, err := getCurrentUser()
 
 	if err != nil {
 		return false
@@ -320,7 +397,7 @@ func IsWritable(path string) bool {
 		return false
 	}
 
-	user, err := system.CurrentUser()
+	user, err := getCurrentUser()
 
 	if err != nil {
 		return false
@@ -370,7 +447,7 @@ func IsExecutable(path string) bool {
 		return false
 	}
 
-	user, err := system.CurrentUser()
+	user, err := getCurrentUser()
 
 	if err != nil {
 		return false

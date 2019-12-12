@@ -22,7 +22,7 @@ deps-test: ## Download dependencies for tests
 test: ## Run tests
 	git config --global http.https://pkg.re.followRedirects true
 	go get -v pkg.re/check.v1
-	go test -covermode=count ./...
+	go test -covermode=count -tags=unit ./...
 
 gen-fuzz: ## Generate go-fuzz archives for all packages
 	bash .scripts/fuzz-gen.sh ${PACKAGE}
