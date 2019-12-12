@@ -1,5 +1,11 @@
 ## Changelog
 
+### 11.4.0
+
+* `[fsutil]` Added method `ValidatePerms` for permissions validation
+* `[system]` Improved current user info caching mechanic
+* `[fsutil]` Increased code coverage (98.0% → 98.8%)
+
 ### 11.3.1
 
 * `[initsystem]` Fixed stubs for Windows

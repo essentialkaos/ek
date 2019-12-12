@@ -95,7 +95,7 @@ testWithCover() {
     fi
 
     if [[ "$cover_enabled" == "-" ]] ; then
-      go test $dir/$package_dir -covermode=count
+      go test $dir/$package_dir -covermode=count -tags=unit
 
       if [[ $? -ne 0 ]] ; then
         has_errors=true
@@ -104,7 +104,7 @@ testWithCover() {
       continue
     fi
 
-    go test -covermode=count -coverprofile=coverage.tmp $dir/$package_dir
+    go test -covermode=count -tags=unit -coverprofile=coverage.tmp $dir/$package_dir
 
     if [[ $? -ne 0 ]] ; then
       has_errors=true

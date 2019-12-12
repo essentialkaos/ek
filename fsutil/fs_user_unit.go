@@ -1,7 +1,7 @@
-// +build !windows
+// +build unit
 
-// Package ek is set of auxiliary packages
-package ek
+// Package fsutil provides methods for working with files on POSIX compatible systems
+package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +11,32 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"errors"
+	"pkg.re/essentialkaos/ek.v11/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "11.4.0"
+var useFakeUser bool
+var getUserError bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func getCurrentUser() (*system.User, error) {
+	if useFakeUser {
+		return &system.User{
+			Name:    "test",
+			UID:     65534,
+			GID:     65534,
+			RealUID: 65534,
+			RealGID: 65534,
+			HomeDir: "/unknown",
+		}, nil
+	}
+
+	if getUserError {
+		return nil, errors.New("Error")
+	}
+
+	return system.CurrentUser()
 }

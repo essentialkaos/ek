@@ -541,6 +541,12 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	c.Assert(IsExecutableByUser(tmpFile9, curUser.Name), check.Equals, true)
 	c.Assert(IsExecutableByUser(tmpFile9, "somerandomuser"), check.Equals, false)
 	c.Assert(IsExecutableByUser(tmpFile1, curUser.Name), check.Equals, false)
+
+	getUserError = true
+	c.Assert(IsReadable(tmpFile1), check.Equals, false)
+	c.Assert(IsWritable(tmpFile4), check.Equals, false)
+	c.Assert(IsExecutable(tmpFile7), check.Equals, false)
+	getUserError = false
 }
 
 func (s *FSSuite) TestCheckPerms(c *check.C) {
@@ -548,8 +554,13 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	tmpFile := tmpDir + "/test.file"
 	tmpLink := tmpDir + "/test.link"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte(""), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile, []byte(""), 0600), check.IsNil)
 	c.Assert(os.Symlink("123", tmpLink), check.IsNil)
+
+	getUserError = true
+	c.Assert(CheckPerms("F", tmpFile), check.Equals, false)
+	c.Assert(ValidatePerms("F", tmpFile), check.NotNil)
+	getUserError = false
 
 	c.Assert(CheckPerms("", tmpFile), check.Equals, false)
 	c.Assert(CheckPerms("FR", ""), check.Equals, false)
@@ -565,6 +576,28 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 
 	c.Assert(CheckPerms("W", tmpFile), check.Equals, true)
 	c.Assert(CheckPerms("R", tmpFile), check.Equals, true)
+
+	c.Assert(ValidatePerms("", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("FR", ""), check.NotNil)
+	c.Assert(ValidatePerms("FR", "/not_exist"), check.NotNil)
+
+	c.Assert(ValidatePerms("F", tmpDir), check.NotNil)
+	c.Assert(ValidatePerms("D", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("L", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("X", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("S", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("B", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("C", tmpFile), check.NotNil)
+
+	c.Assert(ValidatePerms("W", tmpFile), check.IsNil)
+	c.Assert(ValidatePerms("R", tmpFile), check.IsNil)
+
+	useFakeUser = true
+	c.Assert(CheckPerms("W", tmpFile), check.Equals, false)
+	c.Assert(CheckPerms("R", tmpFile), check.Equals, false)
+	c.Assert(ValidatePerms("W", tmpFile), check.NotNil)
+	c.Assert(ValidatePerms("R", tmpFile), check.NotNil)
+	useFakeUser = false
 }
 
 func (s *FSSuite) TestGetMode(c *check.C) {

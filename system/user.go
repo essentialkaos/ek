@@ -90,10 +90,16 @@ var (
 	ErrCantParseGetentOutput = errors.New("Can't parse getent command output")
 )
 
+// CurrentUserCachePeriod is cache period for current user info
+var CurrentUserCachePeriod = 5 * time.Minute
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Current user info cache
+// Current is user info cache
 var curUser *User
+
+// curUserUpdateDate is date when user data was updated
+var curUserUpdateDate time.Time
 
 // Path to pts dir
 var ptsDir = "/dev/pts"
@@ -133,8 +139,10 @@ func Who() ([]*SessionInfo, error) {
 
 // CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
-	if len(avoidCache) == 0 && curUser != nil {
-		return curUser, nil
+	if len(avoidCache) == 0 || avoidCache[0] == false {
+		if curUser != nil && time.Since(curUserUpdateDate) < CurrentUserCachePeriod {
+			return curUser, nil
+		}
 	}
 
 	username, err := getCurrentUserName()
@@ -154,6 +162,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	}
 
 	curUser = user
+	curUserUpdateDate = time.Now()
 
 	return user, nil
 }
