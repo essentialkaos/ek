@@ -115,7 +115,7 @@ func (h Handlers) TrackAsync() {
 // codebeat:disable[LOC,ABC]
 
 // GetByName returns signal with given name
-func GetByName(name string) (os.Signal, error) {
+func GetByName(name string) (syscall.Signal, error) {
 	switch strings.ToUpper(name) {
 	case "SIGABRT", "ABRT":
 		return ABRT, nil
@@ -183,7 +183,7 @@ func GetByName(name string) (os.Signal, error) {
 }
 
 // GetByCode returns signal with given code
-func GetByCode(code int) (os.Signal, error) {
+func GetByCode(code int) (syscall.Signal, error) {
 	switch code {
 	case 1:
 		return HUP, nil
