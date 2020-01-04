@@ -111,6 +111,8 @@ func (h Handlers) TrackAsync() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[LOC,ABC]
+
 // GetByName returns signal with given name
 func GetByName(name string) os.Signal {
 	switch strings.ToUpper(name) {
@@ -240,5 +242,7 @@ func GetByCode(code int) os.Signal {
 
 	return -1
 }
+
+// codebeat:enable[LOC,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //
