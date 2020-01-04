@@ -178,7 +178,7 @@ func GetByName(name string) os.Signal {
 		return XFSZ
 	}
 
-	return -1
+	return syscall.Signal(-1)
 }
 
 // GetByCode returns signal with given code
@@ -240,7 +240,7 @@ func GetByCode(code int) os.Signal {
 		return XFSZ
 	}
 
-	return -1
+	return syscall.Signal(-1)
 }
 
 // codebeat:enable[LOC,ABC]
