@@ -1,5 +1,10 @@
 ## Changelog
 
+### 11.5.0
+
+* `[signal]` Added method `GetByName` for getting signal by its name.
+* `[signal]` Added method `GetByCode` for getting signal by its code.
+
 ### 11.4.0
 
 * `[fsutil]` Added method `ValidatePerms` for permissions validation
