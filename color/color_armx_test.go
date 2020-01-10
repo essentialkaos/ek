@@ -1,4 +1,4 @@
-// +build arm arm64
+// +build arm, arm64
 
 package color
 

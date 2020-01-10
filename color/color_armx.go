@@ -1,4 +1,4 @@
-// +build arm arm64
+// +build arm, arm64
 
 // Package color provides methods for working with colors
 package color

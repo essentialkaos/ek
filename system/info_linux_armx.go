@@ -1,5 +1,5 @@
 // +build linux
-// +build arm arm64
+// +build arm, arm64
 
 package system
 
