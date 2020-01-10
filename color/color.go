@@ -1,5 +1,3 @@
-// +build 386 amd64
-
 // Package color provides methods for working with colors
 package color
 
@@ -23,7 +21,7 @@ func RGB2Hex(r, g, b int) int {
 
 // Hex2RGB convert Hex color to RGB
 func Hex2RGB(h int) (int, int, int) {
-	if IsRGBA(h) {
+	if h >= 0xFFFFFF {
 		return 0xFF, 0xFF, 0xFF
 	}
 
@@ -31,17 +29,17 @@ func Hex2RGB(h int) (int, int, int) {
 }
 
 // RGBA2Hex convert RGBA color to Hex
-func RGBA2Hex(r, g, b, a int) int {
-	return r<<24 | g<<16 | b<<8 | a
+func RGBA2Hex(r, g, b, a int) int64 {
+	return int64(r)<<24 | int64(g)<<16 | int64(b)<<8 | int64(a)
 }
 
 // Hex2RGBA convert Hex color to RGBA
-func Hex2RGBA(h int) (int, int, int, int) {
+func Hex2RGBA(h int64) (int, int, int, int) {
 	if h >= 0xFFFFFF {
-		return h >> 24 & 0xFF, h >> 16 & 0xFF, h >> 8 & 0xFF, h & 0xFF
+		return int(h>>24) & 0xFF, int(h>>16) & 0xFF, int(h>>8) & 0xFF, int(h) & 0xFF
 	}
 
-	return h >> 16 & 0xFF, h >> 8 & 0xFF, h & 0xFF, 0
+	return int(h) >> 16 & 0xFF, int(h>>8) & 0xFF, int(h) & 0xFF, 0
 }
 
 // RGB2HSB convert RGB color to HSB (HSV)
@@ -116,7 +114,7 @@ func HSB2RGB(h, s, b int) (int, int, int) {
 }
 
 // IsRGBA if Hex coded color has alpha channel info
-func IsRGBA(h int) bool {
+func IsRGBA(h int64) bool {
 	return h > 0xFFFFFF
 }
 

@@ -44,16 +44,13 @@ func (s *ColorSuite) TestHex2RGB(c *C) {
 
 	r, g, b = Hex2RGB(0x7F7F7F)
 	c.Assert([]int{r, g, b}, DeepEquals, []int{0x7F, 0x7F, 0x7F})
-
-	r, g, b = Hex2RGB(0xFFFFFFFF)
-	c.Assert([]int{r, g, b}, DeepEquals, []int{0xFF, 0xFF, 0xFF})
 }
 
 func (s *ColorSuite) TestRGBA2Hex(c *C) {
-	c.Assert(RGBA2Hex(0, 0, 0, 0), Equals, 0x00000000)
-	c.Assert(RGBA2Hex(255, 255, 255, 0), Equals, 0xFFFFFF00)
-	c.Assert(RGBA2Hex(255, 255, 255, 255), Equals, 0xFFFFFFFF)
-	c.Assert(RGBA2Hex(127, 127, 127, 127), Equals, 0x7F7F7F7F)
+	c.Assert(RGBA2Hex(0, 0, 0, 0), Equals, int64(0x00000000))
+	c.Assert(RGBA2Hex(255, 255, 255, 0), Equals, int64(0xFFFFFF00))
+	c.Assert(RGBA2Hex(255, 255, 255, 255), Equals, int64(0xFFFFFFFF))
+	c.Assert(RGBA2Hex(127, 127, 127, 127), Equals, int64(0x7F7F7F7F))
 }
 
 func (s *ColorSuite) TestHex2RGBA(c *C) {
@@ -120,8 +117,8 @@ func (s *ColorSuite) TestHSB2RGB(c *C) {
 }
 
 func (s *ColorSuite) TestRGBACheck(c *C) {
-	c.Assert(IsRGBA(0xFFAABB), Equals, false)
-	c.Assert(IsRGBA(0xFFAABB01), Equals, true)
+	c.Assert(IsRGBA(int64(0xFFAABB)), Equals, false)
+	c.Assert(IsRGBA(int64(0xFFAABB01)), Equals, true)
 }
 
 func (s *ColorSuite) TestRGB2Term(c *C) {
