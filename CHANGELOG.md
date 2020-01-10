@@ -1,5 +1,11 @@
 ## Changelog
 
+### 11.5.1
+
+* `[color]` Fixed compatibility with ARM
+* `[fmtutil]` Fixed compatibility with ARM
+* `[system]` Fixed compatibility with ARM
+
 ### 11.5.0
 
 * `[signal]` Added method `GetByName` for getting signal by its name

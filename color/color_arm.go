@@ -1,4 +1,4 @@
-// +build 386 amd64
+// +build arm
 
 // Package color provides methods for working with colors
 package color
@@ -17,12 +17,12 @@ import (
 )
 
 // RGB2Hex convert RGB color to Hex
-func RGB2Hex(r, g, b int) int {
+func RGB2Hex(r, g, b int64) int64 {
 	return r<<16 | g<<8 | b
 }
 
 // Hex2RGB convert Hex color to RGB
-func Hex2RGB(h int) (int, int, int) {
+func Hex2RGB(h int64) (int64, int64, int64) {
 	if IsRGBA(h) {
 		return 0xFF, 0xFF, 0xFF
 	}
@@ -31,12 +31,12 @@ func Hex2RGB(h int) (int, int, int) {
 }
 
 // RGBA2Hex convert RGBA color to Hex
-func RGBA2Hex(r, g, b, a int) int {
+func RGBA2Hex(r, g, b, a int64) int64 {
 	return r<<24 | g<<16 | b<<8 | a
 }
 
 // Hex2RGBA convert Hex color to RGBA
-func Hex2RGBA(h int) (int, int, int, int) {
+func Hex2RGBA(h int64) (int64, int64, int64, int64) {
 	if h >= 0xFFFFFF {
 		return h >> 24 & 0xFF, h >> 16 & 0xFF, h >> 8 & 0xFF, h & 0xFF
 	}
@@ -45,16 +45,16 @@ func Hex2RGBA(h int) (int, int, int, int) {
 }
 
 // RGB2HSB convert RGB color to HSB (HSV)
-func RGB2HSB(r, g, b int) (int, int, int) {
+func RGB2HSB(r, g, b int64) (int64, int64, int64) {
 	if r+g+b == 0 {
 		return 0, 0, 0
 	}
 
-	max := mathutil.Max(mathutil.Max(r, g), b)
-	min := mathutil.Min(mathutil.Min(r, g), b)
+	max := mathutil.Max64(mathutil.Max64(r, g), b)
+	min := mathutil.Min64(mathutil.Min64(r, g), b)
 
 	var (
-		h     int
+		h     int64
 		s, bb float64
 	)
 
@@ -76,11 +76,11 @@ func RGB2HSB(r, g, b int) (int, int, int) {
 		s = math.Ceil(((fmax - fmin) / fmax) * 100.0)
 	}
 
-	return h, int(s), int(bb)
+	return h, int64(s), int64(bb)
 }
 
 // HSB2RGB convert HSB (HSV) color to RGB
-func HSB2RGB(h, s, b int) (int, int, int) {
+func HSB2RGB(h, s, b int64) (int64, int64, int64) {
 	var r, g, bb float64
 
 	if h+s+b == 0 {
@@ -110,19 +110,19 @@ func HSB2RGB(h, s, b int) (int, int, int) {
 		r, g, bb = tb, p, q
 	}
 
-	return int(mathutil.Round(r*0xFF, 0)),
-		int(mathutil.Round(g*0xFF, 0)),
-		int(mathutil.Round(bb*0xFF, 0))
+	return int64(mathutil.Round(r*0xFF, 0)),
+		int64(mathutil.Round(g*0xFF, 0)),
+		int64(mathutil.Round(bb*0xFF, 0))
 }
 
 // IsRGBA if Hex coded color has alpha channel info
-func IsRGBA(h int) bool {
+func IsRGBA(h int64) bool {
 	return h > 0xFFFFFF
 }
 
 // RGB2Term convert rgb color to terminal color code
 // https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
-func RGB2Term(r, g, b int) int {
+func RGB2Term(r, g, b int64) int64 {
 	// grayscale
 	if r == g && g == b {
 		if r == 175 {

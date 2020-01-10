@@ -79,7 +79,7 @@ func ExamplePrettyPerc() {
 func ExamplePrettySize() {
 	s1 := 193
 	s2 := 184713
-	s3 := 46361936461
+	s3 := int64(46361936461)
 
 	fmt.Printf("%d → %s\n", s1, PrettySize(s1))
 	fmt.Printf("%d → %s\n", s2, PrettySize(s2))
