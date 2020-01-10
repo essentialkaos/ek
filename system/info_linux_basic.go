@@ -1,7 +1,7 @@
-// +build !windows
+// +build linux
+// +build 386 arm64 amd64
 
-// Package ek is set of auxiliary packages
-package ek
+package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -10,21 +10,17 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
+// byteSliceToString convert byte slice to string
+func byteSliceToString(s [65]int8) string {
+	result := ""
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
-)
+	for _, r := range s {
+		if r == 0 {
+			break
+		}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+		result += string(r)
+	}
 
-// VERSION is current ek package version
-const VERSION = "11.5.1"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	return result
 }

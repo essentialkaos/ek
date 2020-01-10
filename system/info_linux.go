@@ -178,21 +178,6 @@ func getSuseVersion(file string) string {
 	return versionSlice[2] + "." + patchSlice[2]
 }
 
-// byteSliceToString convert byte slice to string
-func byteSliceToString(s [65]int8) string {
-	result := ""
-
-	for _, r := range s {
-		if r == 0 {
-			break
-		}
-
-		result += string(r)
-	}
-
-	return result
-}
-
 // isFileExist check if file exist
 func isFileExist(path string) bool {
 	if path == "" {
