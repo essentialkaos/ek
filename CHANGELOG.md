@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.5.2
+
+* `[errutil]` Fixed panic in `Add` if given Errors struct is nil
+
 ### 11.5.1
 
 * `[color]` Fixed compatibility with ARM

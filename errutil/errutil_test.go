@@ -27,10 +27,13 @@ var _ = Suite(&ErrSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ErrSuite) TestPositive(c *C) {
+	var nilErrs *Errors
+
 	errs := NewErrors()
 
 	errs.Add()
 	errs.Add(nil)
+	errs.Add(nilErrs)
 	errs.Add(errors.New("1"))
 	errs.Add(errors.New("2"))
 	errs.Add(errors.New("3"))
