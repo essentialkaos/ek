@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.6.0
+
+* `[usage]` Added support of raw examples (_without prefix with command name_)
+
 ### 11.5.2
 
 * `[errutil]` Fixed panic in `Add` if given Errors struct is nil

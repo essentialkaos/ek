@@ -56,6 +56,12 @@ func ExampleInfo_Render() {
 	// This is example with description
 	info.AddExample("remove file.dat", "Remove file.dat")
 
+	// Raw example without description
+	info.AddRawExample("add file.dat")
+
+	// Raw example with description
+	info.AddRawExample("remove file.dat", "Remove file.dat")
+
 	// render all data
 	info.Render()
 }

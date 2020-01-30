@@ -81,7 +81,10 @@ func (s *UsageSuite) TestUsage(c *C) {
 
 	info.AddExample() // will be ignored
 	info.AddExample("abc")
-	info.AddExample("abcd", "Example with description")
+	info.AddExample("abc", "Example with description")
+	info.AddRawExample() // will be ignored
+	info.AddRawExample("echo 123 | myapp")
+	info.AddRawExample("echo 123 | myapp", "Example with description")
 
 	info.Render()
 
