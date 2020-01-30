@@ -89,6 +89,7 @@ type Option struct {
 type Example struct {
 	Cmd  string
 	Desc string
+	Raw  bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -165,7 +166,7 @@ func (i *Info) AddOption(a ...string) {
 	)
 }
 
-// AddExample adds example for some command (command, description)
+// AddExample adds example of application usage
 func (i *Info) AddExample(a ...string) {
 	if len(a) == 0 {
 		return
@@ -173,7 +174,18 @@ func (i *Info) AddExample(a ...string) {
 
 	a = append(a, "")
 
-	i.Examples = append(i.Examples, &Example{a[0], a[1]})
+	i.Examples = append(i.Examples, &Example{a[0], a[1], false})
+}
+
+// AddRawExample adds example of application usage without command prefix
+func (i *Info) AddRawExample(a ...string) {
+	if len(a) == 0 {
+		return
+	}
+
+	a = append(a, "")
+
+	i.Examples = append(i.Examples, &Example{a[0], a[1], true})
 }
 
 // AddSpoiler adds spoiler
@@ -363,7 +375,11 @@ func renderExamples(info *Info) {
 	total := len(info.Examples)
 
 	for index, example := range info.Examples {
-		fmtc.Printf("  %s %s\n", info.Name, example.Cmd)
+		if example.Raw {
+			fmtc.Printf("  %s\n", example.Cmd)
+		} else {
+			fmtc.Printf("  %s %s\n", info.Name, example.Cmd)
+		}
 
 		if example.Desc != "" {
 			fmtc.Printf("  {s-}%s{!}\n", example.Desc)
