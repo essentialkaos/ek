@@ -457,6 +457,7 @@ func extractGroupsInfo(data string) []*Group {
 	var field int
 	var result []*Group
 
+	data = strings.TrimRight(data, "\n")
 	groupsInfo := strutil.ReadField(data, 3, false, "=")
 
 	if groupsInfo == "" {

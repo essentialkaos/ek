@@ -470,6 +470,11 @@ func (s *SystemSuite) TestUser(c *C) {
 		c.Assert(groups[2].Name, Equals, "developers")
 		c.Assert(groups[2].GID, Equals, 10201)
 
+		groups = extractGroupsInfo("uid=66(someone) gid=66(someone) groups=66(someone)\n\n")
+
+		c.Assert(groups[0].Name, Equals, "someone")
+		c.Assert(groups[0].GID, Equals, 66)
+
 		group, err = parseGetentGroupOutput("developers:*:10201:bob,john")
 
 		c.Assert(err, IsNil)
