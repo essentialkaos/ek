@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.6.1
+
+* `[system]` Fixed bug with parsing group info in `id` output
+
 ### 11.6.0
 
 * `[usage]` Added support of raw examples (_without prefix with command name_)
