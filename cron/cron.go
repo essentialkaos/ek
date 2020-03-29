@@ -90,6 +90,7 @@ var info = []exprInfo{
 // codebeat:disable[LOC,ABC]
 
 // Parse parse cron expression
+// https://en.wikipedia.org/wiki/Cron
 func Parse(expr string) (*Expr, error) {
 	expr = strings.Replace(expr, "\t", " ", -1)
 	expr = getAliasExpression(expr)
