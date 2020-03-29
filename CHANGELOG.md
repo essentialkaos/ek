@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.6.2
+
+* `[cron]` Added usage examples
+
 ### 11.6.1
 
 * `[system]` Fixed bug with parsing group info in `id` output
