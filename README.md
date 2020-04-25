@@ -100,6 +100,8 @@ go get -u pkg.re/essentialkaos/ek.v11
 * [fz](https://github.com/essentialkaos/fz) - Simple tool for formatting `go-fuzz` output
 * [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
 * [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
+* [icecli](https://github.com/essentialkaos/icecli) - Command-line tools for Icecast
+* [IMC](https://github.com/essentialkaos/imc) - Simple terminal dashboard for Icecast
 * [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
 * [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [perfecto](https://github.com/essentialkaos/perfecto) - Tool for checking perfectly written RPM specs
