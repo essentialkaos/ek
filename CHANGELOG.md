@@ -1,5 +1,9 @@
 ## Changelog
 
+### 11.6.3
+
+* `[usage]` Add more examples
+
 ### 11.6.2
 
 * `[cron]` Added usage examples
