@@ -15,14 +15,26 @@ import (
 
 func ExampleIsSafe() {
 	path1 := "/home/user/project"
-	path2 := "/usr/sbin/project"
+	path2 := "/usr/sbin/myapp"
 
 	fmt.Printf("%s is safe → %t\n", path1, IsSafe(path1))
 	fmt.Printf("%s is safe → %t\n", path2, IsSafe(path2))
 
 	// Output:
 	// /home/user/project is safe → true
-	// /usr/sbin/project is safe → false
+	// /usr/sbin/myapp is safe → false
+}
+
+func ExampleDirN() {
+	path1 := "/home/user/project/config/file.cfg"
+	path2 := "/usr/sbin/myapp"
+
+	fmt.Printf("Config dir: %s\n", DirN(path1, 4))
+	fmt.Printf("Bin dir: %s\n", DirN(path2, 2))
+
+	// Output:
+	// Config dir: /home/user/project/config
+	// Bin dir: /usr/sbin
 }
 
 func ExampleIsDotfile() {

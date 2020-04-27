@@ -1,8 +1,12 @@
 ## Changelog
 
+### 11.7.0
+
+* `[path]` Added method `DirN` for reading N elements from path
+
 ### 11.6.3
 
-* `[usage]` Add more examples
+* `[usage]` Added more examples
 
 ### 11.6.2
 

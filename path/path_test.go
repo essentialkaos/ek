@@ -45,6 +45,16 @@ func (s *PathUtilSuite) TestBase(c *C) {
 	c.Assert(f, Equals, "file.jpg")
 }
 
+func (s *PathUtilSuite) TestDirN(c *C) {
+	c.Assert(DirN("", 99), Equals, "")
+	c.Assert(DirN("1", 99), Equals, "1")
+	c.Assert(DirN("abcde", 1), Equals, "abcde")
+	c.Assert(DirN("/a/b/c/d", -1), Equals, "/a/b/c/d")
+	c.Assert(DirN("/a/b/c/d", 1), Equals, "/a")
+	c.Assert(DirN("a/b/c/d", 2), Equals, "a/b")
+	c.Assert(DirN("/a/b/c/d", 99), Equals, "/a/b/c/d")
+}
+
 func (s *PathUtilSuite) TestEvalHome(c *C) {
 	homeDir := env.Get()["HOME"]
 
