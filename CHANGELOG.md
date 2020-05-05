@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.1.0
+
+* `[usage/update]` Added update checker for custom storages
+
 ### 12.0.0
 
 * `[path]` Added method `DirN` for reading N elements from path

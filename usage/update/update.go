@@ -1,4 +1,3 @@
-// Package update contains update checkers for different services
 package update
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -9,7 +8,6 @@ package update
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"strings"
 	"time"
 
 	"pkg.re/essentialkaos/ek.v12/req"
@@ -17,32 +15,33 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type githubRelease struct {
-	Tag       string    `json:"tag_name"`
-	Published time.Time `json:"published_at"`
+// ReleaseInfo contains info about the latest version of application
+type ReleaseInfo struct {
+	Version string    `json:"version"`
+	Date    time.Time `json:"date"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitHubChecker checks new releases on GitHub
-func GitHubChecker(app, version, data string) (string, time.Time, bool) {
+// UpdateChecker checks new releases on custom storage
+func UpdateChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" {
 		return "", time.Time{}, false
 	}
 
-	release := getLatestGitHubRelease(app, version, data)
+	release := getLastReleaseInfo(app, version, data)
 
 	if release == nil {
 		return "", time.Time{}, false
 	}
 
-	return strings.TrimLeft(release.Tag, "v"), release.Published, true
+	return release.Version, release.Date, release.Version != version
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestRelease fetches the latest release from GitHub
-func getLatestGitHubRelease(app, version, repository string) *githubRelease {
+// getLastReleaseInfo fetches info about the latest version
+func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	engine := req.Engine{}
 
 	engine.SetDialTimeout(1)
@@ -50,7 +49,8 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine.SetUserAgent(app, version, "go.ek")
 
 	response, err := engine.Get(req.Request{
-		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
+		URL:         storage + "/latest.json",
+		Accept:      req.CONTENT_TYPE_JSON,
 		AutoDiscard: true,
 	})
 
@@ -58,11 +58,7 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 		return nil
 	}
 
-	if response.Header.Get("X-RateLimit-Remaining") == "0" {
-		return nil
-	}
-
-	release := &githubRelease{}
+	release := &ReleaseInfo{}
 	err = response.JSON(release)
 
 	if err != nil {
