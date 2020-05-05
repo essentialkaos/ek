@@ -20,8 +20,8 @@ import (
 	"syscall"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v11/env"
-	"pkg.re/essentialkaos/ek.v11/strutil"
+	"pkg.re/essentialkaos/ek.v12/env"
+	"pkg.re/essentialkaos/ek.v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -12,7 +12,7 @@ import (
 	"os"
 	"syscall"
 
-	"pkg.re/essentialkaos/ek.v11/fsutil"
+	"pkg.re/essentialkaos/ek.v12/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

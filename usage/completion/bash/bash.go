@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v11/usage"
+	"pkg.re/essentialkaos/ek.v12/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

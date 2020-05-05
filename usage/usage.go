@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v11/fmtc"
-	"pkg.re/essentialkaos/ek.v11/mathutil"
-	"pkg.re/essentialkaos/ek.v11/strutil"
-	"pkg.re/essentialkaos/ek.v11/version"
+	"pkg.re/essentialkaos/ek.v12/fmtc"
+	"pkg.re/essentialkaos/ek.v12/mathutil"
+	"pkg.re/essentialkaos/ek.v12/strutil"
+	"pkg.re/essentialkaos/ek.v12/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

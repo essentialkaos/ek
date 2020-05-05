@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v11/knf"
+	"pkg.re/essentialkaos/ek.v12/knf"
 
 	. "pkg.re/check.v1"
 )
