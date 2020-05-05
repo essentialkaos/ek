@@ -36,6 +36,11 @@ func Dir(path string) string {
 	return ""
 }
 
+// DirN returns first N elements of path
+func DirN(path string, n int) string {
+	return ""
+}
+
 // Ext returns the file name extension used by path
 func Ext(path string) string {
 	return ""

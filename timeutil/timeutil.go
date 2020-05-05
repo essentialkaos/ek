@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v11/mathutil"
-	"pkg.re/essentialkaos/ek.v11/pluralize"
+	"pkg.re/essentialkaos/ek.v12/mathutil"
+	"pkg.re/essentialkaos/ek.v12/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -67,21 +67,21 @@ MAINLOOP:
 		case duration >= _WEEK:
 			weeks := duration / _WEEK
 			duration = duration % _WEEK
-			result = append(result, pluralize.PluralizeSpecial(pluralize.En, weeks, "week", "weeks"))
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
 		case duration >= _DAY:
 			days := duration / _DAY
 			duration = duration % _DAY
-			result = append(result, pluralize.PluralizeSpecial(pluralize.En, days, "day", "days"))
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
 		case duration >= _HOUR:
 			hours := duration / _HOUR
 			duration = duration % _HOUR
-			result = append(result, pluralize.PluralizeSpecial(pluralize.En, hours, "hour", "hours"))
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
 		case duration >= _MINUTE:
 			minutes := duration / _MINUTE
 			duration = duration % _MINUTE
-			result = append(result, pluralize.PluralizeSpecial(pluralize.En, minutes, "minute", "minutes"))
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
 		case duration >= 1:
-			result = append(result, pluralize.PluralizeSpecial(pluralize.En, duration, "second", "seconds"))
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", duration, "second", "seconds"))
 			break MAINLOOP
 		case duration <= 0 && len(result) == 0:
 			return "< 1 second"

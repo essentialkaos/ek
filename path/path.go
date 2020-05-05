@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v11/env"
+	"pkg.re/essentialkaos/ek.v12/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -65,6 +65,31 @@ func Clean(path string) string {
 // Dir returns all but the last element of path, typically the path's directory
 func Dir(path string) string {
 	return PATH.Dir(path)
+}
+
+// DirN returns first N elements of path
+func DirN(path string, n int) string {
+	if len(path) <= 1 || n < 1 {
+		return path
+	}
+
+	if path[0] == '/' {
+		n++
+	}
+
+	var k int
+
+	for i, r := range path {
+		if r == '/' {
+			k++
+		}
+
+		if k == n {
+			return path[:i]
+		}
+	}
+
+	return path
 }
 
 // Ext returns the file name extension used by path

@@ -13,7 +13,7 @@ import (
 	"net"
 	"net/url"
 
-	"pkg.re/essentialkaos/ek.v11/knf"
+	"pkg.re/essentialkaos/ek.v12/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -10,7 +10,7 @@ package bash
 import (
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v11/usage"
+	"pkg.re/essentialkaos/ek.v12/usage"
 
 	. "pkg.re/check.v1"
 )
