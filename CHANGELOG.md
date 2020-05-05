@@ -2,15 +2,12 @@
 
 ### 12.0.0
 
+* `[path]` Added method `DirN` for reading N elements from path
 * `[pluralize]` Methods `Pluralize` and `PluralizeSpecial` now return only pluralized word (_incompatible changes_)
 * `[pluralize]` Added methods `P` and `PS` for pluralization with custom formatting
 * `[pluralize]` Added usage examples
 
 ---
-
-### 11.7.0
-
-* `[path]` Added method `DirN` for reading N elements from path
 
 ### 11.6.3
 
