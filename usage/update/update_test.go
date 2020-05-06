@@ -26,7 +26,17 @@ var _ = Suite(&UpdateSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *UpdateSuite) TestGitHubChecker(c *C) {
-	newVersion, releaseDate, hasUpdate := GitHubChecker("GitHubChecker", "0.9.9", "")
+	newVersion, releaseDate, hasUpdate := GitHubChecker("", "", "")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitHubChecker("GitHubChecker", "0.9.9", "")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitHubChecker("GitHubChecker", "0.9.9", "essentialkaos/unknown")
 
 	c.Assert(newVersion, Equals, "")
 	c.Assert(hasUpdate, Equals, false)
@@ -35,5 +45,23 @@ func (s *UpdateSuite) TestGitHubChecker(c *C) {
 
 	c.Assert(newVersion, Equals, "1.0.0")
 	c.Assert(releaseDate.Unix(), Equals, int64(1461710348))
+	c.Assert(hasUpdate, Equals, true)
+}
+
+func (s *UpdateSuite) TestUpdateChecker(c *C) {
+	newVersion, releaseDate, hasUpdate := UpdateChecker("", "", "")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = UpdateChecker("GitHubChecker", "0.9.9", "https://apps.kaos.st")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = UpdateChecker("GitHubChecker", "0.9.9", "https://apps.kaos.st/dummy-app")
+
+	c.Assert(newVersion, Equals, "1.2.3")
+	c.Assert(releaseDate.Unix(), Equals, int64(1578064700))
 	c.Assert(hasUpdate, Equals, true)
 }
