@@ -44,16 +44,20 @@ func ExamplePrettyNum() {
 	fmt.Printf("%d → %s\n", n2, PrettyNum(n2))
 	fmt.Printf("%.2f → %s\n", n3, PrettyNum(n3))
 
-	// Set order separator
+	// Set default order separator
 	OrderSeparator = " "
 
 	fmt.Printf("%.2f → %s\n", n3, PrettyNum(n3))
+
+	// Use custom order separator
+	fmt.Printf("%.2f → %s\n", n3, PrettyNum(n3, "|"))
 
 	// Output:
 	// 10 → 10
 	// 5000 → 5,000
 	// 6128750.26 → 6,128,750.26
 	// 6128750.26 → 6 128 750.26
+	// 6128750.26 → 6|128|750.26
 }
 
 func ExamplePrettyPerc() {
@@ -90,11 +94,15 @@ func ExamplePrettySize() {
 
 	fmt.Printf("%d → %s\n", s3, PrettySize(s3))
 
+	// Use custom order separator
+	fmt.Printf("%d → %s\n", s3, PrettySize(s3, "|"))
+
 	// Output:
 	// 193 → 193B
 	// 184713 → 180.4KB
 	// 46361936461 → 43.2GB
 	// 46361936461 → 43.2 GB
+	// 46361936461 → 43.2|GB
 }
 
 func ExampleParseSize() {

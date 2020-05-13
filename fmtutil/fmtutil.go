@@ -38,8 +38,14 @@ var SizeSeparator = ""
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
-func PrettyNum(i interface{}) string {
+func PrettyNum(i interface{}, separator ...string) string {
 	var str string
+
+	sep := OrderSeparator
+
+	if len(separator) > 0 {
+		sep = separator[0]
+	}
 
 	switch v := i.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -52,10 +58,10 @@ func PrettyNum(i interface{}) string {
 			return "0"
 		}
 
-		return formatPrettyFloat(str)
+		return formatPrettyFloat(str, sep)
 	}
 
-	return appendPrettySymbol(str)
+	return appendPrettySymbol(str, sep)
 }
 
 // PrettyNum formats float value to "pretty" percent form (e.g 12.3423 -> 12.3%)
@@ -70,8 +76,14 @@ func PrettyPerc(i float64) string {
 }
 
 // PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
-func PrettySize(i interface{}) string {
+func PrettySize(i interface{}, separator ...string) string {
 	var f float64
+
+	sep := SizeSeparator
+
+	if len(separator) > 0 {
+		sep = separator[0]
+	}
 
 	switch u := i.(type) {
 	case int:
@@ -93,20 +105,20 @@ func PrettySize(i interface{}) string {
 	}
 
 	if math.IsNaN(f) {
-		return "0" + SizeSeparator + "B"
+		return "0" + sep + "B"
 	}
 
 	switch {
 	case f >= _TERA:
-		return fmt.Sprintf("%g", Float(f/_TERA)) + SizeSeparator + "TB"
+		return fmt.Sprintf("%g", Float(f/_TERA)) + sep + "TB"
 	case f >= _GIGA:
-		return fmt.Sprintf("%g", Float(f/_GIGA)) + SizeSeparator + "GB"
+		return fmt.Sprintf("%g", Float(f/_GIGA)) + sep + "GB"
 	case f >= _MEGA:
-		return fmt.Sprintf("%g", Float(f/_MEGA)) + SizeSeparator + "MB"
+		return fmt.Sprintf("%g", Float(f/_MEGA)) + sep + "MB"
 	case f >= _KILO:
-		return fmt.Sprintf("%g", Float(f/_KILO)) + SizeSeparator + "KB"
+		return fmt.Sprintf("%g", Float(f/_KILO)) + sep + "KB"
 	default:
-		return fmt.Sprintf("%g", mathutil.Round(f, 0)) + SizeSeparator + "B"
+		return fmt.Sprintf("%g", mathutil.Round(f, 0)) + sep + "B"
 	}
 }
 
@@ -238,17 +250,17 @@ func CountDigits(i int) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func formatPrettyFloat(str string) string {
+func formatPrettyFloat(str, sep string) string {
 	flt := strings.TrimRight(strutil.ReadField(str, 1, false, "."), "0")
 
 	if flt == "" {
-		return appendPrettySymbol(strutil.ReadField(str, 0, false, "."))
+		return appendPrettySymbol(strutil.ReadField(str, 0, false, "."), sep)
 	}
 
-	return appendPrettySymbol(strutil.ReadField(str, 0, false, ".")) + "." + flt
+	return appendPrettySymbol(strutil.ReadField(str, 0, false, "."), sep) + "." + flt
 }
 
-func appendPrettySymbol(str string) string {
+func appendPrettySymbol(str, sep string) string {
 	l := len(str)
 
 	if l <= 3 {
@@ -262,7 +274,7 @@ func appendPrettySymbol(str string) string {
 		if i == 0 {
 			rs = str[i:i+3] + rs
 		} else {
-			rs = OrderSeparator + str[i:i+3] + rs
+			rs = sep + str[i:i+3] + rs
 		}
 	}
 

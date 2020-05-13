@@ -3,6 +3,7 @@
 ### 12.2.0
 
 * `[usage/update]` Increased dial and request timeouts to 3 seconds
+* `[fmtutil]` Added possibility to define custom separators in `PrettySize` and `PrettyNum` methods
 
 ### 12.1.0
 
