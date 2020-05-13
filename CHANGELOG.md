@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.2.0
+
+* `[usage/update]` Increased dial and request timeouts to 3 seconds
+
 ### 12.1.0
 
 * `[usage/update]` Added update checker for custom storages

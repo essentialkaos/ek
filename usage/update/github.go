@@ -45,8 +45,8 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine := req.Engine{}
 
-	engine.SetDialTimeout(1)
-	engine.SetRequestTimeout(1)
+	engine.SetDialTimeout(3)
+	engine.SetRequestTimeout(3)
 	engine.SetUserAgent(app, version, "go.ek")
 
 	response, err := engine.Get(req.Request{

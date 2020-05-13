@@ -44,8 +44,8 @@ func UpdateChecker(app, version, data string) (string, time.Time, bool) {
 func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	engine := req.Engine{}
 
-	engine.SetDialTimeout(1)
-	engine.SetRequestTimeout(1)
+	engine.SetDialTimeout(3)
+	engine.SetRequestTimeout(3)
 	engine.SetUserAgent(app, version, "go.ek")
 
 	response, err := engine.Get(req.Request{
