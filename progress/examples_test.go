@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package progress
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,24 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.2.0"
+func ExampleNew() {
+	pb := New(1000, "Downloading...")
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	pbs := DefaultSettings
+	pbs.RefreshRate = 50 * time.Millisecond
+	pbs.ShowSpeed = false
+	pbs.ShowRemaining = false
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	defer pb.Finish()
+
+	pb.Start()
+
+	for range time.NewTicker(time.Second).C {
+		pb.Add(1)
+	}
 }

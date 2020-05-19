@@ -24,6 +24,7 @@
 + path
 + pid
 + pluralize
++ progress
 + rand
 + req
 - signal
@@ -40,7 +41,7 @@
 + timeutil
 + tmp
 + usage
-! usage/update
++ usage/update
 + usage/completion/bash
 + usage/completion/fish
 + usage/completion/zsh

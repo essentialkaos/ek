@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.2.0
+
+* `[progress]` Added package for creating terminal progress bar
+* `[usage/update]` Increased dial and request timeouts to 3 seconds
+* `[fmtutil]` Added possibility to define custom separators in `PrettySize` and `PrettyNum` methods
+* `[passwd]` Increased code coverage (94.9% → 96.8%)
+* `[usage/update]` Increased code coverage (92.1% → 100%)
+* `[req]` Tests refactoring
+
 ### 12.1.0
 
 * `[usage/update]` Added update checker for custom storages
