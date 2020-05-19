@@ -24,6 +24,10 @@ type githubRelease struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var githubAPI = "https://api.github.com"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // GitHubChecker checks new releases on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" {
@@ -50,7 +54,7 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine.SetUserAgent(app, version, "go.ek")
 
 	response, err := engine.Get(req.Request{
-		URL:         "https://api.github.com/repos/" + repository + "/releases/latest",
+		URL:         githubAPI + "/repos/" + repository + "/releases/latest",
 		AutoDiscard: true,
 	})
 

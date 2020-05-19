@@ -5,6 +5,8 @@
 * `[progress]` Added package for creating terminal progress bar
 * `[usage/update]` Increased dial and request timeouts to 3 seconds
 * `[fmtutil]` Added possibility to define custom separators in `PrettySize` and `PrettyNum` methods
+* `[passwd]` Increased code coverage (94.9% → 96.8%)
+* `[usage/update]` Increased code coverage (92.1% → 100%)
 
 ### 12.1.0
 
@@ -15,7 +17,6 @@
 * `[path]` Added method `DirN` for reading N elements from path
 * `[pluralize]` Methods `Pluralize` and `PluralizeSpecial` now return only pluralized word (_incompatible changes_)
 * `[pluralize]` Added methods `P` and `PS` for pluralization with custom formatting
-* `[passwd]` Increased code coverage (94.9% → 96.8%)
 * `[pluralize]` Added usage examples
 
 ---
