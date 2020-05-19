@@ -5,7 +5,6 @@
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://travis-ci.com/essentialkaos/ek"><img src="https://travis-ci.com/essentialkaos/ek.svg?branch=master"></a>
-  <a href="https://coveralls.io/github/essentialkaos/ek"><img src="https://coveralls.io/repos/github/essentialkaos/ek/badge.svg" alt="Coverage Status" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
@@ -67,6 +66,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v12/path) - Package for working with paths (fully compatible with base path package)
 * [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v12/pid) - Package for working with PID files
 * [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v12/pluralize) - Package provides methods for pluralization
+* [`progress`](https://godoc.org/pkg.re/essentialkaos/ek.v12/progress) - Package provides methods and structs for creating terminal progress bar
 * [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v12/rand) - Package for generating random data
 * [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v12/req) - Package for working with HTTP request
 * [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v12/signal) - Package for handling signals

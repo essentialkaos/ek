@@ -24,6 +24,7 @@
 + path
 + pid
 + pluralize
++ progress
 + rand
 + req
 - signal
