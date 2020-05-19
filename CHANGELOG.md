@@ -15,6 +15,7 @@
 * `[path]` Added method `DirN` for reading N elements from path
 * `[pluralize]` Methods `Pluralize` and `PluralizeSpecial` now return only pluralized word (_incompatible changes_)
 * `[pluralize]` Added methods `P` and `PS` for pluralization with custom formatting
+* `[passwd]` Increased code coverage (94.9% → 96.8%)
 * `[pluralize]` Added usage examples
 
 ---

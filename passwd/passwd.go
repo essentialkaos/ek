@@ -64,12 +64,7 @@ func Encrypt(password, pepper string) (string, error) {
 		return "", err
 	}
 
-	block, err := aes.NewCipher([]byte(pepper))
-
-	if err != nil {
-		return "", err
-	}
-
+	block, _ := aes.NewCipher([]byte(pepper))
 	hpd := padData(hp)
 
 	ct := make([]byte, aes.BlockSize+len(hpd))
@@ -93,12 +88,7 @@ func Check(password, pepper, hash string) bool {
 		return false
 	}
 
-	block, err := aes.NewCipher([]byte(pepper))
-
-	if err != nil {
-		return false
-	}
-
+	block, _ := aes.NewCipher([]byte(pepper))
 	hpd, err := base64.URLEncoding.DecodeString(addBase64Padding(hash))
 
 	if err != nil {
