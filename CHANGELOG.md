@@ -2,6 +2,7 @@
 
 ### 12.2.0
 
+* `[progress]` Added package for creating terminal progress bar
 * `[usage/update]` Increased dial and request timeouts to 3 seconds
 * `[fmtutil]` Added possibility to define custom separators in `PrettySize` and `PrettyNum` methods
 

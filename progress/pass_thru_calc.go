@@ -46,6 +46,10 @@ func (p *PassThruCalc) Calculate(v int64) (float64, time.Duration) {
 		return 0, 0
 	}
 
+	if c-p.current <= 0 {
+		return 0, 99 * time.Minute
+	}
+
 	t := time.Since(p.lastUpdate)
 	n := (c - p.current) / t.Seconds()
 	r := time.Duration((p.total-c)/n) * time.Second
@@ -53,10 +57,6 @@ func (p *PassThruCalc) Calculate(v int64) (float64, time.Duration) {
 	if t >= p.winSize {
 		p.current = c
 		p.lastUpdate = time.Now()
-	}
-
-	if c <= p.total && n == 0 && r == 0 {
-		return n, 99 * time.Minute
 	}
 
 	return n, r
