@@ -7,6 +7,7 @@
 * `[fmtutil]` Added possibility to define custom separators in `PrettySize` and `PrettyNum` methods
 * `[passwd]` Increased code coverage (94.9% → 96.8%)
 * `[usage/update]` Increased code coverage (92.1% → 100%)
+* `[req]` Tests refactoring
 
 ### 12.1.0
 

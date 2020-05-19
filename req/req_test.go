@@ -14,14 +14,13 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 	"testing"
 	"time"
 
 	. "pkg.re/check.v1"
-
-	"pkg.re/essentialkaos/ek.v12/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -53,14 +52,13 @@ const (
 	_TEST_STRING_RESP     = "Test String Response"
 )
 
-const _DEFAULT_PORT = "30000"
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Test(t *testing.T) { TestingT(t) }
 
 type ReqSuite struct {
 	url      string
+	port     string
 	listener net.Listener
 }
 
@@ -77,13 +75,15 @@ var _ = Suite(&ReqSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ReqSuite) SetUpSuite(c *C) {
-	s.url = "http://127.0.0.1:" + _DEFAULT_PORT
+	s.port = "30000"
 
-	envVars := env.Get()
+	httpServerPort := os.Getenv("EK_TEST_PORT")
 
-	if envVars["EK_TEST_PORT"] != "" {
-		s.url = "http://127.0.0.1:" + envVars["EK_TEST_PORT"]
+	if httpServerPort != "" {
+		s.port = httpServerPort
 	}
+
+	s.url = "http://127.0.0.1:" + s.port
 
 	SetDialTimeout(60.0)
 	SetRequestTimeout(60.0)
@@ -584,14 +584,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	port := _DEFAULT_PORT
-	envVars := env.Get()
-
-	if envVars["EK_TEST_PORT"] != "" {
-		port = envVars["EK_TEST_PORT"]
-	}
-
-	listener, err := net.Listen("tcp", ":"+port)
+	listener, err := net.Listen("tcp", ":"+s.port)
 
 	if err != nil {
 		c.Fatal(err.Error())
