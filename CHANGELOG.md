@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.3.0
+
+* `[progress]` Calculate speed and remaining time using Exponentially Weighted Moving Average (EWMA)
+* `[progress]` Added pass thru writer
+
 ### 12.2.0
 
 * `[progress]` Added package for creating terminal progress bar
