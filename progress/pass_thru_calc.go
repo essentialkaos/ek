@@ -14,6 +14,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const _MAX_REMAINING = 5999 * time.Second
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // PassThruCalc is pass thru calculator struct
 type PassThruCalc struct {
 	total      float64
@@ -51,6 +55,10 @@ func (p *PassThruCalc) Calculate(v int64) (float64, time.Duration) {
 
 	if p.prev != 0 && p.speed > 0 {
 		p.remaining = time.Duration((p.total-c)/p.speed) * time.Second
+	}
+
+	if p.remaining > _MAX_REMAINING {
+		p.remaining = _MAX_REMAINING
 	}
 
 	p.prev = c
