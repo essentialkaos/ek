@@ -10,7 +10,6 @@ package update
 import (
 	"net"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
@@ -36,14 +35,7 @@ var _ = Suite(&UpdateSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *UpdateSuite) SetUpSuite(c *C) {
-	s.port = "30000"
-
-	httpServerPort := os.Getenv("EK_TEST_PORT")
-
-	if httpServerPort != "" {
-		s.port = httpServerPort
-	}
-
+	s.port = "30002"
 	s.url = "http://127.0.0.1:" + s.port
 
 	go runHTTPServer(s, c)

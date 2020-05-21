@@ -14,7 +14,6 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 	"sort"
 	"strings"
 	"testing"
@@ -75,14 +74,7 @@ var _ = Suite(&ReqSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ReqSuite) SetUpSuite(c *C) {
-	s.port = "30000"
-
-	httpServerPort := os.Getenv("EK_TEST_PORT")
-
-	if httpServerPort != "" {
-		s.port = httpServerPort
-	}
-
+	s.port = "30001"
 	s.url = "http://127.0.0.1:" + s.port
 
 	SetDialTimeout(60.0)
