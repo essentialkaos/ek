@@ -23,6 +23,10 @@ type DummyReader struct {
 	io.Reader
 }
 
+type DummyWriter struct {
+	io.Writer
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Test(t *testing.T) { TestingT(t) }
@@ -65,15 +69,20 @@ func (s *ProgressSuite) TestBar(c *C) {
 	c.Assert(pb.IsFinished(), Equals, false)
 	c.Assert(pb.IsStarted(), Equals, false)
 
-	r := &DummyReader{Reader: nil}
-	pb.PassThru(r)
-	c.Assert(pb.passThru, NotNil)
-	pr := pb.PassThru(r)
-	c.Assert(pb.passThru, NotNil)
+	pb.Reader(&DummyReader{Reader: nil})
+	c.Assert(pb.reader, NotNil)
+
+	pb.Writer(&DummyWriter{Writer: nil})
+	c.Assert(pb.writer, NotNil)
+
+	pr := pb.Reader(&DummyReader{Reader: nil})
+	pw := pb.Writer(&DummyWriter{Writer: nil})
 
 	pr.Read(nil)
-
 	c.Assert(pb.Current(), Equals, int64(202))
+
+	pw.Write(nil)
+	c.Assert(pb.Current(), Equals, int64(302))
 
 	pb.Finish() // should be skipped
 	pb.Start()
@@ -256,24 +265,24 @@ func (s *ProgressSuite) TestRemainingRender(c *C) {
 
 	vl, sz := pb.renderRemaining(8 * time.Second)
 
-	c.Assert(vl, Equals, "{c}0:08{!}")
-	c.Assert(sz, Equals, 4)
+	c.Assert(vl, Equals, "{c} 0:08{!}")
+	c.Assert(sz, Equals, 5)
 
 	vl, sz = pb.renderRemaining(148 * time.Second)
 
-	c.Assert(vl, Equals, "{c}2:28{!}")
-	c.Assert(sz, Equals, 4)
+	c.Assert(vl, Equals, "{c} 2:28{!}")
+	c.Assert(sz, Equals, 5)
 
 	pb.settings.RemainingColorTag = ""
 
 	vl, sz = pb.renderRemaining(148 * time.Second)
 
-	c.Assert(vl, Equals, "2:28")
-	c.Assert(sz, Equals, 4)
+	c.Assert(vl, Equals, " 2:28")
+	c.Assert(sz, Equals, 5)
 }
 
 func (s *ProgressSuite) TestPassThruCalc(c *C) {
-	ptc := NewPassThruCalc(1000, time.Millisecond)
+	ptc := NewPassThruCalc(1000, 0.5)
 
 	c.Assert(ptc, NotNil)
 
@@ -283,22 +292,17 @@ func (s *ProgressSuite) TestPassThruCalc(c *C) {
 
 	sp, dr := ptc.Calculate(1)
 
-	time.Sleep(3 * time.Millisecond)
+	time.Sleep(time.Second)
 
 	sp, dr = ptc.Calculate(2)
 
 	c.Assert(sp, Not(Equals), 0.0)
 	c.Assert(dr, Not(Equals), time.Duration(0))
 
-	sp, dr = ptc.Calculate(2)
+	sp2, dr2 := ptc.Calculate(2)
 
-	c.Assert(sp, Equals, 0.0)
-	c.Assert(dr, Equals, time.Duration(5940000000000))
-
-	sp, dr = ptc.Calculate(1000000)
-
-	c.Assert(sp, Equals, 0.0)
-	c.Assert(dr, Equals, time.Duration(0))
+	c.Assert(sp2, Equals, sp)
+	c.Assert(dr2, Equals, dr)
 }
 
 func (s *ProgressSuite) TestAux(c *C) {
@@ -358,6 +362,10 @@ func (s *ProgressSuite) TestAux(c *C) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (dr *DummyReader) Read(p []byte) (int, error) {
+func (r *DummyReader) Read(p []byte) (int, error) {
+	return 100, nil
+}
+
+func (w *DummyWriter) Write(p []byte) (int, error) {
 	return 100, nil
 }

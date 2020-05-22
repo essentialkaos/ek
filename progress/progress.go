@@ -49,9 +49,11 @@ type Bar struct {
 	buffer string
 
 	ticker       *time.Ticker
-	passThru     *passThru
 	passThruCalc *PassThruCalc
 	phCounter    int
+
+	reader *passThruReader
+	writer *passThruWriter
 
 	mu *sync.RWMutex
 }
@@ -82,8 +84,13 @@ type Settings struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type passThru struct {
+type passThruReader struct {
 	io.Reader
+	bar *Bar
+}
+
+type passThruWriter struct {
+	io.Writer
 	bar *Bar
 }
 
@@ -137,7 +144,7 @@ func (b *Bar) Start() {
 	b.finishChan = make(chan bool)
 
 	if b.total > 0 {
-		b.passThruCalc = NewPassThruCalc(b.total, 15*time.Second)
+		b.passThruCalc = NewPassThruCalc(b.total, 10.0)
 	}
 
 	go b.renderer()
@@ -181,7 +188,7 @@ func (b *Bar) SetTotal(v int64) {
 	b.mu.Lock()
 
 	if b.passThruCalc == nil {
-		b.passThruCalc = NewPassThruCalc(v, 15*time.Second)
+		b.passThruCalc = NewPassThruCalc(v, 10.0)
 	} else {
 		b.passThruCalc.SetTotal(v)
 	}
@@ -229,18 +236,32 @@ func (b *Bar) IsStarted() bool {
 	return b.started
 }
 
-// PassThru creates and returns pass thru proxy reader
-func (b *Bar) PassThru(r io.Reader) io.Reader {
-	if b.passThru != nil {
-		b.passThru.Reader = r
+// Reader creates and returns pass thru proxy reader
+func (b *Bar) Reader(r io.Reader) io.Reader {
+	if b.reader != nil {
+		b.reader.Reader = r
 	} else {
-		b.passThru = &passThru{
+		b.reader = &passThruReader{
 			Reader: r,
 			bar:    b,
 		}
 	}
 
-	return b.passThru
+	return b.reader
+}
+
+// Writer creates and returns pass thru proxy reader
+func (b *Bar) Writer(w io.Writer) io.Writer {
+	if b.writer != nil {
+		b.writer.Writer = w
+	} else {
+		b.writer = &passThruWriter{
+			Writer: w,
+			bar:    b,
+		}
+	}
+
+	return b.writer
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -456,7 +477,7 @@ func (b *Bar) renderRemaining(remaining time.Duration) (string, int) {
 		sec = d
 	}
 
-	result = fmt.Sprintf("%d:%02d", min, sec)
+	result = fmt.Sprintf("%2d:%02d", min, sec)
 
 	if fmtc.DisableColors || b.settings.RemainingColorTag == "" {
 		return result, len(result)
@@ -531,11 +552,22 @@ func (b *Bar) renderPlaceholder(size int) string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Read reads data and updates progress bar
-func (pt *passThru) Read(p []byte) (int, error) {
-	n, err := pt.Reader.Read(p)
+func (r *passThruReader) Read(p []byte) (int, error) {
+	n, err := r.Reader.Read(p)
 
 	if n > 0 {
-		pt.bar.Add(n)
+		r.bar.Add(n)
+	}
+
+	return n, err
+}
+
+// Write writes data and updates progress bar
+func (w *passThruWriter) Write(p []byte) (int, error) {
+	n, err := w.Writer.Write(p)
+
+	if n > 0 {
+		w.bar.Add(n)
 	}
 
 	return n, err

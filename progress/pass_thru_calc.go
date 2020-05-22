@@ -8,25 +8,33 @@ package progress
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const _MAX_REMAINING = 5999 * time.Second
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// PassThruCalc is pass thru calculator struct
 type PassThruCalc struct {
-	current    float64
 	total      float64
-	winSize    time.Duration
+	prev       float64
+	speed      float64
+	decay      float64
+	remaining  time.Duration
 	lastUpdate time.Time
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewPassThruCalc creates new pass thru calculator
-func NewPassThruCalc(total int64, winSize time.Duration) *PassThruCalc {
+func NewPassThruCalc(total int64, winSizeSec float64) *PassThruCalc {
 	return &PassThruCalc{
-		total:   float64(total),
-		winSize: winSize,
+		total: float64(total),
+		decay: 2 / (winSizeSec + 1),
 	}
 }
 
@@ -34,32 +42,29 @@ func NewPassThruCalc(total int64, winSize time.Duration) *PassThruCalc {
 
 // Calculate calculates number of objects per seconds and remaining time
 func (p *PassThruCalc) Calculate(v int64) (float64, time.Duration) {
-	if p.lastUpdate.IsZero() {
-		p.lastUpdate = time.Now()
-		p.current = float64(v)
-		return 0, 0
-	}
-
 	c := float64(v)
+	now := time.Now()
 
-	if c > p.total {
-		return 0, 0
+	if !p.lastUpdate.IsZero() && now.Sub(p.lastUpdate) < time.Second/2 {
+		return p.speed, p.remaining
 	}
 
-	if c-p.current <= 0 {
-		return 0, 99 * time.Minute
+	speed := math.Abs(c-p.prev) / time.Since(p.lastUpdate).Seconds()
+
+	p.speed = (speed * p.decay) + (p.speed * (1.0 - p.decay))
+
+	if p.prev != 0 && p.speed > 0 {
+		p.remaining = time.Duration((p.total-c)/p.speed) * time.Second
 	}
 
-	t := time.Since(p.lastUpdate)
-	n := (c - p.current) / t.Seconds()
-	r := time.Duration((p.total-c)/n) * time.Second
-
-	if t >= p.winSize {
-		p.current = c
-		p.lastUpdate = time.Now()
+	if p.remaining > _MAX_REMAINING {
+		p.remaining = _MAX_REMAINING
 	}
 
-	return n, r
+	p.prev = c
+	p.lastUpdate = now
+
+	return p.speed, p.remaining
 }
 
 // SetTotal sets total number of objects
