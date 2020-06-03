@@ -43,6 +43,25 @@ func (s *TimeUtilSuite) TestPretyDuration(c *C) {
 	c.Assert(PrettyDuration(time.Second/36698888), Equals, "27 ns")
 }
 
+func (s *TimeUtilSuite) TestShortDuration(c *C) {
+	c.Assert(ShortDuration(time.Duration(0)), Equals, "0:00")
+	c.Assert(ShortDuration(time.Duration(59000000000)), Equals, "0:59")
+	c.Assert(ShortDuration(60), Equals, "1:00")
+	c.Assert(ShortDuration(120), Equals, "2:00")
+	c.Assert(ShortDuration(2235), Equals, "37:15")
+	c.Assert(ShortDuration(1234567), Equals, "342:56:07")
+	c.Assert(ShortDuration(int16(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(int32(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(int64(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(uint16(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(uint32(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(uint64(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(uint(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(float32(1234)), Equals, "20:34")
+	c.Assert(ShortDuration(float64(1234)), Equals, "20:34")
+	c.Assert(ShortDuration("ABCD"), Equals, "")
+}
+
 func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
 	c.Assert(DurationToSeconds(time.Minute), Equals, int64(60))
 	c.Assert(DurationToSeconds(time.Hour), Equals, int64(3600))

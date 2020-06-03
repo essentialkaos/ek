@@ -30,9 +30,6 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// It's ok to have so nested blocks in this method
-// codebeat:disable[BLOCK_NESTING]
-
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
 	var duration int
@@ -40,7 +37,7 @@ func PrettyDuration(d interface{}) string {
 	switch u := d.(type) {
 	case time.Duration:
 		if u < time.Second {
-			return getShortDuration(u)
+			return getPrettyShortDuration(u)
 		}
 
 		duration = int(u.Seconds())
@@ -58,10 +55,42 @@ func PrettyDuration(d interface{}) string {
 		return "Wrong duration value"
 	}
 
-	return getLongDuration(duration)
+	return getPrettyLongDuration(duration)
 }
 
-// codebeat:enable[BLOCK_NESTING]
+// ShortDuration returns pretty short duration (e.g. 1:37)
+func ShortDuration(d interface{}) string {
+	var duration int64
+
+	switch u := d.(type) {
+	case time.Duration:
+		duration = int64(u.Seconds())
+	case int16:
+		duration = int64(u)
+	case int32:
+		duration = int64(u)
+	case uint16:
+		duration = int64(u)
+	case uint32:
+		duration = int64(u)
+	case uint64:
+		duration = int64(u)
+	case uint:
+		duration = int64(u)
+	case int:
+		duration = int64(u)
+	case float32:
+		duration = int64(u)
+	case float64:
+		duration = int64(u)
+	case int64:
+		duration = u
+	default:
+		return ""
+	}
+
+	return getShortDuration(duration)
+}
 
 // Format returns formatted date as a string
 //
@@ -442,7 +471,34 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
-func getLongDuration(d int) string {
+func getShortDuration(d int64) string {
+	if d == 0 {
+		return "0:00"
+	}
+
+	var h, m int64
+
+	if d >= 3600 {
+		h = d / 3600
+		d = d % 3600
+	}
+
+	if d >= 60 {
+		m = d / 60
+		d = d % 60
+	}
+
+	if h > 0 {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, d)
+	}
+
+	return fmt.Sprintf("%d:%02d", m, d)
+}
+
+// It's ok to have so nested blocks in this method
+// codebeat:disable[BLOCK_NESTING]
+
+func getPrettyLongDuration(d int) string {
 	var result []string
 
 MAINLOOP:
@@ -481,7 +537,9 @@ MAINLOOP:
 	return result[0]
 }
 
-func getShortDuration(d time.Duration) string {
+// codebeat:enable[BLOCK_NESTING]
+
+func getPrettyShortDuration(d time.Duration) string {
 	var duration float64
 
 	switch {
