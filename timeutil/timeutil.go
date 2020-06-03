@@ -35,10 +35,7 @@ const (
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
-	var (
-		result   []string
-		duration int
-	)
+	var duration int
 
 	switch u := d.(type) {
 	case time.Duration:
@@ -61,40 +58,7 @@ func PrettyDuration(d interface{}) string {
 		return "Wrong duration value"
 	}
 
-MAINLOOP:
-	for i := 0; i < 5; i++ {
-		switch {
-		case duration >= _WEEK:
-			weeks := duration / _WEEK
-			duration = duration % _WEEK
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
-		case duration >= _DAY:
-			days := duration / _DAY
-			duration = duration % _DAY
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
-		case duration >= _HOUR:
-			hours := duration / _HOUR
-			duration = duration % _HOUR
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
-		case duration >= _MINUTE:
-			minutes := duration / _MINUTE
-			duration = duration % _MINUTE
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
-		case duration >= 1:
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", duration, "second", "seconds"))
-			break MAINLOOP
-		case duration <= 0 && len(result) == 0:
-			return "< 1 second"
-		}
-	}
-
-	resultLen := len(result)
-
-	if resultLen > 1 {
-		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
-	}
-
-	return result[0]
+	return getLongDuration(duration)
 }
 
 // codebeat:enable[BLOCK_NESTING]
@@ -476,6 +440,45 @@ func getTimezone(d time.Time, separator bool) string {
 
 		return fmt.Sprintf("+%02d%02d", hours, minutes)
 	}
+}
+
+func getLongDuration(d int) string {
+	var result []string
+
+MAINLOOP:
+	for i := 0; i < 5; i++ {
+		switch {
+		case d >= _WEEK:
+			weeks := d / _WEEK
+			d = d % _WEEK
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
+		case d >= _DAY:
+			days := d / _DAY
+			d = d % _DAY
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
+		case d >= _HOUR:
+			hours := d / _HOUR
+			d = d % _HOUR
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
+		case d >= _MINUTE:
+			minutes := d / _MINUTE
+			d = d % _MINUTE
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
+		case d >= 1:
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", d, "second", "seconds"))
+			break MAINLOOP
+		case d <= 0 && len(result) == 0:
+			return "< 1 second"
+		}
+	}
+
+	resultLen := len(result)
+
+	if resultLen > 1 {
+		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
+	}
+
+	return result[0]
 }
 
 func getShortDuration(d time.Duration) string {
