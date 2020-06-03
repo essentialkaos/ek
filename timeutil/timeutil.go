@@ -22,17 +22,17 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_MINUTE = 60
-	_HOUR   = 3600
-	_DAY    = 86400
-	_WEEK   = 604800
+	_MINUTE int64 = 60
+	_HOUR         = 3600
+	_DAY          = 86400
+	_WEEK         = 604800
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
-	var duration int
+	var duration int64
 
 	switch u := d.(type) {
 	case time.Duration:
@@ -40,19 +40,29 @@ func PrettyDuration(d interface{}) string {
 			return getPrettyShortDuration(u)
 		}
 
-		duration = int(u.Seconds())
-	case int8:
-		duration = int(u)
-	case int16:
-		duration = int(u)
-	case int32:
-		duration = int(u)
-	case int64:
-		duration = int(u)
+		duration = int64(u.Seconds())
 	case int:
+		duration = int64(u)
+	case int16:
+		duration = int64(u)
+	case int32:
+		duration = int64(u)
+	case uint:
+		duration = int64(u)
+	case uint16:
+		duration = int64(u)
+	case uint32:
+		duration = int64(u)
+	case uint64:
+		duration = int64(u)
+	case float32:
+		duration = int64(u)
+	case float64:
+		duration = int64(u)
+	case int64:
 		duration = u
 	default:
-		return "Wrong duration value"
+		return ""
 	}
 
 	return getPrettyLongDuration(duration)
@@ -65,19 +75,19 @@ func ShortDuration(d interface{}) string {
 	switch u := d.(type) {
 	case time.Duration:
 		duration = int64(u.Seconds())
+	case int:
+		duration = int64(u)
 	case int16:
 		duration = int64(u)
 	case int32:
+		duration = int64(u)
+	case uint:
 		duration = int64(u)
 	case uint16:
 		duration = int64(u)
 	case uint32:
 		duration = int64(u)
 	case uint64:
-		duration = int64(u)
-	case uint:
-		duration = int64(u)
-	case int:
 		duration = int64(u)
 	case float32:
 		duration = int64(u)
@@ -498,7 +508,7 @@ func getShortDuration(d int64) string {
 // It's ok to have so nested blocks in this method
 // codebeat:disable[BLOCK_NESTING]
 
-func getPrettyLongDuration(d int) string {
+func getPrettyLongDuration(d int64) string {
 	var result []string
 
 MAINLOOP:
