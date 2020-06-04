@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.4.0
+
+* `[timeutil]` Added method `ShortDuration` for duration formatting
+* `[timeutil]` Code refactoring
+
 ### 12.3.0
 
 * `[progress]` Calculate speed and remaining time using Exponentially Weighted Moving Average (EWMA)

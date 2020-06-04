@@ -22,82 +22,85 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_MINUTE = 60
-	_HOUR   = 3600
-	_DAY    = 86400
-	_WEEK   = 604800
+	_MINUTE int64 = 60
+	_HOUR         = 3600
+	_DAY          = 86400
+	_WEEK         = 604800
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// It's ok to have so nested blocks in this method
-// codebeat:disable[BLOCK_NESTING]
-
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
-	var (
-		result   []string
-		duration int
-	)
+	var duration int64
 
 	switch u := d.(type) {
 	case time.Duration:
 		if u < time.Second {
-			return getShortDuration(u)
+			return getPrettyShortDuration(u)
 		}
 
-		duration = int(u.Seconds())
-	case int8:
-		duration = int(u)
-	case int16:
-		duration = int(u)
-	case int32:
-		duration = int(u)
-	case int64:
-		duration = int(u)
+		duration = int64(u.Seconds())
 	case int:
+		duration = int64(u)
+	case int16:
+		duration = int64(u)
+	case int32:
+		duration = int64(u)
+	case uint:
+		duration = int64(u)
+	case uint16:
+		duration = int64(u)
+	case uint32:
+		duration = int64(u)
+	case uint64:
+		duration = int64(u)
+	case float32:
+		duration = int64(u)
+	case float64:
+		duration = int64(u)
+	case int64:
 		duration = u
 	default:
-		return "Wrong duration value"
+		return ""
 	}
 
-MAINLOOP:
-	for i := 0; i < 5; i++ {
-		switch {
-		case duration >= _WEEK:
-			weeks := duration / _WEEK
-			duration = duration % _WEEK
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
-		case duration >= _DAY:
-			days := duration / _DAY
-			duration = duration % _DAY
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
-		case duration >= _HOUR:
-			hours := duration / _HOUR
-			duration = duration % _HOUR
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
-		case duration >= _MINUTE:
-			minutes := duration / _MINUTE
-			duration = duration % _MINUTE
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
-		case duration >= 1:
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", duration, "second", "seconds"))
-			break MAINLOOP
-		case duration <= 0 && len(result) == 0:
-			return "< 1 second"
-		}
-	}
-
-	resultLen := len(result)
-
-	if resultLen > 1 {
-		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
-	}
-
-	return result[0]
+	return getPrettyLongDuration(duration)
 }
 
-// codebeat:enable[BLOCK_NESTING]
+// ShortDuration returns pretty short duration (e.g. 1:37)
+func ShortDuration(d interface{}) string {
+	var duration int64
+
+	switch u := d.(type) {
+	case time.Duration:
+		duration = int64(u.Seconds())
+	case int:
+		duration = int64(u)
+	case int16:
+		duration = int64(u)
+	case int32:
+		duration = int64(u)
+	case uint:
+		duration = int64(u)
+	case uint16:
+		duration = int64(u)
+	case uint32:
+		duration = int64(u)
+	case uint64:
+		duration = int64(u)
+	case float32:
+		duration = int64(u)
+	case float64:
+		duration = int64(u)
+	case int64:
+		duration = u
+	default:
+		return ""
+	}
+
+	return getShortDuration(duration)
+}
 
 // Format returns formatted date as a string
 //
@@ -478,7 +481,75 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
-func getShortDuration(d time.Duration) string {
+func getShortDuration(d int64) string {
+	if d == 0 {
+		return "0:00"
+	}
+
+	var h, m int64
+
+	if d >= 3600 {
+		h = d / 3600
+		d = d % 3600
+	}
+
+	if d >= 60 {
+		m = d / 60
+		d = d % 60
+	}
+
+	if h > 0 {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, d)
+	}
+
+	return fmt.Sprintf("%d:%02d", m, d)
+}
+
+// It's ok to have so nested blocks in this method
+// codebeat:disable[BLOCK_NESTING]
+
+func getPrettyLongDuration(d int64) string {
+	var result []string
+
+MAINLOOP:
+	for i := 0; i < 5; i++ {
+		switch {
+		case d >= _WEEK:
+			weeks := d / _WEEK
+			d = d % _WEEK
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
+		case d >= _DAY:
+			days := d / _DAY
+			d = d % _DAY
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
+		case d >= _HOUR:
+			hours := d / _HOUR
+			d = d % _HOUR
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
+		case d >= _MINUTE:
+			minutes := d / _MINUTE
+			d = d % _MINUTE
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
+		case d >= 1:
+			result = append(result, pluralize.PS(pluralize.En, "%d %s", d, "second", "seconds"))
+			break MAINLOOP
+		case d <= 0 && len(result) == 0:
+			return "< 1 second"
+		}
+	}
+
+	resultLen := len(result)
+
+	if resultLen > 1 {
+		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
+	}
+
+	return result[0]
+}
+
+// codebeat:enable[BLOCK_NESTING]
+
+func getPrettyShortDuration(d time.Duration) string {
 	var duration float64
 
 	switch {
