@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.5.0
+
+* `[req]` Added method `Bytes()` for reading response body as byte slice
+* `[env]` Fixed tests
+
 ### 12.4.0
 
 * `[timeutil]` Added method `ShortDuration` for duration formatting
