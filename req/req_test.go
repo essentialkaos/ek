@@ -360,6 +360,16 @@ func (s *ReqSuite) TestStringResp(c *C) {
 	c.Assert(resp.String(), Equals, _TEST_STRING_RESP)
 }
 
+func (s *ReqSuite) TestBytesResp(c *C) {
+	resp, err := Request{
+		URL: s.url + _URL_STRING_RESP,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+	c.Assert(resp.Bytes(), DeepEquals, []byte(_TEST_STRING_RESP))
+}
+
 func (s *ReqSuite) TestJSONResp(c *C) {
 	resp, err := Request{
 		URL: s.url + _URL_JSON_RESP,

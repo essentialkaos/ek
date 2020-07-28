@@ -416,11 +416,16 @@ func (r *Response) JSON(v interface{}) error {
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
-// String reads response body as string
-func (r *Response) String() string {
+// Bytes reads response body as byte slice
+func (r *Response) Bytes() []byte {
 	defer r.Body.Close()
 	result, _ := ioutil.ReadAll(r.Body)
-	return string(result)
+	return result
+}
+
+// String reads response body as string
+func (r *Response) String() string {
+	return string(r.Bytes())
 }
 
 // Error shows error message
