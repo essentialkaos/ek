@@ -1,12 +1,12 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
 
 <p align="center">
-  <a href="https://godoc.org/pkg.re/essentialkaos/ek.v12"><img src="https://godoc.org/pkg.re/essentialkaos/ek.v12?status.svg"></a>
-  <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek"></a>
+  <a href="https://pkg.go.dev/github.com/essentialkaos/ek"><img src="https://pkg.go.dev/badge/essentialkaos/ek" alt="PkgGoDev" /></a>
+  <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://travis-ci.com/essentialkaos/ek"><img src="https://travis-ci.com/essentialkaos/ek.svg?branch=master" /></a>
   <a href="https://github.com/essentialkaos/ek/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/ek/workflows/CodeQL/badge.svg" /></a>
-  <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
+  <a href="#license"><img src="https://gh.kaos.st/apache2.svg" /></a>
 </p>
 
 <p align="center"><a href="#platform-support">Platform support</a> • <a href="#installation">Installation</a> • <a href="#sub-packages">Sub-packages</a> • <a href="#projects-with-ek">Projects with EK</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
