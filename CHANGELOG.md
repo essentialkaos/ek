@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.5.1
+
+* License changed from EKOL to Apache-2.0
+
 ### 12.5.0
 
 * `[req]` Added method `Bytes()` for reading response body as byte slice
