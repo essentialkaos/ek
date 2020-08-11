@@ -19,7 +19,7 @@ func byteSliceToString(s [65]int8) string {
 			break
 		}
 
-		result += string(r)
+		result += string(rune(r))
 	}
 
 	return result
