@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.5.2
+
+* `[system]` Fixed compatibility with Go ≥ 1.15
+
 ### 12.5.1
 
 * License changed from EKOL to Apache-2.0
