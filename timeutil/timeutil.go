@@ -171,9 +171,14 @@ func Format(d time.Time, f string) string {
 	return output.String()
 }
 
-// DurationToSeconds converts duration to seconds
-func DurationToSeconds(d time.Duration) int64 {
-	return int64(d / 1000000000)
+// DurationToSeconds converts time.Duration to float64
+func DurationToSeconds(d time.Duration) float64 {
+	return float64(d) / 1000000000.0
+}
+
+// SecondsToDuration converts float64 to time.Duration
+func SecondsToDuration(d float64) time.Duration {
+	return time.Duration(1000000000.0 * d)
 }
 
 // ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
