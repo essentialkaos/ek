@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.6.0
+
+* `[timeutil]` Added method `SecondsToDuration` for convertation `float64` to `time.Duration`
+* `[timeutil]` `DurationToSeconds` now returns the result as a float64 number
+* `[hash]` Code refactoring
+
 ### 12.5.2
 
 * `[system]` Fixed compatibility with Go ≥ 1.15

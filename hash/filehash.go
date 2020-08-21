@@ -19,7 +19,7 @@ import (
 
 // FileHash generates an SHA-256 hash for a given file
 func FileHash(file string) string {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0644)
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
 
 	if err != nil {
 		return ""
