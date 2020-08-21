@@ -71,8 +71,13 @@ func (s *TimeUtilSuite) TestShortDuration(c *C) {
 }
 
 func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
-	c.Assert(DurationToSeconds(time.Minute), Equals, int64(60))
-	c.Assert(DurationToSeconds(time.Hour), Equals, int64(3600))
+	c.Assert(SecondsToDuration(1), Equals, time.Second)
+	c.Assert(SecondsToDuration(1.5), Equals, 1500*time.Millisecond)
+	c.Assert(SecondsToDuration(3600), Equals, time.Hour)
+}
+
+func (s *TimeUtilSuite) TestSecondsToDuration(c *C) {
+	c.Assert(DurationToSeconds(time.Second/4), Equals, 0.25)
 }
 
 func (s *TimeUtilSuite) TestFormat(c *C) {

@@ -171,12 +171,12 @@ func Format(d time.Time, f string) string {
 	return output.String()
 }
 
-// DurationToSeconds converts duration to seconds
+// DurationToSeconds converts time.Duration to float64
 func DurationToSeconds(d time.Duration) float64 {
-	return float64(d / 1000000000)
+	return float64(d) / 1000000000.0
 }
 
-// DurationToSeconds converts seconds to duration
+// SecondsToDuration converts float64 to time.Duration
 func SecondsToDuration(d float64) time.Duration {
 	return time.Duration(1000000000.0 * d)
 }
