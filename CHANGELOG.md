@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.6.1
+
+* `[timeutil]` Added more usage examples
+
 ### 12.6.0
 
 * `[timeutil]` Added method `SecondsToDuration` for convertation `float64` to `time.Duration`

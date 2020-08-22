@@ -44,9 +44,59 @@ func ExampleFormat() {
 	// Tuesday 15/Jun/2010 15:30:45.000001234
 }
 
-func ExampleDurationToSeconds() {
-	fmt.Println(DurationToSeconds(time.Minute))
+func ExampleShortDuration() {
+	fmt.Println(ShortDuration(time.Second * 85))
 
 	// Output:
-	// 60
+	// 1:25
+}
+
+func ExampleDurationToSeconds() {
+	fmt.Println(DurationToSeconds(2500 * time.Millisecond))
+
+	// Output:
+	// 2.5
+}
+
+func ExampleSecondsToDuration() {
+	fmt.Println(SecondsToDuration(3600))
+
+	// Output:
+	// 1h0m0s
+}
+
+func ExampleDate() {
+	StartDate = 1577836800
+
+	t := int64(1583020800)
+	d := TinyDate(t)
+
+	fmt.Println(t)
+	fmt.Println(d)
+
+	// Output:
+	// 1583020800
+	// 5184000
+}
+
+func ExampleDate_Unix() {
+	StartDate = 1577836800
+
+	d := TinyDate(1583020800)
+
+	fmt.Println(d.Unix())
+
+	// Output:
+	// 1583020800
+}
+
+func ExampleDate_Time() {
+	StartDate = 1577836800
+
+	d := TinyDate(1583020800)
+
+	fmt.Println(d.Time().In(time.UTC))
+
+	// Output:
+	// 2020-03-01 00:00:00 +0000 UTC
 }
