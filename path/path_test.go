@@ -8,7 +8,7 @@ package path
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"pkg.re/essentialkaos/ek.v12/env"
+	"os"
 	"testing"
 
 	. "pkg.re/check.v1"
@@ -56,7 +56,7 @@ func (s *PathUtilSuite) TestDirN(c *C) {
 }
 
 func (s *PathUtilSuite) TestEvalHome(c *C) {
-	homeDir := env.Get()["HOME"]
+	homeDir := os.Getenv("HOME")
 
 	c.Assert(Clean("~/path"), Equals, homeDir+"/path")
 	c.Assert(Clean("/path"), Equals, "/path")

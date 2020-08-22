@@ -13,6 +13,62 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExamplePath() {
+	fmt.Println(Base("/home/user/project"))
+
+	// Output:
+	// project
+}
+
+func ExampleClean() {
+	fmt.Println(Clean("/project//abc"))
+
+	// Output:
+	// /project/abc
+}
+
+func ExampleDir() {
+	fmt.Println(Dir("/home/user/project"))
+
+	// Output:
+	// /home/user
+}
+
+func ExampleExt() {
+	fmt.Println(Ext("/home/user/file.zip"))
+
+	// Output:
+	// .zip
+}
+
+func ExampleIsAbs() {
+	fmt.Println(IsAbs("/dev/null"))
+
+	// Output:
+	// true
+}
+
+func ExampleJoin() {
+	fmt.Println(Join("home", "user", "project"))
+
+	// Output:
+	// home/user/project
+}
+
+func ExampleMatch() {
+	fmt.Println(Match("/home/*", "/home/user"))
+
+	// Output:
+	// true <nil>
+}
+
+func ExampleSplit() {
+	fmt.Println(Split("/home/user/file.zip"))
+
+	// Output:
+	// /home/user/ file.zip
+}
+
 func ExampleIsSafe() {
 	path1 := "/home/user/project"
 	path2 := "/usr/sbin/myapp"

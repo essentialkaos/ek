@@ -12,11 +12,10 @@ package path
 
 import (
 	"errors"
+	"os"
 	PATH "path"
 	"path/filepath"
 	"strings"
-
-	"pkg.re/essentialkaos/ek.v12/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -160,7 +159,7 @@ func evalHome(path string) string {
 		return path
 	}
 
-	return env.Get()["HOME"] + path[1:]
+	return os.Getenv("HOME") + path[1:]
 }
 
 func contains(path, subpath string) bool {
