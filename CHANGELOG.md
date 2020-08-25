@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.7.0
+
+* `knf/validators/regexp` Added new KNF validator with regular expression support
+
 ### 12.6.1
 
 * `[path]` Code refactoring
