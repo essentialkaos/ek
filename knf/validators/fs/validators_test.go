@@ -172,6 +172,27 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	c.Assert(errs, HasLen, 1)
 }
 
+func (s *ValidatorSuite) TestMatchPattern(c *C) {
+	configFile := createConfig(c, "/etc/passwd")
+
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
+
+	errs := knf.Validate([]*knf.Validator{
+		{"test:test0", MatchPattern, "/etc/*"},
+		{"test:test1", MatchPattern, "/etc/*"},
+	})
+
+	c.Assert(errs, HasLen, 0)
+
+	errs = knf.Validate([]*knf.Validator{
+		{"test:test1", MatchPattern, "/var/*"},
+		{"test:test1", MatchPattern, "[]a"},
+	})
+
+	c.Assert(errs, HasLen, 2)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func createConfig(c *C, data string) string {

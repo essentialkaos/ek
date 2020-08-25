@@ -2,7 +2,8 @@
 
 ### 12.7.0
 
-* `knf/validators/regexp` Added new KNF validator with regular expression support
+* `[knf/validators/regexp]` Added new KNF validator for checking regular expression pattern matching
+* `[knf/validators/fs]` Added new KNF validator for checking shell pattern matching
 
 ### 12.6.1
 
