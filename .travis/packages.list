@@ -16,6 +16,11 @@
 ! initsystem
 + jsonutil
 + knf
++ knf/validators
++ knf/validators/fs
++ knf/validators/network
++ knf/validators/regexp
++ knf/validators/system
 + log
 + mathutil
 - netutil
