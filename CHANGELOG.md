@@ -4,6 +4,14 @@
 
 * `[knf/validators/regexp]` Added new KNF validator for checking regular expression pattern matching
 * `[knf/validators/fs]` Added new KNF validator for checking shell pattern matching
+* `[fsutil]` Fixed bug with checking empty dirs on osx
+* `[initsystem]` Disabled tests on osx
+* `[knf/validators/fs]` Fixed tests on osx
+* `[knf/validators/system]` Fixed compatibility with osx
+* `[log]` Fixed tests on OSX
+* `[system]` Fixed checking user or group existence on OSX
+* `[system]` Fixed group lookup on osx
+* `[system]` Improved user info fetching on OSX
 
 ### 12.6.1
 

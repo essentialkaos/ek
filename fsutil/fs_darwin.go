@@ -65,5 +65,5 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func isEmptyDirent(n int) bool {
-	return n == 0x40
+	return n <= 0x40
 }
