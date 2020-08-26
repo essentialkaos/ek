@@ -49,6 +49,19 @@ func getUserInfo(nameOrID string) (*User, error) {
 	return parseGetentPasswdOutput(string(data))
 }
 
+// getGroupInfo returns group info by name or id
+func getGroupInfo(nameOrID string) (*Group, error) {
+	cmd := exec.Command("getent", "group", nameOrID)
+
+	data, err := cmd.Output()
+
+	if err != nil {
+		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
+	}
+
+	return parseGetentGroupOutput(string(data))
+}
+
 // parseGetentGroupOutput parse 'getent passwd' command output
 func parseGetentPasswdOutput(data string) (*User, error) {
 	data = strings.TrimRight(data, "\r\n")
@@ -76,4 +89,22 @@ func parseGetentPasswdOutput(data string) (*User, error) {
 		RealUID:  uid,
 		RealGID:  gid,
 	}, nil
+}
+
+// parseGetentGroupOutput parse 'getent group' command output
+func parseGetentGroupOutput(data string) (*Group, error) {
+	name := strutil.ReadField(data, 0, false, ":")
+	id := strutil.ReadField(data, 2, false, ":")
+
+	if name == "" || id == "" {
+		return nil, ErrCantParseGetentOutput
+	}
+
+	gid, err := strconv.Atoi(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Group{name, gid}, nil
 }

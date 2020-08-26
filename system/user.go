@@ -11,7 +11,6 @@ package system
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"sort"
@@ -322,19 +321,6 @@ func getRealUserFromEnv() (string, int, int) {
 	return user, uid, gid
 }
 
-// getGroupInfo returns group info by name or id
-func getGroupInfo(nameOrID string) (*Group, error) {
-	cmd := exec.Command("getent", "group", nameOrID)
-
-	data, err := cmd.Output()
-
-	if err != nil {
-		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
-	}
-
-	return parseGetentGroupOutput(string(data))
-}
-
 // getOwner returns file or directory owner UID
 func getOwner(path string) (int, error) {
 	if path == "" {
@@ -482,22 +468,4 @@ func parseGroupInfo(data string) (*Group, error) {
 	}
 
 	return &Group{GID: gid, Name: name[:len(name)-1]}, nil
-}
-
-// parseGetentGroupOutput parse 'getent group' command output
-func parseGetentGroupOutput(data string) (*Group, error) {
-	name := strutil.ReadField(data, 0, false, ":")
-	id := strutil.ReadField(data, 2, false, ":")
-
-	if name == "" || id == "" {
-		return nil, ErrCantParseGetentOutput
-	}
-
-	gid, err := strconv.Atoi(id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &Group{name, gid}, nil
 }

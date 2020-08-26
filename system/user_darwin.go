@@ -35,20 +35,20 @@ func IsGroupExist(name string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getUserInfo tries to find user info by name or UID
-func getUserInfo(nameOrID string) (*User, error) {
+// getUserInfo tries to find user info by name
+func getUserInfo(name string) (*User, error) {
 	cmd := exec.Command(
-		"dscl", ".", "-read", "/Users/"+nameOrID,
+		"dscl", ".", "-read", "/Users/"+name,
 		"UniqueID", "PrimaryGroupID", "NFSHomeDirectory", "UserShell",
 	)
 
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
-		return nil, fmt.Errorf("User with name %s does not exist", nameOrID)
+		return nil, fmt.Errorf("User with name %s does not exist", name)
 	}
 
-	user := &User{Name: nameOrID, RealName: nameOrID}
+	user := &User{Name: name, RealName: name}
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
 
 	for scanner.Scan() {
@@ -68,10 +68,36 @@ func getUserInfo(nameOrID string) (*User, error) {
 		case "UserShell":
 			user.Shell = strings.TrimSpace(strutil.ReadField(line, 1, false, ":"))
 		}
+
+		if err != nil {
+			return nil, fmt.Errorf("Can't parse field %s value: %v", field, err)
+		}
 	}
 
 	user.RealUID = user.UID
 	user.RealGID = user.GID
 
 	return user, nil
+}
+
+// getGroupInfo returns group info by name
+func getGroupInfo(name string) (*Group, error) {
+	cmd := exec.Command("dscl", ".", "-read", "/Groups/"+name, "PrimaryGroupID")
+
+	out, err := cmd.Output()
+
+	if err != nil || len(out) == 0 {
+		return nil, fmt.Errorf("Group with name %s does not exist", name)
+	}
+
+	group := &Group{Name: name}
+	data := string(out)
+
+	group.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(data, 1, false, ":")))
+
+	if err != nil {
+		return nil, fmt.Errorf("Can't parse PrimaryGroupID field value: %v", err)
+	}
+
+	return group, nil
 }
