@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"testing"
 
 	"pkg.re/essentialkaos/ek.v12/knf"
@@ -115,10 +116,19 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
-		{"test:test0", OwnerGroup, "root"},
-		{"test:test1", OwnerGroup, "root"},
-	})
+	var errs []error
+
+	if runtime.GOOS == "darwin" {
+		errs = knf.Validate([]*knf.Validator{
+			{"test:test0", OwnerGroup, "wheel"},
+			{"test:test1", OwnerGroup, "wheel"},
+		})
+	} else {
+		errs = knf.Validate([]*knf.Validator{
+			{"test:test0", OwnerGroup, "root"},
+			{"test:test1", OwnerGroup, "root"},
+		})
+	}
 
 	c.Assert(errs, HasLen, 0)
 
