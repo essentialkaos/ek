@@ -111,7 +111,6 @@ func (ls *LogSuite) TestErrors(c *C) {
 	_, err = New("/_not_exist_", 0644)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "open /_not_exist_: permission denied")
 
 	err = Reopen()
 

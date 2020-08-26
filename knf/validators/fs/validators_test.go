@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"testing"
 
 	"pkg.re/essentialkaos/ek.v12/knf"
@@ -115,10 +116,19 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
-		{"test:test0", OwnerGroup, "root"},
-		{"test:test1", OwnerGroup, "root"},
-	})
+	var errs []error
+
+	if runtime.GOOS == "darwin" {
+		errs = knf.Validate([]*knf.Validator{
+			{"test:test0", OwnerGroup, "wheel"},
+			{"test:test1", OwnerGroup, "wheel"},
+		})
+	} else {
+		errs = knf.Validate([]*knf.Validator{
+			{"test:test0", OwnerGroup, "root"},
+			{"test:test1", OwnerGroup, "root"},
+		})
+	}
 
 	c.Assert(errs, HasLen, 0)
 
@@ -170,6 +180,27 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+}
+
+func (s *ValidatorSuite) TestMatchPattern(c *C) {
+	configFile := createConfig(c, "/etc/passwd")
+
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
+
+	errs := knf.Validate([]*knf.Validator{
+		{"test:test0", MatchPattern, "/etc/*"},
+		{"test:test1", MatchPattern, "/etc/*"},
+	})
+
+	c.Assert(errs, HasLen, 0)
+
+	errs = knf.Validate([]*knf.Validator{
+		{"test:test1", MatchPattern, "/var/*"},
+		{"test:test1", MatchPattern, "[]a"},
+	})
+
+	c.Assert(errs, HasLen, 2)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

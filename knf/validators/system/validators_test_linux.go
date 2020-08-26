@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,29 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"pkg.re/essentialkaos/ek.v12/knf"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.7.0"
+func (s *ValidatorSuite) TestInterfaceValidator(c *C) {
+	configFile := createConfig(c, _CONFIG_DATA)
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	errs := knf.Validate([]*knf.Validator{
+		{"interface:test0", Interface, nil},
+		{"interface:test1", Interface, nil},
+	})
+
+	c.Assert(errs, HasLen, 0)
+
+	errs = knf.Validate([]*knf.Validator{
+		{"interface:test2", Interface, nil},
+	})
+
+	c.Assert(errs, HasLen, 1)
 }

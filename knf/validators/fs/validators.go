@@ -14,6 +14,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v12/fsutil"
 	"pkg.re/essentialkaos/ek.v12/knf"
+	"pkg.re/essentialkaos/ek.v12/path"
 	"pkg.re/essentialkaos/ek.v12/system"
 )
 
@@ -35,6 +36,10 @@ var (
 	// FileMode returns error if config property contains path to object with other
 	// file mode
 	FileMode = validateFileMode
+
+	// MatchPattern returns error if config property contains path which doesn't match
+	// given shell pattern
+	MatchPattern = validateMatchPattern
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -145,6 +150,27 @@ func validateFileMode(config *knf.Config, prop string, value interface{}) error 
 
 	if perms != targetPerms {
 		return fmt.Errorf("%s has different mode (%d != %d)", target, targetPerms, perms)
+	}
+
+	return nil
+}
+
+func validateMatchPattern(config *knf.Config, prop string, value interface{}) error {
+	pattern := value.(string)
+	confPath := config.GetS(prop)
+
+	if pattern == "" || confPath == "" {
+		return nil
+	}
+
+	isMatch, err := path.Match(pattern, confPath)
+
+	if err != nil {
+		fmt.Errorf("Can't parse shell pattern: %v", err)
+	}
+
+	if !isMatch {
+		return fmt.Errorf("Property %s must match shell pattern %s", prop, pattern)
 	}
 
 	return nil

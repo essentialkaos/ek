@@ -1,7 +1,5 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+// Package regexp provides KNF validators with regular expressions
+package regexp
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +9,38 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
+	"regexp"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"pkg.re/essentialkaos/ek.v12/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.7.0"
+var (
+	// Regexp returns an error if config property does not match given regexp
+	Regexp = validateRegexp
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func validateRegexp(config *knf.Config, prop string, value interface{}) error {
+	pattern := value.(string)
+	confVal := config.GetS(prop)
+
+	if confVal == "" || pattern == "" {
+		return nil
+	}
+
+	isMatch, err := regexp.MatchString(pattern, confVal)
+
+	if err != nil {
+		return fmt.Errorf("Can't use given regexp pattern: %v", err)
+	}
+
+	if !isMatch {
+		return fmt.Errorf("Property %s must match regexp pattern %s", prop, pattern)
+	}
+
+	return nil
 }

@@ -8,75 +8,96 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"pkg.re/essentialkaos/ek.v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getUserInfo tries to find user info by name or UID
-func getUserInfo(nameOrID string) (*User, error) {
-	cmd := exec.Command("dscl", ".", "-read", "/Users/"+nameOrID)
+// IsUserExist checks if user exist on system or not
+func IsUserExist(name string) bool {
+	cmd := exec.Command("dscl", ".", "-read", "/Users/"+name, "RecordName")
+
+	return cmd.Run() == nil
+}
+
+// IsGroupExist checks if group exist on system or not
+func IsGroupExist(name string) bool {
+	cmd := exec.Command("dscl", ".", "-read", "/Groups/"+name, "RecordName")
+
+	return cmd.Run() == nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// getUserInfo tries to find user info by name
+func getUserInfo(name string) (*User, error) {
+	cmd := exec.Command(
+		"dscl", ".", "-read", "/Users/"+name,
+		"UniqueID", "PrimaryGroupID", "NFSHomeDirectory", "UserShell",
+	)
 
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
-		return nil, fmt.Errorf("User with this name %s does not exist", nameOrID)
+		return nil, fmt.Errorf("User with name %s does not exist", name)
 	}
 
-	var (
-		lineStart = 0
-		uid       int
-		gid       int
-		home      string
-		shell     string
-	)
+	user := &User{Name: name, RealName: name}
+	scanner := bufio.NewScanner(strings.NewReader(string(out)))
 
-	for i, b := range out {
-		if b != '\n' {
-			continue
-		}
+	for scanner.Scan() {
+		line := scanner.Text()
+		field := strutil.ReadField(line, 0, false, ":")
 
-		// Skip long lines
-		if i-lineStart > 128 {
-			lineStart = i + 1
-			continue
-		}
-
-		line := string(out[lineStart:i])
-
-		lineStart = i + 1
-
-		sepIndex := strings.Index(line, ":")
-
-		if sepIndex == -1 {
-			continue
-		}
-
-		rec := line[0:sepIndex]
-
-		switch rec {
+		switch field {
 		case "UniqueID":
-			uid, _ = strconv.Atoi(line[sepIndex+2:])
+			user.UID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ":")))
 		case "PrimaryGroupID":
-			gid, _ = strconv.Atoi(line[sepIndex+2:])
+			user.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ":")))
 		case "NFSHomeDirectory":
-			home = line[sepIndex+2:]
+			user.HomeDir = strutil.ReadField(
+				strings.TrimSpace(strutil.ReadField(line, 1, false, ":")),
+				0, false, " ",
+			)
 		case "UserShell":
-			shell = line[sepIndex+2:]
+			user.Shell = strings.TrimSpace(strutil.ReadField(line, 1, false, ":"))
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("Can't parse field %s value: %v", field, err)
 		}
 	}
 
-	return &User{
-		Name:     nameOrID,
-		UID:      uid,
-		GID:      gid,
-		HomeDir:  home,
-		Shell:    shell,
-		RealName: nameOrID,
-		RealUID:  uid,
-		RealGID:  gid,
-	}, nil
+	user.RealUID = user.UID
+	user.RealGID = user.GID
+
+	return user, nil
+}
+
+// getGroupInfo returns group info by name
+func getGroupInfo(name string) (*Group, error) {
+	cmd := exec.Command("dscl", ".", "-read", "/Groups/"+name, "PrimaryGroupID")
+
+	out, err := cmd.Output()
+
+	if err != nil || len(out) == 0 {
+		return nil, fmt.Errorf("Group with name %s does not exist", name)
+	}
+
+	group := &Group{Name: name}
+	data := string(out)
+
+	group.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(data, 1, false, ":")))
+
+	if err != nil {
+		return nil, fmt.Errorf("Can't parse PrimaryGroupID field value: %v", err)
+	}
+
+	return group, nil
 }
