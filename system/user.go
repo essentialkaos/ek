@@ -197,24 +197,6 @@ func LookupGroup(nameOrID string) (*Group, error) {
 	return getGroupInfo(nameOrID)
 }
 
-// IsUserExist checks if user exist on system or not
-func IsUserExist(name string) bool {
-	cmd := exec.Command("getent", "passwd", name)
-
-	err := cmd.Run()
-
-	return err == nil
-}
-
-// IsGroupExist checks if group exist on system or not
-func IsGroupExist(name string) bool {
-	cmd := exec.Command("getent", "group", name)
-
-	err := cmd.Run()
-
-	return err == nil
-}
-
 // CurrentTTY returns current tty or empty string if error occurred
 func CurrentTTY() string {
 	pid := strconv.Itoa(os.Getpid())

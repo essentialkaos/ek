@@ -20,6 +20,22 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// IsUserExist checks if user exist on system or not
+func IsUserExist(name string) bool {
+	cmd := exec.Command("getent", "passwd", name)
+
+	return cmd.Run() == nil
+}
+
+// IsGroupExist checks if group exist on system or not
+func IsGroupExist(name string) bool {
+	cmd := exec.Command("getent", "group", name)
+
+	return cmd.Run() == nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // getUserInfo tries to find user info by name or UID
 func getUserInfo(nameOrID string) (*User, error) {
 	cmd := exec.Command("getent", "passwd", nameOrID)
