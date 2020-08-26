@@ -19,40 +19,30 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// User returns error if config property contains name of user or UID which not
-	// present on the system
-	User = validateUser
-
-	// Group returns error if config property contains name of group or GID which not
-	// present on the system
-	Group = validateGroup
+	// Interface returns error if config property contains name of network interface
+	// which not present on the system
+	Interface = validateInterface
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateUser(config *knf.Config, prop string, value interface{}) error {
-	userNameOrID := config.GetS(prop)
+func validateInterface(config *knf.Config, prop string, value interface{}) error {
+	interfaceName := config.GetS(prop)
 
-	if userNameOrID == "" {
+	if interfaceName == "" {
 		return nil
 	}
 
-	if !system.IsUserExist(userNameOrID) {
-		return fmt.Errorf("User %s is not present on the system", userNameOrID)
+	stats, err := system.GetInterfacesStats()
+
+	if err != nil {
+		return fmt.Errorf("Can't get interfaces info: %v", err)
 	}
 
-	return nil
-}
+	_, isPresent := stats[interfaceName]
 
-func validateGroup(config *knf.Config, prop string, value interface{}) error {
-	groupNameOrID := config.GetS(prop)
-
-	if groupNameOrID == "" {
-		return nil
-	}
-
-	if !system.IsGroupExist(groupNameOrID) {
-		return fmt.Errorf("Group %s is not present on the system", groupNameOrID)
+	if !isPresent {
+		return fmt.Errorf("Interface %s is not present on the system", interfaceName)
 	}
 
 	return nil
