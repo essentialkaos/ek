@@ -26,7 +26,7 @@ const _CONFIG_DATA = `
 
 [group]
   test0:
-  test1: root
+  test1: daemon
   test2: somerandomgroup
 
 [interface]
