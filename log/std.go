@@ -48,8 +48,7 @@ func (l *StdLogger) Fatalln(v ...interface{}) {
 
 // Output is analog of Output from stdlib
 func (l *StdLogger) Output(calldepth int, s string) error {
-	_, err := l.Logger.Print(INFO, s)
-	return err
+	return l.Logger.Print(INFO, s)
 }
 
 // Panic is analog of Panic from stdlib

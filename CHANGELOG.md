@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.8.0
+
+* `[log]` Removed useless return value from `Aux`, `Debug`, `Info`, `Warn`, `Error`, `Crit` and `Print` methods
+
 ### 12.7.0
 
 * `[knf/validators/regexp]` Added new KNF validator for checking regular expression pattern matching
