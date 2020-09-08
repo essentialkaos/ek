@@ -163,37 +163,37 @@ func Flush() error {
 }
 
 // Print write message to global logger output
-func Print(level uint8, f string, a ...interface{}) (int, error) {
+func Print(level uint8, f string, a ...interface{}) error {
 	return Global.Print(level, f, a...)
 }
 
 // Debug write debug message to global logger output
-func Debug(f string, a ...interface{}) (int, error) {
+func Debug(f string, a ...interface{}) error {
 	return Global.Debug(f, a...)
 }
 
 // Info write info message to global logger output
-func Info(f string, a ...interface{}) (int, error) {
+func Info(f string, a ...interface{}) error {
 	return Global.Info(f, a...)
 }
 
 // Warn write warning message to global logger output
-func Warn(f string, a ...interface{}) (int, error) {
+func Warn(f string, a ...interface{}) error {
 	return Global.Warn(f, a...)
 }
 
 // Error write error message to global logger output
-func Error(f string, a ...interface{}) (int, error) {
+func Error(f string, a ...interface{}) error {
 	return Global.Error(f, a...)
 }
 
 // Crit write critical message to global logger output
-func Crit(f string, a ...interface{}) (int, error) {
+func Crit(f string, a ...interface{}) error {
 	return Global.Crit(f, a...)
 }
 
 // Aux write unskippable message (for separators/headers)
-func Aux(f string, a ...interface{}) (int, error) {
+func Aux(f string, a ...interface{}) error {
 	return Global.Aux(f, a...)
 }
 
@@ -301,16 +301,16 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 }
 
 // Print write message to logger output
-func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
+func (l *Logger) Print(level uint8, f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	if l.level > level {
-		return 0, nil
+		return nil
 	}
 
 	w := l.getWritter(level)
@@ -331,24 +331,23 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) (int, error) {
 	}
 
 	var err error
-	var n int
 
 	if l.UseColors {
 		c := Colors[level]
 		if showPrefixes {
-			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+			_, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 		} else {
-			n, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s{!}", getTime(), fmt.Sprintf(f, a...))
+			_, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s{!}", getTime(), fmt.Sprintf(f, a...))
 		}
 	} else {
 		if showPrefixes {
-			n, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+			_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 		} else {
-			n, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
+			_, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
 		}
 	}
 
-	return n, err
+	return err
 }
 
 // Flush write buffered data to file
@@ -372,54 +371,54 @@ func (l *Logger) Flush() error {
 }
 
 // Debug write debug message to logger output
-func (l *Logger) Debug(f string, a ...interface{}) (int, error) {
+func (l *Logger) Debug(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(DEBUG, f, a...)
 }
 
 // Info write info message to logger output
-func (l *Logger) Info(f string, a ...interface{}) (int, error) {
+func (l *Logger) Info(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(INFO, f, a...)
 }
 
 // Warn write warning message to logger output
-func (l *Logger) Warn(f string, a ...interface{}) (int, error) {
+func (l *Logger) Warn(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(WARN, f, a...)
 }
 
 // Error write error message to logger output
-func (l *Logger) Error(f string, a ...interface{}) (int, error) {
+func (l *Logger) Error(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(ERROR, f, a...)
 }
 
 // Crit write critical message to logger output
-func (l *Logger) Crit(f string, a ...interface{}) (int, error) {
+func (l *Logger) Crit(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(CRIT, f, a...)
 }
 
 // Aux write unfiltered message (for separators/headers) to logger output
-func (l *Logger) Aux(f string, a ...interface{}) (int, error) {
+func (l *Logger) Aux(f string, a ...interface{}) error {
 	if l == nil || l.mu == nil {
-		return -1, ErrLoggerIsNil
+		return ErrLoggerIsNil
 	}
 
 	return l.Print(AUX, f, a...)

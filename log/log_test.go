@@ -68,37 +68,37 @@ func (ls *LogSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Print(DEBUG, "test")
+	err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Debug("test")
+	err = l.Debug("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Info("test")
+	err = l.Info("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Warn("test")
+	err = l.Warn("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Error("test")
+	err = l.Error("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Crit("test")
+	err = l.Crit("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
 
-	_, err = l.Aux("test")
+	err = l.Aux("test")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
@@ -149,7 +149,7 @@ func (ls *LogSuite) TestLevel(c *C) {
 
 	l.MinLevel("crit")
 
-	_, err := l.Print(ERROR, "error")
+	err := l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
 }
@@ -181,22 +181,22 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 
 	l := &Logger{mu: &sync.Mutex{}}
 
-	_, err = l.Print(INFO, "info")
+	err = l.Print(INFO, "info")
 
 	c.Assert(err, IsNil)
 
-	_, err = l.Print(ERROR, "error")
+	err = l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
 
 	l.UseColors = true
 	l.PrefixError = true
 
-	_, err = l.Print(INFO, "info")
+	err = l.Print(INFO, "info")
 
 	c.Assert(err, IsNil)
 
-	_, err = l.Print(ERROR, "error")
+	err = l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
 }
