@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.8.1
+
+* `[knf/validators/system]` Fixed bug with source file naming
+
 ### 12.8.0
 
 * `[log]` Removed useless return value from `Aux`, `Debug`, `Info`, `Warn`, `Error`, `Crit` and `Print` methods
