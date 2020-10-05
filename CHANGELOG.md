@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.9.0
+
+* `[usage/update]` Disabled update check from CI environments
+
 ### 12.8.1
 
 * `[knf/validators/system]` Fixed bug with source file naming
