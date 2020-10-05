@@ -9,7 +9,6 @@ package update
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"os"
 	"strings"
 	"time"
 
@@ -31,7 +30,7 @@ var githubAPI = "https://api.github.com"
 
 // GitHubChecker checks new releases on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
-	if version == "" || data == "" || os.Getenv("CI") == "true" {
+	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
 	}
 

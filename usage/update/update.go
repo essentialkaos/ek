@@ -26,7 +26,7 @@ type ReleaseInfo struct {
 
 // UpdateChecker checks new releases on custom storage
 func UpdateChecker(app, version, data string) (string, time.Time, bool) {
-	if version == "" || data == "" || os.Getenv("CI") == "true" {
+	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
 	}
 
@@ -67,4 +67,13 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	}
 
 	return release
+}
+
+// isUpdateCheckRequired checks if update check is required
+func isUpdateCheckRequired() bool {
+	if os.Getenv("CI") == "true" && os.Getenv("EK_TEST_PORT") == "" {
+		return false
+	}
+
+	return true
 }
