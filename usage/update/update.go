@@ -71,9 +71,5 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 
 // isUpdateCheckRequired checks if update check is required
 func isUpdateCheckRequired() bool {
-	if os.Getenv("CI") == "true" && os.Getenv("EK_TEST_PORT") == "" {
-		return false
-	}
-
-	return true
+	return !(os.Getenv("CI") == "true" && os.Getenv("EK_TEST_PORT") == "")
 }
