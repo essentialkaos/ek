@@ -8,6 +8,7 @@ package update
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"os"
 	"time"
 
 	"pkg.re/essentialkaos/ek.v12/req"
@@ -25,7 +26,7 @@ type ReleaseInfo struct {
 
 // UpdateChecker checks new releases on custom storage
 func UpdateChecker(app, version, data string) (string, time.Time, bool) {
-	if version == "" || data == "" {
+	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
 	}
 
@@ -66,4 +67,9 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	}
 
 	return release
+}
+
+// isUpdateCheckRequired checks if update check is required
+func isUpdateCheckRequired() bool {
+	return !(os.Getenv("CI") == "true" && os.Getenv("EK_TEST_PORT") == "")
 }
