@@ -33,14 +33,15 @@ const _BREADCRUMBS_MIN_SIZE = 8
 
 // About contains info about application
 type About struct {
-	App     string // App is application name
-	Version string // Version is current application version in semver notation
-	Release string // Release is current application release
-	Build   string // Build is current application build
-	Desc    string // Desc is short info about application
-	Year    int    // Year is year when owner company was founded
-	License string // License is name of license
-	Owner   string // Owner is name of owner (company/developer)
+	App        string // App is application name
+	Version    string // Version is current application version in semver notation
+	Release    string // Release is current application release
+	Build      string // Build is current application build
+	Desc       string // Desc is short info about application
+	Year       int    // Year is year when owner company was founded
+	License    string // License is name of license
+	Owner      string // Owner is name of owner (company/developer)
+	BugTracker string // BugTracker is URL of bug tracker
 
 	// Function for checking application updates
 	UpdateChecker UpdateChecker
