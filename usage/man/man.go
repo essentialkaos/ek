@@ -30,6 +30,7 @@ func Generate(info *usage.Info, about *usage.About) string {
 	result += genDescription(info)
 	result += genCommands(info)
 	result += genOptions(info)
+	result += genExamples(info)
 	result += genBugTrackerInfo(about)
 	result += genLicense(about)
 	result += genAuthor(about)
@@ -113,12 +114,12 @@ func genCommands(info *usage.Info) string {
 
 	for _, command := range info.Commands {
 		if command.Group != "" && curGroup != command.Group {
-			result += fmt.Sprintf(".SS %s\n\n", command.Group)
+			result += fmt.Sprintf(".SS %s\n", command.Group)
 			curGroup = command.Group
 		}
 
 		result += ".TP\n"
-		result += fmt.Sprintf(".BR %s ", command.Name)
+		result += fmt.Sprintf(".B %s", command.Name)
 
 		if len(command.Args) != 0 {
 			result += formatCommandArgs(command.Args)
@@ -179,6 +180,33 @@ func genDescription(info *usage.Info) string {
 	)
 }
 
+// genExamples generates examples part
+func genExamples(info *usage.Info) string {
+	if len(info.Examples) == 0 {
+		return ""
+	}
+
+	result := ".SH EXAMPLES\n"
+
+	for index, example := range info.Examples {
+		result += ".TP\n"
+
+		if example.Desc != "" {
+			result += ".B • " + example.Desc + "\n"
+		} else {
+			result += fmt.Sprintf(".B • Example %d\n", index+1)
+		}
+
+		if !example.Raw {
+			result += fmt.Sprintf("%s %s\n", info.Name, example.Cmd)
+		} else {
+			result += fmt.Sprintf("%s\n", example.Cmd)
+		}
+	}
+
+	return result
+}
+
 // genBugTrackerInfo generates bugs part
 func genBugTrackerInfo(about *usage.About) string {
 	if about.BugTracker == "" {
@@ -230,9 +258,9 @@ func formatCommandArgs(args []string) string {
 
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "?") {
-			result += fmt.Sprintf(" \" \" \\fR%s\\fP", strings.Replace(arg, "?", "", -1))
+			result += fmt.Sprintf(" \\fR%s\\fP", strings.Replace(arg, "?", "", -1))
 		} else {
-			result += fmt.Sprintf(" \" \" \\fI%s\\fP", arg)
+			result += fmt.Sprintf(" \\fI%s\\fP", arg)
 		}
 	}
 

@@ -123,11 +123,11 @@ func (s *ManSuite) TestCommandsGenerator(c *C) {
 	info.AddCommand("test3", "Test3 command", "?arg1")
 
 	commands := ".SH COMMANDS\n"
-	commands += ".SS Commands\n\n.TP\n.BR test1 \nTest1 command\n"
-	commands += ".SS Group1\n\n"
-	commands += ".TP\n.BR test2  \" \" \\fIarg1\\fP\nTest2 command\n"
-	commands += ".SS Group2\n\n"
-	commands += ".TP\n.BR test3  \" \" \\fRarg1\\fP\nTest3 command\n"
+	commands += ".SS Commands\n.TP\n.B test1\nTest1 command\n"
+	commands += ".SS Group1\n"
+	commands += ".TP\n.B test2 \\fIarg1\\fP\nTest2 command\n"
+	commands += ".SS Group2\n"
+	commands += ".TP\n.B test3 \\fRarg1\\fP\nTest3 command\n"
 
 	c.Assert(genCommands(info), Equals, commands)
 }
@@ -140,6 +140,23 @@ func (s *ManSuite) TestDescriptionGenerator(c *C) {
 	info.AddSpoiler("Some text.")
 
 	c.Assert(genDescription(info), Equals, ".SH DESCRIPTION\n\nSome text.\n\n")
+}
+
+func (s *ManSuite) TestExamplesGenerator(c *C) {
+	info := &usage.Info{Name: "app"}
+
+	c.Assert(genExamples(info), Equals, "")
+
+	info.AddExample("test 123", "Test1")
+	info.AddExample("test 456")
+	info.AddRawExample("app test 789", "Test3")
+
+	examples := ".SH EXAMPLES\n"
+	examples += ".TP\n.B • Test1\napp test 123\n"
+	examples += ".TP\n.B • Example 2\napp test 456\n"
+	examples += ".TP\n.B • Test3\napp test 789\n"
+
+	c.Assert(genExamples(info), Equals, examples)
 }
 
 func (s *ManSuite) TestAuthorGenerator(c *C) {
