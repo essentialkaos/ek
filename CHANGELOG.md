@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.10.9
+
+* `[usage/man]` Added package for generating man pages from usage info
+
 ### 12.9.0
 
 * `[usage/update]` Disabled update check from CI environments
