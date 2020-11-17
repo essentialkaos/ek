@@ -48,15 +48,11 @@ jobs:
       - name: Run tests on Linux/Mac
         working-directory: ${{env.SRC_DIR}}
         if: ${{ runner.os != 'Windows' }}
-        env:
-          CI: true
         run: .scripts/nix.sh 12
 
       - name: Run tests on Windows
         working-directory: ${{env.SRC_DIR}}
         if: ${{ runner.os == 'Windows' }}
-        env:
-          CI: true
         run: .scripts/windows.sh 12
 
       - name: Install goveralls
@@ -70,7 +66,7 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -service github -coverprofile cover.out
+        run: goveralls -service github -coverprofile coverage.txt
 
       - name: Set up Node.js
         if: ${{ runner.os != 'Windows' }}
