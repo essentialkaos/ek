@@ -21,13 +21,7 @@ Currently we support Linux and Mac OS X (except `system` package). Some packages
 
 ### Installation
 
-Before the initial install, allow git to use redirects for [pkg.re](https://github.com/essentialkaos/pkgre) service (_reason why you should do this described [here](https://github.com/essentialkaos/pkgre#git-support)_):
-
-```
-git config --global http.https://pkg.re.followRedirects true
-```
-
-Make sure you have a working Go 1.12+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.14+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
 go get pkg.re/essentialkaos/ek.v12
@@ -122,7 +116,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 
 ### Build Status
 
-| Branch | TravisCI |
+| Branch | Status |
 |--------|----------|
 | `master` | [![CI](https://github.com/essentialkaos/ek/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/ek/actions) |
 | `develop` | [![CI](https://github.com/essentialkaos/ek/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/ek/actions) |
