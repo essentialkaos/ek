@@ -4,7 +4,7 @@
   <a href="https://pkg.go.dev/github.com/essentialkaos/ek"><img src="https://pkg.go.dev/badge/essentialkaos/ek" alt="PkgGoDev" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
-  <a href="https://travis-ci.com/essentialkaos/ek"><img src="https://travis-ci.com/essentialkaos/ek.svg?branch=master" /></a>
+  <a href="https://github.com/essentialkaos/ek/actions"><img src="https://github.com/essentialkaos/ek/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
   <a href="https://github.com/essentialkaos/ek/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/ek/workflows/CodeQL/badge.svg" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg" /></a>
 </p>
@@ -21,13 +21,7 @@ Currently we support Linux and Mac OS X (except `system` package). Some packages
 
 ### Installation
 
-Before the initial install, allow git to use redirects for [pkg.re](https://github.com/essentialkaos/pkgre) service (_reason why you should do this described [here](https://github.com/essentialkaos/pkgre#git-support)_):
-
-```
-git config --global http.https://pkg.re.followRedirects true
-```
-
-Make sure you have a working Go 1.12+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.14+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
 go get pkg.re/essentialkaos/ek.v12
@@ -122,10 +116,10 @@ go get -u pkg.re/essentialkaos/ek.v12
 
 ### Build Status
 
-| Branch | TravisCI |
+| Branch | Status |
 |--------|----------|
-| `master` | [![Build Status](https://travis-ci.com/essentialkaos/ek.svg?branch=master)](https://travis-ci.com/essentialkaos/ek) |
-| `develop` | [![Build Status](https://travis-ci.com/essentialkaos/ek.svg?branch=develop)](https://travis-ci.com/essentialkaos/ek) |
+| `master` | [![CI](https://github.com/essentialkaos/ek/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/ek/actions) |
+| `develop` | [![CI](https://github.com/essentialkaos/ek/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/ek/actions) |
 
 ### Contributing
 

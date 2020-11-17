@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: '0 14 */15 * *'
+
+jobs:
+  Go:
+    name: Go
+    runs-on: ${{ matrix.os }}
+
+    env:
+      SRC_DIR: src/github.com/${{ github.repository }}
+      EK_TEST_PORT: 8080
+
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        go: [ '1.14.x', '1.15.x' ]
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+        id: go
+
+      - name: Setup PATH
+        run: |
+          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
+          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
+          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{env.SRC_DIR}}
+
+      - name: Download dependencies
+        working-directory: ${{env.SRC_DIR}}
+        if: ${{ runner.os != 'Windows' }}
+        run: make deps deps-test
+
+      - name: Run tests on Linux/Mac
+        working-directory: ${{env.SRC_DIR}}
+        if: ${{ runner.os != 'Windows' }}
+        run: .scripts/nix.sh 12
+
+      - name: Run tests on Windows
+        working-directory: ${{env.SRC_DIR}}
+        if: ${{ runner.os == 'Windows' }}
+        run: .scripts/windows.sh 12
+
+      - name: Install goveralls
+        if: ${{ runner.os != 'Windows' }}
+        env:
+          GO111MODULE: off
+        run: go get -v github.com/mattn/goveralls
+
+      - name: Send coverage to Coveralls
+        if: ${{ runner.os != 'Windows' }}
+        working-directory: ${{env.SRC_DIR}}
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: goveralls -service github -coverprofile coverage.txt
+
+      - name: Set up Node.js
+        if: ${{ runner.os != 'Windows' }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+
+      - name: Install codeclimate-test-reporter
+        if: ${{ runner.os != 'Windows' }}
+        run: npm install -g codeclimate-test-reporter
+
+      - name: Send coverage to Codebeat
+        if: ${{ runner.os != 'Windows' }}
+        working-directory: ${{env.SRC_DIR}}
+        env:
+          CODECLIMATE_API_HOST: https://codebeat.co/webhooks/code_coverage
+          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_TOKEN }}
+        run: codeclimate-test-reporter < coverage.txt

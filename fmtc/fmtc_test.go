@@ -87,7 +87,7 @@ func (s *FormatSuite) TestParsing(c *C) {
 }
 
 func (s *FormatSuite) Test256Colors(c *C) {
-	if os.Getenv("TRAVIS") != "1" {
+	if os.Getenv("CI") == "" {
 		c.Assert(Is256ColorsSupported(), Equals, true)
 	} else {
 		c.Assert(Is256ColorsSupported(), Equals, false)

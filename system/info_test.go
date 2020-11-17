@@ -404,7 +404,7 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 func (s *SystemSuite) TestUser(c *C) {
 	// This test can fail on Travis because workers
 	// doesn't have any active sessions
-	if os.Getenv("TRAVIS") != "1" {
+	if os.Getenv("CI") == "" {
 		user, err := CurrentUser()
 
 		c.Assert(err, IsNil)
