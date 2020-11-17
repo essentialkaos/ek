@@ -47,7 +47,7 @@ func (s *NetUtilSuite) TestGetIP(c *C) {
 }
 
 func (s *NetUtilSuite) TestGetIP6(c *C) {
-	if os.Getenv("CI") != "" {
+	if os.Getenv("CI") == "" {
 		c.Assert(GetIP6(), Not(Equals), "")
 	}
 }
