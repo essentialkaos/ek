@@ -14,38 +14,10 @@ main() {
     exit 1
   fi
 
-  installGoveralls
-  installCodeclimateTestReporter
   makeLink "$version"
   testWithCover "$dir"
-}
 
-# Install goveralls
-installGoveralls() {
-  echo "Installing latest version of Goveralls..."
-
-  go get -v github.com/mattn/goveralls
-
-  if [[ $? -ne 0 ]] ; then
-    echo "[ERROR] Can't install Goveralls"
-    exit 1
-  fi
-
-  echo ""
-}
-
-# Install codeclimate-test-reporter
-installCodeclimateTestReporter() {
-  echo "Installing latest version of codeclimate-test-reporter..."
-
-  npm install -g codeclimate-test-reporter
-
-  if [[ $? -ne 0 ]] ; then
-    echo "[ERROR] Can't install codeclimate-test-reporter"
-    exit 1
-  fi
-
-  echo ""
+  exit 0
 }
 
 # Create links for pkg.re import paths
@@ -84,7 +56,7 @@ testWithCover() {
   fi
 
   local has_errors cover_enabled package_dir
-  local package_list=".travis/packages.list"
+  local package_list=".scripts/packages.list"
 
   while read package ; do
 
@@ -120,16 +92,6 @@ testWithCover() {
   if [[ $has_errors ]] ; then
     exit 1
   fi
-
-  echo -e "\nSending coverage data to Coveralls..."
-
-  goveralls -service travis-ci -repotoken $COVERALLS_TOKEN -coverprofile coverage.txt
-
-  echo -e "\nSending coverage data to Codebeat..."
-
-  codeclimate-test-reporter < coverage.txt
-
-  exit 0
 }
 
 ########################################################################################
