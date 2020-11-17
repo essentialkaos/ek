@@ -47,8 +47,7 @@ func (s *NetUtilSuite) TestGetIP(c *C) {
 }
 
 func (s *NetUtilSuite) TestGetIP6(c *C) {
-	// Some Travis workers doesn't have
-	if os.Getenv("TRAVIS") != "1" {
+	if os.Getenv("CI") != "" {
 		c.Assert(GetIP6(), Not(Equals), "")
 	}
 }

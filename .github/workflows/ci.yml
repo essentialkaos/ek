@@ -48,11 +48,15 @@ jobs:
       - name: Run tests on Linux/Mac
         working-directory: ${{env.SRC_DIR}}
         if: ${{ runner.os != 'Windows' }}
+        env:
+          CI: true
         run: .scripts/nix.sh 12
 
       - name: Run tests on Windows
         working-directory: ${{env.SRC_DIR}}
         if: ${{ runner.os == 'Windows' }}
+        env:
+          CI: true
         run: .scripts/windows.sh 12
 
       - name: Install goveralls
