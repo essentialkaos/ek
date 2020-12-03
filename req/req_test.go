@@ -492,10 +492,10 @@ func (s *ReqSuite) TestEngineInit(c *C) {
 	var eng *Engine
 
 	eng = &Engine{}
-	initEngine(eng)
+	eng.Init()
 
 	eng = &Engine{Transport: &http.Transport{}}
-	initEngine(eng)
+	eng.Init()
 }
 
 func (s *ReqSuite) TestEngineErrors(c *C) {
@@ -507,7 +507,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	c.Assert(err, NotNil)
 
 	eng = &Engine{}
-	initEngine(eng)
+	eng.Init()
 
 	eng.Dialer = nil
 
@@ -517,7 +517,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	c.Assert(err, NotNil)
 
 	eng = &Engine{}
-	initEngine(eng)
+	eng.Init()
 	eng.Transport = nil
 
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
@@ -526,7 +526,8 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	c.Assert(err, NotNil)
 
 	eng = &Engine{}
-	initEngine(eng)
+	eng.Init()
+	eng.Init()
 	eng.Client = nil
 
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})

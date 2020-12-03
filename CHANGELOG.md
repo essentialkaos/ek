@@ -1,6 +1,10 @@
 ## Changelog
 
-### 12.10.9
+### 12.10.1
+
+* `[req]` Code refactoring
+
+### 12.10.0
 
 * `[usage/man]` Added package for generating man pages from usage info
 

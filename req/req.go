@@ -282,6 +282,51 @@ func SetRequestTimeout(timeout float64) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Init initializes engine
+func (e *Engine) Init() *Engine {
+	if e.initialized {
+		return e
+	}
+
+	if e.Dialer == nil {
+		e.Dialer = &net.Dialer{}
+	}
+
+	if e.Transport == nil {
+		e.Transport = &http.Transport{
+			Dial:  e.Dialer.Dial,
+			Proxy: http.ProxyFromEnvironment,
+		}
+	} else {
+		e.Transport.Dial = e.Dialer.Dial
+	}
+
+	if e.Client == nil {
+		e.Client = &http.Client{
+			Transport: e.Transport,
+		}
+	}
+
+	if e.dialTimeout > 0 {
+		e.SetDialTimeout(e.dialTimeout)
+	}
+
+	if e.requestTimeout > 0 {
+		e.SetRequestTimeout(e.requestTimeout)
+	}
+
+	if e.UserAgent == "" {
+		e.SetUserAgent(USER_AGENT, "10")
+	}
+
+	e.dialTimeout = 0
+	e.requestTimeout = 0
+
+	e.initialized = true
+
+	return e
+}
+
 // Do sends request and process response
 func (e *Engine) Do(r Request) (*Response, error) {
 	return e.doRequest(r, "")
@@ -477,7 +522,7 @@ func (q Query) String() string {
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	// Lazy engine initialization
 	if e != nil && !e.initialized {
-		initEngine(e)
+		e.Init()
 	}
 
 	err := checkRequest(r)
@@ -534,44 +579,6 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 // codebeat:enable[CYCLO,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func initEngine(e *Engine) {
-	if e.Dialer == nil {
-		e.Dialer = &net.Dialer{}
-	}
-
-	if e.Transport == nil {
-		e.Transport = &http.Transport{
-			Dial:  e.Dialer.Dial,
-			Proxy: http.ProxyFromEnvironment,
-		}
-	} else {
-		e.Transport.Dial = e.Dialer.Dial
-	}
-
-	if e.Client == nil {
-		e.Client = &http.Client{
-			Transport: e.Transport,
-		}
-	}
-
-	if e.dialTimeout > 0 {
-		e.SetDialTimeout(e.dialTimeout)
-	}
-
-	if e.requestTimeout > 0 {
-		e.SetRequestTimeout(e.requestTimeout)
-	}
-
-	if e.UserAgent == "" {
-		e.SetUserAgent(USER_AGENT, "10")
-	}
-
-	e.dialTimeout = 0
-	e.requestTimeout = 0
-
-	e.initialized = true
-}
 
 func checkRequest(r Request) error {
 	if r.URL == "" {
