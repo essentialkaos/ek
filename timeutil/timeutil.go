@@ -182,16 +182,14 @@ func SecondsToDuration(d float64) time.Duration {
 }
 
 // ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
-func ParseDuration(dur string) int64 {
+func ParseDuration(dur string) (int64, error) {
 	if dur == "" {
-		return 0
+		return 0, nil
 	}
 
-	var (
-		result   int64
-		value    string
-		valueInt int64
-	)
+	var err error
+	var value string
+	var result, valueInt int64
 
 	for _, sym := range strings.ToLower(dur) {
 		switch sym {
@@ -199,38 +197,50 @@ func ParseDuration(dur string) int64 {
 			value += string(sym)
 
 		case 'w':
-			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			valueInt, err = strconv.ParseInt(value, 10, 64)
 			result += valueInt * _WEEK
 			value = ""
 
 		case 'd':
-			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			valueInt, err = strconv.ParseInt(value, 10, 64)
 			result += valueInt * _DAY
 			value = ""
 
 		case 'h':
-			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			valueInt, err = strconv.ParseInt(value, 10, 64)
 			result += valueInt * _HOUR
 			value = ""
 
 		case 'm':
-			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			valueInt, err = strconv.ParseInt(value, 10, 64)
 			result += valueInt * _MINUTE
 			value = ""
 
 		case 's':
-			valueInt, _ = strconv.ParseInt(value, 10, 64)
+			valueInt, err = strconv.ParseInt(value, 10, 64)
 			result += valueInt
 			value = ""
+
+		default:
+			return 0, fmt.Errorf("Unsupported symbol \"%s\"", string(sym))
+		}
+
+		if err != nil {
+			return 0, err
 		}
 	}
 
 	if value != "" {
-		valueInt, _ = strconv.ParseInt(value, 10, 64)
+		valueInt, err = strconv.ParseInt(value, 10, 64)
+
+		if err != nil {
+			return 0, err
+		}
+
 		result += valueInt
 	}
 
-	return result
+	return result, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
