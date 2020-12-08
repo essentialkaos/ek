@@ -27,8 +27,10 @@ func ExamplePrettyDuration() {
 }
 
 func ExampleParseDuration() {
-	fmt.Println(ParseDuration("2w3d10h20m35s"))
-	fmt.Println(PrettyDuration(ParseDuration("2w3d10h20m35s")))
+	d, _ := ParseDuration("2w3d10h20m35s")
+
+	fmt.Println(d)
+	fmt.Println(PrettyDuration(d))
 
 	// Output:
 	// 1506035
