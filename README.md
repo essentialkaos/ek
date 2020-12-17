@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
 
 <p align="center">
-  <a href="https://pkg.go.dev/github.com/essentialkaos/ek"><img src="https://pkg.go.dev/badge/essentialkaos/ek" alt="PkgGoDev" /></a>
+  <a href="https://pkg.go.dev/pkg.re/essentialkaos/ek.v12"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://github.com/essentialkaos/ek/actions"><img src="https://github.com/essentialkaos/ek/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
