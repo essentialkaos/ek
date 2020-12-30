@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.12.0
+
+* `[timeutil]` Code refactoring
+
 ### 12.11.0
 
 * `[timeutil]` Added checking for parsing errors to `ParseDuration` method
