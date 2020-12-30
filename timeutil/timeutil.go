@@ -32,74 +32,52 @@ const (
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 func PrettyDuration(d interface{}) string {
-	var duration int64
+	dur, ok := convertDuration(d)
 
-	switch u := d.(type) {
-	case time.Duration:
-		if u < time.Second {
-			return getPrettyShortDuration(u)
-		}
-
-		duration = int64(u.Seconds())
-	case int:
-		duration = int64(u)
-	case int16:
-		duration = int64(u)
-	case int32:
-		duration = int64(u)
-	case uint:
-		duration = int64(u)
-	case uint16:
-		duration = int64(u)
-	case uint32:
-		duration = int64(u)
-	case uint64:
-		duration = int64(u)
-	case float32:
-		duration = int64(u)
-	case float64:
-		duration = int64(u)
-	case int64:
-		duration = u
-	default:
+	if !ok {
 		return ""
 	}
 
-	return getPrettyLongDuration(duration)
+	if dur != 0 && dur < time.Second {
+		return getPrettyShortDuration(dur)
+	}
+
+	return getPrettyLongDuration(dur)
+}
+
+// PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
+func PrettyDurationInDays(d interface{}) string {
+	dur, ok := convertDuration(d)
+
+	if !ok {
+		return ""
+	}
+
+	switch {
+	case dur <= 5*time.Minute:
+		return "just now"
+	case dur <= time.Hour*24:
+		return "today"
+	}
+
+	days := int(dur.Hours()) / 24
+
+	return pluralize.PS(pluralize.En, "%d %s", days, "day", "days")
 }
 
 // ShortDuration returns pretty short duration (e.g. 1:37)
 func ShortDuration(d interface{}) string {
-	var duration int64
+	dur, ok := convertDuration(d)
 
-	switch u := d.(type) {
-	case time.Duration:
-		duration = int64(u.Seconds())
-	case int:
-		duration = int64(u)
-	case int16:
-		duration = int64(u)
-	case int32:
-		duration = int64(u)
-	case uint:
-		duration = int64(u)
-	case uint16:
-		duration = int64(u)
-	case uint32:
-		duration = int64(u)
-	case uint64:
-		duration = int64(u)
-	case float32:
-		duration = int64(u)
-	case float64:
-		duration = int64(u)
-	case int64:
-		duration = u
-	default:
+	if !ok {
 		return ""
 	}
 
-	return getShortDuration(duration)
+	if dur == 0 {
+		return "0:00"
+	}
+
+	return getShortDuration(dur)
 }
 
 // Format returns formatted date as a string
@@ -247,6 +225,35 @@ func ParseDuration(dur string) (int64, error) {
 
 // It's ok to have so long method here
 // codebeat:disable[LOC,ABC]
+
+func convertDuration(d interface{}) (time.Duration, bool) {
+	switch u := d.(type) {
+	case time.Duration:
+		return u, true
+	case int:
+		return time.Duration(u) * time.Second, true
+	case int16:
+		return time.Duration(u) * time.Second, true
+	case int32:
+		return time.Duration(u) * time.Second, true
+	case uint:
+		return time.Duration(u) * time.Second, true
+	case uint16:
+		return time.Duration(u) * time.Second, true
+	case uint32:
+		return time.Duration(u) * time.Second, true
+	case uint64:
+		return time.Duration(u) * time.Second, true
+	case float32:
+		return time.Duration(u) * time.Second, true
+	case float64:
+		return time.Duration(u) * time.Second, true
+	case int64:
+		return time.Duration(u) * time.Second, true
+	}
+
+	return 0, false
+}
 
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	r, _, err := input.ReadRune()
@@ -496,12 +503,10 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
-func getShortDuration(d int64) string {
-	if d == 0 {
-		return "0:00"
-	}
-
+func getShortDuration(dur time.Duration) string {
 	var h, m int64
+
+	d := int64(dur.Seconds())
 
 	if d >= 3600 {
 		h = d / 3600
@@ -523,7 +528,9 @@ func getShortDuration(d int64) string {
 // It's ok to have so nested blocks in this method
 // codebeat:disable[BLOCK_NESTING]
 
-func getPrettyLongDuration(d int64) string {
+func getPrettyLongDuration(dur time.Duration) string {
+	d := int64(dur.Seconds())
+
 	var result []string
 
 MAINLOOP:
