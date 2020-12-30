@@ -26,6 +26,18 @@ func ExamplePrettyDuration() {
 	// 1 day 10 hours 17 minutes and 36 seconds
 }
 
+func ExamplePrettyDurationInDays() {
+	// you can use int ...
+	fmt.Println(PrettyDurationInDays(650))
+
+	// ... and time.Duration types
+	fmt.Println(PrettyDurationInDays(168 * time.Hour))
+
+	// Output:
+	// today
+	// 7 days
+}
+
 func ExampleParseDuration() {
 	d, _ := ParseDuration("2w3d10h20m35s")
 

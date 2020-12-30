@@ -45,6 +45,26 @@ func PrettyDuration(d interface{}) string {
 	return getPrettyLongDuration(dur)
 }
 
+// PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
+func PrettyDurationInDays(d interface{}) string {
+	dur, ok := convertDuration(d)
+
+	if !ok {
+		return ""
+	}
+
+	switch {
+	case dur <= 5*time.Minute:
+		return "just now"
+	case dur <= time.Hour*24:
+		return "today"
+	}
+
+	days := int(dur.Hours()) / 24
+
+	return pluralize.PS(pluralize.En, "%d %s", days, "day", "days")
+}
+
 // ShortDuration returns pretty short duration (e.g. 1:37)
 func ShortDuration(d interface{}) string {
 	dur, ok := convertDuration(d)

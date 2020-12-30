@@ -2,6 +2,7 @@
 
 ### 12.12.0
 
+* `[timeutil]` Added method `PrettyDurationInDays` for rendering pretty duration in days
 * `[timeutil]` Code refactoring
 
 ### 12.11.0
