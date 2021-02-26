@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.12.1
+
+* `[usage/completion/bash]` Fixed bug with showing files with autocomplete
+
 ### 12.12.0
 
 * `[timeutil]` Added method `PrettyDurationInDays` for rendering pretty duration in days

@@ -38,6 +38,11 @@ _{{COMPNAME_SAFE}}() {
     return 0
   fi
 
+  if [[ -z "$cmds" ]] ; then
+    _filedir
+    return 0
+  fi
+
   COMPREPLY=($(compgen -W '$(_{{COMPNAME_SAFE}}_filter "$cmds" "$opts")' -- "$cur"))
 }
 
@@ -59,7 +64,7 @@ _{{COMPNAME_SAFE}}_filter() {
   echo "$1" && return 0
 }
 
-complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} -o nosort
+complete -F _{{COMPNAME_SAFE}} {{COMPNAME}}
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -105,6 +110,7 @@ func genGlobalOptionsList(info *usage.Info) string {
 	return strings.Join(result, " ")
 }
 
+// genCommandsHandlers generates command handler
 func genCommandsHandlers(info *usage.Info) string {
 	if !isCommandHandlersRequired(info) {
 		return ""
