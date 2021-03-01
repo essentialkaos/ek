@@ -22,7 +22,7 @@ const _BASH_TEMPLATE = `# Completion for {{COMPNAME}}
 # This completion is automatically generated
 
 _{{COMPNAME_SAFE}}() {
-  local cur prev cmds opts
+  local cur prev cmds opts show_files
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -30,6 +30,7 @@ _{{COMPNAME_SAFE}}() {
 
   cmds="{{COMMANDS}}"
   opts="{{GLOBAL_OPTIONS}}"
+  show_files="{{SHOW_FILES}}"
 
 {{COMMANDS_HANDLERS}}
 
@@ -38,18 +39,17 @@ _{{COMPNAME_SAFE}}() {
     return 0
   fi
 
-  if [[ -z "$cmds" ]] ; then
-    _filedir
-    return 0
+  if [[ -z "$cmds" && -n "$show_files" ]] ; then
+    _filedir && return 0
   fi
 
-  COMPREPLY=($(compgen -W '$(_{{COMPNAME_SAFE}}_filter "$cmds" "$opts")' -- "$cur"))
+  COMPREPLY=($(compgen -W '$(_{{COMPNAME_SAFE}}_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
 }
 
 _{{COMPNAME_SAFE}}_filter() {
-  if [[ -z "$1" ]] ; then
-    echo "$2" && return 0
-  fi
+  local cmds="$1"
+  local opts="$2"
+  local show_files="$3"
 
   local cmd1 cmd2
 
@@ -61,10 +61,14 @@ _{{COMPNAME_SAFE}}_filter() {
     done
   done
 
-  echo "$1" && return 0
+  if [[ -z "$show_files" ]] ; then
+    echo "$opts" && return 0
+  fi
+
+  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
 }
 
-complete -F _{{COMPNAME_SAFE}} {{COMPNAME}}
+complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -78,8 +82,15 @@ func Generate(info *usage.Info, name string) string {
 	result = strings.Replace(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info), -1)
 	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
 
-	nameSafe := strings.Replace(name, "-", "_", -1)
+	if len(info.Args) != 0 {
+		result = strings.Replace(result, "{{SHOW_FILES}}", "true", -1)
+		result = strings.Replace(result, "{{COMP_OPTS}}", "-o filenames", -1)
+	} else {
+		result = strings.Replace(result, "{{SHOW_FILES}}", "", -1)
+		result = strings.Replace(result, "{{COMP_OPTS}}", "", -1)
+	}
 
+	nameSafe := strings.Replace(name, "-", "_", -1)
 	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
 
 	return result

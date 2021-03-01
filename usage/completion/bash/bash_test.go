@@ -17,11 +17,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _RESULT = `# Completion for test
+const _RESULT_FILES = `# Completion for test
 # This completion is automatically generated
 
 _test() {
-  local cur prev cmds opts
+  local cur prev cmds opts show_files
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -29,6 +29,7 @@ _test() {
 
   cmds="print clean"
   opts="--option-aaa --option-bbb --option-ccc"
+  show_files="true"
 
   case $prev in
     clean)
@@ -44,13 +45,17 @@ _test() {
     return 0
   fi
 
-  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts")' -- "$cur"))
+  if [[ -z "$cmds" && -n "$show_files" ]] ; then
+    _filedir && return 0
+  fi
+
+  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
 }
 
 _test_filter() {
-  if [[ -z "$1" ]] ; then
-    echo "$2" && return 0
-  fi
+  local cmds="$1"
+  local opts="$2"
+  local show_files="$3"
 
   local cmd1 cmd2
 
@@ -62,10 +67,74 @@ _test_filter() {
     done
   done
 
-  echo "$1" && return 0
+  if [[ -z "$show_files" ]] ; then
+    echo "$opts" && return 0
+  fi
+
+  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
 }
 
-complete -F _test test -o nosort
+complete -F _test test -o filenames
+`
+
+const _RESULT_NO_FILES = `# Completion for test
+# This completion is automatically generated
+
+_test() {
+  local cur prev cmds opts show_files
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  cmds="print clean"
+  opts="--option-aaa --option-bbb --option-ccc"
+  show_files=""
+
+  case $prev in
+    clean)
+      opts="--option-ddd --option-eee"
+      COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+      return 0
+      ;;
+
+  esac
+
+  if [[ $cur == -* ]] ; then
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+    return 0
+  fi
+
+  if [[ -z "$cmds" && -n "$show_files" ]] ; then
+    _filedir && return 0
+  fi
+
+  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
+}
+
+_test_filter() {
+  local cmds="$1"
+  local opts="$2"
+  local show_files="$3"
+
+  local cmd1 cmd2
+
+  for cmd1 in $1 ; do
+    for cmd2 in ${COMP_WORDS[*]} ; do
+      if [[ "$cmd1" == "$cmd2" ]] ; then
+        echo "$2" && return 0
+      fi
+    done
+  done
+
+  if [[ -z "$show_files" ]] ; then
+    echo "$opts" && return 0
+  fi
+
+  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
+}
+
+complete -F _test test 
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -81,8 +150,11 @@ var _ = Suite(&BashSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *BashSuite) TestGenerator(c *C) {
-	data := Generate(genTestUsageInfo(), "test")
-	c.Assert(data, Equals, _RESULT)
+	completion := Generate(genTestUsageInfo(true), "test")
+	c.Assert(completion, Equals, _RESULT_FILES)
+
+	completion = Generate(genTestUsageInfo(false), "test")
+	c.Assert(completion, Equals, _RESULT_NO_FILES)
 }
 
 func (s *BashSuite) TestAuxi(c *C) {
@@ -94,8 +166,14 @@ func (s *BashSuite) TestAuxi(c *C) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func genTestUsageInfo() *usage.Info {
-	info := usage.NewInfo("")
+func genTestUsageInfo(withFiles bool) *usage.Info {
+	var info *usage.Info
+
+	if withFiles {
+		info = usage.NewInfo("", "spec-file")
+	} else {
+		info = usage.NewInfo("")
+	}
 
 	info.AddCommand("print", "Print command")
 	info.AddCommand("clean", "Clean command")
