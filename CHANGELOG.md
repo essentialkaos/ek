@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.12.1
+### 12.13.0
 
 * `[usage/completion/bash]` Fixed bug with showing files with autocomplete
 
