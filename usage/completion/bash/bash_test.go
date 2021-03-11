@@ -30,6 +30,7 @@ _test() {
   cmds="print clean"
   opts="--option-aaa --option-bbb --option-ccc"
   show_files="true"
+  file_glob="[sr]pm"
 
   case $prev in
     clean)
@@ -45,33 +46,37 @@ _test() {
     return 0
   fi
 
-  if [[ -z "$cmds" && -n "$show_files" ]] ; then
-    _filedir && return 0
-  fi
-
-  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
+  _test_filter "$cmds" "$opts" "$show_files" "$file_glob"
 }
 
 _test_filter() {
   local cmds="$1"
   local opts="$2"
   local show_files="$3"
+  local file_glob="$4"
 
   local cmd1 cmd2
 
-  for cmd1 in $1 ; do
+  for cmd1 in $cmds ; do
     for cmd2 in ${COMP_WORDS[*]} ; do
       if [[ "$cmd1" == "$cmd2" ]] ; then
-        echo "$2" && return 0
+        if [[ -z "$show_files" ]] ; then
+          COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        else
+          _filedir "$file_glob"
+        fi
+
+        return 0
       fi
     done
   done
 
   if [[ -z "$show_files" ]] ; then
-    echo "$opts" && return 0
+    COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+    return 0
   fi
 
-  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
+  _filedir "$file_glob"
 }
 
 complete -F _test test -o filenames
@@ -90,6 +95,7 @@ _test() {
   cmds="print clean"
   opts="--option-aaa --option-bbb --option-ccc"
   show_files=""
+  file_glob=""
 
   case $prev in
     clean)
@@ -105,33 +111,37 @@ _test() {
     return 0
   fi
 
-  if [[ -z "$cmds" && -n "$show_files" ]] ; then
-    _filedir && return 0
-  fi
-
-  COMPREPLY=($(compgen -W '$(_test_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
+  _test_filter "$cmds" "$opts" "$show_files" "$file_glob"
 }
 
 _test_filter() {
   local cmds="$1"
   local opts="$2"
   local show_files="$3"
+  local file_glob="$4"
 
   local cmd1 cmd2
 
-  for cmd1 in $1 ; do
+  for cmd1 in $cmds ; do
     for cmd2 in ${COMP_WORDS[*]} ; do
       if [[ "$cmd1" == "$cmd2" ]] ; then
-        echo "$2" && return 0
+        if [[ -z "$show_files" ]] ; then
+          COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        else
+          _filedir "$file_glob"
+        fi
+
+        return 0
       fi
     done
   done
 
   if [[ -z "$show_files" ]] ; then
-    echo "$opts" && return 0
+    COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+    return 0
   fi
 
-  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
+  _filedir "$file_glob"
 }
 
 complete -F _test test 
@@ -150,10 +160,10 @@ var _ = Suite(&BashSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *BashSuite) TestGenerator(c *C) {
-	completion := Generate(genTestUsageInfo(true), "test")
+	completion := Generate(genTestUsageInfo(true), "test", "[sr]pm")
 	c.Assert(completion, Equals, _RESULT_FILES)
 
-	completion = Generate(genTestUsageInfo(false), "test")
+	completion = Generate(genTestUsageInfo(false), "test", "")
 	c.Assert(completion, Equals, _RESULT_NO_FILES)
 }
 

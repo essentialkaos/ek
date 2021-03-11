@@ -31,6 +31,7 @@ _{{COMPNAME_SAFE}}() {
   cmds="{{COMMANDS}}"
   opts="{{GLOBAL_OPTIONS}}"
   show_files="{{SHOW_FILES}}"
+  file_glob="{{FILE_GLOB}}"
 
 {{COMMANDS_HANDLERS}}
 
@@ -39,33 +40,37 @@ _{{COMPNAME_SAFE}}() {
     return 0
   fi
 
-  if [[ -z "$cmds" && -n "$show_files" ]] ; then
-    _filedir && return 0
-  fi
-
-  COMPREPLY=($(compgen -W '$(_{{COMPNAME_SAFE}}_filter "$cmds" "$opts" "$show_files")' -- "$cur"))
+  _{{COMPNAME_SAFE}}_filter "$cmds" "$opts" "$show_files" "$file_glob"
 }
 
 _{{COMPNAME_SAFE}}_filter() {
   local cmds="$1"
   local opts="$2"
   local show_files="$3"
+  local file_glob="$4"
 
   local cmd1 cmd2
 
-  for cmd1 in $1 ; do
+  for cmd1 in $cmds ; do
     for cmd2 in ${COMP_WORDS[*]} ; do
       if [[ "$cmd1" == "$cmd2" ]] ; then
-        echo "$2" && return 0
+        if [[ -z "$show_files" ]] ; then
+          COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        else
+          _filedir "$file_glob"
+        fi
+
+        return 0
       fi
     done
   done
 
   if [[ -z "$show_files" ]] ; then
-    echo "$opts" && return 0
+    COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+    return 0
   fi
 
-  compgen -f -- "${COMP_WORDS[COMP_CWORD]}"
+  _filedir "$file_glob"
 }
 
 complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
@@ -74,7 +79,7 @@ complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Generate generates Bash completion code
-func Generate(info *usage.Info, name string) string {
+func Generate(info *usage.Info, name, fileGlob string) string {
 	result := _BASH_TEMPLATE
 
 	result = strings.Replace(result, "{{COMMANDS}}", genCommandsList(info), -1)
@@ -85,9 +90,11 @@ func Generate(info *usage.Info, name string) string {
 	if len(info.Args) != 0 {
 		result = strings.Replace(result, "{{SHOW_FILES}}", "true", -1)
 		result = strings.Replace(result, "{{COMP_OPTS}}", "-o filenames", -1)
+		result = strings.Replace(result, "{{FILE_GLOB}}", fileGlob, -1)
 	} else {
 		result = strings.Replace(result, "{{SHOW_FILES}}", "", -1)
 		result = strings.Replace(result, "{{COMP_OPTS}}", "", -1)
+		result = strings.Replace(result, "{{FILE_GLOB}}", "", -1)
 	}
 
 	nameSafe := strings.Replace(name, "-", "_", -1)

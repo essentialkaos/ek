@@ -30,5 +30,5 @@ func ExampleGenerate() {
 	info.AddOption("h:help", "Show this help message")
 	info.AddOption("v:version", "Show version")
 
-	fmt.Println(Generate(info, "app"))
+	fmt.Println(Generate(info, "app", "txt"))
 }
