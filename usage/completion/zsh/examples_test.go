@@ -2,7 +2,7 @@ package zsh
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,5 +38,5 @@ func ExampleGenerate() {
 		"v:version":   {Type: options.BOOL},
 	}
 
-	fmt.Println(Generate(info, opts, "app"))
+	fmt.Println(Generate(info, opts, "app", "*.txt"))
 }

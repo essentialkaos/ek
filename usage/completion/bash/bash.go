@@ -3,7 +3,7 @@ package bash
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -22,7 +22,7 @@ const _BASH_TEMPLATE = `# Completion for {{COMPNAME}}
 # This completion is automatically generated
 
 _{{COMPNAME_SAFE}}() {
-  local cur prev cmds opts
+  local cur prev cmds opts show_files
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -30,6 +30,8 @@ _{{COMPNAME_SAFE}}() {
 
   cmds="{{COMMANDS}}"
   opts="{{GLOBAL_OPTIONS}}"
+  show_files="{{SHOW_FILES}}"
+  file_glob="{{FILE_GLOB}}"
 
 {{COMMANDS_HANDLERS}}
 
@@ -38,34 +40,46 @@ _{{COMPNAME_SAFE}}() {
     return 0
   fi
 
-  COMPREPLY=($(compgen -W '$(_{{COMPNAME_SAFE}}_filter "$cmds" "$opts")' -- "$cur"))
+  _{{COMPNAME_SAFE}}_filter "$cmds" "$opts" "$show_files" "$file_glob"
 }
 
 _{{COMPNAME_SAFE}}_filter() {
-  if [[ -z "$1" ]] ; then
-    echo "$2" && return 0
-  fi
+  local cmds="$1"
+  local opts="$2"
+  local show_files="$3"
+  local file_glob="$4"
 
   local cmd1 cmd2
 
-  for cmd1 in $1 ; do
+  for cmd1 in $cmds ; do
     for cmd2 in ${COMP_WORDS[*]} ; do
       if [[ "$cmd1" == "$cmd2" ]] ; then
-        echo "$2" && return 0
+        if [[ -z "$show_files" ]] ; then
+          COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        else
+          _filedir "$file_glob"
+        fi
+
+        return 0
       fi
     done
   done
 
-  echo "$1" && return 0
+  if [[ -z "$show_files" ]] ; then
+    COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+    return 0
+  fi
+
+  _filedir "$file_glob"
 }
 
-complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} -o nosort
+complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Generate generates Bash completion code
-func Generate(info *usage.Info, name string) string {
+func Generate(info *usage.Info, name string, fileGlob ...string) string {
 	result := _BASH_TEMPLATE
 
 	result = strings.Replace(result, "{{COMMANDS}}", genCommandsList(info), -1)
@@ -73,8 +87,19 @@ func Generate(info *usage.Info, name string) string {
 	result = strings.Replace(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info), -1)
 	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
 
-	nameSafe := strings.Replace(name, "-", "_", -1)
+	if len(info.Args) != 0 {
+		result = strings.Replace(result, "{{SHOW_FILES}}", "true", -1)
+		result = strings.Replace(result, "{{COMP_OPTS}}", "-o filenames", -1)
+		if len(fileGlob) != 0 {
+			result = strings.Replace(result, "{{FILE_GLOB}}", fileGlob[0], -1)
+		}
+	} else {
+		result = strings.Replace(result, "{{SHOW_FILES}}", "", -1)
+		result = strings.Replace(result, "{{COMP_OPTS}}", "", -1)
+		result = strings.Replace(result, "{{FILE_GLOB}}", "", -1)
+	}
 
+	nameSafe := strings.Replace(name, "-", "_", -1)
 	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
 
 	return result
@@ -105,6 +130,7 @@ func genGlobalOptionsList(info *usage.Info) string {
 	return strings.Join(result, " ")
 }
 
+// genCommandsHandlers generates command handler
 func genCommandsHandlers(info *usage.Info) string {
 	if !isCommandHandlersRequired(info) {
 		return ""

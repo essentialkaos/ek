@@ -16,11 +16,12 @@ jobs:
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
       EK_TEST_PORT: 8080
+      GO111MODULE: off
 
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
-        go: [ '1.14.x', '1.15.x' ]
+        go: [ '1.15.x', '1.16.x' ]
 
     steps:
       - name: Set up Go

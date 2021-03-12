@@ -2,7 +2,7 @@ package zsh
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -44,6 +44,7 @@ _test() {
     ;;
   esac
 
+  _files -g "*.txt"
 }
 
 _test_cmds() {
@@ -71,7 +72,7 @@ var _ = Suite(&ZSHSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ZSHSuite) TestGenerator(c *C) {
-	data := Generate(genTestUsageInfo(), genTestOptions(), "test")
+	data := Generate(genTestUsageInfo(), genTestOptions(), "test", "*.txt")
 	c.Assert(data, Equals, _RESULT)
 }
 
@@ -80,6 +81,13 @@ func (s *ZSHSuite) TestAuxi(c *C) {
 
 	c.Assert(genCommandsHandlers(info, nil), Equals, "")
 	c.Assert(genCommandsFunc(info), Equals, "")
+
+	c.Assert(genFilesHandler(info, nil), Equals, "")
+
+	info = usage.NewInfo("", "files")
+
+	c.Assert(genFilesHandler(info, []string{"*.txt"}), Equals, "  _files -g \"*.txt\"")
+	c.Assert(genFilesHandler(info, nil), Equals, "  _files")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -95,7 +103,7 @@ func genTestOptions() options.Map {
 }
 
 func genTestUsageInfo() *usage.Info {
-	info := usage.NewInfo("")
+	info := usage.NewInfo("", "file…")
 
 	info.AddCommand("print", "Print command")
 	info.AddCommand("clean", "Clean command")
