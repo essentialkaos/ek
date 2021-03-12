@@ -2,7 +2,10 @@
 
 ### 12.13.0
 
+* `[usage/completion/bash]` Improved completion generation
+* `[usage/completion/zsh]` Improved completion generation
 * `[usage/completion/bash]` Fixed bug with showing files with autocomplete
+* `[usage/completion/zsh]` Fixed bug with showing files with autocomplete
 
 ### 12.12.0
 

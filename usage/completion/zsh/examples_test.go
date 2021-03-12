@@ -38,5 +38,5 @@ func ExampleGenerate() {
 		"v:version":   {Type: options.BOOL},
 	}
 
-	fmt.Println(Generate(info, opts, "app"))
+	fmt.Println(Generate(info, opts, "app", "*.txt"))
 }

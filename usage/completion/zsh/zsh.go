@@ -31,6 +31,7 @@ _{{COMPNAME}}() {
 {{GLOBAL_ARGS}}
 
 {{COMMANDS_HANDLERS}}
+{{FILES_HANDLER}}
 }
 
 {{COMMANDS_FUNC}}
@@ -40,12 +41,13 @@ _{{COMPNAME}} "$@"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Generate generates zsh completion code
-func Generate(info *usage.Info, opts options.Map, name string) string {
+func Generate(info *usage.Info, opts options.Map, name string, fileGlob ...string) string {
 	result := _ZSH_TEMPLATE
 
 	result = strings.Replace(result, "{{GLOBAL_ARGS}}", genGlobalOptionList(info, opts), -1)
 	result = strings.Replace(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info, opts), -1)
 	result = strings.Replace(result, "{{COMMANDS_FUNC}}", genCommandsFunc(info), -1)
+	result = strings.Replace(result, "{{FILES_HANDLER}}", genFilesHandler(info, fileGlob), -1)
 	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
 
 	nameSafe := strings.Replace(name, "-", "_", -1)
@@ -56,6 +58,19 @@ func Generate(info *usage.Info, opts options.Map, name string) string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// genFilesHandler generates handler for showing files
+func genFilesHandler(info *usage.Info, fileGlob []string) string {
+	if len(info.Args) == 0 && len(fileGlob) == 0 {
+		return ""
+	}
+
+	if len(fileGlob) != 0 {
+		return "  _files -g \"" + fileGlob[0] + "\""
+	}
+
+	return "  _files"
+}
 
 // genGlobalOptionList generates list with global options
 func genGlobalOptionList(info *usage.Info, opts options.Map) string {
