@@ -163,7 +163,7 @@ func (s *BashSuite) TestGenerator(c *C) {
 	completion := Generate(genTestUsageInfo(true), "test", "[sr]pm")
 	c.Assert(completion, Equals, _RESULT_FILES)
 
-	completion = Generate(genTestUsageInfo(false), "test", "")
+	completion = Generate(genTestUsageInfo(false), "test")
 	c.Assert(completion, Equals, _RESULT_NO_FILES)
 }
 
