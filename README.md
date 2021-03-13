@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
 
 <p align="center">
-  <a href="https://pkg.go.dev/pkg.re/essentialkaos/ek.v12"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev" /></a>
+  <a href="https://pkg.re/essentialkaos/ek.v12?docs"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/ek"><img src="https://goreportcard.com/badge/github.com/essentialkaos/ek" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-ek"><img alt="codebeat badge" src="https://codebeat.co/badges/3649d737-e5b9-4465-9765-b9f4ebec60ec" /></a>
   <a href="https://github.com/essentialkaos/ek/actions"><img src="https://github.com/essentialkaos/ek/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
@@ -21,7 +21,7 @@ Currently we support Linux and Mac OS X (except `system` package). Some packages
 
 ### Installation
 
-Make sure you have a working Go 1.14+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.15+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
 go get pkg.re/essentialkaos/ek.v12
@@ -35,84 +35,87 @@ go get -u pkg.re/essentialkaos/ek.v12
 
 ### Sub-packages
 
-* [`cache`](https://godoc.org/pkg.re/essentialkaos/ek.v12/cache) - Package provides simple in-memory key:value store
-* [`color`](https://godoc.org/pkg.re/essentialkaos/ek.v12/color) - Package provides methods for working with colors
-* [`cron`](https://godoc.org/pkg.re/essentialkaos/ek.v12/cron) - Package provides methods for working with cron expressions
-* [`csv`](https://godoc.org/pkg.re/essentialkaos/ek.v12/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
-* [`easing`](https://godoc.org/pkg.re/essentialkaos/ek.v12/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
-* [`emoji`](https://godoc.org/pkg.re/essentialkaos/ek.v12/emoji) - Package provides methods for working with emojis
-* [`env`](https://godoc.org/pkg.re/essentialkaos/ek.v12/env) - Package provides methods for working with environment variables
-* [`errutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/errutil) - Package provides methods for working with errors
-* [`directio`](https://godoc.org/pkg.re/essentialkaos/ek.v12/directio) - Package provides methods for reading/writing files with direct io
-* [`fmtc`](https://godoc.org/pkg.re/essentialkaos/ek.v12/fmtc) - Package provides methods similar to fmt for colored output
-* [`fmtutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/fmtutil) - Package provides methods for output formatting
-* [`fmtutil/table`](https://godoc.org/pkg.re/essentialkaos/ek.v12/fmtutil/table) - Package table contains methods and structs for rendering data as a table
-* [`fsutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/fsutil) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
-* [`hash`](https://godoc.org/pkg.re/essentialkaos/ek.v12/hash) - Package hash contains different hash algorithms and utilities
-* [`httputil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/httputil) - Package provides methods for working with HTTP request/responses
-* [`initsystem`](https://godoc.org/pkg.re/essentialkaos/ek.v12/initsystem) - Package provides methods for working with different init systems (sysv, upstart, systemd)
-* [`jsonutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/jsonutil) - Package provides methods for working with JSON data
-* [`knf`](https://godoc.org/pkg.re/essentialkaos/ek.v12/knf) - Package provides methods for working with configs in KNF format
-* [`log`](https://godoc.org/pkg.re/essentialkaos/ek.v12/log) - Package with an improved logger
-* [`mathutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/mathutil) - Package with math utils
-* [`netutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/netutil) - Package with network utils
-* [`options`](https://godoc.org/pkg.re/essentialkaos/ek.v12/options) - Package provides methods for working with command-line options
-* [`passwd`](https://godoc.org/pkg.re/essentialkaos/ek.v12/passwd) - Package contains methods for working with passwords
-* [`path`](https://godoc.org/pkg.re/essentialkaos/ek.v12/path) - Package for working with paths (fully compatible with base path package)
-* [`pid`](https://godoc.org/pkg.re/essentialkaos/ek.v12/pid) - Package for working with PID files
-* [`pluralize`](https://godoc.org/pkg.re/essentialkaos/ek.v12/pluralize) - Package provides methods for pluralization
-* [`progress`](https://godoc.org/pkg.re/essentialkaos/ek.v12/progress) - Package provides methods and structs for creating terminal progress bar
-* [`rand`](https://godoc.org/pkg.re/essentialkaos/ek.v12/rand) - Package for generating random data
-* [`req`](https://godoc.org/pkg.re/essentialkaos/ek.v12/req) - Package for working with HTTP request
-* [`signal`](https://godoc.org/pkg.re/essentialkaos/ek.v12/signal) - Package for handling signals
-* [`sliceutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/sliceutil) - Package with utils for working with slices
-* [`sortutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/sortutil) - Package with utils for sorting slices
-* [`spellcheck`](https://godoc.org/pkg.re/essentialkaos/ek.v12/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
-* [`strutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/strutil) - Package provides utils for working with strings
-* [`system/exec`](https://godoc.org/pkg.re/essentialkaos/ek.v12/system/process) - Package provides methods for executing commands
-* [`system/process`](https://godoc.org/pkg.re/essentialkaos/ek.v12/system/process) - Package provides methods for getting information about active processes
-* [`system/procname`](https://godoc.org/pkg.re/essentialkaos/ek.v12/system/process) - Package provides methods for changing process name in the process tree
-* [`system/sensors`](https://godoc.org/pkg.re/essentialkaos/ek.v12/system/sensors) - Package sensors provide methods for collecting sensors information
-* [`system`](https://godoc.org/pkg.re/essentialkaos/ek.v12/system) - Package provides methods for working with system data (metrics/users)
-* [`terminal`](https://godoc.org/pkg.re/essentialkaos/ek.v12/terminal) - Package provides methods for working with user input
-* [`terminal/window`](https://godoc.org/pkg.re/essentialkaos/ek.v12/terminal/window) - Package provides methods for working terminal window
-* [`timeutil`](https://godoc.org/pkg.re/essentialkaos/ek.v12/timeutil) - Package provides methods for working with time
-* [`tmp`](https://godoc.org/pkg.re/essentialkaos/ek.v12/tmp) - Package provides methods for working with temporary data
-* [`usage`](https://godoc.org/pkg.re/essentialkaos/ek.v12/usage) - Package provides methods for rendering info for command-line tools
-* [`usage/update`](https://godoc.org/pkg.re/essentialkaos/ek.v12/usage/update) - Package contains update checkers for different services
-* [`usage/completion/bash`](https://godoc.org/pkg.re/essentialkaos/ek.v12/usage/completion/bash) - Package bash provides methods for generating bash completion
-* [`usage/completion/fish`](https://godoc.org/pkg.re/essentialkaos/ek.v12/usage/completion/fish) - Package fish provides methods for generating fish completion
-* [`usage/completion/zsh`](https://godoc.org/pkg.re/essentialkaos/ek.v12/usage/completion/zsh) - Package zsh provides methods for generating zsh completion
-* [`uuid`](https://godoc.org/pkg.re/essentialkaos/ek.v12/uuid) - Package provides methods for generating version 4 and 5 UUID's
-* [`version`](https://godoc.org/pkg.re/essentialkaos/ek.v12/version) - Package provides methods for parsing semver version info
+* [`cache`](https://pkg.re/essentialkaos/ek.v12/cache?docs) - Package provides simple in-memory key:value store
+* [`color`](https://pkg.re/essentialkaos/ek.v12/color?docs) - Package provides methods for working with colors
+* [`cron`](https://pkg.re/essentialkaos/ek.v12/cron?docs) - Package provides methods for working with cron expressions
+* [`csv`](https://pkg.re/essentialkaos/ek.v12/csv?docs) - Package with simple (without any checks) CSV parser compatible with default Go parser
+* [`easing`](https://pkg.re/essentialkaos/ek.v12/easing?docs) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
+* [`emoji`](https://pkg.re/essentialkaos/ek.v12/emoji?docs) - Package provides methods for working with emojis
+* [`env`](https://pkg.re/essentialkaos/ek.v12/env?docs) - Package provides methods for working with environment variables
+* [`errutil`](https://pkg.re/essentialkaos/ek.v12/errutil?docs) - Package provides methods for working with errors
+* [`directio`](https://pkg.re/essentialkaos/ek.v12/directio?docs) - Package provides methods for reading/writing files with direct io
+* [`fmtc`](https://pkg.re/essentialkaos/ek.v12/fmtc?docs) - Package provides methods similar to fmt for colored output
+* [`fmtc/lscolors`](https://pkg.re/essentialkaos/ek.v12/fmtc/lscolors?docs) - Package provides method for colorizing file names based on colors from dircolors
+* [`fmtutil`](https://pkg.re/essentialkaos/ek.v12/fmtutil?docs) - Package provides methods for output formatting
+* [`fmtutil/table`](https://pkg.re/essentialkaos/ek.v12/fmtutil/table?docs) - Package table contains methods and structs for rendering data as a table
+* [`fsutil`](https://pkg.re/essentialkaos/ek.v12/fsutil?docs) - Package provides methods for working with files on POSIX compatible systems (Linux / Mac OS X)
+* [`hash`](https://pkg.re/essentialkaos/ek.v12/hash?docs) - Package hash contains different hash algorithms and utilities
+* [`httputil`](https://pkg.re/essentialkaos/ek.v12/httputil?docs) - Package provides methods for working with HTTP request/responses
+* [`initsystem`](https://pkg.re/essentialkaos/ek.v12/initsystem?docs) - Package provides methods for working with different init systems (sysv, upstart, systemd)
+* [`jsonutil`](https://pkg.re/essentialkaos/ek.v12/jsonutil?docs) - Package provides methods for working with JSON data
+* [`knf`](https://pkg.re/essentialkaos/ek.v12/knf?docs) - Package provides methods for working with configs in KNF format
+* [`log`](https://pkg.re/essentialkaos/ek.v12/log?docs) - Package with an improved logger
+* [`mathutil`](https://pkg.re/essentialkaos/ek.v12/mathutil?docs) - Package with math utils
+* [`netutil`](https://pkg.re/essentialkaos/ek.v12/netutil?docs) - Package with network utils
+* [`options`](https://pkg.re/essentialkaos/ek.v12/options?docs) - Package provides methods for working with command-line options
+* [`passwd`](https://pkg.re/essentialkaos/ek.v12/passwd?docs) - Package contains methods for working with passwords
+* [`path`](https://pkg.re/essentialkaos/ek.v12/path?docs) - Package for working with paths (fully compatible with base path package)
+* [`pid`](https://pkg.re/essentialkaos/ek.v12/pid?docs) - Package for working with PID files
+* [`pluralize`](https://pkg.re/essentialkaos/ek.v12/pluralize?docs) - Package provides methods for pluralization
+* [`progress`](https://pkg.re/essentialkaos/ek.v12/progress?docs) - Package provides methods and structs for creating terminal progress bar
+* [`rand`](https://pkg.re/essentialkaos/ek.v12/rand?docs) - Package for generating random data
+* [`req`](https://pkg.re/essentialkaos/ek.v12/req?docs) - Package for working with HTTP request
+* [`signal`](https://pkg.re/essentialkaos/ek.v12/signal?docs) - Package for handling signals
+* [`sliceutil`](https://pkg.re/essentialkaos/ek.v12/sliceutil?docs) - Package with utils for working with slices
+* [`sortutil`](https://pkg.re/essentialkaos/ek.v12/sortutil?docs) - Package with utils for sorting slices
+* [`spellcheck`](https://pkg.re/essentialkaos/ek.v12/spellcheck?docs) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+* [`strutil`](https://pkg.re/essentialkaos/ek.v12/strutil?docs) - Package provides utils for working with strings
+* [`system/exec`](https://pkg.re/essentialkaos/ek.v12/system/process?docs) - Package provides methods for executing commands
+* [`system/process`](https://pkg.re/essentialkaos/ek.v12/system/process?docs) - Package provides methods for getting information about active processes
+* [`system/procname`](https://pkg.re/essentialkaos/ek.v12/system/process?docs) - Package provides methods for changing process name in the process tree
+* [`system/sensors`](https://pkg.re/essentialkaos/ek.v12/system/sensors?docs) - Package sensors provide methods for collecting sensors information
+* [`system`](https://pkg.re/essentialkaos/ek.v12/system?docs) - Package provides methods for working with system data (metrics/users)
+* [`terminal`](https://pkg.re/essentialkaos/ek.v12/terminal?docs) - Package provides methods for working with user input
+* [`terminal/window`](https://pkg.re/essentialkaos/ek.v12/terminal/window?docs) - Package provides methods for working terminal window
+* [`timeutil`](https://pkg.re/essentialkaos/ek.v12/timeutil?docs) - Package provides methods for working with time
+* [`tmp`](https://pkg.re/essentialkaos/ek.v12/tmp?docs) - Package provides methods for working with temporary data
+* [`usage`](https://pkg.re/essentialkaos/ek.v12/usage?docs) - Package provides methods for rendering info for command-line tools
+* [`usage/update`](https://pkg.re/essentialkaos/ek.v12/usage/update?docs) - Package contains update checkers for different services
+* [`usage/completion/bash`](https://pkg.re/essentialkaos/ek.v12/usage/completion/bash?docs) - Package bash provides methods for generating bash completion
+* [`usage/completion/fish`](https://pkg.re/essentialkaos/ek.v12/usage/completion/fish?docs) - Package fish provides methods for generating fish completion
+* [`usage/completion/zsh`](https://pkg.re/essentialkaos/ek.v12/usage/completion/zsh?docs) - Package zsh provides methods for generating zsh completion
+* [`uuid`](https://pkg.re/essentialkaos/ek.v12/uuid?docs) - Package provides methods for generating version 4 and 5 UUID's
+* [`version`](https://pkg.re/essentialkaos/ek.v12/version?docs) - Package provides methods for parsing semver version info
 
 ### Projects with `EK`
 
-* [aligo](https://github.com/essentialkaos/aligo) - Utility for checking and viewing Golang struct alignment info
-* [Bastion](https://github.com/essentialkaos/bastion) - Utility for temporary disabling access to server
-* [bibop](https://github.com/essentialkaos/bibop) - Utility for testing command-line tools
-* [Deadline](https://github.com/essentialkaos/deadline) - Simple utility for controlling application working time
-* [fz](https://github.com/essentialkaos/fz) - Simple tool for formatting `go-fuzz` output
-* [GoHeft](https://github.com/essentialkaos/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
-* [GoMakeGen](https://github.com/essentialkaos/gomakegen) - Utility for generating makefiles for golang applications
-* [icecli](https://github.com/essentialkaos/icecli) - Command-line tools for Icecast
-* [IMC](https://github.com/essentialkaos/imc) - Simple terminal dashboard for Icecast
-* [MDToc](https://github.com/essentialkaos/mdtoc) - Utility for generating table of contents for markdown files
-* [Mockka](https://github.com/essentialkaos/mockka) - Mockka is a simple utility for mocking HTTP API's
-* [perfecto](https://github.com/essentialkaos/perfecto) - Tool for checking perfectly written RPM specs
-* [pkg.re Morpher](https://github.com/essentialkaos/pkgre) - Part of [pkg.re](https://pkg.re) service (_provides versioned URLs for Go_)
-* [RBInstall](https://github.com/essentialkaos/rbinstall) - Utility for installing prebuilt ruby to RBEnv
-* [Redis Monitor Top](https://github.com/essentialkaos/redis-monitor-top) - Tiny Redis client for aggregating stats from MONITOR flow
-* [Redis CLI Monitor](https://github.com/essentialkaos/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
-* [Redis Latency Monitor](https://github.com/essentialkaos/redis-latency-monitor) - Tiny Redis client for latency measurement
-* [SHDoc](https://github.com/essentialkaos/shdoc) - Tool for viewing and exporting docs for shell scripts
-* [Sonar](https://github.com/essentialkaos/sonar) - Utility for showing user Slack status in Atlassian Jira
-* [SourceIndex](https://github.com/essentialkaos/source-index) - Utility for generating an index for source archives
-* [SSLScan Client](https://github.com/essentialkaos/sslcli) - Pretty awesome command-line client for public SSLLabs API
-* [swptop](https://github.com/essentialkaos/swptop) - Simple utility for viewing swap consumption of processes
-* [Terrafarm](https://github.com/essentialkaos/terrafarm) - Utility for working with terraform based rpmbuilder farm
+* [aligo](https://kaos.sh/aligo) - Utility for checking and viewing Golang struct alignment info
+* [Bastion](https://kaos.sh/bastion) - Utility for temporary disabling access to server
+* [bibop](https://kaos.sh/bibop) - Utility for testing command-line tools
+* [bop](https://kaos.sh/bop) - Utility for generating bibop tests for RPM packages
+* [Deadline](https://kaos.sh/deadline) - Simple utility for controlling application working time
+* [fz](https://kaos.sh/fz) - Simple tool for formatting `go-fuzz` output
+* [GoHeft](https://kaos.sh/goheft) - Utility for listing sizes of all used static libraries compiled into golang binary
+* [GoMakeGen](https://kaos.sh/gomakegen) - Utility for generating makefiles for golang applications
+* [icecli](https://kaos.sh/icecli) - Command-line tools for Icecast
+* [IMC](https://kaos.sh/imc) - Simple terminal dashboard for Icecast
+* [MDToc](https://kaos.sh/mdtoc) - Utility for generating table of contents for markdown files
+* [Mockka](https://kaos.sh/mockka) - Mockka is a simple utility for mocking HTTP API's
+* [perfecto](https://kaos.sh/perfecto) - Tool for checking perfectly written RPM specs
+* [pkg.re Morpher](https://kaos.sh/pkgre) - Part of [pkg.re](https://pkg.re) service (_provides versioned URLs for Go_)
+* [RBInstall](https://kaos.sh/rbinstall) - Utility for installing prebuilt ruby to RBEnv
+* [Redis Monitor Top](https://kaos.sh/redis-monitor-top) - Tiny Redis client for aggregating stats from MONITOR flow
+* [Redis CLI Monitor](https://kaos.sh/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
+* [Redis Latency Monitor](https://kaos.sh/redis-latency-monitor) - Tiny Redis client for latency measurement
+* [SHDoc](https://kaos.sh/shdoc) - Tool for viewing and exporting docs for shell scripts
+* [Sonar](https://kaos.sh/sonar) - Utility for showing user Slack status in Atlassian Jira
+* [SourceIndex](https://kaos.sh/source-index) - Utility for generating an index for source archives
+* [SSLScan Client](https://kaos.sh/sslcli) - Pretty awesome command-line client for public SSLLabs API
+* [swptop](https://kaos.sh/swptop) - Simple utility for viewing swap consumption of processes
+* [Terrafarm](https://kaos.sh/terrafarm) - Utility for working with terraform based rpmbuilder farm
 * [vgrepo](https://github.com/gongled/vgrepo) - Simple CLI tool for managing Vagrant repositories
-* [Yo](https://github.com/essentialkaos/yo) - Command-line YAML processor
+* [uc](https://kaos.sh/uc) - Simple utility for counting unique lines
+* [Yo](https://kaos.sh/yo) - Command-line YAML processor
 
 ### Build Status
 

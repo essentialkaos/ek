@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package lscolors
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,13 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.14.0"
+func ExamplePrintln() {
+	file := "myfile.txt"
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	fmt.Println(Colorize(file))
 }

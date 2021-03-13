@@ -8,6 +8,7 @@
 + errutil
 ! directio
 + fmtc
++ fmtc/lscolors
 + fmtutil
 + fmtutil/table
 + fsutil

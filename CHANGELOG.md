@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.14.0
+
+* `[fmtc/lscolors]` Added new package for colorizing file names with colors from dircolors
+
 ### 12.13.0
 
 * `[usage/completion/bash]` Improved completion generation
