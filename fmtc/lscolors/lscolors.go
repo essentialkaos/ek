@@ -60,7 +60,7 @@ func initialize() {
 	colorMap = make(map[string]string)
 
 	for _, key := range strings.Split(lsColors, ":") {
-		if !strings.HasPrefix(key, "*") {
+		if !strings.HasPrefix(key, "*") || !strings.ContainsRune(key, '=') {
 			continue
 		}
 

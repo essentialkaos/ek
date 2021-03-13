@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.14.1
+
+* `[fmtc/lscolors]` Improved environment variable parsing
+
 ### 12.14.0
 
 * `[fmtc/lscolors]` Added new package for colorizing file names with colors from dircolors
