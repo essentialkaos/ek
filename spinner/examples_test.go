@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package spinner
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,31 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.15.0"
+func ExampleShow() {
+	Show("My long running task")
+	time.Sleep(time.Second)
+	Done(true)
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+func ExampleUpdate() {
+	Show("My long running task")
+	time.Sleep(time.Second)
+	Show("My long running task still working")
+	time.Sleep(time.Second)
+	Done(true)
+}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func ExampleDone() {
+	Show("My long running task with good result")
+	time.Sleep(time.Second)
+	Done(true)
+
+	Show("My long running task with bad result")
+	time.Sleep(time.Second)
+	Done(false)
 }

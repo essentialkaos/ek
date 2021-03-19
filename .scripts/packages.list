@@ -37,6 +37,7 @@
 + sliceutil
 + sortutil
 + spellcheck
++ spinner
 + strutil
 - system
 - system/exec
