@@ -10,6 +10,7 @@ package spinner
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -50,7 +51,7 @@ var mu = &sync.RWMutex{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Show shows spinner with given task description
-func Show(taskDesc string) {
+func Show(message string, args ...interface{}) {
 	mu.RLock()
 	if !isHidden {
 		mu.RUnlock()
@@ -59,7 +60,7 @@ func Show(taskDesc string) {
 	mu.RUnlock()
 
 	mu.Lock()
-	desc = taskDesc
+	desc = fmt.Sprintf(message, args...)
 	isActive, isHidden = true, false
 	start = time.Now()
 	mu.Unlock()
@@ -68,7 +69,7 @@ func Show(taskDesc string) {
 }
 
 // Update updates task description
-func Update(taskDesc string) {
+func Update(message string, args ...interface{}) {
 	mu.RLock()
 	if isHidden {
 		mu.RUnlock()
@@ -77,7 +78,7 @@ func Update(taskDesc string) {
 	mu.RUnlock()
 
 	mu.Lock()
-	desc = taskDesc
+	desc = fmt.Sprintf(message, args...)
 	mu.Unlock()
 }
 

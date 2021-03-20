@@ -14,7 +14,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleShow() {
-	Show("My long running task")
+	file := "file.txt"
+	Show("Removing file %s", file)
 	time.Sleep(time.Second)
 	Done(true)
 }
