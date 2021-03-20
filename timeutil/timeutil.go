@@ -11,6 +11,7 @@ package timeutil
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -66,7 +67,7 @@ func PrettyDurationInDays(d interface{}) string {
 }
 
 // ShortDuration returns pretty short duration (e.g. 1:37)
-func ShortDuration(d interface{}) string {
+func ShortDuration(d interface{}, highPrecision ...bool) string {
 	dur, ok := convertDuration(d)
 
 	if !ok {
@@ -77,7 +78,11 @@ func ShortDuration(d interface{}) string {
 		return "0:00"
 	}
 
-	return getShortDuration(dur)
+	if len(highPrecision) != 0 && highPrecision[0] == true {
+		return getShortDuration(dur, true)
+	}
+
+	return getShortDuration(dur, false)
 }
 
 // Format returns formatted date as a string
@@ -503,10 +508,11 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
-func getShortDuration(dur time.Duration) string {
+func getShortDuration(dur time.Duration, highPrecision bool) string {
 	var h, m int64
 
-	d := int64(dur.Seconds())
+	s := dur.Seconds()
+	d := int64(s)
 
 	if d >= 3600 {
 		h = d / 3600
@@ -520,6 +526,12 @@ func getShortDuration(dur time.Duration) string {
 
 	if h > 0 {
 		return fmt.Sprintf("%d:%02d:%02d", h, m, d)
+	}
+
+	if highPrecision && s < 10.0 {
+		ms := fmt.Sprintf("%.3f", s-math.Floor(s))
+		ms = strings.ReplaceAll(ms, "0.", "")
+		return fmt.Sprintf("%d:%02d.%s", m, d, ms)
 	}
 
 	return fmt.Sprintf("%d:%02d", m, d)

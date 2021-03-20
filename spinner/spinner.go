@@ -125,12 +125,12 @@ func Done(ok bool) {
 	if ok {
 		fmtc.Printf(
 			OkColorTag+"✔  {!}%s "+TimeColorTag+"(%s){!}\n",
-			desc, timeutil.ShortDuration(time.Since(start)),
+			desc, timeutil.ShortDuration(time.Since(start), true),
 		)
 	} else {
 		fmtc.Printf(
 			ErrColorTag+"✖  {!}%s "+TimeColorTag+"(%s){!}\n",
-			desc, timeutil.ShortDuration(time.Since(start)),
+			desc, timeutil.ShortDuration(time.Since(start), true),
 		)
 	}
 
