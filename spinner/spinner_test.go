@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is set of auxiliary packages
-package ek
+package spinner
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,38 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"testing"
+	"time"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	. "pkg.re/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.15.0"
+func Test(t *testing.T) { TestingT(t) }
+
+type SpinnerSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+var _ = Suite(&SpinnerSuite{})
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *SpinnerSuite) TestSpinner(c *C) {
+	Done(true) // skipped
+	Show("ABCD")
+	Show("ABCD") // skipped
+	time.Sleep(time.Millisecond * 100)
+	Update("ABCD")
+	time.Sleep(time.Millisecond * 100)
+	Done(true)
+	Update("ABCD") // skipped
+	Show("ABCD")
+	time.Sleep(time.Millisecond * 10)
+	Done(false)
+
+	DisableAnimation = true
+	Show("ABCD")
+	Done(true)
 }

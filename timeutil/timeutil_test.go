@@ -61,6 +61,8 @@ func (s *TimeUtilSuite) TestPretyDurationInDays(c *C) {
 
 func (s *TimeUtilSuite) TestShortDuration(c *C) {
 	c.Assert(ShortDuration(time.Duration(0)), Equals, "0:00")
+	c.Assert(ShortDuration(time.Duration(3546*time.Millisecond), false), Equals, "0:03")
+	c.Assert(ShortDuration(time.Duration(3546*time.Millisecond), true), Equals, "0:03.546")
 	c.Assert(ShortDuration(time.Duration(59000000000)), Equals, "0:59")
 	c.Assert(ShortDuration(60), Equals, "1:00")
 	c.Assert(ShortDuration(120), Equals, "2:00")

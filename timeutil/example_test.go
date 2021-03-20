@@ -60,9 +60,11 @@ func ExampleFormat() {
 
 func ExampleShortDuration() {
 	fmt.Println(ShortDuration(time.Second * 85))
+	fmt.Println(ShortDuration(3215*time.Millisecond, true))
 
 	// Output:
 	// 1:25
+	// 0:03.215
 }
 
 func ExampleDurationToSeconds() {

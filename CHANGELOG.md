@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.15.0
+
+* `[spinner]` Added new package for showing spinner animation for long-running tasks
+* `[timeutil]` Added high precision mode for `ShortDuration`
+
 ### 12.14.1
 
 * `[fmtc/lscolors]` Improved environment variable parsing
