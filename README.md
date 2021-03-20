@@ -69,6 +69,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`sliceutil`](https://pkg.re/essentialkaos/ek.v12/sliceutil?docs) - Package with utils for working with slices
 * [`sortutil`](https://pkg.re/essentialkaos/ek.v12/sortutil?docs) - Package with utils for sorting slices
 * [`spellcheck`](https://pkg.re/essentialkaos/ek.v12/spellcheck?docs) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+* [`spinner`](https://pkg.re/essentialkaos/ek.v12/spinner?docs) - Package provides methods for creating spinner animation for long-running tasks
 * [`strutil`](https://pkg.re/essentialkaos/ek.v12/strutil?docs) - Package provides utils for working with strings
 * [`system/exec`](https://pkg.re/essentialkaos/ek.v12/system/process?docs) - Package provides methods for executing commands
 * [`system/process`](https://pkg.re/essentialkaos/ek.v12/system/process?docs) - Package provides methods for getting information about active processes
