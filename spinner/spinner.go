@@ -20,10 +20,20 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+//  SpinnerColorTag is spinner animation color tag (see fmtc package)
 var SpinnerColorTag = "{y}"
+
+// OkColorTag is check color tag (see fmtc package)
 var OkColorTag = "{g}"
+
+// ErrColorTag is cross color tag (see fmtc package)
 var ErrColorTag = "{r}"
+
+// TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
+
+// Disable is global off switch flag
+var Disable = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -52,6 +62,10 @@ var mu = &sync.RWMutex{}
 
 // Show shows spinner with given task description
 func Show(message string, args ...interface{}) {
+	if Disable {
+		return
+	}
+
 	mu.RLock()
 	if !isHidden {
 		mu.RUnlock()
@@ -70,6 +84,10 @@ func Show(message string, args ...interface{}) {
 
 // Update updates task description
 func Update(message string, args ...interface{}) {
+	if Disable {
+		return
+	}
+
 	mu.RLock()
 	if isHidden {
 		mu.RUnlock()
@@ -84,6 +102,10 @@ func Update(message string, args ...interface{}) {
 
 // Done finishes spinner animation and shows task status
 func Done(ok bool) {
+	if Disable {
+		return
+	}
+
 	mu.RLock()
 
 	if !isActive {

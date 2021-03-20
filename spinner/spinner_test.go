@@ -38,4 +38,9 @@ func (s *SpinnerSuite) TestSpinner(c *C) {
 	Show("ABCD")
 	time.Sleep(time.Millisecond * 10)
 	Done(false)
+
+	Disable = true
+	Show("ABCD")
+	Update("ABCD")
+	Done(false)
 }
