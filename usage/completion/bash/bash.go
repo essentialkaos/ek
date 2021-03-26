@@ -79,7 +79,7 @@ complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Generate generates Bash completion code
-func Generate(info *usage.Info, name string, fileGlob ...string) string {
+func Generate(info *usage.Info, name string, fileExt ...string) string {
 	result := _BASH_TEMPLATE
 
 	result = strings.Replace(result, "{{COMMANDS}}", genCommandsList(info), -1)
@@ -90,8 +90,8 @@ func Generate(info *usage.Info, name string, fileGlob ...string) string {
 	if len(info.Args) != 0 {
 		result = strings.Replace(result, "{{SHOW_FILES}}", "true", -1)
 		result = strings.Replace(result, "{{COMP_OPTS}}", "-o filenames", -1)
-		if len(fileGlob) != 0 {
-			result = strings.Replace(result, "{{FILE_GLOB}}", fileGlob[0], -1)
+		if len(fileExt) != 0 {
+			result = strings.Replace(result, "{{FILE_GLOB}}", fileExt[0], -1)
 		}
 	} else {
 		result = strings.Replace(result, "{{SHOW_FILES}}", "", -1)

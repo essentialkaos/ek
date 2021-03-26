@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.15.1
+
+* `[usage/completion/bash]` Code refactoring
+
 ### 12.15.0
 
 * `[spinner]` Added new package for showing spinner animation for long-running tasks
