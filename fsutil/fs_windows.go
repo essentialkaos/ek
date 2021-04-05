@@ -49,6 +49,11 @@ func CheckPerms(perms, path string) bool {
 	return false
 }
 
+// ValidatePerms validates permissions for file or directory
+func ValidatePerms(props, path string) error {
+	return nil
+}
+
 // ProperPath returns the first proper path from a given slice
 func ProperPath(props string, paths []string) string {
 	return ""

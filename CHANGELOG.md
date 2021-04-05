@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.15.2
+
+* `[fsutil]` Fixed stubs for Windows
+
 ### 12.15.1
 
 * `[usage/completion/bash]` Code refactoring
