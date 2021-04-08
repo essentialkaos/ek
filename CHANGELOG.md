@@ -3,6 +3,7 @@
 ### 12.15.2
 
 * `[fsutil]` Fixed stubs for Windows
+* `[progress]` Minor UI fix
 
 ### 12.15.1
 
