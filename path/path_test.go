@@ -104,3 +104,12 @@ func (s *PathUtilSuite) TestDotfile(c *C) {
 	c.Assert(IsDotfile("/.dotfile"), Equals, true)
 	c.Assert(IsDotfile("/some/dir/.abcd"), Equals, true)
 }
+
+func (s *PathUtilSuite) TestGlob(c *C) {
+	c.Assert(IsGlob(""), Equals, false)
+	c.Assert(IsGlob("ancd-1234"), Equals, false)
+	c.Assert(IsGlob("[1234"), Equals, false)
+	c.Assert(IsGlob("test*"), Equals, true)
+	c.Assert(IsGlob("t?st"), Equals, true)
+	c.Assert(IsGlob("t[a-z]st"), Equals, true)
+}
