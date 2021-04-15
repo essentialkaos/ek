@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.15.2
+### 12.16.0
 
 * `[path]` Added new method for checking Unix-type globs
 * `[fsutil]` Fixed stubs for Windows
