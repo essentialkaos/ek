@@ -104,3 +104,15 @@ func ExampleIsDotfile() {
 	// /home/user/project/file is dotfile → false
 	// /home/user/project/.file is dotfile → true
 }
+
+func ExampleIsGlob() {
+	file1 := "file"
+	file2 := "*.file"
+
+	fmt.Printf("%s is glob → %t\n", file1, IsGlob(file1))
+	fmt.Printf("%s is glob → %t\n", file2, IsGlob(file2))
+
+	// Output:
+	// file is glob → false
+	// *.file is glob → true
+}

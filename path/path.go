@@ -152,6 +152,30 @@ func IsDotfile(path string) bool {
 	return pathBase[0:1] == "."
 }
 
+// IsGlob returns true if given pattern is Unix-like glob
+func IsGlob(pattern string) bool {
+	if pattern == "" {
+		return false
+	}
+
+	var rs bool
+
+	for _, r := range pattern {
+		switch r {
+		case '?', '*':
+			return true
+		case '[':
+			rs = true
+		case ']':
+			if rs {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func evalHome(path string) string {

@@ -401,6 +401,7 @@ func (b *Bar) renderName() (string, int) {
 // renderPercentage returns parcentage text
 func (b *Bar) renderPercentage() (string, int) {
 	var perc float64
+	var result string
 
 	switch {
 	case b.total <= 0:
@@ -411,7 +412,11 @@ func (b *Bar) renderPercentage() (string, int) {
 		perc = (float64(b.current) / float64(b.total)) * 100.0
 	}
 
-	result := fmt.Sprintf("%5.1f", perc) + "%%"
+	if perc == 100.0 {
+		result = "100%%"
+	} else {
+		result = fmt.Sprintf("%5.1f", perc) + "%%"
+	}
 
 	if fmtc.DisableColors || b.settings.PercentColorTag == "" {
 		return result, len(result)
