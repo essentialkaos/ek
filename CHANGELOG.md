@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.17.0
+
+* `[options]` Method `Parse` now returns arguments as `Arguments` struct with additional methods for working with them
+
 ### 12.16.0
 
 * `[path]` Added new method for checking Unix-type globs
