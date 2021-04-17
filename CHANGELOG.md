@@ -3,6 +3,8 @@
 ### 12.17.0
 
 * `[options]` Method `Parse` now returns arguments as `Arguments` struct with additional methods for working with them
+* `[progress]` Fixed bug with rendering resulting progress bar in some situations
+* `[progress]` Using integer instead of floats for progress if total size is less than 1000 and `IsSize` set to false
 
 ### 12.16.0
 
