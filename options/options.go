@@ -283,7 +283,7 @@ func (opts *Options) Has(name string) bool {
 }
 
 // Parse parse options
-func (opts *Options) Parse(rawOpts []string, optMap ...Map) ([]string, []error) {
+func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error) {
 	var errs []error
 
 	if len(optMap) != 0 {
@@ -374,7 +374,7 @@ func Has(name string) bool {
 }
 
 // Parse parse options
-func Parse(optMap ...Map) ([]string, []error) {
+func Parse(optMap ...Map) (Arguments, []error) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}

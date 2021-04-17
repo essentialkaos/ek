@@ -368,7 +368,7 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	fArgs, errs := NewOptions().Parse([]string{"-", "--"}, Map{"t:test": {}})
 
 	c.Assert(errs, HasLen, 0)
-	c.Assert(fArgs, DeepEquals, []string{"-", "--"})
+	c.Assert(fArgs, DeepEquals, Arguments{"-", "--"})
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
