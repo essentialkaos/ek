@@ -355,6 +355,24 @@ func Copy(v string) string {
 	return (v + " ")[:len(v)]
 }
 
+// Before returns part of the string before given substring
+func Before(s, substr string) string {
+	if !strings.Contains(s, substr) {
+		return s
+	}
+
+	return s[:strings.Index(s, substr)]
+}
+
+// After returns part of the string after given substring
+func After(s, substr string) string {
+	if !strings.Contains(s, substr) {
+		return s
+	}
+
+	return s[strings.Index(s, substr)+len(substr):]
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func formatItems(data []string) []string {

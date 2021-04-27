@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.17.0
+
+* `[options]` Method `Parse` now returns arguments as `Arguments` struct with additional methods for working with them
+* `[strutil]` Added methods `Before` and `After` for extracting strings before and after some substring
+* `[progress]` Fixed bug with rendering resulting progress bar in some situations
+* `[progress]` Using integer instead of floats for progress if total size is less than 1000 and `IsSize` set to false
+
 ### 12.16.0
 
 * `[path]` Added new method for checking Unix-type globs

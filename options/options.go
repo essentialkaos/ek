@@ -283,7 +283,7 @@ func (opts *Options) Has(name string) bool {
 }
 
 // Parse parse options
-func (opts *Options) Parse(rawOpts []string, optMap ...Map) ([]string, []error) {
+func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error) {
 	var errs []error
 
 	if len(optMap) != 0 {
@@ -293,7 +293,7 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) ([]string, []error) 
 	}
 
 	if len(errs) != 0 {
-		return []string{}, errs
+		return Arguments{}, errs
 	}
 
 	return opts.parseOptions(rawOpts)
@@ -374,7 +374,7 @@ func Has(name string) bool {
 }
 
 // Parse parse options
-func Parse(optMap ...Map) ([]string, []error) {
+func Parse(optMap ...Map) (Arguments, []error) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -408,10 +408,10 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 	}
 
 	var (
-		optName    string
-		mixedOpt   bool
-		nonOptList []string
-		errorList  []error
+		optName   string
+		mixedOpt  bool
+		arguments Arguments
+		errorList []error
 	)
 
 	for _, curOpt := range rawOpts {
@@ -426,7 +426,7 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 
 			switch {
 			case strings.TrimRight(curOpt, "-") == "":
-				nonOptList = append(nonOptList, curOpt)
+				arguments = append(arguments, curOpt)
 				continue
 
 			case curOptLen > 2 && curOpt[0:2] == "--":
@@ -444,7 +444,7 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 				optName, mixedOpt = "", false
 
 			default:
-				nonOptList = append(nonOptList, curOpt)
+				arguments = append(arguments, curOpt)
 				continue
 			}
 
@@ -506,7 +506,7 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 		}
 	}
 
-	return nonOptList, errorList
+	return arguments, errorList
 }
 
 // codebeat:enable[LOC,BLOCK_NESTING,CYCLO]

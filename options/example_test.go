@@ -45,7 +45,8 @@ func Example_parsing() {
 		fmt.Println("\"--string/-s\" is set")
 	}
 
-	fmt.Printf("Unparsed: %v\n\n", args)
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("First argument: %s\n\n", args.Get(0))
 
 	fmt.Printf("string → %s\n", GetS("string"))
 	fmt.Printf("int → %d\n", GetI("int"))

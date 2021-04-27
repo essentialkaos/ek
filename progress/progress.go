@@ -159,6 +159,9 @@ func (b *Bar) Finish() {
 		return
 	}
 
+	fmtc.TPrintf(b.renderElements())
+	fmtc.NewLine()
+
 	b.finishChan <- true
 }
 
@@ -609,7 +612,7 @@ func getPrettyCTSize(current, total int64) (string, string, string) {
 // getPrettyCTNum returns formatted current/total number text
 func getPrettyCTNum(current, total int64) (string, string, string) {
 	var mod float64
-	var label string
+	var label, curText, totText string
 
 	switch {
 	case total > 1000*1000*1000:
@@ -625,8 +628,13 @@ func getPrettyCTNum(current, total int64) (string, string, string) {
 		mod = 1
 	}
 
-	curText := fmt.Sprintf("%.1f", float64(current)/mod)
-	totText := fmt.Sprintf("%.1f", float64(total)/mod)
+	if total > 1000 {
+		curText = fmt.Sprintf("%.1f", float64(current)/mod)
+		totText = fmt.Sprintf("%.1f", float64(total)/mod)
+	} else {
+		curText = fmt.Sprintf("%d", int(float64(current)/mod))
+		totText = fmt.Sprintf("%d", int(float64(total)/mod))
+	}
 
 	return curText, totText, label
 }

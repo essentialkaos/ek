@@ -231,8 +231,8 @@ func (s *ProgressSuite) TestProgressRender(c *C) {
 
 	vl, sz = pb.renderProgress()
 
-	c.Assert(vl, Equals, " 1.0/10.0")
-	c.Assert(sz, Equals, 9)
+	c.Assert(vl, Equals, " 1/10")
+	c.Assert(sz, Equals, 5)
 }
 
 func (s *ProgressSuite) TestSpeedRender(c *C) {
@@ -332,8 +332,8 @@ func (s *ProgressSuite) TestAux(c *C) {
 
 	ct, tt, lt = getPrettyCTNum(1, 15)
 
-	c.Assert(ct, Equals, "1.0")
-	c.Assert(tt, Equals, "15.0")
+	c.Assert(ct, Equals, "1")
+	c.Assert(tt, Equals, "15")
 	c.Assert(lt, Equals, "")
 
 	ct, tt, lt = getPrettyCTNum(123, 15*1000)

@@ -119,3 +119,17 @@ func ExampleCopy() {
 	// Output:
 	// abc
 }
+
+func ExampleBefore() {
+	fmt.Println(Before("john@domain.com", "@"))
+
+	// Output:
+	// john
+}
+
+func ExampleAfter() {
+	fmt.Println(After("john@domain.com", "@"))
+
+	// Output:
+	// domain.com
+}

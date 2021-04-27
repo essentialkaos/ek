@@ -368,7 +368,7 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	fArgs, errs := NewOptions().Parse([]string{"-", "--"}, Map{"t:test": {}})
 
 	c.Assert(errs, HasLen, 0)
-	c.Assert(fArgs, DeepEquals, []string{"-", "--"})
+	c.Assert(fArgs, DeepEquals, Arguments{"-", "--"})
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -453,4 +453,64 @@ func (s *OptUtilSuite) TestGuessType(c *C) {
 	c.Assert(guessType(4), Equals, INT)
 	c.Assert(guessType(true), Equals, BOOL)
 	c.Assert(guessType(3.3), Equals, FLOAT)
+}
+
+func (s *OptUtilSuite) TestArguments(c *C) {
+	a := Arguments([]string{"test", "6", "2.67", "true"})
+
+	c.Assert(a.Has(1), Equals, true)
+	c.Assert(a.Has(9), Equals, false)
+
+	c.Assert(a.Get(0), Equals, "test")
+	c.Assert(a.Get(1), Equals, "6")
+	c.Assert(a.Get(2), Equals, "2.67")
+	c.Assert(a.Get(3), Equals, "true")
+	c.Assert(a.Get(4), Equals, "")
+
+	iv, err := a.GetI(0)
+	c.Assert(iv, Equals, 0)
+	c.Assert(err, NotNil)
+	iv, err = a.GetI(1)
+	c.Assert(iv, Equals, 6)
+	c.Assert(err, IsNil)
+
+	fv, err := a.GetF(0)
+	c.Assert(fv, Equals, 0.0)
+	c.Assert(err, NotNil)
+	fv, err = a.GetF(2)
+	c.Assert(fv, Equals, 2.67)
+	c.Assert(err, IsNil)
+
+	a = Arguments([]string{"true", "yes", "y", "1", "false", "no", "n", "0", "", "TEST"})
+
+	bv, err := a.GetB(0)
+	c.Assert(bv, Equals, true)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(1)
+	c.Assert(bv, Equals, true)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(2)
+	c.Assert(bv, Equals, true)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(3)
+	c.Assert(bv, Equals, true)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(4)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(5)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(6)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(7)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(8)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, IsNil)
+	bv, err = a.GetB(9)
+	c.Assert(bv, Equals, false)
+	c.Assert(err, NotNil)
 }
