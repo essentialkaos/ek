@@ -216,3 +216,15 @@ func (s *StrUtilSuite) BenchmarkLen(c *C) {
 		Len("✶✈12AB例例子예")
 	}
 }
+
+func (s *StrUtilSuite) TestBefore(c *C) {
+	c.Assert(Before("", "@"), Equals, "")
+	c.Assert(Before("test::1234", "@"), Equals, "test::1234")
+	c.Assert(Before("test::1234", "::"), Equals, "test")
+}
+
+func (s *StrUtilSuite) TestAfter(c *C) {
+	c.Assert(After("", "@"), Equals, "")
+	c.Assert(After("test::1234", "@"), Equals, "test::1234")
+	c.Assert(After("test::1234", "::"), Equals, "1234")
+}
