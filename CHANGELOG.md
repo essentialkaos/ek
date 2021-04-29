@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.17.1
+
+* `[path]` Fixed stubs for Windows
+
 ### 12.17.0
 
 * `[options]` Method `Parse` now returns arguments as `Arguments` struct with additional methods for working with them
