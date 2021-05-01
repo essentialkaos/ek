@@ -75,3 +75,8 @@ func IsSafe(path string) bool {
 func IsDotfile(path string) bool {
 	return false
 }
+
+// IsGlob returns true if given pattern is Unix-like glob
+func IsGlob(pattern string) bool {
+	return false
+}
