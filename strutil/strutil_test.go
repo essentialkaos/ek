@@ -228,3 +228,13 @@ func (s *StrUtilSuite) TestAfter(c *C) {
 	c.Assert(After("test::1234", "@"), Equals, "test::1234")
 	c.Assert(After("test::1234", "::"), Equals, "1234")
 }
+
+func (s *StrUtilSuite) TestHasPrefixAny(c *C) {
+	c.Assert(HasPrefixAny("#abcd", "#", "@"), Equals, true)
+	c.Assert(HasPrefixAny("#abcd", "$", "@"), Equals, false)
+}
+
+func (s *StrUtilSuite) TestHasSuffixAny(c *C) {
+	c.Assert(HasSuffixAny("abcd#", "#", "@"), Equals, true)
+	c.Assert(HasSuffixAny("abcd#", "$", "@"), Equals, false)
+}

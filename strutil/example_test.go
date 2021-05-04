@@ -133,3 +133,21 @@ func ExampleAfter() {
 	// Output:
 	// domain.com
 }
+
+func ExampleHasPrefixAny() {
+	fmt.Println(HasPrefixAny("www.domain.com", "dl", "www"))
+	fmt.Println(HasPrefixAny("api.domain.com", "dl", "www"))
+
+	// Output:
+	// true
+	// false
+}
+
+func ExampleHasSuffixAny() {
+	fmt.Println(HasSuffixAny("www.domain.com", ".com", ".org", ".net"))
+	fmt.Println(HasSuffixAny("www.domain.info", ".com", ".org", ".net"))
+
+	// Output:
+	// true
+	// false
+}
