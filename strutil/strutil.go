@@ -373,6 +373,28 @@ func After(s, substr string) string {
 	return s[strings.Index(s, substr)+len(substr):]
 }
 
+// HasPrefixAny tests whether the string s begins with one of given prefixes
+func HasPrefixAny(s string, prefix ...string) bool {
+	for _, prf := range prefix {
+		if strings.HasPrefix(s, prf) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// HasSuffixAny tests whether the string s ends with one of given suffixes
+func HasSuffixAny(s string, suffix ...string) bool {
+	for _, suf := range suffix {
+		if strings.HasSuffix(s, suf) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func formatItems(data []string) []string {

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.18.0
+
+* `[strutil]` Added methods `HasPrefixAny` and `HasSuffixAny` for checking multiple prefixes or suffixes at once
+
 ### 12.17.1
 
 * `[path]` Fixed stubs for Windows
