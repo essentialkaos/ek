@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.18.1
+
+* `[sliceutil]` Added usage examples
+
 ### 12.18.0
 
 * `[strutil]` Added methods `HasPrefixAny` and `HasSuffixAny` for checking multiple prefixes or suffixes at once
@@ -15,7 +19,7 @@
 * `[progress]` Fixed bug with rendering resulting progress bar in some situations
 * `[progress]` Using integer instead of floats for progress if total size is less than 1000 and `IsSize` set to false
 
-### 12.16.0
+### 12.16.0 
 
 * `[path]` Added new method for checking Unix-type globs
 * `[fsutil]` Fixed stubs for Windows
