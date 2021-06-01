@@ -3,6 +3,7 @@
 ### 12.19.0
 
 * `[system]` Code refactoring
+* `[system]` Increased code coverage (78.5%% → 90.2%)
 
 ### 12.18.1
 

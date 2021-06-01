@@ -18,15 +18,16 @@ import (
 
 // OS names
 const (
-	LINUX_ARCH   = "Arch"
-	LINUX_CENTOS = "CentOS"
-	LINUX_DEBIAN = "Debian"
-	LINUX_FEDORA = "Dedora"
-	LINUX_GENTOO = "Gentoo"
-	LINUX_RHEL   = "RHEL"
-	LINUX_SUSE   = "SuSe"
-	LINUX_UBUNTU = "Ubuntu"
-	DARWIN_OSX   = "OSX"
+	LINUX_ARCH      = "Arch"
+	LINUX_CENTOS    = "CentOS"
+	LINUX_DEBIAN    = "Debian"
+	LINUX_FEDORA    = "Fedora"
+	LINUX_GENTOO    = "Gentoo"
+	LINUX_RHEL      = "RHEL"
+	LINUX_SUSE      = "SuSe"
+	LINUX_OPEN_SUSE = "openSUSE"
+	LINUX_UBUNTU    = "Ubuntu"
+	DARWIN_OSX      = "OSX"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -135,6 +136,20 @@ type SystemInfo struct {
 	Version      string `json:"version"`      // OS version
 	Kernel       string `json:"kernel"`       // Kernel version
 	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
+}
+
+// OSInfo contains info about OS
+type OSInfo struct {
+	Name            string `json:"name"`
+	PrettyName      string `json:"pretty_name"`
+	Version         string `json:"version"`
+	VersionID       string `json:"version_id"`
+	VersionCodename string `json:"version_codename"`
+	ID              string `json:"id"`
+	IDLike          string `json:"id_like"`
+	HomeURL         string `json:"home_url"`
+	BugReportURL    string `json:"bugreport_url"`
+	SupportURL      string `json:"support_url"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

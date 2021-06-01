@@ -514,6 +514,55 @@ func (s *SystemSuite) TestUser(c *C) {
 	}
 }
 
+func (s *SystemSuite) TestGetInfo(c *C) {
+	osReleaseFile = "/_UNKNOWN_"
+
+	sysInfo, err := GetSystemInfo()
+
+	c.Assert(sysInfo, IsNil)
+	c.Assert(err, NotNil)
+
+	osReleaseFile = s.CreateTestFile(c, `NAME="Ubuntu"
+VERSION="20.10 (Groovy Gorilla)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 20.10"
+VERSION_ID="20.10"
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+VERSION_CODENAME=groovy`)
+
+	sysInfo, err = GetSystemInfo()
+
+	c.Assert(sysInfo, NotNil)
+	c.Assert(err, IsNil)
+
+	osInfo, err := GetOSInfo()
+
+	c.Assert(osInfo.Name, Equals, LINUX_UBUNTU)
+	c.Assert(osInfo.PrettyName, Equals, "Ubuntu 20.10")
+	c.Assert(osInfo.Version, Equals, "20.10 (Groovy Gorilla)")
+	c.Assert(osInfo.VersionID, Equals, "20.10")
+	c.Assert(osInfo.VersionCodename, Equals, "groovy")
+	c.Assert(osInfo.ID, Equals, "ubuntu")
+	c.Assert(osInfo.IDLike, Equals, "debian")
+	c.Assert(osInfo.HomeURL, Equals, "https://www.ubuntu.com/")
+	c.Assert(osInfo.BugReportURL, Equals, "https://bugs.launchpad.net/ubuntu/")
+	c.Assert(osInfo.SupportURL, Equals, "https://help.ubuntu.com/")
+
+	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
+	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)
+	c.Assert(formatDistName("debian"), Equals, LINUX_DEBIAN)
+	c.Assert(formatDistName("fedora"), Equals, LINUX_FEDORA)
+	c.Assert(formatDistName("gentoo"), Equals, LINUX_GENTOO)
+	c.Assert(formatDistName("rhel"), Equals, LINUX_RHEL)
+	c.Assert(formatDistName("suse"), Equals, LINUX_SUSE)
+	c.Assert(formatDistName("opensuse"), Equals, LINUX_OPEN_SUSE)
+	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
+	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SystemSuite) CreateTestFile(c *C, data string) string {
