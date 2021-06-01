@@ -2,8 +2,9 @@
 
 ### 12.19.0
 
+* `[system]` Added method `GetCPUCount` for getting info about number of CPU's
 * `[system]` Code refactoring
-* `[system]` Increased code coverage (78.5%% → 90.2%)
+* `[system]` Increased code coverage (78.5% → 90.2%)
 
 ### 12.18.1
 

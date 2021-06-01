@@ -95,6 +95,14 @@ type CPUStats struct {
 	Count  int    `json:"count"`
 }
 
+// CPUCount contains info about number of CPU
+type CPUCount struct {
+	Possible uint32 `json:"possible"`
+	Present  uint32 `json:"present"`
+	Online   uint32 `json:"online"`
+	Offline  uint32 `json:"offline"`
+}
+
 // FSUsage contains info about FS usage
 type FSUsage struct {
 	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)

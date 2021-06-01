@@ -210,6 +210,38 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 	c.Assert(info, IsNil)
 }
 
+func (s *SystemSuite) TestCPUCount(c *C) {
+	cpuPossibleFile = s.CreateTestFile(c, "0-127\n")
+	cpuPresentFile = s.CreateTestFile(c, "0-3\n")
+	cpuOnlineFile = s.CreateTestFile(c, "0-3\n")
+	cpuOfflineFile = s.CreateTestFile(c, "4-127\n")
+
+	info, err := GetCPUCount()
+
+	c.Assert(err, IsNil)
+
+	c.Assert(info.Possible, Equals, uint32(128))
+	c.Assert(info.Present, Equals, uint32(4))
+	c.Assert(info.Online, Equals, uint32(4))
+	c.Assert(info.Offline, Equals, uint32(124))
+
+	cpuOfflineFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuOnlineFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuPresentFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuPossibleFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+}
+
 func (s *SystemSuite) TestMemUsage(c *C) {
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal:       32653288 kB\nMemFree:          531664 kB\nMemAvailable:   31243272 kB\nBuffers:            7912 kB\nCached:         28485940 kB\nSwapCached:          889 kB\nActive:         15379084 kB\nInactive:       13340308 kB\nActive(anon):     143408 kB\nInactive(anon):   247048 kB\nActive(file):   15235676 kB\nInactive(file): 13093260 kB\nUnevictable:          16 kB\nMlocked:              16 kB\nSwapTotal:       4194300 kB\nSwapFree:        2739454 kB\nDirty:              6744 kB\nWriteback:             0 kB\nAnonPages:        225604 kB\nMapped:            46404 kB\nShmem:            164916 kB\nSlab:            3021828 kB\nSReclaimable:    2789624 kB\nSUnreclaim:       232204 kB\nKernelStack:        3696 kB\n")
 
