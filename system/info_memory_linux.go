@@ -10,8 +10,6 @@ package system
 import (
 	"bufio"
 	"errors"
-	"io"
-	"os"
 
 	"pkg.re/essentialkaos/ek.v12/strutil"
 )
@@ -25,15 +23,15 @@ var procMemInfoFile = "/proc/meminfo"
 
 // GetMemUsage returns memory usage info
 func GetMemUsage() (*MemUsage, error) {
-	fd, err := os.OpenFile(procMemInfoFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(procMemInfoFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseMemUsage(bufio.NewReader(fd))
+	return parseMemUsage(s)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,10 +39,9 @@ func GetMemUsage() (*MemUsage, error) {
 // codebeat:disable[LOC,ABC]
 
 // parseMemUsage parses memory usage info
-func parseMemUsage(r io.Reader) (*MemUsage, error) {
+func parseMemUsage(s *bufio.Scanner) (*MemUsage, error) {
 	var err error
 
-	s := bufio.NewScanner(r)
 	mem := &MemUsage{}
 
 	for s.Scan() {

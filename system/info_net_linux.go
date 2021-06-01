@@ -10,8 +10,6 @@ package system
 import (
 	"bufio"
 	"errors"
-	"io"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -28,15 +26,15 @@ var procNetFile = "/proc/net/dev"
 
 // GetInterfacesStats returns info about network interfaces
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
-	fd, err := os.OpenFile(procNetFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(procNetFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseInterfacesStats(bufio.NewReader(fd))
+	return parseInterfacesStats(s)
 }
 
 // GetNetworkSpeed returns network input/output speed in bytes per second for
@@ -85,10 +83,8 @@ func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Du
 // codebeat:disable[LOC,ABC]
 
 // parseInterfacesStats parses interfaces stats data
-func parseInterfacesStats(r io.Reader) (map[string]*InterfaceStats, error) {
+func parseInterfacesStats(s *bufio.Scanner) (map[string]*InterfaceStats, error) {
 	var err error
-
-	s := bufio.NewScanner(r)
 
 	stats := make(map[string]*InterfaceStats)
 

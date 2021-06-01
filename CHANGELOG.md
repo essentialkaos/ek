@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.19.0
+
+* `[system]` Code refactoring
+
 ### 12.18.1
 
 * `[sliceutil]` Added usage examples
