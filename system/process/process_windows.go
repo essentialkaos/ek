@@ -66,6 +66,22 @@ type MemInfo struct {
 	VmSwap uint64 `json:"swap"` // Swap size
 }
 
+// MountInfo contains information about mounts
+// https://www.kernel.org/doc/Documentation/filesystems/proc.txt
+type MountInfo struct {
+	MountID        uint16   `json:"mount_id"`        // unique identifier of the mount (may be reused after umount)
+	ParentID       uint16   `json:"parent_id"`       // ID of parent (or of self for the top of the mount tree)
+	StDevMajor     uint16   `json:"stdev_major"`     // major value of st_dev for files on filesystem
+	StDevMinor     uint16   `json:"stdev_minor"`     // minor value of st_dev for files on filesystem
+	Root           string   `json:"root"`            // root of the mount within the filesystem
+	MountPoint     string   `json:"mount_point"`     // mount point relative to the process's root
+	MountOptions   []string `json:"mount_options"`   // per mount options
+	OptionalFields []string `json:"optional_fields"` // zero or more fields of the form "tag[:value]"
+	FSType         string   `json:"fs_type"`         // name of filesystem of the form "type[.subtype]"
+	MountSource    string   `json:"mount_source"`    // filesystem specific information or "none"
+	SuperOptions   []string `json:"super_options"`   // per super block options
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ToSample converts ProcInfo to ProcSample for CPU usage calculation
@@ -92,5 +108,10 @@ func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 
 // GetMemInfo returns info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
+	return nil, nil
+}
+
+// GetMountInfo returns info about process mounts
+func GetMountInfo(pid int) ([]*MountInfo, error) {
 	return nil, nil
 }

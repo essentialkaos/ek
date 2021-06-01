@@ -13,7 +13,6 @@ import (
 	"bufio"
 	"errors"
 	"os"
-	"os/exec"
 	"strconv"
 	"time"
 
@@ -74,7 +73,7 @@ func (pi *ProcInfo) ToSample() ProcSample {
 
 // GetInfo returns process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
-	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
@@ -96,7 +95,7 @@ func GetInfo(pid int) (*ProcInfo, error) {
 
 // GetSample returns ProcSample for CPU usage calculation
 func GetSample(pid int) (ProcSample, error) {
-	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
 	if err != nil {
 		return 0, err
@@ -237,24 +236,9 @@ func parseStatData(text string) (*ProcInfo, error) {
 
 // codebeat:enable[LOC,ABC]
 
+// getHZ returns number of processor clock ticks per second
 func getHZ() float64 {
-	if hz != 0.0 {
-		return hz
-	}
-
-	output, err := exec.Command("/usr/bin/getconf", "CLK_TCK").Output()
-
-	if err != nil {
-		hz = 100.0
-		return hz
-	}
-
-	hz, _ = strconv.ParseFloat(string(output), 64)
-
-	if hz == 0.0 {
-		hz = 100.0
-		return hz
-	}
-
-	return hz
+	// CLK_TCK is a constant on Linux
+	// https://git.musl-libc.org/cgit/musl/tree/src/conf/sysconf.c#n30
+	return 100
 }

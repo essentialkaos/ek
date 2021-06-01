@@ -253,7 +253,7 @@ func parseFSInfo(s *bufio.Scanner, calculateStats bool) (map[string]*FSUsage, er
 
 // enable:disable[LOC,ABC,CYCLO]
 
-// getHZ return number of processor clock ticks per second
+// getHZ returns number of processor clock ticks per second
 func getHZ() float64 {
 	// CLK_TCK is a constant on Linux
 	// https://git.musl-libc.org/cgit/musl/tree/src/conf/sysconf.c#n30

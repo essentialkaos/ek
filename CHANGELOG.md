@@ -3,8 +3,10 @@
 ### 12.19.0
 
 * `[system]` Added method `GetCPUCount` for getting info about number of CPU's
+* `[system/process]` Added method `GetMountInfo` for getting info about process mounts
 * `[system]` Code refactoring
-* `[system]` Increased code coverage (78.5% → 90.2%)
+* `[system]` Increased code coverage (78.5% → 90.5%)
+* `[system/process]` Increased code coverage (82.4% → 86.8%)
 
 ### 12.18.1
 

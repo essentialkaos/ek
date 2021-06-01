@@ -27,10 +27,15 @@ type ProcessInfo struct {
 	Command  string         // Full command
 	User     string         // Username
 	PID      int            // PID
-	IsThread bool           // True if process is thread
 	Parent   int            // Parent process PID
 	Childs   []*ProcessInfo // Slice with child processes
+	IsThread bool           // True if process is thread
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// procFS is path to procfs
+var procFS = "/proc"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -42,11 +47,11 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 		root = pid[0]
 	}
 
-	if !fsutil.IsExist("/proc/" + strconv.Itoa(root)) {
+	if !fsutil.IsExist(procFS + "/" + strconv.Itoa(root)) {
 		return nil, fmt.Errorf("Process with PID %d doesn't exist", pid)
 	}
 
-	list, err := findInfo("/proc", make(map[int]string))
+	list, err := findInfo(procFS, make(map[int]string))
 
 	if err != nil {
 		return nil, err
@@ -61,7 +66,7 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 
 // GetList returns slice with all active processes on the system
 func GetList() ([]*ProcessInfo, error) {
-	return findInfo("/proc", make(map[int]string))
+	return findInfo(procFS, make(map[int]string))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

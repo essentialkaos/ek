@@ -10,6 +10,8 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
@@ -89,9 +91,53 @@ func (s *ProcessSuite) TestGetMemInfo(c *C) {
 	c.Assert(err, IsNil)
 }
 
+func (s *ProcessSuite) TestGetMountInfo(c *C) {
+	info, err := GetMountInfo(66000)
+
+	c.Assert(info, IsNil)
+	c.Assert(err, NotNil)
+
+	info, err = GetMountInfo(1)
+
+	c.Assert(info, NotNil)
+	c.Assert(err, IsNil)
+
+	_, _, err = parseStDevValue("AA:11")
+	c.Assert(err, NotNil)
+
+	_, _, err = parseStDevValue("11:AA")
+	c.Assert(err, NotNil)
+
+	_, err = parseMountInfoLine("AA AA")
+	c.Assert(err, NotNil)
+
+	procFS = s.CreateFakeProcFS(c, "10000", "mountinfo", "AA AA AA")
+
+	info, err = GetMountInfo(10000)
+
+	c.Assert(info, IsNil)
+	c.Assert(err, NotNil)
+
+	procFS = "/proc"
+}
+
 func (s *ProcessSuite) TestCalculateCPUUsage(c *C) {
 	s1 := ProcSample(13)
 	s2 := ProcSample(66)
 
 	c.Assert(CalculateCPUUsage(s1, s2, time.Second), Equals, 53.0)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *ProcessSuite) CreateFakeProcFS(c *C, pid, file, data string) string {
+	tmpDir := c.MkDir()
+	os.Mkdir(tmpDir+"/"+pid, 0755)
+	pfsFile := tmpDir + "/" + pid + "/" + file
+
+	if ioutil.WriteFile(pfsFile, []byte(data), 0644) != nil {
+		c.Fatal("Can't create temporary file")
+	}
+
+	return tmpDir
 }
