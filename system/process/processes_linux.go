@@ -116,14 +116,20 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 }
 
 func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, error) {
-	cmd, err := ioutil.ReadFile(dir + "/cmdline")
-
-	if len(cmd) == 0 {
-		return nil, nil
-	}
+	pidInt, err := strconv.Atoi(pid)
 
 	if err != nil {
 		return nil, err
+	}
+
+	cmd, err := ioutil.ReadFile(dir + "/cmdline")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(cmd) == 0 {
+		return nil, nil
 	}
 
 	uid, _, err := fsutil.GetOwner(dir)
@@ -133,12 +139,6 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 	}
 
 	username, err := getProcessUser(uid, userMap)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pidInt, err := strconv.Atoi(pid)
 
 	if err != nil {
 		return nil, err
@@ -192,10 +192,7 @@ func getParentPIDs(pidDir string) (int, int) {
 		return -1, -1
 	}
 
-	var (
-		ppid string
-		tgid string
-	)
+	var ppid, tgid string
 
 	for _, line := range strings.Split(string(data), "\n") {
 		if strings.HasPrefix(line, "Tgid:") {
@@ -215,8 +212,12 @@ func getParentPIDs(pidDir string) (int, int) {
 		return -1, -1
 	}
 
-	tgidInt, _ := strconv.Atoi(tgid)
-	ppidInt, _ := strconv.Atoi(ppid)
+	tgidInt, tgidErr := strconv.Atoi(tgid)
+	ppidInt, ppidErr := strconv.Atoi(ppid)
+
+	if tgidErr != nil || ppidErr != nil {
+		return -1, -1
+	}
 
 	return tgidInt, ppidInt
 }
