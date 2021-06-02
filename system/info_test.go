@@ -210,6 +210,38 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 	c.Assert(info, IsNil)
 }
 
+func (s *SystemSuite) TestCPUCount(c *C) {
+	cpuPossibleFile = s.CreateTestFile(c, "0-127\n")
+	cpuPresentFile = s.CreateTestFile(c, "0-3\n")
+	cpuOnlineFile = s.CreateTestFile(c, "0-3\n")
+	cpuOfflineFile = s.CreateTestFile(c, "4-127\n")
+
+	info, err := GetCPUCount()
+
+	c.Assert(err, IsNil)
+
+	c.Assert(info.Possible, Equals, uint32(128))
+	c.Assert(info.Present, Equals, uint32(4))
+	c.Assert(info.Online, Equals, uint32(4))
+	c.Assert(info.Offline, Equals, uint32(124))
+
+	cpuOfflineFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuOnlineFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuPresentFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+
+	cpuPossibleFile = "/_UNKNOWN_"
+	_, err = GetCPUCount()
+	c.Assert(err, NotNil)
+}
+
 func (s *SystemSuite) TestMemUsage(c *C) {
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal:       32653288 kB\nMemFree:          531664 kB\nMemAvailable:   31243272 kB\nBuffers:            7912 kB\nCached:         28485940 kB\nSwapCached:          889 kB\nActive:         15379084 kB\nInactive:       13340308 kB\nActive(anon):     143408 kB\nInactive(anon):   247048 kB\nActive(file):   15235676 kB\nInactive(file): 13093260 kB\nUnevictable:          16 kB\nMlocked:              16 kB\nSwapTotal:       4194300 kB\nSwapFree:        2739454 kB\nDirty:              6744 kB\nWriteback:             0 kB\nAnonPages:        225604 kB\nMapped:            46404 kB\nShmem:            164916 kB\nSlab:            3021828 kB\nSReclaimable:    2789624 kB\nSUnreclaim:       232204 kB\nKernelStack:        3696 kB\n")
 
@@ -512,6 +544,55 @@ func (s *SystemSuite) TestUser(c *C) {
 		c.Assert(err, IsNil)
 		c.Assert(sess, HasLen, 0)
 	}
+}
+
+func (s *SystemSuite) TestGetInfo(c *C) {
+	osReleaseFile = "/_UNKNOWN_"
+
+	sysInfo, err := GetSystemInfo()
+
+	c.Assert(sysInfo, IsNil)
+	c.Assert(err, NotNil)
+
+	osReleaseFile = s.CreateTestFile(c, `NAME="Ubuntu"
+VERSION="20.10 (Groovy Gorilla)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 20.10"
+VERSION_ID="20.10"
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+VERSION_CODENAME=groovy`)
+
+	sysInfo, err = GetSystemInfo()
+
+	c.Assert(sysInfo, NotNil)
+	c.Assert(err, IsNil)
+
+	osInfo, err := GetOSInfo()
+
+	c.Assert(osInfo.Name, Equals, LINUX_UBUNTU)
+	c.Assert(osInfo.PrettyName, Equals, "Ubuntu 20.10")
+	c.Assert(osInfo.Version, Equals, "20.10 (Groovy Gorilla)")
+	c.Assert(osInfo.VersionID, Equals, "20.10")
+	c.Assert(osInfo.VersionCodename, Equals, "groovy")
+	c.Assert(osInfo.ID, Equals, "ubuntu")
+	c.Assert(osInfo.IDLike, Equals, "debian")
+	c.Assert(osInfo.HomeURL, Equals, "https://www.ubuntu.com/")
+	c.Assert(osInfo.BugReportURL, Equals, "https://bugs.launchpad.net/ubuntu/")
+	c.Assert(osInfo.SupportURL, Equals, "https://help.ubuntu.com/")
+
+	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
+	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)
+	c.Assert(formatDistName("debian"), Equals, LINUX_DEBIAN)
+	c.Assert(formatDistName("fedora"), Equals, LINUX_FEDORA)
+	c.Assert(formatDistName("gentoo"), Equals, LINUX_GENTOO)
+	c.Assert(formatDistName("rhel"), Equals, LINUX_RHEL)
+	c.Assert(formatDistName("suse"), Equals, LINUX_SUSE)
+	c.Assert(formatDistName("opensuse"), Equals, LINUX_OPEN_SUSE)
+	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
+	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

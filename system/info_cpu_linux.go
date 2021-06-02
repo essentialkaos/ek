@@ -10,8 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
-	"io"
-	"os"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +25,14 @@ var procStatFile = "/proc/stat"
 
 // Path to file with info about CPU
 var cpuInfoFile = "/proc/cpuinfo"
+
+// Files with CPU info
+var (
+	cpuPossibleFile = "/sys/devices/system/cpu/possible"
+	cpuPresentFile  = "/sys/devices/system/cpu/present"
+	cpuOnlineFile   = "/sys/devices/system/cpu/online"
+	cpuOfflineFile  = "/sys/devices/system/cpu/offline"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -81,28 +88,62 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 
 // GetCPUStats returns basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
-	fd, err := os.OpenFile(procStatFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(procStatFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseCPUStats(bufio.NewReader(fd))
+	return parseCPUStats(s)
 }
 
 // GetCPUInfo returns slice with info about CPUs
 func GetCPUInfo() ([]*CPUInfo, error) {
-	fd, err := os.OpenFile(cpuInfoFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(cpuInfoFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseCPUInfo(bufio.NewReader(fd))
+	return parseCPUInfo(s)
+}
+
+// GetCPUCount returns info about CPU
+func GetCPUCount() (CPUCount, error) {
+	possible, err := ioutil.ReadFile(cpuPossibleFile)
+
+	if err != nil {
+		return CPUCount{}, err
+	}
+
+	present, err := ioutil.ReadFile(cpuPresentFile)
+
+	if err != nil {
+		return CPUCount{}, err
+	}
+
+	online, err := ioutil.ReadFile(cpuOnlineFile)
+
+	if err != nil {
+		return CPUCount{}, err
+	}
+
+	offline, err := ioutil.ReadFile(cpuOfflineFile)
+
+	if err != nil {
+		return CPUCount{}, err
+	}
+
+	return CPUCount{
+		Possible: parseCPUCountInfo(string(possible)),
+		Present:  parseCPUCountInfo(string(present)),
+		Online:   parseCPUCountInfo(string(online)),
+		Offline:  parseCPUCountInfo(string(offline)),
+	}, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -110,10 +151,9 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 // codebeat:disable[LOC,ABC,CYCLO]
 
 // parseCPUStats parses cpu stats data
-func parseCPUStats(r io.Reader) (*CPUStats, error) {
+func parseCPUStats(s *bufio.Scanner) (*CPUStats, error) {
 	var err error
 
-	s := bufio.NewScanner(r)
 	stats := &CPUStats{}
 
 	for s.Scan() {
@@ -188,7 +228,7 @@ func parseCPUStats(r io.Reader) (*CPUStats, error) {
 }
 
 // parseCPUInfo parses cpu info data
-func parseCPUInfo(r io.Reader) ([]*CPUInfo, error) {
+func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 	var (
 		err      error
 		info     []*CPUInfo
@@ -200,8 +240,6 @@ func parseCPUInfo(r io.Reader) ([]*CPUInfo, error) {
 		speed    float64
 		id       int
 	)
-
-	s := bufio.NewScanner(r)
 
 	for s.Scan() {
 		text := s.Text()
@@ -251,3 +289,14 @@ func parseCPUInfo(r io.Reader) ([]*CPUInfo, error) {
 }
 
 // codebeat:enable[LOC,ABC,CYCLO]
+
+// parseCPUCountInfo parses CPU count data
+func parseCPUCountInfo(data string) uint32 {
+	startNum := strings.Trim(strutil.ReadField(data, 0, false, "-"), "\n\r")
+	endNum := strings.Trim(strutil.ReadField(data, 1, false, "-"), "\n\r")
+
+	start, _ := strconv.ParseUint(startNum, 10, 32)
+	end, _ := strconv.ParseUint(endNum, 10, 32)
+
+	return uint32(end-start) + 1
+}

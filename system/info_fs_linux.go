@@ -10,9 +10,6 @@ package system
 import (
 	"bufio"
 	"errors"
-	"io"
-	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"syscall"
@@ -36,28 +33,28 @@ var hz = 0.0
 
 // GetFSUsage returns info about mounted filesystems
 func GetFSUsage() (map[string]*FSUsage, error) {
-	fd, err := os.OpenFile(mtabFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(mtabFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseFSInfo(bufio.NewReader(fd), true)
+	return parseFSInfo(s, true)
 }
 
 // GetIOStats returns IO statistics as map device -> statistics
 func GetIOStats() (map[string]*IOStats, error) {
-	fd, err := os.OpenFile(procDiskStatsFile, os.O_RDONLY, 0)
+	s, closer, err := getFileScanner(procDiskStatsFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
+	defer closer()
 
-	return parseIOStats(bufio.NewReader(fd))
+	return parseIOStats(s)
 }
 
 // GetIOUtil returns slice (device -> utilization) with IO utilization
@@ -114,10 +111,8 @@ func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[s
 // codebeat:disable[LOC,ABC,CYCLO]
 
 // parseIOStats parses IO stats data
-func parseIOStats(r io.Reader) (map[string]*IOStats, error) {
+func parseIOStats(s *bufio.Scanner) (map[string]*IOStats, error) {
 	var err error
-
-	s := bufio.NewScanner(r)
 
 	iostats := make(map[string]*IOStats)
 
@@ -206,10 +201,8 @@ func parseIOStats(r io.Reader) (map[string]*IOStats, error) {
 }
 
 // parseFSInfo parses fs info data
-func parseFSInfo(r io.Reader, calculateStats bool) (map[string]*FSUsage, error) {
+func parseFSInfo(s *bufio.Scanner, calculateStats bool) (map[string]*FSUsage, error) {
 	var err error
-
-	s := bufio.NewScanner(r)
 
 	info := make(map[string]*FSUsage)
 
@@ -260,25 +253,9 @@ func parseFSInfo(r io.Reader, calculateStats bool) (map[string]*FSUsage, error) 
 
 // enable:disable[LOC,ABC,CYCLO]
 
-// getHZ return number of processor clock ticks per second
+// getHZ returns number of processor clock ticks per second
 func getHZ() float64 {
-	if hz != 0.0 {
-		return hz
-	}
-
-	output, err := exec.Command("/usr/bin/getconf", "CLK_TCK").Output()
-
-	if err != nil {
-		hz = 100.0
-		return hz
-	}
-
-	hz, _ = strconv.ParseFloat(string(output), 64)
-
-	if hz == 0.0 {
-		hz = 100.0
-		return hz
-	}
-
-	return hz
+	// CLK_TCK is a constant on Linux
+	// https://git.musl-libc.org/cgit/musl/tree/src/conf/sysconf.c#n30
+	return 100
 }

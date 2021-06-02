@@ -27,10 +27,15 @@ type ProcessInfo struct {
 	Command  string         // Full command
 	User     string         // Username
 	PID      int            // PID
-	IsThread bool           // True if process is thread
 	Parent   int            // Parent process PID
 	Childs   []*ProcessInfo // Slice with child processes
+	IsThread bool           // True if process is thread
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// procFS is path to procfs
+var procFS = "/proc"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -42,11 +47,11 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 		root = pid[0]
 	}
 
-	if !fsutil.IsExist("/proc/" + strconv.Itoa(root)) {
+	if !fsutil.IsExist(procFS + "/" + strconv.Itoa(root)) {
 		return nil, fmt.Errorf("Process with PID %d doesn't exist", pid)
 	}
 
-	list, err := findInfo("/proc", make(map[int]string))
+	list, err := findInfo(procFS, make(map[int]string))
 
 	if err != nil {
 		return nil, err
@@ -61,7 +66,7 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 
 // GetList returns slice with all active processes on the system
 func GetList() ([]*ProcessInfo, error) {
-	return findInfo("/proc", make(map[int]string))
+	return findInfo(procFS, make(map[int]string))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -111,14 +116,20 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 }
 
 func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, error) {
-	cmd, err := ioutil.ReadFile(dir + "/cmdline")
-
-	if len(cmd) == 0 {
-		return nil, nil
-	}
+	pidInt, err := strconv.Atoi(pid)
 
 	if err != nil {
 		return nil, err
+	}
+
+	cmd, err := ioutil.ReadFile(dir + "/cmdline")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(cmd) == 0 {
+		return nil, nil
 	}
 
 	uid, _, err := fsutil.GetOwner(dir)
@@ -128,12 +139,6 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 	}
 
 	username, err := getProcessUser(uid, userMap)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pidInt, err := strconv.Atoi(pid)
 
 	if err != nil {
 		return nil, err
@@ -187,10 +192,7 @@ func getParentPIDs(pidDir string) (int, int) {
 		return -1, -1
 	}
 
-	var (
-		ppid string
-		tgid string
-	)
+	var ppid, tgid string
 
 	for _, line := range strings.Split(string(data), "\n") {
 		if strings.HasPrefix(line, "Tgid:") {
@@ -210,8 +212,12 @@ func getParentPIDs(pidDir string) (int, int) {
 		return -1, -1
 	}
 
-	tgidInt, _ := strconv.Atoi(tgid)
-	ppidInt, _ := strconv.Atoi(ppid)
+	tgidInt, tgidErr := strconv.Atoi(tgid)
+	ppidInt, ppidErr := strconv.Atoi(ppid)
+
+	if tgidErr != nil || ppidErr != nil {
+		return -1, -1
+	}
 
 	return tgidInt, ppidInt
 }

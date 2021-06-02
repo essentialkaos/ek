@@ -16,7 +16,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_getTree() {
+func ExampleGetTree() {
 	process, err := GetTree()
 
 	if err != nil {
@@ -24,10 +24,10 @@ func Example_getTree() {
 	}
 
 	// process is a top process in the tree
-	fmt.Println(process.PID)
+	fmt.Printf("%v\n", process.PID)
 }
 
-func Example_getList() {
+func ExampleGetList() {
 	processes, err := GetList()
 
 	if err != nil {
@@ -35,10 +35,10 @@ func Example_getList() {
 	}
 
 	// processes is slice with info about all active processes
-	fmt.Println(processes)
+	fmt.Printf("%v\n", processes)
 }
 
-func Example_calculateCPUUsage() {
+func ExampleCalculateCPUUsage() {
 	pid := 1345
 	duration := time.Second * 15
 
@@ -47,4 +47,24 @@ func Example_calculateCPUUsage() {
 	sample2, _ := GetSample(pid)
 
 	fmt.Printf("CPU Usage: %g%%\n", CalculateCPUUsage(sample1, sample2, duration))
+}
+
+func ExampleGetMemInfo() {
+	info, err := GetMemInfo(1000)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("%v\n", info)
+}
+
+func ExampleGetMountInfo() {
+	info, err := GetMountInfo(1000)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("%v\n", info)
 }

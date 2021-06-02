@@ -42,7 +42,7 @@ type MemInfo struct {
 
 // GetMemInfo returns info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
-	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/status", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/status", os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err

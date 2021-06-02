@@ -12,8 +12,8 @@ package process
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
-	"os/exec"
 	"strconv"
 	"time"
 
@@ -60,11 +60,6 @@ type ProcSample uint
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Ticks per second
-var hz = 0.0
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // ToSample converts ProcInfo to ProcSample for CPU usage calculation
 func (pi *ProcInfo) ToSample() ProcSample {
 	return ProcSample(pi.UTime + pi.STime + pi.CUTime + pi.CSTime)
@@ -74,7 +69,7 @@ func (pi *ProcInfo) ToSample() ProcSample {
 
 // GetInfo returns process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
-	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
 	if err != nil {
 		return nil, err
@@ -96,7 +91,7 @@ func GetInfo(pid int) (*ProcInfo, error) {
 
 // GetSample returns ProcSample for CPU usage calculation
 func GetSample(pid int) (ProcSample, error) {
-	fd, err := os.OpenFile("/proc/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
 
 	if err != nil {
 		return 0, err
@@ -111,31 +106,7 @@ func GetSample(pid int) (ProcSample, error) {
 		return 0, errors.New("Can't parse stat file for given process")
 	}
 
-	utime, err := strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
-
-	if err != nil {
-		return 0, errors.New("Can't parse stat field 13")
-	}
-
-	stime, err := strconv.ParseUint(strutil.ReadField(text, 14, true), 10, 64)
-
-	if err != nil {
-		return 0, errors.New("Can't parse stat field 14")
-	}
-
-	cutime, err := strconv.ParseUint(strutil.ReadField(text, 15, true), 10, 64)
-
-	if err != nil {
-		return 0, errors.New("Can't parse stat field 15")
-	}
-
-	cstime, err := strconv.ParseUint(strutil.ReadField(text, 16, true), 10, 64)
-
-	if err != nil {
-		return 0, errors.New("Can't parse stat field 16")
-	}
-
-	return ProcSample(utime + stime + cutime + cstime), nil
+	return parseSampleData(text)
 }
 
 // codebeat:enable[LOC,ABC]
@@ -152,109 +123,106 @@ func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 
 // codebeat:disable[LOC,ABC]
 
+// parseStatData parses CPU stats data
 func parseStatData(text string) (*ProcInfo, error) {
 	var err error
 
 	info := &ProcInfo{}
 
-	info.Comm = strutil.ReadField(text, 1, true)
-	info.State = strutil.ReadField(text, 2, true)
+	for i := 0; i < 20; i++ {
+		switch i {
+		case 0:
+			info.PID, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 1:
+			info.Comm = strutil.ReadField(text, i, true)
+		case 2:
+			info.State = strutil.ReadField(text, i, true)
+		case 3:
+			info.PPID, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 5:
+			info.Session, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 6:
+			info.TTYNR, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 7:
+			info.TPGid, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 13:
+			info.UTime, err = parseUint64Field(strutil.ReadField(text, i, true), i)
+		case 14:
+			info.STime, err = parseUint64Field(strutil.ReadField(text, i, true), i)
+		case 15:
+			info.CUTime, err = parseUint64Field(strutil.ReadField(text, i, true), i)
+		case 16:
+			info.CSTime, err = parseUint64Field(strutil.ReadField(text, i, true), i)
+		case 17:
+			info.Priority, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 18:
+			info.Nice, err = parseIntField(strutil.ReadField(text, i, true), i)
+		case 19:
+			info.NumThreads, err = parseIntField(strutil.ReadField(text, i, true), i)
+		}
 
-	info.PID, err = strconv.Atoi(strutil.ReadField(text, 0, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 0")
-	}
-
-	info.PPID, err = strconv.Atoi(strutil.ReadField(text, 3, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 3")
-	}
-
-	info.Session, err = strconv.Atoi(strutil.ReadField(text, 5, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 5")
-	}
-
-	info.TTYNR, err = strconv.Atoi(strutil.ReadField(text, 6, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 6")
-	}
-
-	info.TPGid, err = strconv.Atoi(strutil.ReadField(text, 7, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 7")
-	}
-
-	info.UTime, err = strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 13")
-	}
-
-	info.STime, err = strconv.ParseUint(strutil.ReadField(text, 14, true), 10, 64)
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 14")
-	}
-
-	info.CUTime, err = strconv.ParseUint(strutil.ReadField(text, 15, true), 10, 64)
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 15")
-	}
-
-	info.CSTime, err = strconv.ParseUint(strutil.ReadField(text, 16, true), 10, 64)
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 16")
-	}
-
-	info.Priority, err = strconv.Atoi(strutil.ReadField(text, 17, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 17")
-	}
-
-	info.Nice, err = strconv.Atoi(strutil.ReadField(text, 18, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 18")
-	}
-
-	info.NumThreads, err = strconv.Atoi(strutil.ReadField(text, 19, true))
-
-	if err != nil {
-		return nil, errors.New("Can't parse stat field 19")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return info, nil
 }
 
+// parseSampleData extracts CPU sample info
+func parseSampleData(text string) (ProcSample, error) {
+	var err error
+	var utime, stime, cutime, cstime uint64
+
+	for i := 13; i < 17; i++ {
+		value := strutil.ReadField(text, i, true)
+
+		switch i {
+		case 13:
+			utime, err = parseUint64Field(value, i)
+		case 14:
+			stime, err = parseUint64Field(value, i)
+		case 15:
+			cutime, err = parseUint64Field(value, i)
+		case 16:
+			cstime, err = parseUint64Field(value, i)
+		}
+
+		if err != nil {
+			return ProcSample(0), err
+		}
+	}
+
+	return ProcSample(utime + stime + cutime + cstime), nil
+}
+
 // codebeat:enable[LOC,ABC]
 
-func getHZ() float64 {
-	if hz != 0.0 {
-		return hz
-	}
-
-	output, err := exec.Command("/usr/bin/getconf", "CLK_TCK").Output()
+// parseIntField parses int value of field
+func parseIntField(s string, field int) (int, error) {
+	v, err := strconv.Atoi(s)
 
 	if err != nil {
-		hz = 100.0
-		return hz
+		return 0, fmt.Errorf("Can't parse stat field %d: %w", field, err)
 	}
 
-	hz, _ = strconv.ParseFloat(string(output), 64)
+	return v, nil
+}
 
-	if hz == 0.0 {
-		hz = 100.0
-		return hz
+// parseIntField parses uint value of field
+func parseUint64Field(s string, field int) (uint64, error) {
+	v, err := strconv.ParseUint(s, 10, 64)
+
+	if err != nil {
+		return 0, fmt.Errorf("Can't parse stat field %d: %w", field, err)
 	}
 
-	return hz
+	return v, nil
+}
+
+// getHZ returns number of processor clock ticks per second
+func getHZ() float64 {
+	// CLK_TCK is a constant on Linux
+	// https://git.musl-libc.org/cgit/musl/tree/src/conf/sysconf.c#n30
+	return 100.0
 }

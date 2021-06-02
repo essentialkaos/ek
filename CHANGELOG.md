@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.19.0
+
+* `[system]` Added method `GetCPUCount` for getting info about number of CPU's
+* `[system/process]` Added method `GetMountInfo` for getting info about process mounts
+* `[system]` Code refactoring
+* `[system/process]` Code refactoring
+* `[system]` Increased code coverage (78.5% → 90.5%)
+* `[system/process]` Increased code coverage (82.4% → 98.0%)
+
 ### 12.18.1
 
 * `[sliceutil]` Added usage examples

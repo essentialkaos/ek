@@ -9,6 +9,8 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
+	"os"
 	"strconv"
 )
 
@@ -16,15 +18,16 @@ import (
 
 // OS names
 const (
-	LINUX_ARCH   = "Arch"
-	LINUX_CENTOS = "CentOS"
-	LINUX_DEBIAN = "Debian"
-	LINUX_FEDORA = "Dedora"
-	LINUX_GENTOO = "Gentoo"
-	LINUX_RHEL   = "RHEL"
-	LINUX_SUSE   = "SuSe"
-	LINUX_UBUNTU = "Ubuntu"
-	DARWIN_OSX   = "OSX"
+	LINUX_ARCH      = "Arch"
+	LINUX_CENTOS    = "CentOS"
+	LINUX_DEBIAN    = "Debian"
+	LINUX_FEDORA    = "Fedora"
+	LINUX_GENTOO    = "Gentoo"
+	LINUX_RHEL      = "RHEL"
+	LINUX_SUSE      = "SuSe"
+	LINUX_OPEN_SUSE = "openSUSE"
+	LINUX_UBUNTU    = "Ubuntu"
+	DARWIN_OSX      = "OSX"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -92,6 +95,14 @@ type CPUStats struct {
 	Count  int    `json:"count"`
 }
 
+// CPUCount contains info about number of CPU
+type CPUCount struct {
+	Possible uint32 `json:"possible"`
+	Present  uint32 `json:"present"`
+	Online   uint32 `json:"online"`
+	Offline  uint32 `json:"offline"`
+}
+
 // FSUsage contains info about FS usage
 type FSUsage struct {
 	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)
@@ -135,7 +146,35 @@ type SystemInfo struct {
 	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
 }
 
+// OSInfo contains info about OS
+type OSInfo struct {
+	Name            string `json:"name"`
+	PrettyName      string `json:"pretty_name"`
+	Version         string `json:"version"`
+	VersionID       string `json:"version_id"`
+	VersionCodename string `json:"version_codename"`
+	ID              string `json:"id"`
+	IDLike          string `json:"id_like"`
+	HomeURL         string `json:"home_url"`
+	BugReportURL    string `json:"bugreport_url"`
+	SupportURL      string `json:"support_url"`
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// getFileScanner opens file and creates scanner for reading text files line by line
+func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r := bufio.NewReader(fd)
+	s := bufio.NewScanner(r)
+
+	return s, fd.Close, nil
+}
 
 // parseSize parse size in kB
 func parseSize(v string) (uint64, error) {
