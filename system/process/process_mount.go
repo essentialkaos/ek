@@ -69,8 +69,6 @@ func GetMountInfo(pid int) ([]*MountInfo, error) {
 	return result, nil
 }
 
-// codebeat:enable[LOC,ABC]
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // parseMountInfoLine parses mount info from given line
@@ -127,6 +125,8 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 
 	return info, nil
 }
+
+// codebeat:enable[LOC,ABC]
 
 // parseStDevValue parses st_dev major and minor values
 func parseStDevValue(data string) (uint16, uint16, error) {
