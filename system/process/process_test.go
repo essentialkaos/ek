@@ -203,6 +203,26 @@ func (s *ProcessSuite) TestCalculateCPUUsage(c *C) {
 	c.Assert(CalculateCPUUsage(s1, s2, time.Second), Equals, 53.0)
 }
 
+func (s *ProcessSuite) TestCPUPriority(c *C) {
+	pid := os.Getpid()
+
+	pri, ni, err := GetCPUPriority(pid)
+	c.Assert(err, IsNil)
+	c.Assert(pri, Equals, 20)
+	c.Assert(ni, Equals, 0)
+
+	err = SetCPUPriority(pid, 2)
+	c.Assert(err, IsNil)
+
+	pri, ni, err = GetCPUPriority(pid)
+	c.Assert(err, IsNil)
+	c.Assert(pri, Equals, 22)
+	c.Assert(ni, Equals, 2)
+
+	_, _, err = GetCPUPriority(12000000)
+	c.Assert(err, NotNil)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ProcessSuite) CreateFakeProcFS(c *C, pid, file, data string) string {

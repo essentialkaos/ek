@@ -1,7 +1,6 @@
-// +build !windows
+// +build linux
 
-// Package ek is set of auxiliary packages
-package ek
+package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +10,25 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"syscall"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.20.0"
+// SetCPUPriority sets CPU scheduling priority
+func SetCPUPriority(pid, niceness int) error {
+	return syscall.Setpriority(syscall.PRIO_PROCESS, pid, niceness)
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// GetCPUPriority returns CPU scheduling priority (PR, NI, error)
+func GetCPUPriority(pid int) (int, int, error) {
+	pr, err := syscall.Getpriority(syscall.PRIO_PROCESS, pid)
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	ni := 20 - pr
+
+	return 20 + ni, ni, nil
 }
