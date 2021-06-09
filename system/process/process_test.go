@@ -223,6 +223,29 @@ func (s *ProcessSuite) TestCPUPriority(c *C) {
 	c.Assert(err, NotNil)
 }
 
+func (s *ProcessSuite) TestIOPriority(c *C) {
+	pid := os.Getpid()
+
+	class, classdata, err := GetIOPriority(pid)
+	c.Assert(err, IsNil)
+	c.Assert(class, Equals, PRIO_CLASS_NONE)
+	c.Assert(classdata, Equals, 4)
+
+	err = SetIOPriority(pid, PRIO_CLASS_BEST_EFFORT, 5)
+	c.Assert(err, IsNil)
+
+	class, classdata, err = GetIOPriority(pid)
+	c.Assert(err, IsNil)
+	c.Assert(class, Equals, PRIO_CLASS_BEST_EFFORT)
+	c.Assert(classdata, Equals, 5)
+
+	_, _, err = GetIOPriority(999999)
+	c.Assert(err, NotNil)
+
+	err = SetIOPriority(999999, PRIO_CLASS_BEST_EFFORT, 5)
+	c.Assert(err, NotNil)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ProcessSuite) CreateFakeProcFS(c *C, pid, file, data string) string {

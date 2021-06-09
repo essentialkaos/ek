@@ -11,6 +11,7 @@ package process
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -67,4 +68,60 @@ func ExampleGetMountInfo() {
 	}
 
 	fmt.Printf("%v\n", info)
+}
+
+func ExampleGetCPUPriority() {
+	pid := os.Getpid()
+	pr, ni, err := GetCPUPriority(pid)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("PR: %d | NI: %d\n", pr, ni)
+}
+
+func ExampleSetCPUPriority() {
+	pid := os.Getpid()
+	err := SetCPUPriority(pid, -20)
+
+	if err != nil {
+		return
+	}
+
+	pr, ni, err := GetCPUPriority(pid)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("PR: %d | NI: %d\n", pr, ni)
+}
+
+func ExampleGetIOPriority() {
+	pid := os.Getpid()
+	class, classdata, err := GetIOPriority(pid)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("Class: %d | Classdata: %d\n", class, classdata)
+}
+
+func ExampleSetIOPriority() {
+	pid := os.Getpid()
+	err := SetIOPriority(pid, PRIO_CLASS_REAL_TIME, 5)
+
+	if err != nil {
+		return
+	}
+
+	class, classdata, err := GetIOPriority(pid)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("Class: %d | Classdata: %d\n", class, classdata)
 }
