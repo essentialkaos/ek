@@ -2,8 +2,8 @@
 
 ### 12.20.0
 
-* `[system/process]` Added methods for setting and getting CPU scheduler info
-* `[system/process]` Added methods for setting and getting IO scheduler info
+* `[system/process]` Added methods for setting and getting CPU scheduler priority
+* `[system/process]` Added methods for setting and getting IO scheduler priority
 
 ### 12.19.0
 
