@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.20.0
+
+* `[system/process]` Added methods for setting and getting CPU scheduler priority
+* `[system/process]` Added methods for setting and getting IO scheduler priority
+
 ### 12.19.0
 
 * `[system]` Added method `GetCPUCount` for getting info about number of CPU's
