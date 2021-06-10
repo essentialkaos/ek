@@ -115,3 +115,23 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 func GetMountInfo(pid int) ([]*MountInfo, error) {
 	return nil, nil
 }
+
+// GetCPUPriority returns process CPU scheduling priority (PR, NI, error)
+func GetCPUPriority(pid int) (int, int, error) {
+	return 0, 0, nil
+}
+
+// SetCPUPriority sets process CPU scheduling priority
+func SetCPUPriority(pid, niceness int) error {
+	return nil
+}
+
+// GetIOPriority returns process IO scheduling priority (class, classdata, error)
+func GetIOPriority(pid int) (int, int, error) {
+	return 0, 0, nil
+}
+
+// SetIOPriority sets process IO scheduling priority
+func SetIOPriority(pid, class, classdata int) error {
+	return nil
+}

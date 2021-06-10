@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.20.1
+
+* `[system/process]` Fixed stubs for Windows
+
 ### 12.20.0
 
 * `[system/process]` Added methods for setting and getting CPU scheduler priority
