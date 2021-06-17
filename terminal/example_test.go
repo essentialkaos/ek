@@ -14,9 +14,18 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleReadUI() {
-
-	// user must enter name
+	// User must enter name
 	input, err := ReadUI("Please enter user name", true)
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
+
+	fmt.Printf("User name: %s\v", input)
+
+	// You can read user input without providing any title
+	fmt.Println("Please enter user name")
+	input, err = ReadUI("", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
@@ -26,12 +35,11 @@ func ExampleReadUI() {
 }
 
 func ExampleReadPassword() {
-
 	Prompt = "› "
 	MaskSymbol = "•"
 	MaskSymbolColorTag = "{s}"
 
-	// user must enter password
+	// User must enter password
 	input, err := ReadUI("Please enter password", true)
 
 	if err != nil {
@@ -42,8 +50,8 @@ func ExampleReadPassword() {
 }
 
 func ExampleReadAnswer() {
-
-	// is user doesn't enter any value, we use default value (Y in this case)
+	// If the user doesn't enter any value, we will use the default
+	// value (Y in this case)
 	ok, err := ReadAnswer("Remove this file?", "Y")
 
 	if !ok || err != nil {
@@ -82,11 +90,11 @@ func ExamplePrintActionStatus() {
 }
 
 func ExamplePrintErrorMessage() {
-	// print this text with red color
+	// Print red text to stderr
 	PrintErrorMessage("Error while sending data")
 }
 
 func ExamplePrintWarnMessage() {
-	// print this text with yellow color
+	// Print yellow text to stderr
 	PrintWarnMessage("Warning file is not found")
 }
