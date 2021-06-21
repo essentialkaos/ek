@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.20.2
+
+* `[terminal]` Usage examples improvements
+
 ### 12.20.1
 
 * `[system/process]` Fixed stubs for Windows

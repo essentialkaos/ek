@@ -187,7 +187,7 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 		}
 
 		if nonEmpty && strings.TrimSpace(input) == "" {
-			PrintWarnMessage("\nYou must enter non empty value\n")
+			PrintWarnMessage("\nYou must enter non-empty value\n")
 			continue
 		}
 
