@@ -17,5 +17,5 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]] ; then
             full_ver=$(echo ${GITHUB_REF} | cut -f3 -d'/')
             major_ver=$(echo ${full_ver} | cut -f1 -d'.')
-            curl -s ${{env.GO_SUM}}/pkg.re/${{github.repository}}.${major_ver}@${full_ver}
+            curl -s ${{env.GO_SUM}}/pkg.re/${{github.repository}}.${major_ver}@${full_ver}+incompatible
           fi
