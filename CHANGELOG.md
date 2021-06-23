@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.20.4
+
+* Added `go.mod` file
+
 ### 12.20.3
 
 * `go-check` package replaced by [our fork](https://kaos.sh/check)
