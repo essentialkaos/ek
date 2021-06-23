@@ -13,7 +13,7 @@ import (
 	"pkg.re/essentialkaos/ek.v12/options"
 	"pkg.re/essentialkaos/ek.v12/usage"
 
-	. "pkg.re/check.v1"
+	. "pkg.re/essentialkaos/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

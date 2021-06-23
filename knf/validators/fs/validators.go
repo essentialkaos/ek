@@ -166,7 +166,7 @@ func validateMatchPattern(config *knf.Config, prop string, value interface{}) er
 	isMatch, err := path.Match(pattern, confPath)
 
 	if err != nil {
-		fmt.Errorf("Can't parse shell pattern: %v", err)
+		return fmt.Errorf("Can't parse shell pattern: %v", err)
 	}
 
 	if !isMatch {

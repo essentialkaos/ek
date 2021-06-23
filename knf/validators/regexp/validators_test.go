@@ -13,7 +13,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v12/knf"
 
-	check "pkg.re/check.v1"
+	check "pkg.re/essentialkaos/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
