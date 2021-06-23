@@ -3,6 +3,7 @@
 ### 12.20.3
 
 * `go-check` package replaced by [our fork](https://kaos.sh/check)
+* `[cron]` Removed useless example
 
 ### 12.20.2
 

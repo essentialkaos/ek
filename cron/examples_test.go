@@ -32,24 +32,6 @@ func ExampleParse() {
 	// Execute2: false
 }
 
-func ExampleExpr_Parse() {
-	expr, err := Parse("0,15,30,45 0,6,12,18 1-10,15,31 * Mon-Fri")
-
-	if err != nil {
-		return
-	}
-
-	m1 := time.Date(2020, 1, 1, 18, 15, 0, 0, time.Local)
-	m2 := time.Date(2020, 1, 1, 18, 20, 0, 0, time.Local)
-
-	fmt.Printf("Execute1: %t\n", expr.IsDue(m1))
-	fmt.Printf("Execute2: %t\n", expr.IsDue(m2))
-
-	// Output:
-	// Execute1: true
-	// Execute2: false
-}
-
 func ExampleExpr_Next() {
 	expr, err := Parse("0,15,30,45 0,6,12,18 1-10,15,31 * Mon-Fri")
 
