@@ -5,6 +5,7 @@
 * `go-check` package replaced by [our fork](https://kaos.sh/check)
 * `[cron]` Removed useless example
 * `[knf/validators/fs]` Fixed bug with handling pattern matching error
+* `[path]` Fixed usage examples
 
 ### 12.20.2
 

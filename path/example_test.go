@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExamplePath() {
+func ExampleBase() {
 	fmt.Println(Base("/home/user/project"))
 
 	// Output:
