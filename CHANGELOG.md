@@ -3,6 +3,7 @@
 ### 12.21.0
 
 * `[knf]` Added new getter `GetD` which returns valus as duration in seconds
+* `[system/process]` Improved tests
 
 ### 12.20.3
 

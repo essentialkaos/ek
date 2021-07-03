@@ -36,7 +36,7 @@ func (s *ProcessSuite) TestGetTree(c *C) {
 	c.Assert(tree, IsNil)
 	c.Assert(err, NotNil)
 
-	tree, err = GetTree(1)
+	tree, err = GetTree(os.Getpid())
 
 	c.Assert(tree, NotNil)
 	c.Assert(err, IsNil)
