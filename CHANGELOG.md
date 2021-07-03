@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.21.0
+
+* `[knf]` Added new getter `GetD` which returns valus as duration in seconds
+
 ### 12.20.3
 
 * `go-check` package replaced by [our fork](https://kaos.sh/check)
