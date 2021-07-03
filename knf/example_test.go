@@ -37,6 +37,9 @@ func ExampleGlobal() {
 	// Read file mode value
 	GetM("section:file-mode")
 
+	// Read duration in seconds
+	GetD("section:duration")
+
 	// Check section
 	if HasSection("section") {
 		// Section exist

@@ -73,7 +73,7 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         uses: actions/setup-node@v1
         with:
-          node-version: '10.x'
+          node-version: '14.x'
 
       - name: Install codeclimate-test-reporter
         if: ${{ runner.os != 'Windows' }}

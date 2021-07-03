@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -210,6 +211,19 @@ func GetM(name string, defvals ...os.FileMode) os.FileMode {
 	}
 
 	return global.GetM(name, defvals...)
+}
+
+// GetD returns global config values as duration
+func GetD(name string, defvals ...time.Duration) time.Duration {
+	if global == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetD(name, defvals...)
 }
 
 // HasSection check if section exist
@@ -461,6 +475,29 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	}
 
 	return os.FileMode(valM)
+}
+
+// GetD returns config value as duration
+func (c *Config) GetD(name string, defvals ...time.Duration) time.Duration {
+	if c == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	val := c.data[name]
+
+	if val == "" {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return time.Duration(c.GetI64(name)) * time.Second
 }
 
 // HasSection check if section exist

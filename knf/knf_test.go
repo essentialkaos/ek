@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	check "pkg.re/essentialkaos/check.v1"
 )
@@ -59,6 +60,12 @@ test1:      1
   test3: 0
   test4: ABC
   test5: true
+
+[duration]
+	test1: 0
+	test2: 60
+	test3: ABC
+	test4: true
 
 [comment]
   test1: 100
@@ -167,6 +174,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetF("test"), check.Equals, 0.0)
 	c.Assert(GetB("test"), check.Equals, false)
 	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
+	c.Assert(GetD("test"), check.Equals, time.Duration(0))
 	c.Assert(HasSection("test"), check.Equals, false)
 	c.Assert(HasProp("test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
@@ -181,6 +189,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetF("test"), check.Equals, 0.0)
 	c.Assert(config.GetB("test"), check.Equals, false)
 	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
+	c.Assert(config.GetD("test"), check.Equals, time.Duration(0))
 	c.Assert(config.HasSection("test"), check.Equals, false)
 	c.Assert(config.HasProp("test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
@@ -221,11 +230,21 @@ func (s *KNFSuite) TestSections(c *check.C) {
 
 	sections := Sections()
 
-	c.Assert(sections, check.HasLen, 8)
+	c.Assert(sections, check.HasLen, 9)
 	c.Assert(
 		sections,
 		check.DeepEquals,
-		[]string{"formating", "string", "boolean", "integer", "file-mode", "comment", "macro", "k"},
+		[]string{
+			"formating",
+			"string",
+			"boolean",
+			"integer",
+			"file-mode",
+			"duration",
+			"comment",
+			"macro",
+			"k",
+		},
 	)
 }
 
@@ -347,6 +366,20 @@ func (s *KNFSuite) TestFileMode(c *check.C) {
 	c.Assert(GetM("file-mode:test5"), check.Equals, os.FileMode(0))
 }
 
+func (s *KNFSuite) TestDuration(c *check.C) {
+	var err error
+
+	err = Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(GetD("duration:test1"), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test2"), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test3"), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test4"), check.Equals, time.Duration(0))
+}
+
 func (s *KNFSuite) TestComments(c *check.C) {
 	var err error
 
@@ -385,6 +418,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.GetF("formating:test1"), check.Equals, 0.0)
 	c.Assert(nilConf.GetB("formating:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formating:test1"), check.Equals, os.FileMode(0))
+	c.Assert(nilConf.GetD("formating:test1"), check.Equals, time.Duration(0))
 	c.Assert(nilConf.HasSection("formating"), check.Equals, false)
 	c.Assert(nilConf.HasProp("formating:test1"), check.Equals, false)
 	c.Assert(nilConf.Sections(), check.HasLen, 0)
@@ -414,6 +448,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
+	c.Assert(GetD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	err = Global(s.ConfigPath)
@@ -429,6 +464,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
+	c.Assert(GetD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	var nc *Config
@@ -441,6 +477,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
+	c.Assert(nc.GetD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
