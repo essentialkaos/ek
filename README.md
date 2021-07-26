@@ -100,21 +100,22 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [GoMakeGen](https://kaos.sh/gomakegen) - Utility for generating makefiles for golang applications
 * [icecli](https://kaos.sh/icecli) - Command-line tools for Icecast
 * [IMC](https://kaos.sh/imc) - Simple terminal dashboard for Icecast
+* [jira-reindex-runner](https://kaos.sh/jira-reindex-runner) - Application for periodical running Jira re-index process
+* [knf](https://kaos.sh/knf) - Simple utility for reading values from KNF files
 * [MDToc](https://kaos.sh/mdtoc) - Utility for generating table of contents for markdown files
 * [Mockka](https://kaos.sh/mockka) - Mockka is a simple utility for mocking HTTP API's
 * [perfecto](https://kaos.sh/perfecto) - Tool for checking perfectly written RPM specs
 * [pkg.re Morpher](https://kaos.sh/pkgre) - Part of [pkg.re](https://pkg.re) service (_provides versioned URLs for Go_)
 * [RBInstall](https://kaos.sh/rbinstall) - Utility for installing prebuilt ruby to RBEnv
-* [Redis Monitor Top](https://kaos.sh/redis-monitor-top) - Tiny Redis client for aggregating stats from MONITOR flow
 * [Redis CLI Monitor](https://kaos.sh/redis-cli-monitor) - Tiny redis client for renamed MONITOR commands
 * [Redis Latency Monitor](https://kaos.sh/redis-latency-monitor) - Tiny Redis client for latency measurement
+* [Redis Monitor Top](https://kaos.sh/redis-monitor-top) - Tiny Redis client for aggregating stats from MONITOR flow
+* [scratch](https://kaos.sh/scratch) - Simple utility for generating blank files for Go apps, utilities and packages
 * [SHDoc](https://kaos.sh/shdoc) - Tool for viewing and exporting docs for shell scripts
 * [Sonar](https://kaos.sh/sonar) - Utility for showing user Slack status in Atlassian Jira
 * [SourceIndex](https://kaos.sh/source-index) - Utility for generating an index for source archives
 * [SSLScan Client](https://kaos.sh/sslcli) - Pretty awesome command-line client for public SSLLabs API
 * [swptop](https://kaos.sh/swptop) - Simple utility for viewing swap consumption of processes
-* [Terrafarm](https://kaos.sh/terrafarm) - Utility for working with terraform based rpmbuilder farm
-* [vgrepo](https://github.com/gongled/vgrepo) - Simple CLI tool for managing Vagrant repositories
 * [uc](https://kaos.sh/uc) - Simple utility for counting unique lines
 * [Yo](https://kaos.sh/yo) - Command-line YAML processor
 
