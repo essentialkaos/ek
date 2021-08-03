@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.21.1
+
+* `[log]` Code refactoring
+
 ### 12.21.0
 
 * `[knf]` Added new getter `GetD` which returns valus as duration in seconds

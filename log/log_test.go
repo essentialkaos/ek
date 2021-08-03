@@ -46,8 +46,8 @@ func (ls *LogSuite) SetUpTest(c *C) {
 		PrefixError: true,
 		PrefixCrit:  true,
 
-		level: INFO,
-		mu:    &sync.Mutex{},
+		minLevel: INFO,
+		mu:       &sync.Mutex{},
 	}
 }
 
@@ -121,7 +121,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
-	l := &Logger{level: WARN, mu: &sync.Mutex{}}
+	l := &Logger{minLevel: WARN, mu: &sync.Mutex{}}
 
 	c.Assert(l.MinLevel(-1), IsNil)
 	c.Assert(l.MinLevel(6), IsNil)
