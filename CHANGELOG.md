@@ -3,6 +3,7 @@
 ### 12.21.1
 
 * `[log]` Code refactoring
+* `[log]` Improved tests
 
 ### 12.21.0
 

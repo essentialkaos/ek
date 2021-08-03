@@ -477,3 +477,21 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 11)
 }
+
+func (ls *LogSuite) TestNilLogger(c *C) {
+	var l *Logger
+
+	c.Assert(l.Reopen(), Equals, ErrLoggerIsNil)
+	c.Assert(l.MinLevel(1), Equals, ErrLoggerIsNil)
+	c.Assert(l.Set("", 0644), Equals, ErrLoggerIsNil)
+	c.Assert(l.Print(CRIT, ""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Flush(), Equals, ErrLoggerIsNil)
+	c.Assert(l.Debug(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Info(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Warn(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Error(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Crit(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Aux(""), Equals, ErrLoggerIsNil)
+
+	l.EnableBufIO(time.Second)
+}
