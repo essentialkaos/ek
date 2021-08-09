@@ -78,7 +78,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`system`](https://pkg.re/essentialkaos/ek.v12/system?docs) - Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://pkg.re/essentialkaos/ek.v12/terminal?docs) - Package provides methods for working with user input
 * [`terminal/window`](https://pkg.re/essentialkaos/ek.v12/terminal/window?docs) - Package provides methods for working terminal window
-* [`timeutil`](https://pkg.re/essentialkaos/ek.v12/timeutil?docs) - Package provides methods for working with time
+* [`timeutil`](https://pkg.re/essentialkaos/ek.v12/timeutil?docs) - Package provides methods for working with time and date
 * [`tmp`](https://pkg.re/essentialkaos/ek.v12/tmp?docs) - Package provides methods for working with temporary data
 * [`usage`](https://pkg.re/essentialkaos/ek.v12/usage?docs) - Package provides methods for rendering info for command-line tools
 * [`usage/update`](https://pkg.re/essentialkaos/ek.v12/usage/update?docs) - Package contains update checkers for different services

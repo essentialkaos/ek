@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.21.1
+### 12.22.0
 
+* `[timeutil]` Added more new helpers
 * `[log]` Code refactoring
 * `[log]` Improved tests
 

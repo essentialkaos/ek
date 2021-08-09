@@ -252,3 +252,20 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	_, err = ParseDuration("9999999999999999999999999999999999999")
 	c.Assert(err, NotNil)
 }
+
+func (s *TimeUtilSuite) TestHelpers(c *C) {
+	d := time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local)
+
+	c.Assert(PrevDay(d), DeepEquals, time.Date(2020, 12, 31, 12, 30, 15, 0, time.Local))
+	c.Assert(PrevMonth(d), DeepEquals, time.Date(2020, 12, 1, 12, 30, 15, 0, time.Local))
+	c.Assert(PrevYear(d), DeepEquals, time.Date(2020, 1, 1, 12, 30, 15, 0, time.Local))
+	c.Assert(NextDay(d), DeepEquals, time.Date(2021, 1, 2, 12, 30, 15, 0, time.Local))
+	c.Assert(NextMonth(d), DeepEquals, time.Date(2021, 2, 1, 12, 30, 15, 0, time.Local))
+	c.Assert(NextYear(d), DeepEquals, time.Date(2022, 1, 1, 12, 30, 15, 0, time.Local))
+
+	d = time.Date(2021, 8, 1, 12, 30, 15, 0, time.Local)
+	c.Assert(PrevWorkday(d), DeepEquals, time.Date(2021, 7, 30, 12, 30, 15, 0, time.Local))
+	c.Assert(PrevWeekend(d), DeepEquals, time.Date(2021, 7, 31, 12, 30, 15, 0, time.Local))
+	c.Assert(NextWorkday(d), DeepEquals, time.Date(2021, 8, 2, 12, 30, 15, 0, time.Local))
+	c.Assert(NextWeekend(d), DeepEquals, time.Date(2021, 8, 7, 12, 30, 15, 0, time.Local))
+}
