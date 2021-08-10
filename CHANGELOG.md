@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.22.0
+
+* `[timeutil]` Added more new helpers
+* `[log]` Code refactoring
+* `[log]` Improved tests
+
 ### 12.21.0
 
 * `[knf]` Added new getter `GetD` which returns valus as duration in seconds

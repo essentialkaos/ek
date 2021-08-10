@@ -48,7 +48,7 @@ type Logger struct {
 	fd       *os.File
 	w        *bufio.Writer
 	mu       *sync.Mutex
-	level    uint8
+	minLevel uint8
 	perms    os.FileMode
 	useBufIO bool
 }
@@ -61,8 +61,8 @@ var Global = &Logger{
 	PrefixError: true,
 	PrefixCrit:  true,
 
-	level: INFO,
-	mu:    &sync.Mutex{},
+	minLevel: INFO,
+	mu:       &sync.Mutex{},
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -123,8 +123,8 @@ func New(file string, perms os.FileMode) (*Logger, error) {
 		PrefixCrit:  true,
 		PrefixError: true,
 
-		level: INFO,
-		mu:    &sync.Mutex{},
+		minLevel: INFO,
+		mu:       &sync.Mutex{},
 	}
 
 	err := logger.Set(file, perms)
@@ -242,7 +242,7 @@ func (l *Logger) MinLevel(level interface{}) error {
 		levelCode = CRIT
 	}
 
-	l.level = levelCode
+	l.minLevel = levelCode
 
 	return nil
 }
@@ -309,22 +309,12 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	if l.level > level {
+	if l.minLevel > level {
 		return nil
 	}
 
 	w := l.getWritter(level)
-
-	var showPrefixes bool
-
-	switch {
-	case level == DEBUG && l.PrefixDebug,
-		level == INFO && l.PrefixInfo,
-		level == WARN && l.PrefixWarn,
-		level == ERROR && l.PrefixError,
-		level == CRIT && l.PrefixCrit:
-		showPrefixes = true
-	}
+	showPrefix := l.showPrefix(level)
 
 	if f == "" || f[len(f)-1:] != "\n" {
 		f += "\n"
@@ -332,19 +322,15 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) error {
 
 	var err error
 
-	if l.UseColors {
-		c := Colors[level]
-		if showPrefixes {
-			_, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
-		} else {
-			_, err = fmtc.Fprintf(w, "{s-}%s{!} "+c+"%s{!}", getTime(), fmt.Sprintf(f, a...))
-		}
-	} else {
-		if showPrefixes {
-			_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
-		} else {
-			_, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
-		}
+	switch {
+	case l.UseColors && showPrefix:
+		_, err = fmtc.Fprintf(w, "{s-}%s{!} "+Colors[level]+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+	case l.UseColors && !showPrefix:
+		_, err = fmtc.Fprintf(w, "{s-}%s{!} "+Colors[level]+"%s{!}", getTime(), fmt.Sprintf(f, a...))
+	case !l.UseColors && showPrefix:
+		_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+	case !l.UseColors && !showPrefix:
+		_, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
 	}
 
 	return err
@@ -445,6 +431,19 @@ func (l *Logger) getWritter(level uint8) io.Writer {
 	}
 
 	return w
+}
+
+func (l *Logger) showPrefix(level uint8) bool {
+	switch {
+	case level == DEBUG && l.PrefixDebug,
+		level == INFO && l.PrefixInfo,
+		level == WARN && l.PrefixWarn,
+		level == ERROR && l.PrefixError,
+		level == CRIT && l.PrefixCrit:
+		return true
+	}
+
+	return false
 }
 
 func (l *Logger) flushDaemon(interval time.Duration) {

@@ -46,8 +46,8 @@ func (ls *LogSuite) SetUpTest(c *C) {
 		PrefixError: true,
 		PrefixCrit:  true,
 
-		level: INFO,
-		mu:    &sync.Mutex{},
+		minLevel: INFO,
+		mu:       &sync.Mutex{},
 	}
 }
 
@@ -121,7 +121,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
-	l := &Logger{level: WARN, mu: &sync.Mutex{}}
+	l := &Logger{minLevel: WARN, mu: &sync.Mutex{}}
 
 	c.Assert(l.MinLevel(-1), IsNil)
 	c.Assert(l.MinLevel(6), IsNil)
@@ -476,4 +476,22 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	dataSlice := strings.Split(string(data), "\n")
 
 	c.Assert(len(dataSlice), Equals, 11)
+}
+
+func (ls *LogSuite) TestNilLogger(c *C) {
+	var l *Logger
+
+	c.Assert(l.Reopen(), Equals, ErrLoggerIsNil)
+	c.Assert(l.MinLevel(1), Equals, ErrLoggerIsNil)
+	c.Assert(l.Set("", 0644), Equals, ErrLoggerIsNil)
+	c.Assert(l.Print(CRIT, ""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Flush(), Equals, ErrLoggerIsNil)
+	c.Assert(l.Debug(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Info(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Warn(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Error(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Crit(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Aux(""), Equals, ErrLoggerIsNil)
+
+	l.EnableBufIO(time.Second)
 }
