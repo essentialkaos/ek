@@ -15,67 +15,85 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleNew() {
-	store := New(time.Second, time.Minute)
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
+	cache.Set("test", "ABCD")
 
-	fmt.Println(store.Get("test"))
+	fmt.Println(cache.Get("test"))
 	// Output: ABCD
 }
 
-func ExampleStore_Set() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Set() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
+	cache.Set("test", "ABCD")
 
-	fmt.Println(store.Get("test"))
+	fmt.Println(cache.Get("test"))
 	// Output: ABCD
 }
 
-func ExampleStore_Has() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Has() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
+	cache.Set("test", "ABCD")
 
-	fmt.Println(store.Has("test"))
+	fmt.Println(cache.Has("test"))
 	// Output: true
 }
 
-func ExampleStore_Get() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Get() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
+	cache.Set("test", "ABCD")
 
-	fmt.Println(store.Get("test"))
+	fmt.Println(cache.Get("test"))
 	// Output: ABCD
 }
 
-func ExampleStore_GetWithExpiration() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Size() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
+	cache.Set("test", "ABCD")
 
-	item, exp := store.GetWithExpiration("test")
+	fmt.Println(cache.Size())
+	// Output: 1
+}
+
+func ExampleCache_Expired() {
+	cache := New(time.Second, time.Minute)
+
+	cache.Set("test", "ABCD")
+
+	fmt.Println(cache.Expired())
+	// Output: 0
+}
+
+func ExampleCache_GetWithExpiration() {
+	cache := New(time.Second, time.Minute)
+
+	cache.Set("test", "ABCD")
+
+	item, exp := cache.GetWithExpiration("test")
 
 	fmt.Println(item, exp.String())
 }
 
-func ExampleStore_Delete() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Delete() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
-	store.Delete("test")
+	cache.Set("test", "ABCD")
+	cache.Delete("test")
 
-	fmt.Println(store.Get("test"))
+	fmt.Println(cache.Get("test"))
 	// Output: <nil>
 }
 
-func ExampleStore_Flush() {
-	store := New(time.Second, time.Minute)
+func ExampleCache_Flush() {
+	cache := New(time.Second, time.Minute)
 
-	store.Set("test", "ABCD")
-	store.Flush()
+	cache.Set("test", "ABCD")
+	cache.Flush()
 
-	fmt.Println(store.Get("test"))
+	fmt.Println(cache.Get("test"))
 	// Output: <nil>
 }
