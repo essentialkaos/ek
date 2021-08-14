@@ -1,4 +1,4 @@
-// Package cache provides simple in-memory key:value store
+// Package cache provides simple in-memory key:value cache
 package cache
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -15,8 +15,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Store is cache store
-type Store struct {
+// Cache is cache instance
+type Cache struct {
 	expiration     time.Duration
 	data           map[string]interface{}
 	expiry         map[string]int64
@@ -26,9 +26,9 @@ type Store struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// New creates new store instance
-func New(defaultExpiration, cleanupInterval time.Duration) *Store {
-	s := &Store{
+// New creates new cache instance
+func New(defaultExpiration, cleanupInterval time.Duration) *Cache {
+	s := &Cache{
 		expiration: defaultExpiration,
 		data:       make(map[string]interface{}),
 		expiry:     make(map[string]int64),
@@ -45,8 +45,8 @@ func New(defaultExpiration, cleanupInterval time.Duration) *Store {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Has returns true if store contains data for given key
-func (s *Store) Has(key string) bool {
+// Has returns true if cache contains data for given key
+func (s *Cache) Has(key string) bool {
 	if s == nil {
 		return false
 	}
@@ -75,8 +75,42 @@ func (s *Store) Has(key string) bool {
 	return ok
 }
 
-// Set adds or updates item in store
-func (s *Store) Set(key string, data interface{}) {
+// Size returns number of items in cache
+func (s *Cache) Size() int {
+	if s == nil {
+		return 0
+	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return len(s.data)
+}
+
+// Expired returns number of exipred items in cache
+func (s *Cache) Expired() int {
+	if s == nil {
+		return 0
+	}
+
+	items := 0
+	now := time.Now().UnixNano()
+
+	s.mu.Lock()
+
+	for _, expiration := range s.expiry {
+		if now > expiration {
+			items++
+		}
+	}
+
+	s.mu.Unlock()
+
+	return items
+}
+
+// Set adds or updates item in cache
+func (s *Cache) Set(key string, data interface{}) {
 	if s == nil {
 		return
 	}
@@ -90,7 +124,7 @@ func (s *Store) Set(key string, data interface{}) {
 }
 
 // Get returns item from cache or nil
-func (s *Store) Get(key string) interface{} {
+func (s *Cache) Get(key string) interface{} {
 	if s == nil {
 		return nil
 	}
@@ -122,7 +156,7 @@ func (s *Store) Get(key string) interface{} {
 }
 
 // GetWithExpiration returns item from cache and expiration date or nil
-func (s *Store) GetWithExpiration(key string) (interface{}, time.Time) {
+func (s *Cache) GetWithExpiration(key string) (interface{}, time.Time) {
 	if s == nil {
 		return nil, time.Time{}
 	}
@@ -154,7 +188,7 @@ func (s *Store) GetWithExpiration(key string) (interface{}, time.Time) {
 }
 
 // Delete removes item from cache
-func (s *Store) Delete(key string) {
+func (s *Cache) Delete(key string) {
 	if s == nil {
 		return
 	}
@@ -168,7 +202,7 @@ func (s *Store) Delete(key string) {
 }
 
 // Flush removes all data from cache
-func (s *Store) Flush() {
+func (s *Cache) Flush() {
 	if s == nil {
 		return
 	}
@@ -183,7 +217,7 @@ func (s *Store) Flush() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *Store) janitor(interval time.Duration) {
+func (s *Cache) janitor(interval time.Duration) {
 	for range time.NewTicker(interval).C {
 		if len(s.data) == 0 {
 			continue

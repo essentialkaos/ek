@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.23.0
+
+* `[cache]` Renamed `Store` to `Cache`
+* `[cache]` Added method `Size` for checking cache size
+* `[cache]` Added method `Expired` for checking number of expired items
+
 ### 12.22.0
 
 * `[timeutil]` Added more new helpers
