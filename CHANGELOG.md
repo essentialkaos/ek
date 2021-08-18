@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.24.0
+
+* `[color]` Added method `RGB2CMYK` for converting RGB colors to CMYK
+* `[color]` Added method `CMYK2RGB` for converting CMYK colors to RGB
+* `[color]` Added method `RGB2HSL` for converting RGB colors to HSL
+* `[color]` Added method `HSL2RGB` for converting HSL colors to RGB
+* `[color]` Added method `RGBLuminance` for calculating relative luminance for RGB colors
+* `[color]` Added method `HEXLuminance` for calculating relative luminance for HEX colors
+* `[color]` Added method `Contrast` for calculating contrast ratio of foreground and background colors
+
 ### 12.23.0
 
 * `[cache]` Renamed `Store` to `Cache`
