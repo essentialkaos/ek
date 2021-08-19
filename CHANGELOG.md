@@ -8,7 +8,7 @@
 * `[color]` Added method `CMYK2RGB` for converting CMYK colors to RGB
 * `[color]` Added method `RGB2HSL` for converting RGB colors to HSL
 * `[color]` Added method `HSL2RGB` for converting HSL colors to RGB
-* `[color]` Added method `Luminance` for calculating relative luminance for RGB colors
+* `[color]` Added method `Luminance` for calculating relative luminance for RGB color
 * `[color]` Added method `Contrast` for calculating contrast ratio of foreground and background colors
 * `[color]` Method `RGB2HSB` rewritten from scratch and renamed to `RGB2HSV`
 * `[color]` Method `HSB2RGB` rewritten from scratch and renamed to `HSV2RGB`
