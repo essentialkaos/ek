@@ -14,102 +14,91 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleRGB2Hex() {
-	fmt.Printf("%x\n", RGB2Hex(127, 25, 75))
-	// Output: 7f194b
+	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true))
+
+	// Output: #7F194B
 }
 
 func ExampleHex2RGB() {
-	r, g, b := Hex2RGB(0X7F194B)
+	fmt.Printf("%s\n", Hex2RGB(0x7F194B))
 
-	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
-
-	// Output: r:127 g:25 b:75
+	// Output: RGB{R:127 G:25 B:75}
 }
 
 func ExampleHex2RGBA() {
-	r, g, b, a := Hex2RGBA(0X7F194BCC)
+	fmt.Printf("%s\n", Hex2RGBA(0x7F194BCC))
 
-	fmt.Printf("r:%d g:%d b:%d a:%d\n", r, g, b, a)
-
-	// Output: r:127 g:25 b:75 a:204
+	// Output: RGBA{R:127 G:25 B:75 A:0.80}
 }
 
-func ExampleRGB2HSB() {
-	h, s, v := RGB2HSB(127, 25, 75)
+func ExampleRGBA2Hex() {
+	c := RGBA2Hex(RGBA{127, 25, 75, 204})
 
-	fmt.Printf("h:%d s:%d v:%d\n", h, s, v)
+	fmt.Printf("%s\n", c.ToWeb(true))
 
-	// Output: h:331 s:81 v:50
+	// Output: #7F194BCC
 }
 
-func ExampleHSB2RGB() {
-	r, g, b := HSB2RGB(331, 81, 50)
+func ExampleRGB2Term() {
+	c := RGB{255, 0, 0}
 
-	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
+	fmt.Printf("%s → \\e[38;5;%dm\n", c, RGB2Term(c))
 
-	// Output: r:128 g:24 b:74
+	// Output: RGB{R:255 G:0 B:0} → \e[38;5;196m
 }
 
 func ExampleRGB2CMYK() {
-	c, m, y, k := RGB2CMYK(68, 133, 148)
+	fmt.Printf("%s\n", RGB2CMYK(RGB{127, 25, 75}))
 
-	fmt.Printf(
-		"C:%.0f%% M:%.0f%% Y:%.0f%% K:%.0f%%\n",
-		c*100.0, m*100.0, y*100.0, k*100.0,
-	)
-
-	// Output: C:54% M:10% Y:0% K:42%
+	// Output: CMYK{C:0% M:80% Y:41% K:50%}
 }
 
 func ExampleCMYK2RGB() {
-	r, g, b := CMYK2RGB(0.0, 0.25, 0.77, 0.17)
+	fmt.Printf("%s\n", CMYK2RGB(CMYK{0, 0.8, 0.41, 0.5}))
 
-	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
+	// Output: RGB{R:127 G:25 B:75}
+}
 
-	// Output: r:211 g:158 b:48
+func ExampleRGB2HSV() {
+	fmt.Printf("%s\n", RGB2HSV(RGB{127, 25, 75}))
+
+	// Output: HSV{H:331° S:80% V:50%}
+}
+
+func ExampleHSV2RGB() {
+	c := HSV2RGB(HSV{331.0 / 360.0, 80.0 / 100.0, 50.0 / 100.0})
+
+	fmt.Printf("%s\n", c)
+
+	// Output: RGB{R:127 G:25 B:74}
 }
 
 func ExampleRGB2HSL() {
-	h, s, l := RGB2HSL(111, 128, 173)
+	fmt.Printf("%s\n", RGB2HSL(RGB{127, 25, 75}))
 
-	fmt.Printf(
-		"h:%.0f° s:%.0f%% l:%.0f%%\n",
-		h*360, s*100, l*100,
-	)
-
-	// Output: h:224° s:27% l:56%
+	// Output: HSL{H:331° S:67% L:30%}
 }
 
 func ExampleHSL2RGB() {
-	r, g, b := HSL2RGB(0.6209677419354839, 0.27433628318584075, 0.5568627450980392)
+	c := HSL2RGB(HSL{331.0 / 360.0, 67.0 / 100.0, 30.0 / 100.0})
 
-	fmt.Printf("r:%d g:%d b:%d\n", r, g, b)
+	fmt.Printf("%s\n", c)
 
-	// Output: r:111 g:128 b:173
+	// Output: RGB{R:127 G:25 B:74}
 }
 
 func ExampleHUE2RGB() {
 	hue := HUE2RGB(0.3, 0.12, 0.56)
 
-	fmt.Printf("hue:%.4f\n", hue)
+	fmt.Printf("Hue: %.4f\n", hue)
 
-	// Output: hue:0.1848
+	// Output: Hue: 0.1848
 }
 
-func ExampleRGBLuminance() {
-	l := RGBLuminance(135, 85, 189)
+func ExampleLuminance() {
+	fmt.Printf("Lum: %.7f\n", Luminance(RGB{135, 85, 189}))
 
-	fmt.Printf("lum: %.7f\n", l)
-
-	// Output: lum: 0.1532202
-}
-
-func ExampleHEXLuminance() {
-	l := HEXLuminance(0x8755bd)
-
-	fmt.Printf("lum: %.7f\n", l)
-
-	// Output: lum: 0.1532202
+	// Output: Lum: 0.1532202
 }
 
 func ExampleContrast() {
@@ -120,11 +109,99 @@ func ExampleContrast() {
 	// Output: ratio: 6.35:1
 }
 
-func ExampleIsRGBA() {
-	fmt.Println(IsRGBA(0xAABBCC))
-	fmt.Println(IsRGBA(0xAABBCCDD))
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleRGB_ToHex() {
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHex().ToWeb(true))
+
+	// Output: #7F194B
+}
+
+func ExampleRGB_ToCMYK() {
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToCMYK())
+
+	// Output: CMYK{C:0% M:80% Y:41% K:50%}
+}
+
+func ExampleRGB_ToHSV() {
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHSV())
+
+	// Output: HSV{H:331° S:80% V:50%}
+}
+
+func ExampleRGB_ToHSL() {
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHSL())
+
+	// Output: HSL{H:331° S:67% L:30%}
+}
+
+func ExampleRGB_ToTerm() {
+	c := RGB{255, 0, 0}
+
+	fmt.Printf("%s → \\e[38;5;%dm\n", c, c.ToTerm())
+
+	// Output: RGB{R:255 G:0 B:0} → \e[38;5;196m
+}
+
+func ExampleRGBA_ToHex() {
+	c := RGBA{127, 25, 75, 204}.ToHex()
+
+	fmt.Printf("%s\n", c.ToWeb(true))
+
+	// Output: #7F194BCC
+}
+
+func ExampleCMYK_ToRGB() {
+	fmt.Printf("%s\n", CMYK{0, 0.8, 0.41, 0.5}.ToRGB())
+
+	// Output: RGB{R:127 G:25 B:75}
+}
+
+func ExampleHSV_ToRGB() {
+	c := HSV{331.0 / 360.0, 80.0 / 100.0, 50.0 / 100.0}.ToRGB()
+
+	fmt.Printf("%s\n", c)
+
+	// Output: RGB{R:127 G:25 B:74}
+}
+
+func ExampleHSL_ToRGB() {
+	c := HSL{331.0 / 360.0, 67.0 / 100.0, 30.0 / 100.0}.ToRGB()
+
+	fmt.Printf("%s\n", c)
+
+	// Output: RGB{R:127 G:25 B:74}
+}
+
+func ExampleHex_IsRGBA() {
+	c1 := Hex(0x7F194B)
+	c2 := Hex(0x7F194B5F)
+
+	fmt.Printf("%s → %t\n", c1.ToWeb(true), c1.IsRGBA())
+	fmt.Printf("%s → %t\n", c2.ToWeb(true), c2.IsRGBA())
 
 	// Output:
-	// false
-	// true
+	// #7F194B → false
+	// #7F194B5F → true
+}
+
+func ExampleHex_ToRGB() {
+	fmt.Printf("%s\n", Hex(0x7F194B).ToRGB())
+
+	// Output: RGB{R:127 G:25 B:75}
+}
+
+func ExampleHex_ToRGBA() {
+	fmt.Printf("%s\n", Hex(0x7F194B5F).ToRGBA())
+
+	// Output: RGBA{R:127 G:25 B:75 A:0.37}
+}
+
+func ExampleHex_ToWeb() {
+	fmt.Printf("%s\n", Hex(0x7F194B).ToWeb(true))
+	fmt.Printf("%s\n", Hex(0x7F194B).ToWeb(false))
+
+	// Output:
+	// #7F194B
+	// #7f194b
 }
