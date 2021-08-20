@@ -35,7 +35,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 
 ### Sub-packages
 
-* [`cache`](https://pkg.re/essentialkaos/ek.v12/cache?docs) - Package provides simple in-memory key:value store
+* [`cache`](https://pkg.re/essentialkaos/ek.v12/cache?docs) - Package provides simple in-memory key:value cache
 * [`color`](https://pkg.re/essentialkaos/ek.v12/color?docs) - Package provides methods for working with colors
 * [`cron`](https://pkg.re/essentialkaos/ek.v12/cron?docs) - Package provides methods for working with cron expressions
 * [`csv`](https://pkg.re/essentialkaos/ek.v12/csv?docs) - Package with simple (without any checks) CSV parser compatible with default Go parser
@@ -117,6 +117,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [SSLScan Client](https://kaos.sh/sslcli) - Pretty awesome command-line client for public SSLLabs API
 * [swptop](https://kaos.sh/swptop) - Simple utility for viewing swap consumption of processes
 * [uc](https://kaos.sh/uc) - Simple utility for counting unique lines
+* [updown-badge-server](https://kaos.sh/updown-badge-server) - Service for generating badges for updown.io checks
 * [Yo](https://kaos.sh/yo) - Command-line YAML processor
 
 ### Build Status
