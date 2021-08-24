@@ -14,6 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ElasticIn accelerating from zero velocity
+// https://easings.net/#easeInElastic
 func ElasticIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -45,6 +46,7 @@ func ElasticIn(t, b, c, d float64) float64 {
 }
 
 // ElasticOut decelerating to zero velocity
+// https://easings.net/#easeOutElastic
 func ElasticOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -74,6 +76,7 @@ func ElasticOut(t, b, c, d float64) float64 {
 }
 
 // ElasticInOut acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutElastic
 func ElasticInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

@@ -14,6 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // SineIn accelerating from zero velocity
+// https://easings.net/#easeInSine
 func SineIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -23,6 +24,7 @@ func SineIn(t, b, c, d float64) float64 {
 }
 
 // SineOut decelerating to zero velocity
+// https://easings.net/#easeOutSine
 func SineOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -32,6 +34,7 @@ func SineOut(t, b, c, d float64) float64 {
 }
 
 // SineInOut acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutSine
 func SineInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

@@ -14,6 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // CircIn accelerating from zero velocity
+// https://easings.net/#easeInCirc
 func CircIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -25,6 +26,7 @@ func CircIn(t, b, c, d float64) float64 {
 }
 
 // CircOut decelerating to zero velocity
+// https://easings.net/#easeOutCirc
 func CircOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -37,6 +39,7 @@ func CircOut(t, b, c, d float64) float64 {
 }
 
 // CircInOut acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutCirc
 func CircInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

@@ -14,6 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ExpoIn accelerating from zero velocity
+// https://easings.net/#easeInExpo
 func ExpoIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -23,6 +24,7 @@ func ExpoIn(t, b, c, d float64) float64 {
 }
 
 // ExpoOut decelerating to zero velocity
+// https://easings.net/#easeOutExpo
 func ExpoOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -32,6 +34,7 @@ func ExpoOut(t, b, c, d float64) float64 {
 }
 
 // ExpoInOut acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutExpo
 func ExpoInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
