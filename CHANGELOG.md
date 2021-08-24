@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.24.1
+
+* `[color]` Added three-digit RGB notation generation to `HEX.ToWeb`
+
 ### 12.24.0
 
 * `[color]` Using structs for color models instead of bare numbers
