@@ -44,6 +44,7 @@ func (s *ColorSuite) TestHex(c *C) {
 	c.Assert(Hex(0x49d62df7).String(), Equals, "Hex{#49D62DF7}")
 	c.Assert(Hex(0x49d62d).ToWeb(false), Equals, "#49d62d")
 	c.Assert(Hex(0x49d62df7).ToWeb(true), Equals, "#49D62DF7")
+	c.Assert(Hex(0xFFAA44).ToWeb(true), Equals, "#FA4")
 }
 
 func (s *ColorSuite) TestRGBA(c *C) {
