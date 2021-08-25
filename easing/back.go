@@ -14,6 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // BackIn Accelerating from zero velocity
+// https://easings.net/#easeInBack
 func BackIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -26,6 +27,7 @@ func BackIn(t, b, c, d float64) float64 {
 }
 
 // BackOut Decelerating to zero velocity
+// https://easings.net/#easeOutBack
 func BackOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -38,6 +40,7 @@ func BackOut(t, b, c, d float64) float64 {
 }
 
 // BackInOut Acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutBack
 func BackInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

@@ -8,6 +8,7 @@ package easing
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // QuintIn accelerating from zero velocity
+// https://easings.net/#easeInQuint
 func QuintIn(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -18,6 +19,7 @@ func QuintIn(t, b, c, d float64) float64 {
 }
 
 // QuintOut decelerating to zero velocity
+// https://easings.net/#easeOutQuint
 func QuintOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c
@@ -30,6 +32,7 @@ func QuintOut(t, b, c, d float64) float64 {
 }
 
 // QuintInOut acceleration until halfway, then deceleration
+// https://easings.net/#easeInOutQuint
 func QuintInOut(t, b, c, d float64) float64 {
 	if t > d {
 		return c

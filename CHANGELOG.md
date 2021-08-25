@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.24.2
+
+* `[easing]` Added links to examples for every function
+* `[easing]` Added usage examples
+
 ### 12.24.1
 
 * `[color]` Added three-digit RGB notation generation to `HEX.ToWeb`
