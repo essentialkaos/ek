@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.25.0
+
+* `[color]` Added method `Parse` for parsing colors (`#RGB`/`#RGBA`/`#RRGGBB`/`#RRGGBBAA`)
+* `[color]` Fixed bug with formatting small values using `Hex.ToWeb`
+* `[color]` Fixed bug with converting `Hex` to `RGBA`
+
 ### 12.24.2
 
 * `[easing]` Added links to examples for every function
@@ -7,7 +13,7 @@
 
 ### 12.24.1
 
-* `[color]` Added three-digit RGB notation generation to `HEX.ToWeb`
+* `[color]` Added three-digit RGB notation generation to `Hex.ToWeb`
 
 ### 12.24.0
 

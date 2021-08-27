@@ -13,6 +13,19 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleParse() {
+	fmt.Println(Parse("#ff6347"))
+	fmt.Println(Parse("#B8F"))
+	fmt.Println(Parse("#FF3B21A6"))
+	fmt.Println(Parse("mintcream"))
+
+	// Output:
+	// Hex{#FF6347} <nil>
+	// Hex{#BB88FF} <nil>
+	// Hex{#FF3B21A6} <nil>
+	// Hex{#F5FFFA} <nil>
+}
+
 func ExampleRGB2Hex() {
 	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true))
 

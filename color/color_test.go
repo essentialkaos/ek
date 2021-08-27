@@ -27,6 +27,42 @@ var _ = Suite(&ColorSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *ColorSuite) TestParse(c *C) {
+	color, err := Parse("violet")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xEE82EE))
+
+	color, err = Parse("#ff6347")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xFF6347))
+
+	color, err = Parse("#FF6347")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xFF6347))
+
+	color, err = Parse("FF6347")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xFF6347))
+
+	color, err = Parse("#b3f")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xBB33FF))
+
+	color, err = Parse("#FF6347AA")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xFF6347AA))
+
+	color, err = Parse("#b3fa")
+	c.Assert(err, IsNil)
+	c.Assert(color, Equals, Hex(0xBB33FFAA))
+
+	color, err = Parse("")
+	c.Assert(err, NotNil)
+
+	color, err = Parse("TEST")
+	c.Assert(err, NotNil)
+}
+
 func (s *ColorSuite) TestRGB(c *C) {
 	c.Assert(RGB{0, 0, 0}.ToHex(), DeepEquals, Hex(0x000000))
 	c.Assert(RGB{255, 255, 255}.ToHex(), DeepEquals, Hex(0xFFFFFF))
@@ -45,6 +81,7 @@ func (s *ColorSuite) TestHex(c *C) {
 	c.Assert(Hex(0x49d62d).ToWeb(false), Equals, "#49d62d")
 	c.Assert(Hex(0x49d62df7).ToWeb(true), Equals, "#49D62DF7")
 	c.Assert(Hex(0xFFAA44).ToWeb(true), Equals, "#FA4")
+	c.Assert(Hex(0x0).ToWeb(true), Equals, "#000")
 }
 
 func (s *ColorSuite) TestRGBA(c *C) {
