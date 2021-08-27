@@ -115,22 +115,20 @@ func (c Hex) ToRGBA() RGBA {
 
 // ToWeb converts hex color notation used in web (#RGB / #RRGGBB/#RRGGBBAA)
 func (c Hex) ToWeb(caps bool) string {
-	var result string
+	var k string
 
 	if caps {
-		result = fmt.Sprintf("#%X", uint32(c))
+		k = fmt.Sprintf("%06X", uint32(c))
 	} else {
-		result = fmt.Sprintf("#%x", uint32(c))
+		k = fmt.Sprintf("%06x", uint32(c))
 	}
 
 	// Generate shorthand color only for RGB
-	if c < 0xFFFFFF && result[1] == result[2] &&
-		result[3] == result[4] &&
-		result[5] == result[6] {
-		return "#" + result[1:2] + result[3:4] + result[5:6]
+	if c < 0xFFFFFF && k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
+		k = k[0:1] + k[2:3] + k[4:5]
 	}
 
-	return result
+	return "#" + k
 }
 
 // String returns string representation of RGB color

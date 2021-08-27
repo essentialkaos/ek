@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.25.0
+
+* `[color]` Fixed bug with formatting small values using `Hex.ToWeb`
+
 ### 12.24.2
 
 * `[easing]` Added links to examples for every function
@@ -7,7 +11,7 @@
 
 ### 12.24.1
 
-* `[color]` Added three-digit RGB notation generation to `HEX.ToWeb`
+* `[color]` Added three-digit RGB notation generation to `Hex.ToWeb`
 
 ### 12.24.0
 
