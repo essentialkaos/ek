@@ -4,6 +4,7 @@
 
 * `[color]` Added method `Parse` for parsing colors (`#RGB`/`#RGBA`/`#RRGGBB`/`#RRGGBBAA`)
 * `[color]` Fixed bug with formatting small values using `Hex.ToWeb`
+* `[color]` Fixed bug with converting `Hex` to `RGBA`
 
 ### 12.24.2
 

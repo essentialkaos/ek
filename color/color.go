@@ -382,7 +382,7 @@ func Hex2RGBA(h Hex) RGBA {
 		return RGBA{uint8(h>>24) & 0xFF, uint8(h>>16) & 0xFF, uint8(h>>8) & 0xFF, uint8(h) & 0xFF}
 	}
 
-	return RGBA{uint8(h) >> 16 & 0xFF, uint8(h>>8) & 0xFF, uint8(h) & 0xFF, 0}
+	return RGBA{uint8(h>>16) & 0xFF, uint8(h>>8) & 0xFF, uint8(h) & 0xFF, 0}
 }
 
 // RGB2Term convert rgb color to terminal color code
