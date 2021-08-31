@@ -3,6 +3,7 @@
 ### 12.26.0
 
 * `[fsutil]` Added method `IsEmpty` for checking empty files
+* `[system/process]` Fixed bug with searching info for creating process tree
 
 ### 12.25.0
 

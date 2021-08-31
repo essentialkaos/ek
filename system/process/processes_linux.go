@@ -122,6 +122,11 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 		return nil, err
 	}
 
+	// The process had died after the moment when we have created a list of processes
+	if !fsutil.IsExist(dir + "/cmdline") {
+		return nil, nil
+	}
+
 	cmd, err := ioutil.ReadFile(dir + "/cmdline")
 
 	if err != nil {

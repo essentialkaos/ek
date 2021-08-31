@@ -33,13 +33,13 @@ var _ = Suite(&ProcessSuite{})
 func (s *ProcessSuite) TestGetTree(c *C) {
 	tree, err := GetTree(66000)
 
-	c.Assert(tree, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(tree, IsNil)
 
 	tree, err = GetTree(os.Getpid())
 
-	c.Assert(tree, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(tree, NotNil)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "task", "AABBCC")
 
@@ -50,10 +50,7 @@ func (s *ProcessSuite) TestGetTree(c *C) {
 }
 
 func (s *ProcessSuite) TestGetTreeAux(c *C) {
-	_, err := readProcessInfo("/_UNKNOWN_", "10000", map[int]string{})
-	c.Assert(err, NotNil)
-
-	_, err = readProcessInfo("/_UNKNOWN_", "ABCD", map[int]string{})
+	_, err := readProcessInfo("/_UNKNOWN_", "ABCD", map[int]string{})
 	c.Assert(err, NotNil)
 
 	c.Assert(isPID(""), Equals, false)
@@ -71,6 +68,10 @@ func (s *ProcessSuite) TestGetTreeAux(c *C) {
 
 	pidDir := s.CreateFakeProcFS(c, "10000", "status", "Tgid: \nPPid: \n")
 
+	tree, err := readProcessInfo(pidDir, "10000", map[int]string{})
+	c.Assert(tree, IsNil)
+	c.Assert(err, IsNil)
+
 	p1, p2 = getParentPIDs(pidDir + "/10000")
 	c.Assert(p1, Equals, -1)
 	c.Assert(p2, Equals, -1)
@@ -85,27 +86,27 @@ func (s *ProcessSuite) TestGetTreeAux(c *C) {
 func (s *ProcessSuite) TestGetList(c *C) {
 	procs, err := GetList()
 
+	c.Assert(err, IsNil)
 	c.Assert(procs, NotNil)
 	c.Assert(procs, Not(HasLen), 0)
-	c.Assert(err, IsNil)
 }
 
 func (s *ProcessSuite) TestGetInfo(c *C) {
 	info, err := GetInfo(66000)
 
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	info, err = GetInfo(1)
 
-	c.Assert(info, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(info, NotNil)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "stat", "AABBCC")
 
 	info, err = GetInfo(10000)
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	procFS = "/proc"
 
@@ -143,25 +144,25 @@ func (s *ProcessSuite) TestInfoToSample(c *C) {
 func (s *ProcessSuite) TestGetMemInfo(c *C) {
 	info, err := GetMemInfo(66000)
 
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	info, err = GetMemInfo(1)
 
-	c.Assert(info, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(info, NotNil)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "status", "VmPeak: AAA")
 
 	info, err = GetMemInfo(10000)
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "status", "VmPeak:         0 kB\nVmSize:         0 kB\n")
 
 	info, err = GetMemInfo(10000)
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	procFS = "/proc"
 }
@@ -169,13 +170,13 @@ func (s *ProcessSuite) TestGetMemInfo(c *C) {
 func (s *ProcessSuite) TestGetMountInfo(c *C) {
 	info, err := GetMountInfo(66000)
 
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	info, err = GetMountInfo(1)
 
-	c.Assert(info, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(info, NotNil)
 
 	_, _, err = parseStDevValue("AA:11")
 	c.Assert(err, NotNil)
@@ -190,8 +191,8 @@ func (s *ProcessSuite) TestGetMountInfo(c *C) {
 
 	info, err = GetMountInfo(10000)
 
-	c.Assert(info, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(info, IsNil)
 
 	procFS = "/proc"
 }
