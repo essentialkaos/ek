@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.26.0
+
+* `[fsutil]` Added method `IsEmpty` for checking empty files
+
 ### 12.25.0
 
 * `[color]` Added method `Parse` for parsing colors (`#RGB`/`#RGBA`/`#RRGGBB`/`#RRGGBBAA`)

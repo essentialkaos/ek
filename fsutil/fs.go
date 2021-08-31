@@ -481,6 +481,17 @@ func IsExecutableByUser(path, userName string) bool {
 	return isExecutableStat(stat, user.UID, getGIDList(user))
 }
 
+// IsEmpty returns true if given file is empty
+func IsEmpty(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	path = PATH.Clean(path)
+
+	return GetSize(path) == 0
+}
+
 // IsNonEmpty returns true if given file is not empty
 func IsNonEmpty(path string) bool {
 	if path == "" {
