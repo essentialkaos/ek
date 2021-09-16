@@ -4,27 +4,10 @@ on:
   create
 
 jobs:
-  GoSumDB:
-    name: Trigger GoSum/PkgGoDev
+  GoDoc:
+    name: Generate docs
     runs-on: ubuntu-latest
 
-    env:
-      GO_SUM: https://sum.golang.org/lookup
-      GO_PKG: https://pkg.go.dev/fetch
-
     steps:
-      - name: Send request to GoSum DB
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]] ; then
-            full_ver=$(echo ${GITHUB_REF} | cut -f3 -d'/')
-            major_ver=$(echo ${full_ver} | cut -f1 -d'.')
-            curl -s -m 15 ${{env.GO_SUM}}/pkg.re/${{github.repository}}.${major_ver}@${full_ver}+incompatible
-          fi
-
-      - name: Send request to PkgGoDev
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]] ; then
-            full_ver=$(echo ${GITHUB_REF} | cut -f3 -d'/')
-            major_ver=$(echo ${full_ver} | cut -f1 -d'.')
-            curl -s -m 5 -X POST ${{env.GO_PKG}}/pkg.re/${{github.repository}}.${major_ver}@${full_ver}+incompatible || exit 0
-          fi
+      - name: Trigger GoSumDB and PkgGoDev
+        uses: essentialkaos/pkgre-godoc-action@v1
