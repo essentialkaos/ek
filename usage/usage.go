@@ -1,4 +1,5 @@
-// Package usage provides methods and structs for rendering info for command-line tools
+// Package usage provides methods and structs for generating usage info for
+// command-line tools
 package usage
 
 // ////////////////////////////////////////////////////////////////////////////////// //

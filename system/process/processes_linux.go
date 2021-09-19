@@ -1,6 +1,6 @@
 // +build linux
 
-// Package process provides methods for getting information about active processes
+// Package process provides methods for gathering information about active processes
 package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //

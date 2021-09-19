@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package signal provides methods for handling signals
+// Package signal provides methods for handling POSIX signals
 package signal
 
 // ////////////////////////////////////////////////////////////////////////////////// //

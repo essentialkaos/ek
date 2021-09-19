@@ -1,4 +1,4 @@
-// Package knf provides methods for working with configs in KNF format
+// Package knf provides methods for working with configuration files in KNF format
 package knf
 
 // ////////////////////////////////////////////////////////////////////////////////// //

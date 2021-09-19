@@ -1,6 +1,6 @@
 // +build !windows
 
-// Package ek is set of auxiliary packages
+// Package ek is a set of auxiliary packages
 package ek
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,4 @@
-// Package lscolors provides method for colorizing file names based on colors from dircolors
+// Package lscolors provides methods for colorizing file names based on colors from dircolors
 package lscolors
 
 // ////////////////////////////////////////////////////////////////////////////////// //

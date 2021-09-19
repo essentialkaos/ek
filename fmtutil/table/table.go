@@ -1,4 +1,4 @@
-// Package table contains methods and structs for rendering data as a table
+// Package table contains methods and structs for rendering data in tabular format
 package table
 
 // ////////////////////////////////////////////////////////////////////////////////// //
