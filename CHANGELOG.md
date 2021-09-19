@@ -2,6 +2,7 @@
 
 ### 12.26.0
 
+* `[events]` New package for creating event-driven systems
 * `[fsutil]` Added method `IsEmpty` for checking empty files
 * `[system/process]` Fixed bug with searching info for creating process tree
 

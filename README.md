@@ -43,6 +43,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`emoji`](https://pkg.re/essentialkaos/ek.v12/emoji?docs) - Package provides methods for working with emojis
 * [`env`](https://pkg.re/essentialkaos/ek.v12/env?docs) - Package provides methods for working with environment variables
 * [`errutil`](https://pkg.re/essentialkaos/ek.v12/errutil?docs) - Package provides methods for working with errors
+* [`events`](https://pkg.re/essentialkaos/ek.v12/events?docs) - Package provides methods and structs for creating event-driven systems
 * [`directio`](https://pkg.re/essentialkaos/ek.v12/directio?docs) - Package provides methods for reading/writing files with direct io
 * [`fmtc`](https://pkg.re/essentialkaos/ek.v12/fmtc?docs) - Package provides methods similar to fmt for colored output
 * [`fmtc/lscolors`](https://pkg.re/essentialkaos/ek.v12/fmtc/lscolors?docs) - Package provides method for colorizing file names based on colors from dircolors
