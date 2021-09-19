@@ -28,15 +28,31 @@ func ExampleAbout_Render() {
 	about.Render()
 }
 
+func ExampleNewInfo() {
+	// If the first argument (name) is empty, we use the name of the file
+	// for info generation
+	info := NewInfo("")
+
+	// You can hardcode the name of the app if you want
+	info = NewInfo("myapp")
+
+	// You can define one or more arguments handled by your program
+	info = NewInfo("", "files…")
+	info = NewInfo("", "input", "num-files", "output")
+
+	info.Render()
+}
+
 func ExampleInfo_AddGroup() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	// You can add custom commands groups
 	info.AddGroup("External Commands")
 
+	// ... and add commands to this group
 	info.AddCommand("publish", "Publish items")
 
-	// You can define option argument name
+	// You can define option (output) and payload (file) name
 	info.AddOption("o:output", "Output", "file")
 
 	// render all data
@@ -44,7 +60,7 @@ func ExampleInfo_AddGroup() {
 }
 
 func ExampleInfo_AddCommand() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	// You can define command arguments names
 	info.AddCommand("add", "Add item", "file")
@@ -63,12 +79,12 @@ func ExampleInfo_AddCommand() {
 }
 
 func ExampleInfo_AddOption() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
-	// AddOption support options in format used in ek.arg package
+	// AddOption supports options in format used in options package
 	info.AddOption("v:version", "Print version")
 
-	// You can define option argument name
+	// You can define option (output) and payload (file) name
 	info.AddOption("o:output", "Output", "file")
 
 	// render all data
@@ -76,7 +92,7 @@ func ExampleInfo_AddOption() {
 }
 
 func ExampleInfo_AddExample() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	info.AddCommand("add", "Add item", "file")
 	info.AddCommand("remove", "Remove item", "file", "?mode")
@@ -92,7 +108,7 @@ func ExampleInfo_AddExample() {
 }
 
 func ExampleInfo_AddRawExample() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	info.AddCommand("add", "Add item", "file")
 	info.AddCommand("remove", "Remove item", "file", "?mode")
@@ -108,7 +124,7 @@ func ExampleInfo_AddRawExample() {
 }
 
 func ExampleInfo_AddSpoiler() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	// Spoiler will be shown before all commands and options
 	info.AddSpoiler("This is my supadupa utility")
@@ -118,7 +134,7 @@ func ExampleInfo_AddSpoiler() {
 }
 
 func ExampleInfo_BoundOptions() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	info.AddCommand("publish", "Publish items")
 
@@ -132,7 +148,7 @@ func ExampleInfo_BoundOptions() {
 }
 
 func ExampleInfo_GetCommand() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	// You can define command arguments names
 	info.AddCommand("add", "Add item", "file")
@@ -148,9 +164,9 @@ func ExampleInfo_GetCommand() {
 }
 
 func ExampleInfo_GetOption() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
-	// AddOption support options in format used in ek.arg package
+	// AddOption supports options in format used in options package
 	info.AddOption("v:version", "Print version")
 
 	// You can define option argument name
@@ -163,7 +179,7 @@ func ExampleInfo_GetOption() {
 }
 
 func ExampleInfo_Render() {
-	info := NewInfo("myapp", "items...")
+	info := NewInfo("", "items…")
 
 	// Spoiler will be shown before all commands and options
 	info.AddSpoiler("This is my supadupa utility")
@@ -182,7 +198,7 @@ func ExampleInfo_Render() {
 
 	info.AddOption("--help", "Print help content")
 
-	// AddOption support options in format used in ek.arg package
+	// AddOption supports options in format used in options package
 	info.AddOption("v:version", "Print version")
 
 	// You can define option argument name
