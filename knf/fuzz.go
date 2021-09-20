@@ -16,14 +16,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Fuzz(data []byte) int {
-	config := &Config{
-		data:     make(map[string]string),
-		sections: make([]string, 0),
-		props:    make([]string, 0),
-		file:     "",
-	}
-
-	err := readConfigData(config, bytes.NewReader(data), "")
+	_, err := readKNFData(bytes.NewReader(data))
 
 	if err != nil {
 		return 0
