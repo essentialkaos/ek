@@ -54,7 +54,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`httputil`](https://pkg.re/essentialkaos/ek.v12/httputil?docs) - Package provides methods for working with HTTP request/responses
 * [`initsystem`](https://pkg.re/essentialkaos/ek.v12/initsystem?docs) - Package provides methods for working with different init systems (sysv, upstart, systemd)
 * [`jsonutil`](https://pkg.re/essentialkaos/ek.v12/jsonutil?docs) - Package provides methods for working with JSON data
-* [`knf`](https://pkg.re/essentialkaos/ek.v12/knf?docs) - Package provides methods for working with configuration files in KNF format
+* [`knf`](https://pkg.re/essentialkaos/ek.v12/knf?docs) - Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
 * [`log`](https://pkg.re/essentialkaos/ek.v12/log?docs) - Package with an improved logger
 * [`mathutil`](https://pkg.re/essentialkaos/ek.v12/mathutil?docs) - Package provides some additional math methods
 * [`netutil`](https://pkg.re/essentialkaos/ek.v12/netutil?docs) - Package provides methods for working with network
