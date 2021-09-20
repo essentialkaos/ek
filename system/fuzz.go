@@ -10,6 +10,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"bytes"
 )
 
@@ -17,7 +18,9 @@ import (
 
 func FuzzCPUStats(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseCPUStats(r)
+	s := bufio.NewScanner(r)
+
+	_, err := parseCPUStats(s)
 
 	if err != nil {
 		return 1
@@ -28,7 +31,9 @@ func FuzzCPUStats(data []byte) int {
 
 func FuzzCPUInfo(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseCPUInfo(r)
+	s := bufio.NewScanner(r)
+
+	_, err := parseCPUInfo(s)
 
 	if err != nil {
 		return 1
@@ -39,7 +44,9 @@ func FuzzCPUInfo(data []byte) int {
 
 func FuzzMemUsage(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseMemUsage(r)
+	s := bufio.NewScanner(r)
+
+	_, err := parseMemUsage(s)
 
 	if err != nil {
 		return 1
@@ -50,7 +57,9 @@ func FuzzMemUsage(data []byte) int {
 
 func FuzzIOStats(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseIOStats(r)
+	s := bufio.NewScanner(r)
+
+	_, err := parseIOStats(s)
 
 	if err != nil {
 		return 1
@@ -61,7 +70,9 @@ func FuzzIOStats(data []byte) int {
 
 func FuzzFSInfo(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseFSInfo(r, false)
+	s := bufio.NewScanner(r)
+
+	_, err := parseFSInfo(s, false)
 
 	if err != nil {
 		return 1
@@ -72,7 +83,9 @@ func FuzzFSInfo(data []byte) int {
 
 func FuzzInterfacesStats(data []byte) int {
 	r := bytes.NewReader(data)
-	_, err := parseInterfacesStats(r)
+	s := bufio.NewScanner(r)
+
+	_, err := parseInterfacesStats(s)
 
 	if err != nil {
 		return 1
