@@ -1,4 +1,4 @@
-// Package cache provides simple in-memory key:value cache
+// Package cache provides a simple in-memory key:value cache
 package cache
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.26.0
+
+* `[events]` New package for creating event-driven systems
+* `[system]` Fixed bug with parsing CPU info data
+* `[fsutil]` Added method `IsEmpty` for checking empty files
+* `[system/process]` Fixed bug with searching info for creating process tree
+* `[knf]` Code refactoring
+* `[usage]` Added more usage examples
+
 ### 12.25.0
 
 * `[color]` Added method `Parse` for parsing colors (`#RGB`/`#RGBA`/`#RRGGBB`/`#RRGGBBAA`)

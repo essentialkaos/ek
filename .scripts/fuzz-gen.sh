@@ -69,7 +69,7 @@ main() {
       fi
 
       if [[ $? -eq 0 ]] ; then
-        show "${CL_GREEN}✔ ${CL_DARK}($output)${CL_NORM}"
+        show "${CL_GREEN}✔  ${CL_DARK}($output)${CL_NORM}"
       else
         show "✖ " $RED
       fi

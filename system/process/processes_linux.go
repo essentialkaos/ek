@@ -1,6 +1,6 @@
 // +build linux
 
-// Package process provides methods for getting information about active processes
+// Package process provides methods for gathering information about active processes
 package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -120,6 +120,11 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 
 	if err != nil {
 		return nil, err
+	}
+
+	// The process had died after the moment when we have created a list of processes
+	if !fsutil.IsExist(dir + "/cmdline") {
+		return nil, nil
 	}
 
 	cmd, err := ioutil.ReadFile(dir + "/cmdline")

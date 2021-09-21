@@ -1,4 +1,4 @@
-// Package version provides methods for parsing semver version info
+// Package version provides methods for working with semver version info
 package version
 
 // ////////////////////////////////////////////////////////////////////////////////// //

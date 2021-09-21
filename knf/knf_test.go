@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -157,13 +159,13 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	err = Global(s.MalformedConfigPath)
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, fmt.Sprintf("Configuration file %s is malformed", s.MalformedConfigPath))
+	c.Assert(err.Error(), check.Equals, "Error at line 2: Data defined before section")
 
 	updated, err := Reload()
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "Global config is not loaded")
+	c.Assert(err, check.DeepEquals, ErrConfigIsNil)
 
 	c.Assert(GetS("test"), check.Equals, "")
 	c.Assert(GetI("test"), check.Equals, 0)
@@ -179,10 +181,9 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(HasProp("test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
-	c.Assert(Validate([]*Validator{}), check.Not(check.HasLen), 0)
-	c.Assert(Validate([]*Validator{})[0].Error(), check.Equals, "Global config struct is nil")
+	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrConfigIsNil})
 
-	config := &Config{}
+	config := &Config{mx: &sync.RWMutex{}}
 
 	c.Assert(config.GetS("test"), check.Equals, "")
 	c.Assert(config.GetI("test"), check.Equals, 0)
@@ -200,9 +201,9 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "Path to config file is empty (non initialized struct?)")
+	c.Assert(err, check.DeepEquals, ErrFileNotSet)
 
-	config = &Config{file: "/_not_exists_"}
+	config = &Config{file: "/_not_exists_", mx: &sync.RWMutex{}}
 
 	updated, err = config.Reload()
 
@@ -427,12 +428,12 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	_, err := nilConf.Reload()
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "Config is nil")
+	c.Assert(err, check.DeepEquals, ErrConfigIsNil)
 
 	errs := nilConf.Validate([]*Validator{})
 
 	c.Assert(errs, check.Not(check.HasLen), 0)
-	c.Assert(errs[0].Error(), check.Equals, "Config is nil")
+	c.Assert(errs, check.DeepEquals, []error{ErrConfigIsNil})
 }
 
 func (s *KNFSuite) TestDefault(c *check.C) {
@@ -500,4 +501,31 @@ func (s *KNFSuite) TestSimpleValidator(c *check.C) {
 	})
 
 	c.Assert(errs, check.HasLen, 1)
+}
+
+func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
+	r := strings.NewReader(`
+		[section]
+		ABCD
+	`)
+
+	_, err := readKNFData(r)
+	c.Assert(err.Error(), check.Equals, "Error at line 3: Property must have \":\" as a delimiter")
+
+	r = strings.NewReader(`
+		[section]
+		A: 1
+		A: 2
+	`)
+
+	_, err = readKNFData(r)
+	c.Assert(err.Error(), check.Equals, "Error at line 4: Property \"A\" defined more than once")
+
+	r = strings.NewReader(`
+		[section]
+		A: {abcd:test}
+	`)
+
+	_, err = readKNFData(r)
+	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
 }

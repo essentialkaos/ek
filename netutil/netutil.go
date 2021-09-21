@@ -1,4 +1,4 @@
-// Package netutil with network utils
+// Package netutil provides methods for working with network
 package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //

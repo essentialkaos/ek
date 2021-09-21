@@ -395,13 +395,18 @@ func (s *FSSuite) TestIsEmptyDir(c *check.C) {
 	c.Assert(IsEmptyDir("/not_exist"), check.Equals, false)
 }
 
-func (s *FSSuite) TestIsNonEmpty(c *check.C) {
+func (s *FSSuite) TestIsEmpty(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile1 := tmpDir + "/test1.file"
 	tmpFile2 := tmpDir + "/test2.file"
 
 	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
 	c.Assert(ioutil.WriteFile(tmpFile2, []byte(""), 0644), check.IsNil)
+
+	c.Assert(IsEmpty(""), check.Equals, false)
+	c.Assert(IsEmpty("/not_exist"), check.Equals, false)
+	c.Assert(IsEmpty(tmpFile2), check.Equals, true)
+	c.Assert(IsEmpty(tmpFile1), check.Equals, false)
 
 	c.Assert(IsNonEmpty(""), check.Equals, false)
 	c.Assert(IsNonEmpty("/not_exist"), check.Equals, false)

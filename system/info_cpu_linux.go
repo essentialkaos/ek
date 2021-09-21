@@ -271,7 +271,7 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 				info = append(info, &CPUInfo{vendor, model, cores, siblings, cache, nil})
 			}
 
-			if id < len(info) {
+			if id < len(info) && info[id] != nil {
 				info[id].Speed = append(info[id].Speed, speed)
 			}
 		}
