@@ -2,8 +2,10 @@
 
 ### 12.26.1
 
+* `[httputil]` Added method `GetPortByScheme`
 * `[events]` Improved unknown events handling
 * `[events]` Added usage examples
+* `[httputil]` Added usage examples
 * Error check moved at the beginning of every test
 
 ### 12.26.0

@@ -17,7 +17,7 @@ import (
 
 // GetRequestAddr returns host and port info from request
 func GetRequestAddr(r *http.Request) (string, string) {
-	if r.Host == "" {
+	if r == nil || r.Host == "" || r.URL == nil {
 		return "", ""
 	}
 
@@ -27,7 +27,7 @@ func GetRequestAddr(r *http.Request) (string, string) {
 	case 2:
 		return hostSlice[0], hostSlice[1]
 	default:
-		return hostSlice[0], "80"
+		return hostSlice[0], GetPortByScheme(r.URL.Scheme)
 	}
 }
 
@@ -66,6 +66,20 @@ func GetRemoteHost(r *http.Request) string {
 func GetRemotePort(r *http.Request) string {
 	_, port := GetRemoteAddr(r)
 	return port
+}
+
+// GetPortByScheme returns port for supported scheme
+func GetPortByScheme(s string) string {
+	switch strings.ToLower(s) {
+	case "http":
+		return "80"
+	case "https":
+		return "443"
+	case "ftp":
+		return "21"
+	}
+
+	return ""
 }
 
 // GetDescByCode returns response code description

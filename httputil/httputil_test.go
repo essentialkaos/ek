@@ -50,6 +50,11 @@ func (s *HTTPUtilSuite) TestRequestParsing(c *C) {
 	c.Assert(GetRequestPort(req3), Equals, "8080")
 	c.Assert(GetRequestPort(req4), Equals, "8080")
 	c.Assert(GetRequestPort(req5), Equals, "")
+
+	c.Assert(GetPortByScheme("http"), Equals, "80")
+	c.Assert(GetPortByScheme("https"), Equals, "443")
+	c.Assert(GetPortByScheme("ftp"), Equals, "21")
+	c.Assert(GetPortByScheme("unknown"), Equals, "")
 }
 
 func (s *HTTPUtilSuite) TestRemoteParsing(c *C) {
