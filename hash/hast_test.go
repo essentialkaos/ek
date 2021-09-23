@@ -54,7 +54,6 @@ func (s *HashSuite) TestFileHash(c *C) {
 	hash2 := FileHash(s.TmpDir + "/not-exist.log")
 
 	c.Assert(err, IsNil)
-
 	c.Assert(hash1, Equals, "2d7ec20906125cd23fee7b628b98463d554b1105b141b2d39a19bac5f3274dec")
 	c.Assert(hash2, Equals, "")
 }

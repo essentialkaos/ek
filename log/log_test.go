@@ -207,8 +207,8 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	l.MinLevel(DEBUG)
 
-	c.Assert(l, Not(IsNil))
 	c.Assert(err, IsNil)
+	c.Assert(l, Not(IsNil))
 
 	l.PrefixDebug = false
 	l.PrefixInfo = false
@@ -240,8 +240,8 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	data, err := ioutil.ReadFile(logfile)
 
-	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
 
 	dataSlice := strings.Split(string(data), "\n")
 
@@ -274,8 +274,8 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 
 	MinLevel(DEBUG)
 
-	c.Assert(Global, Not(IsNil))
 	c.Assert(err, IsNil)
+	c.Assert(Global, Not(IsNil))
 
 	Global.PrefixDebug = true
 	Global.PrefixInfo = true
@@ -308,8 +308,8 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 
 	data, err := ioutil.ReadFile(logfile)
 
-	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
 
 	dataSlice := strings.Split(string(data), "\n")
 
@@ -343,8 +343,8 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 
 	MinLevel(DEBUG)
 
-	c.Assert(Global, Not(IsNil))
 	c.Assert(err, IsNil)
+	c.Assert(Global, Not(IsNil))
 
 	Global.PrefixDebug = true
 	Global.PrefixInfo = true
@@ -385,8 +385,8 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 
 	data, err := ioutil.ReadFile(logfile)
 
-	c.Assert(len(data), Not(Equals), 0)
 	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
 
 	dataSlice := strings.Split(string(data), "\n")
 
@@ -418,8 +418,8 @@ func (ls *LogSuite) TestBufIO(c *C) {
 	logfile := ls.TempDir + "/file4.log"
 	err := Set(logfile, 0644)
 
-	c.Assert(Global, Not(IsNil))
 	c.Assert(err, IsNil)
+	c.Assert(Global, Not(IsNil))
 
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 

@@ -227,36 +227,36 @@ func (s *CronSuite) TestNearIndex(c *C) {
 func (s *CronSuite) TestErrors(c *C) {
 	e, err := Parse("0-A * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("A-1 * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("*/A * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("*/0 * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("A * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,A * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,2-A * * * *")
 
-	c.Assert(e, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(e, IsNil)
 }

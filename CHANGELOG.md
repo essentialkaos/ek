@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.26.1
+
+* Error check moved at the beginning of every test
+
 ### 12.26.0
 
 * `[events]` New package for creating event-driven systems
