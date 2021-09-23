@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.26.1
+### 12.27.0
 
 * `[httputil]` Added method `GetPortByScheme`
 * `[events]` Improved unknown events handling
