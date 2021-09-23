@@ -503,8 +503,8 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 
 	resp, err := eng.Do(Request{URL: "https://essentialkaos.com"})
 
-	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
 	eng.Init()
@@ -513,8 +513,8 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
-	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
 	eng.Init()
@@ -522,8 +522,8 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
-	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
 	eng.Init()
@@ -532,8 +532,8 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
-	c.Assert(resp, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(resp, IsNil)
 }
 
 func (s *ReqSuite) TestIsURL(c *C) {

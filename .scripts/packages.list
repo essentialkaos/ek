@@ -1,58 +1,59 @@
-+ cache
-+ color
-+ cron
-+ csv
-+ easing
-+ emoji
-+ env
-+ errutil
-+ events
-! directio
-+ fmtc
-+ fmtc/lscolors
-+ fmtutil
-+ fmtutil/table
-+ fsutil
-+ hash
-+ httputil
-! initsystem
-+ jsonutil
-+ knf
-+ knf/validators
-+ knf/validators/fs
-+ knf/validators/network
-+ knf/validators/regexp
-+ knf/validators/system
-+ log
-+ mathutil
-- netutil
-+ options
-+ passwd
-+ path
-+ pid
-+ pluralize
-+ progress
-+ rand
-+ req
-- signal
-+ sliceutil
-+ sortutil
-+ spellcheck
-+ spinner
-+ strutil
-- system
-- system/exec
-- system/process
-- system/procname
-- terminal
-! terminal/window
-+ timeutil
-+ tmp
-+ usage
-+ usage/update
-+ usage/man
-+ usage/completion/bash
-+ usage/completion/fish
-+ usage/completion/zsh
-+ uuid
-+ version
+* + cache
+* + color
+* + cron
+* + csv
+* + easing
+* + emoji
+* + env
+* + errutil
+* + events
+* ! directio
+* + fmtc
+* + fmtc/lscolors
+* + fmtutil
+* + fmtutil/table
+* + fsutil
+* + hash
+* + httputil
+* ! initsystem
+* + jsonutil
+* + knf
+* + knf/validators
+* + knf/validators/fs
+* + knf/validators/network
+* + knf/validators/regexp
+* + knf/validators/system
+* + log
+* + mathutil
+L + netutil
+* + options
+* + passwd
+* + path
+* + pid
+* + pluralize
+* + progress
+* + rand
+* + req
+* - signal
+* + sliceutil
+* + sortutil
+* + spellcheck
+* + spinner
+* + strutil
+* - system
+* - system/exec
+L - system/process
+* - system/procname
+L + system/sensors
+* - terminal
+* ! terminal/window
+* + timeutil
+* + tmp
+* + usage
+* + usage/update
+* + usage/man
+* + usage/completion/bash
+* + usage/completion/fish
+* + usage/completion/zsh
+* + uuid
+* + version

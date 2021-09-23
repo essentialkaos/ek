@@ -97,8 +97,8 @@ func (ts *TmpSuite) TestMkDir(c *C) {
 
 	tmpDir, err := t.MkDir("test")
 
-	c.Assert(tmpDir, Not(Equals), "")
 	c.Assert(err, IsNil)
+	c.Assert(tmpDir, Not(Equals), "")
 	c.Assert(fsutil.IsExist(tmpDir), Equals, true)
 	c.Assert(fsutil.IsDir(tmpDir), Equals, true)
 	c.Assert(fsutil.IsReadable(tmpDir), Equals, true)

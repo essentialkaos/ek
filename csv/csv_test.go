@@ -52,8 +52,8 @@ func (s *CSVSuite) SetUpSuite(c *C) {
 func (s *CSVSuite) TestRead(c *C) {
 	fd, err := os.Open(s.dataFile)
 
-	c.Assert(fd, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(fd, NotNil)
 
 	defer fd.Close()
 
@@ -88,8 +88,8 @@ func (s *CSVSuite) TestRead(c *C) {
 func (s *CSVSuite) TestReadTo(c *C) {
 	fd, err := os.Open(s.dataFile)
 
-	c.Assert(fd, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(fd, NotNil)
 
 	defer fd.Close()
 

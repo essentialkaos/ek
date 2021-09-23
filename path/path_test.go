@@ -36,8 +36,8 @@ func (s *PathUtilSuite) TestBase(c *C) {
 
 	match, err := Match("/some/test/*", "/some/test/path")
 
-	c.Assert(match, Equals, true)
 	c.Assert(err, IsNil)
+	c.Assert(match, Equals, true)
 
 	d, f := Split("/some/test/path/file.jpg")
 

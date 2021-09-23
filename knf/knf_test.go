@@ -163,9 +163,9 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	updated, err := Reload()
 
-	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
 	c.Assert(err, check.DeepEquals, ErrConfigIsNil)
+	c.Assert(updated, check.IsNil)
 
 	c.Assert(GetS("test"), check.Equals, "")
 	c.Assert(GetI("test"), check.Equals, 0)

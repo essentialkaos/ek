@@ -65,18 +65,18 @@ end script`
 
 	ok, err := parseUpstartEnabledData(tmpDir + "/0.conf")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartEnabledData(tmpDir + "/1.conf")
 
-	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, true)
 
 	ok, err = parseUpstartEnabledData(tmpDir + "/2.conf")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 }
 
 func (s *InitSuite) TestSysvEnabled(c *C) {
@@ -86,83 +86,83 @@ func (s *InitSuite) TestSysvEnabled(c *C) {
 
 	ok, err := parseSysvEnabledOutput(d1)
 
-	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, true)
 
 	ok, err = parseSysvEnabledOutput(d2)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseSysvEnabledOutput(d3)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseSysvEnabledOutput("")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
+	c.Assert(ok, Equals, false)
 }
 
 func (s *InitSuite) TestSystemdStatus(c *C) {
 	d := "\r\n\r\n\n\n"
 	ok, err := parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Can't parse systemd output")
+	c.Assert(ok, Equals, false)
 
 	d = "LoadState=not-found\nActiveState=inactive\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Unit myapp could not be found")
+	c.Assert(ok, Equals, false)
 
 	d = "LoadState=loaded\nActiveState=failed\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 
 	d = "LoadState=loaded\nActiveState=failed\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 
 	d = "LoadState=loaded\nActiveState=inactive\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 
 	d = "LoadState=loaded\nActiveState=active\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
-	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, true)
 }
 
 func (s *InitSuite) TestUpstartStatus(c *C) {
 	ok, err := parseUpstartStatusOutput("\r\n")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("assdas ad asd asd\r\n")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, NotNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("myapp stop/waiting\r\n")
 
-	c.Assert(ok, Equals, false)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("myapp start/running\r\n")
 
-	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
+	c.Assert(ok, Equals, true)
 }
