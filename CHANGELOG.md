@@ -4,6 +4,8 @@
 
 * `[httputil]` Added method `GetPortByScheme`
 * `[events]` Improved unknown events handling
+* `[system/sensors]` Code refactoring
+* `[system/sensors]` Increased code coverage (0.0% → 100.0%)
 * `[events]` Added usage examples
 * `[httputil]` Added usage examples
 * Error check moved at the beginning of every test

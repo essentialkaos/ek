@@ -19,15 +19,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _SYS_DIR = "/sys/class/hwmon"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Device contains info from different device sensors
 type Device struct {
-	Name         string
-	TempSensors  []*TempSensor
-	PowerSensors []*PowerSensor
+	Name        string
+	TempSensors []TempSensor
 }
 
 // TempSensor contains info from temperature sensor
@@ -35,43 +30,37 @@ type TempSensor struct {
 	Name string
 	Cur  float64
 	Min  float64
-	Mid  float64
 	Max  float64
 	Crit float64
 }
 
-// PowerSensor contains info from power sensor
-type PowerSensor struct {
-	Name string
-	Cur  float64
-	Min  float64
-	Max  float64
-}
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var hwmonDir = "/sys/class/hwmon"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Collect collects sensors information
+// https://www.kernel.org/doc/Documentation/hwmon/sysfs-interface
 func Collect() ([]*Device, error) {
-	if !fsutil.CheckPerms("DR", _SYS_DIR) {
+	if !fsutil.CheckPerms("DR", hwmonDir) {
 		return nil, fmt.Errorf("Can't read sensors information")
 	}
 
 	var result []*Device
-	var coreTempCount int
 
-	for _, deviceDir := range fsutil.List(_SYS_DIR, false) {
-		device, err := collectDeviceInfo(_SYS_DIR + "/" + deviceDir)
+	for _, deviceDir := range fsutil.List(hwmonDir, false) {
+		if !hasSensorsData(hwmonDir + "/" + deviceDir) {
+			continue
+		}
+
+		device, err := collectDeviceInfo(hwmonDir + "/" + deviceDir)
 
 		if err != nil {
 			return nil, err
 		}
 
 		if device != nil {
-			if device.Name == "coretemp" {
-				device.Name += strconv.Itoa(coreTempCount)
-				coreTempCount++
-			}
-
 			result = append(result, device)
 		}
 	}
@@ -87,9 +76,7 @@ func (d *Device) Temperature() (float64, float64, float64) {
 		return 0.0, 0.0, 0.0
 	}
 
-	min := 100.0
-	max := 0.0
-	tot := 0.0
+	min, max, tot := 100.0, 0.0, 0.0
 
 	for _, v := range d.TempSensors {
 		if v.Cur < min {
@@ -109,8 +96,8 @@ func (d *Device) Temperature() (float64, float64, float64) {
 // String formats sensor data as a string
 func (s *TempSensor) String() string {
 	return fmt.Sprintf(
-		"[Name:%s Cur:%g Min:%g Mid:%g Max:%g Crit:%g]",
-		s.Name, s.Cur, s.Min, s.Mid, s.Max, s.Crit,
+		"{Name:%s Cur:+%g°C Min:+%g°C Max:+%g°C Crit:+%g°C}",
+		s.Name, s.Cur, s.Min, s.Max, s.Crit,
 	)
 }
 
@@ -118,46 +105,41 @@ func (s *TempSensor) String() string {
 
 func hasSensorsData(dir string) bool {
 	switch {
-	case fsutil.IsExist(dir + "/temp1_input"),
-		fsutil.IsExist(dir + "/temp2_input"):
+	case hasTempSensorsData(dir):
 		return true
 	}
 
 	return false
 }
 
+func hasTempSensorsData(dir string) bool {
+	return fsutil.IsExist(dir + "/temp1_input")
+}
+
 func collectDeviceInfo(dir string) (*Device, error) {
 	var err error
-	var dataDir string
-
-	switch {
-	case hasSensorsData(dir):
-		dataDir = dir
-	case hasSensorsData(dir + "/device"):
-		dataDir = dir + "/device"
-	default:
-		return nil, nil
-	}
 
 	device := &Device{}
 
-	device.Name, err = readSensorLabel(dataDir + "/name")
+	device.Name, err = readSensorLabel(dir + "/name")
 
 	if err != nil {
 		return nil, err
 	}
 
-	device.TempSensors, err = collectTempInfo(dataDir)
+	if hasTempSensorsData(dir) {
+		device.TempSensors, err = collectTempSensorsInfo(dir)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return device, nil
 }
 
-func collectTempInfo(dir string) ([]*TempSensor, error) {
-	var sensors []*TempSensor
+func collectTempSensorsInfo(dir string) ([]TempSensor, error) {
+	var result []TempSensor
 
 	for i := 1; i < 128; i++ {
 		filePrefix := dir + "/temp" + strconv.Itoa(i)
@@ -166,52 +148,53 @@ func collectTempInfo(dir string) ([]*TempSensor, error) {
 			break
 		}
 
-		info, err := getSensorInfo(filePrefix)
+		sensor, err := readTempSensors(filePrefix)
 
 		if err != nil {
 			return nil, err
 		}
 
-		sensors = append(sensors, info)
+		result = append(result, sensor)
 	}
 
-	return sensors, nil
+	return result, nil
 }
 
-func getSensorInfo(filePrefix string) (*TempSensor, error) {
+func readTempSensors(filePrefix string) (TempSensor, error) {
 	var err error
 
-	sensor := &TempSensor{}
-	sensor.Name, err = readSensorLabel(filePrefix + "_label")
+	sensor := TempSensor{}
+
+	if fsutil.IsExist(filePrefix + "_label") {
+		sensor.Name, err = readSensorLabel(filePrefix + "_label")
+
+		if err != nil {
+			return TempSensor{}, err
+		}
+	}
 
 	sensor.Cur, err = readTempSensorValue(filePrefix + "_input")
 
 	if err != nil {
-		return nil, err
+		return TempSensor{}, err
 	}
 
 	sensor.Min, err = readTempSensorValue(filePrefix + "_min")
 
 	if err != nil {
-		return nil, err
-	}
-
-	sensor.Mid, err = readTempSensorValue(filePrefix + "_mid")
-
-	if err != nil {
-		return nil, err
+		return TempSensor{}, err
 	}
 
 	sensor.Max, err = readTempSensorValue(filePrefix + "_max")
 
 	if err != nil {
-		return nil, err
+		return TempSensor{}, err
 	}
 
 	sensor.Crit, err = readTempSensorValue(filePrefix + "_crit")
 
 	if err != nil {
-		return nil, err
+		return TempSensor{}, err
 	}
 
 	return sensor, nil
@@ -221,7 +204,7 @@ func readSensorLabel(file string) (string, error) {
 	data, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		return "", fmt.Errorf("Can't read data from %s: %v", file, err)
+		return "", fmt.Errorf("Can't read data from %s: %w", file, err)
 	}
 
 	return strings.Trim(string(data), "\r\n"), nil
@@ -235,13 +218,13 @@ func readTempSensorValue(file string) (float64, error) {
 	data, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		return 0.0, fmt.Errorf("Can't read sensor data from %s: %v", file, err)
+		return 0.0, fmt.Errorf("Can't read sensor data from %s: %w", file, err)
 	}
 
 	value, err := strconv.ParseFloat(strings.Trim(string(data), "\r\n"), 64)
 
 	if err != nil {
-		return 0.0, fmt.Errorf("Can't parse sensor data from %s: %v", file, err)
+		return 0.0, fmt.Errorf("Can't parse sensor data from %s: %w", file, err)
 	}
 
 	return value / 1000.0, nil

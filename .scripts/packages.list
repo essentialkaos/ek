@@ -44,6 +44,7 @@
 - system/exec
 - system/process
 - system/procname
++ system/sensors
 - terminal
 ! terminal/window
 + timeutil
