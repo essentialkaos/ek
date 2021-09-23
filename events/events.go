@@ -118,6 +118,14 @@ func (d *Dispatcher) Dispatch(typ string, payload interface{}) error {
 
 	d.mx.RLock()
 
+	if d.handlers[typ] == nil {
+		d.mx.RUnlock()
+		return fmt.Errorf("No handlers for event \"%s\"", typ)
+	}
+
+	d.mx.RUnlock()
+	d.mx.RLock()
+
 	for _, h := range d.handlers[typ] {
 		go h(payload)
 	}
@@ -135,6 +143,14 @@ func (d *Dispatcher) DispatchAndWait(typ string, payload interface{}) error {
 		return err
 	}
 
+	d.mx.RLock()
+
+	if d.handlers[typ] == nil {
+		d.mx.RUnlock()
+		return fmt.Errorf("No handlers for event \"%s\"", typ)
+	}
+
+	d.mx.RUnlock()
 	d.mx.RLock()
 
 	cur, tot := 0, len(d.handlers[typ])

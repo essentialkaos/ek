@@ -49,6 +49,9 @@ func (s *EventsSuite) TestBasicErrors(c *C) {
 	c.Assert(d.RemoveHandler("test", basicTestHandler), IsNil)
 	c.Assert(d.RemoveHandler("test", basicTestHandler), NotNil)
 
+	c.Assert(d.Dispatch("unknown", basicTestHandler), NotNil)
+	c.Assert(d.DispatchAndWait("unknown", basicTestHandler), NotNil)
+
 	c.Assert(validateArguments(d, "", basicTestHandler, true), NotNil)
 	c.Assert(validateArguments(d, "test", nil, true), NotNil)
 }
