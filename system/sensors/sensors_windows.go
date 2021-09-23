@@ -8,13 +8,10 @@ package sensors
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Device contains info from different device sensors
 type Device struct {
-	Name         string
-	TempSensors  []*TempSensor
-	PowerSensors []*PowerSensor
+	Name        string
+	TempSensors []TempSensor
 }
 
 // TempSensor contains info from temperature sensor
@@ -22,17 +19,8 @@ type TempSensor struct {
 	Name string
 	Cur  float64
 	Min  float64
-	Mid  float64
 	Max  float64
 	Crit float64
-}
-
-// PowerSensor contains info from power sensor
-type PowerSensor struct {
-	Name string
-	Cur  float64
-	Min  float64
-	Max  float64
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -50,7 +38,7 @@ func (d *Device) Temperature() (float64, float64, float64) {
 }
 
 // String formats sensor data as a string
-func (s *TempSensor) String() string {
+func (s TempSensor) String() string {
 	return ""
 }
 

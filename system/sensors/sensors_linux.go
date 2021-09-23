@@ -96,7 +96,7 @@ func (d *Device) Temperature() (float64, float64, float64) {
 }
 
 // String formats sensor data as a string
-func (s *TempSensor) String() string {
+func (s TempSensor) String() string {
 	return fmt.Sprintf(
 		"{Name:%s Cur:+%g°C Min:+%g°C Max:+%g°C Crit:+%g°C}",
 		s.Name, s.Cur, s.Min, s.Max, s.Crit,
