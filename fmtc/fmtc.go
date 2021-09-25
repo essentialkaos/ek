@@ -13,10 +13,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strconv"
 	"strings"
-
-	"pkg.re/essentialkaos/ek.v12/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -67,7 +66,7 @@ var codes = map[rune]int{
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // DisableColors disables all colors and modificators in output
-var DisableColors = false
+var DisableColors = os.Getenv("NO_COLOR") != ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -236,7 +235,7 @@ func Bell() {
 
 // Is256ColorsSupported returns true if 256 colors is supported
 func Is256ColorsSupported() bool {
-	return strings.Contains(env.Get().GetS("TERM"), "256color")
+	return strings.Contains(os.Getenv("TERM"), "256color")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
