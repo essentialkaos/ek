@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.28.0
+
+* `[fmtc]` `NO_COLOR` support
+* `[fmtc]` Code refactoring
+
 ### 12.27.0
 
 * `[httputil]` Added method `GetPortByScheme`
