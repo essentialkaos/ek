@@ -3,6 +3,7 @@
 ### 12.29.0
 
 * `[errutil]` Added method `Cap` for getting max capacity
+* `[system/sensors]` Added sorting by the name for slice with devices info
 * `[errutil]` Added more usage examples
 
 ### 12.28.0
