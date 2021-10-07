@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.29.0
+
+* `[errutil]` Added method `Cap` for getting max capacity
+* `[errutil]` Added more usage examples
+
 ### 12.28.0
 
 * `[fmtc]` `NO_COLOR` support

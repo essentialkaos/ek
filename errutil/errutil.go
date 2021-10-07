@@ -10,25 +10,25 @@ package errutil
 
 // Errors is struct for handling many errors at once
 type Errors struct {
-	maxSize int
-	errors  []error
+	capacity int
+	errors   []error
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewErrors creates new struct
-func NewErrors(maxSize ...int) *Errors {
-	if len(maxSize) == 0 {
+func NewErrors(capacity ...int) *Errors {
+	if len(capacity) == 0 {
 		return &Errors{}
 	}
 
-	size := maxSize[0]
+	size := capacity[0]
 
 	if size < 0 {
 		size = 0
 	}
 
-	return &Errors{maxSize: size}
+	return &Errors{capacity: size}
 }
 
 // Chain executes functions in chain and if one of them return error
@@ -68,14 +68,14 @@ func (e *Errors) Add(errs ...interface{}) *Errors {
 		}
 	}
 
-	if e.maxSize > 0 && len(e.errors) > e.maxSize {
-		e.errors = e.errors[len(e.errors)-e.maxSize:]
+	if e.capacity > 0 && len(e.errors) > e.capacity {
+		e.errors = e.errors[len(e.errors)-e.capacity:]
 	}
 
 	return e
 }
 
-// Last returns last error in slice
+// Last returns the last error
 func (e *Errors) Last() error {
 	if e == nil || e.errors == nil {
 		return nil
@@ -109,6 +109,15 @@ func (e *Errors) Num() int {
 	}
 
 	return len(e.errors)
+}
+
+// Cap returns max capacity
+func (e *Errors) Cap() int {
+	if e == nil {
+		return 0
+	}
+
+	return e.capacity
 }
 
 // Error returns text of all errors
