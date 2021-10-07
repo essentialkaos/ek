@@ -17,6 +17,7 @@ import (
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v12/fsutil"
+	"pkg.re/essentialkaos/ek.v12/sortutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -51,7 +52,11 @@ func Collect() ([]*Device, error) {
 
 	var result []*Device
 
-	for _, deviceDir := range fsutil.List(hwmonDir, false) {
+	deviceDir := fsutil.List(hwmonDir, false)
+
+	sortutil.StringsNatural(deviceDir)
+
+	for _, deviceDir := range deviceDir {
 		if !hasSensorsData(hwmonDir + "/" + deviceDir) {
 			continue
 		}

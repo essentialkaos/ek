@@ -74,6 +74,7 @@ func (s *ErrSuite) TestSizeLimit(c *C) {
 
 	c.Assert(errs.HasErrors(), Equals, true)
 	c.Assert(errs.Num(), Equals, 3)
+	c.Assert(errs.Cap(), Equals, 3)
 	c.Assert(errs.All(), HasLen, 3)
 
 	errList := errs.All()
@@ -83,7 +84,7 @@ func (s *ErrSuite) TestSizeLimit(c *C) {
 
 	errs = NewErrors(-10)
 
-	c.Assert(errs.maxSize, Equals, 0)
+	c.Assert(errs.capacity, Equals, 0)
 }
 
 func (s *ErrSuite) TestAdd(c *C) {
@@ -117,10 +118,25 @@ func (s *ErrSuite) TestNil(c *C) {
 	var errs *Errors
 
 	c.Assert(errs.Num(), Equals, 0)
+	c.Assert(errs.Cap(), Equals, 0)
 	c.Assert(errs.All(), HasLen, 0)
 	c.Assert(errs.HasErrors(), Equals, false)
 	c.Assert(errs.Last(), IsNil)
 	c.Assert(errs.Error(), Equals, "")
+}
+
+func (s *ErrSuite) TestNoInit(c *C) {
+	var errs Errors
+
+	c.Assert(errs.Num(), Equals, 0)
+	c.Assert(errs.Cap(), Equals, 0)
+	c.Assert(errs.All(), HasLen, 0)
+	c.Assert(errs.HasErrors(), Equals, false)
+	c.Assert(errs.Last(), IsNil)
+	c.Assert(errs.Error(), Equals, "")
+
+	c.Assert(errs.Add(errors.New("1")), NotNil)
+	c.Assert(errs.Last(), DeepEquals, errors.New("1"))
 }
 
 func (s *ErrSuite) TestChain(c *C) {
