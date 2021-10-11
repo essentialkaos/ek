@@ -6,6 +6,7 @@
 * `[terminal]` Added fmtc color codes support in input prompt
 * `[terminal]` Fixed bug with masking password if prompt contains ANSI color codes
 * `[strutil]` Code refactoring
+* `[options]` Added more usage examples
 
 ### 12.29.0
 
