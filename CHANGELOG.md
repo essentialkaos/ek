@@ -3,6 +3,8 @@
 ### 12.30.0
 
 * `[ansi]` New package for working with ANSI/VT100 control sequences
+* `[terminal]` Added fmtc color codes support in input prompt
+* `[terminal]` Fixed bug with masking password if prompt contains ANSI color codes
 * `[strutil]` Code refactoring
 
 ### 12.29.0
