@@ -220,49 +220,30 @@ func ReplaceAll(source, from, to string) string {
 		return ""
 	}
 
-	var result string
+	var result strings.Builder
 
 SOURCELOOP:
 	for _, sourceSym := range source {
 		for _, fromSym := range from {
 			if fromSym == sourceSym {
-				result += to
+				result.WriteString(to)
 				continue SOURCELOOP
 			}
 		}
 
-		result += string(sourceSym)
+		result.WriteRune(sourceSym)
 	}
 
-	return result
+	return result.String()
 }
 
 // Exclude excludes substring from given string
-// It little bit faster than strings.ReplaceAll
 func Exclude(data, substr string) string {
 	if len(data) == 0 || len(substr) == 0 {
 		return data
 	}
 
-	k := strings.Count(data, substr)
-
-	if k == 0 {
-		return data
-	}
-
-	b := make([]byte, len(data)-(len(substr)*k))
-	p, w := 0, 0
-
-	for i := 0; i < k; i++ {
-		j := p
-		j += strings.Index(data[p:], substr)
-		w += copy(b[w:], data[p:j])
-		p = j + len(substr)
-	}
-
-	w += copy(b[w:], data[p:])
-
-	return string(b[0:w])
+	return strings.ReplaceAll(data, substr, "")
 }
 
 // ReadField reads field with given index from data
@@ -312,11 +293,9 @@ MAINLOOP:
 // Fields splits the string data around each instance of one or more
 // consecutive white space or comma characters
 func Fields(data string) []string {
-	var (
-		result   []string
-		item     string
-		waitChar rune
-	)
+	var result []string
+	var item strings.Builder
+	var waitChar rune
 
 	for _, char := range data {
 		switch char {
@@ -324,30 +303,31 @@ func Fields(data string) []string {
 			if waitChar == 0 {
 				waitChar = getClosingChar(char)
 			} else if waitChar != 0 && waitChar == char {
-				result = append(result, item)
-				item, waitChar = "", 0
+				result = appendField(result, item.String())
+				item.Reset()
+				waitChar = 0
 			} else {
-				item += string(char)
+				item.WriteRune(char)
 			}
 
 		case ',', ';', ' ':
 			if waitChar != 0 {
-				item += string(char)
+				item.WriteRune(char)
 			} else {
-				result = append(result, item)
-				item = ""
+				result = appendField(result, item.String())
+				item.Reset()
 			}
 
 		default:
-			item += string(char)
+			item.WriteRune(char)
 		}
 	}
 
-	if item != "" {
-		result = append(result, item)
+	if item.Len() != 0 {
+		result = appendField(result, item.String())
 	}
 
-	return formatItems(result)
+	return result
 }
 
 // Copy is method for force string copying
@@ -397,18 +377,12 @@ func HasSuffixAny(s string, suffix ...string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func formatItems(data []string) []string {
-	var result []string
-
-	for _, v := range data {
-		item := strings.TrimSpace(v)
-
-		if item != "" {
-			result = append(result, item)
-		}
+func appendField(data []string, item string) []string {
+	if strings.TrimSpace(item) == "" {
+		return data
 	}
 
-	return result
+	return append(data, item)
 }
 
 func getClosingChar(r rune) rune {

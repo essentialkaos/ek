@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.30.0
+
+* `[strutil]` Code refactoring
+
 ### 12.29.0
 
 * `[errutil]` Added method `Cap` for getting max capacity
