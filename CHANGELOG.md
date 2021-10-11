@@ -2,6 +2,7 @@
 
 ### 12.30.0
 
+* `[ansi]` New package for working with ANSI/VT100 control sequences
 * `[strutil]` Code refactoring
 
 ### 12.29.0
