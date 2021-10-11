@@ -62,14 +62,16 @@
 Tag: `{#code}`
 
 ![#colors](../.github/images/256_colors_fg.png)
-_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting)_
+
+_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting) website_
 
 ##### Background
 
 Tag: `{%code}`
 
 ![#colors](../.github/images/256_colors_bg.png)
-_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting)_
+
+_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting) website_
 
 #### Examples
 
@@ -115,4 +117,15 @@ _Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatt
  │            └ Unset reverse modificator (keep yellow color)
  │
  └ Bold text with yellow background (due to reverse modificator)
+```
+
+```
+{#213}{%240}Hi all!{!}
+ ┬───  ┬───         ┬
+ │     │            │
+ │     │            └ Reset everything
+ │     │
+ │     └ Set background color to grey
+ │
+ └ Set text color to pink
 ```
