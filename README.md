@@ -35,6 +35,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 
 ### Sub-packages
 
+* [`ansi`](https://pkg.re/essentialkaos/ek.v12/ansi?docs) - Package provides methods for working with ANSI/VT100 control sequences
 * [`cache`](https://pkg.re/essentialkaos/ek.v12/cache?docs) - Package provides a simple in-memory key:value cache
 * [`color`](https://pkg.re/essentialkaos/ek.v12/color?docs) - Package provides methods for working with colors
 * [`cron`](https://pkg.re/essentialkaos/ek.v12/cron?docs) - Package provides methods for working with cron expressions

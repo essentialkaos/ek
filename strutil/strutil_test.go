@@ -8,7 +8,6 @@ package strutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"strings"
 	"testing"
 
 	. "pkg.re/essentialkaos/check.v1"
@@ -70,21 +69,9 @@ func (s *StrUtilSuite) TestExtract(c *C) {
 	c.Assert(Extract("test1234TEST", 4, 8), Equals, "1234")
 }
 
-func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
-	for i := 0; i < c.N; i++ {
-		Substr("test1234TEST", 4, 8)
-	}
-}
-
 func (s *StrUtilSuite) TestEllipsis(c *C) {
 	c.Assert(Ellipsis("Test1234", 8), Equals, "Test1234")
 	c.Assert(Ellipsis("Test1234test", 8), Equals, "Test1...")
-}
-
-func (s *StrUtilSuite) BenchmarkEllipsis(c *C) {
-	for i := 0; i < c.N; i++ {
-		Ellipsis("Test1234test", 8)
-	}
 }
 
 func (s *StrUtilSuite) TestHead(c *C) {
@@ -96,12 +83,6 @@ func (s *StrUtilSuite) TestHead(c *C) {
 	c.Assert(Head("ABCD1234", 100), Equals, "ABCD1234")
 }
 
-func (s *StrUtilSuite) BenchmarkHead(c *C) {
-	for i := 0; i < c.N; i++ {
-		Head("ABCD1234ABCD1234", 4)
-	}
-}
-
 func (s *StrUtilSuite) TestTail(c *C) {
 	c.Assert(Tail("", 1), Equals, "")
 	c.Assert(Tail("ABCD1234", 0), Equals, "")
@@ -111,29 +92,11 @@ func (s *StrUtilSuite) TestTail(c *C) {
 	c.Assert(Tail("ABCD1234", 100), Equals, "ABCD1234")
 }
 
-func (s *StrUtilSuite) BenchmarkTail(c *C) {
-	for i := 0; i < c.N; i++ {
-		Tail("ABCD1234ABCD1234", 4)
-	}
-}
-
 func (s *StrUtilSuite) TestExclude(c *C) {
 	c.Assert(Exclude("ABCD1234abcd1234ABCD", ""), Equals, "ABCD1234abcd1234ABCD")
 	c.Assert(Exclude("", "1234"), Equals, "")
 	c.Assert(Exclude("ABCD1234abcd1234ABCD", "5678"), Equals, "ABCD1234abcd1234ABCD")
 	c.Assert(Exclude("ABCD1234abcd1234ABCD", "1234"), Equals, "ABCDabcdABCD")
-}
-
-func (s *StrUtilSuite) BenchmarkStdlibReplace(c *C) {
-	for i := 0; i < c.N; i++ {
-		strings.Replace("ABCD1234abcd1234ABCD", "1234", "", -1)
-	}
-}
-
-func (s *StrUtilSuite) BenchmarkExclude(c *C) {
-	for i := 0; i < c.N; i++ {
-		Exclude("ABCD1234abcd1234ABCD", "1234")
-	}
 }
 
 func (s *StrUtilSuite) TestSize(c *C) {
@@ -146,12 +109,6 @@ func (s *StrUtilSuite) TestSize(c *C) {
 	c.Assert(SuffixSize("abcd", ' '), Equals, 0)
 	c.Assert(SuffixSize("abcd    ", ' '), Equals, 4)
 	c.Assert(SuffixSize("    ", ' '), Equals, 4)
-}
-
-func (s *StrUtilSuite) BenchmarkSize(c *C) {
-	for i := 0; i < c.N; i++ {
-		PrefixSize("    abcd", ' ')
-	}
 }
 
 func (s *StrUtilSuite) TestReplaceAll(c *C) {
@@ -193,28 +150,10 @@ func (s *StrUtilSuite) TestCopy(c *C) {
 	c.Assert(Copy("ABCD1234"), Equals, "ABCD1234")
 }
 
-func (s *StrUtilSuite) BenchmarkFields(c *C) {
-	for i := 0; i < c.N; i++ {
-		Fields("\"1 2\" 3 \"4 5\"")
-	}
-}
-
-func (s *StrUtilSuite) BenchmarkReadField(c *C) {
-	for i := 0; i < c.N; i++ {
-		ReadField("abc 1234 DEF", 2, false)
-	}
-}
-
 func (s *StrUtilSuite) TestLen(c *C) {
 	c.Assert(Len("ABCDABCD12341234"), Equals, 16)
 	c.Assert(Len(""), Equals, 0)
 	c.Assert(Len("✶✈12AB例例子예"), Equals, 10)
-}
-
-func (s *StrUtilSuite) BenchmarkLen(c *C) {
-	for i := 0; i < c.N; i++ {
-		Len("✶✈12AB例例子예")
-	}
 }
 
 func (s *StrUtilSuite) TestBefore(c *C) {
@@ -237,4 +176,70 @@ func (s *StrUtilSuite) TestHasPrefixAny(c *C) {
 func (s *StrUtilSuite) TestHasSuffixAny(c *C) {
 	c.Assert(HasSuffixAny("abcd#", "#", "@"), Equals, true)
 	c.Assert(HasSuffixAny("abcd#", "$", "@"), Equals, false)
+}
+
+func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
+	for i := 0; i < c.N; i++ {
+		Substr("test1234TEST", 4, 8)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkEllipsis(c *C) {
+	for i := 0; i < c.N; i++ {
+		Ellipsis("Test1234test", 8)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkHead(c *C) {
+	for i := 0; i < c.N; i++ {
+		Head("ABCD1234ABCD1234", 4)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkTail(c *C) {
+	for i := 0; i < c.N; i++ {
+		Tail("ABCD1234ABCD1234", 4)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkExclude(c *C) {
+	for i := 0; i < c.N; i++ {
+		Exclude("ABCD1234abcd1234ABCD", "1234")
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkExtract(c *C) {
+	for i := 0; i < c.N; i++ {
+		Extract("test1234TEST", 4, 8)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkSize(c *C) {
+	for i := 0; i < c.N; i++ {
+		PrefixSize("    abcd", ' ')
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkFields(c *C) {
+	for i := 0; i < c.N; i++ {
+		Fields("\"1 2\" 3 \"4 5\"")
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkReadField(c *C) {
+	for i := 0; i < c.N; i++ {
+		ReadField("abc 1234 DEF", 2, false)
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkLen(c *C) {
+	for i := 0; i < c.N; i++ {
+		Len("✶✈12AB例例子예")
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkReplaceAll(c *C) {
+	for i := 0; i < c.N; i++ {
+		ReplaceAll("ABCDABCD12341234", "AB12", "?")
+	}
 }

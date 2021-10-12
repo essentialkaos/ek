@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package ansi
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,22 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.30.0"
+func Example_HasCodes() {
+	fmt.Println(HasCodes("Hello"))
+	fmt.Println(HasCodes("\033[40;38;5;82mHello\x1B[0m"))
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	// Output:
+	// false
+	// true
+}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func Example_RemoveCodes() {
+	fmt.Println(RemoveCodes("\033[40;38;5;82mHello\x1B[0m"))
+	// Output:
+	// Hello
 }

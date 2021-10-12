@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.30.0
+
+* `[ansi]` New package for working with ANSI/VT100 control sequences
+* `[terminal]` Added fmtc color codes support in input prompt
+* `[terminal]` Fixed bug with masking password if prompt contains ANSI color codes
+* `[strutil]` Code refactoring
+* `[options]` Added more usage examples
+
 ### 12.29.0
 
 * `[errutil]` Added method `Cap` for getting max capacity

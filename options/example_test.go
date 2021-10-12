@@ -14,7 +14,28 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_parsing() {
+func Example_NewOptions() {
+	opts := NewOptions()
+
+	// Add options
+	opts.Add("S:string2", &V{Type: STRING, Value: "Default value"})
+	opts.Add("I:int2", &V{Type: INT, Min: 1, Max: 10})
+
+	// args contains unparsed values
+	args, errs := opts.Parse(os.Args[1:])
+
+	if len(errs) != 0 {
+		for _, err := range errs {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("First argument: %s\n\n", args.Get(0))
+}
+
+func Example_Parse() {
 	// Key is option in format "short-name:long-name" or "long-name"
 	// We highly recommend defining options names as constants
 	optMap := Map{

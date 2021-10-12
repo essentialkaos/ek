@@ -18,6 +18,7 @@ import (
 
 	"pkg.re/essentialkaos/go-linenoise.v3"
 
+	"pkg.re/essentialkaos/ek.v12/ansi"
 	"pkg.re/essentialkaos/ek.v12/fmtc"
 	"pkg.re/essentialkaos/ek.v12/fsutil"
 )
@@ -139,7 +140,9 @@ func SetHintHandler(h func(input string) string) {
 func getMask(message string) string {
 	var masking string
 
-	prefix := strings.Repeat(" ", utf8.RuneCountInString(Prompt))
+	// Remove fmtc color tags and ANSI escape codes
+	prompt := fmtc.Clean(ansi.RemoveCodes(Prompt))
+	prefix := strings.Repeat(" ", utf8.RuneCountInString(prompt))
 
 	if isTmuxSession() {
 		masking = strings.Repeat("*", utf8.RuneCountInString(message))
@@ -148,7 +151,7 @@ func getMask(message string) string {
 	}
 
 	if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
-		return Prompt + masking
+		return fmtc.Sprintf(Prompt) + masking
 	}
 
 	return fmt.Sprintf("%s\033[1A%s", prefix, masking)
@@ -180,7 +183,7 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	var err error
 
 	for {
-		input, err = linenoise.Line(Prompt)
+		input, err = linenoise.Line(fmtc.Sprintf(Prompt))
 
 		if err != nil {
 			return "", err
@@ -199,7 +202,7 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 			}
 		} else {
 			if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
-				fmt.Println(Prompt + input)
+				fmt.Println(fmtc.Sprintf(Prompt) + input)
 			}
 		}
 
