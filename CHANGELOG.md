@@ -3,6 +3,8 @@
 ### 12.31.0
 
 * `[errutil]` Added method `Reset` resetting `Errors` instance
+* `[sliceutil]` Added methods `Copy`, `CopyInts` and `CopyFloats` for copying slices
+* `[sliceutil]` Code refactoring
 
 ### 12.30.0
 
