@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.31.0
+
+* `[errutil]` Added method `Reset` resetting `Errors` instance
+
 ### 12.30.0
 
 * `[ansi]` New package for working with ANSI/VT100 control sequences

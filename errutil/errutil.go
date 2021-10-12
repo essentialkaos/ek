@@ -134,3 +134,8 @@ func (e *Errors) Error() string {
 
 	return result
 }
+
+// Reset resets Errors instance to be empty
+func (e *Errors) Reset() {
+	e.errors = nil
+}
