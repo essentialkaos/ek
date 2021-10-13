@@ -45,7 +45,7 @@ func (r *Reader) Read() ([]string, error) {
 	str, _, err := r.br.ReadLine()
 
 	if err != nil || len(str) == 0 {
-		return []string{}, err
+		return nil, err
 	}
 
 	return strings.Split(string(str), string(r.Comma)), nil

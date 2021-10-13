@@ -14,12 +14,52 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Copy creates copy of given slice
+func Copy(slice []string) []string {
+	if len(slice) == 0 {
+		return nil
+	}
+
+	s := make([]string, len(slice))
+	copy(s, slice)
+
+	return s
+}
+
+// CopyInts creates copy of given slice
+func CopyInts(slice []int) []int {
+	if len(slice) == 0 {
+		return nil
+	}
+
+	s := make([]int, len(slice))
+	copy(s, slice)
+
+	return s
+}
+
+// CopyFloats creates copy of given slice
+func CopyFloats(slice []float64) []float64 {
+	if len(slice) == 0 {
+		return nil
+	}
+
+	s := make([]float64, len(slice))
+	copy(s, slice)
+
+	return s
+}
+
 // StringToInterface converts slice with strings to slice with interface{}
 func StringToInterface(data []string) []interface{} {
-	var result []interface{}
+	if len(data) == 0 {
+		return nil
+	}
 
-	for _, r := range data {
-		result = append(result, r)
+	result := make([]interface{}, len(data))
+
+	for i, r := range data {
+		result[i] = r
 	}
 
 	return result
@@ -27,10 +67,14 @@ func StringToInterface(data []string) []interface{} {
 
 // IntToInterface converts slice with ints to slice with interface{}
 func IntToInterface(data []int) []interface{} {
-	var result []interface{}
+	if len(data) == 0 {
+		return nil
+	}
 
-	for _, r := range data {
-		result = append(result, r)
+	result := make([]interface{}, len(data))
+
+	for i, r := range data {
+		result[i] = r
 	}
 
 	return result
@@ -38,10 +82,14 @@ func IntToInterface(data []int) []interface{} {
 
 // StringToError converts slice with strings to slice with errors
 func StringToError(data []string) []error {
-	var result []error
+	if len(data) == 0 {
+		return nil
+	}
 
-	for _, e := range data {
-		result = append(result, errors.New(e))
+	result := make([]error, len(data))
+
+	for i, e := range data {
+		result[i] = errors.New(e)
 	}
 
 	return result
@@ -49,10 +97,14 @@ func StringToError(data []string) []error {
 
 // ErrorToString converts slice with errors to slice with strings
 func ErrorToString(data []error) []string {
-	var result []string
+	if len(data) == 0 {
+		return nil
+	}
 
-	for _, e := range data {
-		result = append(result, e.Error())
+	result := make([]string, len(data))
+
+	for i, e := range data {
+		result[i] = e.Error()
 	}
 
 	return result
@@ -78,42 +130,50 @@ func Contains(slice []string, value string) bool {
 	return Index(slice, value) != -1
 }
 
-// Exclude returns slice without items in second given slice
-func Exclude(slice, items []string) []string {
-	var result []string
+// Exclude removes items from slice
+func Exclude(slice []string, items ...string) []string {
+	var n int
+
+	s := Copy(slice)
+
+	if len(slice) == 0 || len(items) == 0 {
+		return s
+	}
 
 LOOP:
-	for _, i := range slice {
+	for _, i := range s {
 		for _, j := range items {
 			if i == j {
 				continue LOOP
 			}
 		}
 
-		result = append(result, i)
+		s[n] = i
+		n++
 	}
 
-	return result
+	return s[:n]
 }
 
 // Deduplicate removes duplicates from slice.
 // Slice must be sorted before deduplication.
 func Deduplicate(slice []string) []string {
+	var n int
+
+	s := Copy(slice)
+
 	if len(slice) <= 1 {
-		return slice
+		return s
 	}
 
-	j := 0
-
-	for i := 1; i < len(slice); i++ {
-		if slice[j] == slice[i] {
+	for i := 1; i < len(s); i++ {
+		if s[n] == s[i] {
 			continue
 		}
 
-		j++
-
-		slice[j] = slice[i]
+		n++
+		s[n] = s[i]
 	}
 
-	return slice[:j+1]
+	return s[:n+1]
 }

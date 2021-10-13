@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.31.0
+
+* `[errutil]` Added method `Reset` for resetting `Errors` instance
+* `[sliceutil]` Added methods `Copy`, `CopyInts` and `CopyFloats` for copying slices
+* `[csv]` Code refactoring
+* `[sliceutil]` Code refactoring
+
 ### 12.30.0
 
 * `[ansi]` New package for working with ANSI/VT100 control sequences

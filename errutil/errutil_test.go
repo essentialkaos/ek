@@ -55,6 +55,10 @@ func (s *ErrSuite) TestPositive(c *C) {
 	)
 	c.Assert(errs.Add(nil), NotNil)
 	c.Assert(errs.Error(), Equals, "  1\n  2\n  3\n  4\n  5\n")
+
+	errs.Reset()
+
+	c.Assert(errs.Num(), Equals, 0)
 }
 
 func (s *ErrSuite) TestSizeLimit(c *C) {
