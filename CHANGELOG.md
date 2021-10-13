@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.32.0
+
+* `[fmtutil]` Added method `PrettyDiff` for formatting diff numbers
+* `[fmtutil]` Fixed bug in `PrettyNum` with formatting negative numbers
+* `[fmtutil]` Code refactoring
+
 ### 12.31.0
 
 * `[errutil]` Added method `Reset` for resetting `Errors` instance

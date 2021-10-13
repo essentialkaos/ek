@@ -37,7 +37,17 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum(2500.00), Equals, "2,500")
 	c.Assert(PrettyNum(1.23), Equals, "1.23")
 	c.Assert(PrettyNum(-1000), Equals, "-1,000")
+	c.Assert(PrettyNum(-123456789), Equals, "-123,456,789")
+	c.Assert(PrettyNum(-123456789.15), Equals, "-123,456,789.15")
 	c.Assert(PrettyNum(math.NaN()), Equals, "0")
+	c.Assert(PrettyNum("abcd"), Equals, "abcd")
+}
+
+func (s *FmtUtilSuite) TestPretyDiff(c *C) {
+	c.Assert(PrettyDiff(0), Equals, "0")
+	c.Assert(PrettyDiff(100), Equals, "+100")
+	c.Assert(PrettyDiff(15620), Equals, "+15,620")
+	c.Assert(PrettyDiff(-15620), Equals, "-15,620")
 }
 
 func (s *FmtUtilSuite) TestPretyPerc(c *C) {
@@ -182,4 +192,18 @@ func (s *FmtUtilSuite) TestColorizePassword(c *C) {
 	c.Assert(ColorizePassword(p3, "{r}", "", ""), Equals, "{r}AB{!}[3{r}a{!}={r}c{!}_{!}")
 	c.Assert(ColorizePassword(p3, "", "{g}", ""), Equals, "{!}AB[{g}3{!}a=c_{!}")
 	c.Assert(ColorizePassword(p3, "", "", "{y}"), Equals, "{!}AB{y}[{!}3a{y}={!}c{y}_{!}")
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *FmtUtilSuite) BenchmarkPrettyNum(c *C) {
+	for i := 0; i < c.N; i++ {
+		PrettyNum(-123456)
+	}
+}
+
+func (s *FmtUtilSuite) BenchmarkPrettyNumFloat(c *C) {
+	for i := 0; i < c.N; i++ {
+		PrettyNum(-123456.15)
+	}
 }

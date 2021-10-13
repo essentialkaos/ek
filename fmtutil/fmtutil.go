@@ -51,6 +51,8 @@ func PrettyNum(i interface{}, separator ...string) string {
 	case int, int32, int64, uint, uint32, uint64:
 		str = fmt.Sprintf("%d", v)
 
+		return appendPrettySymbol(str, sep)
+
 	case float32, float64:
 		str = fmt.Sprintf("%.3f", v)
 
@@ -61,7 +63,17 @@ func PrettyNum(i interface{}, separator ...string) string {
 		return formatPrettyFloat(str, sep)
 	}
 
-	return appendPrettySymbol(str, sep)
+	// Return value for unsupported types as is
+	return fmt.Sprintf("%v", i)
+}
+
+// PrettyDiff formats number to "pretty" form with + or - symbol at the begining
+func PrettyDiff(i int, separator ...string) string {
+	if i > 0 {
+		return "+" + PrettyNum(i, separator...)
+	}
+
+	return PrettyNum(i, separator...)
 }
 
 // PrettyNum formats float value to "pretty" percent form (e.g 12.3423 -> 12.3%)
@@ -261,28 +273,33 @@ func formatPrettyFloat(str, sep string) string {
 }
 
 func appendPrettySymbol(str, sep string) string {
-	l := len(str)
-
-	if l <= 3 {
+	if len(str) < 3 {
 		return str
 	}
 
-	r := l % 3
-	rs := ""
+	var b strings.Builder
 
-	for i := l - 3; i >= 0; i -= 3 {
-		if i == 0 {
-			rs = str[i:i+3] + rs
-		} else {
-			rs = sep + str[i:i+3] + rs
+	if str[0] == '-' {
+		b.WriteRune('-')
+		str = str[1:]
+	}
+
+	if len(str)%3 == 0 {
+		b.Grow(len(str) + (len(str) / 3) - 1)
+	} else {
+		b.Grow(len(str) + len(str)/3)
+		b.WriteString(str[:(len(str) % 3)])
+		b.WriteString(sep)
+	}
+
+	for i := len(str) % 3; i < len(str); i++ {
+		b.WriteByte(str[i])
+		if (1+i-len(str)%3)%3 == 0 && i+1 != len(str) {
+			b.WriteString(sep)
 		}
 	}
 
-	if r != 0 {
-		rs = str[0:r] + rs
-	}
-
-	return rs
+	return b.String()
 }
 
 func extractSizeInfo(s string) (uint64, string) {
