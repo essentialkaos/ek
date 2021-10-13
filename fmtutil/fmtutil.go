@@ -67,6 +67,15 @@ func PrettyNum(i interface{}, separator ...string) string {
 	return fmt.Sprintf("%v", i)
 }
 
+// PrettyDiff formats number to "pretty" form with + or - symbol at the begining
+func PrettyDiff(i int, separator ...string) string {
+	if i > 0 {
+		return "+" + PrettyNum(i, separator...)
+	}
+
+	return PrettyNum(i, separator...)
+}
+
 // PrettyNum formats float value to "pretty" percent form (e.g 12.3423 -> 12.3%)
 func PrettyPerc(i float64) string {
 	i = Float(i)

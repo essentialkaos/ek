@@ -43,6 +43,13 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum("abcd"), Equals, "abcd")
 }
 
+func (s *FmtUtilSuite) TestPretyDiff(c *C) {
+	c.Assert(PrettyDiff(0), Equals, "0")
+	c.Assert(PrettyDiff(100), Equals, "+100")
+	c.Assert(PrettyDiff(15620), Equals, "+15,620")
+	c.Assert(PrettyDiff(-15620), Equals, "-15,620")
+}
+
 func (s *FmtUtilSuite) TestPretyPerc(c *C) {
 	c.Assert(PrettyPerc(0.12), Equals, "0.12%")
 	c.Assert(PrettyPerc(1), Equals, "1%")
