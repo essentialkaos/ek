@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.33.0
+
+* `[errutil]` Added support for `string`, `[]string`, and `errutil.Errors` types to method `Errors.Add`
+
 ### 12.32.0
 
 * `[fmtutil]` Added method `PrettyDiff` for formatting diff numbers

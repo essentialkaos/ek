@@ -8,6 +8,12 @@ package errutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import (
+	"errors"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Errors is struct for handling many errors at once
 type Errors struct {
 	capacity int
@@ -61,10 +67,18 @@ func (e *Errors) Add(errs ...interface{}) *Errors {
 			if v != nil {
 				e.errors = append(e.errors, v.errors...)
 			}
+		case Errors:
+			e.errors = append(e.errors, v.errors...)
 		case []error:
 			e.errors = append(e.errors, v...)
+		case []string:
+			for _, s := range v {
+				e.errors = append(e.errors, errors.New(s))
+			}
 		case error:
 			e.errors = append(e.errors, v)
+		case string:
+			e.errors = append(e.errors, errors.New(v))
 		}
 	}
 
