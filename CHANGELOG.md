@@ -3,6 +3,7 @@
 ### 12.33.0
 
 * `[errutil]` Added support for `string`, `[]string`, and `errutil.Errors` types to method `Errors.Add`
+* `[fmtutil]` Added method `PrettyBool` for formatting boolean values
 
 ### 12.32.0
 

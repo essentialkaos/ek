@@ -60,6 +60,15 @@ func ExamplePrettyNum() {
 	// 6128750.26 → 6|128|750.26
 }
 
+func ExamplePrettyBool() {
+	fmt.Printf("%t → %s\n", true, PrettyBool(true))
+	fmt.Printf("%t → %s\n", false, PrettyBool(false))
+
+	// Output:
+	// true → Y
+	// false → N
+}
+
 func ExamplePrettyPerc() {
 	var (
 		n1 float64 = 0.123
