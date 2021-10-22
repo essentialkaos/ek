@@ -85,6 +85,9 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 func (s *FmtUtilSuite) TestPretyBool(c *C) {
 	c.Assert(PrettyBool(true), Equals, "Y")
 	c.Assert(PrettyBool(false), Equals, "N")
+	c.Assert(PrettyBool(true, "Yes"), Equals, "Yes")
+	c.Assert(PrettyBool(false, "Yes"), Equals, "N")
+	c.Assert(PrettyBool(false, "Yes", "No"), Equals, "No")
 }
 
 func (s *FmtUtilSuite) TestParseSize(c *C) {

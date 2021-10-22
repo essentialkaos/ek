@@ -63,10 +63,14 @@ func ExamplePrettyNum() {
 func ExamplePrettyBool() {
 	fmt.Printf("%t → %s\n", true, PrettyBool(true))
 	fmt.Printf("%t → %s\n", false, PrettyBool(false))
+	fmt.Printf("%t → %s\n", true, PrettyBool(true, "Yep", "Nope"))
+	fmt.Printf("%t → %s\n", false, PrettyBool(false, "Yep", "Nope"))
 
 	// Output:
 	// true → Y
 	// false → N
+	// true → Yep
+	// false → Nope
 }
 
 func ExamplePrettyPerc() {

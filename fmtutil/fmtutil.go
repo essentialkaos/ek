@@ -135,8 +135,13 @@ func PrettySize(i interface{}, separator ...string) string {
 }
 
 // PrettyBool formats boolean to "pretty" form (e.g true/false -> Y/N)
-func PrettyBool(b bool) string {
-	if b {
+func PrettyBool(b bool, vals ...string) string {
+	switch {
+	case b && len(vals) >= 1:
+		return vals[0]
+	case !b && len(vals) >= 2:
+		return vals[1]
+	case b:
 		return "Y"
 	}
 
