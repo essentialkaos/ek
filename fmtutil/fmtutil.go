@@ -134,6 +134,20 @@ func PrettySize(i interface{}, separator ...string) string {
 	}
 }
 
+// PrettyBool formats boolean to "pretty" form (e.g true/false -> Y/N)
+func PrettyBool(b bool, vals ...string) string {
+	switch {
+	case b && len(vals) >= 1:
+		return vals[0]
+	case !b && len(vals) >= 2:
+		return vals[1]
+	case b:
+		return "Y"
+	}
+
+	return "N"
+}
+
 // ParseSize parses size and return it in bytes (e.g 1.34 Mb -> 1478182)
 func ParseSize(size string) uint64 {
 	ns := strings.ToLower(strings.Replace(size, " ", "", -1))

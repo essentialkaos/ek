@@ -82,6 +82,14 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 	c.Assert(PrettySize(math.NaN()), Equals, "0B")
 }
 
+func (s *FmtUtilSuite) TestPretyBool(c *C) {
+	c.Assert(PrettyBool(true), Equals, "Y")
+	c.Assert(PrettyBool(false), Equals, "N")
+	c.Assert(PrettyBool(true, "Yes"), Equals, "Yes")
+	c.Assert(PrettyBool(false, "Yes"), Equals, "N")
+	c.Assert(PrettyBool(false, "Yes", "No"), Equals, "No")
+}
+
 func (s *FmtUtilSuite) TestParseSize(c *C) {
 	c.Assert(ParseSize("1 MB"), Equals, uint64(1024*1024))
 	c.Assert(ParseSize("1 M"), Equals, uint64(1000*1000))

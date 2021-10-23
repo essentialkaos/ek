@@ -95,18 +95,27 @@ func (s *ErrSuite) TestAdd(c *C) {
 	errs1 := NewErrors()
 	errs2 := NewErrors()
 
+	var errs3 Errors
+
 	errs1.Add(errors.New("1"))
 	errs1.Add(errors.New("2"))
 
 	errs2.Add(errors.New("3"))
 	errs2.Add(errors.New("4"))
 
+	errs3.Add(errors.New("5"))
+	errs3.Add(errors.New("6"))
+
 	errs1.Add(errs2)
-	errs1.Add([]error{errors.New("5"), errors.New("6")})
+	errs1.Add(errs3)
+
+	errs1.Add([]error{errors.New("7"), errors.New("8")})
+	errs1.Add([]string{"9", "10"})
+	errs1.Add("11")
 
 	c.Assert(errs1.HasErrors(), Equals, true)
-	c.Assert(errs1.Num(), Equals, 6)
-	c.Assert(errs1.All(), HasLen, 6)
+	c.Assert(errs1.Num(), Equals, 11)
+	c.Assert(errs1.All(), HasLen, 11)
 }
 
 func (s *ErrSuite) TestNegative(c *C) {
