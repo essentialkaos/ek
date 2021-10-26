@@ -3,6 +3,7 @@
 ### 12.34.0
 
 * `[fsutil]` Added method `TouchFile` for creating empty files
+* `[fsutil]` Added usage examples
 
 ### 12.33.0
 

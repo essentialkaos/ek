@@ -52,15 +52,15 @@ var ErrEmptyPath = errors.New("Path is empty")
 
 // CheckPerms checks many props at once
 //
-// F - is file
-// D - is directory
-// X - is executable
-// L - is link
-// W - is writable
-// R - is readable
-// B - is block device
-// C - is character device
-// S - not empty (only for files)
+//    * F - is file
+//    * D - is directory
+//    * X - is executable
+//    * L - is link
+//    * W - is writable
+//    * R - is readable
+//    * B - is block device
+//    * C - is character device
+//    * S - not empty (only for files)
 //
 func CheckPerms(props, path string) bool {
 	if props == "" || path == "" {
