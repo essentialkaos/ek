@@ -122,6 +122,17 @@ func CopyDir(from, to string) error {
 	return copyDir(from, to)
 }
 
+// TouchFile creates empty file
+func TouchFile(path string, perm os.FileMode) error {
+	fd, err := os.OpenFile(path, os.O_CREATE, perm)
+
+	if err != nil {
+		return err
+	}
+
+	return fd.Close()
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func copyFile(from, to string, perms []os.FileMode) error {

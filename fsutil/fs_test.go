@@ -747,6 +747,22 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 	c.Assert(CopyDir(tmpDir1, "/root/abcd"), check.NotNil)
 }
 
+func (s *FSSuite) TestTouchFile(c *check.C) {
+	err := TouchFile("/__unknown__", 0600)
+
+	c.Assert(err, check.NotNil)
+
+	testDir := c.MkDir()
+	testFile := testDir + "/test.txt"
+
+	err = TouchFile(testFile, 0600)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(IsExist(testFile), check.Equals, true)
+	c.Assert(IsEmpty(testFile), check.Equals, true)
+	c.Assert(GetMode(testFile), check.Equals, os.FileMode(0600))
+}
+
 func (s *FSSuite) TestInternal(c *check.C) {
 	c.Assert(getGIDList(nil), check.IsNil)
 

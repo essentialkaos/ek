@@ -13,18 +13,23 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CopyFile simple file copying with bufio
+// CopyFile copies file using bufio
 func CopyFile(from, to string, perms ...os.FileMode) error {
 	return nil
 }
 
-// MoveFile move file
+// MoveFile moves file
 func MoveFile(from, to string, perms ...os.FileMode) error {
 	return nil
 }
 
-// CopyDir copy directory content recursively to target directory
+// CopyDir copies directory content recursively to target directory
 func CopyDir(from, to string) error {
+	return nil
+}
+
+// TouchFile creates empty file
+func TouchFile(path string, perm os.FileMode) error {
 	return nil
 }
 
