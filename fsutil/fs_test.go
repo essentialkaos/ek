@@ -617,15 +617,26 @@ func (s *FSSuite) TestGetMode(c *check.C) {
 	c.Assert(GetMode(tmpFile), check.Equals, os.FileMode(0764))
 }
 
-func (s *FSSuite) TestLineCount(c *check.C) {
+func (s *FSSuite) TestCountLines(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
 	c.Assert(ioutil.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644), check.IsNil)
 
-	c.Assert(LineCount(""), check.Equals, -1)
-	c.Assert(LineCount("/not_exist"), check.Equals, -1)
-	c.Assert(LineCount(tmpFile), check.Equals, 4)
+	n, err := CountLines("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(n, check.Equals, 0)
+
+	n, err = CountLines("/not_exist")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(n, check.Equals, 0)
+
+	n, err = CountLines(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(n, check.Equals, 4)
 }
 
 func (s *FSSuite) TestCopyFile(c *check.C) {
@@ -745,6 +756,22 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 	_disableCopyDirChecks = true
 
 	c.Assert(CopyDir(tmpDir1, "/root/abcd"), check.NotNil)
+}
+
+func (s *FSSuite) TestTouchFile(c *check.C) {
+	err := TouchFile("/__unknown__", 0600)
+
+	c.Assert(err, check.NotNil)
+
+	testDir := c.MkDir()
+	testFile := testDir + "/test.txt"
+
+	err = TouchFile(testFile, 0600)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(IsExist(testFile), check.Equals, true)
+	c.Assert(IsEmpty(testFile), check.Equals, true)
+	c.Assert(GetMode(testFile), check.Equals, os.FileMode(0600))
 }
 
 func (s *FSSuite) TestInternal(c *check.C) {

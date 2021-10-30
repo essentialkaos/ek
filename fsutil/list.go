@@ -30,7 +30,7 @@ type ListingFilter struct {
 
 	SizeLess    int64 // Files with size less than defined
 	SizeGreater int64 // Files with size greater than defined
-	SizeEqual   int64 // Files with size equals than defined
+	SizeEqual   int64 // Files with size equals to defined
 	SizeZero    bool  // Empty files
 
 	Perms    string // Permission (see fsutil.CheckPerms for more info)

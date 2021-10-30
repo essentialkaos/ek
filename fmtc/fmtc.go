@@ -75,40 +75,41 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 // the number of bytes written and any write error encountered.
 //
 // Supported color codes:
-// Modificators:
-//  - Light colors
-//  ! Default
-//  * Bold
-//  ^ Dim
-//  _ Underline
-//  ~ Blink
-//  @ Reverse
 //
-// Foreground colors:
-//  d Black (Dark)
-//  r Red
-//  g Green
-//  y Yellow
-//  b Blue
-//  m Magenta
-//  c Cyan
-//  s Gray (Smokey)
-//  w White
+//    Modificators:
+//     - Light colors
+//     ! Default
+//     * Bold
+//     ^ Dim
+//     _ Underline
+//     ~ Blink
+//     @ Reverse
 //
-// Background colors:
-//  D Black (Dark)
-//  R Red
-//  G Green
-//  Y Yellow
-//  B Blue
-//  M Magenta
-//  C Cyan
-//  S Gray (Smokey)
-//  W White
+//    Foreground colors:
+//     d Black (Dark)
+//     r Red
+//     g Green
+//     y Yellow
+//     b Blue
+//     m Magenta
+//     c Cyan
+//     s Gray (Smokey)
+//     w White
 //
-// 256 colors:
-//  #code foreground color
-//  %code background color
+//    Background colors:
+//     D Black (Dark)
+//     R Red
+//     G Green
+//     Y Yellow
+//     B Blue
+//     M Magenta
+//     C Cyan
+//     S Gray (Smokey)
+//     W White
+//
+//    256 colors:
+//     #code foreground color
+//     %code background color
 func Print(a ...interface{}) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Print(a...)

@@ -9,36 +9,35 @@ package fsutil
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// LineCount return number of lines in file
-func LineCount(file string) int {
+// CountLines returns number of lines in given file
+func CountLines(file string) (int, error) {
 	if file == "" {
-		return -1
+		return 0, errors.New("Path to file is empty")
 	}
 
 	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
 
 	if err != nil {
-		return -1
+		return 0, err
 	}
-
-	defer fd.Close()
 
 	// Use 32k buffer
 	buf := make([]byte, 32*1024)
-	count := 0
-	sep := []byte{'\n'}
+	count, sep := 0, []byte{'\n'}
 
 	for {
 		c, err := fd.Read(buf)
 
 		if err != nil && err != io.EOF {
-			return count
+			fd.Close()
+			return 0, err
 		}
 
 		count += bytes.Count(buf[:c], sep)
@@ -48,5 +47,5 @@ func LineCount(file string) int {
 		}
 	}
 
-	return count
+	return count, fd.Close()
 }
