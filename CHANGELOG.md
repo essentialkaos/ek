@@ -4,6 +4,8 @@
 
 * `[fsutil]` Added method `TouchFile` for creating empty files
 * `[fsutil]` Code refactoring
+* `[fmtc]` Documentation refactoring
+* `[timeutil]` Documentation refactoring
 * `[fsutil]` Added usage examples
 
 ### 12.33.0
