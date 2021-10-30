@@ -9,6 +9,7 @@ package fsutil
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -332,4 +333,176 @@ func ExampleTouchFile() {
 	}
 
 	fmt.Println("Lock file successfully created!")
+}
+
+func ExampleCountLines() {
+	file := "/home/john/test.txt"
+
+	lineNum, err := CountLines(file)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("File %s contains %d lines of text\n", file, lineNum)
+}
+
+func ExampleList() {
+	dir := "/home/john/documents"
+
+	// List all objects including hidden (files and directries
+	// with the dot at the beginning of the file name)
+	objects := List(dir, false)
+
+	if len(objects) == 0 {
+		fmt.Printf("Directory %s is empty", dir)
+		return
+	}
+
+	fmt.Printf("Directory %s contains:\n", dir)
+
+	for _, object := range objects {
+		fmt.Printf("  %s\n", object)
+	}
+}
+
+func ExampleListAll() {
+	dir := "/home/john/documents"
+
+	// List all objects excluding hidden (files and directries
+	// with the dot at the beginning of the file name)
+	objects := ListAll(dir, true)
+
+	if len(objects) == 0 {
+		fmt.Printf("Directory %s is empty", dir)
+		return
+	}
+
+	fmt.Printf("Directory %s contains:\n", dir)
+
+	for _, object := range objects {
+		fmt.Printf("  %s\n", object)
+	}
+}
+
+func ExampleListAllDirs() {
+	target := "/home/john/documents"
+
+	// List all directories including hidden (directries
+	// with the dot at the beginning of the file name)
+	dirs := ListAllDirs(target, true)
+
+	if len(dirs) == 0 {
+		fmt.Printf("Directory %s is empty", target)
+		return
+	}
+
+	fmt.Printf("Directory %s contains:\n", target)
+
+	for _, dir := range dirs {
+		fmt.Printf("  %s\n", dir)
+	}
+}
+
+func ExampleListAllFiles() {
+	target := "/home/john/documents"
+
+	// List all files including hidden (files with the dot
+	// at the beginning of the file name)
+	files := ListAllFiles(target, true)
+
+	if len(files) == 0 {
+		fmt.Printf("Directory %s is empty", target)
+		return
+	}
+
+	fmt.Printf("Directory %s contains:\n", target)
+
+	for _, file := range files {
+		fmt.Printf("  %s\n", file)
+	}
+}
+
+func ExampleListToAbsolute() {
+	dir := "/home/john/documents"
+
+	// List all objects including hidden (files and directries
+	// with the dot at the beginning of the file name)
+	objects := List(dir, false)
+
+	if len(objects) == 0 {
+		fmt.Printf("Directory %s is empty", dir)
+		return
+	}
+
+	// The method adds the path to the beginning of every item in the slice
+	ListToAbsolute(dir, objects)
+}
+
+func ExampleListingFilter() {
+	dir := "/home/john/documents"
+
+	filter := ListingFilter{
+		MatchPatterns: []string{"*.doc", "*.docx", "*.pdf"},
+		MTimeOlder:    time.Now().Unix() - 3600,
+		SizeGreater:   50 * 1024,
+		Perms:         "FR",
+	}
+
+	docs := List(dir, false, filter)
+
+	if len(docs) == 0 {
+		fmt.Printf("No documents found in %s\n", dir)
+		return
+	}
+
+	fmt.Println("Found documents:")
+
+	for _, doc := range docs {
+		fmt.Printf("  %s\n", doc)
+	}
+}
+
+func ExamplePush() {
+	// Current working directory is the directory where binary was executed
+
+	cwd := Push("/home/john/documents")
+
+	// Current working directory set to /home/john/documents
+
+	cwd = Push("/home/john/documents/work")
+
+	// Current working directory set to /home/john/documents/work
+
+	fmt.Println(cwd)
+
+	cwd = Pop()
+
+	// Current working directory set to /home/john/documents
+
+	cwd = Pop()
+
+	// Current working directory set to initial working directory
+}
+
+func ExamplePop() {
+	// Current working directory is the directory where binary was executed
+
+	cwd := Push("/home/john/documents")
+
+	// Current working directory set to /home/john/documents
+
+	cwd = Push("/home/john/documents/work")
+
+	// Current working directory set to /home/john/documents/work
+
+	fmt.Println(cwd)
+
+	cwd = Pop()
+
+	// Current working directory set to /home/john/documents
+
+	cwd = Pop()
+
+	// Current working directory set to initial working directory
 }

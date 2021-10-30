@@ -617,15 +617,26 @@ func (s *FSSuite) TestGetMode(c *check.C) {
 	c.Assert(GetMode(tmpFile), check.Equals, os.FileMode(0764))
 }
 
-func (s *FSSuite) TestLineCount(c *check.C) {
+func (s *FSSuite) TestCountLines(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
 	c.Assert(ioutil.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644), check.IsNil)
 
-	c.Assert(LineCount(""), check.Equals, -1)
-	c.Assert(LineCount("/not_exist"), check.Equals, -1)
-	c.Assert(LineCount(tmpFile), check.Equals, 4)
+	n, err := CountLines("")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(n, check.Equals, 0)
+
+	n, err = CountLines("/not_exist")
+
+	c.Assert(err, check.NotNil)
+	c.Assert(n, check.Equals, 0)
+
+	n, err = CountLines(tmpFile)
+
+	c.Assert(err, check.IsNil)
+	c.Assert(n, check.Equals, 4)
 }
 
 func (s *FSSuite) TestCopyFile(c *check.C) {
