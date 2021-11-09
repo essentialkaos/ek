@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.35.0
+
+* `[secstr]` New package for working with protected (secure) strings
+
 ### 12.34.0
 
 * `[fsutil]` Added method `TouchFile` for creating empty files

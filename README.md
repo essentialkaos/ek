@@ -67,6 +67,7 @@ go get -u pkg.re/essentialkaos/ek.v12
 * [`progress`](https://pkg.re/essentialkaos/ek.v12/progress?docs) - Package provides methods and structs for creating terminal progress bar
 * [`rand`](https://pkg.re/essentialkaos/ek.v12/rand?docs) - Package for generating random data
 * [`req`](https://pkg.re/essentialkaos/ek.v12/req?docs) - Package simplify working with an HTTP requests
+* [`secstr`](https://pkg.re/essentialkaos/ek.v12/secstr?docs) - Package provides methods and structs for working with protected (secure) strings
 * [`signal`](https://pkg.re/essentialkaos/ek.v12/signal?docs) - Package provides methods for handling POSIX signals
 * [`sliceutil`](https://pkg.re/essentialkaos/ek.v12/sliceutil?docs) - Package provides methods for working with slices
 * [`sortutil`](https://pkg.re/essentialkaos/ek.v12/sortutil?docs) - Package provides methods for sorting slices
