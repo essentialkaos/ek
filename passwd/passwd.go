@@ -42,12 +42,23 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encrypt creates hash and encrypts password with salt and pepper
+// Encrypt creates hash and encrypts it with salt and pepper
+// Depricated: Use Hash method instead
 func Encrypt(password, pepper string) (string, error) {
+	return Hash(password, pepper)
+}
+
+// Hash creates hash and encrypts it with salt and pepper
+func Hash(password, pepper string) (string, error) {
+	return HashBytes([]byte(password), []byte(pepper))
+}
+
+// HashBytes creates hash and encrypts it with salt and pepper
+func HashBytes(password, pepper []byte) (string, error) {
 	switch {
-	case password == "":
+	case len(password) == 0:
 		return "", errors.New("Password can't be empty")
-	case pepper == "":
+	case len(pepper) == 0:
 		return "", errors.New("Pepper can't be empty")
 	}
 
@@ -56,7 +67,7 @@ func Encrypt(password, pepper string) (string, error) {
 	}
 
 	hasher := sha512.New()
-	hasher.Write([]byte(password))
+	hasher.Write(password)
 
 	hp, err := bcrypt.GenerateFromPassword(hasher.Sum(nil), 10)
 
@@ -64,7 +75,7 @@ func Encrypt(password, pepper string) (string, error) {
 		return "", err
 	}
 
-	block, _ := aes.NewCipher([]byte(pepper))
+	block, _ := aes.NewCipher(pepper)
 	hpd := padData(hp)
 
 	ct := make([]byte, aes.BlockSize+len(hpd))
@@ -82,13 +93,18 @@ func Encrypt(password, pepper string) (string, error) {
 	return removeBase64Padding(base64.URLEncoding.EncodeToString(ct)), nil
 }
 
-// Check compares password and encrypted hash
+// Check compares password with encrypted hash
 func Check(password, pepper, hash string) bool {
-	if password == "" || hash == "" || !isValidPepper(pepper) {
+	return CheckBytes([]byte(password), []byte(pepper), hash)
+}
+
+// CheckBytes compares password with encrypted hash
+func CheckBytes(password, pepper []byte, hash string) bool {
+	if len(password) == 0 || len(hash) == 0 || !isValidPepper(pepper) {
 		return false
 	}
 
-	block, _ := aes.NewCipher([]byte(pepper))
+	block, _ := aes.NewCipher(pepper)
 	hpd, err := base64.URLEncoding.DecodeString(addBase64Padding(hash))
 
 	if err != nil {
@@ -118,7 +134,7 @@ func Check(password, pepper, hash string) bool {
 	}
 
 	hasher := sha512.New()
-	hasher.Write([]byte(password))
+	hasher.Write(password)
 
 	return bcrypt.CompareHashAndPassword(h, hasher.Sum(nil)) == nil
 }
@@ -268,7 +284,7 @@ func getRandomPassword(length, strength int) string {
 	}
 }
 
-func isValidPepper(pepper string) bool {
+func isValidPepper(pepper []byte) bool {
 	switch len(pepper) {
 	case 16, 24, 32:
 		return true

@@ -48,3 +48,53 @@ func ExampleGenPasswordVariations() {
 	// Output:
 	// Variants: [MYpASSWORD12345 MyPassword12345 myPassword1234]
 }
+
+func ExampleHash() {
+	password, pepper := "MyPassword", "ABCD1234abcd1234"
+	hash, err := Hash(password, pepper)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Hash: %s\n", hash)
+}
+
+func ExampleHashBytes() {
+	password, pepper := []byte("MyPassword"), []byte("ABCD1234abcd1234")
+	hash, err := HashBytes(password, pepper)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Hash: %s\n", hash)
+}
+
+func ExampleCheck() {
+	password, pepper := "MyPassword", "ABCD1234abcd1234"
+	hash, err := Hash(password, pepper)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Valid: %t\n", Check(password, pepper, hash))
+
+	// Output:
+	// Valid: true
+}
+
+func ExampleCheckBytes() {
+	password, pepper := []byte("MyPassword"), []byte("ABCD1234abcd1234")
+	hash, err := HashBytes(password, pepper)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Valid: %t\n", CheckBytes(password, pepper, hash))
+
+	// Output:
+	// Valid: true
+}
