@@ -3,6 +3,7 @@
 ### 12.35.0
 
 * `[secstr]` New package for working with protected (secure) strings
+* `[req]` Method `Query.String()` renamed to `Query.Encode()`
 
 ### 12.34.0
 

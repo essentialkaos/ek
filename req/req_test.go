@@ -546,7 +546,7 @@ func (s *ReqSuite) TestIsURL(c *C) {
 
 func (s *ReqSuite) TestQueryEncoding(c *C) {
 	q := Query{}
-	c.Assert(q.String(), Equals, "")
+	c.Assert(q.Encode(), Equals, "")
 
 	q = Query{
 		"a": 1,
@@ -555,7 +555,7 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 		"d": nil,
 	}
 
-	qr := strings.Split(q.String(), "&")
+	qr := strings.Split(q.Encode(), "&")
 	sort.Strings(qr)
 	qrs := strings.Join(qr, "&")
 
