@@ -167,6 +167,28 @@ func GetPasswordStrength(password string) int {
 	}
 }
 
+// GenPasswordVariations generates password variants with possible
+// typos fixes (case swap for all letters, first leter swap, password
+// without last symbol)
+func GenPasswordVariations(password string) []string {
+	if len(password) < 6 {
+		return nil
+	}
+
+	var result []string
+	var variant string
+
+	for i := 0; i < len(password); i++ {
+		variant += flipCase(string(password[i]))
+	}
+
+	result = append(result, variant)
+	result = append(result, flipCase(password[:1])+password[1:])
+	result = append(result, password[:len(password)-1])
+
+	return result
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func between(val, min, max int) int {
@@ -253,4 +275,14 @@ func isValidPepper(pepper string) bool {
 	}
 
 	return false
+}
+
+func flipCase(s string) string {
+	sc := strings.ToLower(s)
+
+	if s != sc {
+		return sc
+	}
+
+	return strings.ToUpper(s)
 }

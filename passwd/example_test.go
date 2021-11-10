@@ -38,3 +38,13 @@ func ExampleGetPasswordStrength() {
 	// Output:
 	// Password is ok
 }
+
+func ExampleGenPasswordVariations() {
+	password := "myPassword12345"
+	variants := GenPasswordVariations(password)
+
+	fmt.Printf("Variants: %v\n", variants)
+
+	// Output:
+	// Variants: [MYpASSWORD12345 MyPassword12345 myPassword1234]
+}

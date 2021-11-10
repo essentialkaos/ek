@@ -52,6 +52,15 @@ func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(4, 100)), Equals, STRENGTH_STRONG)
 }
 
+func (s *PasswdSuite) TestGenPasswordVariations(c *C) {
+	c.Assert(GenPasswordVariations(""), HasLen, 0)
+	c.Assert(GenPasswordVariations("test"), HasLen, 0)
+	c.Assert(GenPasswordVariations("password12345"), HasLen, 3)
+	c.Assert(GenPasswordVariations("passWORD12345"), DeepEquals, []string{
+		"PASSword12345", "PassWORD12345", "passWORD1234",
+	})
+}
+
 func (s *PasswdSuite) TestEncrypt(c *C) {
 	hp, err := Encrypt("Test123", "ABCD1234ABCD1234")
 

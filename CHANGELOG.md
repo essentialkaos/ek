@@ -4,6 +4,7 @@
 
 * `[secstr]` New package for working with protected (secure) strings
 * `[req]` Method `Query.String()` renamed to `Query.Encode()`
+* `[passwd]` Added method `GenPasswordVariations` for generating password variations with possible typos fixes
 
 ### 12.34.0
 
