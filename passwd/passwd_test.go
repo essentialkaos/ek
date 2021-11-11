@@ -59,6 +59,15 @@ func (s *PasswdSuite) TestGenPasswordVariations(c *C) {
 	c.Assert(GenPasswordVariations("passWORD12345"), DeepEquals, []string{
 		"PASSword12345", "PassWORD12345", "passWORD1234",
 	})
+
+	c.Assert(GenPasswordBytesVariations([]byte("")), HasLen, 0)
+	c.Assert(GenPasswordBytesVariations([]byte("test")), HasLen, 0)
+	c.Assert(GenPasswordBytesVariations([]byte("password12345")), HasLen, 3)
+	c.Assert(GenPasswordBytesVariations([]byte("passWORD12345")), DeepEquals, [][]byte{
+		[]byte("PASSword12345"),
+		[]byte("PassWORD12345"),
+		[]byte("passWORD1234"),
+	})
 }
 
 func (s *PasswdSuite) TestHash(c *C) {

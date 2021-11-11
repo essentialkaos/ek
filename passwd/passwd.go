@@ -26,10 +26,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type Strength int
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 const (
-	STRENGTH_WEAK   = iota // Only lowercase English alphabet characters
-	STRENGTH_MEDIUM        // Lowercase and uppercase English alphabet characters, digits
-	STRENGTH_STRONG        // Lowercase and uppercase English alphabet characters, digits, special symbols
+	STRENGTH_WEAK   Strength = iota // Only lowercase English alphabet characters
+	STRENGTH_MEDIUM                 // Lowercase and uppercase English alphabet characters, digits
+	STRENGTH_STRONG                 // Lowercase and uppercase English alphabet characters, digits, special symbols
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -140,28 +144,38 @@ func CheckBytes(password, pepper []byte, hash string) bool {
 }
 
 // GenPassword generates random password
-func GenPassword(length, strength int) string {
-	return getRandomPassword(length, between(strength, 0, 2))
+func GenPassword(length int, strength Strength) string {
+	return string(GenPasswordBytes(length, strength))
+}
+
+// GenPassword generates random password
+func GenPasswordBytes(length int, strength Strength) []byte {
+	return getRandomPasswordBytes(length, getStrength(strength))
 }
 
 // GetPasswordStrength returns password strength
-func GetPasswordStrength(password string) int {
-	if password == "" {
+func GetPasswordStrength(password string) Strength {
+	return GetPasswordBytesStrength([]byte(password))
+}
+
+// GetPasswordBytesStrength returns password strength
+func GetPasswordBytesStrength(password []byte) Strength {
+	if len(password) == 0 {
 		return STRENGTH_WEAK
 	}
 
 	var conditions int
 
-	if strings.ContainsAny(password, "abcdefghijklmnopqrstuvwxyz") &&
-		strings.ContainsAny(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+	if bytes.ContainsAny(password, "abcdefghijklmnopqrstuvwxyz") &&
+		bytes.ContainsAny(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
 		conditions++
 	}
 
-	if strings.ContainsAny(password, "1234567890") {
+	if bytes.ContainsAny(password, "1234567890") {
 		conditions++
 	}
 
-	if strings.ContainsAny(password, _SYMBOLS_STRONG) {
+	if bytes.ContainsAny(password, _SYMBOLS_STRONG) {
 		conditions++
 	}
 
@@ -174,13 +188,11 @@ func GetPasswordStrength(password string) int {
 	switch conditions {
 	case 4:
 		return STRENGTH_STRONG
-
 	case 3:
 		return STRENGTH_MEDIUM
-
-	default:
-		return STRENGTH_WEAK
 	}
+
+	return STRENGTH_WEAK
 }
 
 // GenPasswordVariations generates password variants with possible
@@ -192,30 +204,45 @@ func GenPasswordVariations(password string) []string {
 	}
 
 	var result []string
-	var variant string
 
-	for i := 0; i < len(password); i++ {
-		variant += flipCase(string(password[i]))
+	passwordBytes := []byte(password)
+
+	result = append(result, string(genVariantFlipAll(passwordBytes)))
+	result = append(result, string(genVariantFlipFirst(passwordBytes)))
+	result = append(result, string(genVariantTrimLast(passwordBytes)))
+
+	return result
+}
+
+// GenPasswordBytesVariations generates password variants with possible
+// typos fixes (case swap for all letters, first leter swap, password
+// without last symbol)
+func GenPasswordBytesVariations(password []byte) [][]byte {
+	if len(password) < 6 {
+		return nil
 	}
 
-	result = append(result, variant)
-	result = append(result, flipCase(password[:1])+password[1:])
-	result = append(result, password[:len(password)-1])
+	var result [][]byte
+
+	result = append(result, genVariantFlipAll(password))
+	result = append(result, genVariantFlipFirst(password))
+	result = append(result, genVariantTrimLast(password))
 
 	return result
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func between(val, min, max int) int {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
+func getStrength(s Strength) Strength {
+	if s < STRENGTH_WEAK {
+		return STRENGTH_WEAK
 	}
+
+	if s > STRENGTH_STRONG {
+		return STRENGTH_STRONG
+	}
+
+	return s
 }
 
 func padData(src []byte) []byte {
@@ -250,9 +277,9 @@ func removeBase64Padding(src string) string {
 	return strings.TrimRight(src, "=")
 }
 
-func getRandomPassword(length, strength int) string {
+func getRandomPasswordBytes(length int, strength Strength) []byte {
 	if length == 0 {
-		return ""
+		return nil
 	}
 
 	if strength == STRENGTH_STRONG && length < 6 {
@@ -268,18 +295,18 @@ func getRandomPassword(length, strength int) string {
 		symbols += _SYMBOLS_MEDIUM + _SYMBOLS_STRONG
 	}
 
-	for {
-		ls := len(symbols)
-		r := make([]byte, length)
+	ls := len(symbols)
+	buf := make([]byte, length)
 
+	for {
 		rand.Seed(time.Now().UTC().UnixNano())
 
 		for i := 0; i < length; i++ {
-			r[i] = symbols[rand.Intn(ls)]
+			buf[i] = symbols[rand.Intn(ls)]
 		}
 
-		if GetPasswordStrength(string(r)) == strength {
-			return string(r)
+		if GetPasswordBytesStrength(buf) == strength {
+			return buf
 		}
 	}
 }
@@ -293,12 +320,37 @@ func isValidPepper(pepper []byte) bool {
 	return false
 }
 
-func flipCase(s string) string {
+func genVariantFlipAll(password []byte) []byte {
+	result := make([]byte, len(password))
+
+	for i := 0; i < len(password); i++ {
+		result[i] = flipCase(password[i])
+	}
+
+	return result
+}
+
+func genVariantFlipFirst(password []byte) []byte {
+	result := make([]byte, len(password))
+
+	copy(result, password)
+
+	result[0] = flipCase(password[0])
+
+	return result
+}
+
+func genVariantTrimLast(password []byte) []byte {
+	return append(password[:0:0], password[:len(password)-1]...)
+}
+
+func flipCase(b byte) byte {
+	s := string(b)
 	sc := strings.ToLower(s)
 
 	if s != sc {
-		return sc
+		return byte(sc[0])
 	}
 
-	return strings.ToUpper(s)
+	return byte(strings.ToUpper(s)[0])
 }
