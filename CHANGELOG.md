@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.35.1
+
+* `[passwd]` Fixed typo in deprecation notice
+
 ### 12.35.0
 
 * `[secstr]` New package for working with protected (secure) strings
