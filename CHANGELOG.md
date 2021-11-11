@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.35.0
+
+* `[secstr]` New package for working with protected (secure) strings
+* `[req]` Method `Query.String()` renamed to `Query.Encode()`
+* `[passwd]` Added method `GenPasswordVariations` and `GenPasswordBytesVariations` for generating password variations with possible typos fixes
+* `[passwd]` Added methods `HashBytes`, `CheckBytes`, `GenPasswordBytes` and `GetPasswordBytesStrength`
+* `[passwd]` Method `Encrypt` marked as depricated (_use `Hash` method instead_)
+* `[passwd]` Added more usage examples
+
 ### 12.34.0
 
 * `[fsutil]` Added method `TouchFile` for creating empty files

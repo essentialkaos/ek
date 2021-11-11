@@ -18,6 +18,7 @@ deps: git-config ## Download dependencies
 
 deps-test: git-config ## Download dependencies for tests
 	go get -v github.com/axw/gocov/gocov
+	go get -v golang.org/x/sys/unix
 	go get -v pkg.re/essentialkaos/check.v1
 
 test: ## Run tests

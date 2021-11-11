@@ -1,7 +1,4 @@
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package secstr
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,20 +8,18 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.35.0"
+func ExampleNewSecureString() {
+	passwd := "MySuppaPassword12345"
+	ss, err := NewSecureString(&passwd)
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	if err != nil {
+		panic(err)
+	}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	fmt.Printf("Password: %s", string(ss.Data))
 }

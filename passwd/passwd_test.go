@@ -52,8 +52,31 @@ func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(4, 100)), Equals, STRENGTH_STRONG)
 }
 
-func (s *PasswdSuite) TestEncrypt(c *C) {
+func (s *PasswdSuite) TestGenPasswordVariations(c *C) {
+	c.Assert(GenPasswordVariations(""), HasLen, 0)
+	c.Assert(GenPasswordVariations("test"), HasLen, 0)
+	c.Assert(GenPasswordVariations("password12345"), HasLen, 3)
+	c.Assert(GenPasswordVariations("passWORD12345"), DeepEquals, []string{
+		"PASSword12345", "PassWORD12345", "passWORD1234",
+	})
+
+	c.Assert(GenPasswordBytesVariations([]byte("")), HasLen, 0)
+	c.Assert(GenPasswordBytesVariations([]byte("test")), HasLen, 0)
+	c.Assert(GenPasswordBytesVariations([]byte("password12345")), HasLen, 3)
+	c.Assert(GenPasswordBytesVariations([]byte("passWORD12345")), DeepEquals, [][]byte{
+		[]byte("PASSword12345"),
+		[]byte("PassWORD12345"),
+		[]byte("passWORD1234"),
+	})
+}
+
+func (s *PasswdSuite) TestHash(c *C) {
 	hp, err := Encrypt("Test123", "ABCD1234ABCD1234")
+
+	c.Assert(hp, NotNil)
+	c.Assert(err, IsNil)
+
+	hp, err = Hash("Test123", "ABCD1234ABCD1234")
 
 	c.Assert(hp, NotNil)
 	c.Assert(err, IsNil)
@@ -69,20 +92,20 @@ func (s *PasswdSuite) TestEncrypt(c *C) {
 	c.Assert(Check("TEST", "ABCD1234ABCD1234", "0000000000000000000000"), Equals, false)
 }
 
-func (s *PasswdSuite) TestEncryptErrors(c *C) {
+func (s *PasswdSuite) TestHashErrors(c *C) {
 	var err error
 
-	_, err = Encrypt("", "ABCD1234ABCD1234")
+	_, err = Hash("", "ABCD1234ABCD1234")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Password can't be empty")
 
-	_, err = Encrypt("Test123", "")
+	_, err = Hash("Test123", "")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Pepper can't be empty")
 
-	_, err = Encrypt("Test123", "ABCD1234ABCD12")
+	_, err = Hash("Test123", "ABCD1234ABCD12")
 
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Pepper have invalid size")
@@ -92,9 +115,9 @@ func (s *PasswdSuite) TestEncryptErrors(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *PasswdSuite) BenchmarkEncrypt(c *C) {
+func (s *PasswdSuite) BenchmarkHash(c *C) {
 	for i := 0; i < c.N; i++ {
-		Encrypt("Test123", "ABCD1234ABCD1234")
+		Hash("Test123", "ABCD1234ABCD1234")
 	}
 }
 

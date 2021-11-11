@@ -1,7 +1,5 @@
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package secstr provides methods and structs for working with protected (secure) strings
+package secstr
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -10,21 +8,21 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"pkg.re/essentialkaos/go-linenoise.v3"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// VERSION is current ek package version
-const VERSION = "12.35.0"
+// String contains protected data
+type String struct {
+	Data []byte
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+// NewSecureString creates new secure string
+func NewSecureString(data interface{}) (*String, error) {
+	return nil, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Destroy destroys data
+func (s *String) Destroy() error {
+	return nil
 }

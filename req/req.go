@@ -487,8 +487,8 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String converts query struct to string
-func (q Query) String() string {
+// Encode converts query struct to url-encoded string
+func (q Query) Encode() string {
 	var result string
 
 	for k, v := range q {
@@ -546,7 +546,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	}
 
 	if r.Query != nil && len(r.Query) != 0 {
-		r.URL += "?" + r.Query.String()
+		r.URL += "?" + r.Query.Encode()
 	}
 
 	bodyReader, err := getBodyReader(r.Body)

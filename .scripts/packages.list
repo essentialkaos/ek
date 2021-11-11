@@ -8,7 +8,7 @@
 * + env
 * + errutil
 * + events
-* ! directio
+* + directio
 * + fmtc
 * + fmtc/lscolors
 * + fmtutil
@@ -35,6 +35,7 @@ L + netutil
 * + progress
 * + rand
 * + req
+* + secstr
 * - signal
 * + sliceutil
 * + sortutil
