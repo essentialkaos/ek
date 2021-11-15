@@ -47,7 +47,7 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Encrypt creates hash and encrypts it with salt and pepper
-// Depricated: Use Hash method instead
+// Deprecated: Use Hash method instead
 func Encrypt(password, pepper string) (string, error) {
 	return Hash(password, pepper)
 }
