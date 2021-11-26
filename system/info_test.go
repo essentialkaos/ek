@@ -595,6 +595,22 @@ VERSION_CODENAME=groovy`)
 	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
 }
 
+func (s *SystemSuite) TestGetCPUArchBits(c *C) {
+	cpuInfoFile = "/_UNKNOWN_"
+
+	c.Assert(getCPUArchBits(), Equals, 0)
+
+	cpuInfoFile = s.CreateTestFile(c, "processor       : 1\nflags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64")
+
+	c.Assert(getCPUArchBits(), Equals, 64)
+
+	cpuInfoFile = s.CreateTestFile(c, "processor       : 1\nflags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64")
+
+	c.Assert(getCPUArchBits(), Equals, 32)
+
+	cpuInfoFile = "/proc/cpuinfo"
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SystemSuite) CreateTestFile(c *C, data string) string {

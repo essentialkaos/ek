@@ -45,6 +45,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 		Version:      osInfo.Version,
 		Kernel:       byteSliceToString(info.Release),
 		Arch:         byteSliceToString(info.Machine),
+		ArchBits:     getCPUArchBits(),
 	}, nil
 }
 

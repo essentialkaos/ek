@@ -300,3 +300,29 @@ func parseCPUCountInfo(data string) uint32 {
 
 	return uint32(end-start) + 1
 }
+
+// getCPUArchBits returns CPU architecture bits (32/64)
+func getCPUArchBits() int {
+	s, closer, err := getFileScanner(cpuInfoFile)
+
+	if err != nil {
+		return 0
+	}
+
+	defer closer()
+
+	for s.Scan() {
+		text := s.Text()
+
+		if !strings.HasPrefix(text, "flags") {
+			continue
+		}
+
+		// lm - 64 / tm - 32 / rm - 16
+		if strings.Contains(text, " lm ") {
+			return 64
+		}
+	}
+
+	return 32
+}
