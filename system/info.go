@@ -144,6 +144,7 @@ type SystemInfo struct {
 	Version      string `json:"version"`      // OS version
 	Kernel       string `json:"kernel"`       // Kernel version
 	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
+	ArchBits     int    `json:"arch_bits"`    // Architecture bits (32/64)
 }
 
 // OSInfo contains info about OS

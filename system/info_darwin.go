@@ -59,6 +59,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 		Version:      getOSXVersion(),
 		Kernel:       kernel,
 		Arch:         cleanArch,
+		ArchBits:     64,
 	}, nil
 }
 

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.36.0
+
+* `[system]` Added CPU architecture bits info to `SystemInfo`
+
 ### 12.35.1
 
 * `[passwd]` Fixed typo in deprecation notice
