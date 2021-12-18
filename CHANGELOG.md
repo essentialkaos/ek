@@ -3,6 +3,7 @@
 ### 12.37.0
 
 * `[strutil]` Added helper `Q` for working with default values
+* `[usage]` Added color customization for application name and version
 
 ### 12.36.0
 
