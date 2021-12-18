@@ -25,6 +25,12 @@ var _ = Suite(&StrUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *StrUtilSuite) TestQ(c *C) {
+	c.Assert(Q(), Equals, "")
+	c.Assert(Q("a"), Equals, "a")
+	c.Assert(Q("", "", "1"), Equals, "1")
+}
+
 func (s *StrUtilSuite) TestConcat(c *C) {
 	s1 := "abcdef"
 	s2 := "123456"

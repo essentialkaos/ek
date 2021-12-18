@@ -13,6 +13,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleQ() {
+	var defaultValue = "john"
+	var user = ""
+
+	fmt.Println(Q(user, defaultValue))
+
+	// Output:
+	// john
+}
+
 func ExampleConcat() {
 	fmt.Println(Concat("abc", " ", "123", " ", "ABC"))
 

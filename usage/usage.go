@@ -32,6 +32,15 @@ const _BREADCRUMBS_MIN_SIZE = 8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	DEFAULT_COMMANDS_COLOR_TAG = "{y}"
+	DEFAULT_OPTIONS_COLOR_TAG  = "{g}"
+	DEFAULT_APP_NAME_COLOR_TAG = "{c*}"
+	DEFAULT_APP_VER_COLOR_TAG  = "{c}"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // About contains info about application
 type About struct {
 	App        string // App is application name
@@ -44,14 +53,17 @@ type About struct {
 	Owner      string // Owner is name of owner (company/developer)
 	BugTracker string // BugTracker is URL of bug tracker
 
+	AppNameColorTag string // AppNameColorTag contains default app name color tag
+	VersionColorTag string // AppNameColorTag contains default app version color tag
+
 	// Function for checking application updates
 	UpdateChecker UpdateChecker
 }
 
 // Info contains info about commands, options, and examples
 type Info struct {
-	CommandsColorTag string // CommandsColor contains default commands color
-	OptionsColorTag  string // OptionsColor contains default options color
+	CommandsColorTag string // CommandsColor contains default commands color tag
+	OptionsColorTag  string // OptionsColor contains default options color tag
 	Breadcrumbs      bool   // Use bread crumbs for commands and options output
 
 	Name    string
@@ -105,16 +117,14 @@ func NewInfo(args ...string) *Info {
 		args = args[1:]
 	}
 
-	if name == "" {
-		name = filepath.Base(os.Args[0])
-	}
+	name = strutil.Q(name, filepath.Base(os.Args[0]))
 
 	info := &Info{
 		Name: name,
 		Args: args,
 
-		CommandsColorTag: "{y}",
-		OptionsColorTag:  "{g}",
+		CommandsColorTag: DEFAULT_COMMANDS_COLOR_TAG,
+		OptionsColorTag:  DEFAULT_OPTIONS_COLOR_TAG,
 		Breadcrumbs:      true,
 	}
 
@@ -273,16 +283,19 @@ func (i *Info) Render() {
 
 // Render prints version info to console
 func (a *About) Render() {
+	nc := strutil.Q(a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
+	vc := strutil.Q(a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG)
+
 	switch {
 	case a.Build != "":
 		fmtc.Printf(
-			"\n{*c}%s {c}%s{!}{s}%s{!} {s-}(%s){!} - %s\n\n",
+			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} {s-}(%s){!} - %s\n\n",
 			a.App, a.Version,
 			a.Release, a.Build, a.Desc,
 		)
 	default:
 		fmtc.Printf(
-			"\n{*c}%s {c}%s{!}{s}%s{!} - %s\n\n",
+			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} - %s\n\n",
 			a.App, a.Version,
 			a.Release, a.Desc,
 		)

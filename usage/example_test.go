@@ -23,6 +23,9 @@ func ExampleAbout_Render() {
 		Year:    2009,    // Year when company was founded
 		License: "MIT",
 		Owner:   "John Dow <john@domain.com>",
+
+		AppNameColorTag: "{r*}", // Use custom color for application name
+		VersionColorTag: "{r}",  // Use custom color for application version
 	}
 
 	about.Render()
