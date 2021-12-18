@@ -24,6 +24,17 @@ var defaultFieldsSeparators = []string{" ", "\t"}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Q is simple helper for working with default values
+func Q(v ...string) string {
+	for _, k := range v {
+		if k != "" {
+			return k
+		}
+	}
+
+	return ""
+}
+
 // Concat is method for fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer

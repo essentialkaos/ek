@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.37.0
+
+* `[strutil]` Added helper `Q` for working with default values
+
 ### 12.36.0
 
 * `[system]` Added CPU architecture bits info to `SystemInfo`
