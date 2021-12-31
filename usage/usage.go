@@ -54,7 +54,7 @@ type About struct {
 	BugTracker string // BugTracker is URL of bug tracker
 
 	AppNameColorTag string // AppNameColorTag contains default app name color tag
-	VersionColorTag string // AppNameColorTag contains default app version color tag
+	VersionColorTag string // VersionColorTag contains default app version color tag
 
 	// Function for checking application updates
 	UpdateChecker UpdateChecker
@@ -62,6 +62,7 @@ type About struct {
 
 // Info contains info about commands, options, and examples
 type Info struct {
+	AppNameColorTag  string // AppNameColorTag contains default app name color tag
 	CommandsColorTag string // CommandsColor contains default commands color tag
 	OptionsColorTag  string // OptionsColor contains default options color tag
 	Breadcrumbs      bool   // Use bread crumbs for commands and options output
@@ -79,12 +80,13 @@ type Info struct {
 
 // UpdateChecker is a base for all update checkers
 type UpdateChecker struct {
-	Data      string
+	Payload   string
 	CheckFunc func(app, version, data string) (string, time.Time, bool)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Command contains info about supported command
 type Command struct {
 	Name         string
 	Desc         string
@@ -93,6 +95,7 @@ type Command struct {
 	BoundOptions []string
 }
 
+// Option contains info about supported option
 type Option struct {
 	Short string
 	Long  string
@@ -100,6 +103,7 @@ type Option struct {
 	Arg   string
 }
 
+// Example contains usage example
 type Example struct {
 	Cmd  string
 	Desc string
@@ -245,7 +249,7 @@ func (i *Info) GetOption(name string) *Option {
 
 // Render prints usage info to console
 func (i *Info) Render() {
-	usageMessage := "\n{*}Usage:{!} " + i.Name
+	usageMessage := "\n{*}Usage:{!} " + i.AppNameColorTag + i.Name + "{!}"
 
 	if len(i.Options) != 0 {
 		usageMessage += " " + i.OptionsColorTag + "{options}{!}"
@@ -319,11 +323,11 @@ func (a *About) Render() {
 		fmtc.Printf("{s-}%s{!}\n", a.License)
 	}
 
-	if a.UpdateChecker.CheckFunc != nil && a.UpdateChecker.Data != "" {
+	if a.UpdateChecker.CheckFunc != nil && a.UpdateChecker.Payload != "" {
 		newVersion, releaseDate, hasUpdate := a.UpdateChecker.CheckFunc(
 			a.App,
 			a.Version,
-			a.UpdateChecker.Data,
+			a.UpdateChecker.Payload,
 		)
 
 		if hasUpdate && isNewerVersion(a.Version, newVersion) {
