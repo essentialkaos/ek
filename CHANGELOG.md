@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.38.0
+
+* `[usage]` Improved color customization for application name and version
+* `[usage]` Added color customization for application name in usage info
+
 ### 12.37.0
 
 * `[strutil]` Added helper `Q` for working with default values

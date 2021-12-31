@@ -11,35 +11,35 @@ package signal
 
 const (
 	ABRT   = 0
-	ALRM   = 0
-	BUS    = 0
-	CHLD   = 0
-	CONT   = 0
-	FPE    = 0
-	HUP    = 0
-	ILL    = 0
-	INT    = 0
-	IO     = 0
-	IOT    = 0
-	KILL   = 0
-	PIPE   = 0
-	PROF   = 0
-	QUIT   = 0
-	SEGV   = 0
-	STOP   = 0
-	SYS    = 0
-	TERM   = 0
-	TRAP   = 0
-	TSTP   = 0
-	TTIN   = 0
-	TTOU   = 0
-	URG    = 0
-	USR1   = 0
-	USR2   = 0
-	VTALRM = 0
-	WINCH  = 0
-	XCPU   = 0
-	XFSZ   = 0
+	ALRM   = 1
+	BUS    = 2
+	CHLD   = 3
+	CONT   = 4
+	FPE    = 5
+	HUP    = 6
+	ILL    = 7
+	INT    = 8
+	IO     = 9
+	IOT    = 10
+	KILL   = 11
+	PIPE   = 12
+	PROF   = 13
+	QUIT   = 14
+	SEGV   = 15
+	STOP   = 16
+	SYS    = 17
+	TERM   = 18
+	TRAP   = 19
+	TSTP   = 20
+	TTIN   = 21
+	TTOU   = 22
+	URG    = 23
+	USR1   = 24
+	USR2   = 25
+	VTALRM = 26
+	WINCH  = 27
+	XCPU   = 28
+	XFSZ   = 29
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

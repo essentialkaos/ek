@@ -39,6 +39,11 @@ func ExampleNewInfo() {
 	// You can hardcode the name of the app if you want
 	info = NewInfo("myapp")
 
+	// You can customize some colors
+	info.AppNameColorTag = "{c}"
+	info.CommandsColorTag = "{y}"
+	info.OptionsColorTag = "{m}"
+
 	// You can define one or more arguments handled by your program
 	info = NewInfo("", "files…")
 	info = NewInfo("", "input", "num-files", "output")
