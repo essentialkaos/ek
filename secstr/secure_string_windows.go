@@ -17,6 +17,7 @@ type String struct {
 
 // NewSecureString creates new secure string
 func NewSecureString(data interface{}) (*String, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
@@ -24,5 +25,6 @@ func NewSecureString(data interface{}) (*String, error) {
 
 // Destroy destroys data
 func (s *String) Destroy() error {
+	panic("UNSUPPORTED")
 	return nil
 }

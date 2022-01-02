@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 // Package sensors provide methods for collecting sensors information

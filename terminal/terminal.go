@@ -1,4 +1,5 @@
-// +build linux, darwin, !windows
+//go:build !windows
+// +build !windows
 
 // Package terminal provides methods for working with user input
 package terminal

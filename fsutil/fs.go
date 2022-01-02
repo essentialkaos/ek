@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 // Package fsutil provides methods for working with files on POSIX compatible systems
@@ -25,8 +26,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_IFMT   = 0XF000
-	_IFSOCK = 0XC000
+	_IFMT   = 0xF000
+	_IFSOCK = 0xC000
 	_IFREG  = 0x8000
 	_IFBLK  = 0x6000
 	_IFDIR  = 0x4000

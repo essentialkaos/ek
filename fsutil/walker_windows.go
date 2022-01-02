@@ -1,5 +1,3 @@
-// +build windows
-
 package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -10,10 +8,12 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Push(dir string) string {
+	panic("UNSUPPORTED")
 	return ""
 }
 
 // Pop change current working directory to previous in stack
 func Pop() string {
+	panic("UNSUPPORTED")
 	return ""
 }

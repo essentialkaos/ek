@@ -1,5 +1,3 @@
-// +build windows
-
 package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -23,10 +21,12 @@ type ProcessInfo struct {
 
 // GetTree returns root process with all subprocesses on the system
 func GetTree(pid ...int) (*ProcessInfo, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
 // GetList returns slice with all active processes on the system
 func GetList() ([]*ProcessInfo, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }

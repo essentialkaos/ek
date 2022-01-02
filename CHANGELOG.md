@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.38.1
+
+* Fixed build tags for Go ≤ 1.16
+
 ### 12.38.0
 
 * `[usage]` Improved color customization for application name and version

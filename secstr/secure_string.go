@@ -1,4 +1,5 @@
-//+build !windows
+//go:build !windows
+// +build !windows
 
 // Package secstr provides methods and structs for working with protected (secure) strings
 package secstr

@@ -1,5 +1,3 @@
-// +build windows
-
 package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,15 +9,18 @@ package window
 
 // GetSize returns window width and height
 func GetSize() (int, int) {
+	panic("UNSUPPORTED")
 	return -1, -1
 }
 
 // GetWidth returns window width
 func GetWidth() int {
+	panic("UNSUPPORTED")
 	return -1
 }
 
 // GetHeight returns window height
 func GetHeight() int {
+	panic("UNSUPPORTED")
 	return -1
 }

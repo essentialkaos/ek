@@ -14,12 +14,13 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	BLOCK_SIZE = 4096 // Minimal block size
-	ALIGN_SIZE = 4096 // Align size
+	BLOCK_SIZE = 0 // Minimal block size
+	ALIGN_SIZE = 0 // Align size
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func openFile(file string, flag int, perm os.FileMode) (*os.File, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }

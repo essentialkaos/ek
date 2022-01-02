@@ -1,4 +1,5 @@
-// +build linux, darwin, !windows
+//go:build !windows
+// +build !windows
 
 // Package exec provides methods for executing commands
 package exec
