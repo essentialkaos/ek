@@ -1,5 +1,3 @@
-// +build !linux, !darwin, windows
-
 package signal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,9 +55,13 @@ type Handlers map[int]func()
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Track catch signal and execute handler for this signal
-func (h Handlers) Track() {}
+func (h Handlers) Track() {
+	panic("UNSUPPORTED")
+}
 
 // TrackAsync catch signal and execute async handler for this signal
-func (h Handlers) TrackAsync() {}
+func (h Handlers) TrackAsync() {
+	panic("UNSUPPORTED")
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //

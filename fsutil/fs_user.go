@@ -1,3 +1,4 @@
+//go:build !unit
 // +build !unit
 
 // Package fsutil provides methods for working with files on POSIX compatible systems

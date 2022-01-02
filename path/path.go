@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 // Package path provides methods for working with paths (fully compatible with base path package)

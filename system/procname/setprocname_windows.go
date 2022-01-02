@@ -1,5 +1,3 @@
-// +build windows
-
 package procname
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,10 +9,12 @@ package procname
 
 // Set change current process command in process tree
 func Set(args []string) error {
+	panic("UNSUPPORTED")
 	return nil
 }
 
 // Replace replace one argument in process command
 func Replace(from, to string) error {
+	panic("UNSUPPORTED")
 	return nil
 }

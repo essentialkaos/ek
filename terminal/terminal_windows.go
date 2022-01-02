@@ -1,5 +1,3 @@
-// +build windows, !linux, !darwin
-
 package terminal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -30,41 +28,44 @@ var MaskSymbolColorTag = ""
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ReadUI(title string, nonEmpty bool) (string, error) {
+	panic("UNSUPPORTED")
 	return "", nil
 }
 
 func ReadAnswer(title, defaultAnswer string) (bool, error) {
+	panic("UNSUPPORTED")
 	return true, nil
 }
 
 func ReadPassword(title string, nonEmpty bool) (string, error) {
+	panic("UNSUPPORTED")
 	return "", nil
 }
 
 func PrintErrorMessage(message string, args ...interface{}) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func PrintWarnMessage(message string, args ...interface{}) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func PrintActionMessage(message string) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func PrintActionStatus(status int) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func AddHstory(ui string) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func SetCompletionHandler(h func(in string) []string) {
-	return
+	panic("UNSUPPORTED")
 }
 
 func SetHintHandler(h func(input string) string) {
-	return
+	panic("UNSUPPORTED")
 }

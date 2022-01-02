@@ -1,5 +1,3 @@
-// +build !linux, !darwin, windows
-
 // Package exec provides methods for executing commands
 package exec
 
@@ -12,16 +10,19 @@ package exec
 
 // Sudo execute some command with sudo
 func Sudo(user string, args ...string) error {
+	panic("UNSUPPORTED")
 	return nil
 }
 
 // Run execute some command
 func Run(command string, args ...string) error {
+	panic("UNSUPPORTED")
 	return nil
 }
 
 // RunAsUser run command as some user
 func RunAsUser(user, logFile string, command string, args ...string) error {
+	panic("UNSUPPORTED")
 	return nil
 }
 

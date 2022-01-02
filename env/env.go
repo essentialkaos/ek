@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 // Package env provides methods for working with environment variables

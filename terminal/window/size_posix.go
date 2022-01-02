@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 // Package window provides methods for working terminal window

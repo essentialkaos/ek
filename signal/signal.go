@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 // Package signal provides methods for handling POSIX signals

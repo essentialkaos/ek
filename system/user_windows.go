@@ -44,31 +44,37 @@ type SessionInfo struct {
 
 // Who returns info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
 // CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
 // LookupUser searches user info by given name
 func LookupUser(name string) (*User, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
 // LookupGroup searches group info by given name
 func LookupGroup(name string) (*Group, error) {
+	panic("UNSUPPORTED")
 	return nil, nil
 }
 
 // IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsGroupExist checks if group exist on system or not
 func IsGroupExist(name string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
@@ -76,16 +82,19 @@ func IsGroupExist(name string) bool {
 
 // IsRoot checks if current user is root
 func (u *User) IsRoot() bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsSudo checks if it user over sudo command
 func (u *User) IsSudo() bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // GroupList returns slice with user groups names
 func (u *User) GroupList() []string {
+	panic("UNSUPPORTED")
 	return nil
 }
 

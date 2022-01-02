@@ -1,5 +1,3 @@
-// +build windows
-
 package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -17,159 +15,185 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	S_IFMT   = 0170000
-	S_IFSOCK = 0140000
-	S_IFLNK  = 0120000
-	S_IFREG  = 0100000
-	S_IFBLK  = 0060000
-	S_IFDIR  = 0040000
-	S_IFCHR  = 0020000
-	S_IFIFO  = 0010000
-	S_ISUID  = 0004000
-	S_ISGID  = 0002000
-	S_ISVTX  = 0001000
-	S_IRWXU  = 00700
-	S_IRUSR  = 00400
-	S_IWUSR  = 00200
-	S_IXUSR  = 00100
-	S_IRWXG  = 00070
-	S_IRGRP  = 00040
-	S_IWGRP  = 00020
-	S_IXGRP  = 00010
-	S_IRWXO  = 00007
-	S_IROTH  = 00004
-	S_IWOTH  = 00002
-	S_IXOTH  = 00001
+	S_IFMT   = 0
+	S_IFSOCK = 0
+	S_IFLNK  = 0
+	S_IFREG  = 0
+	S_IFBLK  = 0
+	S_IFDIR  = 0
+	S_IFCHR  = 0
+	S_IFIFO  = 0
+	S_ISUID  = 0
+	S_ISGID  = 0
+	S_ISVTX  = 0
+	S_IRWXU  = 0
+	S_IRUSR  = 0
+	S_IWUSR  = 0
+	S_IXUSR  = 0
+	S_IRWXG  = 0
+	S_IRGRP  = 0
+	S_IWGRP  = 0
+	S_IXGRP  = 0
+	S_IRWXO  = 0
+	S_IROTH  = 0
+	S_IWOTH  = 0
+	S_IXOTH  = 0
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // CheckPerms check many props at once
 func CheckPerms(perms, path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // ValidatePerms validates permissions for file or directory
 func ValidatePerms(props, path string) error {
+	panic("UNSUPPORTED")
 	return nil
 }
 
 // ProperPath returns the first proper path from a given slice
 func ProperPath(props string, paths []string) string {
+	panic("UNSUPPORTED")
 	return ""
 }
 
 // IsExist returns true if the given object is exist
 func IsExist(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsRegular returns true if the given object is a regular file
 func IsRegular(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsSocket returns true if the given object is a socket
 func IsSocket(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsBlockDevice returns true if the given object is a device
 func IsBlockDevice(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsCharacterDevice returns true if the given object is a character device
 func IsCharacterDevice(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsDir returns true if the given object is a directory
 func IsDir(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsLink returns true if the given object is a link
 func IsLink(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsReadable returns true if given object is readable by current user
 func IsReadable(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsReadableByUser returns true if given object is readable by some user
 func IsReadableByUser(path, userName string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsWritable returns true if given object is writable by current user
 func IsWritable(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsWritableByUser returns true if given object is writable by some user
 func IsWritableByUser(path, userName string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsExecutable returns true if given object is executable by current user
 func IsExecutable(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsExecutableByUser returns true if given object is executable by some user
 func IsExecutableByUser(path, userName string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsNonEmpty returns true if given file is not empty
 func IsNonEmpty(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // IsEmptyDir returns true if given directory es empty
 func IsEmptyDir(path string) bool {
+	panic("UNSUPPORTED")
 	return false
 }
 
 // GetOwner returns object owner UID and GID
 func GetOwner(path string) (int, int, error) {
+	panic("UNSUPPORTED")
 	return 0, 0, nil
 }
 
 // GetATime returns time of last access
 func GetATime(path string) (time.Time, error) {
+	panic("UNSUPPORTED")
 	return time.Time{}, nil
 }
 
 // GetCTime returns time of creation
 func GetCTime(path string) (time.Time, error) {
+	panic("UNSUPPORTED")
 	return time.Time{}, nil
 }
 
 // GetMTime returns time of modification
 func GetMTime(path string) (time.Time, error) {
+	panic("UNSUPPORTED")
 	return time.Time{}, nil
 }
 
 // GetSize returns file size in bytes
 func GetSize(path string) int64 {
+	panic("UNSUPPORTED")
 	return -1
 }
 
 // GetMode returns file mode bits
 func GetMode(path string) os.FileMode {
+	panic("UNSUPPORTED")
 	return 0
 }
 
 // GetTimes returns time of access, modification, and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
+	panic("UNSUPPORTED")
 	return time.Time{}, time.Time{}, time.Time{}, nil
 }
 
 // GetTimestamps returns time of access, modification, and creation at once as unix timestamp
 func GetTimestamps(path string) (int64, int64, int64, error) {
+	panic("UNSUPPORTED")
 	return -1, -1, -1, nil
 }
