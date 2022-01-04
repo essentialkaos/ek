@@ -1,3 +1,4 @@
+// Package window provides methods for working terminal window
 package window
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -7,19 +8,19 @@ package window
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize returns window width and height
+// ❗ GetSize returns window width and height
 func GetSize() (int, int) {
 	panic("UNSUPPORTED")
 	return -1, -1
 }
 
-// GetWidth returns window width
+// ❗ GetWidth returns window width
 func GetWidth() int {
 	panic("UNSUPPORTED")
 	return -1
 }
 
-// GetHeight returns window height
+// ❗ GetHeight returns window height
 func GetHeight() int {
 	panic("UNSUPPORTED")
 	return -1
