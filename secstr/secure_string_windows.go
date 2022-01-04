@@ -8,14 +8,14 @@ package secstr
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String contains protected data
+// ❗ String contains protected data
 type String struct {
 	Data []byte
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewSecureString creates new secure string
+// ❗ NewSecureString creates new secure string
 func NewSecureString(data interface{}) (*String, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
@@ -23,7 +23,7 @@ func NewSecureString(data interface{}) (*String, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Destroy destroys data
+// ❗ Destroy destroys data
 func (s *String) Destroy() error {
 	panic("UNSUPPORTED")
 	return nil

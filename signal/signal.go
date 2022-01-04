@@ -23,41 +23,41 @@ import (
 
 // Signal codes
 const (
-	ABRT   = syscall.SIGABRT
-	ALRM   = syscall.SIGALRM
-	BUS    = syscall.SIGBUS
-	CHLD   = syscall.SIGCHLD
-	CONT   = syscall.SIGCONT
-	FPE    = syscall.SIGFPE
-	HUP    = syscall.SIGHUP
-	ILL    = syscall.SIGILL
-	INT    = syscall.SIGINT
-	IO     = syscall.SIGIO
-	IOT    = syscall.SIGIOT
-	KILL   = syscall.SIGKILL
-	PIPE   = syscall.SIGPIPE
-	PROF   = syscall.SIGPROF
-	QUIT   = syscall.SIGQUIT
-	SEGV   = syscall.SIGSEGV
-	STOP   = syscall.SIGSTOP
-	SYS    = syscall.SIGSYS
-	TERM   = syscall.SIGTERM
-	TRAP   = syscall.SIGTRAP
-	TSTP   = syscall.SIGTSTP
-	TTIN   = syscall.SIGTTIN
-	TTOU   = syscall.SIGTTOU
-	URG    = syscall.SIGURG
-	USR1   = syscall.SIGUSR1
-	USR2   = syscall.SIGUSR2
-	VTALRM = syscall.SIGVTALRM
-	WINCH  = syscall.SIGWINCH
-	XCPU   = syscall.SIGXCPU
-	XFSZ   = syscall.SIGXFSZ
+	ABRT   = syscall.SIGABRT   // ABRT signal code
+	ALRM   = syscall.SIGALRM   // ALRM signal code
+	BUS    = syscall.SIGBUS    // BUS signal code
+	CHLD   = syscall.SIGCHLD   // CHLD signal code
+	CONT   = syscall.SIGCONT   // CONT signal code
+	FPE    = syscall.SIGFPE    // FPE signal code
+	HUP    = syscall.SIGHUP    // HUP signal code
+	ILL    = syscall.SIGILL    // ILL signal code
+	INT    = syscall.SIGINT    // INT signal code
+	IO     = syscall.SIGIO     // IO signal code
+	IOT    = syscall.SIGIOT    // IOT signal code
+	KILL   = syscall.SIGKILL   // KILL signal code
+	PIPE   = syscall.SIGPIPE   // PIPE signal code
+	PROF   = syscall.SIGPROF   // PROF signal code
+	QUIT   = syscall.SIGQUIT   // QUIT signal code
+	SEGV   = syscall.SIGSEGV   // SEGV signal code
+	STOP   = syscall.SIGSTOP   // STOP signal code
+	SYS    = syscall.SIGSYS    // SYS signal code
+	TERM   = syscall.SIGTERM   // TERM signal code
+	TRAP   = syscall.SIGTRAP   // TRAP signal code
+	TSTP   = syscall.SIGTSTP   // TSTP signal code
+	TTIN   = syscall.SIGTTIN   // TTIN signal code
+	TTOU   = syscall.SIGTTOU   // TTOU signal code
+	URG    = syscall.SIGURG    // URG signal code
+	USR1   = syscall.SIGUSR1   // USR1 signal code
+	USR2   = syscall.SIGUSR2   // USR2 signal code
+	VTALRM = syscall.SIGVTALRM // VTALRM signal code
+	WINCH  = syscall.SIGWINCH  // WINCH signal code
+	XCPU   = syscall.SIGXCPU   // XCPU signal code
+	XFSZ   = syscall.SIGXFSZ   // XFSZ signal code
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Handlers is map signal->handler
+// Handlers is map signal → handler
 type Handlers map[os.Signal]func()
 
 // ////////////////////////////////////////////////////////////////////////////////// //

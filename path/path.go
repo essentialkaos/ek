@@ -21,7 +21,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-//ErrBadPattern indicates a globbing pattern was malformed
+// ErrBadPattern indicates a globbing pattern was malformed
 var ErrBadPattern = errors.New("Syntax error in pattern")
 
 // unsafePaths is slice with unsafe paths

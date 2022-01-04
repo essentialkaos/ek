@@ -8,19 +8,19 @@ package exec
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Sudo execute some command with sudo
+// ❗ Sudo executes command with sudo
 func Sudo(user string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// Run execute some command
+// ❗ Run executes command
 func Run(command string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// RunAsUser run command as some user
+// ❗ RunAsUser runs command as a given user
 func RunAsUser(user, logFile string, command string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil

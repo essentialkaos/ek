@@ -8,37 +8,37 @@ package initsystem
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SysV if SysV is used on system
+// ❗ SysV returns true if SysV is used on system
 func SysV() bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// Upstart if Upstart is used on system
+// ❗ Upstart returns true if Upstart is used on system
 func Upstart() bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// Systemd if Systemd is used on system
+// ❗ Systemd returns true if Systemd is used on system
 func Systemd() bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// IsPresent returns true if service is present in any init system
+// ❗ IsPresent returns true if service is present in any init system
 func IsPresent(name string) bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// IsWorks returns service state
+// ❗ IsWorks returns service state
 func IsWorks(name string) (bool, error) {
 	panic("UNSUPPORTED")
 	return false, nil
 }
 
-// IsEnabled returns true if auto start enabled for given service
+// ❗ IsEnabled returns true if auto start enabled for given service
 func IsEnabled(name string) (bool, error) {
 	panic("UNSUPPORTED")
 	return false, nil

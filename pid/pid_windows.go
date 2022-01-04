@@ -1,3 +1,4 @@
+// Package pid provides methods for working with PID files
 package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -7,13 +8,13 @@ package pid
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsWorks returns true if process with PID from PID file is works
+// ❗ IsWorks returns true if process with PID from PID file is works
 func IsWorks(name string) bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// IsProcessWorks returns true if process with given PID is works
+// ❗ IsProcessWorks returns true if process with given PID is works
 func IsProcessWorks(pid int) bool {
 	panic("UNSUPPORTED")
 	return false
