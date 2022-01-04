@@ -17,7 +17,13 @@ Auxiliary packages for Go.
 
 ### Platform support
 
-Currently we support Linux and macOS (except `system` package). Some packages have stubs for Windows (_for autocomplete_).
+Currently we support Linux and macOS (_except some packages_). All packages have stubs for unsupported platforms (_for autocomplete_).
+
+<details><summary><b>More info about stubs</b></summary><p>
+
+> Some packages cannot be used on some platforms, like `fsutil` package, which cannot be used on Windows due to using signals, or `system` sub-packages which require [procfs](https://en.wikipedia.org/wiki/Procfs). But you can write code on these platforms with no problem because almost all packages have stubs with information about all constants, variables, and functions available on other platforms. So, for example, Sublime with [LSP](https://lsp.sublimetext.io) on Windows will show all information about methods available only on the Linux platform. All descriptions from stubs contain symbol ❗ at the beginning as a mark of unsupported code. Code with stubs can be compiled, but any method invocation from stubs will lead to panic.
+
+</p></details>
 
 ### Installation
 
