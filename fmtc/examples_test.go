@@ -112,6 +112,14 @@ func ExampleClean() {
 	// Output: Text
 }
 
+func ExampleIs256ColorsSupported() {
+	fmt.Printf("256 Colors Supported: %t\n", Is256ColorsSupported())
+}
+
+func ExampleIsTrueColorSupported() {
+	fmt.Printf("TrueColor Supported: %t\n", IsTrueColorSupported())
+}
+
 func ExampleTPrintf() {
 	TPrintf("This is temporary text")
 	time.Sleep(time.Second)
@@ -122,7 +130,7 @@ func ExampleTLPrintf() {
 	// Power of TPrintf and LPrintf in one method
 	TLPrintf(22, "This is temporary text")
 	time.Sleep(time.Second)
-	TLPrintf(22, "This message replace previous message after 1 sec")
+	TLPrintf(22, "This message will replace previous message after 1 sec")
 }
 
 func ExampleLPrintf() {
