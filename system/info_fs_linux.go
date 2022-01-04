@@ -26,9 +26,6 @@ var procDiskStatsFile = "/proc/diskstats"
 // Path to mtab file
 var mtabFile = "/etc/mtab"
 
-// Ticks per second
-var hz = 0.0
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetFSUsage returns info about mounted filesystems
