@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.39.0
+
+* `[fmtc]` Added TrueColor support
+* `[fmtc]` Code refactoring
+
 ### 12.38.1
 
 * Fixed build tags for Go ≤ 1.16

@@ -73,9 +73,13 @@ func ExamplePrintln() {
 	// modificator reset
 	Println("{r}{*}red and bold {!*}just red{!}")
 
-	// 256 colors. # for foreground, % for background
+	// 256 colors (# for foreground, % for background)
 	Println("{#201}pink text{!}")
 	Println("{%201}pink background{!}")
+
+	// 24-bit colors (# for foreground, % for background)
+	Println("{#7cfc00}lawngreen text{!}")
+	Println("{%6a5acd}slateblue background{!}")
 }
 
 func ExamplePrintf() {
