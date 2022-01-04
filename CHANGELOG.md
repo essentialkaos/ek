@@ -4,6 +4,8 @@
 
 * `[fmtc]` Added TrueColor support
 * `[fmtc]` Code refactoring
+* Added more stubs for macOS
+* Improved stubs for Windows
 
 ### 12.38.1
 

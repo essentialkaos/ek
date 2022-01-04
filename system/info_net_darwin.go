@@ -7,6 +7,12 @@ package system
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import (
+	"time"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ GetInterfacesStats returns info about network interfaces
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	panic("UNSUPPORTED")
