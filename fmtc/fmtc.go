@@ -73,9 +73,11 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var colors256Supported bool
-var colors256Checked bool
 var colorsTCSupported bool
-var colorsTCChecked bool
+var colorsSupportChecked bool
+
+var term = os.Getenv("TERM")
+var colorTerm = os.Getenv("COLORTERM")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -250,24 +252,22 @@ func Bell() {
 
 // Is256ColorsSupported returns true if 256 colors is supported by terminal
 func Is256ColorsSupported() bool {
-	if colors256Checked {
+	if colorsSupportChecked {
 		return colors256Supported
 	}
 
-	colors256Supported = strings.Contains(os.Getenv("TERM"), "256color")
-	colors256Checked = true
+	checkForColorsSupport()
 
 	return colors256Supported
 }
 
 // IsTrueColorSupported returns true if TrueColor (24-bit colors) is supported by terminal
 func IsTrueColorSupported() bool {
-	if colorsTCChecked {
+	if colorsSupportChecked {
 		return colorsTCSupported
 	}
 
-	colorsTCSupported = strings.Contains(os.Getenv("TERM"), "truecolor") || os.Getenv("COLORTERM") == "truecolor"
-	colorsTCChecked = true
+	checkForColorsSupport()
 
 	return colorsTCSupported
 }
@@ -503,6 +503,20 @@ func isValidExtendedTag(tag string) bool {
 	}
 
 	return true
+}
+
+func checkForColorsSupport() {
+	if strings.Contains(term, "256color") {
+		colors256Supported = true
+	}
+
+	if term == "iterm" || colorTerm == "truecolor" ||
+		strings.Contains(term, "truecolor") ||
+		strings.HasPrefix(term, "vte") {
+		colors256Supported, colorsTCSupported = true, true
+	}
+
+	colorsSupportChecked = true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

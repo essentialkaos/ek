@@ -87,17 +87,24 @@ func (s *FormatSuite) TestParsing(c *C) {
 }
 
 func (s *FormatSuite) Test256Colors(c *C) {
-	term := os.Getenv("TERM")
+	term = "xterm-256color"
+	colorTerm = ""
 
-	os.Setenv("TERM", "xterm-256color")
+	colorsSupportChecked = false
+
 	c.Assert(Is256ColorsSupported(), Equals, true)
-	colors256Checked = false
 
-	os.Setenv("TERM", "")
+	colorsSupportChecked = false
+	colors256Supported = false
+	colorsTCSupported = false
+	term = ""
+	colorTerm = ""
+
 	c.Assert(Is256ColorsSupported(), Equals, false)
 	c.Assert(Is256ColorsSupported(), Equals, false)
 
-	os.Setenv("TERM", term)
+	term = os.Getenv("TERM")
+	colorTerm = os.Getenv("COLORTERM")
 
 	c.Assert(Sprint("{#214}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
 	c.Assert(Sprint("{%214}O{!}"), Equals, "\x1b[48;5;214mO\x1b[0m")
@@ -108,20 +115,24 @@ func (s *FormatSuite) Test256Colors(c *C) {
 }
 
 func (s *FormatSuite) Test24BitColors(c *C) {
-	term := os.Getenv("TERM")
-	colorTerm := os.Getenv("COLORTERM")
+	term = "xterm-256color"
+	colorTerm = "truecolor"
 
-	os.Setenv("COLORTERM", "truecolor")
+	colorsSupportChecked = false
+
 	c.Assert(IsTrueColorSupported(), Equals, true)
-	colorsTCChecked = false
 
-	os.Setenv("TERM", "")
-	os.Setenv("COLORTERM", "")
+	colorsSupportChecked = false
+	colors256Supported = false
+	colorsTCSupported = false
+	term = ""
+	colorTerm = ""
+
 	c.Assert(IsTrueColorSupported(), Equals, false)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 
-	os.Setenv("TERM", term)
-	os.Setenv("COLORTERM", colorTerm)
+	term = os.Getenv("TERM")
+	colorTerm = os.Getenv("COLORTERM")
 
 	c.Assert(Sprint("{#f1c1b2}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
 	c.Assert(Sprint("{%1F2E3D}O{!}"), Equals, "\x1b[48;2;31;46;61mO\x1b[0m")
