@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 // Package directio provides methods for reading/writing files with direct io
 package directio
 
@@ -26,7 +29,6 @@ var blockPool = sync.Pool{
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ReadFile read file with Direct IO without buffering data in page cache
-// (currently only Unix and Mac OS X is supported)
 func ReadFile(file string) ([]byte, error) {
 	fd, err := openFile(file, os.O_RDONLY, 0)
 
@@ -46,7 +48,6 @@ func ReadFile(file string) ([]byte, error) {
 }
 
 // WriteFile write file with Direct IO without buffering data in page cache
-// (currently only Unix and Mac OS X is supported)
 func WriteFile(file string, data []byte, perms os.FileMode) error {
 	fd, err := openFile(file, os.O_CREATE|os.O_WRONLY, perms)
 

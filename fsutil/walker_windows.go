@@ -7,12 +7,13 @@ package fsutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ❗ Push changes current working directory and add previous working directory to stack
 func Push(dir string) string {
 	panic("UNSUPPORTED")
 	return ""
 }
 
-// Pop change current working directory to previous in stack
+// ❗ Pop changes current working directory to previous in stack
 func Pop() string {
 	panic("UNSUPPORTED")
 	return ""
