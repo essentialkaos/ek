@@ -93,6 +93,7 @@ func (s *FormatSuite) Test256Colors(c *C) {
 	colorsSupportChecked = false
 
 	c.Assert(Is256ColorsSupported(), Equals, true)
+	c.Assert(IsTrueColorSupported(), Equals, false)
 
 	colorsSupportChecked = false
 	colors256Supported = false
@@ -102,6 +103,7 @@ func (s *FormatSuite) Test256Colors(c *C) {
 
 	c.Assert(Is256ColorsSupported(), Equals, false)
 	c.Assert(Is256ColorsSupported(), Equals, false)
+	c.Assert(IsTrueColorSupported(), Equals, false)
 
 	term = os.Getenv("TERM")
 	colorTerm = os.Getenv("COLORTERM")
@@ -121,6 +123,7 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	colorsSupportChecked = false
 
 	c.Assert(IsTrueColorSupported(), Equals, true)
+	c.Assert(Is256ColorsSupported(), Equals, true)
 
 	colorsSupportChecked = false
 	colors256Supported = false
