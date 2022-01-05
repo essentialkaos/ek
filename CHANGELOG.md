@@ -3,6 +3,7 @@
 ### 12.39.0
 
 * `[fmtc]` Added TrueColor support
+* `[system]` Improved macOS support
 * `[fmtc]` Code refactoring
 * `[system]` Code refactoring
 * Added more stubs for macOS

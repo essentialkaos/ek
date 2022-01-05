@@ -7,8 +7,19 @@ package system
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetUptime returns uptime in seconds from 1/1/1970
+import (
+	"golang.org/x/sys/unix"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetUptime returns uptime in seconds from 1/1/1970
 func GetUptime() (uint64, error) {
-	panic("UNSUPPORTED")
-	return 0, nil
+	tv, err := unix.SysctlTimeval("kern.boottime")
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(tv.Sec), nil
 }
