@@ -1,6 +1,3 @@
-//go:build linux
-// +build linux
-
 // Package netutil provides methods for working with network
 package netutil
 
