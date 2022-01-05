@@ -4,6 +4,8 @@
 
 * `[fmtc]` Added TrueColor support
 * `[system]` Improved macOS support
+* `[system]` Fixed bug with extracting macOS version
+* `[system]` Fixed bug with extracting macOS arch info
 * `[fmtc]` Code refactoring
 * `[system]` Code refactoring
 * Added more stubs for macOS

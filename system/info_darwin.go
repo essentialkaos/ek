@@ -43,28 +43,31 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, errors.New("Can't read arch info")
 	}
 
-	archSlice := strings.Split(arch, "/")
-
-	if len(archSlice) != 2 {
-		return nil, errors.New("Can't read arch info")
-	}
-
-	cleanArch := strings.ToLower(strings.Replace(archSlice[len(archSlice)-1], "RELEASE_", "", -1))
-
 	return &SystemInfo{
 		Hostname:     hostname,
 		OS:           os,
 		Distribution: DARWIN_OSX,
-		Version:      getOSXVersion(),
+		Version:      getMacOSVersion(),
 		Kernel:       kernel,
-		Arch:         cleanArch,
+		Arch:         getMacOSArch(arch),
 		ArchBits:     64,
 	}, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getOSXVersion() string {
+func getMacOSArch(archInfo string) string {
+	switch {
+	case strings.Contains(archInfo, "X86_64"):
+		return "x86_64"
+	case strings.Contains(archInfo, "ARM64"):
+		return "arm64"
+	}
+
+	return "unknown"
+}
+
+func getMacOSVersion() string {
 	cmd := exec.Command("sw_vers", "-productVersion")
 
 	versionData, err := cmd.Output()
@@ -73,5 +76,5 @@ func getOSXVersion() string {
 		return ""
 	}
 
-	return string(versionData)
+	return strings.Trim(string(versionData), "\r\n")
 }
