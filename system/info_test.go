@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package system
@@ -37,20 +38,6 @@ func (s *SystemSuite) TestUptime(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(uptime, Not(Equals), 0)
-
-	procUptimeFile = ""
-
-	uptime, err = GetUptime()
-
-	c.Assert(err, NotNil)
-	c.Assert(uptime, Equals, uint64(0))
-
-	procUptimeFile = s.CreateTestFile(c, "CORRUPTED")
-
-	uptime, err = GetUptime()
-
-	c.Assert(err, NotNil)
-	c.Assert(uptime, Equals, uint64(0))
 }
 
 func (s *SystemSuite) TestLoadAvg(c *C) {
