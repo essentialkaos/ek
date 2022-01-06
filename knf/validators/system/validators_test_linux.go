@@ -8,17 +8,29 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"testing"
+	"pkg.re/essentialkaos/ek.v12/knf"
 
 	. "pkg.re/essentialkaos/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Test(t *testing.T) { TestingT(t) }
+func (s *ValidatorSuite) TestInterfaceValidator(c *C) {
+	configFile := createConfig(c, _CONFIG_DATA)
 
-type SystemSuite struct{}
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	errs := knf.Validate([]*knf.Validator{
+		{"interface:test0", Interface, nil},
+		{"interface:test1", Interface, nil},
+	})
 
-var _ = Suite(&SystemSuite{})
+	c.Assert(errs, HasLen, 0)
+
+	errs = knf.Validate([]*knf.Validator{
+		{"interface:test2", Interface, nil},
+	})
+
+	c.Assert(errs, HasLen, 1)
+}

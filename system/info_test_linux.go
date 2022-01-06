@@ -12,10 +12,21 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	. "pkg.re/essentialkaos/check.v1"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func Test(t *testing.T) { TestingT(t) }
+
+type SystemSuite struct{}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var _ = Suite(&SystemSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -27,6 +38,8 @@ func (s *SystemSuite) TestUptime(c *C) {
 }
 
 func (s *SystemSuite) TestLoadAvg(c *C) {
+	origProcLoadAvgFile := procLoadAvgFile
+
 	la, err := GetLA()
 
 	c.Assert(err, IsNil)
@@ -65,9 +78,13 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 
 	c.Assert(err, NotNil)
 	c.Assert(la, IsNil)
+
+	procLoadAvgFile = origProcLoadAvgFile
 }
 
 func (s *SystemSuite) TestCPUUsage(c *C) {
+	origProcStatFile := procStatFile
+
 	cpu, err := GetCPUStats()
 
 	c.Assert(err, IsNil)
@@ -122,10 +139,12 @@ func (s *SystemSuite) TestCPUUsage(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(cpu, IsNil)
 
-	procStatFile = "/proc/stat"
+	procStatFile = origProcStatFile
 }
 
 func (s *SystemSuite) TestCPUInfoErrors(c *C) {
+	origProcStatFile := procStatFile
+
 	for i := 1; i <= 8; i++ {
 		data := strings.Replace("cpu  1 2 3 4 5 6 7 8 0", strconv.Itoa(i), "AB", -1)
 
@@ -137,10 +156,12 @@ func (s *SystemSuite) TestCPUInfoErrors(c *C) {
 		c.Assert(cpu, IsNil)
 	}
 
-	procStatFile = "/proc/stat"
+	procStatFile = origProcStatFile
 }
 
 func (s *SystemSuite) TestCPUInfo(c *C) {
+	origCpuInfoFile := cpuInfoFile
+
 	cpuInfoFile = s.CreateTestFile(c, "vendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1204.199\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.792\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1206.634\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1281.085\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1273.431\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1273.199\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1200.024\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1260.443\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1195.385\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1259.283\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1199.908\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1203.387\ncache size	: 15360 KB\nphysical id	: 0\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1276.330\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1305.670\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1275.750\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1253.253\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1337.677\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\nvendor_id	: GenuineIntel\nmodel name	: Intel(R) Xeon(R) CPU E5-2420 0 @ 1.90GHz\ncpu MHz		: 1327.008\ncache size	: 15360 KB\nphysical id	: 1\nsiblings	: 12\ncpu cores	: 6\nflags		: mmx\n\n")
 
 	info, err := GetCPUInfo()
@@ -181,9 +202,16 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 
 	c.Assert(err, NotNil)
 	c.Assert(info, IsNil)
+
+	cpuInfoFile = origCpuInfoFile
 }
 
 func (s *SystemSuite) TestCPUCount(c *C) {
+	origCpuPossibleFile := cpuPossibleFile
+	origCpuPresentFile := cpuPresentFile
+	origCpuOnlineFile := cpuOnlineFile
+	origCpuOfflineFile := cpuOfflineFile
+
 	cpuPossibleFile = s.CreateTestFile(c, "0-127\n")
 	cpuPresentFile = s.CreateTestFile(c, "0-3\n")
 	cpuOnlineFile = s.CreateTestFile(c, "0-3\n")
@@ -213,9 +241,16 @@ func (s *SystemSuite) TestCPUCount(c *C) {
 	cpuPossibleFile = "/_UNKNOWN_"
 	_, err = GetCPUCount()
 	c.Assert(err, NotNil)
+
+	cpuPossibleFile = origCpuPossibleFile
+	cpuPresentFile = origCpuPresentFile
+	cpuOnlineFile = origCpuOnlineFile
+	cpuOfflineFile = origCpuOfflineFile
 }
 
 func (s *SystemSuite) TestMemUsage(c *C) {
+	origProcMemInfoFile := procMemInfoFile
+
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal:       32653288 kB\nMemFree:          531664 kB\nMemAvailable:   31243272 kB\nBuffers:            7912 kB\nCached:         28485940 kB\nSwapCached:          889 kB\nActive:         15379084 kB\nInactive:       13340308 kB\nActive(anon):     143408 kB\nInactive(anon):   247048 kB\nActive(file):   15235676 kB\nInactive(file): 13093260 kB\nUnevictable:          16 kB\nMlocked:              16 kB\nSwapTotal:       4194300 kB\nSwapFree:        2739454 kB\nDirty:              6744 kB\nWriteback:             0 kB\nAnonPages:        225604 kB\nMapped:            46404 kB\nShmem:            164916 kB\nSlab:            3021828 kB\nSReclaimable:    2789624 kB\nSUnreclaim:       232204 kB\nKernelStack:        3696 kB\n")
 
 	mem, err := GetMemUsage()
@@ -258,9 +293,13 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 
 	c.Assert(err, NotNil)
 	c.Assert(mem, IsNil)
+
+	procMemInfoFile = origProcMemInfoFile
 }
 
 func (s *SystemSuite) TestNet(c *C) {
+	origProcNetFile := procNetFile
+
 	net, err := GetInterfacesStats()
 
 	c.Assert(err, IsNil)
@@ -308,9 +347,15 @@ func (s *SystemSuite) TestNet(c *C) {
 	_, _, err = GetNetworkSpeed(time.Second)
 
 	c.Assert(err, NotNil)
+
+	procNetFile = origProcNetFile
 }
 
 func (s *SystemSuite) TestFSUsage(c *C) {
+	origMtabFile := mtabFile
+	origProcStatFile := procStatFile
+	origProcDiskStatsFile := procDiskStatsFile
+
 	fs, err := GetFSUsage()
 
 	c.Assert(err, IsNil)
@@ -386,10 +431,14 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(util, NotNil)
 	c.Assert(util["abc"], Equals, 3.05)
 
-	procStatFile = "/proc/stat"
+	procDiskStatsFile = origProcDiskStatsFile
+	procStatFile = origProcStatFile
+	mtabFile = origMtabFile
 }
 
 func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
+	origProcDiskStatsFile := procDiskStatsFile
+
 	for i := 0; i < 11; i++ {
 		data := "   8       0 sda X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10"
 		data = strings.Replace(data, "X"+strconv.Itoa(i), "A", -1)
@@ -403,7 +452,7 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 		c.Assert(stats, IsNil)
 	}
 
-	procDiskStatsFile = "/proc/diskstats"
+	procDiskStatsFile = origProcDiskStatsFile
 }
 
 func (s *SystemSuite) TestUser(c *C) {
@@ -520,6 +569,8 @@ func (s *SystemSuite) TestUser(c *C) {
 }
 
 func (s *SystemSuite) TestGetInfo(c *C) {
+	origOsReleaseFile := osReleaseFile
+
 	osReleaseFile = "/_UNKNOWN_"
 
 	sysInfo, err := GetSystemInfo()
@@ -566,9 +617,13 @@ VERSION_CODENAME=groovy`)
 	c.Assert(formatDistName("opensuse"), Equals, LINUX_OPEN_SUSE)
 	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
 	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
+
+	osReleaseFile = origOsReleaseFile
 }
 
 func (s *SystemSuite) TestGetCPUArchBits(c *C) {
+	origCpuInfoFile := cpuInfoFile
+
 	cpuInfoFile = "/_UNKNOWN_"
 
 	c.Assert(getCPUArchBits(), Equals, 0)
@@ -581,7 +636,7 @@ func (s *SystemSuite) TestGetCPUArchBits(c *C) {
 
 	c.Assert(getCPUArchBits(), Equals, 32)
 
-	cpuInfoFile = "/proc/cpuinfo"
+	cpuInfoFile = origCpuInfoFile
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
