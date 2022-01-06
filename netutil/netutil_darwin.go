@@ -1,4 +1,3 @@
-// Package netutil provides methods for working with network
 package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -8,14 +7,6 @@ package netutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetIP returns main IPv4 address
-func GetIP() string {
-	panic("UNSUPPORTED")
-	return ""
-}
-
-// ❗ GetIP6 returns main IPv6 address
-func GetIP6() string {
-	panic("UNSUPPORTED")
+func getDefaultRouteInterface() string {
 	return ""
 }
