@@ -8,17 +8,28 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"testing"
-
 	. "pkg.re/essentialkaos/check.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Test(t *testing.T) { TestingT(t) }
+func (s *SystemSuite) TestUptime(c *C) {
+	uptime, err := GetUptime()
 
-type SystemSuite struct{}
+	c.Assert(err, IsNil)
+	c.Assert(uptime, Not(Equals), 0)
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+func (s *SystemSuite) TestLoadAvg(c *C) {
+	la, err := GetLA()
 
-var _ = Suite(&SystemSuite{})
+	c.Assert(err, IsNil)
+	c.Assert(la, NotNil)
+}
+
+func (s *SystemSuite) TestUser(c *C) {
+	c.Assert(IsUserExist("root"), Equals, true)
+	c.Assert(IsUserExist("_unknown_"), Equals, false)
+	c.Assert(IsGroupExist("wheel"), Equals, true)
+	c.Assert(IsGroupExist("_unknown_"), Equals, false)
+}
