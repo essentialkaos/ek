@@ -456,116 +456,112 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 }
 
 func (s *SystemSuite) TestUser(c *C) {
-	// This test can fail on CI because workers
-	// doesn't have any active sessions
-	if os.Getenv("CI") == "" {
-		user, err := CurrentUser()
+	user, err := CurrentUser()
 
-		c.Assert(err, IsNil)
-		c.Assert(user, NotNil)
+	c.Assert(err, IsNil)
+	c.Assert(user, NotNil)
 
-		appendRealUserInfo(user)
+	appendRealUserInfo(user)
 
-		c.Assert(user.IsRoot(), Equals, false)
-		c.Assert(user.IsSudo(), Equals, false)
-		c.Assert(user.GroupList(), NotNil)
+	c.Assert(user.IsRoot(), Equals, false)
+	c.Assert(user.IsSudo(), Equals, false)
+	c.Assert(user.GroupList(), NotNil)
 
-		user, err = CurrentUser()
+	user, err = CurrentUser()
 
-		c.Assert(err, IsNil)
-		c.Assert(user, NotNil)
+	c.Assert(err, IsNil)
+	c.Assert(user, NotNil)
 
-		sess, err := Who()
+	sess, err := Who()
 
-		c.Assert(err, IsNil)
-		c.Assert(sess, NotNil)
+	c.Assert(err, IsNil)
+	c.Assert(sess, NotNil)
 
-		user, err = LookupUser("")
+	user, err = LookupUser("")
 
-		c.Assert(err, NotNil)
-		c.Assert(user, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(user, IsNil)
 
-		group, err := LookupGroup("root")
+	group, err := LookupGroup("root")
 
-		c.Assert(err, IsNil)
-		c.Assert(group, NotNil)
+	c.Assert(err, IsNil)
+	c.Assert(group, NotNil)
 
-		group, err = LookupGroup("")
+	group, err = LookupGroup("")
 
-		c.Assert(err, NotNil)
-		c.Assert(group, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(group, IsNil)
 
-		c.Assert(IsUserExist("root"), Equals, true)
-		c.Assert(IsUserExist("_UNKNOWN_"), Equals, false)
-		c.Assert(IsGroupExist("root"), Equals, true)
-		c.Assert(IsGroupExist("_UNKNOWN_"), Equals, false)
+	c.Assert(IsUserExist("root"), Equals, true)
+	c.Assert(IsUserExist("_UNKNOWN_"), Equals, false)
+	c.Assert(IsGroupExist("root"), Equals, true)
+	c.Assert(IsGroupExist("_UNKNOWN_"), Equals, false)
 
-		c.Assert(CurrentTTY(), Not(Equals), "")
+	c.Assert(CurrentTTY(), Not(Equals), "")
 
-		uid, ok := getTDOwnerID()
+	uid, ok := getTDOwnerID()
 
-		c.Assert(uid, Not(Equals), -1)
-		c.Assert(ok, Equals, true)
+	c.Assert(uid, Not(Equals), -1)
+	c.Assert(ok, Equals, true)
 
-		os.Setenv("SUDO_USER", "testuser")
-		os.Setenv("SUDO_UID", "1234")
-		os.Setenv("SUDO_GID", "1234")
+	os.Setenv("SUDO_USER", "testuser")
+	os.Setenv("SUDO_UID", "1234")
+	os.Setenv("SUDO_GID", "1234")
 
-		username, uid, gid := getRealUserFromEnv()
+	username, uid, gid := getRealUserFromEnv()
 
-		c.Assert(username, Equals, "testuser")
-		c.Assert(uid, Equals, 1234)
-		c.Assert(gid, Equals, 1234)
+	c.Assert(username, Equals, "testuser")
+	c.Assert(uid, Equals, 1234)
+	c.Assert(gid, Equals, 1234)
 
-		groups := extractGroupsInfo("uid=10123(john) gid=10123(john) groups=10123(john),10200(admins),10201(developers)")
+	groups := extractGroupsInfo("uid=10123(john) gid=10123(john) groups=10123(john),10200(admins),10201(developers)")
 
-		c.Assert(groups[0].Name, Equals, "john")
-		c.Assert(groups[0].GID, Equals, 10123)
-		c.Assert(groups[2].Name, Equals, "developers")
-		c.Assert(groups[2].GID, Equals, 10201)
+	c.Assert(groups[0].Name, Equals, "john")
+	c.Assert(groups[0].GID, Equals, 10123)
+	c.Assert(groups[2].Name, Equals, "developers")
+	c.Assert(groups[2].GID, Equals, 10201)
 
-		groups = extractGroupsInfo("uid=66(someone) gid=66(someone) groups=66(someone)\n\n")
+	groups = extractGroupsInfo("uid=66(someone) gid=66(someone) groups=66(someone)\n\n")
 
-		c.Assert(groups[0].Name, Equals, "someone")
-		c.Assert(groups[0].GID, Equals, 66)
+	c.Assert(groups[0].Name, Equals, "someone")
+	c.Assert(groups[0].GID, Equals, 66)
 
-		group, err = parseGetentGroupOutput("developers:*:10201:bob,john")
+	group, err = parseGetentGroupOutput("developers:*:10201:bob,john")
 
-		c.Assert(err, IsNil)
-		c.Assert(group, NotNil)
-		c.Assert(group.Name, Equals, "developers")
-		c.Assert(group.GID, Equals, 10201)
+	c.Assert(err, IsNil)
+	c.Assert(group, NotNil)
+	c.Assert(group.Name, Equals, "developers")
+	c.Assert(group.GID, Equals, 10201)
 
-		user, err = parseGetentPasswdOutput("bob:*:10567:10567::/home/bob:/bin/zsh")
+	user, err = parseGetentPasswdOutput("bob:*:10567:10567::/home/bob:/bin/zsh")
 
-		c.Assert(err, IsNil)
-		c.Assert(user, NotNil)
-		c.Assert(user.Name, Equals, "bob")
-		c.Assert(user.UID, Equals, 10567)
-		c.Assert(user.GID, Equals, 10567)
-		c.Assert(user.Comment, Equals, "")
-		c.Assert(user.HomeDir, Equals, "/home/bob")
-		c.Assert(user.Shell, Equals, "/bin/zsh")
+	c.Assert(err, IsNil)
+	c.Assert(user, NotNil)
+	c.Assert(user.Name, Equals, "bob")
+	c.Assert(user.UID, Equals, 10567)
+	c.Assert(user.GID, Equals, 10567)
+	c.Assert(user.Comment, Equals, "")
+	c.Assert(user.HomeDir, Equals, "/home/bob")
+	c.Assert(user.Shell, Equals, "/bin/zsh")
 
-		_, err = getOwner("")
+	_, err = getOwner("")
 
-		c.Assert(err, NotNil)
+	c.Assert(err, NotNil)
 
-		_, err = getSessionInfo("ABC")
+	_, err = getSessionInfo("ABC")
 
-		c.Assert(err, NotNil)
+	c.Assert(err, NotNil)
 
-		n, _ := fixCount(-100, nil)
+	n, _ := fixCount(-100, nil)
 
-		c.Assert(n, Equals, 0)
+	c.Assert(n, Equals, 0)
 
-		ptsDir = "/not_exist"
+	ptsDir = "/not_exist"
 
-		sess, err = Who()
+	sess, err = Who()
 
-		c.Assert(err, IsNil)
-		c.Assert(sess, HasLen, 0)
-	}
+	c.Assert(err, IsNil)
+	c.Assert(sess, HasLen, 0)
 }
 
 func (s *SystemSuite) TestGetInfo(c *C) {
