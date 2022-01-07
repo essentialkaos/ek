@@ -472,10 +472,14 @@ func (s *SystemSuite) TestUser(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(user, NotNil)
 
-	sess, err := Who()
+	// This test can fail on CI because workers
+	// doesn't have any active sessions
+	if os.Getenv("CI") == "" {
+		sess, err := Who()
 
-	c.Assert(err, IsNil)
-	c.Assert(sess, NotNil)
+		c.Assert(err, IsNil)
+		c.Assert(sess, NotNil)
+	}
 
 	user, err = LookupUser("")
 
