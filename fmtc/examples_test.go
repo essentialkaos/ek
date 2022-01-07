@@ -2,7 +2,7 @@ package fmtc
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -73,9 +73,13 @@ func ExamplePrintln() {
 	// modificator reset
 	Println("{r}{*}red and bold {!*}just red{!}")
 
-	// 256 colors. # for foreground, % for background
+	// 256 colors (# for foreground, % for background)
 	Println("{#201}pink text{!}")
 	Println("{%201}pink background{!}")
+
+	// 24-bit colors (# for foreground, % for background)
+	Println("{#7cfc00}lawngreen text{!}")
+	Println("{%6a5acd}slateblue background{!}")
 }
 
 func ExamplePrintf() {
@@ -108,6 +112,14 @@ func ExampleClean() {
 	// Output: Text
 }
 
+func ExampleIs256ColorsSupported() {
+	fmt.Printf("256 Colors Supported: %t\n", Is256ColorsSupported())
+}
+
+func ExampleIsTrueColorSupported() {
+	fmt.Printf("TrueColor Supported: %t\n", IsTrueColorSupported())
+}
+
 func ExampleTPrintf() {
 	TPrintf("This is temporary text")
 	time.Sleep(time.Second)
@@ -118,7 +130,7 @@ func ExampleTLPrintf() {
 	// Power of TPrintf and LPrintf in one method
 	TLPrintf(22, "This is temporary text")
 	time.Sleep(time.Second)
-	TLPrintf(22, "This message replace previous message after 1 sec")
+	TLPrintf(22, "This message will replace previous message after 1 sec")
 }
 
 func ExampleLPrintf() {

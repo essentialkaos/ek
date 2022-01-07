@@ -73,6 +73,16 @@ Tag: `{%code}`
 
 _Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting) website_
 
+#### 24-bit Colors (_TrueColor_)
+
+##### Foreground (Text)
+
+Tag: `{#hex}`
+
+##### Background
+
+Tag: `{%hex}`
+
 #### Examples
 
 ```
@@ -128,4 +138,15 @@ _Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatt
  │     └ Set background color to grey
  │
  └ Set text color to pink
+```
+
+```
+{#ff1493}{%191970}Hi all!{!}
+ ┬──────  ┬──────         ┬
+ │        │               │
+ │        │               └ Reset everything
+ │        │
+ │        └ Set background color to midnightblue
+ │
+ └ Set text color to deeppink
 ```

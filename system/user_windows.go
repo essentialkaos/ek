@@ -2,7 +2,7 @@ package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// User contains information about user
+// ❗ User contains information about user
 type User struct {
 	UID      int      `json:"uid"`
 	GID      int      `json:"gid"`
@@ -27,13 +27,13 @@ type User struct {
 	RealName string   `json:"real_name"`
 }
 
-// Group contains information about group
+// ❗ Group contains information about group
 type Group struct {
 	Name string `json:"name"`
 	GID  int    `json:"gid"`
 }
 
-// SessionInfo contains information about all sessions
+// ❗ SessionInfo contains information about all sessions
 type SessionInfo struct {
 	User             *User     `json:"user"`
 	LoginTime        time.Time `json:"login_time"`
@@ -42,37 +42,37 @@ type SessionInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Who returns info about all active sessions sorted by login time
+// ❗ Who returns info about all active sessions sorted by login time
 func Who() ([]*SessionInfo, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// CurrentUser returns struct with info about current user
+// ❗ CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// LookupUser searches user info by given name
+// ❗ LookupUser searches user info by given name
 func LookupUser(name string) (*User, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// LookupGroup searches group info by given name
+// ❗ LookupGroup searches group info by given name
 func LookupGroup(name string) (*Group, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// IsUserExist checks if user exist on system or not
+// ❗ IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// IsGroupExist checks if group exist on system or not
+// ❗ IsGroupExist checks if group exist on system or not
 func IsGroupExist(name string) bool {
 	panic("UNSUPPORTED")
 	return false
@@ -80,22 +80,20 @@ func IsGroupExist(name string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsRoot checks if current user is root
+// ❗ IsRoot checks if current user is root
 func (u *User) IsRoot() bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// IsSudo checks if it user over sudo command
+// ❗ IsSudo checks if it user over sudo command
 func (u *User) IsSudo() bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
-// GroupList returns slice with user groups names
+// ❗ GroupList returns slice with user groups names
 func (u *User) GroupList() []string {
 	panic("UNSUPPORTED")
 	return nil
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //

@@ -5,7 +5,7 @@ package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,17 +25,17 @@ import (
 // MountInfo contains information about mounts
 // https://www.kernel.org/doc/Documentation/filesystems/proc.txt
 type MountInfo struct {
-	MountID        uint16   `json:"mount_id"`        // unique identifier of the mount (may be reused after umount)
+	MountID        uint16   `json:"mount_id"`        // Unique identifier of the mount (may be reused after umount)
 	ParentID       uint16   `json:"parent_id"`       // ID of parent (or of self for the top of the mount tree)
-	StDevMajor     uint16   `json:"stdev_major"`     // major value of st_dev for files on filesystem
-	StDevMinor     uint16   `json:"stdev_minor"`     // minor value of st_dev for files on filesystem
-	Root           string   `json:"root"`            // root of the mount within the filesystem
-	MountPoint     string   `json:"mount_point"`     // mount point relative to the process's root
-	MountOptions   []string `json:"mount_options"`   // per mount options
-	OptionalFields []string `json:"optional_fields"` // zero or more fields of the form "tag[:value]"
-	FSType         string   `json:"fs_type"`         // name of filesystem of the form "type[.subtype]"
-	MountSource    string   `json:"mount_source"`    // filesystem specific information or "none"
-	SuperOptions   []string `json:"super_options"`   // per super block options
+	StDevMajor     uint16   `json:"stdev_major"`     // Major value of st_dev for files on filesystem
+	StDevMinor     uint16   `json:"stdev_minor"`     // Minor value of st_dev for files on filesystem
+	Root           string   `json:"root"`            // Root of the mount within the filesystem
+	MountPoint     string   `json:"mount_point"`     // Mount point relative to the process's root
+	MountOptions   []string `json:"mount_options"`   // Per mount options
+	OptionalFields []string `json:"optional_fields"` // Zero or more fields of the form "tag[:value]"
+	FSType         string   `json:"fs_type"`         // Name of filesystem of the form "type[.subtype]"
+	MountSource    string   `json:"mount_source"`    // Filesystem specific information or "none"
+	SuperOptions   []string `json:"super_options"`   // Per super block options
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

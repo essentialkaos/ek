@@ -3,7 +3,7 @@ package fmtc
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -16,6 +16,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"pkg.re/essentialkaos/ek.v12/color"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -70,6 +72,15 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var colors256Supported bool
+var colorsTCSupported bool
+var colorsSupportChecked bool
+
+var term = os.Getenv("TERM")
+var colorTerm = os.Getenv("COLORTERM")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Print formats using the default formats for its operands and writes to standard
 // output. Spaces are added between operands when neither is a string. It returns
 // the number of bytes written and any write error encountered.
@@ -110,6 +121,11 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 //    256 colors:
 //     #code foreground color
 //     %code background color
+//
+//    24-bit colors (TrueColor):
+//      #hex foreground color
+//      %hex background color
+//
 func Print(a ...interface{}) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Print(a...)
@@ -234,9 +250,26 @@ func Bell() {
 	fmt.Printf(_CODE_BELL)
 }
 
-// Is256ColorsSupported returns true if 256 colors is supported
+// Is256ColorsSupported returns true if 256 colors is supported by terminal
 func Is256ColorsSupported() bool {
-	return strings.Contains(os.Getenv("TERM"), "256color")
+	if colorsSupportChecked {
+		return colors256Supported
+	}
+
+	checkForColorsSupport()
+
+	return colors256Supported
+}
+
+// IsTrueColorSupported returns true if TrueColor (24-bit colors) is supported by terminal
+func IsTrueColorSupported() bool {
+	if colorsSupportChecked {
+		return colorsTCSupported
+	}
+
+	checkForColorsSupport()
+
+	return colorsTCSupported
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -304,12 +337,22 @@ func tag2ANSI(tag string, clean bool) string {
 // codebeat:enable[LOC,BLOCK_NESTING]
 
 func parseExtendedColor(tag string) string {
-	// Foreground
+	if len(tag) == 7 {
+		hex := strings.TrimLeft(tag, "#%")
+		h, _ := color.Parse("#" + hex)
+		c := h.ToRGB()
+
+		if strings.HasPrefix(tag, "#") {
+			return fmt.Sprintf("\033[38;2;%d;%d;%dm", c.R, c.G, c.B)
+		}
+
+		return fmt.Sprintf("\033[48;2;%d;%d;%dm", c.R, c.G, c.B)
+	}
+
 	if strings.HasPrefix(tag, "#") {
 		return "\033[38;5;" + tag[1:] + "m"
 	}
 
-	// Background
 	return "\033[48;5;" + tag[1:] + "m"
 }
 
@@ -445,13 +488,35 @@ func isValidExtendedTag(tag string) bool {
 	}
 
 	tag = strings.TrimLeft(tag, "#%")
-	color, err := strconv.Atoi(tag)
 
-	if err != nil || color < 0 || color > 256 {
-		return false
+	switch len(tag) {
+	case 6:
+		hex, err := strconv.ParseInt(tag, 16, 64)
+		if err != nil || hex < 0x000000 || hex > 0xffffff {
+			return false
+		}
+	default:
+		code, err := strconv.Atoi(tag)
+		if err != nil || code < 0 || code > 256 {
+			return false
+		}
 	}
 
 	return true
+}
+
+func checkForColorsSupport() {
+	if strings.Contains(term, "256color") {
+		colors256Supported = true
+	}
+
+	if term == "iterm" || colorTerm == "truecolor" ||
+		strings.Contains(term, "truecolor") ||
+		strings.HasPrefix(term, "vte") {
+		colors256Supported, colorsTCSupported = true, true
+	}
+
+	colorsSupportChecked = true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,5 +1,17 @@
 ## Changelog
 
+### 12.39.0
+
+* `[fmtc]` Added TrueColor support
+* `[system]` Improved macOS support
+* `[netutil]` Improved macOS support
+* `[system]` Fixed bug with extracting macOS version
+* `[system]` Fixed bug with extracting macOS arch info
+* `[fmtc]` Code refactoring
+* `[system]` Code refactoring
+* Added more stubs for macOS
+* Improved stubs for Windows
+
 ### 12.38.1
 
 * Fixed build tags for Go ≤ 1.16

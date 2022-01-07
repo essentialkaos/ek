@@ -3,19 +3,19 @@ package secstr
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String contains protected data
+// ❗ String contains protected data
 type String struct {
 	Data []byte
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewSecureString creates new secure string
+// ❗ NewSecureString creates new secure string
 func NewSecureString(data interface{}) (*String, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
@@ -23,7 +23,7 @@ func NewSecureString(data interface{}) (*String, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Destroy destroys data
+// ❗ Destroy destroys data
 func (s *String) Destroy() error {
 	panic("UNSUPPORTED")
 	return nil

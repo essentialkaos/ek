@@ -2,7 +2,7 @@ package fmtc
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -87,17 +87,61 @@ func (s *FormatSuite) TestParsing(c *C) {
 }
 
 func (s *FormatSuite) Test256Colors(c *C) {
-	if os.Getenv("CI") == "" {
-		c.Assert(Is256ColorsSupported(), Equals, true)
-	} else {
-		c.Assert(Is256ColorsSupported(), Equals, false)
-	}
+	term = "xterm-256color"
+	colorTerm = ""
+
+	colorsSupportChecked = false
+
+	c.Assert(Is256ColorsSupported(), Equals, true)
+	c.Assert(IsTrueColorSupported(), Equals, false)
+
+	colorsSupportChecked = false
+	colors256Supported = false
+	colorsTCSupported = false
+	term = ""
+	colorTerm = ""
+
+	c.Assert(Is256ColorsSupported(), Equals, false)
+	c.Assert(Is256ColorsSupported(), Equals, false)
+	c.Assert(IsTrueColorSupported(), Equals, false)
+
+	term = os.Getenv("TERM")
+	colorTerm = os.Getenv("COLORTERM")
 
 	c.Assert(Sprint("{#214}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
 	c.Assert(Sprint("{%214}O{!}"), Equals, "\x1b[48;5;214mO\x1b[0m")
 
 	c.Assert(Sprint("{#}o"), Equals, "{#}o")
 	c.Assert(Sprint("{#257}o"), Equals, "{#257}o")
+	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
+}
+
+func (s *FormatSuite) Test24BitColors(c *C) {
+	term = "xterm-256color"
+	colorTerm = "truecolor"
+
+	colorsSupportChecked = false
+
+	c.Assert(IsTrueColorSupported(), Equals, true)
+	c.Assert(Is256ColorsSupported(), Equals, true)
+
+	colorsSupportChecked = false
+	colors256Supported = false
+	colorsTCSupported = false
+	term = ""
+	colorTerm = ""
+
+	c.Assert(IsTrueColorSupported(), Equals, false)
+	c.Assert(IsTrueColorSupported(), Equals, false)
+
+	term = os.Getenv("TERM")
+	colorTerm = os.Getenv("COLORTERM")
+
+	c.Assert(Sprint("{#f1c1b2}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
+	c.Assert(Sprint("{%1F2E3D}O{!}"), Equals, "\x1b[48;2;31;46;61mO\x1b[0m")
+
+	c.Assert(Sprint("{#}o"), Equals, "{#}o")
+	c.Assert(Sprint("{#gggggg}o"), Equals, "{#gggggg}o")
 	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
 }
 

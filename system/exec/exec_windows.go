@@ -3,24 +3,24 @@ package exec
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Sudo execute some command with sudo
+// ❗ Sudo executes command with sudo
 func Sudo(user string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// Run execute some command
+// ❗ Run executes command
 func Run(command string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// RunAsUser run command as some user
+// ❗ RunAsUser runs command as a given user
 func RunAsUser(user, logFile string, command string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
