@@ -562,10 +562,11 @@ func (s *SystemSuite) TestUser(c *C) {
 
 	ptsDir = "/not_exist"
 
-	sess, err = Who()
+	sess, err := Who()
 
 	c.Assert(err, IsNil)
 	c.Assert(sess, HasLen, 0)
+
 }
 
 func (s *SystemSuite) TestGetInfo(c *C) {
