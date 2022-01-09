@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.39.1
+
+* `[knf]` Fixed bug with naming tests source files
+
 ### 12.39.0
 
 * `[fmtc]` Added TrueColor support
