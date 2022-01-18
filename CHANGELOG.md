@@ -3,6 +3,7 @@
 ### 12.40.0
 
 * `[secstr]` Added method `IsEmpty` for checking empty strings
+* `[usage]` Code refactoring
 
 ### 12.39.1
 
