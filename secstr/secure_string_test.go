@@ -31,6 +31,7 @@ func (s *SecstrSuite) TestSlice(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
+	c.Assert(ss.IsEmpty(), Equals, false)
 	c.Assert(ss.Data, HasLen, 8)
 	c.Assert(k, DeepEquals, []byte{0, 0, 0, 0, 0, 0, 0, 0})
 	c.Assert(string(ss.Data), Equals, "Test1234")
@@ -53,6 +54,7 @@ func (s *SecstrSuite) TestString(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
+	c.Assert(ss.IsEmpty(), Equals, false)
 	c.Assert(ss.Data, HasLen, 8)
 	c.Assert(string(ss.Data), Equals, "Test1234")
 
@@ -62,6 +64,7 @@ func (s *SecstrSuite) TestString(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
+	c.Assert(ss.IsEmpty(), Equals, false)
 	c.Assert(ss.Data, HasLen, 8)
 	c.Assert(k2, Equals, "")
 	c.Assert(string(ss.Data), Equals, "Test1234")

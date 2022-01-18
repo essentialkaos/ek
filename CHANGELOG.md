@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.40.0
+
+* `[secstr]` Added method `IsEmpty` for checking empty strings
+
 ### 12.39.1
 
 * `[knf]` Fixed bug with naming tests source files

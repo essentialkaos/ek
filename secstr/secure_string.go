@@ -43,6 +43,11 @@ func NewSecureString(data interface{}) (*String, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// IsEmpty returns false if string is empty
+func (s *String) IsEmpty() bool {
+	return len(s.Data) == 0
+}
+
 // Destroy destroys data
 func (s *String) Destroy() error {
 	return destroySecureString(s)
