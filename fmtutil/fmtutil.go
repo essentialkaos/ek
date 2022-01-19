@@ -410,7 +410,6 @@ func (w *wrapper) Result() string {
 	if w.line.Len() != 0 {
 		w.result.WriteString(w.Indent)
 		w.result.Write(w.line.Bytes())
-		w.result.WriteRune('\n')
 	}
 
 	w.line.Reset()

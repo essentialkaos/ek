@@ -158,8 +158,7 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
   voluptate velit esse quam nihil
   molestiae consequatur, vel illum qui
   dolorem eum fugiat quo voluptas nulla
-  pariatur?
-`
+  pariatur?`
 
 	c.Assert(Wrap(input, "  ", 40), Equals, result)
 
@@ -167,14 +166,14 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
 	result = "  Sed ut \x1b[40;38;5;82mperspiciatis \x1b[30;48;5;82munde\x1b[0m\n" +
 		"  omnis iste natus error sit\n" +
 		"  voluptatem accusantium\n" +
-		"  doloremque\n"
+		"  doloremque"
 
 	c.Assert(Wrap(input, "  ", 30), Equals, result)
 
 	input = "abcd1234abcd1234abcd1234abcd1234 abcd abcd abcd 1234 1234"
 	result = "  abcd1234abcd1234abcd1234abcd1234\n" +
 		"  abcd abcd abcd\n" +
-		"  1234 1234\n"
+		"  1234 1234"
 
 	c.Assert(Wrap(input, "  ", 20), Equals, result)
 }
