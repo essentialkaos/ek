@@ -9,11 +9,13 @@ package fmtutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 
+	"pkg.re/essentialkaos/ek.v12/ansi"
 	"pkg.re/essentialkaos/ek.v12/mathutil"
 	"pkg.re/essentialkaos/ek.v12/strutil"
 )
@@ -26,6 +28,17 @@ const (
 	_GIGA = 1073741824
 	_TERA = 1099511627776
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type wrapper struct {
+	Indent        string
+	MaxLineLength int
+
+	result  bytes.Buffer
+	line    bytes.Buffer
+	lineLen int
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -188,48 +201,44 @@ func Float(f float64) float64 {
 
 // Wrap wraps text using max line length
 func Wrap(text, indent string, maxLineLength int) string {
-	var (
-		result = ""
-		line   = ""
-		words  = strings.Split(text, " ")
-	)
+	var word bytes.Buffer
+	var isNewLine bool
 
-	for _, word := range words {
-		if strings.Contains(word, "\n") {
-			wordSlice := strings.Split(word, "\n")
+	w := &wrapper{
+		Indent:        indent,
+		MaxLineLength: maxLineLength,
+	}
 
-			if len(wordSlice) == 3 {
-				if len(indent+line+wordSlice[0]) > maxLineLength {
-					result += indent + line + "\n" + indent + wordSlice[0] + "\n\n"
-				} else {
-					result += indent + line + wordSlice[0] + "\n\n"
-				}
+	reader := strings.NewReader(text)
 
-				line = wordSlice[2] + " "
+	for i := int64(0); i < reader.Size(); i++ {
+		r, _, _ := reader.ReadRune()
 
-				continue
+		switch r {
+		case ' ':
+			// break
+		case '\n', '\r':
+			if !isNewLine {
+				isNewLine = true
+				w.AddWord(word)
+				word.Reset()
 			} else {
-				word = strings.Replace(word, "\n", "", -1)
+				w.NewLine()
 			}
-		}
-
-		if len(indent+line+word) > maxLineLength {
-			result += indent + line + "\n"
-			line = word + " "
-
+		default:
+			isNewLine = false
+			word.WriteRune(r)
 			continue
 		}
 
-		line += word + " "
+		w.AddWord(word)
+		word.Reset()
 	}
 
-	if line != "" {
-		// Append line without last space appended to
-		// line in for loop
-		result += indent + line[0:len(line)-1]
-	}
+	w.AddWord(word)
+	word.Reset()
 
-	return result
+	return w.Result()
 }
 
 // ColorizePassword adds different fmtc color tags for numbers and letters
@@ -351,4 +360,60 @@ func extractSizeInfo(s string) (uint64, string) {
 	}
 
 	return mlt, sfx
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// AddWord appends word to the line
+func (w *wrapper) AddWord(word bytes.Buffer) {
+	if word.Len() == 0 {
+		return
+	}
+
+	var wordLen int
+
+	if ansi.HasCodesBytes(word.Bytes()) {
+		wordLen = len(ansi.RemoveCodesBytes(word.Bytes()))
+	} else {
+		wordLen = len(word.String())
+	}
+
+	if w.line.Len() != 0 && len(w.Indent)+w.lineLen+wordLen > w.MaxLineLength {
+		w.result.WriteString(w.Indent)
+		w.result.Write(w.line.Bytes())
+		w.result.WriteRune('\n')
+		w.line.Reset()
+		w.lineLen = wordLen + 1
+	} else {
+		w.lineLen += wordLen + 1
+		if w.line.Len() != 0 {
+			w.line.WriteRune(' ')
+		}
+	}
+
+	w.line.Write(word.Bytes())
+}
+
+// NewLine adds new line
+func (w *wrapper) NewLine() {
+	w.result.WriteString(w.Indent)
+	w.result.Write(w.line.Bytes())
+	w.result.WriteRune('\n')
+	w.result.WriteRune('\n')
+	w.line.Reset()
+	w.lineLen = 0
+}
+
+// Result returns result as a string
+func (w *wrapper) Result() string {
+	// If line buffer isn't empty append it to the result
+	if w.line.Len() != 0 {
+		w.result.WriteString(w.Indent)
+		w.result.Write(w.line.Bytes())
+		w.result.WriteRune('\n')
+	}
+
+	w.line.Reset()
+
+	return w.result.String()
 }
