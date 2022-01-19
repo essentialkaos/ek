@@ -2,6 +2,7 @@
 
 ### 12.40.0
 
+* `[ansi]` Added methods for working with byte slices
 * `[secstr]` Added method `IsEmpty` for checking empty strings
 * `[usage]` Code refactoring
 
