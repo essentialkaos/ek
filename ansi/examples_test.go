@@ -14,8 +14,23 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Example_HasCodes() {
-	fmt.Println(HasCodes("Hello"))
-	fmt.Println(HasCodes("\033[40;38;5;82mHello\x1B[0m"))
+	input := "Hello"
+	fmt.Println(HasCodes(input))
+
+	input = "\033[40;38;5;82mHello\x1B[0m"
+	fmt.Println(HasCodes(input))
+
+	// Output:
+	// false
+	// true
+}
+
+func Example_HasCodesBytes() {
+	input := []byte("Hello")
+	fmt.Println(HasCodesBytes(input))
+
+	input = []byte("\033[40;38;5;82mHello\x1B[0m")
+	fmt.Println(HasCodesBytes(input))
 
 	// Output:
 	// false
@@ -23,7 +38,15 @@ func Example_HasCodes() {
 }
 
 func Example_RemoveCodes() {
-	fmt.Println(RemoveCodes("\033[40;38;5;82mHello\x1B[0m"))
+	input := "\033[40;38;5;82mHello\x1B[0m"
+	fmt.Println(RemoveCodes(input))
+	// Output:
+	// Hello
+}
+
+func Example_RemoveCodesBytes() {
+	input := []byte("\033[40;38;5;82mHello\x1B[0m")
+	fmt.Println(string(RemoveCodesBytes(input)))
 	// Output:
 	// Hello
 }
