@@ -6,6 +6,8 @@
 * `[secstr]` Added method `IsEmpty` for checking empty strings
 * `[fmtutil]` Method `Wrap` was rewritten from scratch (`3386 ns/op | 1152 B/op | 40 allocs/op` → `1322 ns/op | 416 B/op | 5 allocs/op`)
 * `[fmtutil]` Method `Wrap` now ignores ANSI/VT100 control sequences
+* `[timeutil]` Method `ParseDuration` was rewritten from scratch (`405 ns/op | 36 B/op | 9 allocs/op` → `222 ns/op | 68 B/op | 3 allocs/op`)
+* `[timeutil]` Method `ParseDuration` now allows to define default modificator
 * `[usage]` Code refactoring
 
 ### 12.39.1

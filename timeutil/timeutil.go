@@ -23,10 +23,11 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
+	_SECOND int64 = 1
 	_MINUTE int64 = 60
-	_HOUR         = 3600
-	_DAY          = 86400
-	_WEEK         = 604800
+	_HOUR   int64 = 3600
+	_DAY    int64 = 86400
+	_WEEK   int64 = 604800
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -166,45 +167,30 @@ func SecondsToDuration(d float64) time.Duration {
 }
 
 // ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
-func ParseDuration(dur string) (int64, error) {
+func ParseDuration(dur string, defMod ...rune) (int64, error) {
 	if dur == "" {
 		return 0, nil
 	}
 
 	var err error
-	var value string
-	var result, valueInt int64
+	var result int64
 
-	for _, sym := range strings.ToLower(dur) {
+	buf := &bytes.Buffer{}
+
+	for _, sym := range dur {
 		switch sym {
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			value += string(sym)
-
-		case 'w':
-			valueInt, err = strconv.ParseInt(value, 10, 64)
-			result += valueInt * _WEEK
-			value = ""
-
-		case 'd':
-			valueInt, err = strconv.ParseInt(value, 10, 64)
-			result += valueInt * _DAY
-			value = ""
-
-		case 'h':
-			valueInt, err = strconv.ParseInt(value, 10, 64)
-			result += valueInt * _HOUR
-			value = ""
-
-		case 'm':
-			valueInt, err = strconv.ParseInt(value, 10, 64)
-			result += valueInt * _MINUTE
-			value = ""
-
-		case 's':
-			valueInt, err = strconv.ParseInt(value, 10, 64)
-			result += valueInt
-			value = ""
-
+			buf.WriteRune(sym)
+		case 'w', 'W':
+			result, err = appendDur(result, buf, _WEEK)
+		case 'd', 'D':
+			result, err = appendDur(result, buf, _DAY)
+		case 'h', 'H':
+			result, err = appendDur(result, buf, _HOUR)
+		case 'm', 'M':
+			result, err = appendDur(result, buf, _MINUTE)
+		case 's', 'S':
+			result, err = appendDur(result, buf, _SECOND)
 		default:
 			return 0, fmt.Errorf("Unsupported symbol \"%s\"", string(sym))
 		}
@@ -214,14 +200,35 @@ func ParseDuration(dur string) (int64, error) {
 		}
 	}
 
-	if value != "" {
-		valueInt, err = strconv.ParseInt(value, 10, 64)
+	if buf.Len() != 0 {
+		if result != 0 {
+			return 0, fmt.Errorf("Misformatted duration \"%s\"", dur)
+		}
+
+		mod := 's'
+
+		if len(defMod) != 0 {
+			mod = defMod[0]
+		}
+
+		result, err = strconv.ParseInt(buf.String(), 10, 64)
 
 		if err != nil {
 			return 0, err
 		}
 
-		result += valueInt
+		switch mod {
+		case 'w', 'W':
+			result *= _WEEK
+		case 'd', 'D':
+			result *= _DAY
+		case 'h', 'H':
+			result *= _HOUR
+		case 'm', 'M':
+			result *= _MINUTE
+		case 's', 'S':
+			result *= _SECOND
+		}
 	}
 
 	return result, nil
@@ -570,8 +577,8 @@ func getTimezone(d time.Time, separator bool) string {
 		tzofs *= -1
 	}
 
-	hours := tzofs / _HOUR
-	minutes := tzofs % _HOUR
+	hours := int64(tzofs) / _HOUR
+	minutes := int64(tzofs) % _HOUR
 
 	switch negative {
 	case true:
@@ -681,6 +688,18 @@ func getPrettyShortDuration(d time.Duration) string {
 		return fmt.Sprintf("%d ns", d.Nanoseconds())
 
 	}
+}
+
+func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
+	v, err := strconv.ParseInt(buf.String(), 10, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	buf.Reset()
+
+	return value + (v * mod), nil
 }
 
 func formatFloat(f float64) float64 {
