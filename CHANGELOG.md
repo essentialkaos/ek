@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.41.0
+
+* `[usage]` Added helpers for generating a string representation of `Command` and `Option`
+
 ### 12.40.0
 
 * `[ansi]` Added methods for working with byte slices

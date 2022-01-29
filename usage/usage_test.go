@@ -8,6 +8,7 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -100,6 +101,9 @@ func (s *UsageSuite) TestUsage(c *C) {
 	c.Assert(info.GetOption("t:test"), NotNil)
 	c.Assert(info.GetOption("test"), NotNil)
 	c.Assert(info.GetOption("test999"), IsNil)
+
+	c.Assert(fmt.Sprintf("%s", info.GetCommand("read")), Equals, "read")
+	c.Assert(fmt.Sprintf("%s", info.GetOption("t:test")), Equals, "--test")
 }
 
 func (s *UsageSuite) TestVersionInfo(c *C) {
