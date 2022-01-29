@@ -249,7 +249,28 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	_, err = ParseDuration("wm")
 	c.Assert(err, NotNil)
 
-	_, err = ParseDuration("9999999999999999999999999999999999999")
+	_, err = ParseDuration("9999999999999999999999999999999999999s")
+	c.Assert(err, NotNil)
+
+	_, err = ParseDuration("1h35m56")
+	c.Assert(err, NotNil)
+
+	d, _ = ParseDuration("30", 's')
+	c.Assert(d, Equals, int64(30))
+
+	d, _ = ParseDuration("25", 'm')
+	c.Assert(d, Equals, int64(1500))
+
+	d, _ = ParseDuration("14", 'h')
+	c.Assert(d, Equals, int64(50400))
+
+	d, _ = ParseDuration("5", 'd')
+	c.Assert(d, Equals, int64(432000))
+
+	d, _ = ParseDuration("2", 'w')
+	c.Assert(d, Equals, int64(1209600))
+
+	_, err = ParseDuration("9999999999999999999999999999999999999", 's')
 	c.Assert(err, NotNil)
 }
 
@@ -268,4 +289,20 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(PrevWeekend(d), DeepEquals, time.Date(2021, 7, 31, 12, 30, 15, 0, time.Local))
 	c.Assert(NextWorkday(d), DeepEquals, time.Date(2021, 8, 2, 12, 30, 15, 0, time.Local))
 	c.Assert(NextWeekend(d), DeepEquals, time.Date(2021, 8, 7, 12, 30, 15, 0, time.Local))
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *TimeUtilSuite) BenchmarkParseDuration(c *C) {
+	for i := 0; i < c.N; i++ {
+		ParseDuration("1w2d3h10m12s")
+	}
+}
+
+func (s *TimeUtilSuite) BenchmarkFormat(c *C) {
+	ts := time.Now()
+
+	for i := 0; i < c.N; i++ {
+		Format(ts, "%Y/%m/%d %H:%M:%S")
+	}
 }

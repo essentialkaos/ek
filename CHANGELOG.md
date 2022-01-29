@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.40.0
+
+* `[ansi]` Added methods for working with byte slices
+* `[secstr]` Added method `IsEmpty` for checking empty strings
+* `[fmtutil]` Method `Wrap` was rewritten from scratch
+* `[fmtutil]` Method `Wrap` now ignores ANSI/VT100 control sequences
+* `[timeutil]` Method `ParseDuration` was rewritten from scratch
+* `[timeutil]` Method `ParseDuration` now allows to define default modificator
+* `[usage]` Code refactoring
+
 ### 12.39.1
 
 * `[knf]` Fixed bug with naming tests source files

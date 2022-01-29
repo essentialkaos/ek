@@ -9,7 +9,7 @@ package ansi
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"strings"
+	"bytes"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,16 +25,36 @@ func HasCodes(s string) bool {
 	return false
 }
 
-// RemoveCodes removes all ANSI/VT100 control sequences from given string
+// HasCodes returns true if given byte slice contains ANSI/VT100 control sequences
+func HasCodesBytes(b []byte) bool {
+	for _, r := range b {
+		if r == 0x1B {
+			return true
+		}
+	}
+
+	return false
+}
+
+// RemoveCodesBytes returns string without all ANSI/VT100 control sequences
 func RemoveCodes(s string) string {
-	if !HasCodes(s) || s == "" {
+	if s == "" || !HasCodes(s) {
 		return s
 	}
 
-	var b strings.Builder
+	return string(RemoveCodesBytes([]byte(s)))
+}
+
+// RemoveCodesBytes returns byte slice without all ANSI/VT100 control sequences
+func RemoveCodesBytes(b []byte) []byte {
+	if len(b) == 0 || !HasCodesBytes(b) {
+		return b
+	}
+
+	var buf bytes.Buffer
 	var skip bool
 
-	for _, r := range s {
+	for _, r := range b {
 		if r == 0x1B {
 			skip = true
 			continue
@@ -49,10 +69,10 @@ func RemoveCodes(s string) string {
 			continue
 		}
 
-		b.WriteRune(r)
+		buf.WriteByte(r)
 	}
 
-	return b.String()
+	return buf.Bytes()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

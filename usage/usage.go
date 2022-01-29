@@ -63,17 +63,17 @@ type About struct {
 // Info contains info about commands, options, and examples
 type Info struct {
 	AppNameColorTag  string // AppNameColorTag contains default app name color tag
-	CommandsColorTag string // CommandsColor contains default commands color tag
-	OptionsColorTag  string // OptionsColor contains default options color tag
-	Breadcrumbs      bool   // Use bread crumbs for commands and options output
+	CommandsColorTag string // CommandsColorTag contains default commands color tag
+	OptionsColorTag  string // OptionsColorTag contains default options color tag
+	Breadcrumbs      bool   // Breadcrumbs is flag for using bread crumbs for commands and options output
 
-	Name    string
-	Args    []string
-	Spoiler string
+	Name    string   // Name is app name
+	Args    []string // Args is slice with app arguments
+	Spoiler string   // Spoiler contains additional info
 
-	Commands []*Command
-	Options  []*Option
-	Examples []*Example
+	Commands []*Command // Commands is list of supported commands
+	Options  []*Option  // Options is list of supported options
+	Examples []*Example // Examples is list of usage examples
 
 	curGroup string
 }
@@ -88,26 +88,36 @@ type UpdateChecker struct {
 
 // Command contains info about supported command
 type Command struct {
-	Name         string
-	Desc         string
-	Group        string
-	Args         []string
-	BoundOptions []string
+	Name         string   // Name is command name
+	Desc         string   // Desc is command description
+	Group        string   // Group is group name
+	Args         []string // Args is slice with arguments
+	BoundOptions []string // BoundOptions is slice with long names of related options
+
+	ColorTag string // ColorTag contains default color tag
+
+	info *Info
 }
 
 // Option contains info about supported option
 type Option struct {
-	Short string
-	Long  string
-	Desc  string
-	Arg   string
+	Short string // Short is short option name (with one minus prefix)
+	Long  string // Long is long option name (with two minuses prefix)
+	Desc  string // Desc is option description
+	Arg   string // Arg is option argument
+
+	ColorTag string // ColorTag contains default color tag
+
+	info *Info
 }
 
 // Example contains usage example
 type Example struct {
-	Cmd  string
-	Desc string
-	Raw  bool
+	Cmd  string // Cmd is command usage example
+	Desc string // Desc is usage description
+	Raw  bool   // Raw is raw example flag (without automatic binary name appending)
+
+	info *Info
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -159,6 +169,7 @@ func (i *Info) AddCommand(a ...string) {
 			Desc:  a[1],
 			Args:  a[2:],
 			Group: group,
+			info:  i,
 		},
 	)
 }
@@ -178,6 +189,7 @@ func (i *Info) AddOption(a ...string) {
 			Short: short,
 			Desc:  a[1],
 			Arg:   strings.Join(a[2:], " "),
+			info:  i,
 		},
 	)
 }
@@ -190,7 +202,7 @@ func (i *Info) AddExample(a ...string) {
 
 	a = append(a, "")
 
-	i.Examples = append(i.Examples, &Example{a[0], a[1], false})
+	i.Examples = append(i.Examples, &Example{a[0], a[1], false, i})
 }
 
 // AddRawExample adds example of application usage without command prefix
@@ -201,7 +213,7 @@ func (i *Info) AddRawExample(a ...string) {
 
 	a = append(a, "")
 
-	i.Examples = append(i.Examples, &Example{a[0], a[1], true})
+	i.Examples = append(i.Examples, &Example{a[0], a[1], true, i})
 }
 
 // AddSpoiler adds spoiler
@@ -285,6 +297,79 @@ func (i *Info) Render() {
 	fmtc.NewLine()
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Render renders info about command
+func (c *Command) Render() {
+	colorTag := strutil.Q(DEFAULT_COMMANDS_COLOR_TAG, c.ColorTag)
+	size := getCommandSize(c)
+	useBreadcrumbs := true
+	maxSize := size
+
+	if c.info != nil {
+		colorTag = c.info.CommandsColorTag
+		maxSize = getMaxCommandSize(c.info.Commands)
+		useBreadcrumbs = c.info.Breadcrumbs
+	}
+
+	fmtc.Printf("  "+colorTag+"%s{!}", c.Name)
+
+	if len(c.Args) != 0 {
+		fmtc.Printf(" " + renderArgs(c.Args...))
+	}
+
+	fmtc.Printf(getSeparator(size, maxSize, useBreadcrumbs))
+	fmtc.Printf(c.Desc)
+
+	fmtc.NewLine()
+}
+
+// Render renders info about option
+func (o *Option) Render() {
+	colorTag := strutil.Q(DEFAULT_OPTIONS_COLOR_TAG, o.ColorTag)
+	size := getOptionSize(o)
+	useBreadcrumbs := true
+	maxSize := size
+
+	if o.info != nil {
+		colorTag = o.info.OptionsColorTag
+		maxSize = getMaxOptionSize(o.info.Options)
+		useBreadcrumbs = o.info.Breadcrumbs
+	}
+
+	fmtc.Printf("  "+colorTag+"%s{!}", formatOptionName(o))
+
+	if o.Arg != "" {
+		fmtc.Printf(" " + renderArgs(o.Arg))
+	}
+
+	fmtc.Printf(getSeparator(size, maxSize, useBreadcrumbs))
+	fmtc.Printf(o.Desc)
+
+	fmtc.NewLine()
+}
+
+// Render renders usage example
+func (e *Example) Render() {
+	appName := os.Args[0]
+
+	if e.info != nil {
+		appName = e.info.Name
+	}
+
+	if e.Raw {
+		fmtc.Printf("  %s\n", e.Cmd)
+	} else {
+		fmtc.Printf("  %s %s\n", appName, e.Cmd)
+	}
+
+	if e.Desc != "" {
+		fmtc.Printf("  {s-}%s{!}\n", e.Desc)
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Render prints version info to console
 func (a *About) Render() {
 	nc := strutil.Q(a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
@@ -340,9 +425,8 @@ func (a *About) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// renderCommands renders all supported commands
 func renderCommands(info *Info) {
-	maxSize := getMaxCommandSize(info.Commands)
-
 	var curGroup string
 
 	for _, command := range info.Commands {
@@ -351,58 +435,27 @@ func renderCommands(info *Info) {
 			curGroup = command.Group
 		}
 
-		fmtc.Printf("  "+info.CommandsColorTag+"%s{!}", command.Name)
-
-		if len(command.Args) != 0 {
-			fmtc.Printf(" " + renderArgs(command.Args...))
-		}
-
-		size := getCommandSize(command)
-
-		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
-		fmtc.Printf(command.Desc)
-
-		fmtc.NewLine()
+		command.Render()
 	}
 }
 
+// renderOptions renders all supported options
 func renderOptions(info *Info) {
-	maxSize := getMaxOptionSize(info.Options)
-
 	printGroupHeader("Options")
 
 	for _, option := range info.Options {
-		fmtc.Printf("  "+info.OptionsColorTag+"%s{!}", formatOptionName(option))
-
-		if option.Arg != "" {
-			fmtc.Printf(" " + renderArgs(option.Arg))
-		}
-
-		size := getOptionSize(option)
-
-		fmtc.Printf(getSeparator(size, maxSize, info.Breadcrumbs))
-		fmtc.Printf(option.Desc)
-
-		fmtc.NewLine()
+		option.Render()
 	}
 }
 
-// renderExamples render examples
+// renderExamples renders all usage examples
 func renderExamples(info *Info) {
 	printGroupHeader("Examples")
 
 	total := len(info.Examples)
 
 	for index, example := range info.Examples {
-		if example.Raw {
-			fmtc.Printf("  %s\n", example.Cmd)
-		} else {
-			fmtc.Printf("  %s %s\n", info.Name, example.Cmd)
-		}
-
-		if example.Desc != "" {
-			fmtc.Printf("  {s-}%s{!}\n", example.Desc)
-		}
+		example.Render()
 
 		if index < total-1 {
 			fmtc.NewLine()
@@ -410,7 +463,7 @@ func renderExamples(info *Info) {
 	}
 }
 
-// renderArgs render args with colors
+// renderArgs renders args with colors
 func renderArgs(args ...string) string {
 	var result string
 
@@ -425,7 +478,7 @@ func renderArgs(args ...string) string {
 	return fmtc.Sprintf(strings.TrimRight(result, " "))
 }
 
-// formatOptionName format option name
+// formatOptionName formats option name
 func formatOptionName(opt *Option) string {
 	if opt.Short != "" {
 		return "--" + opt.Long + ", -" + opt.Short
