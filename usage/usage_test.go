@@ -103,7 +103,9 @@ func (s *UsageSuite) TestUsage(c *C) {
 	c.Assert(info.GetOption("test999"), IsNil)
 
 	c.Assert(fmt.Sprintf("%s", info.GetCommand("read")), Equals, "read")
+	c.Assert(fmt.Sprintf("%s", info.GetCommand("unknown")), Equals, "")
 	c.Assert(fmt.Sprintf("%s", info.GetOption("t:test")), Equals, "--test")
+	c.Assert(fmt.Sprintf("%s", info.GetOption("u:unknown")), Equals, "")
 }
 
 func (s *UsageSuite) TestVersionInfo(c *C) {
