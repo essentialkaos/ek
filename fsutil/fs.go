@@ -152,6 +152,19 @@ func ValidatePerms(props, path string) error {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
+		switch {
+		case strings.ContainsRune(props, 'F'):
+			return fmt.Errorf("File %s doesn't exist or not accessible", path)
+		case strings.ContainsRune(props, 'D'):
+			return fmt.Errorf("Directory %s doesn't exist or not accessible", path)
+		case strings.ContainsRune(props, 'B'):
+			return fmt.Errorf("Block device %s doesn't exist or not accessible", path)
+		case strings.ContainsRune(props, 'C'):
+			return fmt.Errorf("Character device %s doesn't exist or not accessible", path)
+		case strings.ContainsRune(props, 'L'):
+			return fmt.Errorf("Link %s doesn't exist or not accessible", path)
+		}
+
 		return fmt.Errorf("Object %s doesn't exist or not accessible", path)
 	}
 

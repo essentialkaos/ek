@@ -3,6 +3,7 @@
 ### 12.41.0
 
 * `[usage]` Added helpers for generating a string representation of `Command` and `Option`
+* `[fsutil]` Improved errors description for `ValidatePerms`
 
 ### 12.40.0
 
