@@ -594,6 +594,13 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	c.Assert(ValidatePerms("B", tmpFile), check.NotNil)
 	c.Assert(ValidatePerms("C", tmpFile), check.NotNil)
 
+	c.Assert(ValidatePerms("XFR", "/_unknown_").Error(), check.Equals, "File /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XDR", "/_unknown_").Error(), check.Equals, "Directory /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XBR", "/_unknown_").Error(), check.Equals, "Block device /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XCR", "/_unknown_").Error(), check.Equals, "Character device /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XLR", "/_unknown_").Error(), check.Equals, "Link /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XR", "/_unknown_").Error(), check.Equals, "Object /_unknown_ doesn't exist or not accessible")
+
 	c.Assert(ValidatePerms("W", tmpFile), check.IsNil)
 	c.Assert(ValidatePerms("R", tmpFile), check.IsNil)
 

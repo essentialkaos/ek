@@ -299,6 +299,26 @@ func (i *Info) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// String returns a string representation of the command
+func (c *Command) String() string {
+	if c == nil {
+		return ""
+	}
+
+	return c.Name
+}
+
+// String returns a string representation of the option
+func (o *Option) String() string {
+	if o == nil {
+		return ""
+	}
+
+	return "--" + o.Long
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Render renders info about command
 func (c *Command) Render() {
 	colorTag := strutil.Q(DEFAULT_COMMANDS_COLOR_TAG, c.ColorTag)
