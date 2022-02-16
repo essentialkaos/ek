@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.42.0
+
+* `[fsutil]` Improved helpers `CopyFile`, `MoveFile` and `CopyDir`
+* `[fsutil]` Code refactoring
+
 ### 12.41.0
 
 * `[usage]` Added helpers for generating a string representation of `Command` and `Option`

@@ -291,8 +291,18 @@ func ExampleGetMode() {
 
 func ExampleCopyFile() {
 	target := "/home/john/test.txt"
-
 	err := CopyFile(target, "/home/bob/test.txt", 0644)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("File %s successfully copied to bob user directory\n", target)
+
+	target = "/home/john/test.txt"
+
+	// Permissions and target file name are optional and can be omitted
+	err = CopyFile(target, "/home/bob")
 
 	if err != nil {
 		panic(err.Error())
@@ -303,8 +313,18 @@ func ExampleCopyFile() {
 
 func ExampleMoveFile() {
 	target := "/home/john/test.txt"
-
 	err := MoveFile(target, "/home/bob/test.txt", 0644)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("File %s successfully moved to bob user directory\n", target)
+
+	target = "/home/john/test.txt"
+
+	// Permissions and target file name are optional and can be omitted
+	err = MoveFile(target, "/home/bob/")
 
 	if err != nil {
 		panic(err.Error())

@@ -668,7 +668,6 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	c.Assert(CopyFile(tmpFile3, tmpFile2), check.NotNil)
 	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.NotNil)
 	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.NotNil)
-	c.Assert(CopyFile(tmpFile1, tmpDir2), check.NotNil)
 	c.Assert(CopyFile(tmpFile1, tmpFile3), check.NotNil)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
@@ -681,6 +680,8 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
 	c.Assert(GetMode(tmpFile2), check.Equals, os.FileMode(0600))
 
+	c.Assert(CopyFile(tmpFile2, tmpDir1, 0600), check.IsNil)
+
 	_disableCopyFileChecks = true
 
 	c.Assert(CopyFile("", tmpFile2), check.NotNil)
@@ -690,12 +691,15 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 func (s *FSSuite) TestMoveFile(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpDir2 := c.MkDir()
+	tmpDir3 := c.MkDir()
 	tmpFile1 := tmpDir + "/test1.file"
 	tmpFile2 := tmpDir + "/test2.file"
 	tmpFile3 := tmpDir + "/test3.file"
+	tmpFile4 := tmpDir + "/test4.file"
 
 	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
 	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
 
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir2, 0500)
@@ -710,6 +714,7 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 
 	c.Assert(MoveFile(tmpFile1, tmpFile2), check.IsNil)
 	c.Assert(MoveFile(tmpFile2, tmpFile1, 0600), check.IsNil)
+	c.Assert(MoveFile(tmpFile4, tmpDir3, 0644), check.IsNil)
 
 	_disableMoveFileChecks = true
 

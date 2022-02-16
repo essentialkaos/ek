@@ -28,33 +28,36 @@ var _disableCopyDirChecks bool  // Flag for testing purposes only
 
 // CopyFile copies file using bufio
 func CopyFile(from, to string, perms ...os.FileMode) error {
-	var targetExist = IsExist(to)
+	targetExist := IsExist(to)
+
+	if targetExist && IsDir(to) {
+		to = path.Join(to, path.Base(from))
+		targetExist = false
+	}
+
+	dir := path.Dir(to)
 
 	if !_disableCopyFileChecks {
-		dir := path.Dir(to)
-
 		switch {
 		case from == "":
-			return errors.New("Source file can't be blank")
+			return errors.New("Can't copy file: Source file can't be blank")
 		case to == "":
-			return errors.New("Target file can't be blank")
+			return errors.New("Can't copy file: Target file can't be blank")
 
 		case !IsExist(from):
-			return errors.New("File " + from + " does not exists")
+			return errors.New("Can't copy file: File " + from + " does not exists")
 		case !IsRegular(from):
-			return errors.New("File " + from + " is not a regular file")
+			return errors.New("Can't copy file: File " + from + " is not a regular file")
 		case !IsReadable(from):
-			return errors.New("File " + from + " is not readable")
+			return errors.New("Can't copy file: File " + from + " is not readable")
 
 		case !targetExist && !IsExist(dir):
-			return errors.New("Directory " + dir + " does not exists")
+			return errors.New("Can't copy file: Directory " + dir + " does not exists")
 		case !targetExist && !IsWritable(dir):
-			return errors.New("Directory " + dir + " is not writable")
+			return errors.New("Can't copy file: Directory " + dir + " is not writable")
 
 		case targetExist && !IsWritable(to):
-			return errors.New("Target file " + to + " is not writable")
-		case targetExist && !IsRegular(to):
-			return errors.New("Target is not a file")
+			return errors.New("Can't copy file: Target file " + to + " is not writable")
 		}
 	}
 
@@ -63,27 +66,33 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 
 // MoveFile moves file
 func MoveFile(from, to string, perms ...os.FileMode) error {
-	if !_disableMoveFileChecks {
-		targetExist := IsExist(to)
-		dir := path.Dir(to)
+	targetExist := IsExist(to)
 
+	if targetExist && IsDir(to) {
+		to = path.Join(to, path.Base(from))
+		targetExist = false
+	}
+
+	dir := path.Dir(to)
+
+	if !_disableMoveFileChecks {
 		switch {
 		case from == "":
-			return errors.New("Source file can't be blank")
+			return errors.New("Can't move file: Source file can't be blank")
 		case to == "":
-			return errors.New("Target file can't be blank")
+			return errors.New("Can't move file: Target file can't be blank")
 
 		case !IsExist(from):
-			return errors.New("File " + from + " does not exists")
+			return errors.New("Can't move file: File " + from + " does not exists")
 		case !IsRegular(from):
-			return errors.New("File " + from + " is not a regular file")
+			return errors.New("Can't move file: File " + from + " is not a regular file")
 		case !IsReadable(from):
-			return errors.New("File " + from + " is not readable")
+			return errors.New("Can't move file: File " + from + " is not readable")
 
 		case !targetExist && !IsExist(dir):
-			return errors.New("Directory " + dir + " does not exists")
+			return errors.New("Can't move file: Directory " + dir + " does not exists")
 		case !targetExist && !IsWritable(dir):
-			return errors.New("Directory " + dir + " is not writable")
+			return errors.New("Can't move file: Directory " + dir + " is not writable")
 		}
 	}
 
@@ -95,20 +104,20 @@ func CopyDir(from, to string) error {
 	if !_disableCopyDirChecks {
 		switch {
 		case from == "":
-			return errors.New("Source directory can't be blank")
+			return errors.New("Can't copy directory: Source directory can't be blank")
 		case to == "":
-			return errors.New("Target directory can't be blank")
+			return errors.New("Can't copy directory: Target directory can't be blank")
 
 		case !IsExist(from):
-			return errors.New("Directory " + from + " does not exists")
+			return errors.New("Can't copy directory: Directory " + from + " does not exists")
 		case !IsDir(from):
-			return errors.New("Target " + from + " is not a directory")
+			return errors.New("Can't copy directory: Target " + from + " is not a directory")
 		case !IsReadable(from):
-			return errors.New("Directory " + from + " is not readable")
+			return errors.New("Can't copy directory: Directory " + from + " is not readable")
 		case IsExist(to) && !IsDir(to):
-			return errors.New("Target " + to + " is not a directory")
+			return errors.New("Can't copy directory: Target " + to + " is not a directory")
 		case IsExist(to) && !IsWritable(to):
-			return errors.New("Directory " + to + " is not writable")
+			return errors.New("Can't copy directory: Directory " + to + " is not writable")
 		}
 	}
 
@@ -137,6 +146,8 @@ func TouchFile(path string, perm os.FileMode) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func copyFile(from, to string, perms []os.FileMode) error {
+	from, to = path.Clean(from), path.Clean(to)
+
 	var targetExist bool
 	var perm os.FileMode
 
@@ -182,6 +193,8 @@ func copyFile(from, to string, perms []os.FileMode) error {
 }
 
 func moveFile(from, to string, perms []os.FileMode) error {
+	from, to = path.Clean(from), path.Clean(to)
+
 	err := os.Rename(from, to)
 
 	if err != nil {
@@ -196,6 +209,8 @@ func moveFile(from, to string, perms []os.FileMode) error {
 }
 
 func copyDir(from, to string) error {
+	from, to = path.Clean(from), path.Clean(to)
+
 	var err error
 
 	for _, target := range List(from, false) {
