@@ -4,6 +4,7 @@
 
 * `[fsutil]` Improved helpers `CopyFile`, `MoveFile` and `CopyDir`
 * `[fsutil]` Code refactoring
+* `[log]` Code refactoring
 
 ### 12.41.0
 

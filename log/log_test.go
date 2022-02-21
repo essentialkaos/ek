@@ -453,19 +453,19 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	std := &StdLogger{l}
 
 	stdExitFunc = func(code int) { return }
-	stdPanicFunc = func(message string) { return }
 
-	c.Assert(std.Output(2, "test1"), IsNil)
+	c.Assert(std.Output(2, "1"), IsNil)
 
-	std.Fatal("test2")
-	std.Fatalf("%s", "test3")
-	std.Fatalln("test4")
-	std.Panic("test5")
-	std.Panicf("%s", "test6")
-	std.Panicln("test7")
-	std.Print("test8")
-	std.Printf("%s", "test9")
-	std.Println("test10")
+	std.Fatal("2")
+	std.Fatalf("%s", "3")
+	std.Fatalln("4")
+	std.Print("5")
+	std.Printf("%s", "6")
+	std.Println("7")
+
+	c.Assert(func() { std.Panic("testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicf("%s", "testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicln("testPanic") }, PanicMatches, "testPanic\n")
 
 	data, err := ioutil.ReadFile(ls.TempDir + "/file5.log")
 
