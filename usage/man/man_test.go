@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v12/timeutil"
-	"pkg.re/essentialkaos/ek.v12/usage"
+	"github.com/essentialkaos/ek/timeutil"
+	"github.com/essentialkaos/ek/usage"
 
-	. "pkg.re/essentialkaos/check.v1"
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

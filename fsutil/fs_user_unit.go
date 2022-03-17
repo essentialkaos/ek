@@ -13,7 +13,7 @@ package fsutil
 
 import (
 	"errors"
-	"pkg.re/essentialkaos/ek.v12/system"
+	"github.com/essentialkaos/ek/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -10,7 +10,7 @@ package bash
 import (
 	"fmt"
 
-	"pkg.re/essentialkaos/ek.v12/usage"
+	"github.com/essentialkaos/ek/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -14,7 +14,7 @@ package ek
 import (
 	"golang.org/x/crypto/bcrypt"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"github.com/essentialkaos/go-linenoise"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -17,7 +17,7 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v12/color"
+	"github.com/essentialkaos/ek/color"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"pkg.re/essentialkaos/ek.v12/knf"
+	"github.com/essentialkaos/ek/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

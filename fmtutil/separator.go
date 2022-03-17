@@ -10,8 +10,8 @@ package fmtutil
 import (
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v12/fmtc"
-	"pkg.re/essentialkaos/ek.v12/terminal/window"
+	"github.com/essentialkaos/ek/fmtc"
+	"github.com/essentialkaos/ek/terminal/window"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

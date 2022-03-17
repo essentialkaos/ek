@@ -10,7 +10,7 @@ package spellcheck
 import (
 	"testing"
 
-	. "pkg.re/essentialkaos/check.v1"
+	. "github.com/essentialkaos/check"
 )
 
 func Test(t *testing.T) { TestingT(t) }

@@ -5,21 +5,18 @@ export EK_TEST_PORT=8080
 ################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = git-config test fmt deps deps-test clean help
+.PHONY = test fmt deps deps-test clean help
 
 ################################################################################
 
-git-config: ## Configure git redirects for stable import path services
-	git config --global http.https://pkg.re.followRedirects true
-
-deps: git-config ## Download dependencies
-	go get -v pkg.re/essentialkaos/go-linenoise.v3
+deps: ## Download dependencies
+	go get -v github.com/essentialkaos/go-linenoise
 	go get -v golang.org/x/crypto/bcrypt
 
-deps-test: git-config ## Download dependencies for tests
+deps-test: ## Download dependencies for tests
 	go get -v github.com/axw/gocov/gocov
+	go get -v github.com/essentialkaos/check
 	go get -v golang.org/x/sys/unix
-	go get -v pkg.re/essentialkaos/check.v1
 
 test: ## Run tests
 	go test -covermode=count -tags=unit ./...

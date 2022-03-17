@@ -5,6 +5,7 @@
 * `[fsutil]` Improved helpers `CopyFile`, `MoveFile` and `CopyDir`
 * `[fsutil]` Code refactoring
 * `[log]` Code refactoring
+* Removed `pkg.re` usage
 
 ### 12.41.0
 

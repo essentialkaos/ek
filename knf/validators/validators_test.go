@@ -11,9 +11,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v12/knf"
+	"github.com/essentialkaos/ek/knf"
 
-	check "pkg.re/essentialkaos/check.v1"
+	check "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

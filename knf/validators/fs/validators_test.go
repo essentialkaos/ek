@@ -14,9 +14,9 @@ import (
 	"runtime"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v12/knf"
+	"github.com/essentialkaos/ek/knf"
 
-	. "pkg.re/essentialkaos/check.v1"
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

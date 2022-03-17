@@ -12,10 +12,10 @@ import (
 	"fmt"
 	"os"
 
-	"pkg.re/essentialkaos/ek.v12/fsutil"
-	"pkg.re/essentialkaos/ek.v12/knf"
-	"pkg.re/essentialkaos/ek.v12/path"
-	"pkg.re/essentialkaos/ek.v12/system"
+	"github.com/essentialkaos/ek/fsutil"
+	"github.com/essentialkaos/ek/knf"
+	"github.com/essentialkaos/ek/path"
+	"github.com/essentialkaos/ek/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

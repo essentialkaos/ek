@@ -14,9 +14,9 @@ import (
 	"sort"
 	"testing"
 
-	"pkg.re/essentialkaos/ek.v12/system"
+	"github.com/essentialkaos/ek/system"
 
-	check "pkg.re/essentialkaos/check.v1"
+	check "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
