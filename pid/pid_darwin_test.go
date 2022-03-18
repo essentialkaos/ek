@@ -14,7 +14,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	. "pkg.re/essentialkaos/check.v1"
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

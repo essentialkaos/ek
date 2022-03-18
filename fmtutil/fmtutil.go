@@ -15,9 +15,9 @@ import (
 	"strconv"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v12/ansi"
-	"pkg.re/essentialkaos/ek.v12/mathutil"
-	"pkg.re/essentialkaos/ek.v12/strutil"
+	"github.com/essentialkaos/ek/ansi"
+	"github.com/essentialkaos/ek/mathutil"
+	"github.com/essentialkaos/ek/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

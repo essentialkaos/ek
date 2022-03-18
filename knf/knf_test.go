@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	check "pkg.re/essentialkaos/check.v1"
+	check "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

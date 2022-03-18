@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v12/mathutil"
-	"pkg.re/essentialkaos/ek.v12/pluralize"
+	"github.com/essentialkaos/ek/mathutil"
+	"github.com/essentialkaos/ek/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

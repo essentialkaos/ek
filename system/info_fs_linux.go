@@ -15,7 +15,7 @@ import (
 	"syscall"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v12/strutil"
+	"github.com/essentialkaos/ek/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

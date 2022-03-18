@@ -13,7 +13,7 @@ import (
 	"math"
 	"strconv"
 
-	"pkg.re/essentialkaos/ek.v12/mathutil"
+	"github.com/essentialkaos/ek/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

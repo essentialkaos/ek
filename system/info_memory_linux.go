@@ -11,7 +11,7 @@ import (
 	"bufio"
 	"errors"
 
-	"pkg.re/essentialkaos/ek.v12/strutil"
+	"github.com/essentialkaos/ek/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

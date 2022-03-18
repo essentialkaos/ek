@@ -20,9 +20,9 @@ import (
 	"strings"
 	"syscall"
 
-	"pkg.re/essentialkaos/ek.v12/env"
-	"pkg.re/essentialkaos/ek.v12/fsutil"
-	"pkg.re/essentialkaos/ek.v12/strutil"
+	"github.com/essentialkaos/ek/env"
+	"github.com/essentialkaos/ek/fsutil"
+	"github.com/essentialkaos/ek/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

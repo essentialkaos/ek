@@ -17,11 +17,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"pkg.re/essentialkaos/go-linenoise.v3"
+	"github.com/essentialkaos/go-linenoise"
 
-	"pkg.re/essentialkaos/ek.v12/ansi"
-	"pkg.re/essentialkaos/ek.v12/fmtc"
-	"pkg.re/essentialkaos/ek.v12/fsutil"
+	"github.com/essentialkaos/ek/ansi"
+	"github.com/essentialkaos/ek/fmtc"
+	"github.com/essentialkaos/ek/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
