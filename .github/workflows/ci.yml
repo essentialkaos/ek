@@ -16,7 +16,6 @@ jobs:
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
       EK_TEST_PORT: 8080
-      GO111MODULE: off
 
     strategy:
       matrix:
