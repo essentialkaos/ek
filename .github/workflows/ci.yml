@@ -44,7 +44,7 @@ jobs:
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
         if: ${{ runner.os != 'Windows' }}
-        run: make deps deps-test
+        run: make deps
 
       - name: Run tests on Linux/Mac
         working-directory: ${{env.SRC_DIR}}

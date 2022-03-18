@@ -9,14 +9,19 @@ export EK_TEST_PORT=8080
 
 ################################################################################
 
-deps: ## Download dependencies
-	go get -v github.com/essentialkaos/go-linenoise
-	go get -v golang.org/x/crypto/bcrypt
+deps: mod-update ## Download dependencies
 
-deps-test: ## Download dependencies for tests
-	go get -v github.com/axw/gocov/gocov
-	go get -v github.com/essentialkaos/check
-	go get -v golang.org/x/sys/unix
+deps-test: deps ## Download dependencies for tests
+
+mod-init: ## Initialize new module
+	go mod init
+	go mod tidy
+
+mod-update: ## Download modules to local cache
+	go mod download
+
+mod-vendor: ## Make vendored copy of dependencies
+	go mod vendor
 
 test: ## Run tests
 	go test -covermode=count -tags=unit ./...
