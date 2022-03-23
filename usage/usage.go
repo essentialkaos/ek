@@ -15,10 +15,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/fmtc"
-	"github.com/essentialkaos/ek/mathutil"
-	"github.com/essentialkaos/ek/strutil"
-	"github.com/essentialkaos/ek/version"
+	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/mathutil"
+	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek/v12/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

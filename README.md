@@ -27,16 +27,16 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 
 ### Installation
 
-Make sure you have a working Go 1.16+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.17+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
-go get github.com/essentialkaos/ek
+go get github.com/essentialkaos/ek/v12
 ```
 
 If you want to update `EK` to latest stable release, do:
 
 ```
-go get -u github.com/essentialkaos/ek
+go get -u github.com/essentialkaos/ek/v12
 ```
 
 ### Sub-packages

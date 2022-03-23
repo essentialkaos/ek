@@ -14,13 +14,13 @@ package ek
 import (
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/essentialkaos/go-linenoise"
+	"github.com/essentialkaos/go-linenoise/v3"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // VERSION is current ek package version
-const VERSION = "12.42.0"
+const VERSION = "12.42.1"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 

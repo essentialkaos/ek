@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/fmtc"
-	"github.com/essentialkaos/ek/timeutil"
-	"github.com/essentialkaos/ek/usage"
+	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/timeutil"
+	"github.com/essentialkaos/ek/v12/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

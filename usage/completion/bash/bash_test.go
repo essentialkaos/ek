@@ -10,7 +10,7 @@ package bash
 import (
 	"testing"
 
-	"github.com/essentialkaos/ek/usage"
+	"github.com/essentialkaos/ek/v12/usage"
 
 	. "github.com/essentialkaos/check"
 )

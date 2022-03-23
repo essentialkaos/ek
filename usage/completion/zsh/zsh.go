@@ -12,9 +12,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/essentialkaos/ek/fmtc"
-	"github.com/essentialkaos/ek/options"
-	"github.com/essentialkaos/ek/usage"
+	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/options"
+	"github.com/essentialkaos/ek/v12/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

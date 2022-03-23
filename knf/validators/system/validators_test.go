@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/essentialkaos/ek/knf"
+	"github.com/essentialkaos/ek/v12/knf"
 
 	. "github.com/essentialkaos/check"
 )

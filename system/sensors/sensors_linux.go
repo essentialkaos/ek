@@ -17,8 +17,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/fsutil"
-	"github.com/essentialkaos/ek/sortutil"
+	"github.com/essentialkaos/ek/v12/fsutil"
+	"github.com/essentialkaos/ek/v12/sortutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

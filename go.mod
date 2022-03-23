@@ -1,12 +1,12 @@
-module github.com/essentialkaos/ek
+module github.com/essentialkaos/ek/v12
 
 go 1.17
 
 require (
 	github.com/essentialkaos/check v1.2.1
-	github.com/essentialkaos/go-linenoise v2.1.2+incompatible
-	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
-	golang.org/x/sys v0.0.0-20220318055525-2edf467146b5
+	github.com/essentialkaos/go-linenoise/v3 v3.3.5
+	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8
 )
 
 require (
