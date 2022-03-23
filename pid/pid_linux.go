@@ -12,7 +12,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/essentialkaos/ek/fsutil"
+	"github.com/essentialkaos/ek/v12/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

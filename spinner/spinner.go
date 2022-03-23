@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek/fmtc"
-	"github.com/essentialkaos/ek/timeutil"
+	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

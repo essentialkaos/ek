@@ -15,7 +15,7 @@ import (
 
 	. "github.com/essentialkaos/check"
 
-	"github.com/essentialkaos/ek/fsutil"
+	"github.com/essentialkaos/ek/v12/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -14,7 +14,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/essentialkaos/ek/system"
+	"github.com/essentialkaos/ek/v12/system"
 
 	check "github.com/essentialkaos/check"
 )

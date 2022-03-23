@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/mathutil"
-	"github.com/essentialkaos/ek/pluralize"
+	"github.com/essentialkaos/ek/v12/mathutil"
+	"github.com/essentialkaos/ek/v12/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

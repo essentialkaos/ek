@@ -15,7 +15,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/essentialkaos/ek/strutil"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

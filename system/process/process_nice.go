@@ -13,7 +13,7 @@ package process
 import (
 	"syscall"
 
-	"github.com/essentialkaos/ek/mathutil"
+	"github.com/essentialkaos/ek/v12/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

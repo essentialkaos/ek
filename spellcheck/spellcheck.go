@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/essentialkaos/ek/mathutil"
+	"github.com/essentialkaos/ek/v12/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

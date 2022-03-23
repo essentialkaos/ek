@@ -13,8 +13,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/essentialkaos/ek/fsutil"
-	"github.com/essentialkaos/ek/rand"
+	"github.com/essentialkaos/ek/v12/fsutil"
+	"github.com/essentialkaos/ek/v12/rand"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

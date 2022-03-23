@@ -13,7 +13,7 @@ import (
 	"net"
 	"net/url"
 
-	"github.com/essentialkaos/ek/knf"
+	"github.com/essentialkaos/ek/v12/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
