@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.42.2
+
+* `[secstr]` Fixed panic in `IsEmpty` and `Destroy` if string struct is nil
+
+### 12.42.1
+
+* Module path set to `v12`
+
 ### 12.42.0
 
 * `[fsutil]` Improved helpers `CopyFile`, `MoveFile` and `CopyDir`
