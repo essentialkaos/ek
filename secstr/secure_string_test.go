@@ -74,3 +74,10 @@ func (s *SecstrSuite) TestErrors(c *C) {
 	_, err := NewSecureString(123)
 	c.Assert(err, NotNil)
 }
+
+func (s *SecstrSuite) TestNil(c *C) {
+	var k *String
+
+	c.Assert(k.IsEmpty(), Equals, true)
+	c.Assert(k.Destroy(), IsNil)
+}

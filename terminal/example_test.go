@@ -40,13 +40,30 @@ func ExampleReadPassword() {
 	MaskSymbolColorTag = "{s}"
 
 	// User must enter password
-	input, err := ReadUI("Please enter password", true)
+	password, err := ReadPassword("Please enter password", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 	}
 
-	fmt.Printf("User password: %s\v", input)
+	fmt.Printf("User password: %s\v", password)
+}
+
+func ExampleReadPasswordSecure() {
+	Prompt = "› "
+	MaskSymbol = "•"
+	MaskSymbolColorTag = "{s}"
+
+	// User must enter password
+	password, err := ReadPasswordSecure("Please enter password", true)
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+	}
+
+	fmt.Printf("User password: %s\v", string(password.Data))
+
+	password.Destroy()
 }
 
 func ExampleReadAnswer() {
