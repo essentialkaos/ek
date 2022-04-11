@@ -22,6 +22,7 @@ import (
 	"github.com/essentialkaos/ek/v12/ansi"
 	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fsutil"
+	"github.com/essentialkaos/ek/v12/secstr"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -85,6 +86,18 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, true)
+}
+
+// ReadPasswordSecure reads password or some private input which will be hidden
+// after pressing Enter
+func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
+	password, err := readUserInput(title, nonEmpty, true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return secstr.NewSecureString(&password)
 }
 
 // PrintErrorMessage prints error message

@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.42.2
+### 12.43.0
 
+* `[terminal]` Added method `ReadPasswordSecure` for reading password into a secure string
 * `[secstr]` Fixed panic in `IsEmpty` and `Destroy` if string struct is nil
 
 ### 12.42.1
