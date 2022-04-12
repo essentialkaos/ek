@@ -23,6 +23,12 @@ func NewSecureString(data interface{}) (*String, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ❗ IsEmpty returns false if string is empty
+func (s *String) IsEmpty() bool {
+	panic("UNSUPPORTED")
+	return false
+}
+
 // ❗ Destroy destroys data
 func (s *String) Destroy() error {
 	panic("UNSUPPORTED")

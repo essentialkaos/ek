@@ -3,6 +3,7 @@
 ### 12.43.1
 
 * `[terminal]` Fixed stubs for Windows
+* `[secstr]` Fixed stubs for Windows
 
 ### 12.43.0
 
