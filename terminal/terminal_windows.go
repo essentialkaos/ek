@@ -46,6 +46,13 @@ func ReadPassword(title string, nonEmpty bool) (string, error) {
 	return "", nil
 }
 
+// ❗ ReadPasswordSecure reads password or some private input which will be hidden
+// after pressing Enter
+func ReadPasswordSecure(title string, nonEmpty bool) (string, error) {
+	panic("UNSUPPORTED")
+	return "", nil
+}
+
 // ❗ PrintErrorMessage prints error message
 func PrintErrorMessage(message string, args ...interface{}) {
 	panic("UNSUPPORTED")

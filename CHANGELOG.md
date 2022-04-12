@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.43.1
+
+* `[terminal]` Fixed stubs for Windows
+
 ### 12.43.0
 
 * `[terminal]` Added method `ReadPasswordSecure` for reading password into a secure string
