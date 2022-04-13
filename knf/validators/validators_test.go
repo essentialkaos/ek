@@ -158,25 +158,25 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Empty(fakeConfig, "test:empty", nil), check.NotNil)
 	c.Assert(Empty(fakeConfig, "test:string", nil), check.IsNil)
 
-	c.Assert(Less(fakeConfig, "test:integer", 30), check.NotNil)
+	c.Assert(Less(fakeConfig, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
 	c.Assert(Less(fakeConfig, "test:integer", 5), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:float", 30.0), check.NotNil)
+	c.Assert(Less(fakeConfig, "test:float", 30.0).Error(), check.Equals, "Property test:float can't be less than 30")
 	c.Assert(Less(fakeConfig, "test:float", 5.0), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:string", "30"), check.NotNil)
+	c.Assert(Less(fakeConfig, "test:string", "30").Error(), check.Equals, "Wrong validator for property test:string")
 
-	c.Assert(Greater(fakeConfig, "test:integer", 5), check.NotNil)
+	c.Assert(Greater(fakeConfig, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
 	c.Assert(Greater(fakeConfig, "test:integer", 30), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:float", 5.0), check.NotNil)
+	c.Assert(Greater(fakeConfig, "test:float", 5.0).Error(), check.Equals, "Property test:float can't be greater than 5")
 	c.Assert(Greater(fakeConfig, "test:float", 30.0), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:string", "30"), check.NotNil)
+	c.Assert(Greater(fakeConfig, "test:string", "30").Error(), check.Equals, "Wrong validator for property test:string")
 
-	c.Assert(Equals(fakeConfig, "test:empty", ""), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:string", "test"), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:integer", 10), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:float", 10.0), check.NotNil)
-	c.Assert(Equals(fakeConfig, "test:boolean", false), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:empty", "").Error(), check.Equals, "Property test:empty can't be equal \"\"")
+	c.Assert(Equals(fakeConfig, "test:string", "test").Error(), check.Equals, "Property test:string can't be equal \"test\"")
+	c.Assert(Equals(fakeConfig, "test:integer", 10).Error(), check.Equals, "Property test:integer can't be equal 10")
+	c.Assert(Equals(fakeConfig, "test:float", 10.0).Error(), check.Equals, "Property test:float can't be equal 10.000000")
+	c.Assert(Equals(fakeConfig, "test:boolean", false).Error(), check.Equals, "Property test:boolean can't be equal false")
 
-	c.Assert(Equals(fakeConfig, "test:empty", []string{}), check.NotNil)
+	c.Assert(Equals(fakeConfig, "test:empty", []string{}).Error(), check.Equals, "Wrong validator for property test:empty")
 	c.Assert(Equals(fakeConfig, "test:empty", "1"), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:string", "testtest"), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:integer", 15), check.IsNil)
@@ -184,8 +184,8 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
 
 	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
-	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}), check.NotNil)
-	c.Assert(NotContains(fakeConfig, "test:string", 0), check.NotNil)
+	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
+	c.Assert(NotContains(fakeConfig, "test:string", 0).Error(), check.Equals, "Wrong validator for property test:string")
 }
 
 func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
@@ -226,20 +226,20 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
 	c.Assert(TypeBool(fakeConfig, "boolean:test5", nil), check.IsNil)
 	c.Assert(TypeBool(fakeConfig, "boolean:test6", nil), check.IsNil)
 	c.Assert(TypeBool(fakeConfig, "boolean:test7", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test8", nil), check.NotNil)
+	c.Assert(TypeBool(fakeConfig, "boolean:test8", nil).Error(), check.Equals, "Property boolean:test8 contains unsupported boolean value (disabled)")
 
 	c.Assert(TypeNum(fakeConfig, "num:test1", nil), check.IsNil)
 	c.Assert(TypeNum(fakeConfig, "num:test2", nil), check.IsNil)
 	c.Assert(TypeNum(fakeConfig, "num:test3", nil), check.IsNil)
 	c.Assert(TypeNum(fakeConfig, "num:test4", nil), check.IsNil)
 	c.Assert(TypeNum(fakeConfig, "num:test5", nil), check.NotNil)
-	c.Assert(TypeNum(fakeConfig, "float:test3", nil), check.NotNil)
+	c.Assert(TypeNum(fakeConfig, "float:test3", nil).Error(), check.Equals, "Property float:test3 contains unsupported numeric value (0.6)")
 
 	c.Assert(TypeFloat(fakeConfig, "float:test1", nil), check.IsNil)
 	c.Assert(TypeFloat(fakeConfig, "float:test2", nil), check.IsNil)
 	c.Assert(TypeFloat(fakeConfig, "float:test3", nil), check.IsNil)
 	c.Assert(TypeFloat(fakeConfig, "float:test4", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test5", nil), check.NotNil)
+	c.Assert(TypeFloat(fakeConfig, "float:test5", nil).Error(), check.Equals, "Property float:test5 contains unsupported float value (ABCD)")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

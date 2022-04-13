@@ -4,6 +4,7 @@
 
 * `[path]` Added method `Compact` for converting path to compact representation
 * `[knf/validators/fs]` Fixed bug with formatting `FileMode` in error messages
+* `[knf/validators]` Improved tests
 * `[knf/validators/fs]` Improved tests
 * `[knf/validators/network]` Improved tests
 * `[knf/validators/regexp]` Improved tests

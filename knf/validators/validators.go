@@ -188,7 +188,7 @@ func validatorEquals(config *knf.Config, prop string, value interface{}) error {
 
 	case string:
 		if config.GetS(prop) == u {
-			return fmt.Errorf("Property %s can't be equal %s", prop, value.(string))
+			return fmt.Errorf("Property %s can't be equal \"%s\"", prop, value.(string))
 		}
 
 	default:
