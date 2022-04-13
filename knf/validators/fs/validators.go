@@ -149,7 +149,8 @@ func validateFileMode(config *knf.Config, prop string, value interface{}) error 
 	}
 
 	if perms != targetPerms {
-		return fmt.Errorf("%s has different mode (%d != %d)", target, targetPerms, perms)
+		return fmt.Errorf(
+			"%s has different mode (%o != %o)", target, targetPerms, perms)
 	}
 
 	return nil

@@ -169,6 +169,7 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "/etc/passwd has different mode (644 != 777)")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -180,6 +181,7 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "Can't get mode for /etc/__unknown__")
 }
 
 func (s *ValidatorSuite) TestMatchPattern(c *C) {

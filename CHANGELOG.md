@@ -3,6 +3,7 @@
 ### 12.44.0
 
 * `[path]` Added method `Compact` for converting path to compact representation
+* `[knf/validators/fs]` Fixed bug with formatting `FileMode` in error messages
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 
