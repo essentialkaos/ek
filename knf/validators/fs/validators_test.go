@@ -76,6 +76,17 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 11)
+	c.Assert(errs[0].Error(), Equals, "Property test:test1 must be path to file")
+	c.Assert(errs[1].Error(), Equals, "Property test:test1 must be path to readable file")
+	c.Assert(errs[2].Error(), Equals, "Property test:test1 must be path to writable file")
+	c.Assert(errs[3].Error(), Equals, "Property test:test1 must be path to executable file")
+	c.Assert(errs[4].Error(), Equals, "Property test:test1 must be path to readable/writable file")
+	c.Assert(errs[5].Error(), Equals, "Property test:test1 must be path to directory")
+	c.Assert(errs[6].Error(), Equals, "Property test:test1 must be path to readable directory")
+	c.Assert(errs[7].Error(), Equals, "Property test:test1 must be path to readable directory")
+	c.Assert(errs[8].Error(), Equals, "Property test:test1 must be path to writable directory")
+	c.Assert(errs[9].Error(), Equals, "Property test:test1 must be path to readable/writable directory")
+	c.Assert(errs[10].Error(), Equals, "Property test:test1 must be path to object with given permissions (WX)")
 }
 
 func (s *ValidatorSuite) TestOwnerValidator(c *C) {
@@ -97,6 +108,8 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 2)
+	c.Assert(errs[0].Error(), Equals, "User ftp must be owner of /etc/passwd")
+	c.Assert(errs[1].Error(), Equals, "Can't find user somerandomuser on system")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -108,6 +121,7 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "Can't get owner for /etc/__unknown__")
 }
 
 func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
@@ -138,6 +152,8 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 2)
+	c.Assert(errs[0].Error(), Equals, "Group ftp must be owner of /etc/passwd")
+	c.Assert(errs[1].Error(), Equals, "Can't find group somerandomuser on system")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -149,6 +165,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "Can't get owner group for /etc/__unknown__")
 }
 
 func (s *ValidatorSuite) TestFileModeValidator(c *C) {
@@ -203,6 +220,8 @@ func (s *ValidatorSuite) TestMatchPattern(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 2)
+	c.Assert(errs[0].Error(), Equals, "Property test:test1 must match shell pattern /var/*")
+	c.Assert(errs[1].Error(), Equals, "Can't parse shell pattern: syntax error in pattern")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
