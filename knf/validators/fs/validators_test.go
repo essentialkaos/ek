@@ -103,12 +103,12 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	c.Assert(errs, HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test1", Owner, "ftp"},
+		{"test:test1", Owner, "nobody"},
 		{"test:test1", Owner, "somerandomuser"},
 	})
 
 	c.Assert(errs, HasLen, 2)
-	c.Assert(errs[0].Error(), Equals, "User ftp must be owner of /etc/passwd")
+	c.Assert(errs[0].Error(), Equals, "User nobody must be owner of /etc/passwd")
 	c.Assert(errs[1].Error(), Equals, "Can't find user somerandomuser on system")
 
 	configFile = createConfig(c, "/etc/__unknown__")
@@ -147,13 +147,13 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	c.Assert(errs, HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test1", OwnerGroup, "nobody"},
-		{"test:test1", OwnerGroup, "somerandomuser"},
+		{"test:test1", OwnerGroup, "nogroup"},
+		{"test:test1", OwnerGroup, "somerandomgroup"},
 	})
 
 	c.Assert(errs, HasLen, 2)
-	c.Assert(errs[0].Error(), Equals, "Group nobody must be owner of /etc/passwd")
-	c.Assert(errs[1].Error(), Equals, "Can't find group somerandomuser on system")
+	c.Assert(errs[0].Error(), Equals, "Group nogroup must be owner of /etc/passwd")
+	c.Assert(errs[1].Error(), Equals, "Can't find group somerandomgroup on system")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
