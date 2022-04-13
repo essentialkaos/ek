@@ -161,7 +161,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"test:test1", OwnerGroup, "root"},
+		{"test:test1", OwnerGroup, "nogroup"},
 	})
 
 	c.Assert(errs, HasLen, 1)
