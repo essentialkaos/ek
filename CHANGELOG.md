@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.43.1
+### 12.44.0
 
+* `[path]` Added method `Compact` for converting path to compact representation
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 

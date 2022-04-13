@@ -113,3 +113,10 @@ func (s *PathUtilSuite) TestGlob(c *C) {
 	c.Assert(IsGlob("t?st"), Equals, true)
 	c.Assert(IsGlob("t[a-z]st"), Equals, true)
 }
+
+func (s *PathUtilSuite) TestCompact(c *C) {
+	c.Assert(Compact(""), Equals, "")
+	c.Assert(Compact("test"), Equals, "test")
+	c.Assert(Compact("/a/b/c/d"), Equals, "/a/b/c/d")
+	c.Assert(Compact("/my/random/directory/test.txt"), Equals, "/m/r/d/test.txt")
+}

@@ -63,10 +63,17 @@ func ExampleMatch() {
 }
 
 func ExampleSplit() {
-	fmt.Println(Split("/home/user/file.zip"))
+	fmt.Println(Split("/home/user/john/file.zip"))
 
 	// Output:
-	// /home/user/ file.zip
+	// /home/user/john/ file.zip
+}
+
+func ExampleCompact() {
+	fmt.Println(Compact("/home/user/john/file.zip"))
+
+	// Output:
+	// /h/u/j/file.zip
 }
 
 func ExampleIsSafe() {

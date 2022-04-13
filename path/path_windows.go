@@ -73,6 +73,12 @@ func Split(path string) (dir, file string) {
 	return "", ""
 }
 
+// ❗ Compact converts path to compact representation (e.g /some/random/directory/file.txt → /s/r/d/file.txt)
+func Compact(path string) string {
+	panic("UNSUPPORTED")
+	return ""
+}
+
 // ❗ IsSafe return true is given path is safe to use (not points to system dirs)
 func IsSafe(path string) bool {
 	panic("UNSUPPORTED")
