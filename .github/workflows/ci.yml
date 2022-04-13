@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '0 14 */15 * *'
 
+permissions:
+  actions: read
+  contents: read
+  statuses: write
+
 jobs:
   Go:
     name: Go
