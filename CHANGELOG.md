@@ -5,8 +5,10 @@
 * `[path]` Added method `Compact` for converting path to compact representation
 * `[knf/validators/fs]` Fixed bug with formatting `FileMode` in error messages
 * `[cron]` Improved parsing error messages
+* `[fsutil]` Improved parsing error messages
 * `[cron]` Improved tests
 * `[directio]` Improved tests
+* `[fsutil]` Improved tests
 * `[knf/validators/fs]` Improved tests
 * `[knf/validators/network]` Improved tests
 * `[knf/validators/regexp]` Improved tests
