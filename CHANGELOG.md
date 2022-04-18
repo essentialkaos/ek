@@ -4,11 +4,13 @@
 
 * `[path]` Added method `Compact` for converting path to compact representation
 * `[knf/validators/fs]` Fixed bug with formatting `FileMode` in error messages
-* `[knf/validators]` Improved tests
+* `[cron]` Improved parsing error messages
+* `[cron]` Improved tests
 * `[knf/validators/fs]` Improved tests
 * `[knf/validators/network]` Improved tests
 * `[knf/validators/regexp]` Improved tests
 * `[knf/validators/system]` Improved tests
+* `[knf/validators]` Improved tests
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 

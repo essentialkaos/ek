@@ -228,35 +228,42 @@ func (s *CronSuite) TestErrors(c *C) {
 	e, err := Parse("0-A * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "0-A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("A-1 * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "A-1": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("*/A * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "\*/A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("*/0 * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "\*/0": Interval can't be less or equals 0`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("A * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,A * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "0,1,A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,2-A * * * *")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse token "0,1,2-A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 }

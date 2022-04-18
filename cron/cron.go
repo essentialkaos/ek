@@ -10,6 +10,7 @@ package cron
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -121,7 +122,7 @@ func Parse(expr string) (*Expr, error) {
 		}
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Can't parse token %q: %w", token, err)
 		}
 
 		switch tn {
