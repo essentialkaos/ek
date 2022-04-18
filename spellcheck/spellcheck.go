@@ -19,6 +19,8 @@ import (
 
 // Model is spellcheck model struct
 type Model struct {
+	Threshold int // Score treshold (default: 2)
+
 	terms []string
 }
 
@@ -43,13 +45,11 @@ func (s suggestItems) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
-var threshold = 2
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Train trains words by given string slice
 func Train(words []string) *Model {
-	model := &Model{}
+	model := &Model{Threshold: 2}
 
 	if len(words) == 0 {
 		return model
@@ -67,6 +67,8 @@ func Train(words []string) *Model {
 
 	return model
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Correct corrects given value
 func (m *Model) Correct(word string) string {
@@ -88,7 +90,7 @@ func (m *Model) Correct(word string) string {
 		}
 	}
 
-	if result.score > threshold {
+	if result.score > mathutil.Between(m.Threshold, 1, 1000) {
 		return word
 	}
 
@@ -125,8 +127,7 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // Damerau–Levenshtein distance algorithm and code
 func getDLDistance(source, target string) int {
-	sl := len(source)
-	tl := len(target)
+	sl, tl := len(source), len(target)
 
 	if sl == 0 {
 		if tl == 0 {

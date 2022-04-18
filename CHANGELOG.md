@@ -20,6 +20,7 @@
 * `[log]` Improved tests
 * `[options]` Improved tests
 * `[req]` Improved tests
+* `[spellcheck]` Added usage examples
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 
