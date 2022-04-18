@@ -163,7 +163,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	err = Global(s.NonReadableConfigPath)
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.ErrorMatches, `open /etc/sudoers: permission denied`)
+	c.Assert(err, check.ErrorMatches, `open .*: permission denied`)
 
 	err = Global(s.MalformedConfigPath)
 
