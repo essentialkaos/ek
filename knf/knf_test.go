@@ -149,12 +149,15 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	err := Global("/_not_exists_")
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `open /_not_exists_: no such file or directory`)
 
 	err = Global(s.EmptyConfigPath)
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `Configuration file doesn't contain any valid data`)
 
 	err = Global(s.NonReadableConfigPath)
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `open /etc/sudoers: permission denied`)
 
 	err = Global(s.MalformedConfigPath)
 

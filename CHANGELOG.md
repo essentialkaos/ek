@@ -11,6 +11,7 @@
 * `[fsutil]` Improved tests
 * `[initsystem]` Improved tests
 * `[jsonutil]` Improved tests
+* `[knf]` Improved tests
 * `[knf/validators/fs]` Improved tests
 * `[knf/validators/network]` Improved tests
 * `[knf/validators/regexp]` Improved tests
