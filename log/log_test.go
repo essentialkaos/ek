@@ -61,52 +61,52 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err := l.Flush()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Debug("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Info("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Warn("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Error("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Crit("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Aux("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	_, err = New("/_not_exist_", 0644)
 
@@ -115,7 +115,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err = Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrOutputNotSet.Error())
+	c.Assert(err, DeepEquals, ErrOutputNotSet)
 
 	l.EnableBufIO(time.Second)
 }
