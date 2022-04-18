@@ -19,6 +19,7 @@
 * `[knf/validators]` Improved tests
 * `[log]` Improved tests
 * `[options]` Improved tests
+* `[req]` Improved tests
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 
