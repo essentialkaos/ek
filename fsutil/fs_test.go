@@ -691,8 +691,8 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 
 	_disableCopyFileChecks = true
 
-	c.Assert(CopyFile("", tmpFile2), check.ErrorMatches, `read .: is a directory`)
-	c.Assert(CopyFile(tmpFile1, ""), check.ErrorMatches, `open .: is a directory`)
+	c.Assert(CopyFile("", tmpFile2), check.NotNil)
+	c.Assert(CopyFile(tmpFile1, ""), check.NotNil)
 }
 
 func (s *FSSuite) TestMoveFile(c *check.C) {
