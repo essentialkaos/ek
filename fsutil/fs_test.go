@@ -671,11 +671,11 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	c.Assert(CopyFile("", tmpFile2), check.ErrorMatches, `Can't copy file: Source file can't be blank`)
 	c.Assert(CopyFile(tmpFile1, ""), check.ErrorMatches, `Can't copy file: Target file can't be blank`)
 	c.Assert(CopyFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't copy file: File /not_exist does not exists`)
-	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy file: File /tmp/check-[0-9]+/[0-9]+ is not a regular file`)
-	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy file: File /tmp/check-[0-9]+/[0-9]+/test3.file is not readable`)
+	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy file: File .* is not a regular file`)
+	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy file: File .*/test3.file is not readable`)
 	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.ErrorMatches, `Can't copy file: Directory /not_exist does not exists`)
-	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `Can't copy file: Directory /tmp/check-[0-9]+/[0-9]+ is not writable`)
-	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy file: Target file /tmp/check-[0-9]+/[0-9]+/test3.file is not writable`)
+	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `Can't copy file: Directory .* is not writable`)
+	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy file: Target file .*/test3.file is not writable`)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
@@ -714,10 +714,10 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	c.Assert(MoveFile("", tmpFile2), check.ErrorMatches, `Can't move file: Source file can't be blank`)
 	c.Assert(MoveFile(tmpFile1, ""), check.ErrorMatches, `Can't move file: Target file can't be blank`)
 	c.Assert(MoveFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't move file: File /not_exist does not exists`)
-	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `Can't move file: File /tmp/check-[0-9]+/[0-9]+ is not a regular file`)
-	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't move file: File /tmp/check-[0-9]+/[0-9]+/test3.file is not readable`)
+	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `Can't move file: File .* is not a regular file`)
+	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't move file: File .*/test3.file is not readable`)
 	c.Assert(MoveFile(tmpFile1, "/not_exist/file.test"), check.ErrorMatches, `Can't move file: Directory /not_exist does not exists`)
-	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `Can't move file: Directory /tmp/check-[0-9]+/[0-9]+ is not writable`)
+	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `Can't move file: Directory .* is not writable`)
 
 	c.Assert(MoveFile(tmpFile1, tmpFile2), check.IsNil)
 	c.Assert(MoveFile(tmpFile2, tmpFile1, 0600), check.IsNil)
@@ -766,11 +766,11 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 
 	c.Assert(CopyDir("", targetDir), check.ErrorMatches, `Can't copy directory: Source directory can't be blank`)
 	c.Assert(CopyDir(sourceDir, ""), check.ErrorMatches, `Can't copy directory: Target directory can't be blank`)
-	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `Can't copy directory: Directory /tmp/check-[0-9]+/[0-9]+ does not exists`)
-	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `Can't copy directory: Target /tmp/check-[0-9]+/[0-9]+/test1.file is not a directory`)
-	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `Can't copy directory: Directory /tmp/check-[0-9]+/[0-9]+/test5 is not readable`)
-	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy directory: Target /tmp/check-[0-9]+/[0-9]+/test2/test2.file is not a directory`)
-	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `Can't copy directory: Directory /tmp/check-[0-9]+/[0-9]+/test6 is not writable`)
+	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `Can't copy directory: Directory .* does not exists`)
+	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `Can't copy directory: Target .*/test1.file is not a directory`)
+	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `Can't copy directory: Directory .*/test5 is not readable`)
+	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy directory: Target .*/test2/test2.file is not a directory`)
+	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `Can't copy directory: Directory .*/test6 is not writable`)
 
 	_disableCopyDirChecks = true
 
