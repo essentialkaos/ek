@@ -67,6 +67,7 @@ end script`
 	ok, err := parseUpstartEnabledData(tmpDir + "/0.conf")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't read service unit file`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartEnabledData(tmpDir + "/1.conf")
@@ -98,11 +99,13 @@ func (s *InitSuite) TestSysvEnabled(c *C) {
 	ok, err = parseSysvEnabledOutput(d3)
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse chkconfig output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseSysvEnabledOutput("")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse chkconfig output`)
 	c.Assert(ok, Equals, false)
 }
 
@@ -150,11 +153,13 @@ func (s *InitSuite) TestUpstartStatus(c *C) {
 	ok, err := parseUpstartStatusOutput("\r\n")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse upstart output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("assdas ad asd asd\r\n")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse upstart output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("myapp stop/waiting\r\n")

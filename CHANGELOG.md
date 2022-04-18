@@ -9,6 +9,7 @@
 * `[cron]` Improved tests
 * `[directio]` Improved tests
 * `[fsutil]` Improved tests
+* `[initsystem]` Improved tests
 * `[knf/validators/fs]` Improved tests
 * `[knf/validators/network]` Improved tests
 * `[knf/validators/regexp]` Improved tests
