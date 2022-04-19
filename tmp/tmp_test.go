@@ -83,7 +83,10 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	c.Assert(tmpFd, IsNil)
 	c.Assert(tmpFile, Equals, "")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `open /.*_test: permission denied`)
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `open /.*_test: read-only file system`,
+		"linux":  `open /.*_test: permission denied`,
+	})
 
 	var nilTemp *Temp
 
