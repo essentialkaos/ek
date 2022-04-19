@@ -50,11 +50,13 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	t, err := NewTemp("/")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Directory / is not writable`)
 	c.Assert(t, IsNil)
 
 	t, err = NewTemp("/tmpz")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Directory /tmpz does not exist`)
 	c.Assert(t, IsNil)
 
 	os.Create(ts.TempDir + "/test_")
@@ -62,6 +64,7 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	t, err = NewTemp(ts.TempDir + "/test_")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `.*/test_ is not a directory`)
 	c.Assert(t, IsNil)
 
 	t = &Temp{Dir: "/"}
@@ -70,22 +73,26 @@ func (ts *TmpSuite) TestErrors(c *C) {
 
 	c.Assert(tmpDir, Equals, "")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `mkdir /.*_test: permission denied`)
 
 	tmpFd, tmpFile, err := t.MkFile("test")
 
 	c.Assert(tmpFd, IsNil)
 	c.Assert(tmpFile, Equals, "")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /.*_test: permission denied`)
 
 	var nilTemp *Temp
 
 	_, err = nilTemp.MkDir()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Temp struct is nil`)
 
 	_, _, err = nilTemp.MkFile()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Temp struct is nil`)
 }
 
 func (ts *TmpSuite) TestMkDir(c *C) {
