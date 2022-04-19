@@ -5,11 +5,11 @@ export EK_TEST_PORT=8080
 ################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = test fmt deps deps-test clean help
+.PHONY = test fmt deps deps-test mod-init mod-update mod-download mod-vendor clean help
 
 ################################################################################
 
-deps: mod-update ## Download dependencies
+deps: mod-download ## Download dependencies
 
 deps-test: deps ## Download dependencies for tests
 
@@ -17,7 +17,11 @@ mod-init: ## Initialize new module
 	go mod init
 	go mod tidy
 
-mod-update: ## Download modules to local cache
+mod-update: ## Update modules to their latest versions
+	go get -u
+	go mod tidy
+
+mod-download: ## Download modules to local cache
 	go mod download
 
 mod-vendor: ## Make vendored copy of dependencies
