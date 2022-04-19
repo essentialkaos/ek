@@ -24,6 +24,7 @@
 * `[system/process]` Improved tests
 * `[system/sensors]` Improved tests
 * `[tmp]` Improved tests
+* `[version]` Improved tests
 * `[spellcheck]` Added usage examples
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
