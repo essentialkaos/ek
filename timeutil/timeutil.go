@@ -192,7 +192,7 @@ func ParseDuration(dur string, defMod ...rune) (int64, error) {
 		case 's', 'S':
 			result, err = appendDur(result, buf, _SECOND)
 		default:
-			return 0, fmt.Errorf("Unsupported symbol \"%s\"", string(sym))
+			return 0, fmt.Errorf("Unsupported symbol %q", string(sym))
 		}
 
 		if err != nil {
@@ -202,7 +202,7 @@ func ParseDuration(dur string, defMod ...rune) (int64, error) {
 
 	if buf.Len() != 0 {
 		if result != 0 {
-			return 0, fmt.Errorf("Misformatted duration \"%s\"", dur)
+			return 0, fmt.Errorf("Misformatted duration %q", dur)
 		}
 
 		mod := 's'
