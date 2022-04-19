@@ -73,7 +73,10 @@ func (ts *TmpSuite) TestErrors(c *C) {
 
 	c.Assert(tmpDir, Equals, "")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `mkdir /.*_test: permission denied`)
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `mkdir /.*_test: read-only file system`,
+		"linux":  `mkdir /.*_test: permission denied`,
+	})
 
 	tmpFd, tmpFile, err := t.MkFile("test")
 

@@ -11,7 +11,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
-	"runtime"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -112,11 +111,10 @@ func (s *JSONSuite) TestEncoding(c *C) {
 
 	c.Assert(err, NotNil)
 
-	if runtime.GOOS == "darwin" {
-		c.Assert(err, ErrorMatches, `open /test.json: read-only file system`)
-	} else {
-		c.Assert(err, ErrorMatches, `open /test.json: permission denied`)
-	}
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `open /test.json: read-only file system`,
+		"linux":  `open /test.json: permission denied`,
+	})
 
 	err = Write(jsonFile, map[float64]int{3.14: 123})
 

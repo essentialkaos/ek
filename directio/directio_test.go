@@ -9,7 +9,6 @@ package directio
 
 import (
 	"io/ioutil"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -71,11 +70,10 @@ func (s *DirectIOSuite) TestWriting(c *C) {
 
 	c.Assert(err, NotNil)
 
-	if runtime.GOOS == "darwin" {
-		c.Assert(err, ErrorMatches, `open /not_exist: read-only file system`)
-	} else {
-		c.Assert(err, ErrorMatches, `open /not_exist: permission denied`)
-	}
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `open /not_exist: read-only file system`,
+		"linux":  `open /not_exist: permission denied`,
+	})
 }
 
 func (s *DirectIOSuite) BenchmarkAllocation(c *C) {
