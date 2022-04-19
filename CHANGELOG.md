@@ -21,6 +21,7 @@
 * `[options]` Improved tests
 * `[req]` Improved tests
 * `[system]` Improved tests
+* `[system/process]` Improved tests
 * `[spellcheck]` Added usage examples
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
