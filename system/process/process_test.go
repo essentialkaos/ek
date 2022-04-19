@@ -56,7 +56,7 @@ func (s *ProcessSuite) TestGetTreeAux(c *C) {
 	_, err := readProcessInfo("/_unknown_", "ABCD", map[int]string{})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing \"ABCD\": invalid syntax`)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "ABCD": invalid syntax`)
 
 	c.Assert(isPID(""), Equals, false)
 
