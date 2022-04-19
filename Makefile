@@ -14,12 +14,30 @@ deps: mod-download ## Download dependencies
 deps-test: deps ## Download dependencies for tests
 
 mod-init: ## Initialize new module
+ifdef MODULE_PATH
+	go mod init $(MODULE_PATH)
+else
 	go mod init
+endif
+
+ifdef COMPAT
+	go mod tidy -compat=$(COMPAT)
+else
 	go mod tidy
+endif
 
 mod-update: ## Update modules to their latest versions
+ifdef UPDATE_ALL
+	go get -u all
+else
 	go get -u
+endif
+
+ifdef COMPAT
+	go mod tidy -compat=$(COMPAT)
+else
 	go mod tidy
+endif
 
 mod-download: ## Download modules to local cache
 	go mod download
