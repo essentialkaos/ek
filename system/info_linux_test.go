@@ -58,11 +58,12 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	c.Assert(la.RProc, Equals, 5)
 	c.Assert(la.TProc, Equals, 234)
 
-	procLoadAvgFile = ""
+	procLoadAvgFile = "/_unknown_"
 
 	la, err = GetLA()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(la, IsNil)
 
 	procLoadAvgFile = s.CreateTestFile(c, "CORRUPTED")
@@ -70,6 +71,7 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	la, err = GetLA()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 	c.Assert(la, IsNil)
 
 	procLoadAvgFile = s.CreateTestFile(c, "1.15 2.25 3.35 5+234 16354")
@@ -77,6 +79,7 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	la, err = GetLA()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse field 3 in .*/test.file`)
 	c.Assert(la, IsNil)
 
 	procLoadAvgFile = origProcLoadAvgFile
@@ -125,11 +128,12 @@ func (s *SystemSuite) TestCPUUsage(c *C) {
 	c.Assert(cpuInfo.Average, Equals, 80.0)
 	c.Assert(cpuInfo.Count, Equals, 32)
 
-	procStatFile = ""
+	procStatFile = "/_unknown_"
 
 	cpu, err = GetCPUStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(cpu, IsNil)
 
 	procStatFile = s.CreateTestFile(c, "CORRUPTED")
@@ -137,6 +141,7 @@ func (s *SystemSuite) TestCPUUsage(c *C) {
 	cpu, err = GetCPUStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 	c.Assert(cpu, IsNil)
 
 	procStatFile = origProcStatFile
@@ -153,6 +158,7 @@ func (s *SystemSuite) TestCPUInfoErrors(c *C) {
 		cpu, err := GetCPUStats()
 
 		c.Assert(err, NotNil)
+		c.Assert(err, ErrorMatches, `Can't parse field [0-9]+ as unsigned integer in .*/test.file`)
 		c.Assert(cpu, IsNil)
 	}
 
@@ -187,6 +193,7 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 	info, err = GetCPUInfo()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse cpuinfo file`)
 	c.Assert(info, IsNil)
 
 	cpuInfoFile = s.CreateTestFile(c, "cpu cores	: ABCD")
@@ -194,13 +201,15 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 	info, err = GetCPUInfo()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "ABCD": invalid syntax`)
 	c.Assert(info, IsNil)
 
-	cpuInfoFile = ""
+	cpuInfoFile = "/_unknown_"
 
 	info, err = GetCPUInfo()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(info, IsNil)
 
 	cpuInfoFile = origCpuInfoFile
@@ -226,21 +235,25 @@ func (s *SystemSuite) TestCPUCount(c *C) {
 	c.Assert(info.Online, Equals, uint32(4))
 	c.Assert(info.Offline, Equals, uint32(124))
 
-	cpuOfflineFile = "/_UNKNOWN_"
+	cpuOfflineFile = "/_cpuOfflineFile"
 	_, err = GetCPUCount()
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_cpuOfflineFile: no such file or directory`)
 
-	cpuOnlineFile = "/_UNKNOWN_"
+	cpuOnlineFile = "/_cpuOnlineFile"
 	_, err = GetCPUCount()
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_cpuOnlineFile: no such file or directory`)
 
-	cpuPresentFile = "/_UNKNOWN_"
+	cpuPresentFile = "/_cpuPresentFile"
 	_, err = GetCPUCount()
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_cpuPresentFile: no such file or directory`)
 
-	cpuPossibleFile = "/_UNKNOWN_"
+	cpuPossibleFile = "/_cpuPossibleFile"
 	_, err = GetCPUCount()
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_cpuPossibleFile: no such file or directory`)
 
 	cpuPossibleFile = origCpuPossibleFile
 	cpuPresentFile = origCpuPresentFile
@@ -273,11 +286,12 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 	c.Assert(mem.Slab, Equals, uint64(1024*3021828))
 	c.Assert(mem.SReclaimable, Equals, uint64(1024*2789624))
 
-	procMemInfoFile = ""
+	procMemInfoFile = "/_unknown_"
 
 	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "")
@@ -285,6 +299,7 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal: ABC! kB")
@@ -292,6 +307,7 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = origProcMemInfoFile
@@ -330,11 +346,12 @@ func (s *SystemSuite) TestNet(c *C) {
 	c.Assert(in, Equals, uint64(0))
 	c.Assert(out, Equals, uint64(0))
 
-	procNetFile = ""
+	procNetFile = "/_unknown_"
 
 	net, err = GetInterfacesStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(net, IsNil)
 
 	procNetFile = s.CreateTestFile(c, "CORRUPTED")
@@ -342,11 +359,13 @@ func (s *SystemSuite) TestNet(c *C) {
 	net, err = GetInterfacesStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 	c.Assert(net, IsNil)
 
 	_, _, err = GetNetworkSpeed(time.Second)
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
 
 	procNetFile = origProcNetFile
 }
@@ -366,11 +385,12 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(util, NotNil)
 
-	mtabFile = ""
+	mtabFile = "/_unknown_"
 
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(fs, IsNil)
 
 	mtabFile = s.CreateTestFile(c, "/CORRUPTED")
@@ -378,6 +398,7 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `no such file or directory`)
 	c.Assert(fs, IsNil)
 
 	mtabFile = s.CreateTestFile(c, "/CORRUPTED 0 0 0")
@@ -385,13 +406,15 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `no such file or directory`)
 	c.Assert(fs, IsNil)
 
-	procDiskStatsFile = ""
+	procDiskStatsFile = "/_unknown_"
 
 	stats, err := GetIOStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(stats, IsNil)
 
 	procDiskStatsFile = s.CreateTestFile(c, "CORRUPTED")
@@ -399,19 +422,22 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	stats, err = GetIOStats()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse field 3 as unsigned integer in .*/test.file`)
 	c.Assert(stats, IsNil)
 
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `no such file or directory`)
 	c.Assert(fs, IsNil)
 
 	util, err = GetIOUtil(time.Millisecond)
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Can't parse field 3 as unsigned integer in .*/test.file`)
 	c.Assert(util, IsNil)
 
-	procStatFile = ""
+	procStatFile = "/_unknown_"
 	mtabFile = "/etc/mtab"
 	procDiskStatsFile = "/proc/diskstats"
 
@@ -449,6 +475,7 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 		stats, err := GetIOStats()
 
 		c.Assert(err, NotNil)
+		c.Assert(err, ErrorMatches, `Can't parse field [0-9]+ as unsigned integer in .*/test.file`)
 		c.Assert(stats, IsNil)
 	}
 
@@ -484,6 +511,7 @@ func (s *SystemSuite) TestUser(c *C) {
 	user, err = LookupUser("")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `User name/ID can't be blank`)
 	c.Assert(user, IsNil)
 
 	group, err := LookupGroup("root")
@@ -494,6 +522,7 @@ func (s *SystemSuite) TestUser(c *C) {
 	group, err = LookupGroup("")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Group name/ID can't be blank`)
 	c.Assert(group, IsNil)
 
 	c.Assert(IsUserExist("root"), Equals, true)
@@ -551,10 +580,12 @@ func (s *SystemSuite) TestUser(c *C) {
 	_, err = getOwner("")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Path is empty`)
 
 	_, err = getSessionInfo("ABC")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `no such file or directory`)
 
 	n, _ := fixCount(-100, nil)
 
@@ -576,8 +607,9 @@ func (s *SystemSuite) TestGetInfo(c *C) {
 
 	sysInfo, err := GetSystemInfo()
 
-	c.Assert(sysInfo, IsNil)
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open /_UNKNOWN_: no such file or directory`)
+	c.Assert(sysInfo, IsNil)
 
 	osReleaseFile = s.CreateTestFile(c, `NAME="Ubuntu"
 VERSION="20.10 (Groovy Gorilla)"
@@ -592,8 +624,8 @@ VERSION_CODENAME=groovy`)
 
 	sysInfo, err = GetSystemInfo()
 
-	c.Assert(sysInfo, NotNil)
 	c.Assert(err, IsNil)
+	c.Assert(sysInfo, NotNil)
 
 	osInfo, err := GetOSInfo()
 
