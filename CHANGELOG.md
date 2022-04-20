@@ -3,6 +3,7 @@
 ### 12.44.0
 
 * `[path]` Added method `Compact` for converting path to compact representation
+* `[fmtc]` Added method `Render` for converting color tags to ANSI escape codes
 * `[knf/validators/fs]` Fixed bug with formatting `FileMode` in error messages
 * `[cron]` Improved parsing error messages
 * `[fsutil]` Improved parsing error messages

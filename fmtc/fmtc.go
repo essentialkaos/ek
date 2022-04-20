@@ -245,6 +245,11 @@ func Clean(s string) string {
 	return searchColors(s, -1, true)
 }
 
+// Render converts color tags to ANSI escape codes
+func Render(s string) string {
+	return searchColors(s, -1, false)
+}
+
 // Bell prints alert (bell) symbol
 func Bell() {
 	fmt.Printf(_CODE_BELL)

@@ -187,6 +187,10 @@ func (s *FormatSuite) TestClean(c *C) {
 	c.Assert(Clean("{S*_}W{!}"), Equals, "W")
 }
 
+func (s *FormatSuite) TestRender(c *C) {
+	c.Assert(Render("{S*_}W{!}"), Equals, "\x1b[47;1;4mW\x1b[0m")
+}
+
 func (s *FormatSuite) TestMethods(c *C) {
 	c.Assert(Errorf("Test %s", "OK"), DeepEquals, errors.New("Test OK"))
 	c.Assert(Sprintf("Test %s", "OK"), Equals, "Test OK")
