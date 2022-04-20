@@ -54,6 +54,6 @@ func (a Arguments) GetB(index int) (bool, error) {
 	case "false", "no", "n", "0", "":
 		return false, nil
 	default:
-		return false, fmt.Errorf("Unsupported boolean value \"%s\"", v)
+		return false, fmt.Errorf("Unsupported boolean value %q", v)
 	}
 }

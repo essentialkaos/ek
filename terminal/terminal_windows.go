@@ -9,6 +9,8 @@ package terminal
 
 import (
 	"errors"
+
+	"github.com/essentialkaos/ek/v12/secstr"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -42,6 +44,13 @@ func ReadAnswer(title, defaultAnswer string) (bool, error) {
 // ❗ ReadPassword reads password or some private input which will be hidden
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
+	panic("UNSUPPORTED")
+	return "", nil
+}
+
+// ❗ ReadPasswordSecure reads password or some private input which will be hidden
+// after pressing Enter
+func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	panic("UNSUPPORTED")
 	return "", nil
 }

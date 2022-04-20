@@ -48,6 +48,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 	data, err = ReadFile(tmpDir + "/not_exist")
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open .*: no such file or directory`)
 	c.Assert(data, IsNil)
 }
 
@@ -68,6 +69,11 @@ func (s *DirectIOSuite) TestWriting(c *C) {
 	err = WriteFile("/not_exist", payload, 0644)
 
 	c.Assert(err, NotNil)
+
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `open /not_exist: read-only file system`,
+		"linux":  `open /not_exist: permission denied`,
+	})
 }
 
 func (s *DirectIOSuite) BenchmarkAllocation(c *C) {

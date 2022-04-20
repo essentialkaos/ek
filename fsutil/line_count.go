@@ -9,7 +9,6 @@ package fsutil
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"os"
 )
@@ -19,7 +18,7 @@ import (
 // CountLines returns number of lines in given file
 func CountLines(file string) (int, error) {
 	if file == "" {
-		return 0, errors.New("Path to file is empty")
+		return 0, ErrEmptyPath
 	}
 
 	fd, err := os.OpenFile(file, os.O_RDONLY, 0)

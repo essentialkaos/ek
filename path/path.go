@@ -117,6 +117,23 @@ func Split(path string) (dir, file string) {
 	return PATH.Split(path)
 }
 
+// Compact converts path to compact representation (e.g /some/random/directory/file.txt → /s/r/d/file.txt)
+func Compact(path string) string {
+	if !strings.Contains(path, "/") {
+		return path
+	}
+
+	pathSlice := strings.Split(path, "/")
+
+	for i := 0; i < len(pathSlice)-1; i++ {
+		if len(pathSlice[i]) > 1 {
+			pathSlice[i] = pathSlice[i][0:1]
+		}
+	}
+
+	return strings.Join(pathSlice, "/")
+}
+
 // IsSafe returns true is given path is safe to use (not points to system dirs)
 func IsSafe(path string) bool {
 	if path == "" {

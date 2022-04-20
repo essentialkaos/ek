@@ -324,9 +324,9 @@ func (l *Logger) Print(level uint8, f string, a ...interface{}) error {
 
 	switch {
 	case l.UseColors && showPrefix:
-		_, err = fmtc.Fprintf(w, "{s-}%s{!} "+Colors[level]+"%s %s{!}", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+Colors[level]+"%s %s{!}"), getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 	case l.UseColors && !showPrefix:
-		_, err = fmtc.Fprintf(w, "{s-}%s{!} "+Colors[level]+"%s{!}", getTime(), fmt.Sprintf(f, a...))
+		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+Colors[level]+"%s{!}"), getTime(), fmt.Sprintf(f, a...))
 	case !l.UseColors && showPrefix:
 		_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 	case !l.UseColors && !showPrefix:

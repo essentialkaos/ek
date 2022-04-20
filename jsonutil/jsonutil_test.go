@@ -77,6 +77,7 @@ func (s *JSONSuite) TestDecoding(c *C) {
 	err = Read(s.TmpDir+"/file-not-exists.json", &TestStruct{})
 
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `open .*/file-not-exists.json: no such file or directory`)
 
 	err = Read(s.TmpDir+"/file1.json", testStruct)
 
@@ -109,6 +110,11 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	err = Write("/test.json", testStruct)
 
 	c.Assert(err, NotNil)
+
+	c.Assert(err, ErrorMatchesOS, map[string]string{
+		"darwin": `open /test.json: read-only file system`,
+		"linux":  `open /test.json: permission denied`,
+	})
 
 	err = Write(jsonFile, map[float64]int{3.14: 123})
 

@@ -29,16 +29,16 @@ var _ = Suite(&OptUtilSuite{})
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
-	c.Assert(opts.Add("", &V{}), NotNil)
-	c.Assert(opts.Add("t:", &V{}), NotNil)
+	c.Assert(opts.Add("", &V{}), ErrorMatches, `Some option does not have a name`)
+	c.Assert(opts.Add("t:", &V{}), ErrorMatches, `Some option does not have a name`)
 
 	c.Assert(opts.Add("test", &V{}), IsNil)
 	c.Assert(opts.Add(":test1", &V{}), IsNil)
 	c.Assert(opts.Add("t:test2", &V{}), IsNil)
 
-	c.Assert(opts.Add("t1:test", &V{}), NotNil)
-	c.Assert(opts.Add("t:test3", &V{}), NotNil)
-	c.Assert(opts.Add("t:test3", nil), NotNil)
+	c.Assert(opts.Add("t1:test", &V{}), ErrorMatches, `Option --test defined 2 or more times`)
+	c.Assert(opts.Add("t:test3", &V{}), ErrorMatches, `Option -t defined 2 or more times`)
+	c.Assert(opts.Add("t:test3", nil), ErrorMatches, `Struct for option --test3 is nil`)
 }
 
 func (s *OptUtilSuite) TestAddMap(c *C) {
@@ -469,6 +469,7 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 
 	iv, err := a.GetI(0)
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "test": invalid syntax`)
 	c.Assert(iv, Equals, 0)
 	iv, err = a.GetI(1)
 	c.Assert(err, IsNil)
@@ -476,6 +477,7 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 
 	fv, err := a.GetF(0)
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.ParseFloat: parsing "test": invalid syntax`)
 	c.Assert(fv, Equals, 0.0)
 	fv, err = a.GetF(2)
 	c.Assert(err, IsNil)
@@ -512,5 +514,6 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 	c.Assert(bv, Equals, false)
 	bv, err = a.GetB(9)
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Unsupported boolean value "TEST"`)
 	c.Assert(bv, Equals, false)
 }

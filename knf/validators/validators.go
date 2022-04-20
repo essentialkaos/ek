@@ -188,7 +188,7 @@ func validatorEquals(config *knf.Config, prop string, value interface{}) error {
 
 	case string:
 		if config.GetS(prop) == u {
-			return fmt.Errorf("Property %s can't be equal %s", prop, value.(string))
+			return fmt.Errorf("Property %s can't be equal %q", prop, value.(string))
 		}
 
 	default:
@@ -208,7 +208,7 @@ func validatorNotLen(config *knf.Config, prop string, value interface{}) error {
 
 func validatorNotPrefix(config *knf.Config, prop string, value interface{}) error {
 	if !strings.HasPrefix(config.GetS(prop), value.(string)) {
-		return fmt.Errorf("Property %s must have prefix \"%s\"", prop, value.(string))
+		return fmt.Errorf("Property %s must have prefix %q", prop, value.(string))
 	}
 
 	return nil
@@ -216,7 +216,7 @@ func validatorNotPrefix(config *knf.Config, prop string, value interface{}) erro
 
 func validatorNotSuffix(config *knf.Config, prop string, value interface{}) error {
 	if !strings.HasSuffix(config.GetS(prop), value.(string)) {
-		return fmt.Errorf("Property %s must have suffix \"%s\"", prop, value.(string))
+		return fmt.Errorf("Property %s must have suffix %q", prop, value.(string))
 	}
 
 	return nil

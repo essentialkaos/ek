@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -123,7 +124,12 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 	s.ConfigPath = tmpdir + "/" + _CONFIG_FILE_NAME
 	s.EmptyConfigPath = tmpdir + "/" + _CONFIG_EMPTY_FILE_NAME
 	s.MalformedConfigPath = tmpdir + "/" + _CONFIG_MALFORMED_FILE_NAME
-	s.NonReadableConfigPath = "/etc/sudoers"
+
+	if runtime.GOOS == "darwin" {
+		s.NonReadableConfigPath = "/etc/master.passwd"
+	} else {
+		s.NonReadableConfigPath = "/etc/sudoers"
+	}
 
 	err := ioutil.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)
 
@@ -149,12 +155,15 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	err := Global("/_not_exists_")
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `open /_not_exists_: no such file or directory`)
 
 	err = Global(s.EmptyConfigPath)
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `Configuration file doesn't contain any valid data`)
 
 	err = Global(s.NonReadableConfigPath)
 	c.Assert(err, check.NotNil)
+	c.Assert(err, check.ErrorMatches, `open .*: permission denied`)
 
 	err = Global(s.MalformedConfigPath)
 

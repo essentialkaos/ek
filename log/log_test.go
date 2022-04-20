@@ -15,9 +15,10 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/essentialkaos/check"
-
+	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fsutil"
+
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -61,52 +62,52 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err := l.Flush()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Debug("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Info("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Warn("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Error("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Crit("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Aux("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrLoggerIsNil.Error())
+	c.Assert(err, DeepEquals, ErrLoggerIsNil)
 
 	_, err = New("/_not_exist_", 0644)
 
@@ -115,7 +116,7 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err = Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, ErrOutputNotSet.Error())
+	c.Assert(err, DeepEquals, ErrOutputNotSet)
 
 	l.EnableBufIO(time.Second)
 }
@@ -189,6 +190,8 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 
 	c.Assert(err, IsNil)
 
+	fmtc.DisableColors = true
+
 	l.UseColors = true
 	l.PrefixError = true
 
@@ -199,6 +202,8 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 	err = l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
+
+	fmtc.DisableColors = false
 }
 
 func (ls *LogSuite) TestWithoutPrefixes(c *C) {
@@ -452,7 +457,7 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 
 	std := &StdLogger{l}
 
-	stdExitFunc = func(code int) { return }
+	exitFunc = func(code int) { return }
 
 	c.Assert(std.Output(2, "1"), IsNil)
 

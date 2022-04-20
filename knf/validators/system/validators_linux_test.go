@@ -33,4 +33,5 @@ func (s *ValidatorSuite) TestInterfaceValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "Interface abc is not present on the system")
 }

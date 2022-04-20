@@ -166,21 +166,27 @@ func (s *VersionSuite) TestErrors(c *C) {
 
 	_, err = Parse("A")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "A": invalid syntax`)
 
 	_, err = Parse(" ")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing " ": invalid syntax`)
 
 	_, err = Parse("")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Version can't be empty`)
 
 	_, err = Parse("1.2.B")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "B": invalid syntax`)
 
 	_, err = Parse("1.2.8-")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Prerelease number is empty`)
 
 	_, err = Parse("1.2.8-1+")
 	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `Build number is empty`)
 
 	c.Assert(v1.Major(), Equals, -1)
 	c.Assert(v1.Minor(), Equals, -1)

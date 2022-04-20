@@ -120,7 +120,7 @@ func (d *Dispatcher) Dispatch(typ string, payload interface{}) error {
 
 	if d.handlers[typ] == nil {
 		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event \"%s\"", typ)
+		return fmt.Errorf("No handlers for event %q", typ)
 	}
 
 	d.mx.RUnlock()
@@ -147,7 +147,7 @@ func (d *Dispatcher) DispatchAndWait(typ string, payload interface{}) error {
 
 	if d.handlers[typ] == nil {
 		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event \"%s\"", typ)
+		return fmt.Errorf("No handlers for event %q", typ)
 	}
 
 	d.mx.RUnlock()

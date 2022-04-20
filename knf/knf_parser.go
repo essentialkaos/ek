@@ -103,7 +103,7 @@ func readKNFData(r io.Reader) (*Config, error) {
 		fullPropName := genPropName(section, propName)
 
 		if config.HasProp(fullPropName) {
-			return nil, fmt.Errorf("Error at line %d: Property \"%s\" defined more than once", lineNum, propName)
+			return nil, fmt.Errorf("Error at line %d: Property %q defined more than once", lineNum, propName)
 		}
 
 		config.props = append(config.props, fullPropName)

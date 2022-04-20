@@ -21,7 +21,7 @@ type StdLogger struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var stdExitFunc = func(code int) { os.Exit(code) }
+var exitFunc = os.Exit
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -29,21 +29,21 @@ var stdExitFunc = func(code int) { os.Exit(code) }
 func (l *StdLogger) Fatal(v ...interface{}) {
 	l.Logger.Print(CRIT, fmt.Sprint(v...))
 	l.Logger.Flush()
-	stdExitFunc(1)
+	exitFunc(1)
 }
 
 // Fatalf is analog of Fatalf from stdlib
 func (l *StdLogger) Fatalf(format string, v ...interface{}) {
 	l.Logger.Print(CRIT, fmt.Sprintf(format, v...))
 	l.Logger.Flush()
-	stdExitFunc(1)
+	exitFunc(1)
 }
 
 // Fatalln is analog of Fatalln from stdlib
 func (l *StdLogger) Fatalln(v ...interface{}) {
 	l.Logger.Print(CRIT, fmt.Sprintln(v...))
 	l.Logger.Flush()
-	stdExitFunc(1)
+	exitFunc(1)
 }
 
 // Output is analog of Output from stdlib

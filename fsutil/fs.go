@@ -555,7 +555,7 @@ func GetOwner(path string) (int, int, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, fmt.Errorf("Can't get owner info for %q: %w", path, err)
 	}
 
 	return int(stat.Uid), int(stat.Gid), nil
