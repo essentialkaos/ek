@@ -15,9 +15,10 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/essentialkaos/check"
-
+	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fsutil"
+
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -189,6 +190,8 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 
 	c.Assert(err, IsNil)
 
+	fmtc.DisableColors = true
+
 	l.UseColors = true
 	l.PrefixError = true
 
@@ -199,6 +202,8 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 	err = l.Print(ERROR, "error")
 
 	c.Assert(err, IsNil)
+
+	fmtc.DisableColors = false
 }
 
 func (ls *LogSuite) TestWithoutPrefixes(c *C) {

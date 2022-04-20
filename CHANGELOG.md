@@ -27,6 +27,7 @@
 * `[tmp]` Improved tests
 * `[version]` Improved tests
 * `[spellcheck]` Added usage examples
+* `[log]` Fixed bug with rendering messages with colors when `fmtc.DisableColors` set to `true`
 * `[terminal]` Fixed stubs for Windows
 * `[secstr]` Fixed stubs for Windows
 
