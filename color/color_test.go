@@ -57,11 +57,11 @@ func (s *ColorSuite) TestParse(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(color, Equals, Hex(0xBB33FFAA))
 
-	color, err = Parse("")
+	_, err = Parse("")
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, "Color is empty")
 
-	color, err = Parse("TEST")
+	_, err = Parse("TEST")
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, "strconv.ParseUint: parsing \"TTEESSTT\": invalid syntax")
 }
