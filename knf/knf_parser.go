@@ -27,7 +27,6 @@ const (
 	_PROP_DELIMITER       = ":"
 	_MACRO_START_SYMBOL   = "{"
 	_MACRO_END_SYMBOL     = "}"
-	_MACRO_DELIMITER      = ":"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
