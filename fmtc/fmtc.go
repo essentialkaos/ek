@@ -25,7 +25,6 @@ import (
 const (
 	_CODE_RESET      = "\033[0m"
 	_CODE_CLEAN_LINE = "\033[2K\r"
-	_CODE_BACKSPACE  = "\b"
 	_CODE_BELL       = "\a"
 )
 
@@ -196,14 +195,14 @@ func Errorf(f string, a ...interface{}) error {
 
 // TPrintf removes all content on the current line and prints the new message
 func TPrintf(f string, a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return Printf(f, a...)
 }
 
 // TPrintln removes all content on the current line and prints the new message
 // with a new line symbol at the end
 func TPrintln(a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return Println(a...)
 }
 
