@@ -20,7 +20,8 @@ func ElasticIn(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi
+	var s float64
+
 	p := d * 0.3
 	a := c
 
@@ -52,7 +53,8 @@ func ElasticOut(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi
+	var s float64
+
 	p := d * 0.3
 	a := c
 
@@ -82,7 +84,8 @@ func ElasticInOut(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi
+	var s float64
+
 	p := d * (0.3 * 1.5)
 	a := c
 
