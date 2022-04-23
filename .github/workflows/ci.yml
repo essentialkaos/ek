@@ -32,7 +32,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
-        id: go
 
       - name: Setup PATH
         run: |
@@ -97,23 +96,18 @@ jobs:
     name: Lint
     runs-on: ${{ matrix.os }}
 
-    needs: Go
-
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest' ]
-        go: [ '1.17.x', '1.18.x' ]
 
     steps:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go }}
-        id: go
+          go-version: '1.18.x'
 
       - name: Setup PATH
         run: |
@@ -128,5 +122,6 @@ jobs:
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        working-directory: ${{env.SRC_DIR}}
         with:
-          args: --issues-exit-code=0
+          args: --issues-exit-code=0 --build-tags=unit
