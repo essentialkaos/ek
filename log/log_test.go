@@ -457,7 +457,7 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 
 	std := &StdLogger{l}
 
-	exitFunc = func(code int) { return }
+	exitFunc = func(code int) {}
 
 	c.Assert(std.Output(2, "1"), IsNil)
 
