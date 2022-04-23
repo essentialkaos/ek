@@ -1,5 +1,23 @@
 ## Changelog
 
+### 12.44.1
+
+* `[ansi]` Fixed examples
+* `[color]` Tests refactoring
+* `[directio]` Code refactoring
+* `[easing]` Code refactoring
+* `[fmtc]` Code refactoring
+* `[fsutil]` Code refactoring
+* `[knf]` Code refactoring
+* `[log]` Code refactoring
+* `[log]` Tests refactoring
+* `[options]` Code refactoring
+* `[req]` Code refactoring
+* `[signal]` Use buffered channels for signals
+* `[system]` Code refactoring
+* `[timeutil]` Code refactoring
+* `[usage]` Code refactoring
+
 ### 12.44.0
 
 * `[path]` Added method `Compact` for converting path to compact representation
