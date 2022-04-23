@@ -191,7 +191,7 @@ jobs:
     name: Lint
     runs-on: ${{ matrix.os }}
 
-    needs: Linux macOS
+    needs: [Linux, macOS]
 
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
