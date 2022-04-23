@@ -43,17 +43,24 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
 
+      - uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: make deps
 
-      - name: Run tests on Linux/Mac
+      - name: Run tests
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
-
-      - name: Run tests on Windows
-        working-directory: ${{env.SRC_DIR}}
-        run: .scripts/windows.sh 12
 
       - name: Install goveralls
         env:
@@ -114,17 +121,24 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
 
+      - uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: |
+            ~/Library/Caches/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: make deps
 
-      - name: Run tests on Linux/Mac
+      - name: Run tests
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
-
-      - name: Run tests on Windows
-        working-directory: ${{env.SRC_DIR}}
-        run: .scripts/windows.sh 12
 
       - name: Install goveralls
         env:
@@ -191,7 +205,7 @@ jobs:
     name: Lint
     runs-on: ${{ matrix.os }}
 
-    needs: [Linux, macOS]
+    needs: [Linux, macOS, Windows]
 
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
