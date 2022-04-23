@@ -79,7 +79,7 @@ func ShortDuration(d interface{}, highPrecision ...bool) string {
 		return "0:00"
 	}
 
-	if len(highPrecision) != 0 && highPrecision[0] == true {
+	if len(highPrecision) != 0 && highPrecision[0] {
 		return getShortDuration(dur, true)
 	}
 
