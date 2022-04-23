@@ -146,6 +146,7 @@ func (s *ReqSuite) TestMethodPostFile(c *C) {
 	tmpFile := tmpDir + "/testMultipart.bin"
 
 	err := ioutil.WriteFile(tmpFile, []byte(`DATA8913FIN`), 0644)
+	c.Assert(err, IsNil)
 
 	r := Request{URL: s.url + _URL_POST_MULTI, Method: POST}
 	postResp, err := r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
@@ -153,19 +154,19 @@ func (s *ReqSuite) TestMethodPostFile(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(postResp.StatusCode, Equals, 200)
 
-	postResp, err = r.PostFile(tmpDir+"/unknown", "file", map[string]string{"abc": "123"})
+	_, err = r.PostFile(tmpDir+"/unknown", "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `open .*/unknown: no such file or directory`)
 
 	useFakeFormGenerator = true
-	postResp, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+	_, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 	useFakeFormGenerator = false
 
 	ioCopyFunc = func(dst io.Writer, src io.Reader) (int64, error) { return 0, errors.New("") }
-	postResp, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+	_, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 }
@@ -446,7 +447,7 @@ func (s *ReqSuite) TestEncoding(c *C) {
 
 	resp, err = Request{
 		URL:  s.url + "/404",
-		Body: func() { return },
+		Body: func() {},
 	}.Do()
 
 	c.Assert(err, NotNil)

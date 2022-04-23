@@ -294,11 +294,11 @@ func (e *Engine) Init() *Engine {
 
 	if e.Transport == nil {
 		e.Transport = &http.Transport{
-			Dial:  e.Dialer.Dial,
-			Proxy: http.ProxyFromEnvironment,
+			DialContext: e.Dialer.DialContext,
+			Proxy:       http.ProxyFromEnvironment,
 		}
 	} else {
-		e.Transport.Dial = e.Dialer.Dial
+		e.Transport.DialContext = e.Dialer.DialContext
 	}
 
 	if e.Client == nil {
@@ -671,10 +671,8 @@ func configureMultipartRequest(r *Request, file, fieldName string, extraFields m
 		return err
 	}
 
-	if extraFields != nil {
-		for k, v := range extraFields {
-			w.WriteField(k, v)
-		}
+	for k, v := range extraFields {
+		w.WriteField(k, v)
 	}
 
 	w.Close()
