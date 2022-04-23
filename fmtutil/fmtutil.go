@@ -80,7 +80,7 @@ func PrettyNum(i interface{}, separator ...string) string {
 	return fmt.Sprintf("%v", i)
 }
 
-// PrettyDiff formats number to "pretty" form with + or - symbol at the begining
+// PrettyDiff formats number to "pretty" form with + or - symbol at the beginning
 func PrettyDiff(i int, separator ...string) string {
 	if i > 0 {
 		return "+" + PrettyNum(i, separator...)

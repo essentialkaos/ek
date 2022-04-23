@@ -23,8 +23,8 @@ import (
 // Column alignment flags
 const (
 	ALIGN_LEFT   uint8 = 0
-	ALIGN_CENTER       = 1
-	ALIGN_RIGHT        = 2
+	ALIGN_CENTER uint8 = 1
+	ALIGN_RIGHT  uint8 = 2
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

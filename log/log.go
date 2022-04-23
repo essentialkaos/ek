@@ -25,11 +25,11 @@ import (
 
 const (
 	DEBUG uint8 = 0  // DEBUG debug messages
-	INFO        = 1  // INFO info messages
-	WARN        = 2  // WARN warning messages
-	ERROR       = 3  // ERROR error messages
-	CRIT        = 4  // CRIT critical error messages
-	AUX         = 99 // AUX unskipable messages (separators, headers, etc...)
+	INFO  uint8 = 1  // INFO info messages
+	WARN  uint8 = 2  // WARN warning messages
+	ERROR uint8 = 3  // ERROR error messages
+	CRIT  uint8 = 4  // CRIT critical error messages
+	AUX   uint8 = 99 // AUX unskipable messages (separators, headers, etc...)
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

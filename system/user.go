@@ -1,4 +1,5 @@
-// +build linux, darwin, !windows
+//go:build !windows
+// +build !windows
 
 package system
 
@@ -138,7 +139,7 @@ func Who() ([]*SessionInfo, error) {
 
 // CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
-	if len(avoidCache) == 0 || avoidCache[0] == false {
+	if len(avoidCache) == 0 || !avoidCache[0] {
 		if curUser != nil && time.Since(curUserUpdateDate) < CurrentUserCachePeriod {
 			return curUser, nil
 		}

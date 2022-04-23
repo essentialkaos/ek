@@ -14,17 +14,8 @@ package directio
 import (
 	"io"
 	"os"
-	"sync"
 	"unsafe"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var blockPool = sync.Pool{
-	New: func() interface{} {
-		return make([]byte, BLOCK_SIZE+ALIGN_SIZE)
-	},
-}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -79,8 +70,6 @@ func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
 		buf = append(buf, block[:n]...)
 	}
 
-	freeBlock(block)
-
 	return buf, nil
 }
 
@@ -110,13 +99,11 @@ func writeData(fd *os.File, data []byte) error {
 		}
 	}
 
-	freeBlock(block)
-
 	return fd.Truncate(int64(dataSize))
 }
 
 func allocateBlock() []byte {
-	block := blockPool.Get().([]byte)
+	block := make([]byte, BLOCK_SIZE+ALIGN_SIZE)
 
 	if ALIGN_SIZE == 0 {
 		return block
@@ -131,10 +118,6 @@ func allocateBlock() []byte {
 	}
 
 	return block[offset : offset+BLOCK_SIZE]
-}
-
-func freeBlock(block []byte) {
-	blockPool.Put(block)
 }
 
 func alignment(block []byte, alignment int) int {

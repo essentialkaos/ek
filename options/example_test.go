@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Example_NewOptions() {
+func ExampleNewOptions() {
 	opts := NewOptions()
 
 	// Add options
@@ -35,7 +35,7 @@ func Example_NewOptions() {
 	fmt.Printf("First argument: %s\n\n", args.Get(0))
 }
 
-func Example_Parse() {
+func ExampleParse() {
 	// Key is option in format "short-name:long-name" or "long-name"
 	// We highly recommend defining options names as constants
 	optMap := Map{

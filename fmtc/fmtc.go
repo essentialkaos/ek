@@ -25,7 +25,6 @@ import (
 const (
 	_CODE_RESET      = "\033[0m"
 	_CODE_CLEAN_LINE = "\033[2K\r"
-	_CODE_BACKSPACE  = "\b"
 	_CODE_BELL       = "\a"
 )
 
@@ -196,14 +195,14 @@ func Errorf(f string, a ...interface{}) error {
 
 // TPrintf removes all content on the current line and prints the new message
 func TPrintf(f string, a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return Printf(f, a...)
 }
 
 // TPrintln removes all content on the current line and prints the new message
 // with a new line symbol at the end
 func TPrintln(a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return Println(a...)
 }
 
@@ -211,7 +210,7 @@ func TPrintln(a ...interface{}) (int, error) {
 // limited by the text size
 func LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
 	s := fmt.Sprintf(f, a...)
-	return fmt.Printf(searchColors(s, maxSize, DisableColors))
+	return fmt.Print(searchColors(s, maxSize, DisableColors))
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard
@@ -224,14 +223,14 @@ func LPrintln(maxSize int, a ...interface{}) (int, error) {
 // TLPrintf removes all content on the current line and prints the new message
 // limited by the text size
 func TLPrintf(maxSize int, f string, a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return LPrintf(maxSize, f, a...)
 }
 
 // TPrintln removes all content on the current line and prints the new message
 // limited by the text size with a new line symbol at the end
 func TLPrintln(maxSize int, a ...interface{}) (int, error) {
-	fmt.Printf(_CODE_CLEAN_LINE)
+	fmt.Print(_CODE_CLEAN_LINE)
 	return LPrintln(maxSize, a...)
 }
 
@@ -252,7 +251,7 @@ func Render(s string) string {
 
 // Bell prints alert (bell) symbol
 func Bell() {
-	fmt.Printf(_CODE_BELL)
+	fmt.Print(_CODE_BELL)
 }
 
 // Is256ColorsSupported returns true if 256 colors is supported by terminal

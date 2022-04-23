@@ -71,7 +71,7 @@ func Send(pid int, signal syscall.Signal) error {
 
 // Track catches signal and executes handler for this signal
 func (h Handlers) Track() {
-	c := make(chan os.Signal)
+	c := make(chan os.Signal, 2)
 
 	for s := range h {
 		signal.Notify(c, s)
@@ -92,7 +92,7 @@ func (h Handlers) Track() {
 
 // TrackAsync catches signal and executes async handler for this signal
 func (h Handlers) TrackAsync() {
-	c := make(chan os.Signal)
+	c := make(chan os.Signal, 2)
 
 	for s := range h {
 		signal.Notify(c, s)

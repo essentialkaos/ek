@@ -491,16 +491,17 @@ func ExamplePush() {
 	// Current working directory set to /home/john/documents
 
 	cwd = Push("/home/john/documents/work")
+	fmt.Println(cwd)
 
 	// Current working directory set to /home/john/documents/work
 
-	fmt.Println(cwd)
-
 	cwd = Pop()
+	fmt.Println(cwd)
 
 	// Current working directory set to /home/john/documents
 
 	cwd = Pop()
+	fmt.Println(cwd)
 
 	// Current working directory set to initial working directory
 }
@@ -513,16 +514,17 @@ func ExamplePop() {
 	// Current working directory set to /home/john/documents
 
 	cwd = Push("/home/john/documents/work")
+	fmt.Println(cwd)
 
 	// Current working directory set to /home/john/documents/work
 
 	fmt.Println(cwd)
-
 	cwd = Pop()
 
 	// Current working directory set to /home/john/documents
 
 	cwd = Pop()
+	fmt.Println(cwd)
 
 	// Current working directory set to initial working directory
 }

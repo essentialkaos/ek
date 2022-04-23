@@ -40,8 +40,8 @@ func (s *FSSuite) TestList(c *check.C) {
 
 	os.Create(tmpDir + "/.file0")
 
-	c.Assert(ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 0644), check.IsNil)
 
 	c.Assert(os.Mkdir(tmpDir+"/dir1", 0755), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir+"/dir2", 0755), check.IsNil)

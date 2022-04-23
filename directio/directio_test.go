@@ -30,7 +30,7 @@ var _ = Suite(&DirectIOSuite{})
 func (s *DirectIOSuite) TestReading(c *C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/tmp_data"
-	payload := []byte(strings.Repeat("DATA1", 6543))
+	payload := []byte(strings.Repeat("DATA1", 123))
 
 	err := ioutil.WriteFile(tmpFile, payload, 0644)
 
@@ -43,7 +43,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(data, NotNil)
 
-	c.Assert(string(data), Equals, strings.Repeat("DATA1", 6543))
+	c.Assert(string(data), Equals, strings.Repeat("DATA1", 123))
 
 	data, err = ReadFile(tmpDir + "/not_exist")
 
@@ -55,7 +55,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 func (s *DirectIOSuite) TestWriting(c *C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/tmp_data"
-	payload := []byte(strings.Repeat("DATA", 6543))
+	payload := []byte(strings.Repeat("DATA", 123))
 
 	err := WriteFile(tmpFile, payload, 0644)
 
@@ -74,11 +74,4 @@ func (s *DirectIOSuite) TestWriting(c *C) {
 		"darwin": `open /not_exist: read-only file system`,
 		"linux":  `open /not_exist: permission denied`,
 	})
-}
-
-func (s *DirectIOSuite) BenchmarkAllocation(c *C) {
-	for i := 0; i < c.N; i++ {
-		block := allocateBlock()
-		freeBlock(block)
-	}
 }
