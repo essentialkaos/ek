@@ -51,7 +51,7 @@ jobs:
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{ matrix.go }}-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -129,7 +129,7 @@ jobs:
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{ matrix.go }}-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -235,4 +235,8 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ${{env.SRC_DIR}}
-          args: --out-format=colored-line-number --issues-exit-code=0 --build-tags=unit
+          args: --issues-exit-code=0 --build-tags=unit
+
+      - name: Extended linting info
+        working-directory: ${{env.SRC_DIR}}
+        run: golangci-lint --issues-exit-code=0 --build-tags=unit
