@@ -96,6 +96,8 @@ jobs:
     name: Lint
     runs-on: ${{ matrix.os }}
 
+    needs: Go
+
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
 
@@ -124,4 +126,4 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ${{env.SRC_DIR}}
-          args: --issues-exit-code=0 --build-tags=unit
+          args: --out-format=colored-line-number --issues-exit-code=0 --build-tags=unit
