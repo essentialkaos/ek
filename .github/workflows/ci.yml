@@ -92,3 +92,41 @@ jobs:
         run: |
           sed -i'.original' 's#/v[0-9]\+/#/#g' coverage.txt
           codeclimate-test-reporter < coverage.txt
+
+  Lint:
+    name: Lint
+    runs-on: ${{ matrix.os }}
+
+    needs: Go
+
+    env:
+      SRC_DIR: src/github.com/${{ github.repository }}
+      EK_TEST_PORT: 8080
+
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest' ]
+        go: [ '1.17.x', '1.18.x' ]
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+        id: go
+
+      - name: Setup PATH
+        run: |
+          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
+          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
+          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: ${{env.SRC_DIR}}
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --issues-exit-code=0
