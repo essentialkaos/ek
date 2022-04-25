@@ -49,9 +49,9 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-GO-EK-${{ hashFiles('go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-${{ matrix.go }}-
+            ${{ runner.os }}-GO-EK-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -124,9 +124,9 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-GO-EK-${{ hashFiles('go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-${{ matrix.go }}-
+            ${{ runner.os }}-GO-EK-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
