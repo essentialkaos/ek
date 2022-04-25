@@ -62,23 +62,6 @@ jobs:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14.x'
-
-      - name: Install codeclimate-test-reporter
-        run: npm install -g codeclimate-test-reporter
-
-      - name: Send coverage to Codebeat
-        working-directory: ${{env.SRC_DIR}}
-        env:
-          CODECLIMATE_API_HOST: https://codebeat.co/webhooks/code_coverage
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_TOKEN }}
-        run: |
-          sed -i'.original' 's#/v[0-9]\+/#/#g' coverage.txt
-          codeclimate-test-reporter < coverage.txt
-
   macOS:
     name: macOS
     runs-on: macos-latest
@@ -121,33 +104,13 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
 
-      - name: Install goveralls
-        env:
-          GO111MODULE: off
-        run: go get -v github.com/mattn/goveralls
-
-      - name: Send coverage to Coveralls
-        working-directory: ${{env.SRC_DIR}}
+      - name: Send coverage data
+        uses: essentialkaos/goveralls-action@v1
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -service github -coverprofile coverage.txt
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-
-      - name: Install codeclimate-test-reporter
-        run: npm install -g codeclimate-test-reporter
-
-      - name: Send coverage to Codebeat
-        working-directory: ${{env.SRC_DIR}}
-        env:
-          CODECLIMATE_API_HOST: https://codebeat.co/webhooks/code_coverage
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_TOKEN }}
-        run: |
-          sed -i'.original' 's#/v[0-9]\+/#/#g' coverage.txt
-          codeclimate-test-reporter < coverage.txt
+          path: ${{env.SRC_DIR}}
+          profile: coverage.txt
 
   Windows:
     name: Windows (Stubs)
