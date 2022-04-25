@@ -62,16 +62,12 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
 
-      - name: Install goveralls
-        env:
-          GO111MODULE: off
-        run: go get -v github.com/mattn/goveralls
-
-      - name: Send coverage to Coveralls
-        working-directory: ${{env.SRC_DIR}}
+      - name: Send coverage data
+        uses: essentialkaos/goveralls-action@v1
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -service github -coverprofile coverage.txt
+        with:
+          profile: ${{env.SRC_DIR}}/coverage.txt
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
