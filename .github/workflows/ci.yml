@@ -67,7 +67,8 @@ jobs:
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          profile: ${{env.SRC_DIR}}/coverage.txt
+          path: ${{env.SRC_DIR}}
+          profile: coverage.txt
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
