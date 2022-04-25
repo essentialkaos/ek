@@ -53,6 +53,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-${{ matrix.go }}-
 
+      - name: List mod cache
+        working-directory: ${{env.SRC_DIR}}
+        if: steps.cache-deps.outputs.cache-hit == 'true'
+        run: find ~/go/pkg/mod -type d
+
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
         if: steps.cache-deps.outputs.cache-hit != 'true'
