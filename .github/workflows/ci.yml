@@ -46,12 +46,10 @@ jobs:
       - uses: actions/cache@v3
         id: cache-deps
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-GO-EK-${{ hashFiles('go.sum') }}
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-GO-EK-
+            ${{ runner.os }}-go-${{ matrix.go }}-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -121,12 +119,10 @@ jobs:
       - uses: actions/cache@v3
         id: cache-deps
         with:
-          path: |
-            ~/Library/Caches/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-GO-EK-${{ hashFiles('go.sum') }}
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-GO-EK-
+            ${{ runner.os }}-go-${{ matrix.go }}-
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
