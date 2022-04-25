@@ -235,8 +235,4 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ${{env.SRC_DIR}}
-          args: --issues-exit-code=0 --build-tags=unit
-
-      - name: Extended linting info
-        working-directory: ${{env.SRC_DIR}}
-        run: golangci-lint run --issues-exit-code=0 --build-tags=unit
+          args: --issues-exit-code=0 --timeout=3m --build-tags=unit

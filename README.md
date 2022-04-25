@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
 
 <p align="center">
-  <a href="https://kaos.sh/g/ek"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
+  <a href="https://kaos.sh/g/ek.v12"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
   <a href="https://kaos.sh/r/ek"><img src="https://kaos.sh/r/ek.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/b/ek"><img src="https://kaos.sh/b/3649d737-e5b9-4465-9765-b9f4ebec60ec.svg" alt="Codebeat badge" /></a>
   <a href="https://kaos.sh/w/ek/ci"><img src="https://kaos.sh/w/ek/ci.svg" alt="GitHub Actions CI Status" /></a>
@@ -41,61 +41,61 @@ go get -u github.com/essentialkaos/ek/v12
 
 ### Sub-packages
 
-* [`ansi`](https://pkg.go.dev/github.com/essentialkaos/ek/ansi) - Package provides methods for working with ANSI/VT100 control sequences
-* [`cache`](https://pkg.go.dev/github.com/essentialkaos/ek/cache) - Package provides a simple in-memory key:value cache
-* [`color`](https://pkg.go.dev/github.com/essentialkaos/ek/color) - Package provides methods for working with colors
-* [`cron`](https://pkg.go.dev/github.com/essentialkaos/ek/cron) - Package provides methods for working with cron expressions
-* [`csv`](https://pkg.go.dev/github.com/essentialkaos/ek/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
-* [`easing`](https://pkg.go.dev/github.com/essentialkaos/ek/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
-* [`emoji`](https://pkg.go.dev/github.com/essentialkaos/ek/emoji) - Package provides methods for working with emojis
-* [`env`](https://pkg.go.dev/github.com/essentialkaos/ek/env) - Package provides methods for working with environment variables
-* [`errutil`](https://pkg.go.dev/github.com/essentialkaos/ek/errutil) - Package provides methods for working with errors
-* [`events`](https://pkg.go.dev/github.com/essentialkaos/ek/events) - Package provides methods and structs for creating event-driven systems
-* [`directio`](https://pkg.go.dev/github.com/essentialkaos/ek/directio) - Package provides methods for reading/writing files with direct io
-* [`fmtc`](https://pkg.go.dev/github.com/essentialkaos/ek/fmtc) - Package provides methods similar to fmt for colored output
-* [`fmtc/lscolors`](https://pkg.go.dev/github.com/essentialkaos/ek/fmtc/lscolors) - Package provides methods for colorizing file names based on colors from dircolors
-* [`fmtutil`](https://pkg.go.dev/github.com/essentialkaos/ek/fmtutil) - Package provides methods for output formatting
-* [`fmtutil/table`](https://pkg.go.dev/github.com/essentialkaos/ek/fmtutil/table) - Package contains methods and structs for rendering data in tabular format
-* [`fsutil`](https://pkg.go.dev/github.com/essentialkaos/ek/fsutil) - Package provides methods for working with files on POSIX compatible systems (BSD/Linux/macOS)
-* [`hash`](https://pkg.go.dev/github.com/essentialkaos/ek/hash) - Package hash contains different hash algorithms and utilities
-* [`httputil`](https://pkg.go.dev/github.com/essentialkaos/ek/httputil) - Package provides methods for working with HTTP request/responses
-* [`initsystem`](https://pkg.go.dev/github.com/essentialkaos/ek/initsystem) - Package provides methods for working with different init systems (sysv, upstart, systemd)
-* [`jsonutil`](https://pkg.go.dev/github.com/essentialkaos/ek/jsonutil) - Package provides methods for working with JSON data
-* [`knf`](https://pkg.go.dev/github.com/essentialkaos/ek/knf) - Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
-* [`log`](https://pkg.go.dev/github.com/essentialkaos/ek/log) - Package with an improved logger
-* [`mathutil`](https://pkg.go.dev/github.com/essentialkaos/ek/mathutil) - Package provides some additional math methods
-* [`netutil`](https://pkg.go.dev/github.com/essentialkaos/ek/netutil) - Package provides methods for working with network
-* [`options`](https://pkg.go.dev/github.com/essentialkaos/ek/options) - Package provides methods for working with command-line options
-* [`passwd`](https://pkg.go.dev/github.com/essentialkaos/ek/passwd) - Package contains methods for working with passwords
-* [`path`](https://pkg.go.dev/github.com/essentialkaos/ek/path) - Package for working with paths (fully compatible with base path package)
-* [`pid`](https://pkg.go.dev/github.com/essentialkaos/ek/pid) - Package for working with PID files
-* [`pluralize`](https://pkg.go.dev/github.com/essentialkaos/ek/pluralize) - Package provides methods for pluralization
-* [`progress`](https://pkg.go.dev/github.com/essentialkaos/ek/progress) - Package provides methods and structs for creating terminal progress bar
-* [`rand`](https://pkg.go.dev/github.com/essentialkaos/ek/rand) - Package for generating random data
-* [`req`](https://pkg.go.dev/github.com/essentialkaos/ek/req) - Package simplify working with an HTTP requests
-* [`secstr`](https://pkg.go.dev/github.com/essentialkaos/ek/secstr) - Package provides methods and structs for working with protected (secure) strings
-* [`signal`](https://pkg.go.dev/github.com/essentialkaos/ek/signal) - Package provides methods for handling POSIX signals
-* [`sliceutil`](https://pkg.go.dev/github.com/essentialkaos/ek/sliceutil) - Package provides methods for working with slices
-* [`sortutil`](https://pkg.go.dev/github.com/essentialkaos/ek/sortutil) - Package provides methods for sorting slices
-* [`spellcheck`](https://pkg.go.dev/github.com/essentialkaos/ek/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
-* [`spinner`](https://pkg.go.dev/github.com/essentialkaos/ek/spinner) - Package provides methods for creating spinner animation for long-running tasks
-* [`strutil`](https://pkg.go.dev/github.com/essentialkaos/ek/strutil) - Package provides methods for working with strings
-* [`system/exec`](https://pkg.go.dev/github.com/essentialkaos/ek/system/exec) - Package provides methods for executing commands
-* [`system/process`](https://pkg.go.dev/github.com/essentialkaos/ek/system/process) - Package provides methods for gathering information about active processes
-* [`system/procname`](https://pkg.go.dev/github.com/essentialkaos/ek/system/procname) - Package provides methods for changing process name in the process tree
-* [`system/sensors`](https://pkg.go.dev/github.com/essentialkaos/ek/system/sensors) - Package provide methods for collecting sensors information
-* [`system`](https://pkg.go.dev/github.com/essentialkaos/ek/system) - Package provides methods for working with system data (metrics/users)
-* [`terminal`](https://pkg.go.dev/github.com/essentialkaos/ek/terminal) - Package provides methods for working with user input
-* [`terminal/window`](https://pkg.go.dev/github.com/essentialkaos/ek/terminal/window) - Package provides methods for working terminal window
-* [`timeutil`](https://pkg.go.dev/github.com/essentialkaos/ek/timeutil) - Package provides methods for working with time and date
-* [`tmp`](https://pkg.go.dev/github.com/essentialkaos/ek/tmp) - Package provides methods for working with temporary data
-* [`usage`](https://pkg.go.dev/github.com/essentialkaos/ek/usage) - Package usage provides methods and structs for generating usage info for command-line tools
-* [`usage/update`](https://pkg.go.dev/github.com/essentialkaos/ek/usage/update) - Package contains update checkers for different services
-* [`usage/completion/bash`](https://pkg.go.dev/github.com/essentialkaos/ek/usage/completion/bash) - Package provides methods for generating bash completion
-* [`usage/completion/fish`](https://pkg.go.dev/github.com/essentialkaos/ek/usage/completion/fish) - Package provides methods for generating fish completion
-* [`usage/completion/zsh`](https://pkg.go.dev/github.com/essentialkaos/ek/usage/completion/zsh) - Package provides methods for generating zsh completion
-* [`uuid`](https://pkg.go.dev/github.com/essentialkaos/ek/uuid) - Package provides methods for generating version 4 and 5 UUID's
-* [`version`](https://pkg.go.dev/github.com/essentialkaos/ek/version) - Package version provides methods for working with semver version info
+* [`ansi`](https://kaos.sh/g/ek.v12/ansi) - Package provides methods for working with ANSI/VT100 control sequences
+* [`cache`](https://kaos.sh/g/ek.v12/cache) - Package provides a simple in-memory key:value cache
+* [`color`](https://kaos.sh/g/ek.v12/color) - Package provides methods for working with colors
+* [`cron`](https://kaos.sh/g/ek.v12/cron) - Package provides methods for working with cron expressions
+* [`csv`](https://kaos.sh/g/ek.v12/csv) - Package with simple (without any checks) CSV parser compatible with default Go parser
+* [`easing`](https://kaos.sh/g/ek.v12/easing) - Package with easing functions (Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine)
+* [`emoji`](https://kaos.sh/g/ek.v12/emoji) - Package provides methods for working with emojis
+* [`env`](https://kaos.sh/g/ek.v12/env) - Package provides methods for working with environment variables
+* [`errutil`](https://kaos.sh/g/ek.v12/errutil) - Package provides methods for working with errors
+* [`events`](https://kaos.sh/g/ek.v12/events) - Package provides methods and structs for creating event-driven systems
+* [`directio`](https://kaos.sh/g/ek.v12/directio) - Package provides methods for reading/writing files with direct io
+* [`fmtc`](https://kaos.sh/g/ek.v12/fmtc) - Package provides methods similar to fmt for colored output
+* [`fmtc/lscolors`](https://kaos.sh/g/ek.v12/fmtc/lscolors) - Package provides methods for colorizing file names based on colors from dircolors
+* [`fmtutil`](https://kaos.sh/g/ek.v12/fmtutil) - Package provides methods for output formatting
+* [`fmtutil/table`](https://kaos.sh/g/ek.v12/fmtutil/table) - Package contains methods and structs for rendering data in tabular format
+* [`fsutil`](https://kaos.sh/g/ek.v12/fsutil) - Package provides methods for working with files on POSIX compatible systems (BSD/Linux/macOS)
+* [`hash`](https://kaos.sh/g/ek.v12/hash) - Package hash contains different hash algorithms and utilities
+* [`httputil`](https://kaos.sh/g/ek.v12/httputil) - Package provides methods for working with HTTP request/responses
+* [`initsystem`](https://kaos.sh/g/ek.v12/initsystem) - Package provides methods for working with different init systems (sysv, upstart, systemd)
+* [`jsonutil`](https://kaos.sh/g/ek.v12/jsonutil) - Package provides methods for working with JSON data
+* [`knf`](https://kaos.sh/g/ek.v12/knf) - Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
+* [`log`](https://kaos.sh/g/ek.v12/log) - Package with an improved logger
+* [`mathutil`](https://kaos.sh/g/ek.v12/mathutil) - Package provides some additional math methods
+* [`netutil`](https://kaos.sh/g/ek.v12/netutil) - Package provides methods for working with network
+* [`options`](https://kaos.sh/g/ek.v12/options) - Package provides methods for working with command-line options
+* [`passwd`](https://kaos.sh/g/ek.v12/passwd) - Package contains methods for working with passwords
+* [`path`](https://kaos.sh/g/ek.v12/path) - Package for working with paths (fully compatible with base path package)
+* [`pid`](https://kaos.sh/g/ek.v12/pid) - Package for working with PID files
+* [`pluralize`](https://kaos.sh/g/ek.v12/pluralize) - Package provides methods for pluralization
+* [`progress`](https://kaos.sh/g/ek.v12/progress) - Package provides methods and structs for creating terminal progress bar
+* [`rand`](https://kaos.sh/g/ek.v12/rand) - Package for generating random data
+* [`req`](https://kaos.sh/g/ek.v12/req) - Package simplify working with an HTTP requests
+* [`secstr`](https://kaos.sh/g/ek.v12/secstr) - Package provides methods and structs for working with protected (secure) strings
+* [`signal`](https://kaos.sh/g/ek.v12/signal) - Package provides methods for handling POSIX signals
+* [`sliceutil`](https://kaos.sh/g/ek.v12/sliceutil) - Package provides methods for working with slices
+* [`sortutil`](https://kaos.sh/g/ek.v12/sortutil) - Package provides methods for sorting slices
+* [`spellcheck`](https://kaos.sh/g/ek.v12/spellcheck) - Package provides spellcheck based on Damerau–Levenshtein distance algorithm
+* [`spinner`](https://kaos.sh/g/ek.v12/spinner) - Package provides methods for creating spinner animation for long-running tasks
+* [`strutil`](https://kaos.sh/g/ek.v12/strutil) - Package provides methods for working with strings
+* [`system/exec`](https://kaos.sh/g/ek.v12/system/exec) - Package provides methods for executing commands
+* [`system/process`](https://kaos.sh/g/ek.v12/system/process) - Package provides methods for gathering information about active processes
+* [`system/procname`](https://kaos.sh/g/ek.v12/system/procname) - Package provides methods for changing process name in the process tree
+* [`system/sensors`](https://kaos.sh/g/ek.v12/system/sensors) - Package provide methods for collecting sensors information
+* [`system`](https://kaos.sh/g/ek.v12/system) - Package provides methods for working with system data (metrics/users)
+* [`terminal`](https://kaos.sh/g/ek.v12/terminal) - Package provides methods for working with user input
+* [`terminal/window`](https://kaos.sh/g/ek.v12/terminal/window) - Package provides methods for working terminal window
+* [`timeutil`](https://kaos.sh/g/ek.v12/timeutil) - Package provides methods for working with time and date
+* [`tmp`](https://kaos.sh/g/ek.v12/tmp) - Package provides methods for working with temporary data
+* [`usage`](https://kaos.sh/g/ek.v12/usage) - Package usage provides methods and structs for generating usage info for command-line tools
+* [`usage/update`](https://kaos.sh/g/ek.v12/usage/update) - Package contains update checkers for different services
+* [`usage/completion/bash`](https://kaos.sh/g/ek.v12/usage/completion/bash) - Package provides methods for generating bash completion
+* [`usage/completion/fish`](https://kaos.sh/g/ek.v12/usage/completion/fish) - Package provides methods for generating fish completion
+* [`usage/completion/zsh`](https://kaos.sh/g/ek.v12/usage/completion/zsh) - Package provides methods for generating zsh completion
+* [`uuid`](https://kaos.sh/g/ek.v12/uuid) - Package provides methods for generating version 4 and 5 UUID's
+* [`version`](https://kaos.sh/g/ek.v12/version) - Package version provides methods for working with semver version info
 
 ### Projects with `EK`
 
