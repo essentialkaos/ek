@@ -2,48 +2,41 @@
 
 export EK_TEST_PORT=8080
 
+ifdef VERBOSE ## Print verbose information (Flag)
+VERBOSE_FLAG = -v
+endif
+
 ################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = test fmt deps deps-test mod-init mod-update mod-download mod-vendor clean help
+.PHONY = test fmt vet deps update mod-update mod-download mod-vendor gen-fuzz clean help
 
 ################################################################################
 
 deps: mod-download ## Download dependencies
 
-deps-test: deps ## Download dependencies for tests
-
-mod-init: ## Initialize new module
-ifdef MODULE_PATH
-	go mod init $(MODULE_PATH)
-else
-	go mod init
-endif
-
-ifdef COMPAT
-	go mod tidy -compat=$(COMPAT)
-else
-	go mod tidy
-endif
+update: mod-update ## Update dependencies to the latest versions
 
 mod-update: ## Update modules to their latest versions
-ifdef UPDATE_ALL
-	go get -u all
+ifdef UPDATE_ALL ## Update all dependencies (Flag)
+	go get -u $(VERBOSE_FLAG) all
 else
-	go get -u
+	go get -u $(VERBOSE_FLAG) ./...
 endif
 
-ifdef COMPAT
-	go mod tidy -compat=$(COMPAT)
+ifdef COMPAT ## Compatible Go version (String)
+	go mod tidy $(VERBOSE_FLAG) -compat=$(COMPAT)
 else
-	go mod tidy
+	go mod tidy $(VERBOSE_FLAG)
 endif
+
+	test -d vendor && go mod vendor $(VERBOSE_FLAG) || :
 
 mod-download: ## Download modules to local cache
 	go mod download
 
 mod-vendor: ## Make vendored copy of dependencies
-	go mod vendor
+	go mod vendor $(VERBOSE_FLAG)
 
 test: ## Run tests
 	go test -covermode=count -tags=unit ./...
@@ -61,7 +54,11 @@ clean: ## Remove all generated data
 	rm -f *.zip
 
 help: ## Show this info
-	@echo -e '\nSupported targets:\n'
+	@echo -e '\n\033[1mTargets:\033[0m\n'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
-		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-12s\033[0m %s\n", $$1, $$2}'
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-14s\033[0m %s\n", $$1, $$2}'
+	@echo -e '\n\033[1mVariables:\033[0m\n'
+	@grep -E '^ifdef [A-Z_]+ .*?## .*$$' $(abspath $(lastword $(MAKEFILE_LIST))) \
+		| sed 's/ifdef //' \
+		| awk 'BEGIN {FS = " .*?## "}; {printf "  \033[32m%-14s\033[0m %s\n", $$1, $$2}'
 	@echo -e ''
