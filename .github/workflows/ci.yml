@@ -32,12 +32,6 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Setup PATH
-        run: |
-          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
-          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
-          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -49,9 +43,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ matrix.go }}-
+          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -62,33 +54,13 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
 
-      - name: Install goveralls
-        env:
-          GO111MODULE: off
-        run: go get -v github.com/mattn/goveralls
-
-      - name: Send coverage to Coveralls
-        working-directory: ${{env.SRC_DIR}}
+      - name: Send coverage data
+        uses: essentialkaos/goveralls-action@v1
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -service github -coverprofile coverage.txt
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-
-      - name: Install codeclimate-test-reporter
-        run: npm install -g codeclimate-test-reporter
-
-      - name: Send coverage to Codebeat
-        working-directory: ${{env.SRC_DIR}}
-        env:
-          CODECLIMATE_API_HOST: https://codebeat.co/webhooks/code_coverage
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_TOKEN }}
-        run: |
-          sed -i'.original' 's#/v[0-9]\+/#/#g' coverage.txt
-          codeclimate-test-reporter < coverage.txt
+          path: ${{env.SRC_DIR}}
+          profile: coverage.txt
 
   macOS:
     name: macOS
@@ -110,12 +82,6 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Setup PATH
-        run: |
-          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
-          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
-          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -127,9 +93,7 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ matrix.go }}-
+          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -140,33 +104,13 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh 12
 
-      - name: Install goveralls
-        env:
-          GO111MODULE: off
-        run: go get -v github.com/mattn/goveralls
-
-      - name: Send coverage to Coveralls
-        working-directory: ${{env.SRC_DIR}}
+      - name: Send coverage data
+        uses: essentialkaos/goveralls-action@v1
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -service github -coverprofile coverage.txt
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-
-      - name: Install codeclimate-test-reporter
-        run: npm install -g codeclimate-test-reporter
-
-      - name: Send coverage to Codebeat
-        working-directory: ${{env.SRC_DIR}}
-        env:
-          CODECLIMATE_API_HOST: https://codebeat.co/webhooks/code_coverage
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_TOKEN }}
-        run: |
-          sed -i'.original' 's#/v[0-9]\+/#/#g' coverage.txt
-          codeclimate-test-reporter < coverage.txt
+          path: ${{env.SRC_DIR}}
+          profile: coverage.txt
 
   Windows:
     name: Windows (Stubs)
@@ -185,12 +129,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
-
-      - name: Setup PATH
-        run: |
-          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
-          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
-          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -219,12 +157,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '1.18.x'
-
-      - name: Setup PATH
-        run: |
-          echo "GOPATH=${{ github.workspace }}" >> "$GITHUB_ENV"
-          echo "GOBIN=${{ github.workspace }}/bin" >> "$GITHUB_ENV"
-          echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
 
       - name: Checkout
         uses: actions/checkout@v3
