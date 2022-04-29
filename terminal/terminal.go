@@ -39,6 +39,9 @@ var MaskSymbol = "*"
 // MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
 
+// TitleColorTag is fmtc color tag used for input titles
+var TitleColorTag = "{c}"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var tmux int8
@@ -179,18 +182,18 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf("{c}%s ({c*}Y{!*}/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s ({*}Y{!*}/n){!}", title)
 	case "N":
-		return fmt.Sprintf("{c}%s (y/{c*}N{!*}){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (y/{*}N{!*}){!}", title)
 	default:
-		return fmt.Sprintf("{c}%s (y/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (y/n){!}", title)
 	}
 }
 
 // readUserInput reads user input
 func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	if title != "" {
-		fmtc.Println("{c}" + title + "{!}")
+		fmtc.Println(TitleColorTag + title + "{!}")
 	}
 
 	var input string

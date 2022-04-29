@@ -4,6 +4,7 @@
 
 * `[knf]` Added method `Config.File()` which returns path to configuration file
 * `[spinner]` Added `fmtc` color codes support
+* `[terminal]` Title color customization support
 
 ### 12.44.1
 
