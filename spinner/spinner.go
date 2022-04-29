@@ -124,13 +124,13 @@ func Done(ok bool) {
 
 	if ok {
 		fmtc.Printf(
-			OkColorTag+"✔  {!}%s "+TimeColorTag+"(%s){!}\n",
-			desc, timeutil.ShortDuration(time.Since(start), true),
+			OkColorTag+"✔  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			timeutil.ShortDuration(time.Since(start), true),
 		)
 	} else {
 		fmtc.Printf(
-			ErrColorTag+"✖  {!}%s "+TimeColorTag+"(%s){!}\n",
-			desc, timeutil.ShortDuration(time.Since(start), true),
+			ErrColorTag+"✖  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			timeutil.ShortDuration(time.Since(start), true),
 		)
 	}
 
@@ -148,8 +148,8 @@ func showSpinner() {
 		for i, frame := range spinnerFrames {
 			mu.RLock()
 			fmtc.Printf(
-				SpinnerColorTag+"%s  {!}%s… "+TimeColorTag+"[%s]{!}",
-				frame, desc, timeutil.ShortDuration(time.Since(start)),
+				SpinnerColorTag+"%s  {!}"+desc+"… "+TimeColorTag+"[%s]{!}",
+				frame, timeutil.ShortDuration(time.Since(start)),
 			)
 			mu.RUnlock()
 			time.Sleep(framesDelay[i])

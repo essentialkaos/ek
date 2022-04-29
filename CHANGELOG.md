@@ -3,6 +3,7 @@
 ### 12.45.0
 
 * `[knf]` Added method `Config.File()` which returns path to configuration file
+* `[spinner]` Added `fmtc` color codes support
 
 ### 12.44.1
 
