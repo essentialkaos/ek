@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.45.0
+
+* `[knf]` Added method `Config.File()` which returns path to configuration file
+
 ### 12.44.1
 
 * `[ansi]` Fixed examples

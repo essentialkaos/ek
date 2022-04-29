@@ -555,6 +555,11 @@ func (c *Config) Props(section string) []string {
 	return result
 }
 
+// File returns path to configuration file
+func (c *Config) File() string {
+	return c.file
+}
+
 // Validate executes all given validators and
 // returns slice with validation errors
 func (c *Config) Validate(validators []*Validator) []error {
