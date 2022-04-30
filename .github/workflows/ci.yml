@@ -161,7 +161,7 @@ jobs:
     name: Lint
     runs-on: ${{ matrix.os }}
 
-    needs: [Linux, macOS, Windows]
+    needs: SendCoverage
 
     env:
       SRC_DIR: src/github.com/${{ github.repository }}
