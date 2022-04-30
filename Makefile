@@ -17,7 +17,15 @@ deps: mod-download ## Download dependencies
 
 update: mod-update ## Update dependencies to the latest versions
 
-mod-update: ## Update modules to their latest versions
+vendor: mod-vendor ## Make vendored copy of dependencies
+
+test: ## Run tests
+	go test -covermode=count -tags=unit ./...
+
+gen-fuzz: ## Generate go-fuzz archives for all packages
+	bash .scripts/fuzz-gen.sh ${PACKAGE}
+
+mod-update:
 ifdef UPDATE_ALL ## Update all dependencies (Flag)
 	go get -u $(VERBOSE_FLAG) all
 else
@@ -32,17 +40,11 @@ endif
 
 	test -d vendor && go mod vendor $(VERBOSE_FLAG) || :
 
-mod-download: ## Download modules to local cache
+mod-download:
 	go mod download
 
-mod-vendor: ## Make vendored copy of dependencies
+mod-vendor:
 	go mod vendor $(VERBOSE_FLAG)
-
-test: ## Run tests
-	go test -covermode=count -tags=unit ./...
-
-gen-fuzz: ## Generate go-fuzz archives for all packages
-	bash .scripts/fuzz-gen.sh ${PACKAGE}
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
