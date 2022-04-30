@@ -692,7 +692,10 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	c.Assert(CopyFile(tmpFile2, tmpDir1, 0600), check.IsNil)
 
 	c.Assert(copyFile("/not_exist_source", tmpFile2, 0644), check.ErrorMatches, `open /not_exist_source: no such file or directory`)
-	c.Assert(copyFile(tmpFile1, "/not_exist_target", 0644), check.ErrorMatches, `open /not_exist_target: permission denied`)
+	c.Assert(copyFile(tmpFile1, "/not_exist_target", 0644), check.ErrorMatchesOS, map[string]string{
+		"darwin": `open /not_exist_target: read-only file system`,
+		"linux":  `open /not_exist_target: permission denied`,
+	})
 
 	openFileFunc = func(name string, flag int, perm os.FileMode) (*os.File, error) {
 		return nil, fmt.Errorf("Error1")
