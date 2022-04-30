@@ -311,6 +311,19 @@ func ExampleCopyFile() {
 	fmt.Printf("File %s successfully copied to bob user directory\n", target)
 }
 
+func ExampleCopyAttr() {
+	source := "/home/john/test1.txt"
+	target := "/home/john/test2.txt"
+
+	err := CopyAttr(source, target)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Print("File attributes successfully copied")
+}
+
 func ExampleMoveFile() {
 	target := "/home/john/test.txt"
 	err := MoveFile(target, "/home/bob/test.txt", 0644)
