@@ -3,10 +3,12 @@
 ### 12.45.0
 
 * `[knf]` Added method `Config.File()` which returns path to configuration file
+* `[options]` Added many helpful methods for working with arguments
 * `[spinner]` Added `fmtc` color codes support
 * `[terminal]` Title color customization support
 * `[fsutil]` Added method `CopyAttr` for copying attributes from one object to another
 * `[fsutil]` Code refactoring
+* `[options]` Code refactoring
 * `[tmp]` Code refactoring
 * `[fsutil]` Improved tests
 

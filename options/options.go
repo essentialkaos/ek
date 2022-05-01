@@ -400,7 +400,7 @@ func Q(opts ...string) string {
 // without losing code readability
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
-func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
+func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 	opts.prepare()
 
 	if len(rawOpts) == 0 {
@@ -426,7 +426,7 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 
 			switch {
 			case strings.TrimRight(curOpt, "-") == "":
-				arguments = append(arguments, curOpt)
+				arguments = append(arguments, Argument(curOpt))
 				continue
 
 			case curOptLen > 2 && curOpt[0:2] == "--":
@@ -444,7 +444,7 @@ func (opts *Options) parseOptions(rawOpts []string) ([]string, []error) {
 				optName, mixedOpt = "", false
 
 			default:
-				arguments = append(arguments, curOpt)
+				arguments = append(arguments, Argument(curOpt))
 				continue
 			}
 
