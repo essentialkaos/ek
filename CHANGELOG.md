@@ -7,6 +7,7 @@
 * `[terminal]` Title color customization support
 * `[fsutil]` Added method `CopyAttr` for copying attributes from one object to another
 * `[fsutil]` Code refactoring
+* `[tmp]` Code refactoring
 * `[fsutil]` Improved tests
 
 ### 12.44.1
