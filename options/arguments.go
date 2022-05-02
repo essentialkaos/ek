@@ -47,6 +47,30 @@ func (a Arguments) Last() Argument {
 	return a[len(a)-1]
 }
 
+// Append adds arguments to the end of the arguments slices
+func (a Arguments) Append(args ...string) Arguments {
+	var result Arguments
+
+	result = append(Arguments{}, a...)
+
+	for _, arg := range args {
+		result = append(result, Argument(arg))
+	}
+
+	return result
+}
+
+// Unshift adds arguments to the beginning of the arguments slices
+func (a Arguments) Unshift(args ...string) Arguments {
+	var result Arguments
+
+	for _, arg := range args {
+		result = append(result, Argument(arg))
+	}
+
+	return append(result, a...)
+}
+
 // Strings converts arguments to slice with strings
 func (a Arguments) Strings() []string {
 	var result []string

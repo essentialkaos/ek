@@ -373,6 +373,34 @@ func ExampleArguments_Last() {
 	// Last argument: 10
 }
 
+func ExampleArguments_Unshift() {
+	opts := NewOptions()
+
+	args, _ := opts.Parse(
+		[]string{"file.txt", "10"},
+	)
+
+	args = args.Unshift("head")
+
+	fmt.Printf("Arguments: %v\n", args.Strings())
+	// Output:
+	// Arguments: [head file.txt 10]
+}
+
+func ExampleArguments_Append() {
+	opts := NewOptions()
+
+	args, _ := opts.Parse(
+		[]string{"head", "file.txt"},
+	)
+
+	args = args.Append("10")
+
+	fmt.Printf("Arguments: %v\n", args.Strings())
+	// Output:
+	// Arguments: [head file.txt 10]
+}
+
 func ExampleArguments_Strings() {
 	opts := NewOptions()
 

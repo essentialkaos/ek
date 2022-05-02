@@ -476,6 +476,12 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 	c.Assert(a.Get(0).ToUpper().String(), Equals, "A.TXT")
 	c.Assert(a.Filter("*.txt"), DeepEquals, Arguments{"A.txt", "c.txt"})
 	c.Assert(a.Strings(), DeepEquals, []string{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"})
+
+	a = Arguments{"2", "3"}
+	a = a.Append("4", "5")
+	a = a.Unshift("0", "1")
+
+	c.Assert(a, DeepEquals, Arguments{"0", "1", "2", "3", "4", "5"})
 }
 
 func (s *OptUtilSuite) TestArgumentsConvertion(c *C) {
