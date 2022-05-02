@@ -15,6 +15,7 @@ import (
 
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/rand"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -76,12 +77,7 @@ func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 		return "", fmt.Errorf("Temp struct is nil")
 	}
 
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpDir := getTempName(t.Dir, name)
 	err := os.MkdirAll(tmpDir, t.DirPerms)
 
@@ -100,12 +96,7 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 		return nil, "", fmt.Errorf("Temp struct is nil")
 	}
 
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpFile := getTempName(t.Dir, name)
 	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, t.FilePerms)
 
@@ -120,12 +111,7 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 
 // MkName returns name for temporary object (file or directory)
 func (t *Temp) MkName(nameSuffix ...string) string {
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpObj := getTempName(t.Dir, name)
 	t.objects = append(t.objects, tmpObj)
 
