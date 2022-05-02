@@ -373,6 +373,18 @@ func ExampleArguments_Last() {
 	// Last argument: 10
 }
 
+func ExampleArguments_Strings() {
+	opts := NewOptions()
+
+	args, _ := opts.Parse(
+		[]string{"head", "file.txt", "10"},
+	)
+
+	fmt.Printf("Arguments: %v\n", args.Strings())
+	// Output:
+	// Arguments: [head file.txt 10]
+}
+
 func ExampleArguments_Filter() {
 	opts := NewOptions()
 

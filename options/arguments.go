@@ -47,6 +47,17 @@ func (a Arguments) Last() Argument {
 	return a[len(a)-1]
 }
 
+// Strings converts arguments to slice with strings
+func (a Arguments) Strings() []string {
+	var result []string
+
+	for _, arg := range a {
+		result = append(result, string(arg))
+	}
+
+	return result
+}
+
 // Filter filters arguments by given glob pattern
 func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
