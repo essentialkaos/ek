@@ -24,6 +24,19 @@ type Argument string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// NewArguments creates new arguments slice from given strings
+func NewArguments(args ...string) Arguments {
+	var result Arguments
+
+	for _, arg := range args {
+		result = append(result, Argument(arg))
+	}
+
+	return result
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Has returns true if arguments contains argument with given index
 func (a Arguments) Has(index int) bool {
 	return index < len(a) && a[index] != ""

@@ -40,6 +40,22 @@ func ExampleNewOptions() {
 	// Lines: 12
 }
 
+func ExampleNewArguments() {
+	args := NewArguments("head", "file.txt", "10")
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Command: %s\n", args.Get(0).String())
+	fmt.Printf("File: %s\n", args.Get(1).String())
+
+	lines, _ := args.Get(2).Int()
+	fmt.Printf("Lines: %d\n", lines)
+	// Output:
+	// Arguments: [head file.txt 10]
+	// Command: head
+	// File: file.txt
+	// Lines: 10
+}
+
 func ExampleParse() {
 	// Key is option in format "short-name:long-name" or "long-name"
 	// We highly recommend defining options names as constants
