@@ -10,6 +10,7 @@
 * `[fsutil]` Code refactoring
 * `[options]` Code refactoring
 * `[tmp]` Code refactoring
+* `[options]` Added more usage examples
 * `[fsutil]` Improved tests
 
 ### 12.44.1
