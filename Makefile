@@ -2,54 +2,49 @@
 
 export EK_TEST_PORT=8080
 
+ifdef VERBOSE ## Print verbose information (Flag)
+VERBOSE_FLAG = -v
+endif
+
 ################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = test fmt deps deps-test mod-init mod-update mod-download mod-vendor clean help
+.PHONY = test fmt vet deps update mod-update mod-download mod-vendor gen-fuzz clean help
 
 ################################################################################
 
 deps: mod-download ## Download dependencies
 
-deps-test: deps ## Download dependencies for tests
+update: mod-update ## Update dependencies to the latest versions
 
-mod-init: ## Initialize new module
-ifdef MODULE_PATH
-	go mod init $(MODULE_PATH)
-else
-	go mod init
-endif
-
-ifdef COMPAT
-	go mod tidy -compat=$(COMPAT)
-else
-	go mod tidy
-endif
-
-mod-update: ## Update modules to their latest versions
-ifdef UPDATE_ALL
-	go get -u all
-else
-	go get -u
-endif
-
-ifdef COMPAT
-	go mod tidy -compat=$(COMPAT)
-else
-	go mod tidy
-endif
-
-mod-download: ## Download modules to local cache
-	go mod download
-
-mod-vendor: ## Make vendored copy of dependencies
-	go mod vendor
+vendor: mod-vendor ## Make vendored copy of dependencies
 
 test: ## Run tests
 	go test -covermode=count -tags=unit ./...
 
 gen-fuzz: ## Generate go-fuzz archives for all packages
 	bash .scripts/fuzz-gen.sh ${PACKAGE}
+
+mod-update:
+ifdef UPDATE_ALL ## Update all dependencies (Flag)
+	go get -u $(VERBOSE_FLAG) all
+else
+	go get -u $(VERBOSE_FLAG) ./...
+endif
+
+ifdef COMPAT ## Compatible Go version (String)
+	go mod tidy $(VERBOSE_FLAG) -compat=$(COMPAT)
+else
+	go mod tidy $(VERBOSE_FLAG)
+endif
+
+	test -d vendor && go mod vendor $(VERBOSE_FLAG) || :
+
+mod-download:
+	go mod download
+
+mod-vendor:
+	go mod vendor $(VERBOSE_FLAG)
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
@@ -61,7 +56,11 @@ clean: ## Remove all generated data
 	rm -f *.zip
 
 help: ## Show this info
-	@echo -e '\nSupported targets:\n'
+	@echo -e '\n\033[1mTargets:\033[0m\n'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
-		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-12s\033[0m %s\n", $$1, $$2}'
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-14s\033[0m %s\n", $$1, $$2}'
+	@echo -e '\n\033[1mVariables:\033[0m\n'
+	@grep -E '^ifdef [A-Z_]+ .*?## .*$$' $(abspath $(lastword $(MAKEFILE_LIST))) \
+		| sed 's/ifdef //' \
+		| awk 'BEGIN {FS = " .*?## "}; {printf "  \033[32m%-14s\033[0m %s\n", $$1, $$2}'
 	@echo -e ''

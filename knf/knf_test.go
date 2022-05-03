@@ -224,10 +224,12 @@ func (s *KNFSuite) TestParsing(c *check.C) {
 	err := Global(s.ConfigPath)
 
 	c.Assert(err, check.IsNil)
+	c.Assert(global.File(), check.Equals, s.ConfigPath)
 
 	_, err = Reload()
 
 	c.Assert(err, check.IsNil)
+	c.Assert(global.File(), check.Equals, s.ConfigPath)
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {

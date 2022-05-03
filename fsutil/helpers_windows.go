@@ -19,6 +19,13 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 	return nil
 }
 
+// ❗ CopyAttr copies attributes (mode, ownership, timestamps) from one object
+// (file or directory) to another
+func CopyAttr(from, to string) error {
+	panic("UNSUPPORTED")
+	return nil
+}
+
 // ❗ MoveFile moves file
 func MoveFile(from, to string, perms ...os.FileMode) error {
 	panic("UNSUPPORTED")

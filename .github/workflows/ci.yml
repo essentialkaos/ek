@@ -61,6 +61,8 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
+          parallel: true
+          flag-name: linux-${{ matrix.go }}
 
   macOS:
     name: macOS
@@ -111,6 +113,8 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
+          parallel: true
+          flag-name: macos-${{ matrix.go }}
 
   Windows:
     name: Windows (Stubs)
@@ -139,11 +143,25 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/windows.sh 12
 
+  SendCoverage:
+    name: Send Coverage
+    runs-on: ubuntu-latest
+
+    needs: [Linux, macOS]
+
+    steps:
+      - name: Finish parallel tests
+        uses: essentialkaos/goveralls-action@v1
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          parallel-finished: true
+
   Lint:
     name: Lint
     runs-on: ${{ matrix.os }}
 
-    needs: [Linux, macOS, Windows]
+    needs: SendCoverage
 
     env:
       SRC_DIR: src/github.com/${{ github.repository }}

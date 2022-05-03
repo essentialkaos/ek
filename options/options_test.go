@@ -456,64 +456,127 @@ func (s *OptUtilSuite) TestGuessType(c *C) {
 }
 
 func (s *OptUtilSuite) TestArguments(c *C) {
-	a := Arguments([]string{"test", "6", "2.67", "true"})
+	var a Arguments
+
+	c.Assert(a.Has(0), Equals, false)
+	c.Assert(a.Get(0).String(), Equals, "")
+	c.Assert(a.Last().String(), Equals, "")
+	_, err := a.Get(0).Int()
+	c.Assert(err, NotNil)
+	_, err = a.Get(0).Float()
+	c.Assert(err, NotNil)
+	v, _ := a.Get(0).Bool()
+	c.Assert(v, Equals, false)
+
+	a = Arguments{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"}
+
+	c.Assert(a.Has(0), Equals, true)
+	c.Assert(a.Last().String(), Equals, "e.txte")
+	c.Assert(a.Get(0).ToLower().String(), Equals, "a.txt")
+	c.Assert(a.Get(0).ToUpper().String(), Equals, "A.TXT")
+	c.Assert(a.Filter("*.txt"), DeepEquals, Arguments{"A.txt", "c.txt"})
+	c.Assert(a.Strings(), DeepEquals, []string{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"})
+
+	a = Arguments{"2", "3"}
+	a = a.Append("4", "5")
+	a = a.Unshift("0", "1")
+
+	c.Assert(a, DeepEquals, Arguments{"0", "1", "2", "3", "4", "5"})
+}
+
+func (s *OptUtilSuite) TestArgumentsConvertion(c *C) {
+	a := Arguments{"test", "6", "2.67", "true"}
 
 	c.Assert(a.Has(1), Equals, true)
 	c.Assert(a.Has(9), Equals, false)
 
-	c.Assert(a.Get(0), Equals, "test")
-	c.Assert(a.Get(1), Equals, "6")
-	c.Assert(a.Get(2), Equals, "2.67")
-	c.Assert(a.Get(3), Equals, "true")
-	c.Assert(a.Get(4), Equals, "")
+	c.Assert(a.Get(0).String(), Equals, "test")
+	c.Assert(a.Get(1).String(), Equals, "6")
+	c.Assert(a.Get(2).String(), Equals, "2.67")
+	c.Assert(a.Get(3).String(), Equals, "true")
+	c.Assert(a.Get(4).String(), Equals, "")
 
-	iv, err := a.GetI(0)
+	vi, err := a.Get(0).Int()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "test": invalid syntax`)
-	c.Assert(iv, Equals, 0)
-	iv, err = a.GetI(1)
+	c.Assert(vi, Equals, 0)
+	vi, err = a.Get(1).Int()
 	c.Assert(err, IsNil)
-	c.Assert(iv, Equals, 6)
+	c.Assert(vi, Equals, 6)
 
-	fv, err := a.GetF(0)
+	vi64, err := a.Get(0).Int64()
+	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.ParseInt: parsing "test": invalid syntax`)
+	c.Assert(vi64, Equals, int64(0))
+	vi64, err = a.Get(1).Int64()
+	c.Assert(err, IsNil)
+	c.Assert(vi64, Equals, int64(6))
+
+	vu, err := a.Get(0).Uint()
+	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.ParseUint: parsing "test": invalid syntax`)
+	c.Assert(vu, Equals, uint64(0))
+	vu, err = a.Get(1).Uint()
+	c.Assert(err, IsNil)
+	c.Assert(vu, Equals, uint64(6))
+
+	fv, err := a.Get(0).Float()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `strconv.ParseFloat: parsing "test": invalid syntax`)
 	c.Assert(fv, Equals, 0.0)
-	fv, err = a.GetF(2)
+	fv, err = a.Get(2).Float()
 	c.Assert(err, IsNil)
 	c.Assert(fv, Equals, 2.67)
 
-	a = Arguments([]string{"true", "yes", "y", "1", "false", "no", "n", "0", "", "TEST"})
+	a = Arguments{"true", "yes", "y", "1", "false", "no", "n", "0", "", "TEST"}
 
-	bv, err := a.GetB(0)
+	bv, err := a.Get(0).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, true)
-	bv, err = a.GetB(1)
+	bv, err = a.Get(1).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, true)
-	bv, err = a.GetB(2)
+	bv, err = a.Get(2).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, true)
-	bv, err = a.GetB(3)
+	bv, err = a.Get(3).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, true)
-	bv, err = a.GetB(4)
+	bv, err = a.Get(4).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, false)
-	bv, err = a.GetB(5)
+	bv, err = a.Get(5).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, false)
-	bv, err = a.GetB(6)
+	bv, err = a.Get(6).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, false)
-	bv, err = a.GetB(7)
+	bv, err = a.Get(7).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, false)
-	bv, err = a.GetB(8)
+	bv, err = a.Get(8).Bool()
 	c.Assert(err, IsNil)
 	c.Assert(bv, Equals, false)
-	bv, err = a.GetB(9)
+	bv, err = a.Get(9).Bool()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `Unsupported boolean value "TEST"`)
 	c.Assert(bv, Equals, false)
+}
+
+func (s *OptUtilSuite) TestArgumentsPathShorthand(c *C) {
+	a := Arguments{"/my/test/path/to/file.jpg", "//dir////file.jpg"}
+
+	c.Assert(a.Get(0).Base().String(), Equals, "file.jpg")
+	c.Assert(a.Get(1).Clean().String(), Equals, "/dir/file.jpg")
+	c.Assert(a.Get(0).Dir().String(), Equals, "/my/test/path/to")
+	c.Assert(a.Get(0).Ext().String(), Equals, ".jpg")
+	c.Assert(a.Get(0).IsAbs(), Equals, true)
+
+	m, err := a.Get(0).Match("*.txt")
+	c.Assert(err, IsNil)
+	c.Assert(m, Equals, false)
+
+	m, err = a.Get(0).Match("/my/test/path/to/*.jpg")
+	c.Assert(err, IsNil)
+	c.Assert(m, Equals, true)
 }

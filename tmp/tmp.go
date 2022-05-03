@@ -15,6 +15,7 @@ import (
 
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/rand"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,12 +26,12 @@ type Temp struct {
 	DirPerms  os.FileMode
 	FilePerms os.FileMode
 
-	targets []string
+	objects []string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is default temporary directory
+// Dir is path to temporary directory
 var Dir = "/tmp"
 
 // DefaultDirPerms is default permissions for directories
@@ -70,18 +71,13 @@ func NewTemp(dir ...string) (*Temp, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MkDir makes temporary directory
+// MkDir creates temporary directory
 func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	if t == nil {
 		return "", fmt.Errorf("Temp struct is nil")
 	}
 
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpDir := getTempName(t.Dir, name)
 	err := os.MkdirAll(tmpDir, t.DirPerms)
 
@@ -89,23 +85,18 @@ func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 		return "", err
 	}
 
-	t.targets = append(t.targets, tmpDir)
+	t.objects = append(t.objects, tmpDir)
 
 	return tmpDir, err
 }
 
-// MkFile makes temporary file
+// MkFile creates temporary file
 func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	if t == nil {
 		return nil, "", fmt.Errorf("Temp struct is nil")
 	}
 
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpFile := getTempName(t.Dir, name)
 	fd, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE, t.FilePerms)
 
@@ -113,33 +104,28 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 		return nil, "", err
 	}
 
-	t.targets = append(t.targets, tmpFile)
+	t.objects = append(t.objects, tmpFile)
 
 	return fd, tmpFile, nil
 }
 
-// MkName returns name for temporary object
+// MkName returns name for temporary object (file or directory)
 func (t *Temp) MkName(nameSuffix ...string) string {
-	name := ""
-
-	if len(nameSuffix) != 0 {
-		name = nameSuffix[0]
-	}
-
+	name := strutil.Q(nameSuffix...)
 	tmpObj := getTempName(t.Dir, name)
-	t.targets = append(t.targets, tmpObj)
+	t.objects = append(t.objects, tmpObj)
 
 	return tmpObj
 }
 
-// Clean removes all temporary targets
+// Clean removes all temporary objects (files and directories)
 func (t *Temp) Clean() {
-	if t == nil || t.targets == nil || len(t.targets) == 0 {
+	if t == nil || t.objects == nil || len(t.objects) == 0 {
 		return
 	}
 
-	for _, target := range t.targets {
-		os.RemoveAll(target)
+	for _, object := range t.objects {
+		os.RemoveAll(object)
 	}
 }
 

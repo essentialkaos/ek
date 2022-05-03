@@ -9,10 +9,12 @@ package fsutil
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/essentialkaos/ek/v12/system"
 
@@ -670,12 +672,12 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 
 	c.Assert(CopyFile("", tmpFile2), check.ErrorMatches, `Can't copy file: Source file can't be blank`)
 	c.Assert(CopyFile(tmpFile1, ""), check.ErrorMatches, `Can't copy file: Target file can't be blank`)
-	c.Assert(CopyFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't copy file: File /not_exist does not exists`)
-	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy file: File .* is not a regular file`)
-	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy file: File .*/test3.file is not readable`)
-	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.ErrorMatches, `Can't copy file: Directory /not_exist does not exists`)
-	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `Can't copy file: Directory .* is not writable`)
-	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy file: Target file .*/test3.file is not writable`)
+	c.Assert(CopyFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't copy file: File "/not_exist" does not exists`)
+	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy file: File ".*" is not a regular file`)
+	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy file: File ".*/test3.file" is not readable`)
+	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.ErrorMatches, `Can't copy file: Directory "/not_exist" does not exists`)
+	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `Can't copy file: Directory ".*" is not writable`)
+	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy file: Target file ".*/test3.file" is not writable`)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
@@ -689,10 +691,107 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 
 	c.Assert(CopyFile(tmpFile2, tmpDir1, 0600), check.IsNil)
 
-	_disableCopyFileChecks = true
+	c.Assert(copyFile("/not_exist_source", tmpFile2, 0644), check.ErrorMatches, `open /not_exist_source: no such file or directory`)
+	c.Assert(copyFile(tmpFile1, "/not_exist_target", 0644), check.ErrorMatchesOS, map[string]string{
+		"darwin": `open /not_exist_target: read-only file system`,
+		"linux":  `open /not_exist_target: permission denied`,
+	})
 
-	c.Assert(CopyFile("", tmpFile2), check.NotNil)
-	c.Assert(CopyFile(tmpFile1, ""), check.NotNil)
+	openFileFunc = func(name string, flag int, perm os.FileMode) (*os.File, error) {
+		return nil, fmt.Errorf("Error1")
+	}
+	c.Assert(copyFile(tmpFile1, tmpFile2, 0644), check.ErrorMatches, `Error1`)
+	openFileFunc = os.OpenFile
+
+	ioCopyFunc = func(dst io.Writer, src io.Reader) (written int64, err error) {
+		return 0, fmt.Errorf("Error2")
+	}
+	c.Assert(copyFile(tmpFile1, tmpFile2, 0644), check.ErrorMatches, `Error2`)
+	ioCopyFunc = io.Copy
+}
+
+func (s *FSSuite) TestCopyAttr(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile1 := tmpDir + "/test1.file"
+	tmpFile2 := tmpDir + "/test2.file"
+	tmpFile3 := tmpDir + "/test3.file"
+	tmpFile4 := tmpDir + "/test4.file"
+
+	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0600), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(ioutil.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
+
+	os.Chtimes(tmpFile1, time.Unix(946674000, 0), time.Unix(946674000, 0))
+	os.Chmod(tmpFile3, 0111)
+
+	c.Assert(CopyAttr("", tmpFile2), check.ErrorMatches, `Can't copy attributes: Source object can't be blank`)
+	c.Assert(CopyAttr(tmpFile1, ""), check.ErrorMatches, `Can't copy attributes: Target object can't be blank`)
+	c.Assert(CopyAttr("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't copy attributes: "/not_exist_source" does not exists`)
+	c.Assert(CopyAttr(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't copy attributes: "/not_exist_target" does not exists`)
+	c.Assert(CopyAttr(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy attributes: ".*/test3.file" is not readable`)
+	c.Assert(CopyAttr(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy attributes: ".*/test3.file" is not writable`)
+
+	c.Assert(CopyAttr(tmpFile1, tmpFile2), check.IsNil)
+
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Error while reading source object mode`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Error while reading target object mode`)
+	modeFunc = func(f string) os.FileMode { return 0644 }
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't get owner info for "/not_exist_source": no such file or directory`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't get owner info for "/not_exist_target": no such file or directory`)
+	ownerFunc = func(f string) (int, int, error) { return 1, 1, nil }
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't get file info for "/not_exist_source": no such file or directory`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't get file info for "/not_exist_target": no such file or directory`)
+
+	modeFunc = GetMode
+	ownerFunc = GetOwner
+	timesFunc = GetTimes
+}
+
+func (s *FSSuite) TestCopyAttrFaked(c *check.C) {
+	modeFunc = func(f string) os.FileMode { return 0644 }
+	ownerFunc = func(f string) (int, int, error) { return 1, 1, nil }
+	timesFunc = func(f string) (time.Time, time.Time, time.Time, error) {
+		return time.Time{}, time.Time{}, time.Time{}, nil
+	}
+
+	modeFunc = func(f string) os.FileMode {
+		if f == "/source" {
+			return 0600
+		}
+		return 0644
+	}
+	chmodFunc = func(f string, m os.FileMode) error { return fmt.Errorf("Error1") }
+	c.Assert(copyAttributes("/source", "/target"), check.ErrorMatches, `Error1`)
+	modeFunc = func(f string) os.FileMode { return 0644 }
+	chmodFunc = os.Chmod
+
+	ownerFunc = func(f string) (int, int, error) {
+		if f == "/source" {
+			return 1, 1, nil
+		}
+		return 2, 2, nil
+	}
+	chownFunc = func(name string, uid, gid int) error { return fmt.Errorf("Error2") }
+	c.Assert(copyAttributes("/source", "/target"), check.ErrorMatches, `Error2`)
+	ownerFunc = func(f string) (int, int, error) { return 1, 1, nil }
+	chownFunc = os.Chown
+
+	timesFunc = func(f string) (time.Time, time.Time, time.Time, error) {
+		if f == "/source" {
+			return time.Unix(1, 0), time.Unix(1, 0), time.Unix(1, 0), nil
+		}
+		return time.Unix(2, 0), time.Unix(2, 0), time.Unix(2, 0), nil
+	}
+	chtimesFunc = func(name string, atime time.Time, mtime time.Time) error {
+		return fmt.Errorf("Error3")
+	}
+	c.Assert(copyAttributes("/source", "/target"), check.ErrorMatches, `Error3`)
+	chtimesFunc = os.Chtimes
+
+	modeFunc = GetMode
+	ownerFunc = GetOwner
+	timesFunc = GetTimes
 }
 
 func (s *FSSuite) TestMoveFile(c *check.C) {
@@ -703,6 +802,7 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	tmpFile2 := tmpDir + "/test2.file"
 	tmpFile3 := tmpDir + "/test3.file"
 	tmpFile4 := tmpDir + "/test4.file"
+	tmpFile5 := tmpDir + "/test5.file"
 
 	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
 	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
@@ -713,19 +813,18 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 
 	c.Assert(MoveFile("", tmpFile2), check.ErrorMatches, `Can't move file: Source file can't be blank`)
 	c.Assert(MoveFile(tmpFile1, ""), check.ErrorMatches, `Can't move file: Target file can't be blank`)
-	c.Assert(MoveFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't move file: File /not_exist does not exists`)
-	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `Can't move file: File .* is not a regular file`)
-	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't move file: File .*/test3.file is not readable`)
-	c.Assert(MoveFile(tmpFile1, "/not_exist/file.test"), check.ErrorMatches, `Can't move file: Directory /not_exist does not exists`)
-	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `Can't move file: Directory .* is not writable`)
+	c.Assert(MoveFile("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't move file: File "/not_exist_source" does not exists`)
+	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `Can't move file: File ".*" is not a regular file`)
+	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't move file: File ".*/test3.file" is not readable`)
+	c.Assert(MoveFile(tmpFile1, "/not_exist/file.test"), check.ErrorMatches, `Can't move file: Directory "/not_exist" does not exists`)
+	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `Can't move file: Directory ".*" is not writable`)
 
 	c.Assert(MoveFile(tmpFile1, tmpFile2), check.IsNil)
 	c.Assert(MoveFile(tmpFile2, tmpFile1, 0600), check.IsNil)
 	c.Assert(MoveFile(tmpFile4, tmpDir3, 0644), check.IsNil)
+	c.Assert(moveFile(tmpFile1, tmpFile5, 0), check.IsNil)
 
-	_disableMoveFileChecks = true
-
-	c.Assert(MoveFile("", tmpFile2), check.NotNil)
+	c.Assert(moveFile("/not_exist_source", "/not_exist_target", 0644), check.ErrorMatches, `rename /not_exist_source /not_exist_target: no such file or directory`)
 }
 
 func (s *FSSuite) TestCopyDir(c *check.C) {
@@ -766,15 +865,20 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 
 	c.Assert(CopyDir("", targetDir), check.ErrorMatches, `Can't copy directory: Source directory can't be blank`)
 	c.Assert(CopyDir(sourceDir, ""), check.ErrorMatches, `Can't copy directory: Target directory can't be blank`)
-	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `Can't copy directory: Directory .* does not exists`)
-	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `Can't copy directory: Target .*/test1.file is not a directory`)
-	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `Can't copy directory: Directory .*/test5 is not readable`)
-	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy directory: Target .*/test2/test2.file is not a directory`)
-	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `Can't copy directory: Directory .*/test6 is not writable`)
-
-	_disableCopyDirChecks = true
+	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `Can't copy directory: Directory ".*" does not exists`)
+	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `Can't copy directory: Target ".*/test1.file" is not a directory`)
+	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `Can't copy directory: Directory ".*/test5" is not readable`)
+	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy directory: Target ".*/test2/test2.file" is not a directory`)
+	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `Can't copy directory: Directory ".*/test6" is not writable`)
 
 	c.Assert(CopyDir(tmpDir1, "/root/abcd"), check.NotNil)
+
+	mkDirFunc = func(name string, perm os.FileMode) error {
+		return fmt.Errorf("Error1")
+	}
+	c.Assert(copyDir(sourceDir, targetDir), check.ErrorMatches, `Error1`)
+	mkDirFunc = os.Mkdir
+
 }
 
 func (s *FSSuite) TestTouchFile(c *check.C) {
