@@ -3,6 +3,7 @@
 ### 12.45.1
 
 * `[tmp]` Use `os.TempDir` for default directory instead of hardcoded path
+* `[system]` Fixed stubs for Windows
 * `[terminal]` Fixed stubs for Windows
 
 ### 12.45.0
