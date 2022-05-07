@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.45.1
+
+* `[tmp]` Use `os.TempDir` for default directory instead of hardcoded path
+
 ### 12.45.0
 
 * `[knf]` Added method `Config.File()` which returns path to configuration file
