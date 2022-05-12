@@ -95,12 +95,14 @@ func (a Arguments) Strings() []string {
 	return result
 }
 
-// Filter filters arguments by given glob pattern
+// Filter filters arguments by a given glob pattern. This method works only with
+// files. It means that for a given path only the last part will be checked for
+// pattern matching.
 func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
 
 	for _, arg := range a {
-		ok, _ := path.Match(pattern, string(arg))
+		ok, _ := arg.Base().Match(pattern)
 
 		if ok {
 			result = append(result, arg)
