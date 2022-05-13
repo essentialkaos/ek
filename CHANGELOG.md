@@ -1,7 +1,9 @@
 ## Changelog
 
-### 12.45.1
+### 12.46.0
 
+* `[fmtc/lscolors]` Added method `GetColor` for getting control sequence for file
+* `[fmtc/lscolors]` Added method `ColorizePath` for colorizing whole path
 * `[tmp]` Use `os.TempDir` for default directory instead of hardcoded path
 * `[options]` Fixed arguments filtering feature
 * `[system]` Fixed stubs for Windows
