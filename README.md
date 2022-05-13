@@ -9,7 +9,7 @@
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg" /></a>
 </p>
 
-<p align="center"><a href="#platform-support">Platform support</a> • <a href="#installation">Installation</a> • <a href="#sub-packages">Sub-packages</a> • <a href="#projects-with-ek">Projects with EK</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#platform-support">Platform support</a> • <a href="#installation">Installation</a> • <a href="#sub-packages">Sub-packages</a> • <a href="#projects-with-ek">Projects with EK</a> • <a href="#ci-status">CI Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -131,10 +131,10 @@ go get -u github.com/essentialkaos/ek/v12
 * [updown-badge-server](https://kaos.sh/updown-badge-server) - Service for generating badges for updown.io checks
 * [Yo](https://kaos.sh/yo) - Command-line YAML processor
 
-### Build Status
+### CI Status
 
 | Branch | Status |
-|--------|----------|
+|--------|--------|
 | `master` | [![CI](https://kaos.sh/w/ek/ci.svg?branch=master)](https://kaos.sh/w/ek/ci?query=branch:master) |
 | `develop` | [![CI](https://kaos.sh/w/ek/ci.svg?branch=develop)](https://kaos.sh/w/ek/ci?query=branch:develop) |
 
