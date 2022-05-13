@@ -184,5 +184,4 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: ${{env.SRC_DIR}}
           args: --issues-exit-code=0 --timeout=3m --build-tags=unit
