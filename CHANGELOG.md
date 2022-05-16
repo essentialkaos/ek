@@ -4,6 +4,7 @@
 
 * `[fmtc/lscolors]` Added method `GetColor` for getting control sequence for file
 * `[fmtc/lscolors]` Added method `ColorizePath` for colorizing whole path
+* `[spinner]` Added method `Skip` for marking actions as skipped
 * `[tmp]` Use `os.TempDir` for default directory instead of hardcoded path
 * `[options]` Fixed arguments filtering feature
 * `[system]` Fixed stubs for Windows
