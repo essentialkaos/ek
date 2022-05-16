@@ -38,7 +38,7 @@ var OkColorTag = "{g}"
 var ErrColorTag = "{r}"
 
 // SkipColorTag is skipped action color tag (see fmtc package)
-var SkipColorTag = "{s-}"
+var SkipColorTag = "{s}"
 
 // TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
@@ -178,7 +178,7 @@ func stopSpinner(action uint8) {
 		)
 	case _ACTION_SKIP:
 		fmtc.Printf(
-			SkipColorTag+"⚠  "+desc+"{!} "+TimeColorTag+"(%s){!}\n",
+			SkipColorTag+"⚠  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	default:
