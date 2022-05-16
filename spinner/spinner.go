@@ -20,6 +20,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	_ACTION_DONE  uint8 = 0
+	_ACTION_ERROR uint8 = 1
+	_ACTION_SKIP  uint8 = 2
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 //  SpinnerColorTag is spinner animation color tag (see fmtc package)
 var SpinnerColorTag = "{y}"
 
@@ -28,6 +36,9 @@ var OkColorTag = "{g}"
 
 // ErrColorTag is cross color tag (see fmtc package)
 var ErrColorTag = "{r}"
+
+// SkipColorTag is skipped action color tag (see fmtc package)
+var SkipColorTag = "{s}"
 
 // TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
@@ -98,47 +109,16 @@ func Update(message string, args ...interface{}) {
 
 // Done finishes spinner animation and shows task status
 func Done(ok bool) {
-	mu.RLock()
-
-	if !isActive {
-		mu.RUnlock()
-		return
-	}
-
-	mu.RUnlock()
-
-	mu.Lock()
-	isActive = false
-	mu.Unlock()
-
-	for {
-		mu.RLock()
-		if isHidden {
-			mu.RUnlock()
-			break
-		}
-		mu.RUnlock()
-	}
-
-	mu.RLock()
-
 	if ok {
-		fmtc.Printf(
-			OkColorTag+"✔  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
-			timeutil.ShortDuration(time.Since(start), true),
-		)
+		stopSpinner(_ACTION_DONE)
 	} else {
-		fmtc.Printf(
-			ErrColorTag+"✖  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
-			timeutil.ShortDuration(time.Since(start), true),
-		)
+		stopSpinner(_ACTION_ERROR)
 	}
+}
 
-	mu.RUnlock()
-
-	mu.Lock()
-	desc, isActive, isHidden, start = "", false, true, time.Time{}
-	mu.Unlock()
+// Skip finishes spinner animation and mark it as skipped
+func Skip() {
+	stopSpinner(_ACTION_SKIP)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -163,4 +143,54 @@ func showSpinner() {
 			}
 		}
 	}
+}
+
+func stopSpinner(action uint8) {
+	mu.RLock()
+
+	if !isActive {
+		mu.RUnlock()
+		return
+	}
+
+	mu.RUnlock()
+
+	mu.Lock()
+	isActive = false
+	mu.Unlock()
+
+	for {
+		mu.RLock()
+		if isHidden {
+			mu.RUnlock()
+			break
+		}
+		mu.RUnlock()
+	}
+
+	mu.RLock()
+
+	switch action {
+	case _ACTION_ERROR:
+		fmtc.Printf(
+			ErrColorTag+"✖  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			timeutil.ShortDuration(time.Since(start), true),
+		)
+	case _ACTION_SKIP:
+		fmtc.Printf(
+			SkipColorTag+"⚠  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			timeutil.ShortDuration(time.Since(start), true),
+		)
+	default:
+		fmtc.Printf(
+			OkColorTag+"✔  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			timeutil.ShortDuration(time.Since(start), true),
+		)
+	}
+
+	mu.RUnlock()
+
+	mu.Lock()
+	desc, isActive, isHidden, start = "", false, true, time.Time{}
+	mu.Unlock()
 }

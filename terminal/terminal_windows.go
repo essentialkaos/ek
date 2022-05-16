@@ -27,6 +27,9 @@ var MaskSymbol = "*"
 // ❗ MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
 
+// ❗ TitleColorTag is fmtc color tag used for input titles
+var TitleColorTag = ""
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ ReadUI reads user input

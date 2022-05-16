@@ -16,6 +16,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// RESET_SEQ is ANSI reset sequence
+const RESET_SEQ = "\033[0m"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // colorMap is map ext -> ANSI color code
 var colorMap map[string]string
 
@@ -24,25 +29,48 @@ var initialized bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Colorize return file name with ANSI color tags
-func Colorize(file string) string {
+// GetColor returns ANSI control sequence with color for given file
+func GetColor(file string) string {
 	if !initialized {
 		initialize()
 	}
 
 	if len(colorMap) == 0 {
-		return file
+		return ""
 	}
 
 	for glob, color := range colorMap {
 		isMatch, _ := path.Match(glob, file)
 
 		if isMatch {
-			return "\033[" + color + "m" + file + "\033[0m"
+			return "\033[" + color + "m"
 		}
 	}
 
-	return file
+	return ""
+}
+
+// Colorize return file name with ANSI control sequences
+func Colorize(file string) string {
+	colorSeq := GetColor(file)
+
+	if colorSeq == "" {
+		return file
+	}
+
+	return colorSeq + file + RESET_SEQ
+}
+
+// Colorize return path with ANSI control sequences
+func ColorizePath(fullPath string) string {
+	file := path.Base(fullPath)
+	colorSeq := GetColor(file)
+
+	if colorSeq == "" {
+		return fullPath
+	}
+
+	return colorSeq + fullPath + RESET_SEQ
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

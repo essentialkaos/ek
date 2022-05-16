@@ -41,7 +41,6 @@ func (ts *TmpSuite) TestMk(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(t, NotNil)
-	c.Assert(t.Dir, Equals, "/tmp")
 
 	t.Clean()
 }

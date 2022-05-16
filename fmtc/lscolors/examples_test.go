@@ -13,8 +13,24 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExamplePrintln() {
+func ExampleGetColor() {
 	file := "myfile.txt"
+	dir := "/home/john"
 
+	colorSeq := GetColor(file)
+
+	fmt.Printf(
+		"%s/"+colorSeq+"%s"+RESET_SEQ+"\n",
+		dir, file,
+	)
+}
+
+func ExampleColorize() {
+	file := "myfile.txt"
 	fmt.Println(Colorize(file))
+}
+
+func ExampleColorizePath() {
+	path := "/home/john/myfile.txt"
+	fmt.Println(ColorizePath(path))
 }

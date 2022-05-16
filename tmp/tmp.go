@@ -32,7 +32,7 @@ type Temp struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Dir is path to temporary directory
-var Dir = "/tmp"
+var Dir = os.TempDir()
 
 // DefaultDirPerms is default permissions for directories
 var DefaultDirPerms = os.FileMode(0750)

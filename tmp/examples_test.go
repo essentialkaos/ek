@@ -17,8 +17,6 @@ func ExampleNewTemp() {
 	tmp, _ := NewTemp()
 
 	fmt.Println(tmp.Dir)
-
-	// Output: /tmp
 }
 
 func ExampleTemp_MkDir() {
