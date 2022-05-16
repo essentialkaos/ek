@@ -178,7 +178,7 @@ func stopSpinner(action uint8) {
 		)
 	case _ACTION_SKIP:
 		fmtc.Printf(
-			SkipColorTag+"✖  "+desc+"{!} "+TimeColorTag+"(%s){!}\n",
+			SkipColorTag+"⚠  "+desc+"{!} "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	default:
