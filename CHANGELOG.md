@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.46.1
+
+* `[fsutil]` Added bufio writer for copying files
+* `[fsutil]` Fixed bug with changing file mode for copied file if custom umask is used
+
 ### 12.46.0
 
 * `[fmtc/lscolors]` Added method `GetColor` for getting control sequence for file
