@@ -8,6 +8,7 @@
 * `[fsutil]` Fixed bug with changing file mode for copied file if custom umask is used
 * `[options]` Code refactoring
 * `[spinner]` Code refactoring
+* `[knf]` Added more usage examples
 
 ### 12.46.0
 
