@@ -168,6 +168,17 @@ func ExampleGetF() {
 	fmt.Printf("Ratio: %g\n", GetF("r:ratio"))
 }
 
+func ExampleIs() {
+	Parse(Map{
+		"u:user":  {Type: STRING, Value: "john"},
+		"l:lines": {Type: INT, Min: 1, Max: 100},
+	})
+
+	if Is("u:user", "bob") && Is("lines", 10) {
+		fmt.Println("User is bob and lines number is 10")
+	}
+}
+
 func ExampleHas() {
 	args, _ := Parse(Map{
 		"u:user":  {Type: STRING, Value: "john"},

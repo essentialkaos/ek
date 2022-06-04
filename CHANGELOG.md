@@ -3,6 +3,7 @@
 ### 12.46.1
 
 * `[fsutil]` Added bufio writer for copying files
+* `[options]` Added method `Is` for checking option value
 * `[fsutil]` Fixed bug with changing file mode for copied file if custom umask is used
 * `[options]` Code refactoring
 * `[spinner]` Code refactoring
