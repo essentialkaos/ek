@@ -4,6 +4,7 @@
 
 * `[fsutil]` Added bufio writer for copying files
 * `[fsutil]` Fixed bug with changing file mode for copied file if custom umask is used
+* `[options]` Code refactoring
 * `[spinner]` Code refactoring
 
 ### 12.46.0

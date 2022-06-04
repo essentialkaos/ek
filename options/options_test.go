@@ -26,6 +26,22 @@ var _ = Suite(&OptUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *OptUtilSuite) TestNil(c *C) {
+	var opts *Options
+
+	c.Assert(opts.Add("", &V{}), Equals, ErrOptionsIsNil)
+	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, []error{ErrOptionsIsNil})
+	c.Assert(opts.GetS("test"), Equals, "")
+	c.Assert(opts.GetI("test"), Equals, 0)
+	c.Assert(opts.GetB("test"), Equals, false)
+	c.Assert(opts.GetF("test"), Equals, 0.0)
+	c.Assert(opts.Has("test"), Equals, false)
+
+	_, errs := opts.Parse([]string{}, Map{"t:": {}})
+
+	c.Assert(errs, DeepEquals, []error{ErrOptionsIsNil})
+}
+
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
