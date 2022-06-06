@@ -198,6 +198,15 @@ func GetD(name string, defvals ...time.Duration) time.Duration {
 	return global.GetD(name, defvals...)
 }
 
+// Is checks if given property contains given value
+func Is(name string, value interface{}) bool {
+	if global == nil {
+		return false
+	}
+
+	return global.Is(name, value)
+}
+
 // HasSection checks if section exist
 func HasSection(section string) bool {
 	if global == nil {
@@ -489,6 +498,40 @@ func (c *Config) GetD(name string, defvals ...time.Duration) time.Duration {
 	}
 
 	return time.Duration(c.GetI64(name)) * time.Second
+}
+
+// Is checks if given property contains given value
+func (c *Config) Is(name string, value interface{}) bool {
+	if c == nil || c.mx == nil {
+		return false
+	}
+
+	if !c.HasProp(name) {
+		return false
+	}
+
+	switch t := value.(type) {
+	case string:
+		return c.GetS(name) == t
+	case int:
+		return c.GetI(name) == t
+	case int64:
+		return c.GetI64(name) == t
+	case uint:
+		return c.GetU(name) == t
+	case uint64:
+		return c.GetU64(name) == t
+	case float64:
+		return c.GetF(name) == t
+	case bool:
+		return c.GetB(name) == t
+	case os.FileMode:
+		return c.GetM(name) == t
+	case time.Duration:
+		return c.GetD(name) == t
+	}
+
+	return false
 }
 
 // HasSection checks if section exist

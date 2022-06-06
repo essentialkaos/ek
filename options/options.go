@@ -85,13 +85,22 @@ type optionName struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrOptionsIsNil returns if options struct is nil
+var ErrOptionsIsNil = fmt.Errorf("Options struct is nil")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // global is global options
 var global *Options
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add adds a new supported option
+// Add adds a new option
 func (opts *Options) Add(name string, option *V) error {
+	if opts == nil {
+		return ErrOptionsIsNil
+	}
+
 	if !opts.initialized {
 		initOptions(opts)
 	}
@@ -130,7 +139,7 @@ func (opts *Options) Add(name string, option *V) error {
 	return nil
 }
 
-// AddMap adds supported options as map
+// AddMap adds map with supported options
 func (opts *Options) AddMap(optMap Map) []error {
 	var errs []error
 
@@ -147,6 +156,10 @@ func (opts *Options) AddMap(optMap Map) []error {
 
 // GetS returns option value as string
 func (opts *Options) GetS(name string) string {
+	if opts == nil {
+		return ""
+	}
+
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
 
@@ -168,6 +181,10 @@ func (opts *Options) GetS(name string) string {
 
 // GetI returns option value as integer
 func (opts *Options) GetI(name string) int {
+	if opts == nil {
+		return 0
+	}
+
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
 
@@ -201,6 +218,10 @@ func (opts *Options) GetI(name string) int {
 
 // GetB returns option value as boolean
 func (opts *Options) GetB(name string) bool {
+	if opts == nil {
+		return false
+	}
+
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
 
@@ -236,6 +257,10 @@ func (opts *Options) GetB(name string) bool {
 
 // GetF returns option value as floating number
 func (opts *Options) GetF(name string) float64 {
+	if opts == nil {
+		return 0.0
+	}
+
 	optName := parseName(name)
 	opt, ok := opts.full[optName.Long]
 
@@ -267,8 +292,36 @@ func (opts *Options) GetF(name string) float64 {
 	}
 }
 
-// Has check that option exists and set
+// Is checks if option with given name has given value
+func (opts *Options) Is(name string, value interface{}) bool {
+	if opts == nil {
+		return false
+	}
+
+	if !opts.Has(name) {
+		return false
+	}
+
+	switch t := value.(type) {
+	case string:
+		return opts.GetS(name) == t
+	case int:
+		return opts.GetI(name) == t
+	case float64:
+		return opts.GetF(name) == t
+	case bool:
+		return opts.GetB(name) == t
+	}
+
+	return false
+}
+
+// Has checks if option with given name exists and set
 func (opts *Options) Has(name string) bool {
+	if opts == nil {
+		return false
+	}
+
 	opt, ok := opts.full[parseName(name).Long]
 
 	if !ok {
@@ -282,8 +335,12 @@ func (opts *Options) Has(name string) bool {
 	return true
 }
 
-// Parse parse options
+// Parse parses slice with raw options
 func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error) {
+	if opts == nil {
+		return nil, []error{ErrOptionsIsNil}
+	}
+
 	var errs []error
 
 	if len(optMap) != 0 {
@@ -301,7 +358,7 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewOptions create new options struct
+// NewOptions creates new options struct
 func NewOptions() *Options {
 	return &Options{
 		full:        make(Map),
@@ -310,7 +367,7 @@ func NewOptions() *Options {
 	}
 }
 
-// Add add new supported option
+// Add adds new supported option
 func Add(name string, opt *V) error {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -319,7 +376,7 @@ func Add(name string, opt *V) error {
 	return global.Add(name, opt)
 }
 
-// AddMap add supported option as map
+// AddMap adds map with supported options
 func AddMap(optMap Map) []error {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -364,7 +421,7 @@ func GetF(name string) float64 {
 	return global.GetF(name)
 }
 
-// Has check that option exists and set
+// Has checks if option with given name exists and set
 func Has(name string) bool {
 	if global == nil || !global.initialized {
 		return false
@@ -373,7 +430,16 @@ func Has(name string) bool {
 	return global.Has(name)
 }
 
-// Parse parse options
+// Is checks if option with given name has given value
+func Is(name string, value interface{}) bool {
+	if global == nil || !global.initialized {
+		return false
+	}
+
+	return global.Is(name, value)
+}
+
+// Parse parses slice with raw options
 func Parse(optMap ...Map) (Arguments, []error) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -388,7 +454,7 @@ func ParseOptionName(name string) (string, string) {
 	return a.Long, a.Short
 }
 
-// Q merges several options to string
+// Q merges several options into string
 func Q(opts ...string) string {
 	return strings.Join(opts, " ")
 }

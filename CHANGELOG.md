@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.47.0
+
+* `[fsutil]` Added bufio writer for copying files
+* `[knf]` Added method `Is` for checking property value
+* `[options]` Added method `Is` for checking option value
+* `[fsutil]` Fixed bug with changing file mode for copied file if custom umask is used
+* `[options]` Code refactoring
+* `[spinner]` Code refactoring
+* `[knf]` Added more usage examples
+
 ### 12.46.0
 
 * `[fmtc/lscolors]` Added method `GetColor` for getting control sequence for file

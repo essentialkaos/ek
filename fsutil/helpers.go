@@ -35,7 +35,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CopyFile copies file using bufio
+// CopyFile copies file using bufio with given permissions
 func CopyFile(from, to string, perms ...os.FileMode) error {
 	targetExist := IsExist(to)
 
@@ -190,12 +190,6 @@ func TouchFile(path string, perm os.FileMode) error {
 func copyFile(from, to string, perms os.FileMode) error {
 	from, to = path.Clean(from), path.Clean(to)
 
-	var targetExist bool
-
-	if IsExist(to) {
-		targetExist = true
-	}
-
 	ffd, err := openFileFunc(from, os.O_RDONLY, 0)
 
 	if err != nil {
@@ -212,19 +206,22 @@ func copyFile(from, to string, perms os.FileMode) error {
 
 	defer tfd.Close()
 
-	reader := bufio.NewReader(ffd)
+	r := bufio.NewReader(ffd)
+	w := bufio.NewWriter(tfd)
 
-	_, err = ioCopyFunc(tfd, reader)
+	_, err = ioCopyFunc(w, r)
 
 	if err != nil {
 		return err
 	}
 
-	if targetExist {
-		return chmodFunc(to, perms)
+	err = chmodFunc(to, perms)
+
+	if err != nil {
+		return err
 	}
 
-	return nil
+	return w.Flush()
 }
 
 func copyAttributes(from, to string) error {

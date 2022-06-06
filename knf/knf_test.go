@@ -186,6 +186,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetB("test"), check.Equals, false)
 	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
 	c.Assert(GetD("test"), check.Equals, time.Duration(0))
+	c.Assert(Is("test", ""), check.Equals, false)
 	c.Assert(HasSection("test"), check.Equals, false)
 	c.Assert(HasProp("test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
@@ -200,6 +201,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetB("test"), check.Equals, false)
 	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
 	c.Assert(config.GetD("test"), check.Equals, time.Duration(0))
+	c.Assert(config.Is("test", ""), check.Equals, false)
 	c.Assert(config.HasSection("test"), check.Equals, false)
 	c.Assert(config.HasProp("test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
@@ -374,6 +376,25 @@ func (s *KNFSuite) TestDuration(c *check.C) {
 	c.Assert(GetD("duration:test4"), check.Equals, time.Duration(0))
 }
 
+func (s *KNFSuite) TestIs(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(Is("string:test1", "test"), check.Equals, true)
+	c.Assert(Is("boolean:test1", true), check.Equals, true)
+	c.Assert(Is("integer:test1", 1), check.Equals, true)
+	c.Assert(Is("integer:test6", 123.4), check.Equals, true)
+	c.Assert(Is("integer:test1", uint(1)), check.Equals, true)
+	c.Assert(Is("integer:test1", uint64(1)), check.Equals, true)
+	c.Assert(Is("integer:test1", int64(1)), check.Equals, true)
+	c.Assert(Is("file-mode:test1", os.FileMode(0644)), check.Equals, true)
+	c.Assert(Is("duration:test2", time.Minute), check.Equals, true)
+
+	c.Assert(Is("integer:test1", nil), check.Equals, false)
+}
+
 func (s *KNFSuite) TestComments(c *check.C) {
 	err := Global(s.ConfigPath)
 
@@ -409,6 +430,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.GetB("formating:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formating:test1"), check.Equals, os.FileMode(0))
 	c.Assert(nilConf.GetD("formating:test1"), check.Equals, time.Duration(0))
+	c.Assert(nilConf.Is("formating:test1", ""), check.Equals, false)
 	c.Assert(nilConf.HasSection("formating"), check.Equals, false)
 	c.Assert(nilConf.HasProp("formating:test1"), check.Equals, false)
 	c.Assert(nilConf.Sections(), check.HasLen, 0)

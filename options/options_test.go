@@ -26,6 +26,23 @@ var _ = Suite(&OptUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *OptUtilSuite) TestNil(c *C) {
+	var opts *Options
+
+	c.Assert(opts.Add("", &V{}), Equals, ErrOptionsIsNil)
+	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, []error{ErrOptionsIsNil})
+	c.Assert(opts.GetS("test"), Equals, "")
+	c.Assert(opts.GetI("test"), Equals, 0)
+	c.Assert(opts.GetB("test"), Equals, false)
+	c.Assert(opts.GetF("test"), Equals, 0.0)
+	c.Assert(opts.Is("test", ""), Equals, false)
+	c.Assert(opts.Has("test"), Equals, false)
+
+	_, errs := opts.Parse([]string{}, Map{"t:": {}})
+
+	c.Assert(errs, DeepEquals, []error{ErrOptionsIsNil})
+}
+
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
@@ -75,6 +92,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetI("i:int"), Equals, 0)
 	c.Assert(GetF("f:float"), Equals, 0.0)
 	c.Assert(GetB("b:bool"), Equals, false)
+	c.Assert(Is("s:string", ""), Equals, false)
 	c.Assert(Has("s:string"), Equals, false)
 
 	c.Assert(Add("t:test", &V{}), IsNil)
@@ -107,6 +125,8 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetI("i:int"), Equals, 123)
 	c.Assert(GetF("f:float"), Equals, 100.5)
 	c.Assert(GetB("b:bool"), Equals, true)
+	c.Assert(Is("s:string", "Test"), Equals, true)
+	c.Assert(Is("string1", "Test"), Equals, false)
 }
 
 func (s *OptUtilSuite) TestLimiters(c *C) {
@@ -224,6 +244,8 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.GetB("_not_exist_"), Equals, false)
 	c.Assert(opts.GetF("_not_exist_"), Equals, 0.0)
 
+	c.Assert(opts.Is("_not_exist_", ""), Equals, false)
+
 	c.Assert(opts.GetS("s:string"), Equals, "STRING")
 	c.Assert(opts.GetS("string"), Equals, "STRING")
 	c.Assert(opts.GetS("S:empty-string"), Equals, "")
@@ -286,6 +308,12 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.GetS("merg-string"), Equals, "ABC DEF")
 	c.Assert(opts.GetI("merg-int"), Equals, 12)
 	c.Assert(opts.GetF("merg-float"), Equals, 20.2)
+
+	c.Assert(opts.Is("s:string", "STRING"), Equals, true)
+	c.Assert(opts.Is("int", 320), Equals, true)
+	c.Assert(opts.Is("float", 1.098765), Equals, true)
+	c.Assert(opts.Is("b:bool", true), Equals, true)
+	c.Assert(opts.Is("s:string", uint(1)), Equals, false)
 
 	c.Assert(opts.Has("_not_exist_"), Equals, false)
 	c.Assert(opts.Has("empty-string"), Equals, false)
