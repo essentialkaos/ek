@@ -22,6 +22,7 @@ import (
 	"github.com/essentialkaos/ek/v12/ansi"
 	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fsutil"
+	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/secstr"
 )
 
@@ -35,6 +36,9 @@ var Prompt = "> "
 
 // MaskSymbol is symbol used for masking passwords
 var MaskSymbol = "*"
+
+// HideLength is flag for hiding password length
+var HideLength = false
 
 // MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
@@ -160,11 +164,16 @@ func getMask(message string) string {
 	// Remove fmtc color tags and ANSI escape codes
 	prompt := fmtc.Clean(ansi.RemoveCodes(Prompt))
 	prefix := strings.Repeat(" ", utf8.RuneCountInString(prompt))
+	length := utf8.RuneCountInString(message)
 
-	if isTmuxSession() {
-		masking = strings.Repeat("*", utf8.RuneCountInString(message))
+	if !HideLength {
+		if isTmuxSession() {
+			masking = strings.Repeat("*", length)
+		} else {
+			masking = strings.Repeat(MaskSymbol, length)
+		}
 	} else {
-		masking = strings.Repeat(MaskSymbol, utf8.RuneCountInString(message))
+		masking = "[hidden]" + strings.Repeat(" ", mathutil.Max(0, length-8))
 	}
 
 	if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
