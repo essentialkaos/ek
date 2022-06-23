@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/essentialkaos/check v1.3.0
-	github.com/essentialkaos/go-linenoise/v3 v3.3.5
+	github.com/essentialkaos/go-linenoise/v3 v3.4.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad
 )

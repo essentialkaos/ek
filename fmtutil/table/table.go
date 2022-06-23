@@ -369,11 +369,11 @@ func setColumnsSizes(t *Table, columns int) {
 	}
 }
 
-// getColumnsNum return number of columns
+// getColumnsNum returns number of columns
 func getColumnsNum(t *Table) int {
-	if len(t.data) > 0 {
-		var columns int
+	var columns int
 
+	if len(t.data) > 0 {
 		for _, row := range t.data {
 			rowColumns := len(row)
 
@@ -381,15 +381,17 @@ func getColumnsNum(t *Table) int {
 				columns = rowColumns
 			}
 		}
-
-		return columns
 	}
 
-	if len(t.Headers) > 0 {
-		return len(t.Headers)
+	if len(t.Headers) > columns {
+		columns = len(t.Headers)
 	}
 
-	return len(t.Sizes)
+	if len(t.Sizes) > columns {
+		columns = len(t.Sizes)
+	}
+
+	return columns
 }
 
 // formatText align text with color tags

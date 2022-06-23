@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.48.0
+
+* `[terminal]` Added option HideLength for hiding password length
+* `[fmtutil/table]` Fixed bug with calculating number of columns
+
 ### 12.47.0
 
 * `[fsutil]` Added bufio writer for copying files
