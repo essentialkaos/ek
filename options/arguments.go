@@ -9,9 +9,10 @@ package options
 
 import (
 	"fmt"
-	"path"
 	"strconv"
 	"strings"
+
+	"github.com/essentialkaos/ek/v12/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -102,6 +103,11 @@ func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
 
 	for _, arg := range a {
+		// Skip all unexpanded globs
+		if path.IsGlob(arg.String()) {
+			continue
+		}
+
 		ok, _ := arg.Base().Match(pattern)
 
 		if ok {
@@ -129,6 +135,31 @@ func (a Argument) ToUpper() Argument {
 // String converts argument to string
 func (a Argument) String() string {
 	return string(a)
+}
+
+// Is returns true if argument equals to given value
+func (a Argument) Is(value interface{}) bool {
+	switch t := value.(type) {
+	case string:
+		return a.String() == t
+	case int:
+		v, err := a.Int()
+		return v == t && err == nil
+	case int64:
+		v, err := a.Int64()
+		return v == t && err == nil
+	case uint64:
+		v, err := a.Uint()
+		return v == t && err == nil
+	case float64:
+		v, err := a.Float()
+		return v == t && err == nil
+	case bool:
+		v, err := a.Bool()
+		return v == t && err == nil
+	}
+
+	return false
 }
 
 // Int converts argument to int

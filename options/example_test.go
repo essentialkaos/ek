@@ -470,6 +470,22 @@ func ExampleArgument_String() {
 	// Command: head
 }
 
+func ExampleArgument_Is() {
+	opts := NewOptions()
+
+	args, _ := opts.Parse(
+		[]string{"parse", "fileA.txt", "fileB.jpg", "fileC.txt"},
+	)
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Command is \"parse\": %t\n", args.Get(0).Is("parse"))
+	fmt.Printf("Command is \"clear\": %t\n", args.Get(0).Is("clear"))
+	// Output:
+	// Arguments: [parse fileA.txt fileB.jpg fileC.txt]
+	// Command is "parse": true
+	// Command is "clear": false
+}
+
 func ExampleArgument_Int() {
 	opts := NewOptions()
 
