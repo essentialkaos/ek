@@ -102,6 +102,10 @@ func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
 
 	for _, arg := range a {
+		if arg.String() == pattern {
+			continue
+		}
+
 		ok, _ := arg.Base().Match(pattern)
 
 		if ok {

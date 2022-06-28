@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.49.0
+
+* `[options]` Fix bug with filtering unexpanded globs
+
 ### 12.48.0
 
 * `[terminal]` Added option HideLength for hiding password length
