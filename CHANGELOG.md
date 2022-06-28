@@ -2,6 +2,7 @@
 
 ### 12.49.0
 
+* `[options]` Added method `Is` for checking argument value
 * `[options]` Fix bug with filtering unexpanded globs
 
 ### 12.48.0

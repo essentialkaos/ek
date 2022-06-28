@@ -524,6 +524,21 @@ func (s *OptUtilSuite) TestArgumentsConvertion(c *C) {
 	c.Assert(a.Get(3).String(), Equals, "true")
 	c.Assert(a.Get(4).String(), Equals, "")
 
+	c.Assert(a.Get(0).Is("test"), Equals, true)
+	c.Assert(a.Get(0).Is("abcd"), Equals, false)
+	c.Assert(a.Get(1).Is(6), Equals, true)
+	c.Assert(a.Get(1).Is(12), Equals, false)
+	c.Assert(a.Get(1).Is(int64(6)), Equals, true)
+	c.Assert(a.Get(1).Is(int64(12)), Equals, false)
+	c.Assert(a.Get(1).Is(uint64(6)), Equals, true)
+	c.Assert(a.Get(1).Is(uint64(12)), Equals, false)
+	c.Assert(a.Get(2).Is(2.67), Equals, true)
+	c.Assert(a.Get(2).Is(3.14), Equals, false)
+	c.Assert(a.Get(3).Is(true), Equals, true)
+	c.Assert(a.Get(3).Is(false), Equals, false)
+
+	c.Assert(a.Get(0).Is([]string{}), Equals, false)
+
 	vi, err := a.Get(0).Int()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "test": invalid syntax`)
