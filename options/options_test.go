@@ -510,6 +510,9 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 	a = a.Unshift("0", "1")
 
 	c.Assert(a, DeepEquals, Arguments{"0", "1", "2", "3", "4", "5"})
+
+	a = Arguments{"*.txt", "*.jpg"}
+	c.Assert(a.Filter("*.txt"), HasLen, 0)
 }
 
 func (s *OptUtilSuite) TestArgumentsConvertion(c *C) {

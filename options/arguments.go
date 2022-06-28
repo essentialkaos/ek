@@ -9,9 +9,10 @@ package options
 
 import (
 	"fmt"
-	"path"
 	"strconv"
 	"strings"
+
+	"github.com/essentialkaos/ek/v12/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -102,7 +103,8 @@ func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
 
 	for _, arg := range a {
-		if arg.String() == pattern {
+		// Skip all unexpanded globs
+		if path.IsGlob(arg.String()) {
 			continue
 		}
 
