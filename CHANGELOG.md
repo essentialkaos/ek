@@ -3,6 +3,7 @@
 ### 12.50.0
 
 * `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
+* `[fmtc]` Added more usage examples
 
 ### 12.49.0
 
