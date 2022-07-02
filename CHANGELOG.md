@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.50.0
+
+* `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
+
 ### 12.49.0
 
 * `[options]` Added method `Is` for checking argument value

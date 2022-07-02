@@ -217,18 +217,22 @@ func (s *FormatSuite) TestMethods(c *C) {
 	Printf("Printf: %s\n", "OK")
 	Print("Print: OK\n")
 
+	LPrint(11, "LPrintf: OK NOTOK")
+	NewLine()
 	LPrintf(11, "LPrintf: %s NOTOK", "OK")
 	NewLine()
 	LPrintln(12, "LPrintln: OK NOTOK")
 }
 
 func (s *FormatSuite) TestAux(c *C) {
+	TPrint("TPrint: OK\n")
 	TPrintf("TPrint: %s", "OK")
 	TPrintf("")
 	TPrintf("TPrint: %s", "OK")
 
 	TPrintln("TPrint: OK")
 
+	TLPrint(11, "TLPrint: OK NOTOK")
 	TLPrintf(11, "TLPrint: %s NOTOK", "OK")
 	TLPrintf(11, "")
 	TLPrintf(11, "TLPrint: %s NOTOK", "OK")
