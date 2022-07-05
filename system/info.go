@@ -149,20 +149,24 @@ type SystemInfo struct {
 
 // OSInfo contains info about OS
 type OSInfo struct {
-	Name            string `json:"name"`
-	PrettyName      string `json:"pretty_name"`
-	Version         string `json:"version"`
-	VersionID       string `json:"version_id"`
-	VersionCodename string `json:"version_codename"`
-	ID              string `json:"id"`
-	IDLike          string `json:"id_like"`
-	PlatformID      string `json:"platform_id"`
-	Variant         string `json:"variant"`
-	VariantID       string `json:"variant_id"`
-	CPEName         string `json:"cpe_name"`
-	HomeURL         string `json:"home_url"`
-	BugReportURL    string `json:"bugreport_url"`
-	SupportURL      string `json:"support_url"`
+	Name                  string `json:"name"`
+	PrettyName            string `json:"pretty_name"`
+	Version               string `json:"version"`
+	VersionID             string `json:"version_id"`
+	VersionCodename       string `json:"version_codename"`
+	ID                    string `json:"id"`
+	IDLike                string `json:"id_like"`
+	PlatformID            string `json:"platform_id"`
+	Variant               string `json:"variant"`
+	VariantID             string `json:"variant_id"`
+	CPEName               string `json:"cpe_name"`
+	HomeURL               string `json:"home_url"`
+	BugReportURL          string `json:"bugreport_url"`
+	DocumentationURL      string `json:"documentation_url"`
+	Logo                  string `json:"logo"`
+	SupportURL            string `json:"support_url"`
+	SupportProduct        string `json:"support_product"`
+	SupportProductVersion string `json:"support_product_version"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

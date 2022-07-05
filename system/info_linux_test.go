@@ -633,8 +633,12 @@ VERSION_CODENAME=groovy
 VARIANT="Server"
 VARIANT_ID="server"
 PLATFORM_ID="platform:el8"
-
+LOGO=fedora-logo-icon
+DOCUMENTATION_URL="https://docs.project.org"
 CPE_NAME="cpe:/o:oracle:linux:8:6:server"
+
+REDHAT_SUPPORT_PRODUCT="centos"
+REDHAT_SUPPORT_PRODUCT_VERSION="7"
 `)
 
 	sysInfo, err = GetSystemInfo()
@@ -658,6 +662,10 @@ CPE_NAME="cpe:/o:oracle:linux:8:6:server"
 	c.Assert(osInfo.HomeURL, Equals, "https://www.ubuntu.com/")
 	c.Assert(osInfo.BugReportURL, Equals, "https://bugs.launchpad.net/ubuntu/")
 	c.Assert(osInfo.SupportURL, Equals, "https://help.ubuntu.com/")
+	c.Assert(osInfo.DocumentationURL, Equals, "https://docs.project.org")
+	c.Assert(osInfo.Logo, Equals, "fedora-logo-icon")
+	c.Assert(osInfo.SupportProduct, Equals, "centos")
+	c.Assert(osInfo.SupportProductVersion, Equals, "7")
 
 	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
 	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)

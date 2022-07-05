@@ -52,7 +52,12 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 // GetOSInfo returns info about OS
 func GetOSInfo() (*OSInfo, error) {
-	data, err := ioutil.ReadFile(osReleaseFile)
+	return ParseOSInfo(osReleaseFile)
+}
+
+// ParseOSInfo parses data in given os-release file
+func ParseOSInfo(file string) (*OSInfo, error) {
+	data, err := ioutil.ReadFile(file)
 
 	if err != nil {
 		return nil, err
@@ -107,6 +112,17 @@ func applyOSInfo(info *OSInfo, name, value string) {
 		info.BugReportURL = value
 	case "SUPPORT_URL":
 		info.SupportURL = value
+	case "DOCUMENTATION_URL":
+		info.DocumentationURL = value
+	case "LOGO":
+		info.Logo = value
+	}
+
+	switch {
+	case strings.HasSuffix(name, "SUPPORT_PRODUCT"):
+		info.SupportProduct = value
+	case strings.HasSuffix(name, "SUPPORT_PRODUCT_VERSION"):
+		info.SupportProductVersion = value
 	}
 }
 

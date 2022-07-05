@@ -4,6 +4,7 @@
 
 * `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
 * `[system]` More fields support from `os-release` file
+* `[system]` Added method `ParseOSInfo` for parsing `os-release` files
 * `[system]` Improved tests
 * `[fmtc]` Added more usage examples
 
