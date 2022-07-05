@@ -620,7 +620,13 @@ VERSION_ID="20.10"
 HOME_URL="https://www.ubuntu.com/"
 SUPPORT_URL="https://help.ubuntu.com/"
 BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-VERSION_CODENAME=groovy`)
+VERSION_CODENAME=groovy
+VARIANT="Server"
+VARIANT_ID="server"
+PLATFORM_ID="platform:el8"
+
+CPE_NAME="cpe:/o:oracle:linux:8:6:server"
+`)
 
 	sysInfo, err = GetSystemInfo()
 
@@ -636,6 +642,10 @@ VERSION_CODENAME=groovy`)
 	c.Assert(osInfo.VersionCodename, Equals, "groovy")
 	c.Assert(osInfo.ID, Equals, "ubuntu")
 	c.Assert(osInfo.IDLike, Equals, "debian")
+	c.Assert(osInfo.PlatformID, Equals, "platform:el8")
+	c.Assert(osInfo.Variant, Equals, "Server")
+	c.Assert(osInfo.VariantID, Equals, "server")
+	c.Assert(osInfo.CPEName, Equals, "cpe:/o:oracle:linux:8:6:server")
 	c.Assert(osInfo.HomeURL, Equals, "https://www.ubuntu.com/")
 	c.Assert(osInfo.BugReportURL, Equals, "https://bugs.launchpad.net/ubuntu/")
 	c.Assert(osInfo.SupportURL, Equals, "https://help.ubuntu.com/")

@@ -156,6 +156,10 @@ type OSInfo struct {
 	VersionCodename string `json:"version_codename"`
 	ID              string `json:"id"`
 	IDLike          string `json:"id_like"`
+	PlatformID      string `json:"platform_id"`
+	Variant         string `json:"variant"`
+	VariantID       string `json:"variant_id"`
+	CPEName         string `json:"cpe_name"`
 	HomeURL         string `json:"home_url"`
 	BugReportURL    string `json:"bugreport_url"`
 	SupportURL      string `json:"support_url"`
