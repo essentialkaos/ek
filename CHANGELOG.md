@@ -4,6 +4,7 @@
 
 * `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
 * `[system]` More fields support from `os-release` file
+* `[system]` Improved tests
 * `[fmtc]` Added more usage examples
 
 ### 12.49.0
