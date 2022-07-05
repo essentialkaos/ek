@@ -8,6 +8,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -448,14 +449,22 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(fs, NotNil)
 
+	c.Assert(CalculateIOUtil(nil, nil, time.Minute), IsNil)
+
 	util = CalculateIOUtil(
-		map[string]*IOStats{"abc": {IOMs: 10}},
-		map[string]*IOStats{"abc": {IOMs: 1840}},
+		map[string]*IOStats{"1": {IOMs: 10}, "2": {IOMs: 1}, "3": {IOMs: 11}},
+		map[string]*IOStats{"1": {IOMs: 1840}, "2": {IOMs: 10000000}},
 		time.Minute,
 	)
 
 	c.Assert(util, NotNil)
-	c.Assert(util["abc"], Equals, 3.05)
+	c.Assert(util["1"], Equals, 3.05)
+
+	bs := bufio.NewScanner(strings.NewReader(" 11       0 vda 0 0 0 0 0 0 0 0 0 0 0\n 1       0 ram0 0 0 0 0 0 0 0 0 0 0 0\n  7       0 loop0 0 0 0 0 0 0 0 0 0 0 0\n"))
+	st, err := parseIOStats(bs)
+
+	c.Assert(err, IsNil)
+	c.Assert(st, HasLen, 1)
 
 	procDiskStatsFile = origProcDiskStatsFile
 	procStatFile = origProcStatFile
@@ -620,7 +629,17 @@ VERSION_ID="20.10"
 HOME_URL="https://www.ubuntu.com/"
 SUPPORT_URL="https://help.ubuntu.com/"
 BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-VERSION_CODENAME=groovy`)
+VERSION_CODENAME=groovy
+VARIANT="Server"
+VARIANT_ID="server"
+PLATFORM_ID="platform:el8"
+LOGO=fedora-logo-icon
+DOCUMENTATION_URL="https://docs.project.org"
+CPE_NAME="cpe:/o:oracle:linux:8:6:server"
+
+REDHAT_SUPPORT_PRODUCT="centos"
+REDHAT_SUPPORT_PRODUCT_VERSION="7"
+`)
 
 	sysInfo, err = GetSystemInfo()
 
@@ -636,9 +655,17 @@ VERSION_CODENAME=groovy`)
 	c.Assert(osInfo.VersionCodename, Equals, "groovy")
 	c.Assert(osInfo.ID, Equals, "ubuntu")
 	c.Assert(osInfo.IDLike, Equals, "debian")
+	c.Assert(osInfo.PlatformID, Equals, "platform:el8")
+	c.Assert(osInfo.Variant, Equals, "Server")
+	c.Assert(osInfo.VariantID, Equals, "server")
+	c.Assert(osInfo.CPEName, Equals, "cpe:/o:oracle:linux:8:6:server")
 	c.Assert(osInfo.HomeURL, Equals, "https://www.ubuntu.com/")
 	c.Assert(osInfo.BugReportURL, Equals, "https://bugs.launchpad.net/ubuntu/")
 	c.Assert(osInfo.SupportURL, Equals, "https://help.ubuntu.com/")
+	c.Assert(osInfo.DocumentationURL, Equals, "https://docs.project.org")
+	c.Assert(osInfo.Logo, Equals, "fedora-logo-icon")
+	c.Assert(osInfo.SupportProduct, Equals, "centos")
+	c.Assert(osInfo.SupportProductVersion, Equals, "7")
 
 	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
 	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)

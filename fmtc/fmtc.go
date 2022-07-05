@@ -193,6 +193,12 @@ func Errorf(f string, a ...interface{}) error {
 	return errors.New(Sprintf(f, a...))
 }
 
+// TPrint removes all content on the current line and prints the new message
+func TPrint(a ...interface{}) (int, error) {
+	fmt.Print(_CODE_CLEAN_LINE)
+	return Print(a...)
+}
+
 // TPrintf removes all content on the current line and prints the new message
 func TPrintf(f string, a ...interface{}) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
@@ -204,6 +210,13 @@ func TPrintf(f string, a ...interface{}) (int, error) {
 func TPrintln(a ...interface{}) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return Println(a...)
+}
+
+// LPrint formats using the default formats for its operands and writes to standard
+// output limited by the text size
+func LPrint(maxSize int, a ...interface{}) (int, error) {
+	s := fmt.Sprint(a...)
+	return fmt.Print(searchColors(s, maxSize, DisableColors))
 }
 
 // LPrintf formats according to a format specifier and writes to standard output
@@ -218,6 +231,13 @@ func LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
 func LPrintln(maxSize int, a ...interface{}) (int, error) {
 	applyColors(&a, maxSize, DisableColors)
 	return fmt.Println(a...)
+}
+
+// TLPrint removes all content on the current line and prints the new message
+// limited by the text size
+func TLPrint(maxSize int, a ...interface{}) (int, error) {
+	fmt.Print(_CODE_CLEAN_LINE)
+	return LPrint(maxSize, a...)
 }
 
 // TLPrintf removes all content on the current line and prints the new message

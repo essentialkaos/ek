@@ -9,13 +9,144 @@ package fmtc
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExamplePrintln() {
+func ExamplePrint() {
+	// print colored text
+	// {!} is tag for style reset
+	Print("{d}black{!}\n")
+	Print("{r}red{!}\n")
+	Print("{y}yellow{!}\n")
+	Print("{b}blue{!}\n")
+	Print("{c}cyan{!}\n")
+	Print("{m}magenta{!}\n")
+	Print("{g}green{!}\n")
+	Print("{s}light grey{!}\n")
 
+	// use text modificators
+
+	// light colors
+	Print("{r-}light red{!}\n")
+	Print("{r-}dark grey{!}\n")
+
+	// bold + color
+	Print("{r*}red{!}\n")
+	Print("{g*}green{!}\n")
+
+	// dim
+	Print("{r^}red{!}\n")
+	Print("{g^}green{!}\n")
+
+	// underline
+	Print("{r_}red{!}\n")
+	Print("{g_}green{!}\n")
+
+	// blink
+	Print("{r~}red{!}\n")
+	Print("{g~}green{!}\n")
+
+	// reverse
+	Print("{r@}red{!}\n")
+	Print("{g@}green{!}\n")
+
+	// background color
+	Print("{D}black{!}\n")
+	Print("{R}red{!}\n")
+	Print("{Y}yellow{!}\n")
+	Print("{B}blue{!}\n")
+	Print("{C}cyan{!}\n")
+	Print("{M}magenta{!}\n")
+	Print("{G}green{!}\n")
+	Print("{S}light grey{!}\n")
+
+	// many tags at once
+	// underline, cyan text with the red background
+	Print("{cR_}text{!}\n")
+
+	// many tags in once
+	Print("{r}{*}red and bold{!}\n")
+
+	// modificator reset
+	Print("{r}{*}red and bold {!*}just red{!}\n")
+
+	// 256 colors (# for foreground, % for background)
+	Print("{#201}pink text{!}\n")
+	Print("{%201}pink background{!}\n")
+
+	// 24-bit colors (# for foreground, % for background)
+	Print("{#7cfc00}lawngreen text{!}\n")
+	Print("{%6a5acd}slateblue background{!}\n")
+}
+
+func ExamplePrintf() {
+	// print colored text
+	// {!} is tag for style reset
+	Printf("{d}%s{!}\n", "black")
+	Printf("{r}%s{!}\n", "red")
+	Printf("{y}%s{!}\n", "yellow")
+	Printf("{b}%s{!}\n", "blue")
+	Printf("{c}%s{!}\n", "cyan")
+	Printf("{m}%s{!}\n", "magenta")
+	Printf("{g}%s{!}\n", "green")
+	Printf("{s}%s{!}\n", "light grey")
+
+	// use text modificators
+
+	// light colors
+	Printf("{r-}%s{!}\n", "light red")
+	Printf("{r-}%s{!}\n", "dark grey")
+
+	// bold + color
+	Printf("{r*}%s{!}\n", "red")
+	Printf("{g*}%s{!}\n", "green")
+
+	// dim
+	Printf("{r^}{!}\n", "red")
+	Printf("{g^}{!}\n", "green")
+
+	// underline
+	Printf("{r_}{!}\n", "red")
+	Printf("{g_}{!}\n", "green")
+
+	// blink
+	Printf("{r~}{!}\n", "red")
+	Printf("{g~}{!}\n", "green")
+
+	// reverse
+	Printf("{r@}{!}\n", "red")
+	Printf("{g@}{!}\n", "green")
+
+	// background color
+	Printf("{D}%s{!}\n", "black")
+	Printf("{R}%s{!}\n", "red")
+	Printf("{Y}%s{!}\n", "yellow")
+	Printf("{B}%s{!}\n", "blue")
+	Printf("{C}%s{!}\n", "cyan")
+	Printf("{M}%s{!}\n", "magenta")
+	Printf("{G}%s{!}\n", "green")
+	Printf("{S}%s{!}\n", "light grey")
+
+	// many tags at once
+	// underline, cyan text with the red background
+	Printf("{cR_}%s{!}\n", "text")
+
+	// many tags in once
+	Printf("{r}{*}%s{!}\n", "red and bold")
+
+	// 256 colors (# for foreground, % for background)
+	Printf("{#201}%s{!}\n", "pink text")
+	Printf("{%201}%s{!}\n", "pink background")
+
+	// 24-bit colors (# for foreground, % for background)
+	Printf("{#7cfc00}%s{!}\n", "lawngreen text")
+	Printf("{%6a5acd}%s{!}\n", "slateblue background")
+}
+
+func ExamplePrintln() {
 	// print colored text
 	// {!} is tag for style reset
 	Println("{d}black{!}")
@@ -82,17 +213,93 @@ func ExamplePrintln() {
 	Println("{%6a5acd}slateblue background{!}")
 }
 
-func ExamplePrintf() {
-	var (
-		user         = "Bob"
-		isUserOnline = true
-	)
+func ExampleFprint() {
+	Fprint(os.Stderr, "{r}This is error message{!}\n")
+	Fprint(os.Stdout, "{g}This is normal message{!}\n")
+}
 
-	if isUserOnline {
-		Printf("User {c}%s{!} is {g}online{!}\n", user)
-	} else {
-		Printf("User {c}%s{!} is {r}offline{!}\n", user)
-	}
+func ExampleFprintf() {
+	Fprintf(os.Stderr, "{r}%s{!}\n", "This is error message")
+	Fprintf(os.Stdout, "{g}%s{!}\n", "This is normal message")
+}
+
+func ExampleFprintln() {
+	Fprintln(os.Stderr, "{r}This is error message{!}")
+	Fprintln(os.Stdout, "{g}This is normal message{!}")
+}
+
+func ExampleSprint() {
+	msg := Sprint("{r}This is error message{!}\n")
+	fmt.Print(msg)
+}
+
+func ExampleSprintf() {
+	msg := Sprintf("{r}%s{!}\n", "This is error message")
+	fmt.Print(msg)
+}
+
+func ExampleSprintln() {
+	msg := Sprintln("{r}This is error message{!}")
+	fmt.Print(msg)
+}
+
+func ExampleErrorf() {
+	err := Errorf("This is error")
+	fmt.Print(err.Error())
+}
+
+func ExampleTPrint() {
+	TPrint("{s}This is temporary text{!}\n")
+	time.Sleep(time.Second)
+	TPrint("{*}This message replace previous message after 1 sec{!}\n")
+}
+
+func ExampleTPrintf() {
+	TPrintf("{s}%s{!}\n", "This is temporary text")
+	time.Sleep(time.Second)
+	TPrintf("{*}%s{!}\n", "This message replace previous message after 1 sec")
+}
+
+func ExampleTPrintln() {
+	TPrintln("{s}This is temporary text{!}")
+	time.Sleep(time.Second)
+	TPrintln("{*}This message replace previous message after 1 sec{!}")
+}
+
+func ExampleLPrint() {
+	// Only "This is text" will be shown
+	LPrint(12, "{r}This is text {g} with colors{!}")
+}
+
+func ExampleLPrintf() {
+	// Only "This is text" will be shown
+	LPrintf(12, "{r}This is %s {g} with colors{!}", "text")
+}
+
+func ExampleLPrintln() {
+	// Only "This is text" will be shown
+	LPrintln(12, "{r}This is %s {g} with colors{!}")
+}
+
+func ExampleTLPrint() {
+	// Power of TPrint and LPrint in one method
+	TLPrint(15, "{s}This is temporary text{!}")
+	time.Sleep(time.Second)
+	TLPrint(15, "{*}This message replace previous message after 1 sec{!}")
+}
+
+func ExampleTLPrintf() {
+	// Power of TPrintf and LPrintf in one method
+	TLPrintf(15, "{s}%s{!}", "This is temporary text")
+	time.Sleep(time.Second)
+	TLPrintf(15, "{*}%s{!}", "This message replace previous message after 1 sec")
+}
+
+func ExampleTLPrintln() {
+	// Power of TPrintln and LPrintln in one method
+	TLPrintln(15, "{s}This is temporary text{!}")
+	time.Sleep(time.Second)
+	TLPrintln(15, "{*}This message replace previous message after 1 sec{!}")
 }
 
 func ExampleBell() {
@@ -118,22 +325,4 @@ func ExampleIs256ColorsSupported() {
 
 func ExampleIsTrueColorSupported() {
 	fmt.Printf("TrueColor Supported: %t\n", IsTrueColorSupported())
-}
-
-func ExampleTPrintf() {
-	TPrintf("This is temporary text")
-	time.Sleep(time.Second)
-	TPrintf("This message replace previous message after 1 sec")
-}
-
-func ExampleTLPrintf() {
-	// Power of TPrintf and LPrintf in one method
-	TLPrintf(22, "This is temporary text")
-	time.Sleep(time.Second)
-	TLPrintf(22, "This message will replace previous message after 1 sec")
-}
-
-func ExampleLPrintf() {
-	// Only "This is text" will be shown
-	LPrintf(12, "{r}This is %s {g} with colors{!}", "text")
 }

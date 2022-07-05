@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.50.0
+
+* `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
+* `[system]` More fields support from `os-release` file
+* `[system]` Added method `ParseOSInfo` for parsing `os-release` files
+* `[system]` Improved tests
+* `[fmtc]` Added more usage examples
+
 ### 12.49.0
 
 * `[options]` Added method `Is` for checking argument value
