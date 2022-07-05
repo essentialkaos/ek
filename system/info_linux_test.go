@@ -8,6 +8,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -448,14 +449,22 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(fs, NotNil)
 
+	c.Assert(CalculateIOUtil(nil, nil, time.Minute), IsNil)
+
 	util = CalculateIOUtil(
-		map[string]*IOStats{"abc": {IOMs: 10}},
-		map[string]*IOStats{"abc": {IOMs: 1840}},
+		map[string]*IOStats{"1": {IOMs: 10}, "2": {IOMs: 1}, "3": {IOMs: 11}},
+		map[string]*IOStats{"1": {IOMs: 1840}, "2": {IOMs: 10000000}},
 		time.Minute,
 	)
 
 	c.Assert(util, NotNil)
-	c.Assert(util["abc"], Equals, 3.05)
+	c.Assert(util["1"], Equals, 3.05)
+
+	bs := bufio.NewScanner(strings.NewReader(" 11       0 vda 0 0 0 0 0 0 0 0 0 0 0\n 1       0 ram0 0 0 0 0 0 0 0 0 0 0 0\n  7       0 loop0 0 0 0 0 0 0 0 0 0 0 0\n"))
+	st, err := parseIOStats(bs)
+
+	c.Assert(err, IsNil)
+	c.Assert(st, HasLen, 1)
 
 	procDiskStatsFile = origProcDiskStatsFile
 	procStatFile = origProcStatFile

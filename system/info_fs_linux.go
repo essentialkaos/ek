@@ -85,7 +85,7 @@ func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[s
 	itv := uint64(duration / (time.Millisecond * 10))
 
 	for device := range io1 {
-		if io1[device] == nil || io2[device] == nil {
+		if io2[device] == nil {
 			continue
 		}
 
@@ -118,6 +118,7 @@ func parseIOStats(s *bufio.Scanner) (map[string]*IOStats, error) {
 		device := strutil.ReadField(text, 2, true)
 
 		if len(device) > 3 {
+			// Skip devices with names like ram* and loop*
 			if device[:3] == "ram" || device[:3] == "loo" {
 				continue
 			}
