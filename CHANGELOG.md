@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.50.1
+
+* `[progress]` Fixed bug with duplicating progress bar
+* `[progress]` Fixed bug with duplicating percentage symbol
+
 ### 12.50.0
 
 * `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`
