@@ -240,7 +240,7 @@ func renderHeaders(t *Table) {
 			headerText = strings.ToUpper(headerText)
 		}
 
-		fmtc.Printf(" " + HeaderColorTag + formatText(headerText, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + "{!} ")
+		fmtc.Print(" " + HeaderColorTag + formatText(headerText, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + "{!} ")
 
 		if columnIndex+1 != totalColumns {
 			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)

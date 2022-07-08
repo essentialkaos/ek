@@ -133,7 +133,7 @@ func showSpinner() {
 			)
 			mu.RUnlock()
 			time.Sleep(framesDelay[i])
-			fmt.Printf("\033[2K\r")
+			fmt.Print("\033[2K\r")
 
 			if !isActive {
 				mu.Lock()

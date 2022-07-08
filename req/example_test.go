@@ -150,5 +150,5 @@ func ExampleRequest_PostFile() {
 		return
 	}
 
-	fmt.Printf("File successfully uploaded!\n")
+	fmt.Println("File successfully uploaded!")
 }

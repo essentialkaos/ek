@@ -335,11 +335,11 @@ func (c *Command) Render() {
 	fmtc.Printf("  "+colorTag+"%s{!}", c.Name)
 
 	if len(c.Args) != 0 {
-		fmtc.Printf(" " + renderArgs(c.Args...))
+		fmtc.Print(" " + renderArgs(c.Args...))
 	}
 
-	fmtc.Printf(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Printf(c.Desc)
+	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
+	fmtc.Print(c.Desc)
 
 	fmtc.NewLine()
 }
@@ -360,11 +360,11 @@ func (o *Option) Render() {
 	fmtc.Printf("  "+colorTag+"%s{!}", formatOptionName(o))
 
 	if o.Arg != "" {
-		fmtc.Printf(" " + renderArgs(o.Arg))
+		fmtc.Print(" " + renderArgs(o.Arg))
 	}
 
-	fmtc.Printf(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Printf(o.Desc)
+	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
+	fmtc.Print(o.Desc)
 
 	fmtc.NewLine()
 }
@@ -495,7 +495,7 @@ func renderArgs(args ...string) string {
 		}
 	}
 
-	return fmtc.Sprintf(strings.TrimRight(result, " "))
+	return fmtc.Sprint(strings.TrimRight(result, " "))
 }
 
 // formatOptionName formats option name
