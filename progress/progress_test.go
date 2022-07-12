@@ -175,30 +175,30 @@ func (s *ProgressSuite) TestPercRender(c *C) {
 
 	vl, sz := pb.renderPercentage()
 
-	c.Assert(vl, Equals, "{m} 12.3%%{!}")
-	c.Assert(sz, Equals, 7)
+	c.Assert(vl, Equals, "{m} 12.3%{!}")
+	c.Assert(sz, Equals, 6)
 
 	pb.total = -1
 
 	vl, sz = pb.renderPercentage()
 
-	c.Assert(vl, Equals, "{m}  0.0%%{!}")
-	c.Assert(sz, Equals, 7)
+	c.Assert(vl, Equals, "{m}  0.0%{!}")
+	c.Assert(sz, Equals, 6)
 
 	pb.total = 100
 	pb.current = 1000
 
 	vl, sz = pb.renderPercentage()
 
-	c.Assert(vl, Equals, "{m}100%%{!}")
-	c.Assert(sz, Equals, 5)
+	c.Assert(vl, Equals, "{m}100%{!}")
+	c.Assert(sz, Equals, 4)
 
 	pb.settings.PercentColorTag = ""
 
 	vl, sz = pb.renderPercentage()
 
-	c.Assert(vl, Equals, "100%%")
-	c.Assert(sz, Equals, 5)
+	c.Assert(vl, Equals, "100%")
+	c.Assert(sz, Equals, 4)
 }
 
 func (s *ProgressSuite) TestProgressRender(c *C) {

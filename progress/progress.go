@@ -159,9 +159,6 @@ func (b *Bar) Finish() {
 		return
 	}
 
-	fmtc.TPrintf(b.renderElements())
-	fmtc.NewLine()
-
 	b.finishChan <- true
 }
 
@@ -298,7 +295,7 @@ func (b *Bar) render() {
 
 	// render text only if changed
 	if b.buffer != result {
-		fmtc.TPrintf(result)
+		fmtc.TPrint(result)
 	}
 
 	if b.total > 0 {
@@ -416,9 +413,9 @@ func (b *Bar) renderPercentage() (string, int) {
 	}
 
 	if perc == 100.0 {
-		result = "100%%"
+		result = "100%"
 	} else {
-		result = fmt.Sprintf("%5.1f", perc) + "%%"
+		result = fmt.Sprintf("%5.1f%%", perc)
 	}
 
 	if fmtc.DisableColors || b.settings.PercentColorTag == "" {

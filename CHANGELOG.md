@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.50.1
+
+* `[progress]` Fixed bug with duplicating progress bar
+* `[progress]` Fixed bug with duplicating percentage symbol
+* `[fmtc]` Fixed simple mistakes in usage examples
+* `[fmtutil/table]` Fixed strings formatting
+* `[req]` Fixed strings formatting
+* `[spinner]` Fixed strings formatting
+* `[usage]` Fixed strings formatting
+
 ### 12.50.0
 
 * `[fmtc]` Added methods `TPrint`, `LPrint` and `TLPrint`

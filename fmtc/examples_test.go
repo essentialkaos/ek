@@ -105,20 +105,20 @@ func ExamplePrintf() {
 	Printf("{g*}%s{!}\n", "green")
 
 	// dim
-	Printf("{r^}{!}\n", "red")
-	Printf("{g^}{!}\n", "green")
+	Printf("{r^}%s{!}\n", "red")
+	Printf("{g^}%s{!}\n", "green")
 
 	// underline
-	Printf("{r_}{!}\n", "red")
-	Printf("{g_}{!}\n", "green")
+	Printf("{r_}%s{!}\n", "red")
+	Printf("{g_}%s{!}\n", "green")
 
 	// blink
-	Printf("{r~}{!}\n", "red")
-	Printf("{g~}{!}\n", "green")
+	Printf("{r~}%s{!}\n", "red")
+	Printf("{g~}%s{!}\n", "green")
 
 	// reverse
-	Printf("{r@}{!}\n", "red")
-	Printf("{g@}{!}\n", "green")
+	Printf("{r@}%s{!}\n", "red")
+	Printf("{g@}%s{!}\n", "green")
 
 	// background color
 	Printf("{D}%s{!}\n", "black")
