@@ -3,6 +3,7 @@
 ### 12.51.0
 
 * `[fsutil]` Better errors messages from `ValidatePerms`
+* `[pid]` Code refactoring
 
 ### 12.50.1
 

@@ -28,7 +28,7 @@ var Dir = "/var/run"
 
 // Create creates file with process PID file
 func Create(name string) error {
-	err := checkPIDDir(Dir, true)
+	err := fsutil.ValidatePerms("DRW", Dir)
 
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func Create(name string) error {
 
 // Remove removes file with process PID file
 func Remove(name string) error {
-	err := checkPIDDir(Dir, true)
+	err := fsutil.ValidatePerms("DRW", Dir)
 
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func Remove(name string) error {
 
 // Get returns PID from PID file
 func Get(name string) int {
-	err := checkPIDDir(Dir, false)
+	err := fsutil.ValidatePerms("DR", Dir)
 
 	if err != nil {
 		return -1
@@ -95,25 +95,6 @@ func Read(pidFile string) int {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// checkPIDDir checks directory path and return error if directory not ok
-func checkPIDDir(path string, requireModify bool) error {
-	switch {
-	case !fsutil.IsExist(path):
-		return errors.New("Directory " + path + " does not exist")
-
-	case !fsutil.IsDir(path):
-		return errors.New(path + " is not directory")
-
-	case !fsutil.IsWritable(path) && requireModify:
-		return errors.New("Directory " + path + " is not writable")
-
-	case !fsutil.IsReadable(path):
-		return errors.New("Directory " + path + " is not readable")
-	}
-
-	return nil
-}
 
 // normalizePIDFilename returns PID file name with extension
 func normalizePIDFilename(name string) string {
