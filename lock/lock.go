@@ -1,0 +1,63 @@
+// Package lock provides methods for working with lock files
+package lock
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+//                                                                                    //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
+//                                                                                    //
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+import (
+	"os"
+	"time"
+
+	"github.com/essentialkaos/ek/v12/fsutil"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Create creates new lock file
+func Create(name string) error {
+	err := fsutil.ValidatePerms("DW", Dir)
+
+	if err != nil {
+		return err
+	}
+
+	return fsutil.TouchFile(getLockPath(name), 0644)
+}
+
+// Remove deletes lock file
+func Remove(name string) error {
+	err := fsutil.ValidatePerms("DW", Dir)
+
+	if err != nil {
+		return err
+	}
+
+	return os.Remove(getLockPath(name))
+}
+
+// Has returns true if lock file exists
+func Has(name string) bool {
+	return fsutil.IsExist(getLockPath(name))
+}
+
+// Expired returns true if lock file reached TTL
+func Expired(name string, ttl time.Duration) bool {
+	ct, err := fsutil.GetCTime(getLockPath(name))
+
+	if err != nil {
+		return false
+	}
+
+	return time.Since(ct) > ttl
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// getLockPath returns path to lock file
+func getLockPath(name string) string {
+	return Dir + "/" + name + ".lock"
+}
