@@ -25,6 +25,7 @@
 * + knf/validators/regexp
 * + knf/validators/system
 * + log
+* + lock
 * + mathutil
 L + netutil
 * + options
