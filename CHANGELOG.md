@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.51.0
+
+* `[fsutil]` Better errors messages from `ValidatePerms`
+
 ### 12.50.1
 
 * `[progress]` Fixed bug with duplicating progress bar
