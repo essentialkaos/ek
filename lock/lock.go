@@ -44,6 +44,25 @@ func Has(name string) bool {
 	return fsutil.IsExist(getLockPath(name))
 }
 
+// Wait waits until lock file being deleted
+func Wait(name string, deadline time.Time) bool {
+	if !Has(name) {
+		return true
+	}
+
+	for range time.NewTicker(time.Second / 4).C {
+		if !deadline.IsZero() && time.Now().After(deadline) {
+			return false
+		}
+
+		if !Has(name) {
+			break
+		}
+	}
+
+	return true
+}
+
 // Expired returns true if lock file reached TTL
 func Expired(name string, ttl time.Duration) bool {
 	ct, err := fsutil.GetCTime(getLockPath(name))

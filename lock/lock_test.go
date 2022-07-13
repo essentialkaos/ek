@@ -62,3 +62,20 @@ func (s *LockSuite) TestBasics(c *C) {
 
 	c.Assert(Has("test"), Equals, false)
 }
+
+func (s *LockSuite) TestWait(c *C) {
+	Dir = c.MkDir()
+
+	c.Assert(Wait("test", time.Now().Add(time.Second)), Equals, true)
+
+	err := Create("test")
+	c.Assert(err, IsNil)
+
+	go func() {
+		time.Sleep(time.Second)
+		Remove("test")
+	}()
+
+	c.Assert(Wait("test", time.Now().Add(time.Microsecond)), Equals, false)
+	c.Assert(Wait("test", time.Now().Add(3*time.Second)), Equals, true)
+}
