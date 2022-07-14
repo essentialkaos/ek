@@ -57,9 +57,9 @@ func ExampleWait() {
 	// do your stuff
 }
 
-func ExampleExpired() {
+func ExampleIsExpired() {
 	if Has("my_app") {
-		if Expired("my_app", time.Hour) {
+		if IsExpired("my_app", time.Hour) {
 			// looks like lock file was created long time ago, so delete it
 			Remove("my_app")
 		} else {
