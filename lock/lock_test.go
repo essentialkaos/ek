@@ -39,7 +39,7 @@ func (s *LockSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
 
-	c.Assert(Expired("test", time.Second), Equals, false)
+	c.Assert(IsExpired("test", time.Second), Equals, false)
 }
 
 func (s *LockSuite) TestBasics(c *C) {
@@ -51,11 +51,11 @@ func (s *LockSuite) TestBasics(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(Has("test"), Equals, true)
-	c.Assert(Expired("test", time.Minute), Equals, false)
+	c.Assert(IsExpired("test", time.Minute), Equals, false)
 
 	time.Sleep(time.Second)
 
-	c.Assert(Expired("test", time.Millisecond), Equals, true)
+	c.Assert(IsExpired("test", time.Millisecond), Equals, true)
 
 	err = Remove("test")
 	c.Assert(err, IsNil)

@@ -63,8 +63,8 @@ func Wait(name string, deadline time.Time) bool {
 	return true
 }
 
-// Expired returns true if lock file reached TTL
-func Expired(name string, ttl time.Duration) bool {
+// IsExpired returns true if lock file reached TTL
+func IsExpired(name string, ttl time.Duration) bool {
 	ct, err := fsutil.GetCTime(getLockPath(name))
 
 	if err != nil {
