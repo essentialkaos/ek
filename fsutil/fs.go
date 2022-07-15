@@ -140,8 +140,11 @@ func CheckPerms(props, path string) bool {
 
 // ValidatePerms validates permissions for file or directory
 func ValidatePerms(props, path string) error {
-	if props == "" || path == "" {
-		return errors.New("Props or path to object is empty")
+	switch {
+	case props == "":
+		return errors.New("Props is empty")
+	case path == "":
+		return errors.New("Path is empty")
 	}
 
 	path = PATH.Clean(path)
@@ -204,22 +207,31 @@ func ValidatePerms(props, path string) error {
 
 		case 'X':
 			if !isExecutableStat(stat, user.UID, getGIDList(user)) {
-				return fmt.Errorf("%s is not executable", path)
+				return fmt.Errorf(
+					"%s %s is not executable",
+					getObjectType(stat), path,
+				)
 			}
 
 		case 'W':
 			if !isWritableStat(stat, user.UID, getGIDList(user)) {
-				return fmt.Errorf("%s is not writable", path)
+				return fmt.Errorf(
+					"%s %s is not writable",
+					getObjectType(stat), path,
+				)
 			}
 
 		case 'R':
 			if !isReadableStat(stat, user.UID, getGIDList(user)) {
-				return fmt.Errorf("%s is not readable", path)
+				return fmt.Errorf(
+					"%s %s is not readable",
+					getObjectType(stat), path,
+				)
 			}
 
 		case 'S':
 			if stat.Size == 0 {
-				return fmt.Errorf("%s is empty", path)
+				return fmt.Errorf("%s %s is empty", getObjectType(stat), path)
 			}
 		}
 	}
@@ -722,4 +734,19 @@ func getGIDList(user *system.User) []int {
 	}
 
 	return result
+}
+
+func getObjectType(stat *syscall.Stat_t) string {
+	switch {
+	case stat.Mode&_IFMT == _IFREG:
+		return "File"
+	case stat.Mode&_IFMT == _IFDIR:
+		return "Directory"
+	case stat.Mode&_IFMT != _IFBLK:
+		return "Block device"
+	case stat.Mode&_IFMT != _IFCHR:
+		return "Character device"
+	}
+
+	return "Object"
 }

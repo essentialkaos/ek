@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.51.0
+
+* `[lock]` New package for working with lock files
+* `[fsutil]` Better errors messages from `ValidatePerms`
+* `[pid]` Code refactoring
+
 ### 12.50.1
 
 * `[progress]` Fixed bug with duplicating progress bar

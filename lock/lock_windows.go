@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package lock provides methods for working with lock files
+package lock
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +9,38 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.51.0"
+// Dir is a path to directory with lock files
+var Dir = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+// ❗ Create creates new lock file
+func Create(name string) error {
+	panic("UNSUPPORTED")
+	return nil
 }
+
+// ❗ Remove deletes lock file
+func Remove(name string) error {
+	panic("UNSUPPORTED")
+	return nil
+}
+
+// ❗ Has returns true if lock file exists
+func Has(name string) bool {
+	panic("UNSUPPORTED")
+	return false
+}
+
+// ❗ Expired returns true if lock file reached TTL
+func Expired(name string, ttl time.Duration) bool {
+	panic("UNSUPPORTED")
+	return false
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package lock
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,21 +7,7 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
-)
+// Dir is a path to directory with lock files
+var Dir = "/var/tmp"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// VERSION is current ek package version
-const VERSION = "12.51.0"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
-}
