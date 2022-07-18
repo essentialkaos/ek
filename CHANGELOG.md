@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.52.0
+
+* `[fmtc]` Added method `If` for conditional message printing
+
 ### 12.51.0
 
 * `[lock]` New package for working with lock files
