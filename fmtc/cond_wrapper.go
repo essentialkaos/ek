@@ -206,6 +206,15 @@ func (cw CondWrapper) TLPrintln(maxSize int, a ...interface{}) (int, error) {
 	return TLPrintln(maxSize, a...)
 }
 
+// NewLine prints a newline to standard output
+func (cw CondWrapper) NewLine() (int, error) {
+	if cw.match == false {
+		return 0, nil
+	}
+
+	return NewLine()
+}
+
 // Bell prints alert (bell) symbol
 func (cw CondWrapper) Bell() {
 	if cw.match == false {

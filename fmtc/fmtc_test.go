@@ -265,6 +265,7 @@ func (s *FormatSuite) TestIfHelper(c *C) {
 	If(false).TLPrint(100, "TLPrint: OK\n")
 	If(false).TLPrintln(100, "TLPrintln: OK")
 	If(false).TLPrintf(100, "TLPrintf: %s\n", "OK")
+	If(false).NewLine()
 	If(false).Bell()
 
 	If(true).Print("Print: OK\n")
@@ -285,6 +286,7 @@ func (s *FormatSuite) TestIfHelper(c *C) {
 	If(true).TLPrint(100, "TLPrint: OK\n")
 	If(true).TLPrintln(100, "TLPrintln: OK")
 	If(true).TLPrintf(100, "TLPrintf: %s\n", "OK")
+	If(true).NewLine()
 	If(true).Bell()
 }
 
