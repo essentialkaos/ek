@@ -326,3 +326,9 @@ func ExampleIs256ColorsSupported() {
 func ExampleIsTrueColorSupported() {
 	fmt.Printf("TrueColor Supported: %t\n", IsTrueColorSupported())
 }
+
+func ExampleIf() {
+	userIsAdmin := true
+
+	If(userIsAdmin).Println("You are admin!")
+}

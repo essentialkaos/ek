@@ -26,6 +26,8 @@ type FormatSuite struct{}
 
 var _ = Suite(&FormatSuite{})
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *FormatSuite) TestColors(c *C) {
 	c.Assert(Sprint("{r}W{!}"), Equals, "\x1b[31mW\x1b[0m")
 	c.Assert(Sprint("{g}W{!}"), Equals, "\x1b[32mW\x1b[0m")
@@ -240,6 +242,52 @@ func (s *FormatSuite) TestAux(c *C) {
 	TLPrintln(11, "TLPrint: OK NOTOK")
 
 	Bell()
+}
+
+func (s *FormatSuite) TestIfHelper(c *C) {
+	w := bytes.NewBufferString("")
+
+	If(false).Print("Print: OK\n")
+	If(false).Println("Println: OK")
+	If(false).Printf("Printf: %s\n", "OK")
+	If(false).Fprint(w, "Fprint\n")
+	If(false).Fprintln(w, "Fprintln")
+	If(false).Fprintf(w, "Fprintf: %s\n", "OK")
+	If(false).Sprint("Sprint: OK\n")
+	If(false).Sprintln("Sprintln: OK")
+	If(false).Sprintf("Sprintf: %s\n", "OK")
+	If(false).TPrint("TPrint: OK\n")
+	If(false).TPrintln("TPrintln: OK")
+	If(false).TPrintf("TPrintf: %s\n", "OK")
+	If(false).LPrint(100, "LPrint: OK\n")
+	If(false).LPrintln(100, "LPrintln: OK")
+	If(false).LPrintf(100, "LPrintf: %s\n", "OK")
+	If(false).TLPrint(100, "TLPrint: OK\n")
+	If(false).TLPrintln(100, "TLPrintln: OK")
+	If(false).TLPrintf(100, "TLPrintf: %s\n", "OK")
+	If(false).NewLine()
+	If(false).Bell()
+
+	If(true).Print("Print: OK\n")
+	If(true).Println("Println: OK")
+	If(true).Printf("Printf: %s\n", "OK")
+	If(true).Fprint(w, "Fprint\n")
+	If(true).Fprintln(w, "Fprintln")
+	If(true).Fprintf(w, "Fprintf: %s\n", "OK")
+	If(true).Sprint("Sprint: OK\n")
+	If(true).Sprintln("Sprintln: OK")
+	If(true).Sprintf("Sprintf: %s\n", "OK")
+	If(true).TPrint("TPrint: OK\n")
+	If(true).TPrintln("TPrintln: OK")
+	If(true).TPrintf("TPrintf: %s\n", "OK")
+	If(true).LPrint(100, "LPrint: OK\n")
+	If(true).LPrintln(100, "LPrintln: OK")
+	If(true).LPrintf(100, "LPrintf: %s\n", "OK")
+	If(true).TLPrint(100, "TLPrint: OK\n")
+	If(true).TLPrintln(100, "TLPrintln: OK")
+	If(true).TLPrintf(100, "TLPrintf: %s\n", "OK")
+	If(true).NewLine()
+	If(true).Bell()
 }
 
 func (s *FormatSuite) TestFuzzFixes(c *C) {
