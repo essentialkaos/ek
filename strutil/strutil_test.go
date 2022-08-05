@@ -25,10 +25,13 @@ var _ = Suite(&StrUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *StrUtilSuite) TestQ(c *C) {
+func (s *StrUtilSuite) TestHelpers(c *C) {
 	c.Assert(Q(), Equals, "")
 	c.Assert(Q("a"), Equals, "a")
 	c.Assert(Q("", "", "1"), Equals, "1")
+
+	c.Assert(B(true, "A", "B"), Equals, "A")
+	c.Assert(B(false, "A", "B"), Equals, "B")
 }
 
 func (s *StrUtilSuite) TestConcat(c *C) {

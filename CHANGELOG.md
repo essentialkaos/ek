@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.53.0
+
+* `[strutil]` Added method `B` for choosing value by condition
+
 ### 12.52.0
 
 * `[fmtc]` Added method `If` for conditional message printing
