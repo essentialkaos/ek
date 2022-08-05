@@ -14,13 +14,26 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleQ() {
-	var defaultValue = "john"
-	var user = ""
+	defaultValue := "john"
+	user := ""
 
 	fmt.Println(Q(user, defaultValue))
 
 	// Output:
 	// john
+}
+
+func ExampleB() {
+	isAdmin := true
+	user := "bob"
+
+	fmt.Printf(
+		B(isAdmin, "User %s is admin\n", "User %s isn't admin\n"),
+		user,
+	)
+
+	// Output:
+	// User bob is admin
 }
 
 func ExampleConcat() {

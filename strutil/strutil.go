@@ -35,6 +35,15 @@ func Q(v ...string) string {
 	return ""
 }
 
+// B is shorthand for choosing value by condition
+func B(cond bool, positive, negative string) string {
+	if cond {
+		return positive
+	}
+
+	return negative
+}
+
 // Concat is method for fast string concatenation
 func Concat(s ...string) string {
 	var buffer bytes.Buffer

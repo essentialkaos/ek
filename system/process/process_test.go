@@ -253,11 +253,15 @@ func (s *ProcessSuite) TestCPUPriority(c *C) {
 func (s *ProcessSuite) TestIOPriority(c *C) {
 	pid := os.Getpid()
 
+	err := SetIOPriority(pid, PRIO_CLASS_NONE, 0)
+
+	c.Assert(err, IsNil)
+
 	class, classdata, err := GetIOPriority(pid)
 
 	c.Assert(err, IsNil)
 	c.Assert(class, Equals, PRIO_CLASS_NONE)
-	c.Assert(classdata, Equals, 4)
+	c.Assert(classdata, Equals, 0)
 
 	err = SetIOPriority(pid, PRIO_CLASS_BEST_EFFORT, 5)
 
