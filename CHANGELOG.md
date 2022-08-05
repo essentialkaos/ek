@@ -3,6 +3,7 @@
 ### 12.53.0
 
 * `[strutil]` Added method `B` for choosing value by condition
+* `[system/process]` Tests updated for compatibility with GitHub Actions
 
 ### 12.52.0
 
