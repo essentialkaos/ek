@@ -175,7 +175,7 @@ func (opts *Options) GetS(name string) string {
 	case opt.Type == BOOL:
 		return strconv.FormatBool(opt.Value.(bool))
 	default:
-		return opt.Value.(string)
+		return fmt.Sprintf("%s", opt.Value)
 	}
 }
 

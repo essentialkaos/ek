@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.53.1
+
+* `[options]` Fixed panic in `GetS` when mixed or string option contains non-string value
+
 ### 12.53.0
 
 * `[strutil]` Added method `B` for choosing value by condition
