@@ -55,11 +55,8 @@ func PrettyDurationInDays(d interface{}) string {
 		return ""
 	}
 
-	switch {
-	case dur <= 5*time.Minute:
-		return "just now"
-	case dur <= time.Hour*24:
-		return "today"
+	if dur < 24*time.Hour {
+		dur = 24 * time.Hour
 	}
 
 	days := int(dur.Hours()) / 24

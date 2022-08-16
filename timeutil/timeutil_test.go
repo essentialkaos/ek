@@ -53,8 +53,8 @@ func (s *TimeUtilSuite) TestPretyDuration(c *C) {
 
 func (s *TimeUtilSuite) TestPretyDurationInDays(c *C) {
 	c.Assert(PrettyDurationInDays("ABC"), Equals, "")
-	c.Assert(PrettyDurationInDays(120), Equals, "just now")
-	c.Assert(PrettyDurationInDays(7200), Equals, "today")
+	c.Assert(PrettyDurationInDays(120), Equals, "1 day")
+	c.Assert(PrettyDurationInDays(7200), Equals, "1 day")
 	c.Assert(PrettyDurationInDays(90000), Equals, "1 day")
 	c.Assert(PrettyDurationInDays(1296000), Equals, "15 days")
 }

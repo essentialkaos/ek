@@ -28,13 +28,13 @@ func ExamplePrettyDuration() {
 
 func ExamplePrettyDurationInDays() {
 	// you can use int ...
-	fmt.Println(PrettyDurationInDays(650))
+	fmt.Println(PrettyDurationInDays(2 * time.Hour))
 
 	// ... and time.Duration types
 	fmt.Println(PrettyDurationInDays(168 * time.Hour))
 
 	// Output:
-	// today
+	// 1 day
 	// 7 days
 }
 
