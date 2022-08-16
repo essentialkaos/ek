@@ -55,11 +55,8 @@ func PrettyDurationInDays(d interface{}) string {
 		return ""
 	}
 
-	switch {
-	case dur <= 5*time.Minute:
-		return "just now"
-	case dur <= time.Hour*24:
-		return "today"
+	if dur < 24*time.Hour {
+		dur = 24 * time.Hour
 	}
 
 	days := int(dur.Hours()) / 24
@@ -232,6 +229,56 @@ func ParseDuration(dur string, defMod ...rune) (int64, error) {
 	}
 
 	return result, nil
+}
+
+// StartOfHour returns start of the hour
+func StartOfHour(t time.Time) time.Time {
+	return time.Date(
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), 0, 0, 0, t.Location(),
+	)
+}
+
+// StartOfDay returns start of the day
+func StartOfDay(t time.Time) time.Time {
+	return time.Date(
+		t.Year(), t.Month(), t.Day(),
+		0, 0, 0, 0, t.Location(),
+	)
+}
+
+// StartOfWeek returns the first day of the week
+func StartOfWeek(t time.Time, firstDay time.Weekday) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	for {
+		if t.Weekday() == firstDay {
+			return time.Date(
+				t.Year(), t.Month(), t.Day(),
+				0, 0, 0, 0, t.Location(),
+			)
+		}
+
+		t = t.AddDate(0, 0, -1)
+	}
+}
+
+// StartOfMonth returns the first day of the month
+func StartOfMonth(t time.Time) time.Time {
+	return time.Date(
+		t.Year(), t.Month(), 1,
+		0, 0, 0, 0, t.Location(),
+	)
+}
+
+// StartOfYear returns the first day of the year
+func StartOfYear(t time.Time) time.Time {
+	return time.Date(
+		t.Year(), time.January, 1,
+		0, 0, 0, 0, t.Location(),
+	)
 }
 
 // PrevDay returns previous day date

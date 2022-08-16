@@ -351,6 +351,26 @@ func (s *OptUtilSuite) TestMixed(c *C) {
 	c.Assert(opts.GetS("t:test"), Equals, "123")
 }
 
+func (s *OptUtilSuite) TestValueConvertation(c *C) {
+	optMap := Map{"t:test": {Value: 1}}
+	opts := NewOptions()
+	opts.Parse([]string{}, optMap)
+
+	c.Assert(opts.GetS("t:test"), Equals, "1")
+
+	optMap = Map{"t:test": {Value: true}}
+	opts = NewOptions()
+	opts.Parse([]string{}, optMap)
+
+	c.Assert(opts.GetS("t:test"), Equals, "true")
+
+	optMap = Map{"t:test": {Value: 158}}
+	opts = NewOptions()
+	opts.Parse([]string{}, optMap)
+
+	c.Assert(opts.GetS("t:test"), Equals, "158")
+}
+
 func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs := NewOptions().Parse([]string{}, Map{})
 
