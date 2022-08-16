@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.53.1
+### 12.54.0
 
+* `[timeutil]` Added more helpers for working with dates
 * `[options]` Fixed panic in `GetS` when mixed or string option contains non-string value
 
 ### 12.53.0
