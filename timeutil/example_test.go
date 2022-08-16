@@ -95,6 +95,46 @@ func ExampleDate() {
 	// 5184000
 }
 
+func ExampleStartOfHour() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(StartOfHour(d))
+	// Output:
+	// 2021-06-15 12:00:00 +0000 UTC
+}
+
+func ExampleStartOfDay() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(StartOfDay(d))
+	// Output:
+	// 2021-06-15 00:00:00 +0000 UTC
+}
+
+func ExampleStartOfWeek() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(StartOfWeek(d, time.Monday))
+	// Output:
+	// 2021-06-14 00:00:00 +0000 UTC
+}
+
+func ExampleStartOfMonth() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(StartOfMonth(d))
+	// Output:
+	// 2021-06-01 00:00:00 +0000 UTC
+}
+
+func ExampleStartOfYear() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(StartOfYear(d))
+	// Output:
+	// 2021-01-01 00:00:00 +0000 UTC
+}
+
 func ExamplePrevDay() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
