@@ -46,6 +46,12 @@ var MaskSymbolColorTag = ""
 // TitleColorTag is fmtc color tag used for input titles
 var TitleColorTag = "{c}"
 
+// ErrorColorTag is fmtc color tag used for error messages
+var ErrorColorTag = "{r}"
+
+// WarnColorTag is fmtc color tag used for warning messages
+var WarnColorTag = "{y}"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var tmux int8
@@ -110,18 +116,18 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 // PrintErrorMessage prints error message
 func PrintErrorMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, "{r}%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, ErrorColorTag+"%s{!}\n", message)
 	} else {
-		fmtc.Fprintf(os.Stderr, "{r}%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
 	}
 }
 
 // PrintWarnMessage prints warning message
 func PrintWarnMessage(message string, args ...interface{}) {
 	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, "{y}%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, WarnColorTag+"%s{!}\n", message)
 	} else {
-		fmtc.Fprintf(os.Stderr, "{y}%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
 	}
 }
 

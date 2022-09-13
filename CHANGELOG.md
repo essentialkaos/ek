@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.55.0
+
+* `[terminal]` Added color customization for warning and error messages
+* `[progress]` Improved usage example
+
 ### 12.54.0
 
 * `[timeutil]` Added more helpers for working with dates
