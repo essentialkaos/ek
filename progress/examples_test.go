@@ -21,6 +21,8 @@ func ExampleNew() {
 	pbs.ShowSpeed = false
 	pbs.ShowRemaining = false
 
+	pb.UpdateSettings(pbs)
+
 	defer pb.Finish()
 
 	pb.Start()
