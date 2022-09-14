@@ -40,7 +40,8 @@ type Bar struct {
 	started   bool
 	finished  bool
 
-	finishChan chan bool
+	finishChan  chan bool
+	finishGroup sync.WaitGroup
 
 	current int64
 	total   int64
@@ -142,6 +143,7 @@ func (b *Bar) Start() {
 	b.startTime = time.Now()
 	b.ticker = time.NewTicker(b.settings.RefreshRate)
 	b.finishChan = make(chan bool)
+	b.finishGroup = sync.WaitGroup{}
 
 	if b.total > 0 {
 		b.passThruCalc = NewPassThruCalc(b.total, 10.0)
@@ -152,14 +154,18 @@ func (b *Bar) Start() {
 
 // Finish finishes progress processing
 func (b *Bar) Finish() {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	b.mu.RLock()
 
 	if b.finished || !b.started {
+		b.mu.RUnlock()
 		return
 	}
 
+	b.mu.RUnlock()
+
+	b.finishGroup.Add(1)
 	b.finishChan <- true
+	b.finishGroup.Wait()
 }
 
 // UpdateSettings updates progress settings
@@ -271,30 +277,24 @@ func (b *Bar) renderer() {
 	for {
 		select {
 		case <-b.finishChan:
-			b.finished = true
 			b.ticker.Stop()
-			b.render()
+			b.render(true)
 			return
 		case <-b.ticker.C:
-			b.render()
+			b.render(false)
 		}
 	}
 }
 
 // render renders current progress bar state
-func (b *Bar) render() {
+func (b *Bar) render(isFinished bool) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 
-	if !b.finished && b.total > 0 && b.current >= b.total {
-		b.finished = true
-		b.ticker.Stop()
-	}
+	result := b.renderElements(isFinished)
 
-	result := b.renderElements()
-
-	// render text only if changed
-	if b.buffer != result {
+	// render text only if changed or if finished
+	if b.buffer != result || isFinished {
 		fmtc.TPrint(result)
 	}
 
@@ -302,20 +302,23 @@ func (b *Bar) render() {
 		b.buffer = result
 	}
 
-	if b.finished {
+	if isFinished {
 		fmtc.NewLine()
+		b.finished = true
+		close(b.finishChan)
+		b.finishGroup.Done()
 	}
 }
 
 // renderElements returns text with all progress bar graphics and text
-func (b *Bar) renderElements() string {
+func (b *Bar) renderElements(isFinished bool) string {
 	var size, totalSize int
 	var name, percentage, bar, progress, speed, remaining string
 	var statSpeed float64
 	var statRemaining time.Duration
 
 	if b.passThruCalc != nil && (b.settings.ShowSpeed || b.settings.ShowRemaining) {
-		if b.finished {
+		if isFinished {
 			statRemaining = time.Since(b.startTime)
 			statSpeed = float64(b.current) / statRemaining.Seconds()
 		} else {

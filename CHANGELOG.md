@@ -3,6 +3,7 @@
 ### 12.55.0
 
 * `[terminal]` Added color customization for warning and error messages
+* `[progress]` Fixed bug with handling finish stage
 * `[progress]` Improved usage example
 
 ### 12.54.0

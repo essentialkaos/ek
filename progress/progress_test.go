@@ -84,10 +84,14 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pw.Write(nil)
 	c.Assert(pb.Current(), Equals, int64(302))
 
-	pb.Finish() // should be skipped
+	pb.Finish() // should be skipped (not started)
+	c.Assert(pb.IsFinished(), Equals, false)
+
 	pb.Start()
-	pb.renderElements()
-	pb.Start() // should be skipped
+	pb.renderElements(false)
+
+	c.Assert(pb.IsStarted(), Equals, true)
+	pb.Start() // should be skipped (already started)
 	pb.Finish()
 
 	time.Sleep(time.Millisecond * 10)
@@ -97,6 +101,7 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pb.Start()
 	pb.SetCurrent(1000)
 	time.Sleep(time.Millisecond * 100)
+	pb.Finish()
 }
 
 func (s *ProgressSuite) TestBarRender(c *C) {
