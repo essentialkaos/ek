@@ -3,6 +3,7 @@
 ### 12.55.0
 
 * `[terminal]` Added color customization for warning and error messages
+* `[fmtc]` Method `NewLine` now can print more than one new line
 * `[progress]` Fixed bug with handling finish stage
 * `[progress]` Improved usage example
 

@@ -310,6 +310,8 @@ func ExampleBell() {
 func ExampleNewLine() {
 	// just print a new line
 	NewLine()
+	// Print 3 new lines
+	NewLine(3)
 }
 
 func ExampleClean() {
