@@ -6,6 +6,7 @@
 * `[fmtc]` Method `NewLine` now can print more than one new line
 * `[progress]` Fixed bug with handling finish stage
 * `[progress]` Improved usage example
+* `[passwd]` Code refactoring
 
 ### 12.54.0
 

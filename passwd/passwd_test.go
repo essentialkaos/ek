@@ -48,8 +48,8 @@ func (s *PasswdSuite) TestGenPassword(c *C) {
 	c.Assert(GetPasswordStrength(GenPassword(16, STRENGTH_STRONG)), Equals, STRENGTH_STRONG)
 	c.Assert(GetPasswordStrength(GenPassword(4, STRENGTH_STRONG)), Equals, STRENGTH_STRONG)
 
-	c.Assert(GetPasswordStrength(GenPassword(16, -100)), Equals, STRENGTH_WEAK)
-	c.Assert(GetPasswordStrength(GenPassword(4, 100)), Equals, STRENGTH_STRONG)
+	c.Assert(GetPasswordStrength(GenPassword(16, 0)), Equals, STRENGTH_WEAK)
+	c.Assert(GetPasswordStrength(GenPassword(4, 5)), Equals, STRENGTH_STRONG)
 }
 
 func (s *PasswdSuite) TestGenPasswordVariations(c *C) {
@@ -108,7 +108,7 @@ func (s *PasswdSuite) TestHashErrors(c *C) {
 	_, err = Hash("Test123", "ABCD1234ABCD12")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Pepper have invalid size")
+	c.Assert(err.Error(), Equals, "Pepper has invalid size")
 
 	_, ok := unpadData([]byte("-"))
 
@@ -116,13 +116,35 @@ func (s *PasswdSuite) TestHashErrors(c *C) {
 }
 
 func (s *PasswdSuite) BenchmarkHash(c *C) {
+	p, pp := "Test123", "ABCD1234ABCD1234"
+
 	for i := 0; i < c.N; i++ {
-		Hash("Test123", "ABCD1234ABCD1234")
+		Hash(p, pp)
+	}
+}
+
+func (s *PasswdSuite) BenchmarkHashBytes(c *C) {
+	p, pp := []byte("Test123"), []byte("ABCD1234ABCD1234")
+
+	for i := 0; i < c.N; i++ {
+		HashBytes(p, pp)
 	}
 }
 
 func (s *PasswdSuite) BenchmarkCheck(c *C) {
+	p, pp := "Test123", "ABCD1234ABCD1234"
+	h := "jXtzmneskO_ht9VNsuwq68O-jwj3PBxewGrr3YUKf8f7zPqNSlO-Eg7x2KlmoK-wOivvvdaiDpDH_3o5LdWP7ULf6K490KpoNhTZ5XOfaYc"
+
 	for i := 0; i < c.N; i++ {
-		Check("Test123", "ABCD1234ABCD1234", "jXtzmneskO_ht9VNsuwq68O-jwj3PBxewGrr3YUKf8f7zPqNSlO-Eg7x2KlmoK-wOivvvdaiDpDH_3o5LdWP7ULf6K490KpoNhTZ5XOfaYc")
+		Check(p, pp, h)
+	}
+}
+
+func (s *PasswdSuite) BenchmarkCheckBytes(c *C) {
+	p, pp := []byte("Test123"), []byte("ABCD1234ABCD1234")
+	h := []byte("jXtzmneskO_ht9VNsuwq68O-jwj3PBxewGrr3YUKf8f7zPqNSlO-Eg7x2KlmoK-wOivvvdaiDpDH_3o5LdWP7ULf6K490KpoNhTZ5XOfaYc")
+
+	for i := 0; i < c.N; i++ {
+		CheckBytes(p, pp, h)
 	}
 }

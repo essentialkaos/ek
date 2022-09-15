@@ -26,14 +26,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type Strength int
+type Strength uint8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	STRENGTH_WEAK   Strength = iota // Only lowercase English alphabet characters
-	STRENGTH_MEDIUM                 // Lowercase and uppercase English alphabet characters, digits
-	STRENGTH_STRONG                 // Lowercase and uppercase English alphabet characters, digits, special symbols
+	STRENGTH_WEAK   Strength = 0 // Only lowercase English alphabet characters
+	STRENGTH_MEDIUM Strength = 1 // Lowercase and uppercase English alphabet characters, digits
+	STRENGTH_STRONG Strength = 2 // Lowercase and uppercase English alphabet characters, digits, special symbols
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -42,6 +42,12 @@ const (
 	_SYMBOLS_WEAK   = "abcdefghijklmnopqrstuvwxyz"
 	_SYMBOLS_MEDIUM = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	_SYMBOLS_STRONG = "!\";%:?*()_+=-~/\\<>,.[]{}"
+)
+
+var (
+	ErrEmptyPassword = errors.New("Password can't be empty")
+	ErrEmptyPepper   = errors.New("Pepper can't be empty")
+	ErrInvalidPepper = errors.New("Pepper has invalid size")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -54,20 +60,26 @@ func Encrypt(password, pepper string) (string, error) {
 
 // Hash creates hash and encrypts it with salt and pepper
 func Hash(password, pepper string) (string, error) {
-	return HashBytes([]byte(password), []byte(pepper))
+	hash, err := HashBytes([]byte(password), []byte(pepper))
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(hash), nil
 }
 
 // HashBytes creates hash and encrypts it with salt and pepper
-func HashBytes(password, pepper []byte) (string, error) {
+func HashBytes(password, pepper []byte) ([]byte, error) {
 	switch {
 	case len(password) == 0:
-		return "", errors.New("Password can't be empty")
+		return nil, ErrEmptyPassword
 	case len(pepper) == 0:
-		return "", errors.New("Pepper can't be empty")
+		return nil, ErrEmptyPepper
 	}
 
 	if !isValidPepper(pepper) {
-		return "", errors.New("Pepper have invalid size")
+		return nil, ErrInvalidPepper
 	}
 
 	hasher := sha512.New()
@@ -76,7 +88,7 @@ func HashBytes(password, pepper []byte) (string, error) {
 	hp, err := bcrypt.GenerateFromPassword(hasher.Sum(nil), 10)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	block, _ := aes.NewCipher(pepper)
@@ -88,33 +100,39 @@ func HashBytes(password, pepper []byte) (string, error) {
 	_, err = io.ReadFull(crand.Reader, iv)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	cfb := cipher.NewCFBEncrypter(block, iv)
 	cfb.XORKeyStream(ct[aes.BlockSize:], hpd)
 
-	return removeBase64Padding(base64.URLEncoding.EncodeToString(ct)), nil
+	buf := make([]byte, base64.URLEncoding.EncodedLen(len(ct)))
+	base64.URLEncoding.Encode(buf, ct)
+
+	return removeBase64Padding(buf), nil
 }
 
 // Check compares password with encrypted hash
 func Check(password, pepper, hash string) bool {
-	return CheckBytes([]byte(password), []byte(pepper), hash)
+	return CheckBytes([]byte(password), []byte(pepper), []byte(hash))
 }
 
 // CheckBytes compares password with encrypted hash
-func CheckBytes(password, pepper []byte, hash string) bool {
+func CheckBytes(password, pepper, hash []byte) bool {
 	if len(password) == 0 || len(hash) == 0 || !isValidPepper(pepper) {
 		return false
 	}
 
+	hs := addBase64Padding(hash)
+	hpd := make([]byte, base64.URLEncoding.DecodedLen(len(hs)))
 	block, _ := aes.NewCipher(pepper)
-	hpd, err := base64.URLEncoding.DecodeString(addBase64Padding(hash))
+	n, err := base64.URLEncoding.Decode(hpd, hs)
 
 	if err != nil {
 		return false
 	}
 
+	hpd = hpd[:n]
 	hdpl := len(hpd)
 
 	if hdpl < aes.BlockSize || (hdpl%aes.BlockSize) != 0 {
@@ -234,10 +252,6 @@ func GenPasswordBytesVariations(password []byte) [][]byte {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func getStrength(s Strength) Strength {
-	if s < STRENGTH_WEAK {
-		return STRENGTH_WEAK
-	}
-
 	if s > STRENGTH_STRONG {
 		return STRENGTH_STRONG
 	}
@@ -263,18 +277,25 @@ func unpadData(src []byte) ([]byte, bool) {
 	return src[:(length - unpadding)], true
 }
 
-func addBase64Padding(src string) string {
+func addBase64Padding(src []byte) []byte {
 	m := len(src) % 4
 
-	if m != 0 {
-		src += strings.Repeat("=", 4-m)
+	if m == 0 {
+		return src
 	}
 
-	return src
+	buf := make([]byte, len(src)+(4-len(src)%4))
+	copy(buf, src)
+
+	for i := len(src); i < len(buf); i++ {
+		buf[i] = '='
+	}
+
+	return buf
 }
 
-func removeBase64Padding(src string) string {
-	return strings.TrimRight(src, "=")
+func removeBase64Padding(src []byte) []byte {
+	return bytes.TrimRight(src, "=")
 }
 
 func getRandomPasswordBytes(length int, strength Strength) []byte {
