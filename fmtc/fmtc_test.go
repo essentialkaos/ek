@@ -222,8 +222,9 @@ func (s *FormatSuite) TestMethods(c *C) {
 	LPrint(11, "LPrintf: OK NOTOK")
 	NewLine()
 	LPrintf(11, "LPrintf: %s NOTOK", "OK")
-	NewLine()
+	NewLine(2)
 	LPrintln(12, "LPrintln: OK NOTOK")
+	NewLine(-100)
 }
 
 func (s *FormatSuite) TestAux(c *C) {

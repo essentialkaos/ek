@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.55.0
+
+* `[terminal]` Added color customization for warning and error messages
+* `[fmtc]` Method `NewLine` now can print more than one new line
+* `[progress]` Fixed bug with handling finish stage
+* `[progress]` Improved usage example
+* `[passwd]` Code refactoring
+
 ### 12.54.0
 
 * `[timeutil]` Added more helpers for working with dates

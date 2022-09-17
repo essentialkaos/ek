@@ -255,8 +255,18 @@ func TLPrintln(maxSize int, a ...interface{}) (int, error) {
 }
 
 // NewLine prints a newline to standard output
-func NewLine() (int, error) {
-	return fmt.Println("")
+func NewLine(num ...int) (int, error) {
+	if len(num) == 0 {
+		return fmt.Print("\n")
+	}
+
+	lineNum := num[0]
+
+	if lineNum <= 1 {
+		lineNum = 1
+	}
+
+	return fmt.Print(strings.Repeat("\n", lineNum))
 }
 
 // Clean returns string without color tags
