@@ -24,7 +24,7 @@ import (
 
 const (
 	_CODE_RESET      = "\033[0m"
-	_CODE_CLEAN_LINE = "\033[2K\r"
+	_CODE_CLEAN_LINE = "\033[2K"
 	_CODE_BELL       = "\a"
 )
 
