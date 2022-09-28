@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.55.1
+
+* `[fmtc]` Fixed bug with printing useless carriage return symbol in `TPrint*` commands
+
 ### 12.55.0
 
 * `[terminal]` Added color customization for warning and error messages
