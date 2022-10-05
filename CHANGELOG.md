@@ -3,6 +3,7 @@
 ### 12.56.0
 
 * `[fmtc]` Added named colors support
+* `[system]` Fixed fuzz tests
 
 ### 12.55.2
 
