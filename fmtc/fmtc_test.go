@@ -147,7 +147,33 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
 }
 
-func (s *FormatSuite) TestZDisable(c *C) {
+func (s *FormatSuite) TestNamedColors(c *C) {
+	RemoveColor("myTest_1")
+	parseNamedColor("?myTest_1")
+
+	c.Assert(NameColor("", "{r}"), ErrorMatches, `Can't add named color: name can't be empty`)
+	c.Assert(NameColor("test", ""), ErrorMatches, `Can't add named color: tag can't be empty`)
+	c.Assert(NameColor("test", "{H}"), ErrorMatches, `Can't add named color: "{H}" is not valid color tag`)
+	c.Assert(NameColor("test%", "{r}"), ErrorMatches, `Can't add named color: "test%" is not valid name`)
+
+	NameColor("myTest_1", "{r}")
+	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[31mo\x1b[0m")
+
+	NameColor("myTest_1", "{#214}")
+	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
+
+	NameColor("myTest_1", "{#f1c1b2}")
+	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
+
+	RemoveColor("myTest_1")
+	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "o\x1b[0m")
+
+	c.Assert(Sprint("{?}o"), Equals, "{?}o")
+	c.Assert(Sprint("{?<}o"), Equals, "{?<}o")
+	c.Assert(Sprint("{?mytest+}o"), Equals, "{?mytest+}o")
+}
+
+func (s *FormatSuite) TestDisabled(c *C) {
 	DisableColors = true
 
 	c.Assert(Sprint("{r}W{!}"), Equals, "W")

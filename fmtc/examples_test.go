@@ -80,6 +80,22 @@ func ExamplePrint() {
 	// 24-bit colors (# for foreground, % for background)
 	Print("{#7cfc00}lawngreen text{!}\n")
 	Print("{%6a5acd}slateblue background{!}\n")
+
+	// Named colors
+	// All color names must match the next regex
+	// pattern: [a-zA-Z0-9_]+
+
+	// Add new color with name "error"
+	NameColor("error", "{r}")
+
+	// Print using named color
+	Print("{?error}lawngreen text{!}\n")
+
+	// Redifine "error" color to 24-bit color
+	NameColor("error", "{#ff0000}")
+
+	// Remove named color
+	RemoveColor("error")
 }
 
 func ExamplePrintf() {
