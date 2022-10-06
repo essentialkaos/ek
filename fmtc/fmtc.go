@@ -16,6 +16,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/essentialkaos/ek/v12/color"
 )
@@ -75,10 +76,45 @@ var colors256Supported bool
 var colorsTCSupported bool
 var colorsSupportChecked bool
 
+var colorsMap *sync.Map
+
 var term = os.Getenv("TERM")
 var colorTerm = os.Getenv("COLORTERM")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// NameColor defines or redifines named color
+func NameColor(name, tag string) error {
+	if colorsMap == nil {
+		colorsMap = &sync.Map{}
+	}
+
+	tag = strings.Trim(tag, "{}")
+
+	switch {
+	case name == "":
+		return fmt.Errorf("Can't add named color: name can't be empty")
+	case tag == "":
+		return fmt.Errorf("Can't add named color: tag can't be empty")
+	case !isValidSimpleTag(tag) && !isValidExtendedTag(tag):
+		return fmt.Errorf("Can't add named color: \"{%s}\" is not valid color tag", tag)
+	case !isValidNamedTag("?" + name):
+		return fmt.Errorf("Can't add named color: %q is not valid name", name)
+	}
+
+	colorsMap.Store(name, tag)
+
+	return nil
+}
+
+// RemoveColor removes named color
+func RemoveColor(name string) {
+	if colorsMap == nil || name == "" {
+		return
+	}
+
+	colorsMap.Delete(name)
+}
 
 // Print formats using the default formats for its operands and writes to standard
 // output. Spaces are added between operands when neither is a string. It returns
@@ -124,6 +160,9 @@ var colorTerm = os.Getenv("COLORTERM")
 //    24-bit colors (TrueColor):
 //      #hex foreground color
 //      %hex background color
+//
+//    Named colors:
+//      ?name
 //
 func Print(a ...interface{}) (int, error) {
 	applyColors(&a, -1, DisableColors)
@@ -311,12 +350,13 @@ func IsTrueColorSupported() bool {
 // codebeat:disable[LOC,BLOCK_NESTING]
 
 func tag2ANSI(tag string, clean bool) string {
-	if clean {
+	switch {
+	case clean:
 		return ""
-	}
-
-	if isExtendedColorTag(tag) {
+	case isExtendedColorTag(tag):
 		return parseExtendedColor(tag)
+	case isNamedColorTag(tag):
+		return parseNamedColor(tag)
 	}
 
 	light := strings.Contains(tag, "-")
@@ -390,6 +430,21 @@ func parseExtendedColor(tag string) string {
 	return "\033[48;5;" + tag[1:] + "m"
 }
 
+func parseNamedColor(tag string) string {
+	if colorsMap == nil {
+		return ""
+	}
+
+	tag = strings.TrimLeft(tag, "?")
+	t, ok := colorsMap.Load(tag)
+
+	if !ok {
+		return ""
+	}
+
+	return tag2ANSI(t.(string), false)
+}
+
 func getResetCode(code int) string {
 	if code == codes['*'] {
 		code++
@@ -446,8 +501,7 @@ func searchColors(text string, limit int, clean bool) string {
 		return ""
 	}
 
-	closed := true
-	counter := 0
+	closed, counter := true, 0
 	input := bytes.NewBufferString(text)
 	output := bytes.NewBufferString("")
 
@@ -489,16 +543,16 @@ func applyColors(a *[]interface{}, limit int, clean bool) {
 }
 
 func isValidTag(tag string) bool {
+	return isValidSimpleTag(tag) || isValidExtendedTag(tag) || isValidNamedTag(tag)
+}
+
+func isValidSimpleTag(tag string) bool {
 	switch {
 	case tag == "",
 		strings.Trim(tag, "-") == "",
 		strings.Count(tag, "!") > 1,
 		strings.Contains(tag, "!") && strings.Contains(tag, "-"):
 		return false
-	}
-
-	if isValidExtendedTag(tag) {
-		return true
 	}
 
 	for _, r := range tag {
@@ -513,7 +567,14 @@ func isValidTag(tag string) bool {
 }
 
 func isExtendedColorTag(tag string) bool {
-	return strings.HasPrefix(tag, "#") || strings.HasPrefix(tag, "%")
+	switch {
+	case len(tag) < 2,
+		!strings.HasPrefix(tag, "#") &&
+			!strings.HasPrefix(tag, "%"):
+		return false
+	}
+
+	return true
 }
 
 func isValidExtendedTag(tag string) bool {
@@ -532,6 +593,30 @@ func isValidExtendedTag(tag string) bool {
 	default:
 		code, err := strconv.Atoi(tag)
 		if err != nil || code < 0 || code > 256 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isNamedColorTag(tag string) bool {
+	return len(tag) >= 2 && strings.HasPrefix(tag, "?")
+}
+
+func isValidNamedTag(tag string) bool {
+	if !isNamedColorTag(tag) {
+		return false
+	}
+
+	for _, r := range strings.TrimLeft(tag, "?") {
+		switch {
+		case r == 95,
+			r >= 48 && r <= 57,
+			r >= 65 && r <= 90,
+			r >= 97 && r <= 122:
+			continue
+		default:
 			return false
 		}
 	}

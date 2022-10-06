@@ -36,9 +36,13 @@ CL_BL_GREY="\e[1;${GREY};49m"
 ################################################################################
 
 main() {
-  if [[ ! $(type -P go-fuzz-build) ]] ; then
-    error "This utility require go-fuzz-build" $RED
+  if ! type -P go-fuzz-build &> /dev/null ; then
+    error "This utility requires go-fuzz-build" $RED
     exit 1
+  fi
+
+  if ! grep -q 'go-fuzz' go.mod ; then
+    go get github.com/dvyukov/go-fuzz/go-fuzz-dep &> /dev/null
   fi
 
   local src src_package src_name src_path src_func output func_min
@@ -60,12 +64,12 @@ main() {
       if [[ "$src_func" == "Fuzz" ]] ; then
         showm " ${CL_GREY}∙ ${CL_BOLD}${src_package}${CL_NORM}… "
         output="${src_name}-fuzz.zip"
-        go-fuzz-build -o "$output" "github.com/essentialkaos/ek/${src_path}"
+        go-fuzz-build -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
       else
         showm " ${CL_GREY}∙ ${CL_BOLD}${src_package}${CL_NORM} ${CL_GREY}($src_func)${CL_NORM}… "
         func_min=$(echo "$src_func" | sed 's/Fuzz//' | tr '[A-Z]' '[a-z]')
         output="${src_name}-${func_min}-fuzz.zip"
-        go-fuzz-build -func "$src_func" -o "$output" "github.com/essentialkaos/ek/${src_path}"
+        go-fuzz-build -func "$src_func" -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
       fi
 
       if [[ $? -eq 0 ]] ; then
@@ -79,6 +83,10 @@ main() {
   done
 
   show ""
+
+  if grep -q 'go-fuzz' go.mod ; then
+    git checkout go.* &> /dev/null
+  fi
 }
 
 show() {

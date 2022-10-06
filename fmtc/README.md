@@ -83,6 +83,12 @@ Tag: `{#hex}`
 
 Tag: `{%hex}`
 
+#### Named colors
+
+Tag: `{?name}`
+
+For more information about named colors see documentation for method `NameColor`.
+
 #### Examples
 
 ```
@@ -149,4 +155,15 @@ Tag: `{%hex}`
  │        └ Set background color to midnightblue
  │
  └ Set text color to deeppink
+```
+
+```
+{?error}Can't find user "bob"{!}
+ ┬─────                       ┬
+ │                            │
+ │                            └ Reset everything
+ │
+ │
+ │
+ └ Set color to named color "error"
 ```

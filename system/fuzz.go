@@ -104,13 +104,3 @@ func FuzzLAInfo(data []byte) int {
 
 	return 0
 }
-
-func FuzzUptime(data []byte) int {
-	_, err := parseUptime(string(data))
-
-	if err != nil {
-		return 1
-	}
-
-	return 0
-}
