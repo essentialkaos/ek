@@ -350,3 +350,28 @@ func ExampleIf() {
 
 	If(userIsAdmin).Println("You are admin!")
 }
+
+func ExampleNameColor() {
+	// Add new color with name "error"
+	NameColor("error", "{r}")
+
+	// Print a message with named color
+	Print("{?error}lawngreen text{!}\n")
+
+	// Redifine "error" color to 24-bit color
+	NameColor("error", "{#ff0000}")
+
+	// Print a message with new color
+	Print("{?error}lawngreen text{!}\n")
+}
+
+func ExampleRemoveColor() {
+	// Add new color with name "error"
+	NameColor("error", "{r}")
+
+	// Print a message with named color
+	Print("{?error}lawngreen text{!}\n")
+
+	// Remove named color
+	RemoveColor("error")
+}
