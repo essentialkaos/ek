@@ -3,6 +3,7 @@
 ### 12.57.0
 
 * `[log]` Added interface for compatible loggers
+* `[log]` Color for critical errors set from magenta to bold red
 
 ### 12.56.0
 

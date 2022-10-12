@@ -95,7 +95,7 @@ var Colors = map[uint8]string{
 	INFO:  "",
 	WARN:  "{y}",
 	ERROR: "{r}",
-	CRIT:  "{m}",
+	CRIT:  "{r*}",
 }
 
 // TimeFormat contains format string for time in logs
