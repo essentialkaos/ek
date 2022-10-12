@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.57.0
+
+* `[log]` Added interface for compatible loggers
+
 ### 12.56.0
 
 * `[fmtc]` Added named colors support
