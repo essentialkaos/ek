@@ -9,46 +9,96 @@ package tmp
 
 import (
 	"fmt"
+	"io/ioutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleNewTemp() {
-	tmp, _ := NewTemp()
+	tmp, err := NewTemp()
 
-	fmt.Println(tmp.Dir)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	tmp.DirPerms = 0700
+	tmp.FilePerms = 0600
 }
 
 func ExampleTemp_MkDir() {
-	tmp, _ := NewTemp()
+	tmp, err := NewTemp()
 
-	fmt.Println(tmp.MkDir())
-	fmt.Println(tmp.MkDir("test123"))
+	if err != nil {
+		panic(err.Error())
+	}
 
-	tmp.Clean()
+	// Create a temporary file with an auto-generated name and suffix "myapp"
+	// The suffix is optional and can be omitted.
+	tmpDir, err := tmp.MkDir("myapp")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = ioutil.WriteFile(tmpDir+"/test.txt", []byte("Test data\n"), 0644)
+
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func ExampleTemp_MkFile() {
-	tmp, _ := NewTemp()
+	tmp, err := NewTemp()
 
-	fmt.Println(tmp.MkFile())
-	fmt.Println(tmp.MkFile("test123"))
+	if err != nil {
+		panic(err.Error())
+	}
 
-	tmp.Clean()
+	// Create a temporary file with an auto-generated name and suffix ".txt"
+	// The suffix is optional and can be omitted.
+	fd, filename, err := tmp.MkFile(".txt")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer fd.Close()
+
+	fmt.Fprint(fd, "Test data\n")
+	fmt.Printf("Test data written to %s\n", filename)
 }
 
 func ExampleTemp_MkName() {
-	tmp, _ := NewTemp()
+	tmp, err := NewTemp()
 
-	fmt.Println(tmp.MkDir())
-	fmt.Println(tmp.MkDir("test123"))
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// Create a temporary file with an auto-generated name and suffix ".txt"
+	// The suffix is optional and can be omitted.
+	filename := tmp.MkName(".txt")
+
+	if filename == "" {
+		panic("Can't create name for temporary file")
+	}
+
+	err = ioutil.WriteFile(filename, []byte("Test data\n"), 0644)
+
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func ExampleTemp_Clean() {
-	tmp, _ := NewTemp()
+	tmp, err := NewTemp()
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	tmp.MkDir()
 
-	// All temporary data will be removed
+	// All temporary data (directories and files) will be removed
 	tmp.Clean()
 }

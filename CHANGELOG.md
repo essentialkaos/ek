@@ -5,6 +5,7 @@
 * `[log]` Added interface for compatible loggers
 * `[log]` Color for critical errors set from magenta to bold red
 * `[req]` Code refactoring
+* `[tmp]` Improved usage examples
 
 ### 12.56.0
 
