@@ -3,6 +3,7 @@
 ### 12.57.0
 
 * `[log]` Added interface for compatible loggers
+* `[httputil]` Added more helpers for checking URL scheme
 * `[log]` Color for critical errors set from magenta to bold red
 * `[req]` Code refactoring
 * `[tmp]` Improved usage examples
