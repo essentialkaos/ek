@@ -9,6 +9,7 @@ package tmp
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -155,7 +156,5 @@ func (ts *TmpSuite) TestMkName(c *C) {
 	c.Assert(t.MkName(), Not(Equals), "")
 	c.Assert(t.MkName("1234"), Not(Equals), "")
 
-	ln := len(ts.TempDir + "/")
-
-	c.Assert(t.MkName("1234.json")[ln+14:], Equals, "1234.json")
+	c.Assert(strings.HasSuffix(t.MkName("1234.json"), "_1234.json"), Equals, true)
 }

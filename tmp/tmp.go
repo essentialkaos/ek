@@ -11,7 +11,8 @@ package tmp
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
+	"time"
 
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/rand"
@@ -44,10 +45,10 @@ var DefaultFilePerms = os.FileMode(0640)
 
 // NewTemp creates new Temp structure
 func NewTemp(dir ...string) (*Temp, error) {
-	tempDir := path.Clean(Dir)
+	tempDir := filepath.Clean(Dir)
 
 	if len(dir) != 0 {
-		tempDir = path.Clean(dir[0])
+		tempDir = filepath.Clean(dir[0])
 	}
 
 	if !fsutil.IsExist(tempDir) {
@@ -137,9 +138,13 @@ func getTempName(dir, name string) string {
 
 	for {
 		if name != "" {
-			result = path.Join(dir, "_"+rand.String(12)+"_"+name)
+			result = filepath.Join(dir, fmt.Sprintf(
+				"tmp_%d_%s_%s", time.Now().UnixMilli(), rand.String(8), name,
+			))
 		} else {
-			result = path.Join(dir, "_tmp_"+rand.String(12))
+			result = filepath.Join(dir, fmt.Sprintf(
+				"tmp_%d_%s", time.Now().UnixMilli(), rand.String(8),
+			))
 		}
 
 		if !fsutil.IsExist(result) {

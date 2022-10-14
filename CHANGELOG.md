@@ -5,6 +5,7 @@
 * `[log]` Added interface for compatible loggers
 * `[httputil]` Added more helpers for checking URL scheme
 * `[log]` Color for critical errors set from magenta to bold red
+* `[tmp]` Improved unique name generation
 * `[req]` Code refactoring
 * `[tmp]` Improved usage examples
 
