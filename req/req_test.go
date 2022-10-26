@@ -559,18 +559,21 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 	q := Query{}
 	c.Assert(q.Encode(), Equals, "")
 
-	q = Query{
-		"a": 1,
-		"b": "abcd",
-		"c": "",
-		"d": nil,
-	}
+	q = Query{"a": 1, "b": "abcd", "c": "", "d": nil}
 
 	qr := strings.Split(q.Encode(), "&")
 	sort.Strings(qr)
 	qrs := strings.Join(qr, "&")
 
 	c.Assert(qrs, Equals, "a=1&b=abcd&c&d")
+}
+
+func (s *ReqSuite) BenchmarkQueryEncoding(c *C) {
+	q := Query{"a": 1, "b": "abcd", "c": "", "d": nil}
+
+	for i := 0; i < c.N; i++ {
+		q.Encode()
+	}
 }
 
 func (s *ReqSuite) BenchmarkGetOk(c *C) {

@@ -34,6 +34,19 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ILogger is interface for compatible loggers
+type ILogger interface {
+	Aux(f string, a ...interface{}) error
+	Debug(f string, a ...interface{}) error
+	Info(f string, a ...interface{}) error
+	Warn(f string, a ...interface{}) error
+	Error(f string, a ...interface{}) error
+	Crit(f string, a ...interface{}) error
+	Print(level uint8, f string, a ...interface{}) error
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Logger is a basic logger struct
 type Logger struct {
 	PrefixDebug bool // Prefix for debug messages
@@ -82,7 +95,7 @@ var Colors = map[uint8]string{
 	INFO:  "",
 	WARN:  "{y}",
 	ERROR: "{r}",
-	CRIT:  "{m}",
+	CRIT:  "{r*}",
 }
 
 // TimeFormat contains format string for time in logs

@@ -487,30 +487,36 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encode converts query struct to url-encoded string
+// Encode converts query struct to URL-encoded string
 func (q Query) Encode() string {
-	var result string
+	var result strings.Builder
 
 	for k, v := range q {
 		switch u := v.(type) {
 		case string:
 			if v == "" {
-				result += k + "&"
+				result.WriteString(k)
 			} else {
-				result += k + "=" + url.QueryEscape(u) + "&"
+				result.WriteString(k)
+				result.WriteRune('=')
+				result.WriteString(url.QueryEscape(u))
 			}
 		case nil:
-			result += k + "&"
+			result.WriteString(k)
 		default:
-			result += k + "=" + fmt.Sprintf("%v", v) + "&"
+			result.WriteString(k)
+			result.WriteRune('=')
+			result.WriteString(url.QueryEscape(fmt.Sprintf("%v", v)))
 		}
+
+		result.WriteRune('&')
 	}
 
-	if result == "" {
+	if result.Len() == 0 {
 		return ""
 	}
 
-	return result[:len(result)-1]
+	return result.String()[:result.Len()-1]
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

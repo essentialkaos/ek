@@ -119,8 +119,9 @@ func (s *HTTPUtilSuite) TestGetDescCode(c *C) {
 func (s *HTTPUtilSuite) TestURLCheck(c *C) {
 	c.Assert(IsURL("127.0.0.1"), Equals, false)
 	c.Assert(IsURL("127.0.0.1:80"), Equals, false)
+	c.Assert(IsURL("gop://127.0.0.1:80"), Equals, false)
 
-	c.Assert(IsURL("ftp://d.pr"), Equals, true)
+	c.Assert(IsURL("ftp://d.p"), Equals, true)
 	c.Assert(IsURL("ftp://domain.com"), Equals, true)
 	c.Assert(IsURL("http://domain.com"), Equals, true)
 	c.Assert(IsURL("http://domain.com:8080"), Equals, true)

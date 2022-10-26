@@ -86,6 +86,42 @@ func ExampleIsURL() {
 	// httpj://domain.com: false
 }
 
+func ExampleIsHTTP() {
+	url1 := "https://domain.com"
+	url2 := "http://domain.com"
+
+	fmt.Printf("%s: %t\n", url1, IsHTTP(url1))
+	fmt.Printf("%s: %t\n", url2, IsHTTP(url2))
+
+	// Output:
+	// https://domain.com: false
+	// http://domain.com: true
+}
+
+func ExampleIsHTTPS() {
+	url1 := "https://domain.com"
+	url2 := "http://domain.com"
+
+	fmt.Printf("%s: %t\n", url1, IsHTTPS(url1))
+	fmt.Printf("%s: %t\n", url2, IsHTTPS(url2))
+
+	// Output:
+	// https://domain.com: true
+	// http://domain.com: false
+}
+
+func ExampleIsFTP() {
+	url1 := "ftp://domain.com"
+	url2 := "http://domain.com"
+
+	fmt.Printf("%s: %t\n", url1, IsFTP(url1))
+	fmt.Printf("%s: %t\n", url2, IsFTP(url2))
+
+	// Output:
+	// ftp://domain.com: true
+	// http://domain.com: false
+}
+
 func ExampleGetPortByScheme() {
 	fmt.Println(GetPortByScheme("https"))
 	// Output: 443

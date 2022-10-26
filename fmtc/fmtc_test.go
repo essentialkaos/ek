@@ -324,3 +324,41 @@ func (s *FormatSuite) TestFuzzFixes(c *C) {
 	c.Assert(isValidTag("!--"), Equals, false)
 	c.Assert(tag2ANSI("-!", false), Equals, "")
 }
+
+func (s *FormatSuite) BenchmarkSimple(c *C) {
+	for i := 0; i < c.N; i++ {
+		Sprint("Test {r}1{!}!")
+	}
+}
+
+func (s *FormatSuite) Benchmark256(c *C) {
+	for i := 0; i < c.N; i++ {
+		Sprint("Test {#123}1{!}!")
+	}
+}
+
+func (s *FormatSuite) Benchmark24bit(c *C) {
+	for i := 0; i < c.N; i++ {
+		Sprint("Test {#fac1bd}1{!}!")
+	}
+}
+
+func (s *FormatSuite) BenchmarkNamed(c *C) {
+	NameColor("myTest_1", "{r}")
+
+	for i := 0; i < c.N; i++ {
+		Sprint("Test {?myTest_1}1{!}!")
+	}
+
+	RemoveColor("myTest_1")
+}
+
+func (s *FormatSuite) BenchmarkAll(c *C) {
+	NameColor("myTest_1", "{r}")
+
+	for i := 0; i < c.N; i++ {
+		Sprint("Test {r}1{!} {#123}2{!} {#fac1bd}3{!} {?myTest_1}4{!}!")
+	}
+
+	RemoveColor("myTest_1")
+}

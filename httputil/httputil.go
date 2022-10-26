@@ -172,18 +172,22 @@ func GetDescByCode(code int) string {
 	}
 }
 
-// IsURL check if given value is valid URL or not
+// IsURL checks if given value is valid URL or not
 func IsURL(url string) bool {
-	switch {
-	case len(url) < 10:
-		return false
-	case url[0:7] == "http://":
-		return true
-	case url[0:8] == "https://":
-		return true
-	case url[0:6] == "ftp://":
-		return true
-	}
+	return IsHTTPS(url) || IsHTTP(url) || IsFTP(url)
+}
 
-	return false
+// IsHTTP returns true if given URL contains http scheme
+func IsHTTP(url string) bool {
+	return len(url) >= 10 && url[:7] == "http://"
+}
+
+// IsHTTPS returns true if given URL contains https scheme
+func IsHTTPS(url string) bool {
+	return len(url) >= 11 && url[:8] == "https://"
+}
+
+// IsFTP returns true if given URL contains ftp scheme
+func IsFTP(url string) bool {
+	return len(url) >= 9 && url[:6] == "ftp://"
 }
