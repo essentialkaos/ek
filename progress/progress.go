@@ -171,7 +171,7 @@ func (b *Bar) Finish() {
 // UpdateSettings updates progress settings
 func (b *Bar) UpdateSettings(s Settings) {
 	b.mu.Lock()
-	b.settings = s
+	b.settings = mergeSettings(b.settings, s)
 	b.mu.Unlock()
 }
 
@@ -659,4 +659,65 @@ func formatSpeedNum(s float64) string {
 	}
 
 	return fmt.Sprintf("%6g%s/s", fmtutil.Float(s/mod), label)
+}
+
+// mergeSettings merges two settings objects
+func mergeSettings(current, candidate Settings) Settings {
+	return Settings{
+		NameColorTag:      compStr(current.NameColorTag, candidate.NameColorTag),
+		BarFgColorTag:     compStr(current.BarFgColorTag, candidate.BarFgColorTag),
+		BarBgColorTag:     compStr(current.BarBgColorTag, candidate.BarBgColorTag),
+		PercentColorTag:   compStr(current.PercentColorTag, candidate.PercentColorTag),
+		ProgressColorTag:  compStr(current.ProgressColorTag, candidate.ProgressColorTag),
+		SpeedColorTag:     compStr(current.SpeedColorTag, candidate.SpeedColorTag),
+		RemainingColorTag: compStr(current.RemainingColorTag, candidate.RemainingColorTag),
+
+		ShowSpeed:      compBool(current.ShowSpeed, candidate.ShowSpeed),
+		ShowName:       compBool(current.ShowName, candidate.ShowName),
+		ShowPercentage: compBool(current.ShowPercentage, candidate.ShowPercentage),
+		ShowProgress:   compBool(current.ShowProgress, candidate.ShowProgress),
+		ShowRemaining:  compBool(current.ShowRemaining, candidate.ShowRemaining),
+		IsSize:         compBool(current.IsSize, candidate.IsSize),
+
+		Width:    compInt(current.Width, candidate.Width),
+		NameSize: compInt(current.NameSize, candidate.NameSize),
+
+		RefreshRate: compDur(current.RefreshRate, candidate.RefreshRate),
+	}
+}
+
+// compStr compares two string values
+func compStr(current, candidate string) string {
+	if candidate != "" {
+		return candidate
+	}
+
+	return current
+}
+
+// compBool compares two bool values
+func compBool(current, candidate bool) bool {
+	if current != candidate {
+		return candidate
+	}
+
+	return current
+}
+
+// compInt compares two int values
+func compInt(current, candidate int) int {
+	if current != candidate && candidate > 0 {
+		return candidate
+	}
+
+	return current
+}
+
+// compDur compares two duration values
+func compDur(current, candidate time.Duration) time.Duration {
+	if current != candidate && candidate > 0 {
+		return candidate
+	}
+
+	return current
 }
