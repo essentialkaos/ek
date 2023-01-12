@@ -87,6 +87,9 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pb.Finish() // should be skipped (not started)
 	c.Assert(pb.IsFinished(), Equals, false)
 
+	pbs.RefreshRate = 0
+	pb.UpdateSettings(pbs)
+
 	pb.Start()
 	pb.renderElements(false)
 
@@ -363,15 +366,6 @@ func (s *ProgressSuite) TestAux(c *C) {
 	c.Assert(formatSpeedNum(123.0*1000.0), Equals, "   123K/s")
 	c.Assert(formatSpeedNum(123.0*1000.0*1000.0), Equals, "   123M/s")
 	c.Assert(formatSpeedNum(123.0*1000.0*1000.0*1000.0), Equals, "   123B/s")
-
-	c.Assert(compStr("a", "b"), Equals, "b")
-	c.Assert(compStr("a", ""), Equals, "a")
-	c.Assert(compBool(true, false), Equals, false)
-	c.Assert(compBool(true, true), Equals, true)
-	c.Assert(compInt(1, 2), Equals, 2)
-	c.Assert(compInt(3, 0), Equals, 3)
-	c.Assert(compDur(time.Second, time.Minute), Equals, time.Minute)
-	c.Assert(compDur(time.Second, 0), Equals, time.Second)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
