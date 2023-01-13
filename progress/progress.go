@@ -141,9 +141,14 @@ func (b *Bar) Start() {
 	b.started = true
 	b.finished = false
 	b.startTime = time.Now()
-	b.ticker = time.NewTicker(b.settings.RefreshRate)
 	b.finishChan = make(chan bool)
 	b.finishGroup = sync.WaitGroup{}
+
+	if b.settings.RefreshRate >= time.Millisecond {
+		b.ticker = time.NewTicker(b.settings.RefreshRate)
+	} else {
+		b.ticker = time.NewTicker(100 * time.Millisecond)
+	}
 
 	if b.total > 0 {
 		b.passThruCalc = NewPassThruCalc(b.total, 10.0)

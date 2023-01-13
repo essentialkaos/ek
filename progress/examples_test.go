@@ -26,7 +26,7 @@ func SimpleExample() {
 	pbs.RefreshRate = 50 * time.Millisecond
 	pbs.IsSize = false
 
-	// You can update all settings except RefreshRate before and after]
+	// You can update all settings except RefreshRate before and after
 	// calling Start method. RefreshRate must be set before calling
 	// Start method.
 	pb.UpdateSettings(pbs)

@@ -87,6 +87,9 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pb.Finish() // should be skipped (not started)
 	c.Assert(pb.IsFinished(), Equals, false)
 
+	pbs.RefreshRate = 0
+	pb.UpdateSettings(pbs)
+
 	pb.Start()
 	pb.renderElements(false)
 

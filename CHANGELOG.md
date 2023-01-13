@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.57.1
+
+* `[progress]` Fixed bug with updating progress settings
+
 ### 12.57.0
 
 * `[log]` Added interface for compatible loggers
