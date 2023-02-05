@@ -135,6 +135,7 @@ type OSInfo struct {
 	Name                  string `json:"name"`
 	PrettyName            string `json:"pretty_name"`
 	Version               string `json:"version"`
+	Build                 string `json:"build"`
 	VersionID             string `json:"version_id"`
 	VersionCodename       string `json:"version_codename"`
 	ID                    string `json:"id"`

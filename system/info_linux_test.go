@@ -615,6 +615,12 @@ func (s *SystemSuite) TestGetInfo(c *C) {
 	sysInfo, err := GetSystemInfo()
 	c.Assert(err, IsNil)
 	c.Assert(sysInfo, NotNil)
+	c.Assert(sysInfo.Hostname, Not(Equals), "")
+	c.Assert(sysInfo.OS, Not(Equals), "")
+	c.Assert(sysInfo.Kernel, Not(Equals), "")
+	c.Assert(sysInfo.Arch, Not(Equals), "")
+	c.Assert(sysInfo.ArchName, Not(Equals), "")
+	c.Assert(sysInfo.ArchBits, Not(Equals), 0)
 
 	osReleaseFile = "/_UNKNOWN_"
 	osInfo, err := GetOSInfo()

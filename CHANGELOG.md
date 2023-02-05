@@ -4,6 +4,7 @@
 
 * `[system]` Added system arch name to `SystemInfo`
 * `[system]` `Version` and `Distribution` info removed from `SystemInfo` (_use `OSInfo` instead_)
+* `[system]` `GetOSInfo` now works on macOS
 
 ### 12.57.1
 
