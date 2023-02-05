@@ -2,7 +2,7 @@ package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -612,13 +612,21 @@ func (s *SystemSuite) TestUser(c *C) {
 func (s *SystemSuite) TestGetInfo(c *C) {
 	origOsReleaseFile := osReleaseFile
 
-	osReleaseFile = "/_UNKNOWN_"
-
 	sysInfo, err := GetSystemInfo()
+	c.Assert(err, IsNil)
+	c.Assert(sysInfo, NotNil)
+	c.Assert(sysInfo.Hostname, Not(Equals), "")
+	c.Assert(sysInfo.OS, Not(Equals), "")
+	c.Assert(sysInfo.Kernel, Not(Equals), "")
+	c.Assert(sysInfo.Arch, Not(Equals), "")
+	c.Assert(sysInfo.ArchName, Not(Equals), "")
+	c.Assert(sysInfo.ArchBits, Not(Equals), 0)
 
+	osReleaseFile = "/_UNKNOWN_"
+	osInfo, err := GetOSInfo()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `open /_UNKNOWN_: no such file or directory`)
-	c.Assert(sysInfo, IsNil)
+	c.Assert(osInfo, IsNil)
 
 	osReleaseFile = s.CreateTestFile(c, `NAME="Ubuntu"
 VERSION="20.10 (Groovy Gorilla)"
@@ -641,14 +649,9 @@ REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"
 `)
 
-	sysInfo, err = GetSystemInfo()
+	osInfo, err = GetOSInfo()
 
-	c.Assert(err, IsNil)
-	c.Assert(sysInfo, NotNil)
-
-	osInfo, err := GetOSInfo()
-
-	c.Assert(osInfo.Name, Equals, LINUX_UBUNTU)
+	c.Assert(osInfo.Name, Equals, "Ubuntu")
 	c.Assert(osInfo.PrettyName, Equals, "Ubuntu 20.10")
 	c.Assert(osInfo.Version, Equals, "20.10 (Groovy Gorilla)")
 	c.Assert(osInfo.VersionID, Equals, "20.10")
@@ -667,16 +670,11 @@ REDHAT_SUPPORT_PRODUCT_VERSION="7"
 	c.Assert(osInfo.SupportProduct, Equals, "centos")
 	c.Assert(osInfo.SupportProductVersion, Equals, "7")
 
-	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
-	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)
-	c.Assert(formatDistName("debian"), Equals, LINUX_DEBIAN)
-	c.Assert(formatDistName("fedora"), Equals, LINUX_FEDORA)
-	c.Assert(formatDistName("gentoo"), Equals, LINUX_GENTOO)
-	c.Assert(formatDistName("rhel"), Equals, LINUX_RHEL)
-	c.Assert(formatDistName("suse"), Equals, LINUX_SUSE)
-	c.Assert(formatDistName("opensuse"), Equals, LINUX_OPEN_SUSE)
-	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
-	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
+	c.Assert(getArchName("i386"), Equals, "386")
+	c.Assert(getArchName("i586"), Equals, "586")
+	c.Assert(getArchName("i686"), Equals, "686")
+	c.Assert(getArchName("x86_64"), Equals, "amd64")
+	c.Assert(getArchName("aarch64"), Equals, "aarch64")
 
 	osReleaseFile = origOsReleaseFile
 }

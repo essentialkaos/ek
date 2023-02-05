@@ -5,7 +5,7 @@ package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -33,20 +33,15 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, err
 	}
 
-	osInfo, err := GetOSInfo()
-
-	if err != nil {
-		return nil, err
-	}
+	arch := byteSliceToString(info.Machine)
 
 	return &SystemInfo{
-		Hostname:     byteSliceToString(info.Nodename),
-		OS:           byteSliceToString(info.Sysname),
-		Distribution: formatDistName(osInfo.Name),
-		Version:      osInfo.VersionID,
-		Kernel:       byteSliceToString(info.Release),
-		Arch:         byteSliceToString(info.Machine),
-		ArchBits:     getCPUArchBits(),
+		Hostname: byteSliceToString(info.Nodename),
+		OS:       byteSliceToString(info.Sysname),
+		Kernel:   byteSliceToString(info.Release),
+		Arch:     arch,
+		ArchName: getArchName(arch),
+		ArchBits: getCPUArchBits(),
 	}, nil
 }
 
@@ -126,28 +121,18 @@ func applyOSInfo(info *OSInfo, name, value string) {
 	}
 }
 
-// formatDistName formats distribution name
-func formatDistName(name string) string {
-	switch strings.ToUpper(name) {
-	case strings.ToUpper(LINUX_ARCH):
-		return LINUX_ARCH
-	case strings.ToUpper(LINUX_CENTOS):
-		return LINUX_CENTOS
-	case strings.ToUpper(LINUX_DEBIAN):
-		return LINUX_DEBIAN
-	case strings.ToUpper(LINUX_FEDORA):
-		return LINUX_FEDORA
-	case strings.ToUpper(LINUX_GENTOO):
-		return LINUX_GENTOO
-	case strings.ToUpper(LINUX_RHEL):
-		return LINUX_RHEL
-	case strings.ToUpper(LINUX_SUSE):
-		return LINUX_SUSE
-	case strings.ToUpper(LINUX_OPEN_SUSE):
-		return LINUX_OPEN_SUSE
-	case strings.ToUpper(LINUX_UBUNTU):
-		return LINUX_UBUNTU
+// getArchName returns name for given arch
+func getArchName(arch string) string {
+	switch arch {
+	case "i386":
+		return "386"
+	case "i586":
+		return "586"
+	case "i686":
+		return "686"
+	case "x86_64":
+		return "amd64"
 	}
 
-	return name
+	return arch
 }

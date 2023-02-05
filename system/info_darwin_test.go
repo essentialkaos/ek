@@ -2,7 +2,7 @@ package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -44,4 +44,27 @@ func (s *SystemSuite) TestUser(c *C) {
 	c.Assert(IsUserExist("_unknown_"), Equals, false)
 	c.Assert(IsGroupExist("wheel"), Equals, true)
 	c.Assert(IsGroupExist("_unknown_"), Equals, false)
+}
+
+func (s *SystemSuite) TestSystemInfo(c *C) {
+	sysInfo, err := GetSystemInfo()
+
+	c.Assert(err, IsNil)
+	c.Assert(sysInfo, NotNil)
+
+	c.Assert(sysInfo.Hostname, Not(Equals), "")
+	c.Assert(sysInfo.OS, Not(Equals), "")
+	c.Assert(sysInfo.Kernel, Not(Equals), "")
+	c.Assert(sysInfo.Arch, Not(Equals), "")
+	c.Assert(sysInfo.ArchName, Not(Equals), "")
+	c.Assert(sysInfo.ArchBits, Not(Equals), 0)
+
+	osInfo, err := GetOSInfo()
+
+	c.Assert(err, IsNil)
+	c.Assert(osInfo, NotNil)
+
+	c.Assert(osInfo.Name, Equals, "macOS")
+	c.Assert(osInfo.Version, Not(Equals), "")
+	c.Assert(osInfo.Build, Not(Equals), "")
 }

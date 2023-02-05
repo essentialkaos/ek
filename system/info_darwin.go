@@ -3,7 +3,7 @@ package system
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -13,6 +13,8 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -43,19 +45,50 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, errors.New("Can't read arch info")
 	}
 
+	arch = getMacOSArch(arch)
+
 	return &SystemInfo{
-		Hostname:     hostname,
-		OS:           os,
-		Distribution: DARWIN_OSX,
-		Version:      getMacOSVersion(),
-		Kernel:       kernel,
-		Arch:         getMacOSArch(arch),
-		ArchBits:     64,
+		Hostname: hostname,
+		OS:       os,
+		Kernel:   kernel,
+		Arch:     arch,
+		ArchName: getArchName(arch),
+		ArchBits: 64,
 	}, nil
+}
+
+// GetOSInfo returns info about OS
+func GetOSInfo() (*OSInfo, error) {
+	cmd := exec.Command("sw_vers")
+	versionData, err := cmd.Output()
+
+	if err != nil {
+		return nil, err
+	}
+
+	info := &OSInfo{}
+
+	for _, line := range strings.Split(string(versionData), "\n") {
+		name := strutil.ReadField(line, 0, false, ":")
+		value := strutil.ReadField(line, 1, false, ":")
+		value = strings.Trim(value, " \r\t\n")
+
+		switch name {
+		case "ProductName":
+			info.Name = value
+		case "ProductVersion":
+			info.Version = value
+		case "BuildVersion":
+			info.Build = value
+		}
+	}
+
+	return info, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getMacOSArch returns info about arch
 func getMacOSArch(archInfo string) string {
 	switch {
 	case strings.Contains(archInfo, "X86_64"):
@@ -67,14 +100,12 @@ func getMacOSArch(archInfo string) string {
 	return "unknown"
 }
 
-func getMacOSVersion() string {
-	cmd := exec.Command("sw_vers", "-productVersion")
-
-	versionData, err := cmd.Output()
-
-	if err != nil {
-		return ""
+// getArchName returns name for given arch
+func getArchName(arch string) string {
+	switch arch {
+	case "x86_64":
+		return "amd64"
 	}
 
-	return strings.Trim(string(versionData), "\r\n")
+	return arch
 }
