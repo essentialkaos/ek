@@ -2,7 +2,8 @@
 
 ### 12.58.0
 
-* `[system]` Added system arch name to SystemInfo
+* `[system]` Added system arch name to `SystemInfo`
+* `[system]` `Version` and `Distribution` info removed from `SystemInfo` (_use `OSInfo` instead_)
 
 ### 12.57.1
 

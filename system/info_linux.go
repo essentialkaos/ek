@@ -33,23 +33,15 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, err
 	}
 
-	osInfo, err := GetOSInfo()
-
-	if err != nil {
-		return nil, err
-	}
-
 	arch := byteSliceToString(info.Machine)
 
 	return &SystemInfo{
-		Hostname:     byteSliceToString(info.Nodename),
-		OS:           byteSliceToString(info.Sysname),
-		Distribution: formatDistName(osInfo.Name),
-		Version:      osInfo.VersionID,
-		Kernel:       byteSliceToString(info.Release),
-		Arch:         arch,
-		ArchName:     getArchName(arch),
-		ArchBits:     getCPUArchBits(),
+		Hostname: byteSliceToString(info.Nodename),
+		OS:       byteSliceToString(info.Sysname),
+		Kernel:   byteSliceToString(info.Release),
+		Arch:     arch,
+		ArchName: getArchName(arch),
+		ArchBits: getCPUArchBits(),
 	}, nil
 }
 
@@ -127,32 +119,6 @@ func applyOSInfo(info *OSInfo, name, value string) {
 	case strings.HasSuffix(name, "SUPPORT_PRODUCT_VERSION"):
 		info.SupportProductVersion = value
 	}
-}
-
-// formatDistName formats distribution name
-func formatDistName(name string) string {
-	switch strings.ToUpper(name) {
-	case strings.ToUpper(LINUX_ARCH):
-		return LINUX_ARCH
-	case strings.ToUpper(LINUX_CENTOS):
-		return LINUX_CENTOS
-	case strings.ToUpper(LINUX_DEBIAN):
-		return LINUX_DEBIAN
-	case strings.ToUpper(LINUX_FEDORA):
-		return LINUX_FEDORA
-	case strings.ToUpper(LINUX_GENTOO):
-		return LINUX_GENTOO
-	case strings.ToUpper(LINUX_RHEL):
-		return LINUX_RHEL
-	case strings.ToUpper(LINUX_SUSE):
-		return LINUX_SUSE
-	case strings.ToUpper(LINUX_OPEN_SUSE):
-		return LINUX_OPEN_SUSE
-	case strings.ToUpper(LINUX_UBUNTU):
-		return LINUX_UBUNTU
-	}
-
-	return name
 }
 
 // getArchName returns name for given arch

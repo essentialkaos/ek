@@ -612,13 +612,15 @@ func (s *SystemSuite) TestUser(c *C) {
 func (s *SystemSuite) TestGetInfo(c *C) {
 	origOsReleaseFile := osReleaseFile
 
-	osReleaseFile = "/_UNKNOWN_"
-
 	sysInfo, err := GetSystemInfo()
+	c.Assert(err, IsNil)
+	c.Assert(sysInfo, NotNil)
 
+	osReleaseFile = "/_UNKNOWN_"
+	osInfo, err := GetOSInfo()
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `open /_UNKNOWN_: no such file or directory`)
-	c.Assert(sysInfo, IsNil)
+	c.Assert(osInfo, IsNil)
 
 	osReleaseFile = s.CreateTestFile(c, `NAME="Ubuntu"
 VERSION="20.10 (Groovy Gorilla)"
@@ -641,14 +643,9 @@ REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"
 `)
 
-	sysInfo, err = GetSystemInfo()
+	osInfo, err = GetOSInfo()
 
-	c.Assert(err, IsNil)
-	c.Assert(sysInfo, NotNil)
-
-	osInfo, err := GetOSInfo()
-
-	c.Assert(osInfo.Name, Equals, LINUX_UBUNTU)
+	c.Assert(osInfo.Name, Equals, "Ubuntu")
 	c.Assert(osInfo.PrettyName, Equals, "Ubuntu 20.10")
 	c.Assert(osInfo.Version, Equals, "20.10 (Groovy Gorilla)")
 	c.Assert(osInfo.VersionID, Equals, "20.10")
@@ -666,17 +663,6 @@ REDHAT_SUPPORT_PRODUCT_VERSION="7"
 	c.Assert(osInfo.Logo, Equals, "fedora-logo-icon")
 	c.Assert(osInfo.SupportProduct, Equals, "centos")
 	c.Assert(osInfo.SupportProductVersion, Equals, "7")
-
-	c.Assert(formatDistName("arch"), Equals, LINUX_ARCH)
-	c.Assert(formatDistName("centos"), Equals, LINUX_CENTOS)
-	c.Assert(formatDistName("debian"), Equals, LINUX_DEBIAN)
-	c.Assert(formatDistName("fedora"), Equals, LINUX_FEDORA)
-	c.Assert(formatDistName("gentoo"), Equals, LINUX_GENTOO)
-	c.Assert(formatDistName("rhel"), Equals, LINUX_RHEL)
-	c.Assert(formatDistName("suse"), Equals, LINUX_SUSE)
-	c.Assert(formatDistName("opensuse"), Equals, LINUX_OPEN_SUSE)
-	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
-	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
 
 	c.Assert(getArchName("i386"), Equals, "386")
 	c.Assert(getArchName("i586"), Equals, "586")

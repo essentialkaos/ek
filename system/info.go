@@ -16,22 +16,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// OS names
-const (
-	LINUX_ARCH      = "Arch"
-	LINUX_CENTOS    = "CentOS"
-	LINUX_DEBIAN    = "Debian"
-	LINUX_FEDORA    = "Fedora"
-	LINUX_GENTOO    = "Gentoo"
-	LINUX_RHEL      = "RHEL"
-	LINUX_SUSE      = "SuSe"
-	LINUX_OPEN_SUSE = "openSUSE"
-	LINUX_UBUNTU    = "Ubuntu"
-	DARWIN_OSX      = "OSX"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // LoadAvg contains information about average system load
 type LoadAvg struct {
 	Min1  float64 `json:"min1"`  // LA in last 1 minute
@@ -138,14 +122,12 @@ type InterfaceStats struct {
 
 // SystemInfo contains info about a system (hostname, OS, arch...)
 type SystemInfo struct {
-	Hostname     string `json:"hostname"`     // Hostname
-	OS           string `json:"os"`           // OS name
-	Distribution string `json:"distribution"` // OS distribution
-	Version      string `json:"version"`      // OS version
-	Kernel       string `json:"kernel"`       // Kernel version
-	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc…)
-	ArchName     string `json:"arch_name"`    // System architecture (386/686/amd64/etc…)
-	ArchBits     int    `json:"arch_bits"`    // Architecture bits (32/64)
+	Hostname string `json:"hostname"`  // Hostname
+	OS       string `json:"os"`        // OS name
+	Kernel   string `json:"kernel"`    // Kernel version
+	Arch     string `json:"arch"`      // System architecture (i386/i686/x86_64/etc…)
+	ArchName string `json:"arch_name"` // System architecture (386/686/amd64/etc…)
+	ArchBits int    `json:"arch_bits"` // Architecture bits (32/64)
 }
 
 // OSInfo contains info about OS
