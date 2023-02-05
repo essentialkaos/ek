@@ -678,6 +678,12 @@ REDHAT_SUPPORT_PRODUCT_VERSION="7"
 	c.Assert(formatDistName("ubuntu"), Equals, LINUX_UBUNTU)
 	c.Assert(formatDistName("SuppaLinux"), Equals, "SuppaLinux")
 
+	c.Assert(getArchName("i386"), Equals, "386")
+	c.Assert(getArchName("i586"), Equals, "586")
+	c.Assert(getArchName("i686"), Equals, "686")
+	c.Assert(getArchName("x86_64"), Equals, "amd64")
+	c.Assert(getArchName("aarch64"), Equals, "aarch64")
+
 	osReleaseFile = origOsReleaseFile
 }
 

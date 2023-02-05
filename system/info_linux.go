@@ -39,13 +39,16 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, err
 	}
 
+	arch := byteSliceToString(info.Machine)
+
 	return &SystemInfo{
 		Hostname:     byteSliceToString(info.Nodename),
 		OS:           byteSliceToString(info.Sysname),
 		Distribution: formatDistName(osInfo.Name),
 		Version:      osInfo.VersionID,
 		Kernel:       byteSliceToString(info.Release),
-		Arch:         byteSliceToString(info.Machine),
+		Arch:         arch,
+		ArchName:     getArchName(arch),
 		ArchBits:     getCPUArchBits(),
 	}, nil
 }
@@ -150,4 +153,20 @@ func formatDistName(name string) string {
 	}
 
 	return name
+}
+
+// getArchName returns name for given arch
+func getArchName(arch string) string {
+	switch arch {
+	case "i386":
+		return "386"
+	case "i586":
+		return "586"
+	case "i686":
+		return "686"
+	case "x86_64":
+		return "amd64"
+	}
+
+	return arch
 }

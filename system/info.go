@@ -143,7 +143,8 @@ type SystemInfo struct {
 	Distribution string `json:"distribution"` // OS distribution
 	Version      string `json:"version"`      // OS version
 	Kernel       string `json:"kernel"`       // Kernel version
-	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc...)
+	Arch         string `json:"arch"`         // System architecture (i386/i686/x86_64/etc…)
+	ArchName     string `json:"arch_name"`    // System architecture (386/686/amd64/etc…)
 	ArchBits     int    `json:"arch_bits"`    // Architecture bits (32/64)
 }
 

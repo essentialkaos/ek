@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.58.0
+
+* `[system]` Added system arch name to SystemInfo
+
 ### 12.57.1
 
 * `[progress]` Fixed bug with updating progress settings
