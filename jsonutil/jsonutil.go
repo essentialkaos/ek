@@ -24,28 +24,28 @@ var GzipLevel = gzip.BestSpeed
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Read reads and decode JSON file
-func Read(file string, v interface{}) error {
+func Read(file string, v any) error {
 	return readFile(file, v, false)
 }
 
 // ReadGz reads and decode gzipped JSON file
-func ReadGz(file string, v interface{}) error {
+func ReadGz(file string, v any) error {
 	return readFile(file, v, true)
 }
 
 // Write encodes data to JSON and save it to file
-func Write(file string, v interface{}, perms ...os.FileMode) error {
+func Write(file string, v any, perms ...os.FileMode) error {
 	return writeFile(file, v, perms, false)
 }
 
 // Write encodes data to gzipped JSON and save it to file
-func WriteGz(file string, v interface{}, perms ...os.FileMode) error {
+func WriteGz(file string, v any, perms ...os.FileMode) error {
 	return writeFile(file, v, perms, true)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func readFile(file string, v interface{}, compress bool) error {
+func readFile(file string, v any, compress bool) error {
 	fd, err := os.Open(file)
 
 	if err != nil {
@@ -57,7 +57,7 @@ func readFile(file string, v interface{}, compress bool) error {
 	return readData(fd, v, compress)
 }
 
-func readData(rw io.ReadWriter, v interface{}, compress bool) error {
+func readData(rw io.ReadWriter, v any, compress bool) error {
 	var err error
 	var dr io.Reader
 
@@ -76,7 +76,7 @@ func readData(rw io.ReadWriter, v interface{}, compress bool) error {
 	return json.NewDecoder(dr).Decode(v)
 }
 
-func writeFile(file string, v interface{}, perms []os.FileMode, compressed bool) error {
+func writeFile(file string, v any, perms []os.FileMode, compressed bool) error {
 	var perm os.FileMode = 0644
 
 	if len(perms) != 0 {
@@ -94,7 +94,7 @@ func writeFile(file string, v interface{}, perms []os.FileMode, compressed bool)
 	return writeData(fd, v, compressed)
 }
 
-func writeData(rw io.ReadWriter, v interface{}, compressed bool) error {
+func writeData(rw io.ReadWriter, v any, compressed bool) error {
 	var err error
 	var je *json.Encoder
 	var gw *gzip.Writer

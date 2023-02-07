@@ -56,7 +56,7 @@ func Chain(funcs ...func() error) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds new error to slice
-func (e *Errors) Add(errs ...interface{}) *Errors {
+func (e *Errors) Add(errs ...any) *Errors {
 	if errs == nil {
 		return e
 	}

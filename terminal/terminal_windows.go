@@ -59,12 +59,12 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 }
 
 // ❗ PrintErrorMessage prints error message
-func PrintErrorMessage(message string, args ...interface{}) {
+func PrintErrorMessage(message string, args ...any) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ PrintWarnMessage prints warning message
-func PrintWarnMessage(message string, args ...interface{}) {
+func PrintWarnMessage(message string, args ...any) {
 	panic("UNSUPPORTED")
 }
 

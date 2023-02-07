@@ -37,7 +37,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateIP(config *knf.Config, prop string, value interface{}) error {
+func validateIP(config *knf.Config, prop string, value any) error {
 	ipStr := config.GetS(prop)
 
 	if ipStr == "" {
@@ -53,7 +53,7 @@ func validateIP(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validatePort(config *knf.Config, prop string, value interface{}) error {
+func validatePort(config *knf.Config, prop string, value any) error {
 	portStr := config.GetS(prop)
 
 	if portStr == "" {
@@ -69,7 +69,7 @@ func validatePort(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validateMAC(config *knf.Config, prop string, value interface{}) error {
+func validateMAC(config *knf.Config, prop string, value any) error {
 	macStr := config.GetS(prop)
 
 	if macStr == "" {
@@ -85,7 +85,7 @@ func validateMAC(config *knf.Config, prop string, value interface{}) error {
 	return err
 }
 
-func validateCIDR(config *knf.Config, prop string, value interface{}) error {
+func validateCIDR(config *knf.Config, prop string, value any) error {
 	cidrStr := config.GetS(prop)
 
 	if cidrStr == "" {
@@ -101,7 +101,7 @@ func validateCIDR(config *knf.Config, prop string, value interface{}) error {
 	return err
 }
 
-func validateURL(config *knf.Config, prop string, value interface{}) error {
+func validateURL(config *knf.Config, prop string, value any) error {
 	urlStr := config.GetS(prop)
 
 	if urlStr == "" {

@@ -21,12 +21,12 @@ var DefaultPluralizer = En
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // P pluralizes a word based on the passed number with custom format
-func P(format string, n interface{}, data ...string) string {
+func P(format string, n any, data ...string) string {
 	return PS(DefaultPluralizer, format, n, data...)
 }
 
 // PS pluralizes a word based on the passed number with custom pluralizer and format
-func PS(p Pluralizer, format string, n interface{}, data ...string) string {
+func PS(p Pluralizer, format string, n any, data ...string) string {
 	nk, ok := convertNumber(n)
 
 	if !ok {
@@ -60,7 +60,7 @@ func safeSliceGet(data []string, index int) string {
 	return data[index]
 }
 
-func convertNumber(n interface{}) (int, bool) {
+func convertNumber(n any) (int, bool) {
 	switch u := n.(type) {
 	case int32:
 		return int(u), true

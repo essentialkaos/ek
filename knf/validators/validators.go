@@ -56,7 +56,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validatorEmpty(config *knf.Config, prop string, value interface{}) error {
+func validatorEmpty(config *knf.Config, prop string, value any) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s can't be empty", prop)
 	}
@@ -64,7 +64,7 @@ func validatorEmpty(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validatorTypeBool(config *knf.Config, prop string, value interface{}) error {
+func validatorTypeBool(config *knf.Config, prop string, value any) error {
 	propValue := config.GetS(prop)
 
 	switch strings.ToLower(propValue) {
@@ -78,7 +78,7 @@ func validatorTypeBool(config *knf.Config, prop string, value interface{}) error
 	}
 }
 
-func validatorTypeNum(config *knf.Config, prop string, value interface{}) error {
+func validatorTypeNum(config *knf.Config, prop string, value any) error {
 	propValue := config.GetS(prop)
 
 	if propValue == "" {
@@ -97,7 +97,7 @@ func validatorTypeNum(config *knf.Config, prop string, value interface{}) error 
 	return nil
 }
 
-func validatorTypeFloat(config *knf.Config, prop string, value interface{}) error {
+func validatorTypeFloat(config *knf.Config, prop string, value any) error {
 	propValue := config.GetS(prop)
 
 	if propValue == "" {
@@ -116,7 +116,7 @@ func validatorTypeFloat(config *knf.Config, prop string, value interface{}) erro
 	return nil
 }
 
-func validatorNotContains(config *knf.Config, prop string, value interface{}) error {
+func validatorNotContains(config *knf.Config, prop string, value any) error {
 	switch u := value.(type) {
 	case []string:
 		currentValue := config.GetS(prop)
@@ -133,7 +133,7 @@ func validatorNotContains(config *knf.Config, prop string, value interface{}) er
 	return getWrongValidatorError(prop)
 }
 
-func validatorLess(config *knf.Config, prop string, value interface{}) error {
+func validatorLess(config *knf.Config, prop string, value any) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) < value.(int) {
@@ -150,7 +150,7 @@ func validatorLess(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validatorGreater(config *knf.Config, prop string, value interface{}) error {
+func validatorGreater(config *knf.Config, prop string, value any) error {
 	switch value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) > value.(int) {
@@ -169,7 +169,7 @@ func validatorGreater(config *knf.Config, prop string, value interface{}) error 
 	return nil
 }
 
-func validatorEquals(config *knf.Config, prop string, value interface{}) error {
+func validatorEquals(config *knf.Config, prop string, value any) error {
 	switch u := value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		if config.GetI(prop) == value.(int) {
@@ -198,7 +198,7 @@ func validatorEquals(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validatorNotLen(config *knf.Config, prop string, value interface{}) error {
+func validatorNotLen(config *knf.Config, prop string, value any) error {
 	if strutil.Len(config.GetS(prop)) != value.(int) {
 		return fmt.Errorf("Property %s must be %d symbols long", prop, value.(int))
 	}
@@ -206,7 +206,7 @@ func validatorNotLen(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validatorNotPrefix(config *knf.Config, prop string, value interface{}) error {
+func validatorNotPrefix(config *knf.Config, prop string, value any) error {
 	if !strings.HasPrefix(config.GetS(prop), value.(string)) {
 		return fmt.Errorf("Property %s must have prefix %q", prop, value.(string))
 	}
@@ -214,7 +214,7 @@ func validatorNotPrefix(config *knf.Config, prop string, value interface{}) erro
 	return nil
 }
 
-func validatorNotSuffix(config *knf.Config, prop string, value interface{}) error {
+func validatorNotSuffix(config *knf.Config, prop string, value any) error {
 	if !strings.HasSuffix(config.GetS(prop), value.(string)) {
 		return fmt.Errorf("Property %s must have suffix %q", prop, value.(string))
 	}

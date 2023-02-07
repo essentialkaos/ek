@@ -33,11 +33,11 @@ type Config struct {
 type Validator struct {
 	Property string            // Property name
 	Func     PropertyValidator // Validation function
-	Value    interface{}       // Expected value
+	Value    any               // Expected value
 }
 
 // PropertyValidator is default type of property validation function
-type PropertyValidator func(config *Config, prop string, value interface{}) error
+type PropertyValidator func(config *Config, prop string, value any) error
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -199,7 +199,7 @@ func GetD(name string, defvals ...time.Duration) time.Duration {
 }
 
 // Is checks if given property contains given value
-func Is(name string, value interface{}) bool {
+func Is(name string, value any) bool {
 	if global == nil {
 		return false
 	}
@@ -501,7 +501,7 @@ func (c *Config) GetD(name string, defvals ...time.Duration) time.Duration {
 }
 
 // Is checks if given property contains given value
-func (c *Config) Is(name string, value interface{}) bool {
+func (c *Config) Is(name string, value any) bool {
 	if c == nil || c.mx == nil {
 		return false
 	}

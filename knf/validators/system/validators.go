@@ -30,7 +30,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateUser(config *knf.Config, prop string, value interface{}) error {
+func validateUser(config *knf.Config, prop string, value any) error {
 	userNameOrID := config.GetS(prop)
 
 	if userNameOrID == "" {
@@ -44,7 +44,7 @@ func validateUser(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validateGroup(config *knf.Config, prop string, value interface{}) error {
+func validateGroup(config *knf.Config, prop string, value any) error {
 	groupNameOrID := config.GetS(prop)
 
 	if groupNameOrID == "" {

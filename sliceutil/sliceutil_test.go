@@ -41,14 +41,14 @@ func (s *SliceSuite) TestStringToInterface(c *C) {
 	source := []string{"1", "2", "3"}
 
 	c.Assert(StringToInterface(nil), IsNil)
-	c.Assert(StringToInterface(source), DeepEquals, []interface{}{"1", "2", "3"})
+	c.Assert(StringToInterface(source), DeepEquals, []any{"1", "2", "3"})
 }
 
 func (s *SliceSuite) TestIntToInterface(c *C) {
 	source := []int{1, 2, 3}
 
 	c.Assert(IntToInterface(nil), IsNil)
-	c.Assert(IntToInterface(source), DeepEquals, []interface{}{1, 2, 3})
+	c.Assert(IntToInterface(source), DeepEquals, []any{1, 2, 3})
 }
 
 func (s *SliceSuite) TestStringToError(c *C) {

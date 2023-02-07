@@ -16,7 +16,7 @@ type String struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ NewSecureString creates new secure string
-func NewSecureString(data interface{}) (*String, error) {
+func NewSecureString(data any) (*String, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }

@@ -28,7 +28,7 @@ type String struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewSecureString creates new secure string
-func NewSecureString(data interface{}) (*String, error) {
+func NewSecureString(data any) (*String, error) {
 	switch v := data.(type) {
 	case []byte:
 		return secureStringFromSlice(v)

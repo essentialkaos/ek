@@ -90,14 +90,14 @@ func (s *EventsSuite) TestDispatchAndWait(c *C) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func basicTestHandler(payload interface{}) {
+func basicTestHandler(payload any) {
 	return
 }
 
-func asyncTestHandler1(payload interface{}) {
+func asyncTestHandler1(payload any) {
 	atomic.AddUint32(&counter, payload.(uint32))
 }
 
-func asyncTestHandler2(payload interface{}) {
+func asyncTestHandler2(payload any) {
 	atomic.AddUint32(&counter, payload.(uint32)+1)
 }

@@ -51,7 +51,7 @@ var SizeSeparator = ""
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
-func PrettyNum(i interface{}, separator ...string) string {
+func PrettyNum(i any, separator ...string) string {
 	var str string
 
 	sep := OrderSeparator
@@ -101,7 +101,7 @@ func PrettyPerc(i float64) string {
 }
 
 // PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
-func PrettySize(i interface{}, separator ...string) string {
+func PrettySize(i any, separator ...string) string {
 	var f float64
 
 	sep := SizeSeparator
