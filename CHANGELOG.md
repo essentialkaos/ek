@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.59.0
+
+* `[fmtutil/table]` Improved separator rendering
+
 ### 12.58.0
 
 * `[system]` Added system arch name to `SystemInfo`

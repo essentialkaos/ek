@@ -29,6 +29,11 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// _SEPARATOR_TAG is tag used for rendering separator
+const _SEPARATOR_TAG = "[@SEPARATOR@]"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Table is struct which can be used for table rendering
 type Table struct {
 	Sizes     []int    // Custom columns sizes
@@ -153,11 +158,11 @@ func (t *Table) Separator() *Table {
 		return nil
 	}
 
-	if t.separator == "" {
-		t.separator = strings.Repeat(SeparatorSymbol, getSeparatorSize(t))
+	if !t.HasData() {
+		renderSeparator(t)
+	} else {
+		t.Add(_SEPARATOR_TAG)
 	}
-
-	fmtc.Println("{s}" + t.separator + "{!}")
 
 	return t
 }
@@ -185,7 +190,7 @@ func (t *Table) Render() *Table {
 	prepareRender(t)
 
 	if len(t.Headers) == 0 {
-		t.Separator()
+		renderSeparator(t)
 	}
 
 	if t.data != nil {
@@ -222,7 +227,7 @@ func renderHeaders(t *Table) {
 		return
 	}
 
-	t.Separator()
+	renderSeparator(t)
 
 	totalHeaders := len(t.Headers)
 	totalColumns := len(t.columnSizes)
@@ -249,7 +254,7 @@ func renderHeaders(t *Table) {
 		}
 	}
 
-	t.Separator()
+	renderSeparator(t)
 }
 
 // renderData render table data
@@ -257,10 +262,15 @@ func renderData(t *Table) {
 	totalColumns := len(t.columnSizes)
 
 	for _, rowData := range t.data {
+		if rowData[0] == _SEPARATOR_TAG {
+			renderSeparator(t)
+			continue
+		}
+
 		renderRowData(t, rowData, totalColumns)
 	}
 
-	t.Separator()
+	renderSeparator(t)
 }
 
 // renderRowData render data in row
@@ -286,6 +296,15 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 	}
 
 	fmtc.NewLine()
+}
+
+// renderSeparator prints separator
+func renderSeparator(t *Table) {
+	if t.separator == "" {
+		t.separator = strings.Repeat(SeparatorSymbol, getSeparatorSize(t))
+	}
+
+	fmtc.Println("{s}" + t.separator + "{!}")
 }
 
 // convertSlice convert slice with interface{} to slice with strings
@@ -315,6 +334,10 @@ func calculateColumnSizes(t *Table) {
 	if len(t.data) > 0 {
 		for _, row := range t.data {
 			for index, item := range row {
+				if item == _SEPARATOR_TAG {
+					continue
+				}
+
 				itemSizes := strutil.Len(fmtc.Clean(item))
 
 				if itemSizes > t.columnSizes[index] {

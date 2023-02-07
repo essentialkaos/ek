@@ -17,6 +17,9 @@ func ExampleNewTable() {
 	t.Add(1, "{g}Bob{!}", 1.42)
 	t.Add(2, "John", 73.1)
 	t.Add(3, "Mary", 2.29)
+	t.Separator()
+	t.Add(4, "Bob", 6.6)
+	t.Add(5, "Matilda", 0.0)
 
 	t.Render()
 }

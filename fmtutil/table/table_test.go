@@ -107,8 +107,15 @@ func (s *TableSuite) TestSeparator(c *C) {
 	c.Assert(t.Separator(), IsNil)
 
 	t = NewTable()
-
 	c.Assert(t.Separator(), NotNil)
+
+	t = NewTable()
+	c.Assert(t.Add(1), NotNil)
+	c.Assert(t.Add(2), NotNil)
+	c.Assert(t.Separator(), NotNil)
+	c.Assert(t.Add(3), NotNil)
+	c.Assert(t.Add(4), NotNil)
+	t.Render()
 }
 
 func (s *TableSuite) TestRender(c *C) {
