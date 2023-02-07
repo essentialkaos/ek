@@ -2,6 +2,8 @@
 
 ### 12.59.0
 
+* `[system/container]` Added container sub-package with methods for checking container engine info
+* `[system]` Added container engine info to `SystemInfo`
 * `[fmtutil/table]` Improved separator rendering
 * Code refactoring
 
