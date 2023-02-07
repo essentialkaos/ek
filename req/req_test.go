@@ -11,9 +11,9 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 	"testing"
@@ -145,7 +145,7 @@ func (s *ReqSuite) TestMethodPostFile(c *C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/testMultipart.bin"
 
-	err := ioutil.WriteFile(tmpFile, []byte(`DATA8913FIN`), 0644)
+	err := os.WriteFile(tmpFile, []byte(`DATA8913FIN`), 0644)
 	c.Assert(err, IsNil)
 
 	r := Request{URL: s.url + _URL_POST_MULTI, Method: POST}

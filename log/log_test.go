@@ -8,7 +8,6 @@ package log
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
@@ -243,7 +242,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	l.Print(DEBUG, "")
 
-	data, err := ioutil.ReadFile(logfile)
+	data, err := os.ReadFile(logfile)
 
 	c.Assert(err, IsNil)
 	c.Assert(len(data), Not(Equals), 0)
@@ -311,7 +310,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	Crit("Test crit %d", CRIT)
 	Aux("Test aux %d", AUX)
 
-	data, err := ioutil.ReadFile(logfile)
+	data, err := os.ReadFile(logfile)
 
 	c.Assert(err, IsNil)
 	c.Assert(len(data), Not(Equals), 0)
@@ -388,7 +387,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 
 	c.Assert(fsutil.GetSize(logfile), Not(Equals), int64(0))
 
-	data, err := ioutil.ReadFile(logfile)
+	data, err := os.ReadFile(logfile)
 
 	c.Assert(err, IsNil)
 	c.Assert(len(data), Not(Equals), 0)
@@ -472,7 +471,7 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	c.Assert(func() { std.Panicf("%s", "testPanic") }, PanicMatches, "testPanic")
 	c.Assert(func() { std.Panicln("testPanic") }, PanicMatches, "testPanic\n")
 
-	data, err := ioutil.ReadFile(ls.TempDir + "/file5.log")
+	data, err := os.ReadFile(ls.TempDir + "/file5.log")
 
 	if err != nil {
 		c.Fatal(err)

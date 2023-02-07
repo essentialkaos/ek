@@ -11,7 +11,6 @@ package pid
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -44,7 +43,7 @@ func Create(name string) error {
 		os.Remove(pidFile)
 	}
 
-	return ioutil.WriteFile(
+	return os.WriteFile(
 		pidFile,
 		[]byte(fmt.Sprintf("%d\n", os.Getpid())),
 		0644,
@@ -79,7 +78,7 @@ func Get(name string) int {
 
 // Read just reads PID from PID file
 func Read(pidFile string) int {
-	data, err := ioutil.ReadFile(pidFile)
+	data, err := os.ReadFile(pidFile)
 
 	if err != nil {
 		return -1

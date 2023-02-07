@@ -8,7 +8,7 @@ package hash
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -48,7 +48,7 @@ func (s *HashSuite) TestJCHashNegative(c *C) {
 func (s *HashSuite) TestFileHash(c *C) {
 	tempFile := s.TmpDir + "/test.log"
 
-	err := ioutil.WriteFile(tempFile, []byte("ABCDEF12345\n\n"), 0644)
+	err := os.WriteFile(tempFile, []byte("ABCDEF12345\n\n"), 0644)
 
 	hash1 := FileHash(tempFile)
 	hash2 := FileHash(s.TmpDir + "/not-exist.log")

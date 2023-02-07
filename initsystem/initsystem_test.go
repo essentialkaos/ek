@@ -11,7 +11,7 @@ package initsystem
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -61,8 +61,8 @@ end script`
 
 	tmpDir := c.MkDir()
 
-	ioutil.WriteFile(tmpDir+"/1.conf", []byte(data1), 0644)
-	ioutil.WriteFile(tmpDir+"/2.conf", []byte(data2), 0644)
+	os.WriteFile(tmpDir+"/1.conf", []byte(data1), 0644)
+	os.WriteFile(tmpDir+"/2.conf", []byte(data2), 0644)
 
 	ok, err := parseUpstartEnabledData(tmpDir + "/0.conf")
 

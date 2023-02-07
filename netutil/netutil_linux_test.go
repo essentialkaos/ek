@@ -8,7 +8,6 @@ package netutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -55,7 +54,7 @@ func (s *NetUtilSuite) CreateTestFile(c *C, data string) string {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	if ioutil.WriteFile(tmpFile, []byte(data), 0644) != nil {
+	if os.WriteFile(tmpFile, []byte(data), 0644) != nil {
 		c.Fatal("Can't create temporary file")
 	}
 

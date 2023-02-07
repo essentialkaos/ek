@@ -9,7 +9,6 @@ package fs
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"runtime"
 	"testing"
@@ -230,7 +229,7 @@ func createConfig(c *C, data string) string {
 	configPath := c.MkDir() + "/config.knf"
 	configData := fmt.Sprintf(_CONFIG_TEMPLATE, data)
 
-	err := ioutil.WriteFile(configPath, []byte(configData), 0644)
+	err := os.WriteFile(configPath, []byte(configData), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())

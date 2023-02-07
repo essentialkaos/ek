@@ -8,7 +8,7 @@ package directio
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -32,7 +32,7 @@ func (s *DirectIOSuite) TestReading(c *C) {
 	tmpFile := tmpDir + "/tmp_data"
 	payload := []byte(strings.Repeat("DATA1", 123))
 
-	err := ioutil.WriteFile(tmpFile, payload, 0644)
+	err := os.WriteFile(tmpFile, payload, 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())
@@ -61,7 +61,7 @@ func (s *DirectIOSuite) TestWriting(c *C) {
 
 	c.Assert(err, IsNil)
 
-	data, err := ioutil.ReadFile(tmpFile)
+	data, err := os.ReadFile(tmpFile)
 
 	c.Assert(err, IsNil)
 	c.Assert(len(data), Equals, len(payload))

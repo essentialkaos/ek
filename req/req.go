@@ -13,7 +13,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net"
 	"net/http"
@@ -452,7 +451,7 @@ func (r Request) PostFile(file, fieldName string, extraFields map[string]string)
 
 // Discard reads response body for closing connection
 func (r *Response) Discard() {
-	io.Copy(ioutil.Discard, r.Body)
+	io.Copy(io.Discard, r.Body)
 }
 
 // JSON decodes json encoded body
@@ -464,7 +463,7 @@ func (r *Response) JSON(v any) error {
 // Bytes reads response body as byte slice
 func (r *Response) Bytes() []byte {
 	defer r.Body.Close()
-	result, _ := ioutil.ReadAll(r.Body)
+	result, _ := io.ReadAll(r.Body)
 	return result
 }
 

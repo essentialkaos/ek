@@ -10,7 +10,6 @@ package fsutil
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"sort"
 	"testing"
@@ -42,8 +41,8 @@ func (s *FSSuite) TestList(c *check.C) {
 
 	os.Create(tmpDir + "/.file0")
 
-	c.Assert(ioutil.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpDir+"/file1.mp3", []byte("TESTDATA12345678"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpDir+"/file2.jpg", []byte("TESTDATA"), 0644), check.IsNil)
 
 	c.Assert(os.Mkdir(tmpDir+"/dir1", 0755), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir+"/dir2", 0755), check.IsNil)
@@ -270,7 +269,7 @@ func (s *FSSuite) TestGetSize(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	c.Assert(GetSize(""), check.Equals, int64(-1))
 	c.Assert(GetSize("/not_exist"), check.Equals, int64(-1))
@@ -281,7 +280,7 @@ func (s *FSSuite) TestGetTime(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	at, mt, ct, err := GetTimes(tmpFile)
 
@@ -366,7 +365,7 @@ func (s *FSSuite) TestGetOwner(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	uid, gid, err := GetOwner(tmpFile)
 
@@ -394,7 +393,7 @@ func (s *FSSuite) TestIsEmptyDir(c *check.C) {
 	tmpDir2 := c.MkDir()
 	tmpFile := tmpDir1 + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 
 	c.Assert(IsEmptyDir(tmpDir1), check.Equals, false)
 	c.Assert(IsEmptyDir(tmpDir2), check.Equals, true)
@@ -407,8 +406,8 @@ func (s *FSSuite) TestIsEmpty(c *check.C) {
 	tmpFile1 := tmpDir + "/test1.file"
 	tmpFile2 := tmpDir + "/test2.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile2, []byte(""), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile2, []byte(""), 0644), check.IsNil)
 
 	c.Assert(IsEmpty(""), check.Equals, false)
 	c.Assert(IsEmpty("/not_exist"), check.Equals, false)
@@ -426,7 +425,7 @@ func (s *FSSuite) TestTypeChecks(c *check.C) {
 	tmpFile := tmpDir + "/test.file"
 	tmpLink := tmpDir + "/test.link"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0644), check.IsNil)
 	c.Assert(os.Symlink("123", tmpLink), check.IsNil)
 
 	c.Assert(IsExist(""), check.Equals, false)
@@ -494,7 +493,7 @@ func (s *FSSuite) TestPermChecks(c *check.C) {
 	tmpFile9 := tmpDir + "/test9.file"
 
 	for i := 1; i <= 9; i++ {
-		c.Assert(ioutil.WriteFile(fmt.Sprintf("%s/test%d.file", tmpDir, i), []byte(""), 0644), check.IsNil)
+		c.Assert(os.WriteFile(fmt.Sprintf("%s/test%d.file", tmpDir, i), []byte(""), 0644), check.IsNil)
 	}
 
 	os.Chmod(tmpFile1, 0400)
@@ -566,7 +565,7 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	tmpFile := tmpDir + "/test.file"
 	tmpLink := tmpDir + "/test.link"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte(""), 0600), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte(""), 0600), check.IsNil)
 	c.Assert(os.Symlink("123", tmpLink), check.IsNil)
 
 	getUserError = true
@@ -623,7 +622,7 @@ func (s *FSSuite) TestGetMode(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("TEST\n"), 0764), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 0764), check.IsNil)
 
 	os.Chmod(tmpFile, 0764)
 
@@ -635,7 +634,7 @@ func (s *FSSuite) TestCountLines(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile, []byte("1\n2\n3\n4\n"), 0644), check.IsNil)
 
 	n, err := CountLines("")
 
@@ -663,9 +662,9 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	tmpFile2 := tmpDir2 + "/test2.file"
 	tmpFile3 := tmpDir1 + "/test3.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST1234TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile3, []byte(""), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile2, []byte("TEST1234TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile3, []byte(""), 0644), check.IsNil)
 
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir3, 0500)
@@ -717,10 +716,10 @@ func (s *FSSuite) TestCopyAttr(c *check.C) {
 	tmpFile3 := tmpDir + "/test3.file"
 	tmpFile4 := tmpDir + "/test4.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0600), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile1, []byte("TEST\n"), 0600), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile2, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
 
 	os.Chtimes(tmpFile1, time.Unix(946674000, 0), time.Unix(946674000, 0))
 	os.Chmod(tmpFile3, 0111)
@@ -804,9 +803,9 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	tmpFile4 := tmpDir + "/test4.file"
 	tmpFile5 := tmpDir + "/test5.file"
 
-	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile3, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile4, []byte("TEST\n"), 0644), check.IsNil)
 
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir2, 0500)
@@ -849,9 +848,9 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 	c.Assert(os.Mkdir(tmpDir5, 0200), check.IsNil)
 	c.Assert(os.Mkdir(tmpDir6, 0400), check.IsNil)
 
-	c.Assert(ioutil.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile2, []byte("TEST\n"), 0660), check.IsNil)
-	c.Assert(ioutil.WriteFile(tmpFile3, []byte("TEST\n"), 0600), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile1, []byte("TEST\n"), 0644), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile2, []byte("TEST\n"), 0660), check.IsNil)
+	c.Assert(os.WriteFile(tmpFile3, []byte("TEST\n"), 0600), check.IsNil)
 
 	c.Assert(CopyDir(sourceDir, targetDir), check.IsNil)
 

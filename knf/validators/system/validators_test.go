@@ -8,7 +8,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/essentialkaos/ek/v12/knf"
@@ -96,7 +96,7 @@ func (s *ValidatorSuite) TestGroupValidator(c *C) {
 func createConfig(c *C, data string) string {
 	configPath := c.MkDir() + "/config.knf"
 
-	err := ioutil.WriteFile(configPath, []byte(data), 0644)
+	err := os.WriteFile(configPath, []byte(data), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())

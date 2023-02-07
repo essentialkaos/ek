@@ -11,7 +11,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 	"syscall"
 
@@ -54,7 +54,7 @@ func GetOSInfo() (*OSInfo, error) {
 
 // ParseOSInfo parses data in given os-release file
 func ParseOSInfo(file string) (*OSInfo, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 
 	if err != nil {
 		return nil, err

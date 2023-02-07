@@ -9,7 +9,7 @@ package tmp
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,7 +40,7 @@ func ExampleTemp_MkDir() {
 		panic(err.Error())
 	}
 
-	err = ioutil.WriteFile(tmpDir+"/test.txt", []byte("Test data\n"), 0644)
+	err = os.WriteFile(tmpDir+"/test.txt", []byte("Test data\n"), 0644)
 
 	if err != nil {
 		panic(err.Error())
@@ -83,7 +83,7 @@ func ExampleTemp_MkName() {
 		panic("Can't create name for temporary file")
 	}
 
-	err = ioutil.WriteFile(filename, []byte("Test data\n"), 0644)
+	err = os.WriteFile(filename, []byte("Test data\n"), 0644)
 
 	if err != nil {
 		panic(err.Error())
