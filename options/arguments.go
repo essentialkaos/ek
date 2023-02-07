@@ -138,7 +138,7 @@ func (a Argument) String() string {
 }
 
 // Is returns true if argument equals to given value
-func (a Argument) Is(value interface{}) bool {
+func (a Argument) Is(value any) bool {
 	switch t := value.(type) {
 	case string:
 		return a.String() == t

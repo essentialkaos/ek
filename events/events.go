@@ -26,7 +26,7 @@ type Dispatcher struct {
 type Handlers []Handler
 
 // Handler is a function that handles an event
-type Handler func(payload interface{})
+type Handler func(payload any)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -109,7 +109,7 @@ func (d *Dispatcher) HasHandler(typ string, handler Handler) bool {
 }
 
 // Dispatch dispatches event with given type and payload
-func (d *Dispatcher) Dispatch(typ string, payload interface{}) error {
+func (d *Dispatcher) Dispatch(typ string, payload any) error {
 	err := validateArguments(d, typ, nil, false)
 
 	if err != nil {
@@ -136,7 +136,7 @@ func (d *Dispatcher) Dispatch(typ string, payload interface{}) error {
 
 // DispatchAndWait dispatches event with given type and payload and waits
 // until all handlers will be executed
-func (d *Dispatcher) DispatchAndWait(typ string, payload interface{}) error {
+func (d *Dispatcher) DispatchAndWait(typ string, payload any) error {
 	err := validateArguments(d, typ, nil, false)
 
 	if err != nil {
@@ -212,7 +212,7 @@ func validateArguments(d *Dispatcher, typ string, handler Handler, isHandlerRequ
 
 // execWrapper exec wrapper runs given handler function and sends true to the channel
 // when function is successfully executed
-func execWrapper(ch chan bool, handler Handler, payload interface{}) {
+func execWrapper(ch chan bool, handler Handler, payload any) {
 	handler(payload)
 	ch <- true
 }

@@ -78,6 +78,6 @@ func ExampleDispatcher_DispatchAndWait() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func testHandler(payload interface{}) {
+func testHandler(payload any) {
 	fmt.Printf("Got payload: %v\n", payload)
 }

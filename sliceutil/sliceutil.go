@@ -50,13 +50,13 @@ func CopyFloats(slice []float64) []float64 {
 	return s
 }
 
-// StringToInterface converts slice with strings to slice with interface{}
-func StringToInterface(data []string) []interface{} {
+// StringToInterface converts slice with strings to slice with any
+func StringToInterface(data []string) []any {
 	if len(data) == 0 {
 		return nil
 	}
 
-	result := make([]interface{}, len(data))
+	result := make([]any, len(data))
 
 	for i, r := range data {
 		result[i] = r
@@ -65,13 +65,13 @@ func StringToInterface(data []string) []interface{} {
 	return result
 }
 
-// IntToInterface converts slice with ints to slice with interface{}
-func IntToInterface(data []int) []interface{} {
+// IntToInterface converts slice with ints to slice with any
+func IntToInterface(data []int) []any {
 	if len(data) == 0 {
 		return nil
 	}
 
-	result := make([]interface{}, len(data))
+	result := make([]any, len(data))
 
 	for i, r := range data {
 		result[i] = r

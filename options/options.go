@@ -56,7 +56,7 @@ type V struct {
 
 	set bool // non-exported field
 
-	Value interface{} // default value
+	Value any // default value
 }
 
 // Map is map with list of options
@@ -293,7 +293,7 @@ func (opts *Options) GetF(name string) float64 {
 }
 
 // Is checks if option with given name has given value
-func (opts *Options) Is(name string, value interface{}) bool {
+func (opts *Options) Is(name string, value any) bool {
 	if opts == nil {
 		return false
 	}
@@ -431,7 +431,7 @@ func Has(name string) bool {
 }
 
 // Is checks if option with given name has given value
-func Is(name string, value interface{}) bool {
+func Is(name string, value any) bool {
 	if global == nil || !global.initialized {
 		return false
 	}
@@ -808,7 +808,7 @@ func betweenFloat(val, min, max float64) float64 {
 	}
 }
 
-func isSupportedType(v interface{}) bool {
+func isSupportedType(v any) bool {
 	switch v.(type) {
 	case nil, string, bool, int, float64:
 		return true
@@ -817,7 +817,7 @@ func isSupportedType(v interface{}) bool {
 	return false
 }
 
-func guessType(v interface{}) int {
+func guessType(v any) int {
 	switch v.(type) {
 	case string:
 		return STRING

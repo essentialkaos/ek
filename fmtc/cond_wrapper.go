@@ -26,7 +26,7 @@ func If(cond bool) CondWrapper {
 
 // Print formats using the default formats for its operands and writes to standard
 // output.
-func (cw CondWrapper) Print(a ...interface{}) (int, error) {
+func (cw CondWrapper) Print(a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -37,7 +37,7 @@ func (cw CondWrapper) Print(a ...interface{}) (int, error) {
 // Println formats using the default formats for its operands and writes to standard
 // output. Spaces are always added between operands and a newline is appended. It
 // returns the number of bytes written and any write error encountered.
-func (cw CondWrapper) Println(a ...interface{}) (int, error) {
+func (cw CondWrapper) Println(a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -47,7 +47,7 @@ func (cw CondWrapper) Println(a ...interface{}) (int, error) {
 
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
-func (cw CondWrapper) Printf(f string, a ...interface{}) (int, error) {
+func (cw CondWrapper) Printf(f string, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -58,7 +58,7 @@ func (cw CondWrapper) Printf(f string, a ...interface{}) (int, error) {
 // Fprint formats using the default formats for its operands and writes to w.
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
-func (cw CondWrapper) Fprint(w io.Writer, a ...interface{}) (int, error) {
+func (cw CondWrapper) Fprint(w io.Writer, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -69,7 +69,7 @@ func (cw CondWrapper) Fprint(w io.Writer, a ...interface{}) (int, error) {
 // Fprintln formats using the default formats for its operands and writes to w.
 // Spaces are always added between operands and a newline is appended. It returns
 // the number of bytes written and any write error encountered.
-func (cw CondWrapper) Fprintln(w io.Writer, a ...interface{}) (int, error) {
+func (cw CondWrapper) Fprintln(w io.Writer, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -79,7 +79,7 @@ func (cw CondWrapper) Fprintln(w io.Writer, a ...interface{}) (int, error) {
 
 // Fprintf formats according to a format specifier and writes to w. It returns
 // the number of bytes written and any write error encountered.
-func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...interface{}) (int, error) {
+func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -89,7 +89,7 @@ func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...interface{}) (int, err
 
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
-func (cw CondWrapper) Sprint(a ...interface{}) string {
+func (cw CondWrapper) Sprint(a ...any) string {
 	if cw.match == false {
 		return ""
 	}
@@ -99,7 +99,7 @@ func (cw CondWrapper) Sprint(a ...interface{}) string {
 
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
-func (cw CondWrapper) Sprintf(f string, a ...interface{}) string {
+func (cw CondWrapper) Sprintf(f string, a ...any) string {
 	if cw.match == false {
 		return ""
 	}
@@ -110,7 +110,7 @@ func (cw CondWrapper) Sprintf(f string, a ...interface{}) string {
 // Sprintln formats using the default formats for its operands and returns the
 // resulting string. Spaces are always added between operands and a newline is
 // appended.
-func (cw CondWrapper) Sprintln(a ...interface{}) string {
+func (cw CondWrapper) Sprintln(a ...any) string {
 	if cw.match == false {
 		return ""
 	}
@@ -119,7 +119,7 @@ func (cw CondWrapper) Sprintln(a ...interface{}) string {
 }
 
 // TPrint removes all content on the current line and prints the new message
-func (cw CondWrapper) TPrint(a ...interface{}) (int, error) {
+func (cw CondWrapper) TPrint(a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -128,7 +128,7 @@ func (cw CondWrapper) TPrint(a ...interface{}) (int, error) {
 }
 
 // TPrintf removes all content on the current line and prints the new message
-func (cw CondWrapper) TPrintf(f string, a ...interface{}) (int, error) {
+func (cw CondWrapper) TPrintf(f string, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -138,7 +138,7 @@ func (cw CondWrapper) TPrintf(f string, a ...interface{}) (int, error) {
 
 // TPrintln removes all content on the current line and prints the new message
 // with a new line symbol at the end
-func (cw CondWrapper) TPrintln(a ...interface{}) (int, error) {
+func (cw CondWrapper) TPrintln(a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -148,7 +148,7 @@ func (cw CondWrapper) TPrintln(a ...interface{}) (int, error) {
 
 // LPrint formats using the default formats for its operands and writes to standard
 // output limited by the text size
-func (cw CondWrapper) LPrint(maxSize int, a ...interface{}) (int, error) {
+func (cw CondWrapper) LPrint(maxSize int, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -158,7 +158,7 @@ func (cw CondWrapper) LPrint(maxSize int, a ...interface{}) (int, error) {
 
 // LPrintf formats according to a format specifier and writes to standard output
 // limited by the text size
-func (cw CondWrapper) LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+func (cw CondWrapper) LPrintf(maxSize int, f string, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -168,7 +168,7 @@ func (cw CondWrapper) LPrintf(maxSize int, f string, a ...interface{}) (int, err
 
 // LPrintln formats using the default formats for its operands and writes to standard
 // output limited by the text size
-func (cw CondWrapper) LPrintln(maxSize int, a ...interface{}) (int, error) {
+func (cw CondWrapper) LPrintln(maxSize int, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -178,7 +178,7 @@ func (cw CondWrapper) LPrintln(maxSize int, a ...interface{}) (int, error) {
 
 // TLPrint removes all content on the current line and prints the new message
 // limited by the text size
-func (cw CondWrapper) TLPrint(maxSize int, a ...interface{}) (int, error) {
+func (cw CondWrapper) TLPrint(maxSize int, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -188,7 +188,7 @@ func (cw CondWrapper) TLPrint(maxSize int, a ...interface{}) (int, error) {
 
 // TLPrintf removes all content on the current line and prints the new message
 // limited by the text size
-func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}
@@ -198,7 +198,7 @@ func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...interface{}) (int, er
 
 // TPrintln removes all content on the current line and prints the new message
 // limited by the text size with a new line symbol at the end
-func (cw CondWrapper) TLPrintln(maxSize int, a ...interface{}) (int, error) {
+func (cw CondWrapper) TLPrintln(maxSize int, a ...any) (int, error) {
 	if cw.match == false {
 		return 0, nil
 	}

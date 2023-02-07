@@ -72,7 +72,7 @@ var mu = &sync.RWMutex{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Show shows spinner with given task description
-func Show(message string, args ...interface{}) {
+func Show(message string, args ...any) {
 	mu.RLock()
 	if !isHidden {
 		mu.RUnlock()
@@ -94,7 +94,7 @@ func Show(message string, args ...interface{}) {
 }
 
 // Update updates task description
-func Update(message string, args ...interface{}) {
+func Update(message string, args ...any) {
 	mu.RLock()
 	if isHidden {
 		mu.RUnlock()

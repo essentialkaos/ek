@@ -18,7 +18,7 @@ import (
 // Cache is cache instance
 type Cache struct {
 	expiration     time.Duration
-	data           map[string]interface{}
+	data           map[string]any
 	expiry         map[string]int64
 	mu             *sync.RWMutex
 	isJanitorWorks bool
@@ -30,7 +30,7 @@ type Cache struct {
 func New(defaultExpiration, cleanupInterval time.Duration) *Cache {
 	s := &Cache{
 		expiration: defaultExpiration,
-		data:       make(map[string]interface{}),
+		data:       make(map[string]any),
 		expiry:     make(map[string]int64),
 		mu:         &sync.RWMutex{},
 	}
@@ -110,7 +110,7 @@ func (s *Cache) Expired() int {
 }
 
 // Set adds or updates item in cache
-func (s *Cache) Set(key string, data interface{}) {
+func (s *Cache) Set(key string, data any) {
 	if s == nil {
 		return
 	}
@@ -124,7 +124,7 @@ func (s *Cache) Set(key string, data interface{}) {
 }
 
 // Get returns item from cache or nil
-func (s *Cache) Get(key string) interface{} {
+func (s *Cache) Get(key string) any {
 	if s == nil {
 		return nil
 	}
@@ -156,7 +156,7 @@ func (s *Cache) Get(key string) interface{} {
 }
 
 // GetWithExpiration returns item from cache and expiration date or nil
-func (s *Cache) GetWithExpiration(key string) (interface{}, time.Time) {
+func (s *Cache) GetWithExpiration(key string) (any, time.Time) {
 	if s == nil {
 		return nil, time.Time{}
 	}
@@ -209,7 +209,7 @@ func (s *Cache) Flush() {
 
 	s.mu.Lock()
 
-	s.data = make(map[string]interface{})
+	s.data = make(map[string]any)
 	s.expiry = make(map[string]int64)
 
 	s.mu.Unlock()

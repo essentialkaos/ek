@@ -182,26 +182,26 @@ const USER_AGENT = "go-ek-req"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Query is a map[string]interface{} used for query
-type Query map[string]interface{}
+// Query is a map[string]any used for query
+type Query map[string]any
 
 // Headers is a map[string]string used for headers
 type Headers map[string]string
 
 // Request is basic struct
 type Request struct {
-	Method            string      // Request method
-	URL               string      // Request URL
-	Query             Query       // Map with query params
-	Body              interface{} // Request body
-	Headers           Headers     // Map with headers
-	ContentType       string      // Content type header
-	Accept            string      // Accept header
-	BasicAuthUsername string      // Basic auth username
-	BasicAuthPassword string      // Basic auth password
-	AutoDiscard       bool        // Automatically discard all responses with status code != 200
-	FollowRedirect    bool        // Follow redirect
-	Close             bool        // Close indicates whether to close the connection after sending request
+	Method            string  // Request method
+	URL               string  // Request URL
+	Query             Query   // Map with query params
+	Body              any     // Request body
+	Headers           Headers // Map with headers
+	ContentType       string  // Content type header
+	Accept            string  // Accept header
+	BasicAuthUsername string  // Basic auth username
+	BasicAuthPassword string  // Basic auth password
+	AutoDiscard       bool    // Automatically discard all responses with status code != 200
+	FollowRedirect    bool    // Follow redirect
+	Close             bool    // Close indicates whether to close the connection after sending request
 }
 
 // Response is struct contains response data and properties
@@ -456,7 +456,7 @@ func (r *Response) Discard() {
 }
 
 // JSON decodes json encoded body
-func (r *Response) JSON(v interface{}) error {
+func (r *Response) JSON(v any) error {
 	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(v)
 }
@@ -697,7 +697,7 @@ func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, err
 	return w.CreateFormFile(fieldName, filepath.Base(file))
 }
 
-func getBodyReader(body interface{}) (io.Reader, error) {
+func getBodyReader(body any) (io.Reader, error) {
 	switch u := body.(type) {
 	case nil:
 		return nil, nil

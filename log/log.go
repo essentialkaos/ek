@@ -36,13 +36,13 @@ const (
 
 // ILogger is interface for compatible loggers
 type ILogger interface {
-	Aux(f string, a ...interface{}) error
-	Debug(f string, a ...interface{}) error
-	Info(f string, a ...interface{}) error
-	Warn(f string, a ...interface{}) error
-	Error(f string, a ...interface{}) error
-	Crit(f string, a ...interface{}) error
-	Print(level uint8, f string, a ...interface{}) error
+	Aux(f string, a ...any) error
+	Debug(f string, a ...any) error
+	Info(f string, a ...any) error
+	Warn(f string, a ...any) error
+	Error(f string, a ...any) error
+	Crit(f string, a ...any) error
+	Print(level uint8, f string, a ...any) error
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -156,7 +156,7 @@ func Reopen() error {
 }
 
 // MinLevel defines minimal logging level
-func MinLevel(level interface{}) error {
+func MinLevel(level any) error {
 	return Global.MinLevel(level)
 }
 
@@ -176,37 +176,37 @@ func Flush() error {
 }
 
 // Print writes message to global logger output
-func Print(level uint8, f string, a ...interface{}) error {
+func Print(level uint8, f string, a ...any) error {
 	return Global.Print(level, f, a...)
 }
 
 // Debug writes debug message to global logger output
-func Debug(f string, a ...interface{}) error {
+func Debug(f string, a ...any) error {
 	return Global.Debug(f, a...)
 }
 
 // Info writes info message to global logger output
-func Info(f string, a ...interface{}) error {
+func Info(f string, a ...any) error {
 	return Global.Info(f, a...)
 }
 
 // Warn writes warning message to global logger output
-func Warn(f string, a ...interface{}) error {
+func Warn(f string, a ...any) error {
 	return Global.Warn(f, a...)
 }
 
 // Error writes error message to global logger output
-func Error(f string, a ...interface{}) error {
+func Error(f string, a ...any) error {
 	return Global.Error(f, a...)
 }
 
 // Crit writes critical message to global logger output
-func Crit(f string, a ...interface{}) error {
+func Crit(f string, a ...any) error {
 	return Global.Crit(f, a...)
 }
 
 // Aux writes unskippable message (for separators/headers)
-func Aux(f string, a ...interface{}) error {
+func Aux(f string, a ...any) error {
 	return Global.Aux(f, a...)
 }
 
@@ -237,7 +237,7 @@ func (l *Logger) Reopen() error {
 }
 
 // MinLevel defines minimal logging level
-func (l *Logger) MinLevel(level interface{}) error {
+func (l *Logger) MinLevel(level any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -314,7 +314,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 }
 
 // Print writes message to logger output
-func (l *Logger) Print(level uint8, f string, a ...interface{}) error {
+func (l *Logger) Print(level uint8, f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -370,7 +370,7 @@ func (l *Logger) Flush() error {
 }
 
 // Debug writes debug message to logger output
-func (l *Logger) Debug(f string, a ...interface{}) error {
+func (l *Logger) Debug(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -379,7 +379,7 @@ func (l *Logger) Debug(f string, a ...interface{}) error {
 }
 
 // Info writes info message to logger output
-func (l *Logger) Info(f string, a ...interface{}) error {
+func (l *Logger) Info(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -388,7 +388,7 @@ func (l *Logger) Info(f string, a ...interface{}) error {
 }
 
 // Warn writes warning message to logger output
-func (l *Logger) Warn(f string, a ...interface{}) error {
+func (l *Logger) Warn(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -397,7 +397,7 @@ func (l *Logger) Warn(f string, a ...interface{}) error {
 }
 
 // Error writes error message to logger output
-func (l *Logger) Error(f string, a ...interface{}) error {
+func (l *Logger) Error(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -406,7 +406,7 @@ func (l *Logger) Error(f string, a ...interface{}) error {
 }
 
 // Crit writes critical message to logger output
-func (l *Logger) Crit(f string, a ...interface{}) error {
+func (l *Logger) Crit(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -415,7 +415,7 @@ func (l *Logger) Crit(f string, a ...interface{}) error {
 }
 
 // Aux writes unfiltered message (for separators/headers) to logger output
-func (l *Logger) Aux(f string, a ...interface{}) error {
+func (l *Logger) Aux(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrLoggerIsNil
 	}
@@ -471,7 +471,7 @@ func getTime() string {
 	return "[ " + time.Now().Format(TimeFormat) + " ]"
 }
 
-func convertMinLevelValue(level interface{}) (uint8, error) {
+func convertMinLevelValue(level any) (uint8, error) {
 	switch u := level.(type) {
 
 	case int:

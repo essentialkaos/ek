@@ -3,6 +3,7 @@
 ### 12.59.0
 
 * `[fmtutil/table]` Improved separator rendering
+* Code refactoring
 
 ### 12.58.0
 

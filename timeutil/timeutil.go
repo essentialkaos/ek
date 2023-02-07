@@ -33,7 +33,7 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
-func PrettyDuration(d interface{}) string {
+func PrettyDuration(d any) string {
 	dur, ok := convertDuration(d)
 
 	if !ok {
@@ -48,7 +48,7 @@ func PrettyDuration(d interface{}) string {
 }
 
 // PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
-func PrettyDurationInDays(d interface{}) string {
+func PrettyDurationInDays(d any) string {
 	dur, ok := convertDuration(d)
 
 	if !ok {
@@ -65,7 +65,7 @@ func PrettyDurationInDays(d interface{}) string {
 }
 
 // ShortDuration returns pretty short duration (e.g. 1:37)
-func ShortDuration(d interface{}, highPrecision ...bool) string {
+func ShortDuration(d any, highPrecision ...bool) string {
 	dur, ok := convertDuration(d)
 
 	if !ok {
@@ -367,7 +367,7 @@ func NextWeekend(t time.Time) time.Time {
 // It's ok to have so long method here
 // codebeat:disable[LOC,ABC]
 
-func convertDuration(d interface{}) (time.Duration, bool) {
+func convertDuration(d any) (time.Duration, bool) {
 	switch u := d.(type) {
 	case time.Duration:
 		return u, true

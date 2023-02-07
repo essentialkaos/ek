@@ -164,7 +164,7 @@ func RemoveColor(name string) {
 //    Named colors:
 //      ?name
 //
-func Print(a ...interface{}) (int, error) {
+func Print(a ...any) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Print(a...)
 }
@@ -172,21 +172,21 @@ func Print(a ...interface{}) (int, error) {
 // Println formats using the default formats for its operands and writes to standard
 // output. Spaces are always added between operands and a newline is appended. It
 // returns the number of bytes written and any write error encountered.
-func Println(a ...interface{}) (int, error) {
+func Println(a ...any) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Println(a...)
 }
 
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
-func Printf(f string, a ...interface{}) (int, error) {
+func Printf(f string, a ...any) (int, error) {
 	return fmt.Printf(searchColors(f, -1, DisableColors), a...)
 }
 
 // Fprint formats using the default formats for its operands and writes to w.
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
-func Fprint(w io.Writer, a ...interface{}) (int, error) {
+func Fprint(w io.Writer, a ...any) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Fprint(w, a...)
 }
@@ -194,101 +194,101 @@ func Fprint(w io.Writer, a ...interface{}) (int, error) {
 // Fprintln formats using the default formats for its operands and writes to w.
 // Spaces are always added between operands and a newline is appended. It returns
 // the number of bytes written and any write error encountered.
-func Fprintln(w io.Writer, a ...interface{}) (int, error) {
+func Fprintln(w io.Writer, a ...any) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Fprintln(w, a...)
 }
 
 // Fprintf formats according to a format specifier and writes to w. It returns
 // the number of bytes written and any write error encountered.
-func Fprintf(w io.Writer, f string, a ...interface{}) (int, error) {
+func Fprintf(w io.Writer, f string, a ...any) (int, error) {
 	return fmt.Fprintf(w, searchColors(f, -1, DisableColors), a...)
 }
 
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
-func Sprint(a ...interface{}) string {
+func Sprint(a ...any) string {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Sprint(a...)
 }
 
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
-func Sprintf(f string, a ...interface{}) string {
+func Sprintf(f string, a ...any) string {
 	return fmt.Sprintf(searchColors(f, -1, DisableColors), a...)
 }
 
 // Sprintln formats using the default formats for its operands and returns the
 // resulting string. Spaces are always added between operands and a newline is
 // appended.
-func Sprintln(a ...interface{}) string {
+func Sprintln(a ...any) string {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Sprintln(a...)
 }
 
 // Errorf formats according to a format specifier and returns the string as a
 // value that satisfies error.
-func Errorf(f string, a ...interface{}) error {
+func Errorf(f string, a ...any) error {
 	return errors.New(Sprintf(f, a...))
 }
 
 // TPrint removes all content on the current line and prints the new message
-func TPrint(a ...interface{}) (int, error) {
+func TPrint(a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return Print(a...)
 }
 
 // TPrintf removes all content on the current line and prints the new message
-func TPrintf(f string, a ...interface{}) (int, error) {
+func TPrintf(f string, a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return Printf(f, a...)
 }
 
 // TPrintln removes all content on the current line and prints the new message
 // with a new line symbol at the end
-func TPrintln(a ...interface{}) (int, error) {
+func TPrintln(a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return Println(a...)
 }
 
 // LPrint formats using the default formats for its operands and writes to standard
 // output limited by the text size
-func LPrint(maxSize int, a ...interface{}) (int, error) {
+func LPrint(maxSize int, a ...any) (int, error) {
 	s := fmt.Sprint(a...)
 	return fmt.Print(searchColors(s, maxSize, DisableColors))
 }
 
 // LPrintf formats according to a format specifier and writes to standard output
 // limited by the text size
-func LPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+func LPrintf(maxSize int, f string, a ...any) (int, error) {
 	s := fmt.Sprintf(f, a...)
 	return fmt.Print(searchColors(s, maxSize, DisableColors))
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard
 // output limited by the text size
-func LPrintln(maxSize int, a ...interface{}) (int, error) {
+func LPrintln(maxSize int, a ...any) (int, error) {
 	applyColors(&a, maxSize, DisableColors)
 	return fmt.Println(a...)
 }
 
 // TLPrint removes all content on the current line and prints the new message
 // limited by the text size
-func TLPrint(maxSize int, a ...interface{}) (int, error) {
+func TLPrint(maxSize int, a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return LPrint(maxSize, a...)
 }
 
 // TLPrintf removes all content on the current line and prints the new message
 // limited by the text size
-func TLPrintf(maxSize int, f string, a ...interface{}) (int, error) {
+func TLPrintf(maxSize int, f string, a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return LPrintf(maxSize, f, a...)
 }
 
 // TPrintln removes all content on the current line and prints the new message
 // limited by the text size with a new line symbol at the end
-func TLPrintln(maxSize int, a ...interface{}) (int, error) {
+func TLPrintln(maxSize int, a ...any) (int, error) {
 	fmt.Print(_CODE_CLEAN_LINE)
 	return LPrintln(maxSize, a...)
 }
@@ -534,7 +534,7 @@ func searchColors(text string, limit int, clean bool) string {
 	return output.String()
 }
 
-func applyColors(a *[]interface{}, limit int, clean bool) {
+func applyColors(a *[]any, limit int, clean bool) {
 	for i, x := range *a {
 		if s, ok := x.(string); ok {
 			(*a)[i] = searchColors(s, limit, clean)

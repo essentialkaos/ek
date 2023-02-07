@@ -114,7 +114,7 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 }
 
 // PrintErrorMessage prints error message
-func PrintErrorMessage(message string, args ...interface{}) {
+func PrintErrorMessage(message string, args ...any) {
 	if len(args) == 0 {
 		fmtc.Fprintf(os.Stderr, ErrorColorTag+"%s{!}\n", message)
 	} else {
@@ -123,7 +123,7 @@ func PrintErrorMessage(message string, args ...interface{}) {
 }
 
 // PrintWarnMessage prints warning message
-func PrintWarnMessage(message string, args ...interface{}) {
+func PrintWarnMessage(message string, args ...any) {
 	if len(args) == 0 {
 		fmtc.Fprintf(os.Stderr, WarnColorTag+"%s{!}\n", message)
 	} else {

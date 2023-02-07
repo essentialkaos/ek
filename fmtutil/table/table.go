@@ -113,7 +113,7 @@ func (t *Table) SetAlignments(align ...uint8) *Table {
 }
 
 // Add adds given data to stack
-func (t *Table) Add(data ...interface{}) *Table {
+func (t *Table) Add(data ...any) *Table {
 	if t == nil {
 		return nil
 	}
@@ -128,7 +128,7 @@ func (t *Table) Add(data ...interface{}) *Table {
 }
 
 // Print renders given data
-func (t *Table) Print(data ...interface{}) *Table {
+func (t *Table) Print(data ...any) *Table {
 	if t == nil {
 		return nil
 	}
@@ -307,8 +307,8 @@ func renderSeparator(t *Table) {
 	fmtc.Println("{s}" + t.separator + "{!}")
 }
 
-// convertSlice convert slice with interface{} to slice with strings
-func convertSlice(data []interface{}) []string {
+// convertSlice convert slice with any to slice with strings
+func convertSlice(data []any) []string {
 	var result []string
 
 	for _, item := range data {

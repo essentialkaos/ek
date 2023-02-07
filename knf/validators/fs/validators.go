@@ -44,7 +44,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validatePerms(config *knf.Config, prop string, value interface{}) error {
+func validatePerms(config *knf.Config, prop string, value any) error {
 	perms := value.(string)
 	target := config.GetS(prop)
 
@@ -80,7 +80,7 @@ func validatePerms(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validateOwner(config *knf.Config, prop string, value interface{}) error {
+func validateOwner(config *knf.Config, prop string, value any) error {
 	target := config.GetS(prop)
 	owner := value.(string)
 
@@ -107,7 +107,7 @@ func validateOwner(config *knf.Config, prop string, value interface{}) error {
 	return nil
 }
 
-func validateOwnerGroup(config *knf.Config, prop string, value interface{}) error {
+func validateOwnerGroup(config *knf.Config, prop string, value any) error {
 	target := config.GetS(prop)
 	ownerGroup := value.(string)
 
@@ -134,7 +134,7 @@ func validateOwnerGroup(config *knf.Config, prop string, value interface{}) erro
 	return nil
 }
 
-func validateFileMode(config *knf.Config, prop string, value interface{}) error {
+func validateFileMode(config *knf.Config, prop string, value any) error {
 	perms := value.(os.FileMode)
 	target := config.GetS(prop)
 
@@ -156,7 +156,7 @@ func validateFileMode(config *knf.Config, prop string, value interface{}) error 
 	return nil
 }
 
-func validateMatchPattern(config *knf.Config, prop string, value interface{}) error {
+func validateMatchPattern(config *knf.Config, prop string, value any) error {
 	pattern := value.(string)
 	confPath := config.GetS(prop)
 
