@@ -11,11 +11,12 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 	"syscall"
 
 	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek/v12/system/container"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,12 +37,13 @@ func GetSystemInfo() (*SystemInfo, error) {
 	arch := byteSliceToString(info.Machine)
 
 	return &SystemInfo{
-		Hostname: byteSliceToString(info.Nodename),
-		OS:       byteSliceToString(info.Sysname),
-		Kernel:   byteSliceToString(info.Release),
-		Arch:     arch,
-		ArchName: getArchName(arch),
-		ArchBits: getCPUArchBits(),
+		Hostname:        byteSliceToString(info.Nodename),
+		OS:              byteSliceToString(info.Sysname),
+		Kernel:          byteSliceToString(info.Release),
+		Arch:            arch,
+		ArchName:        getArchName(arch),
+		ArchBits:        getCPUArchBits(),
+		ContainerEngine: container.GetEngine(),
 	}, nil
 }
 
@@ -52,7 +54,7 @@ func GetOSInfo() (*OSInfo, error) {
 
 // ParseOSInfo parses data in given os-release file
 func ParseOSInfo(file string) (*OSInfo, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 
 	if err != nil {
 		return nil, err

@@ -8,7 +8,7 @@ package validators
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/essentialkaos/ek/v12/knf"
@@ -247,7 +247,7 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
 func createConfig(c *check.C, data string) string {
 	configPath := c.MkDir() + "/config.knf"
 
-	err := ioutil.WriteFile(configPath, []byte(data), 0644)
+	err := os.WriteFile(configPath, []byte(data), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())

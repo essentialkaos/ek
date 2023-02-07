@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package container
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +8,41 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"os"
+	"testing"
 
-	"github.com/essentialkaos/go-linenoise/v3"
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.60.0"
+func Test(t *testing.T) { TestingT(t) }
+
+type ContainerSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+var _ = Suite(&ContainerSuite{})
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *ContainerSuite) TestGetEngine(c *C) {
+	testEnv := c.MkDir() + "/test"
+
+	dockerEnv = "/_unknown_"
+	podmanEnv = "/_unknown_"
+
+	c.Assert(GetEngine(), Equals, "")
+
+	os.WriteFile(testEnv, []byte("TEST"), 0644)
+
+	dockerEnv = testEnv
+	podmanEnv = "/_unknown_"
+
+	c.Assert(GetEngine(), Equals, DOCKER)
+
+	dockerEnv = "/_unknown_"
+	podmanEnv = testEnv
+
+	c.Assert(GetEngine(), Equals, PODMAN)
 }

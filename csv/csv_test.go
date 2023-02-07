@@ -9,7 +9,6 @@ package csv
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -42,7 +41,7 @@ func (s *CSVSuite) SetUpSuite(c *C) {
 
 	s.dataFile = tmpDir + "/data.csv"
 
-	err := ioutil.WriteFile(s.dataFile, []byte(_DATA), 0644)
+	err := os.WriteFile(s.dataFile, []byte(_DATA), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())

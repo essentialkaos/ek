@@ -9,7 +9,6 @@ package pid
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -94,7 +93,7 @@ func (s *PidSuite) TestErrors(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	ioutil.WriteFile(s.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
+	os.WriteFile(s.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
 
 	pidNum = Get("bad.pid")
 

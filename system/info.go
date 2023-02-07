@@ -122,12 +122,13 @@ type InterfaceStats struct {
 
 // SystemInfo contains info about a system (hostname, OS, arch...)
 type SystemInfo struct {
-	Hostname string `json:"hostname"`  // Hostname
-	OS       string `json:"os"`        // OS name
-	Kernel   string `json:"kernel"`    // Kernel version
-	Arch     string `json:"arch"`      // System architecture (i386/i686/x86_64/etc…)
-	ArchName string `json:"arch_name"` // System architecture (386/686/amd64/etc…)
-	ArchBits int    `json:"arch_bits"` // Architecture bits (32/64)
+	Hostname        string `json:"hostname"`         // Hostname
+	OS              string `json:"os"`               // OS name
+	Kernel          string `json:"kernel"`           // Kernel version
+	Arch            string `json:"arch"`             // System architecture (i386/i686/x86_64/etc…)
+	ArchName        string `json:"arch_name"`        // System architecture (386/686/amd64/etc…)
+	ContainerEngine string `json:"container_engine"` // Container engine name (docker/podman)
+	ArchBits        int    `json:"arch_bits"`        // Architecture bits (32/64)
 }
 
 // OSInfo contains info about OS

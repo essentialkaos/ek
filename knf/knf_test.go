@@ -9,7 +9,6 @@ package knf
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"runtime"
 	"strings"
@@ -131,19 +130,19 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 		s.NonReadableConfigPath = "/etc/sudoers"
 	}
 
-	err := ioutil.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)
+	err := os.WriteFile(s.ConfigPath, []byte(_CONFIG_DATA), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())
 	}
 
-	err = ioutil.WriteFile(s.EmptyConfigPath, []byte(""), 0644)
+	err = os.WriteFile(s.EmptyConfigPath, []byte(""), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())
 	}
 
-	err = ioutil.WriteFile(s.MalformedConfigPath, []byte(_CONFIG_MALF_DATA), 0644)
+	err = os.WriteFile(s.MalformedConfigPath, []byte(_CONFIG_MALF_DATA), 0644)
 
 	if err != nil {
 		c.Fatal(err.Error())

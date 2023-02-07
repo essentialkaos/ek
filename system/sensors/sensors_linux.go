@@ -13,7 +13,7 @@ package sensors
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -209,7 +209,7 @@ func readTempSensors(filePrefix string) (TempSensor, error) {
 }
 
 func readSensorLabel(file string) (string, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 
 	if err != nil {
 		return "", fmt.Errorf("Can't read data from %s: %w", file, err)
@@ -223,7 +223,7 @@ func readTempSensorValue(file string) (float64, error) {
 		return 0.0, nil
 	}
 
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 
 	if err != nil {
 		return 0.0, fmt.Errorf("Can't read sensor data from %s: %w", file, err)

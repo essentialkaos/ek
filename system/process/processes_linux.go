@@ -13,7 +13,7 @@ package process
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -128,7 +128,7 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 		return nil, nil
 	}
 
-	cmd, err := ioutil.ReadFile(dir + "/cmdline")
+	cmd, err := os.ReadFile(dir + "/cmdline")
 
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func getProcessParent(pidDir string, pid int) (int, bool) {
 }
 
 func getParentPIDs(pidDir string) (int, int) {
-	data, err := ioutil.ReadFile(pidDir + "/status")
+	data, err := os.ReadFile(pidDir + "/status")
 
 	if err != nil {
 		return -1, -1

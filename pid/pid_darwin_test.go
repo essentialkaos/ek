@@ -11,7 +11,6 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"os"
 
 	. "github.com/essentialkaos/check"
@@ -33,7 +32,7 @@ func (s *PidSuite) TestIsWorks(c *C) {
 	c.Assert(IsWorks("test"), Equals, false)
 
 	// Write fake pid to pid file
-	ioutil.WriteFile(s.Dir+"/test.pid", []byte("999999\n"), 0644)
+	os.WriteFile(s.Dir+"/test.pid", []byte("999999\n"), 0644)
 
 	c.Assert(IsWorks("test"), Equals, false)
 }

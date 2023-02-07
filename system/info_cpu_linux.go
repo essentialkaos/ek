@@ -10,7 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -114,25 +114,25 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 
 // GetCPUCount returns info about CPU
 func GetCPUCount() (CPUCount, error) {
-	possible, err := ioutil.ReadFile(cpuPossibleFile)
+	possible, err := os.ReadFile(cpuPossibleFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	present, err := ioutil.ReadFile(cpuPresentFile)
+	present, err := os.ReadFile(cpuPresentFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	online, err := ioutil.ReadFile(cpuOnlineFile)
+	online, err := os.ReadFile(cpuOnlineFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	offline, err := ioutil.ReadFile(cpuOfflineFile)
+	offline, err := os.ReadFile(cpuOfflineFile)
 
 	if err != nil {
 		return CPUCount{}, err

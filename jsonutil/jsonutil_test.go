@@ -9,7 +9,6 @@ package jsonutil
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -68,7 +67,7 @@ func (s *JSONSuite) SetUpSuite(c *C) {
 func (s *JSONSuite) TestDecoding(c *C) {
 	jsonFile := s.TmpDir + "/file1.json"
 
-	err := ioutil.WriteFile(jsonFile, []byte(_JSON_DATA), 0644)
+	err := os.WriteFile(jsonFile, []byte(_JSON_DATA), 0644)
 
 	c.Assert(err, IsNil)
 
@@ -101,7 +100,7 @@ func (s *JSONSuite) TestEncoding(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(fsutil.GetMode(jsonFile), Equals, os.FileMode(0640))
 
-	data, err := ioutil.ReadFile(jsonFile)
+	data, err := os.ReadFile(jsonFile)
 
 	c.Assert(err, IsNil)
 	c.Assert(string(data), Equals, _JSON_DATA)

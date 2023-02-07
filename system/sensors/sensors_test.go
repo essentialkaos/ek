@@ -11,7 +11,6 @@ package sensors
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -82,25 +81,25 @@ func (s *SensorsSuite) TestParsingErrors(c *C) {
 
 	hwmonDir = tmpDir
 
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_crit", []byte("AAA"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_crit", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_crit: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_max", []byte("AAA"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_max", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_max: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_min", []byte("AAA"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_min", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_min: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_input", []byte("AAA"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_input", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
@@ -135,19 +134,19 @@ func createFakeFS(tmpDir string) {
 	os.Mkdir(tmpDir+"/hwmon1", 0755)
 	os.Mkdir(tmpDir+"/hwmon2", 0755)
 
-	ioutil.WriteFile(tmpDir+"/hwmon0/name", []byte("acpitz"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon0/temp1_crit", []byte("25600"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon0/temp1_input", []byte("8200"), 0644)
+	os.WriteFile(tmpDir+"/hwmon0/name", []byte("acpitz"), 0644)
+	os.WriteFile(tmpDir+"/hwmon0/temp1_crit", []byte("25600"), 0644)
+	os.WriteFile(tmpDir+"/hwmon0/temp1_input", []byte("8200"), 0644)
 
-	ioutil.WriteFile(tmpDir+"/hwmon1/name", []byte("coretemp"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_label", []byte("Core 0"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_crit", []byte("91000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_input", []byte("38000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_max", []byte("81000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp1_min", []byte("12000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp2_label", []byte("Core 0"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp2_crit", []byte("91000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp2_input", []byte("41000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp2_max", []byte("81000"), 0644)
-	ioutil.WriteFile(tmpDir+"/hwmon1/temp2_min", []byte("12000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/name", []byte("coretemp"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_label", []byte("Core 0"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_crit", []byte("91000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_input", []byte("38000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_max", []byte("81000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp1_min", []byte("12000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp2_label", []byte("Core 0"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp2_crit", []byte("91000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp2_input", []byte("41000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp2_max", []byte("81000"), 0644)
+	os.WriteFile(tmpDir+"/hwmon1/temp2_min", []byte("12000"), 0644)
 }

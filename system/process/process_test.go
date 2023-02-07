@@ -11,7 +11,6 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -291,7 +290,7 @@ func (s *ProcessSuite) CreateFakeProcFS(c *C, pid, file, data string) string {
 	os.Mkdir(tmpDir+"/"+pid, 0755)
 	pfsFile := tmpDir + "/" + pid + "/" + file
 
-	if ioutil.WriteFile(pfsFile, []byte(data), 0644) != nil {
+	if os.WriteFile(pfsFile, []byte(data), 0644) != nil {
 		c.Fatal("Can't create temporary file")
 	}
 

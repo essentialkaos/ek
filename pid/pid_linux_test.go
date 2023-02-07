@@ -12,7 +12,6 @@ package pid
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -34,7 +33,7 @@ func (s *PidSuite) TestIsWorks(c *C) {
 	c.Assert(IsWorks("test"), Equals, false)
 
 	// Write fake pid to pid file
-	ioutil.WriteFile(s.Dir+"/test.pid", []byte("69999\n"), 0644)
+	os.WriteFile(s.Dir+"/test.pid", []byte("69999\n"), 0644)
 
 	c.Assert(IsWorks("test"), Equals, false)
 
