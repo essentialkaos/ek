@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.60.1
+
+* `[initsystem]` Improved systemd support
+
 ### 12.60.0
 
 * `[system/container]` Added container sub-package with methods for checking container engine info
