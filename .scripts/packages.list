@@ -10,7 +10,6 @@
 * + events
 * + directio
 * + fmtc
-* + fmtc/lscolors
 * + fmtutil
 * + fmtutil/table
 * + fsutil
@@ -24,8 +23,9 @@
 * + knf/validators/network
 * + knf/validators/regexp
 * + knf/validators/system
-* + log
 * + lock
+* + log
+* + lscolors
 * + mathutil
 L + netutil
 * + options

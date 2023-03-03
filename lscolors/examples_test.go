@@ -20,7 +20,7 @@ func ExampleGetColor() {
 	colorSeq := GetColor(file)
 
 	fmt.Printf(
-		"%s/"+colorSeq+"%s"+RESET_SEQ+"\n",
+		"%s/"+colorSeq+"%s"+GetColor(RESET)+"\n",
 		dir, file,
 	)
 }

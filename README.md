@@ -27,7 +27,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 
 ### Installation
 
-Make sure you have a working Go 1.17+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ```
 go get github.com/essentialkaos/ek/v12
@@ -53,7 +53,6 @@ go get -u github.com/essentialkaos/ek/v12
 * [`events`](https://kaos.sh/g/ek.v12/events) — Package provides methods and structs for creating event-driven systems
 * [`directio`](https://kaos.sh/g/ek.v12/directio) — Package provides methods for reading/writing files with direct io
 * [`fmtc`](https://kaos.sh/g/ek.v12/fmtc) — Package provides methods similar to fmt for colored output
-* [`fmtc/lscolors`](https://kaos.sh/g/ek.v12/fmtc/lscolors) — Package provides methods for colorizing file names based on colors from dircolors
 * [`fmtutil`](https://kaos.sh/g/ek.v12/fmtutil) — Package provides methods for output formatting
 * [`fmtutil/table`](https://kaos.sh/g/ek.v12/fmtutil/table) — Package contains methods and structs for rendering data in tabular format
 * [`fsutil`](https://kaos.sh/g/ek.v12/fsutil) — Package provides methods for working with files on POSIX compatible systems (BSD/Linux/macOS)
@@ -64,6 +63,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`knf`](https://kaos.sh/g/ek.v12/knf) — Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
 * [`log`](https://kaos.sh/g/ek.v12/log) — Package with an improved logger
 * [`lock`](https://kaos.sh/g/ek.v12/lock) — Package provides methods for working with lock files
+* [`lscolors`](https://kaos.sh/g/ek.v12/lscolors) — Package provides methods for colorizing file names based on colors from dircolors
 * [`mathutil`](https://kaos.sh/g/ek.v12/mathutil) — Package provides some additional math methods
 * [`netutil`](https://kaos.sh/g/ek.v12/netutil) — Package provides methods for working with network
 * [`options`](https://kaos.sh/g/ek.v12/options) — Package provides methods for working with command-line options

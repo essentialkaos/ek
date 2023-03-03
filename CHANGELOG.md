@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.61.0
+
+* `[lscolors]` Sub-package moved from `fmtc` to root of the package
+* `[lscolors]` `GetColor` returns colors for types of objects (_like directory, block device, link…_)
+* `[lscolors]` Added flag `DisableColors` for disabling all colors in output
+
 ### 12.60.1
 
 * `[initsystem]` Improved systemd support
