@@ -97,11 +97,6 @@ type passThruWriter struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrNilProgress returns if progress struct is nil
-var ErrNilProgress = fmt.Errorf("Progress struct is nil")
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // DefaultSettings is default progress bar settings
 var DefaultSettings = Settings{
 	RefreshRate:       100 * time.Millisecond,

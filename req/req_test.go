@@ -568,6 +568,27 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 	c.Assert(qrs, Equals, "a=1&b=abcd&c&d")
 }
 
+func (s *ReqSuite) TestNil(c *C) {
+	var e *Engine
+
+	_, err := e.doRequest(Request{}, GET)
+	c.Assert(err, DeepEquals, ErrNilEngine)
+
+	c.Assert(func() { e.SetUserAgent("APP", "1") }, NotPanics)
+	c.Assert(func() { e.SetDialTimeout(1) }, NotPanics)
+	c.Assert(func() { e.SetRequestTimeout(1) }, NotPanics)
+
+	var r *Response
+
+	c.Assert(func() { r.Discard() }, NotPanics)
+
+	c.Assert(r.JSON(nil), DeepEquals, ErrNilResponse)
+	c.Assert(r.Bytes(), IsNil)
+	c.Assert(r.String(), Equals, "")
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *ReqSuite) BenchmarkQueryEncoding(c *C) {
 	q := Query{"a": 1, "b": "abcd", "c": "", "d": nil}
 

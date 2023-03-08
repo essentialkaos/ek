@@ -12,6 +12,8 @@
 * `[knf]` Code refactoring
 * `[options]` Code refactoring
 * `[progress]` Code refactoring
+* `[req]` Code refactoring
+* `[spellcheck]` Code refactoring
 * `[usage]` Code refactoring
 * `[cache]` Better tests for panics
 * `[cron]` Better tests for panics
@@ -19,6 +21,8 @@
 * `[fmtutil/table]` Better tests for panics
 * `[log]` Better tests for panics
 * `[progress]` Better tests for panics
+* `[req]` Better tests for panics
+* `[spellcheck]` Better tests for panics
 
 ### 12.60.1
 
