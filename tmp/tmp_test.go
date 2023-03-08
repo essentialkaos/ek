@@ -158,3 +158,17 @@ func (ts *TmpSuite) TestMkName(c *C) {
 
 	c.Assert(strings.HasSuffix(t.MkName("1234.json"), "_1234.json"), Equals, true)
 }
+
+func (ts *TmpSuite) TestNil(c *C) {
+	var t *Temp
+
+	_, err := t.MkDir()
+	c.Assert(err, DeepEquals, ErrNilTemp)
+
+	_, _, err = t.MkFile()
+	c.Assert(err, DeepEquals, ErrNilTemp)
+
+	c.Assert(t.MkName(), DeepEquals, "")
+
+	c.Assert(func() { t.Clean() }, NotPanics)
+}
