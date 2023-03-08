@@ -31,7 +31,7 @@ type Handler func(payload any)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrNilDispatcher = fmt.Errorf("Dispatcher wasn't created properly")
+	ErrNilDispatcher = fmt.Errorf("Dispatcher is nil")
 	ErrEmptyType     = fmt.Errorf("Event type is empty")
 	ErrNilHandler    = fmt.Errorf("Handler must not be nil")
 )

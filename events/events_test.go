@@ -32,17 +32,7 @@ var counter uint32
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *EventsSuite) TestBasicErrors(c *C) {
-	var d *Dispatcher
-
-	c.Assert(d.AddHandler("test", basicTestHandler), NotNil)
-	c.Assert(d.RemoveHandler("test", basicTestHandler), NotNil)
-	c.Assert(d.Dispatch("test", nil), NotNil)
-	c.Assert(d.HasHandler("test", nil), Equals, false)
-	c.Assert(d.DispatchAndWait("test", nil), NotNil)
-
-	c.Assert(validateArguments(d, "test", basicTestHandler, true), NotNil)
-
-	d = NewDispatcher()
+	d := NewDispatcher()
 
 	c.Assert(d.AddHandler("test", basicTestHandler), IsNil)
 	c.Assert(d.AddHandler("test", basicTestHandler), NotNil)
@@ -86,6 +76,18 @@ func (s *EventsSuite) TestDispatchAndWait(c *C) {
 	c.Assert(d.DispatchAndWait("test", uint32(5)), IsNil)
 
 	c.Assert(atomic.LoadUint32(&counter), Equals, uint32(11))
+}
+
+func (s *EventsSuite) TestNil(c *C) {
+	var d *Dispatcher
+
+	c.Assert(d.AddHandler("test", basicTestHandler), NotNil)
+	c.Assert(d.RemoveHandler("test", basicTestHandler), NotNil)
+	c.Assert(d.Dispatch("test", nil), NotNil)
+	c.Assert(d.HasHandler("test", nil), Equals, false)
+	c.Assert(d.DispatchAndWait("test", nil), NotNil)
+
+	c.Assert(validateArguments(d, "test", basicTestHandler, true), NotNil)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

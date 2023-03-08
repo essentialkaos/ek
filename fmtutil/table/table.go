@@ -169,6 +169,10 @@ func (t *Table) Separator() *Table {
 
 // RenderHeaders renders headers
 func (t *Table) RenderHeaders() {
+	if t == nil {
+		return
+	}
+
 	if len(t.columnSizes) == 0 {
 		calculateColumnSizes(t)
 	}

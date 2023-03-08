@@ -31,11 +31,7 @@ func (s *TableSuite) TestNewTable(c *C) {
 }
 
 func (s *TableSuite) TestSetHeaders(c *C) {
-	var t *Table
-
-	c.Assert(t.SetHeaders("abc"), IsNil)
-
-	t = NewTable("abc")
+	t := NewTable("abc")
 
 	c.Assert(t.SetHeaders("abc", "def", "123"), NotNil)
 	c.Assert(t.Headers, HasLen, 3)
@@ -47,22 +43,14 @@ func (s *TableSuite) TestRenderHeaders(c *C) {
 }
 
 func (s *TableSuite) TestSetSizes(c *C) {
-	var t *Table
-
-	c.Assert(t.SetSizes(10, 20, 30), IsNil)
-
-	t = NewTable()
+	t := NewTable()
 
 	c.Assert(t.SetSizes(10, 20, 30), NotNil)
 	c.Assert(t.Sizes, HasLen, 3)
 }
 
 func (s *TableSuite) TestSetAlignments(c *C) {
-	var t *Table
-
-	c.Assert(t.SetAlignments(0, 1, 2), IsNil)
-
-	t = NewTable()
+	t := NewTable()
 
 	c.Assert(t.SetAlignments(0, 1, 2), NotNil)
 	c.Assert(t.Alignment, HasLen, 3)
@@ -72,18 +60,12 @@ func (s *TableSuite) TestHasData(c *C) {
 	t := NewTable("1", "2", "3")
 
 	c.Assert(t.HasData(), Equals, false)
-
 	c.Assert(t.Add(10, "abc", 3.14), NotNil)
-
 	c.Assert(t.HasData(), Equals, true)
 }
 
 func (s *TableSuite) TestAdd(c *C) {
-	var t *Table
-
-	c.Assert(t.Add(10, "abc", 3.14), IsNil)
-
-	t = NewTable()
+	t := NewTable()
 
 	c.Assert(t.Add(), NotNil)
 	c.Assert(t.Add(10, "abc", 3.14), NotNil)
@@ -91,22 +73,14 @@ func (s *TableSuite) TestAdd(c *C) {
 }
 
 func (s *TableSuite) TestPrint(c *C) {
-	var t *Table
-
-	c.Assert(t.Print(10, "abc", 3.14), IsNil)
-
-	t = NewTable("ABCD", "ABCDEF", "ABCD")
+	t := NewTable("ABCD", "ABCDEF", "ABCD")
 
 	c.Assert(t.Print(10, "abc", 3.14), NotNil)
 	c.Assert(t.Print(10, "abµ", 3.14, 400), NotNil)
 }
 
 func (s *TableSuite) TestSeparator(c *C) {
-	var t *Table
-
-	c.Assert(t.Separator(), IsNil)
-
-	t = NewTable()
+	t := NewTable()
 	c.Assert(t.Separator(), NotNil)
 
 	t = NewTable()
@@ -119,11 +93,7 @@ func (s *TableSuite) TestSeparator(c *C) {
 }
 
 func (s *TableSuite) TestRender(c *C) {
-	var t *Table
-
-	c.Assert(t.Render(), IsNil)
-
-	t = NewTable()
+	t := NewTable()
 
 	c.Assert(t.Render(), NotNil)
 	c.Assert(t.Print(), NotNil)
@@ -155,6 +125,21 @@ func (s *TableSuite) TestRender(c *C) {
 func (s *TableSuite) TestPrintWithoutInit(c *C) {
 	t := NewTable()
 	t.Print("abcd", 1234)
+}
+
+func (s *TableSuite) TestNil(c *C) {
+	var t *Table
+
+	c.Assert(t.SetHeaders("abc"), IsNil)
+	c.Assert(t.SetSizes(10, 20, 30), IsNil)
+	c.Assert(t.SetAlignments(0, 1, 2), IsNil)
+	c.Assert(t.Add(10, "abc", 3.14), IsNil)
+	c.Assert(t.Print(10, "abc", 3.14), IsNil)
+	c.Assert(t.Render(), IsNil)
+	c.Assert(t.Separator(), IsNil)
+	c.Assert(t.HasData(), Equals, false)
+
+	c.Assert(func() { t.RenderHeaders() }, NotPanics)
 }
 
 func (s *TableSuite) TestAuxi(c *C) {

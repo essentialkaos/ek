@@ -6,7 +6,14 @@
 * `[lscolors]` `GetColor` returns colors for types of objects (_like directory, block device, link…_)
 * `[lscolors]` Added flag `DisableColors` for disabling all colors in output
 * `[usage]` Methods `Render` marked as deprecated (_use `Print` methods instead_)
+* `[cron]` Code refactoring
+* `[csv]` Code refactoring
+* `[fmtutil/table]` Code refactoring
 * `[usage]` Code refactoring
+* `[cache]` Better tests for panics
+* `[cron]` Better tests for panics
+* `[csv]` Better tests for panics
+* `[fmtutil/table]` Better tests for panics
 
 ### 12.60.1
 
