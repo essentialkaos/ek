@@ -122,3 +122,46 @@ func (s *UsageSuite) TestVersionInfo(c *C) {
 	printNewVersionInfo("1.0.0", "1.1.0", d2)
 	printNewVersionInfo("1.0.0", "1.0.1", d3)
 }
+
+func (s *UsageSuite) TestDepricated(c *C) {
+	i := &Info{}
+	i.Render()
+
+	m := &Command{}
+	m.Render()
+
+	o := &Option{}
+	o.Render()
+
+	e := &Example{}
+	e.Render()
+
+	a := &About{}
+	a.Render()
+}
+
+func (s *UsageSuite) TestNils(c *C) {
+	var i *Info
+	c.Assert(func() { i.AddGroup("test") }, NotPanics)
+	c.Assert(func() { i.AddCommand("test") }, NotPanics)
+	c.Assert(func() { i.AddOption("test") }, NotPanics)
+	c.Assert(func() { i.AddExample("test") }, NotPanics)
+	c.Assert(func() { i.AddRawExample("test") }, NotPanics)
+	c.Assert(func() { i.AddSpoiler("test") }, NotPanics)
+	c.Assert(func() { i.BoundOptions("test", "test") }, NotPanics)
+	c.Assert(func() { i.GetCommand("test") }, NotPanics)
+	c.Assert(func() { i.GetOption("test") }, NotPanics)
+	c.Assert(func() { i.Print() }, NotPanics)
+
+	var m *Command
+	c.Assert(func() { m.Print() }, NotPanics)
+
+	var o *Option
+	c.Assert(func() { o.Print() }, NotPanics)
+
+	var e *Example
+	c.Assert(func() { e.Print() }, NotPanics)
+
+	var a *About
+	c.Assert(func() { a.Print() }, NotPanics)
+}

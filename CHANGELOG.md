@@ -5,6 +5,8 @@
 * `[lscolors]` Sub-package moved from `fmtc` to root of the package
 * `[lscolors]` `GetColor` returns colors for types of objects (_like directory, block device, link…_)
 * `[lscolors]` Added flag `DisableColors` for disabling all colors in output
+* `[usage]` Methods `Render` marked as deprecated (_use `Print` methods instead_)
+* `[usage]` Code refactoring
 
 ### 12.60.1
 
@@ -268,7 +270,7 @@
 * `[req]` Method `Query.String()` renamed to `Query.Encode()`
 * `[passwd]` Added method `GenPasswordVariations` and `GenPasswordBytesVariations` for generating password variations with possible typos fixes
 * `[passwd]` Added methods `HashBytes`, `CheckBytes`, `GenPasswordBytes` and `GetPasswordBytesStrength`
-* `[passwd]` Method `Encrypt` marked as depricated (_use `Hash` method instead_)
+* `[passwd]` Method `Encrypt` marked as deprecated (_use `Hash` method instead_)
 * `[passwd]` Added more usage examples
 
 ### 12.34.0

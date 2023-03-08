@@ -147,19 +147,23 @@ func NewInfo(args ...string) *Info {
 
 // AddGroup adds new command group
 func (i *Info) AddGroup(group string) {
+	if i == nil {
+		return
+	}
+
 	i.curGroup = group
 }
 
 // AddCommand adds command (name, description, args)
 func (i *Info) AddCommand(a ...string) {
+	if i == nil || len(a) < 2 {
+		return
+	}
+
 	group := "Commands"
 
 	if i.curGroup != "" {
 		group = i.curGroup
-	}
-
-	if len(a) < 2 {
-		return
 	}
 
 	i.Commands = append(
@@ -176,7 +180,7 @@ func (i *Info) AddCommand(a ...string) {
 
 // AddOption adds option (name, description, args)
 func (i *Info) AddOption(a ...string) {
-	if len(a) < 2 {
+	if i == nil || len(a) < 2 {
 		return
 	}
 
@@ -196,7 +200,7 @@ func (i *Info) AddOption(a ...string) {
 
 // AddExample adds example of application usage
 func (i *Info) AddExample(a ...string) {
-	if len(a) == 0 {
+	if i == nil || len(a) == 0 {
 		return
 	}
 
@@ -207,7 +211,7 @@ func (i *Info) AddExample(a ...string) {
 
 // AddRawExample adds example of application usage without command prefix
 func (i *Info) AddRawExample(a ...string) {
-	if len(a) == 0 {
+	if i == nil || len(a) == 0 {
 		return
 	}
 
@@ -218,11 +222,19 @@ func (i *Info) AddRawExample(a ...string) {
 
 // AddSpoiler adds spoiler
 func (i *Info) AddSpoiler(spoiler string) {
+	if i == nil {
+		return
+	}
+
 	i.Spoiler = spoiler
 }
 
 // BoundOptions bounds command with options
 func (i *Info) BoundOptions(cmd string, options ...string) {
+	if i == nil || cmd == "" {
+		return
+	}
+
 	for _, command := range i.Commands {
 		if command.Name == cmd {
 			for _, opt := range options {
@@ -237,6 +249,10 @@ func (i *Info) BoundOptions(cmd string, options ...string) {
 
 // GetCommand tries to find command with given name
 func (i *Info) GetCommand(name string) *Command {
+	if i == nil {
+		return nil
+	}
+
 	for _, command := range i.Commands {
 		if command.Name == name {
 			return command
@@ -248,6 +264,10 @@ func (i *Info) GetCommand(name string) *Command {
 
 // GetOption tries to find option with given name
 func (i *Info) GetOption(name string) *Option {
+	if i == nil {
+		return nil
+	}
+
 	name, _ = parseOptionName(name)
 
 	for _, option := range i.Options {
@@ -259,8 +279,19 @@ func (i *Info) GetOption(name string) *Option {
 	return nil
 }
 
-// Render prints usage info to console
+// Render prints usage info
+//
+// Deprecated: Use method Print instead
 func (i *Info) Render() {
+	i.Print()
+}
+
+// Print prints usage info
+func (i *Info) Print() {
+	if i == nil {
+		return
+	}
+
 	usageMessage := "\n{*}Usage:{!} " + i.AppNameColorTag + i.Name + "{!}"
 
 	if len(i.Options) != 0 {
@@ -283,15 +314,15 @@ func (i *Info) Render() {
 	}
 
 	if len(i.Commands) != 0 {
-		renderCommands(i)
+		printCommands(i)
 	}
 
 	if len(i.Options) != 0 {
-		renderOptions(i)
+		printOptions(i)
 	}
 
 	if len(i.Examples) != 0 {
-		renderExamples(i)
+		printExamples(i)
 	}
 
 	fmtc.NewLine()
@@ -319,8 +350,33 @@ func (o *Option) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Render renders info about command
+// Render prints info about command
+//
+// Deprecated: Use method Print instead
 func (c *Command) Render() {
+	c.Print()
+}
+
+// Render prints info about option
+//
+// Deprecated: Use method Print instead
+func (o *Option) Render() {
+	o.Print()
+}
+
+// Render prints usage example
+//
+// Deprecated: Use method Print instead
+func (e *Example) Render() {
+	e.Print()
+}
+
+// Print prints info about command
+func (c *Command) Print() {
+	if c == nil {
+		return
+	}
+
 	colorTag := strutil.Q(DEFAULT_COMMANDS_COLOR_TAG, c.ColorTag)
 	size := getCommandSize(c)
 	useBreadcrumbs := true
@@ -335,7 +391,7 @@ func (c *Command) Render() {
 	fmtc.Printf("  "+colorTag+"%s{!}", c.Name)
 
 	if len(c.Args) != 0 {
-		fmtc.Print(" " + renderArgs(c.Args...))
+		fmtc.Print(" " + printArgs(c.Args...))
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
@@ -344,8 +400,12 @@ func (c *Command) Render() {
 	fmtc.NewLine()
 }
 
-// Render renders info about option
-func (o *Option) Render() {
+// Print prints info about option
+func (o *Option) Print() {
+	if o == nil {
+		return
+	}
+
 	colorTag := strutil.Q(DEFAULT_OPTIONS_COLOR_TAG, o.ColorTag)
 	size := getOptionSize(o)
 	useBreadcrumbs := true
@@ -360,7 +420,7 @@ func (o *Option) Render() {
 	fmtc.Printf("  "+colorTag+"%s{!}", formatOptionName(o))
 
 	if o.Arg != "" {
-		fmtc.Print(" " + renderArgs(o.Arg))
+		fmtc.Print(" " + printArgs(o.Arg))
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
@@ -369,8 +429,12 @@ func (o *Option) Render() {
 	fmtc.NewLine()
 }
 
-// Render renders usage example
-func (e *Example) Render() {
+// Print prints usage example
+func (e *Example) Print() {
+	if e == nil {
+		return
+	}
+
 	appName := os.Args[0]
 
 	if e.info != nil {
@@ -390,8 +454,19 @@ func (e *Example) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Render prints version info to console
+// Render prints version info
+//
+// Deprecated: Use method Print instead
 func (a *About) Render() {
+	a.Print()
+}
+
+// Print prints version info
+func (a *About) Print() {
+	if a == nil {
+		return
+	}
+
 	nc := strutil.Q(a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
 	vc := strutil.Q(a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG)
 
@@ -445,8 +520,8 @@ func (a *About) Render() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// renderCommands renders all supported commands
-func renderCommands(info *Info) {
+// printCommands prints all supported commands
+func printCommands(info *Info) {
 	var curGroup string
 
 	for _, command := range info.Commands {
@@ -455,27 +530,27 @@ func renderCommands(info *Info) {
 			curGroup = command.Group
 		}
 
-		command.Render()
+		command.Print()
 	}
 }
 
-// renderOptions renders all supported options
-func renderOptions(info *Info) {
+// printOptions prints all supported options
+func printOptions(info *Info) {
 	printGroupHeader("Options")
 
 	for _, option := range info.Options {
-		option.Render()
+		option.Print()
 	}
 }
 
-// renderExamples renders all usage examples
-func renderExamples(info *Info) {
+// printExamples prints all usage examples
+func printExamples(info *Info) {
 	printGroupHeader("Examples")
 
 	total := len(info.Examples)
 
 	for index, example := range info.Examples {
-		example.Render()
+		example.Print()
 
 		if index < total-1 {
 			fmtc.NewLine()
@@ -483,8 +558,8 @@ func renderExamples(info *Info) {
 	}
 }
 
-// renderArgs renders args with colors
-func renderArgs(args ...string) string {
+// printArgs prints arguments with colors
+func printArgs(args ...string) string {
 	var result string
 
 	for _, a := range args {
@@ -549,7 +624,7 @@ func getMaxOptionSize(options []*Option) int {
 	return size
 }
 
-// getOptionSize calculate rendered command size
+// getOptionSize calculates final command size
 func getCommandSize(cmd *Command) int {
 	size := strutil.Len(cmd.Name) + 2
 
@@ -564,7 +639,7 @@ func getCommandSize(cmd *Command) int {
 	return size
 }
 
-// getOptionSize calculate rendered option size
+// getOptionSize calculates final option size
 func getOptionSize(opt *Option) int {
 	var size int
 
