@@ -98,9 +98,9 @@ func (s *CacheSuite) TestExpiration(c *C) {
 func (s *CacheSuite) TestNil(c *C) {
 	var cache *Cache
 
-	cache.Set("1", "TEST")
-	cache.Delete("1")
-	cache.Flush()
+	c.Assert(func() { cache.Set("1", "TEST") }, NotPanics)
+	c.Assert(func() { cache.Delete("1") }, NotPanics)
+	c.Assert(func() { cache.Flush() }, NotPanics)
 
 	c.Assert(cache.Size(), Equals, 0)
 	c.Assert(cache.Expired(), Equals, 0)

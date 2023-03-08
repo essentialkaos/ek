@@ -61,52 +61,52 @@ func (ls *LogSuite) TestErrors(c *C) {
 	err := l.Flush()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Reopen()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Print(DEBUG, "test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Debug("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Info("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Warn("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Error("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Crit("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Aux("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, DeepEquals, ErrLoggerIsNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
 
 	_, err = New("/_not_exist_", 0644)
 
@@ -485,17 +485,17 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 func (ls *LogSuite) TestNilLogger(c *C) {
 	var l *Logger
 
-	c.Assert(l.Reopen(), Equals, ErrLoggerIsNil)
-	c.Assert(l.MinLevel(1), Equals, ErrLoggerIsNil)
-	c.Assert(l.Set("", 0644), Equals, ErrLoggerIsNil)
-	c.Assert(l.Print(CRIT, ""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Flush(), Equals, ErrLoggerIsNil)
-	c.Assert(l.Debug(""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Info(""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Warn(""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Error(""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Crit(""), Equals, ErrLoggerIsNil)
-	c.Assert(l.Aux(""), Equals, ErrLoggerIsNil)
+	c.Assert(l.Reopen(), Equals, ErrNilLogger)
+	c.Assert(l.MinLevel(1), Equals, ErrNilLogger)
+	c.Assert(l.Set("", 0644), Equals, ErrNilLogger)
+	c.Assert(l.Print(CRIT, ""), Equals, ErrNilLogger)
+	c.Assert(l.Flush(), Equals, ErrNilLogger)
+	c.Assert(l.Debug(""), Equals, ErrNilLogger)
+	c.Assert(l.Info(""), Equals, ErrNilLogger)
+	c.Assert(l.Warn(""), Equals, ErrNilLogger)
+	c.Assert(l.Error(""), Equals, ErrNilLogger)
+	c.Assert(l.Crit(""), Equals, ErrNilLogger)
+	c.Assert(l.Aux(""), Equals, ErrNilLogger)
 
-	l.EnableBufIO(time.Second)
+	c.Assert(func() { l.EnableBufIO(time.Second) }, NotPanics)
 }

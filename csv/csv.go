@@ -17,7 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Reader is reader struct
+// Reader is CSV reader struct
 type Reader struct {
 	Comma rune
 	br    *bufio.Reader
@@ -27,6 +27,9 @@ type Reader struct {
 
 // ErrEmptyDest is returned by the ReadTo method if empty destintation slice was given
 var ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
+
+// ErrNilReader is returned when reader struct is nil
+var ErrNilReader = errors.New("Reader is nil")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -42,6 +45,10 @@ func NewReader(r io.Reader) *Reader {
 
 // Read reads line from CSV file
 func (r *Reader) Read() ([]string, error) {
+	if r == nil {
+		return nil, ErrNilReader
+	}
+
 	str, _, err := r.br.ReadLine()
 
 	if err != nil || len(str) == 0 {
@@ -53,6 +60,10 @@ func (r *Reader) Read() ([]string, error) {
 
 // ReadTo reads data to given slice
 func (r *Reader) ReadTo(dst []string) error {
+	if r == nil {
+		return ErrNilReader
+	}
+
 	if len(dst) == 0 {
 		return ErrEmptyDest
 	}

@@ -85,8 +85,8 @@ type optionName struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrOptionsIsNil returns if options struct is nil
-var ErrOptionsIsNil = fmt.Errorf("Options struct is nil")
+// ErrNilOptions returns if options struct is nil
+var ErrNilOptions = fmt.Errorf("Options struct is nil")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -98,7 +98,7 @@ var global *Options
 // Add adds a new option
 func (opts *Options) Add(name string, option *V) error {
 	if opts == nil {
-		return ErrOptionsIsNil
+		return ErrNilOptions
 	}
 
 	if !opts.initialized {
@@ -338,7 +338,7 @@ func (opts *Options) Has(name string) bool {
 // Parse parses slice with raw options
 func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error) {
 	if opts == nil {
-		return nil, []error{ErrOptionsIsNil}
+		return nil, []error{ErrNilOptions}
 	}
 
 	var errs []error

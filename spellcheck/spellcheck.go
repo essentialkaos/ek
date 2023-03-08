@@ -72,7 +72,7 @@ func Train(words []string) *Model {
 
 // Correct corrects given value
 func (m *Model) Correct(word string) string {
-	if len(m.terms) == 0 {
+	if m == nil || len(m.terms) == 0 {
 		return word
 	}
 
@@ -99,7 +99,7 @@ func (m *Model) Correct(word string) string {
 
 // Suggest suggests words for given word or word part
 func (m *Model) Suggest(word string, max int) []string {
-	if len(m.terms) == 0 {
+	if m == nil || len(m.terms) == 0 {
 		return []string{word}
 	}
 

@@ -1,5 +1,31 @@
 ## Changelog
 
+### 12.61.0
+
+* `[lscolors]` Sub-package moved from `fmtc` to root of the package
+* `[lscolors]` `GetColor` returns colors for types of objects (_like directory, block device, link…_)
+* `[lscolors]` Added flag `DisableColors` for disabling all colors in output
+* `[usage]` Methods `Render` marked as deprecated (_use `Print` methods instead_)
+* `[cron]` Code refactoring
+* `[csv]` Code refactoring
+* `[fmtutil/table]` Code refactoring
+* `[knf]` Code refactoring
+* `[options]` Code refactoring
+* `[progress]` Code refactoring
+* `[req]` Code refactoring
+* `[spellcheck]` Code refactoring
+* `[tmp]` Code refactoring
+* `[usage]` Code refactoring
+* `[cache]` Better tests for panics
+* `[cron]` Better tests for panics
+* `[csv]` Better tests for panics
+* `[fmtutil/table]` Better tests for panics
+* `[log]` Better tests for panics
+* `[progress]` Better tests for panics
+* `[req]` Better tests for panics
+* `[spellcheck]` Better tests for panics
+* `[tmp]` Better tests for panics
+
 ### 12.60.1
 
 * `[initsystem]` Improved systemd support
@@ -262,7 +288,7 @@
 * `[req]` Method `Query.String()` renamed to `Query.Encode()`
 * `[passwd]` Added method `GenPasswordVariations` and `GenPasswordBytesVariations` for generating password variations with possible typos fixes
 * `[passwd]` Added methods `HashBytes`, `CheckBytes`, `GenPasswordBytes` and `GetPasswordBytesStrength`
-* `[passwd]` Method `Encrypt` marked as depricated (_use `Hash` method instead_)
+* `[passwd]` Method `Encrypt` marked as deprecated (_use `Hash` method instead_)
 * `[passwd]` Added more usage examples
 
 ### 12.34.0

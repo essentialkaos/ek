@@ -32,6 +32,11 @@ type Temp struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrNilTemp is returned if temp struct is nil
+var ErrNilTemp = fmt.Errorf("Temp struct is nil")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Dir is path to temporary directory
 var Dir = os.TempDir()
 
@@ -75,7 +80,7 @@ func NewTemp(dir ...string) (*Temp, error) {
 // MkDir creates temporary directory
 func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	if t == nil {
-		return "", fmt.Errorf("Temp struct is nil")
+		return "", ErrNilTemp
 	}
 
 	name := strutil.Q(nameSuffix...)
@@ -94,7 +99,7 @@ func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 // MkFile creates temporary file
 func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	if t == nil {
-		return nil, "", fmt.Errorf("Temp struct is nil")
+		return nil, "", ErrNilTemp
 	}
 
 	name := strutil.Q(nameSuffix...)
@@ -112,6 +117,10 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 
 // MkName returns name for temporary object (file or directory)
 func (t *Temp) MkName(nameSuffix ...string) string {
+	if t == nil {
+		return ""
+	}
+
 	name := strutil.Q(nameSuffix...)
 	tmpObj := getTempName(t.Dir, name)
 	t.objects = append(t.objects, tmpObj)

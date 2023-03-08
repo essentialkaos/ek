@@ -368,6 +368,27 @@ func (s *ProgressSuite) TestAux(c *C) {
 	c.Assert(formatSpeedNum(123.0*1000.0*1000.0*1000.0), Equals, "   123B/s")
 }
 
+func (s *ProgressSuite) TestNil(c *C) {
+	var pb *Bar
+
+	c.Assert(func() { pb.Start() }, NotPanics)
+	c.Assert(func() { pb.Finish() }, NotPanics)
+	c.Assert(func() { pb.UpdateSettings(Settings{}) }, NotPanics)
+	c.Assert(func() { pb.SetName("test") }, NotPanics)
+	c.Assert(func() { pb.SetTotal(100.0) }, NotPanics)
+	c.Assert(func() { pb.SetCurrent(100.0) }, NotPanics)
+	c.Assert(func() { pb.Add(1) }, NotPanics)
+	c.Assert(func() { pb.Add64(1) }, NotPanics)
+
+	c.Assert(pb.Name(), Equals, "")
+	c.Assert(pb.Total(), Equals, int64(0))
+	c.Assert(pb.Current(), Equals, int64(0))
+	c.Assert(pb.IsFinished(), Equals, false)
+	c.Assert(pb.IsStarted(), Equals, false)
+	c.Assert(pb.Reader(nil), Equals, nil)
+	c.Assert(pb.Writer(nil), Equals, nil)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (r *DummyReader) Read(p []byte) (int, error) {

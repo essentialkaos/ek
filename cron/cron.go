@@ -149,7 +149,11 @@ func Parse(expr string) (*Expr, error) {
 // codebeat:disable[LOC]
 
 // IsDue check if current moment is match for expression
-func (expr *Expr) IsDue(args ...time.Time) bool {
+func (e *Expr) IsDue(args ...time.Time) bool {
+	if e == nil {
+		return false
+	}
+
 	var t time.Time
 
 	if len(args) >= 1 {
@@ -158,23 +162,23 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 		t = time.Now()
 	}
 
-	if !contains(expr.minutes, uint8(t.Minute())) {
+	if !contains(e.minutes, uint8(t.Minute())) {
 		return false
 	}
 
-	if !contains(expr.hours, uint8(t.Hour())) {
+	if !contains(e.hours, uint8(t.Hour())) {
 		return false
 	}
 
-	if !contains(expr.doms, uint8(t.Day())) {
+	if !contains(e.doms, uint8(t.Day())) {
 		return false
 	}
 
-	if !contains(expr.months, uint8(t.Month())) {
+	if !contains(e.months, uint8(t.Month())) {
 		return false
 	}
 
-	if !contains(expr.dows, uint8(t.Weekday())) {
+	if !contains(e.dows, uint8(t.Weekday())) {
 		return false
 	}
 
@@ -185,7 +189,11 @@ func (expr *Expr) IsDue(args ...time.Time) bool {
 // codebeat:disable[BLOCK_NESTING,LOC,CYCLO]
 
 // Next get time of next matched moment
-func (expr *Expr) Next(args ...time.Time) time.Time {
+func (e *Expr) Next(args ...time.Time) time.Time {
+	if e == nil {
+		return time.Time{}
+	}
+
 	var t time.Time
 
 	if len(args) >= 1 {
@@ -196,20 +204,20 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 
 	year := t.Year()
 
-	mStart := getNearPrevIndex(expr.months, uint8(t.Month()))
-	dStart := getNearPrevIndex(expr.doms, uint8(t.Day()))
+	mStart := getNearPrevIndex(e.months, uint8(t.Month()))
+	dStart := getNearPrevIndex(e.doms, uint8(t.Day()))
 
 	for y := year; y < year+5; y++ {
-		for i := mStart; i < len(expr.months); i++ {
-			for j := dStart; j < len(expr.doms); j++ {
-				for k := 0; k < len(expr.hours); k++ {
-					for l := 0; l < len(expr.minutes); l++ {
+		for i := mStart; i < len(e.months); i++ {
+			for j := dStart; j < len(e.doms); j++ {
+				for k := 0; k < len(e.hours); k++ {
+					for l := 0; l < len(e.minutes); l++ {
 						d := time.Date(
 							y,
-							time.Month(expr.months[i]),
-							int(expr.doms[j]),
-							int(expr.hours[k]),
-							int(expr.minutes[l]),
+							time.Month(e.months[i]),
+							int(e.doms[j]),
+							int(e.hours[k]),
+							int(e.minutes[l]),
 							0, 0, t.Location(),
 						)
 
@@ -218,11 +226,11 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 						}
 
 						switch {
-						case uint8(d.Month()) != expr.months[i],
-							uint8(d.Day()) != expr.doms[j],
-							uint8(d.Hour()) != expr.hours[k],
-							uint8(d.Minute()) != expr.minutes[l],
-							!contains(expr.dows, uint8(d.Weekday())):
+						case uint8(d.Month()) != e.months[i],
+							uint8(d.Day()) != e.doms[j],
+							uint8(d.Hour()) != e.hours[k],
+							uint8(d.Minute()) != e.minutes[l],
+							!contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -241,7 +249,11 @@ func (expr *Expr) Next(args ...time.Time) time.Time {
 }
 
 // Prev get time of prev matched moment
-func (expr *Expr) Prev(args ...time.Time) time.Time {
+func (e *Expr) Prev(args ...time.Time) time.Time {
+	if e == nil {
+		return time.Time{}
+	}
+
 	var t time.Time
 
 	if len(args) >= 1 {
@@ -252,20 +264,20 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 
 	year := t.Year()
 
-	mStart := getNearNextIndex(expr.months, uint8(t.Month()))
-	dStart := getNearNextIndex(expr.doms, uint8(t.Day()))
+	mStart := getNearNextIndex(e.months, uint8(t.Month()))
+	dStart := getNearNextIndex(e.doms, uint8(t.Day()))
 
 	for y := year; y >= year-5; y-- {
 		for i := mStart; i >= 0; i-- {
 			for j := dStart; j >= 0; j-- {
-				for k := len(expr.hours) - 1; k >= 0; k-- {
-					for l := len(expr.minutes) - 1; l >= 0; l-- {
+				for k := len(e.hours) - 1; k >= 0; k-- {
+					for l := len(e.minutes) - 1; l >= 0; l-- {
 						d := time.Date(
 							y,
-							time.Month(expr.months[i]),
-							int(expr.doms[j]),
-							int(expr.hours[k]),
-							int(expr.minutes[l]),
+							time.Month(e.months[i]),
+							int(e.doms[j]),
+							int(e.hours[k]),
+							int(e.minutes[l]),
 							0, 0, t.Location(),
 						)
 
@@ -274,11 +286,11 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 						}
 
 						switch {
-						case uint8(d.Month()) != expr.months[i],
-							uint8(d.Day()) != expr.doms[j],
-							uint8(d.Hour()) != expr.hours[k],
-							uint8(d.Minute()) != expr.minutes[l],
-							!contains(expr.dows, uint8(d.Weekday())):
+						case uint8(d.Month()) != e.months[i],
+							uint8(d.Day()) != e.doms[j],
+							uint8(d.Hour()) != e.hours[k],
+							uint8(d.Minute()) != e.minutes[l],
+							!contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -287,10 +299,10 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 				}
 			}
 
-			dStart = len(expr.doms) - 1
+			dStart = len(e.doms) - 1
 		}
 
-		mStart = len(expr.months) - 1
+		mStart = len(e.months) - 1
 	}
 
 	return time.Unix(0, 0)
@@ -299,8 +311,12 @@ func (expr *Expr) Prev(args ...time.Time) time.Time {
 // codebeat:enable[BLOCK_NESTING,LOC,CYCLO]
 
 // String return raw expression
-func (expr *Expr) String() string {
-	return expr.expression
+func (e *Expr) String() string {
+	if e == nil {
+		return "Expr{nil}"
+	}
+
+	return e.expression
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

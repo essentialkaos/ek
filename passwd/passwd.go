@@ -53,6 +53,7 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Encrypt creates hash and encrypts it with salt and pepper
+//
 // Deprecated: Use Hash method instead
 func Encrypt(password, pepper string) (string, error) {
 	return Hash(password, pepper)

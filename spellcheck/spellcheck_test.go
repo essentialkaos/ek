@@ -45,3 +45,10 @@ func (s *SpellcheckSuite) TestSpellcheck(c *C) {
 	c.Assert(model.Suggest("tes", 3), DeepEquals, []string{"test", "", "TeStInG"})
 	c.Assert(model.Suggest("tes", 1), DeepEquals, []string{"test"})
 }
+
+func (s *SpellcheckSuite) TestNil(c *C) {
+	var m *Model
+
+	c.Assert(m.Correct("test"), Equals, "test")
+	c.Assert(m.Suggest("test", 1), DeepEquals, []string{"test"})
+}

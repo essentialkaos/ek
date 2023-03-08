@@ -267,3 +267,12 @@ func (s *CronSuite) TestErrors(c *C) {
 	c.Assert(err, ErrorMatches, `Can't parse token "0,1,2-A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 }
+
+func (s *CronSuite) TestNil(c *C) {
+	var e *Expr
+
+	c.Assert(e.IsDue(time.Time{}), Equals, false)
+	c.Assert(e.Next(time.Time{}), DeepEquals, time.Time{})
+	c.Assert(e.Prev(time.Time{}), DeepEquals, time.Time{})
+	c.Assert(e.String(), Equals, "Expr{nil}")
+}

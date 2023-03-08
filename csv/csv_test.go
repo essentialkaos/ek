@@ -138,6 +138,18 @@ func (s *CSVSuite) TestLineParser(c *C) {
 	c.Assert(data, DeepEquals, []string{"A", "B"})
 }
 
+func (s *CSVSuite) TestNil(c *C) {
+	var r *Reader
+	var b = []string{""}
+
+	_, err := r.Read()
+
+	c.Assert(err, DeepEquals, ErrNilReader)
+	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *CSVSuite) BenchmarkRead(c *C) {
 	fd, _ := os.Open(s.dataFile)
 

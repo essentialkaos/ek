@@ -232,17 +232,20 @@ type Engine struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrEngineIsNil is returned if engine struct is nil
-	ErrEngineIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+	// ErrNilEngine is returned if engine struct is nil
+	ErrNilEngine = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
 
-	// ErrClientIsNil is returned if client struct is nil
-	ErrClientIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
+	// ErrNilClient is returned if client struct is nil
+	ErrNilClient = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
 
-	// ErrTransportIsNil is returned if transport is nil
-	ErrTransportIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
+	// ErrNilTransport is returned if transport is nil
+	ErrNilTransport = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
 
-	// ErrDialerIsNil is returned if dialer is nil
-	ErrDialerIsNil = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+	// ErrNilDialer is returned if dialer is nil
+	ErrNilDialer = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+
+	// ErrNilResponse is returned if response is nil
+	ErrNilResponse = RequestError{ERROR_CREATE_REQUEST, "Response is nil"}
 
 	// ErrEmptyURL is returned if given URL is empty
 	ErrEmptyURL = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
@@ -374,22 +377,28 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 
 // SetUserAgent sets user agent based on app name and version
 func (e *Engine) SetUserAgent(app, version string, subs ...string) {
-	if e != nil {
-		e.UserAgent = fmt.Sprintf(
-			"%s/%s (go; %s; %s-%s)",
-			app, version, runtime.Version(),
-			runtime.GOARCH, runtime.GOOS,
-		)
+	if e == nil {
+		return
+	}
 
-		if len(subs) != 0 {
-			e.UserAgent += " " + strings.Join(subs, " ")
-		}
+	e.UserAgent = fmt.Sprintf(
+		"%s/%s (go; %s; %s-%s)",
+		app, version, runtime.Version(),
+		runtime.GOARCH, runtime.GOOS,
+	)
+
+	if len(subs) != 0 {
+		e.UserAgent += " " + strings.Join(subs, " ")
 	}
 }
 
 // SetDialTimeout sets dial timeout
 func (e *Engine) SetDialTimeout(timeout float64) {
-	if e != nil && timeout > 0 {
+	if e == nil {
+		return
+	}
+
+	if timeout > 0 {
 		if e.Dialer == nil {
 			e.dialTimeout = timeout
 		} else {
@@ -400,7 +409,11 @@ func (e *Engine) SetDialTimeout(timeout float64) {
 
 // SetRequestTimeout sets request timeout
 func (e *Engine) SetRequestTimeout(timeout float64) {
-	if e != nil && timeout > 0 {
+	if e == nil {
+		return
+	}
+
+	if timeout > 0 {
 		if e.Dialer == nil {
 			e.requestTimeout = timeout
 		} else {
@@ -408,6 +421,8 @@ func (e *Engine) SetRequestTimeout(timeout float64) {
 		}
 	}
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Do sends request and process response
 func (r Request) Do() (*Response, error) {
@@ -449,19 +464,33 @@ func (r Request) PostFile(file, fieldName string, extraFields map[string]string)
 	return Global.PostFile(r, file, fieldName, extraFields)
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Discard reads response body for closing connection
 func (r *Response) Discard() {
+	if r == nil || r.Body == nil {
+		return
+	}
+
 	io.Copy(io.Discard, r.Body)
 }
 
 // JSON decodes json encoded body
 func (r *Response) JSON(v any) error {
+	if r == nil || r.Body == nil {
+		return ErrNilResponse
+	}
+
 	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
 // Bytes reads response body as byte slice
 func (r *Response) Bytes() []byte {
+	if r == nil || r.Body == nil {
+		return nil
+	}
+
 	defer r.Body.Close()
 	result, _ := io.ReadAll(r.Body)
 	return result
@@ -469,8 +498,14 @@ func (r *Response) Bytes() []byte {
 
 // String reads response body as string
 func (r *Response) String() string {
+	if r == nil {
+		return ""
+	}
+
 	return string(r.Bytes())
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Error shows error message
 func (e RequestError) Error() string {
@@ -530,13 +565,13 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		e.Init()
 	}
 
-	err := checkRequest(r)
+	err := checkEngine(e)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = checkEngine(e)
+	err = checkRequest(r)
 
 	if err != nil {
 		return nil, err
@@ -599,19 +634,19 @@ func checkRequest(r Request) error {
 
 func checkEngine(e *Engine) error {
 	if e == nil {
-		return ErrEngineIsNil
+		return ErrNilEngine
 	}
 
 	if e.Dialer == nil {
-		return ErrDialerIsNil
+		return ErrNilDialer
 	}
 
 	if e.Transport == nil {
-		return ErrTransportIsNil
+		return ErrNilTransport
 	}
 
 	if e.Client == nil {
-		return ErrClientIsNil
+		return ErrNilClient
 	}
 
 	return nil
@@ -660,19 +695,19 @@ func configureMultipartRequest(r *Request, file, fieldName string, extraFields m
 		return err
 	}
 
+	defer fd.Close()
+
 	buf := &bytes.Buffer{}
 	w := multipart.NewWriter(buf)
 	part, err := createFormFile(w, fieldName, file)
 
 	if err != nil {
-		fd.Close()
 		return err
 	}
 
 	_, err = ioCopyFunc(part, fd)
 
 	if err != nil {
-		fd.Close()
 		return err
 	}
 

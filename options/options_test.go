@@ -26,23 +26,6 @@ var _ = Suite(&OptUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *OptUtilSuite) TestNil(c *C) {
-	var opts *Options
-
-	c.Assert(opts.Add("", &V{}), Equals, ErrOptionsIsNil)
-	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, []error{ErrOptionsIsNil})
-	c.Assert(opts.GetS("test"), Equals, "")
-	c.Assert(opts.GetI("test"), Equals, 0)
-	c.Assert(opts.GetB("test"), Equals, false)
-	c.Assert(opts.GetF("test"), Equals, 0.0)
-	c.Assert(opts.Is("test", ""), Equals, false)
-	c.Assert(opts.Has("test"), Equals, false)
-
-	_, errs := opts.Parse([]string{}, Map{"t:": {}})
-
-	c.Assert(errs, DeepEquals, []error{ErrOptionsIsNil})
-}
-
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
@@ -504,19 +487,7 @@ func (s *OptUtilSuite) TestGuessType(c *C) {
 }
 
 func (s *OptUtilSuite) TestArguments(c *C) {
-	var a Arguments
-
-	c.Assert(a.Has(0), Equals, false)
-	c.Assert(a.Get(0).String(), Equals, "")
-	c.Assert(a.Last().String(), Equals, "")
-	_, err := a.Get(0).Int()
-	c.Assert(err, NotNil)
-	_, err = a.Get(0).Float()
-	c.Assert(err, NotNil)
-	v, _ := a.Get(0).Bool()
-	c.Assert(v, Equals, false)
-
-	a = Arguments{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"}
+	a := Arguments{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"}
 
 	c.Assert(a.Has(0), Equals, true)
 	c.Assert(a.Last().String(), Equals, "e.txte")
@@ -645,4 +616,35 @@ func (s *OptUtilSuite) TestArgumentsPathShorthand(c *C) {
 	m, err = a.Get(0).Match("/my/test/path/to/*.jpg")
 	c.Assert(err, IsNil)
 	c.Assert(m, Equals, true)
+}
+
+func (s *OptUtilSuite) TestNilOptions(c *C) {
+	var opts *Options
+
+	c.Assert(opts.Add("", &V{}), Equals, ErrNilOptions)
+	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, []error{ErrNilOptions})
+	c.Assert(opts.GetS("test"), Equals, "")
+	c.Assert(opts.GetI("test"), Equals, 0)
+	c.Assert(opts.GetB("test"), Equals, false)
+	c.Assert(opts.GetF("test"), Equals, 0.0)
+	c.Assert(opts.Is("test", ""), Equals, false)
+	c.Assert(opts.Has("test"), Equals, false)
+
+	_, errs := opts.Parse([]string{}, Map{"t:": {}})
+
+	c.Assert(errs, DeepEquals, []error{ErrNilOptions})
+}
+
+func (s *OptUtilSuite) TestNilArguments(c *C) {
+	var a Arguments
+
+	c.Assert(a.Has(0), Equals, false)
+	c.Assert(a.Get(0).String(), Equals, "")
+	c.Assert(a.Last().String(), Equals, "")
+	_, err := a.Get(0).Int()
+	c.Assert(err, NotNil)
+	_, err = a.Get(0).Float()
+	c.Assert(err, NotNil)
+	v, _ := a.Get(0).Bool()
+	c.Assert(v, Equals, false)
 }
