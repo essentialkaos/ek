@@ -97,6 +97,11 @@ type passThruWriter struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrNilProgress returns if progress struct is nil
+var ErrNilProgress = fmt.Errorf("Progress struct is nil")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // DefaultSettings is default progress bar settings
 var DefaultSettings = Settings{
 	RefreshRate:       100 * time.Millisecond,
@@ -132,6 +137,10 @@ func New(total int64, name string) *Bar {
 
 // Start starts progress processing
 func (b *Bar) Start() {
+	if b == nil {
+		return
+	}
+
 	if b.IsStarted() && !b.IsFinished() {
 		return
 	}
@@ -159,6 +168,10 @@ func (b *Bar) Start() {
 
 // Finish finishes progress processing
 func (b *Bar) Finish() {
+	if b == nil {
+		return
+	}
+
 	b.mu.RLock()
 
 	if b.finished || !b.started {
@@ -175,6 +188,10 @@ func (b *Bar) Finish() {
 
 // UpdateSettings updates progress settings
 func (b *Bar) UpdateSettings(s Settings) {
+	if b == nil {
+		return
+	}
+
 	b.mu.Lock()
 	b.settings = s
 	b.mu.Unlock()
@@ -182,6 +199,10 @@ func (b *Bar) UpdateSettings(s Settings) {
 
 // SetName sets progress bar name
 func (b *Bar) SetName(name string) {
+	if b == nil {
+		return
+	}
+
 	b.mu.Lock()
 	b.name = name
 	b.mu.Unlock()
@@ -189,6 +210,10 @@ func (b *Bar) SetName(name string) {
 
 // Name returns progress bar name
 func (b *Bar) Name() string {
+	if b == nil {
+		return ""
+	}
+
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.name
@@ -196,6 +221,10 @@ func (b *Bar) Name() string {
 
 // SetTotal sets total progress bar value
 func (b *Bar) SetTotal(v int64) {
+	if b == nil {
+		return
+	}
+
 	b.mu.Lock()
 
 	if b.passThruCalc == nil {
@@ -211,30 +240,54 @@ func (b *Bar) SetTotal(v int64) {
 
 // Total returns total progress bar value
 func (b *Bar) Total() int64 {
+	if b == nil {
+		return 0
+	}
+
 	return atomic.LoadInt64(&b.total)
 }
 
 // SetCurrent sets current progress bar value
 func (b *Bar) SetCurrent(v int64) {
+	if b == nil {
+		return
+	}
+
 	atomic.StoreInt64(&b.current, v)
 }
 
 // Current returns current progress bar value
 func (b *Bar) Current() int64 {
+	if b == nil {
+		return 0
+	}
+
 	return atomic.LoadInt64(&b.current)
 }
 
 func (b *Bar) Add(v int) {
+	if b == nil {
+		return
+	}
+
 	atomic.AddInt64(&b.current, int64(v))
 }
 
 // Add64 adds given value ti
 func (b *Bar) Add64(v int64) {
+	if b == nil {
+		return
+	}
+
 	atomic.AddInt64(&b.current, v)
 }
 
 // IsFinished returns true if progress proccesing is finished
 func (b *Bar) IsFinished() bool {
+	if b == nil {
+		return false
+	}
+
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.finished
@@ -242,6 +295,10 @@ func (b *Bar) IsFinished() bool {
 
 // IsStarted returns true if progress proccesing is started
 func (b *Bar) IsStarted() bool {
+	if b == nil {
+		return false
+	}
+
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.started
@@ -249,6 +306,10 @@ func (b *Bar) IsStarted() bool {
 
 // Reader creates and returns pass thru proxy reader
 func (b *Bar) Reader(r io.Reader) io.Reader {
+	if b == nil {
+		return nil
+	}
+
 	if b.reader != nil {
 		b.reader.Reader = r
 	} else {
@@ -263,6 +324,10 @@ func (b *Bar) Reader(r io.Reader) io.Reader {
 
 // Writer creates and returns pass thru proxy reader
 func (b *Bar) Writer(w io.Writer) io.Writer {
+	if b == nil {
+		return nil
+	}
+
 	if b.writer != nil {
 		b.writer.Writer = w
 	} else {

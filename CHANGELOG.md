@@ -9,11 +9,16 @@
 * `[cron]` Code refactoring
 * `[csv]` Code refactoring
 * `[fmtutil/table]` Code refactoring
+* `[knf]` Code refactoring
+* `[options]` Code refactoring
+* `[progress]` Code refactoring
 * `[usage]` Code refactoring
 * `[cache]` Better tests for panics
 * `[cron]` Better tests for panics
 * `[csv]` Better tests for panics
 * `[fmtutil/table]` Better tests for panics
+* `[log]` Better tests for panics
+* `[progress]` Better tests for panics
 
 ### 12.60.1
 

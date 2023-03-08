@@ -105,8 +105,8 @@ var TimeFormat = "2006/01/02 15:04:05.000"
 
 // Errors
 var (
-	// ErrLoggerIsNil is returned by Logger struct methods if struct is nil
-	ErrLoggerIsNil = errors.New("Logger is nil or not created properly")
+	// ErrNilLogger is returned by Logger struct methods if struct is nil
+	ErrNilLogger = errors.New("Logger is nil")
 
 	// ErrUnexpectedLevel is returned by the MinLevel method if given level is unknown
 	ErrUnexpectedLevel = errors.New("Unexpected level type")
@@ -216,7 +216,7 @@ func Aux(f string, a ...any) error {
 // Useful for log rotation
 func (l *Logger) Reopen() error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	l.mu.Lock()
@@ -239,7 +239,7 @@ func (l *Logger) Reopen() error {
 // MinLevel defines minimal logging level
 func (l *Logger) MinLevel(level any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	l.mu.Lock()
@@ -281,7 +281,7 @@ func (l *Logger) EnableBufIO(interval time.Duration) {
 // Set changes logger output target
 func (l *Logger) Set(file string, perms os.FileMode) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	l.mu.Lock()
@@ -316,7 +316,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 // Print writes message to logger output
 func (l *Logger) Print(level uint8, f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	l.mu.Lock()
@@ -352,7 +352,7 @@ func (l *Logger) Print(level uint8, f string, a ...any) error {
 // Flush writes buffered data to file
 func (l *Logger) Flush() error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	l.mu.Lock()
@@ -372,7 +372,7 @@ func (l *Logger) Flush() error {
 // Debug writes debug message to logger output
 func (l *Logger) Debug(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(DEBUG, f, a...)
@@ -381,7 +381,7 @@ func (l *Logger) Debug(f string, a ...any) error {
 // Info writes info message to logger output
 func (l *Logger) Info(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(INFO, f, a...)
@@ -390,7 +390,7 @@ func (l *Logger) Info(f string, a ...any) error {
 // Warn writes warning message to logger output
 func (l *Logger) Warn(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(WARN, f, a...)
@@ -399,7 +399,7 @@ func (l *Logger) Warn(f string, a ...any) error {
 // Error writes error message to logger output
 func (l *Logger) Error(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(ERROR, f, a...)
@@ -408,7 +408,7 @@ func (l *Logger) Error(f string, a ...any) error {
 // Crit writes critical message to logger output
 func (l *Logger) Crit(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(CRIT, f, a...)
@@ -417,7 +417,7 @@ func (l *Logger) Crit(f string, a ...any) error {
 // Aux writes unfiltered message (for separators/headers) to logger output
 func (l *Logger) Aux(f string, a ...any) error {
 	if l == nil || l.mu == nil {
-		return ErrLoggerIsNil
+		return ErrNilLogger
 	}
 
 	return l.Print(AUX, f, a...)

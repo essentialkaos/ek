@@ -42,8 +42,8 @@ type PropertyValidator func(config *Config, prop string, value any) error
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrConfigIsNil = errors.New("Config struct is nil")
-	ErrFileNotSet  = errors.New("Path to config file is empty (non initialized struct?)")
+	ErrNilConfig  = errors.New("Config is nil")
+	ErrFileNotSet = errors.New("Path to config file is empty (non initialized struct?)")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -75,7 +75,7 @@ func Read(file string) (*Config, error) {
 // Reload reloads global configuration file
 func Reload() (map[string]bool, error) {
 	if global == nil {
-		return nil, ErrConfigIsNil
+		return nil, ErrNilConfig
 	}
 
 	return global.Reload()
@@ -247,7 +247,7 @@ func Props(section string) []string {
 // returns slice with validation errors
 func Validate(validators []*Validator) []error {
 	if global == nil {
-		return []error{ErrConfigIsNil}
+		return []error{ErrNilConfig}
 	}
 
 	return global.Validate(validators)
@@ -258,7 +258,7 @@ func Validate(validators []*Validator) []error {
 // Reload reloads configuration file
 func (c *Config) Reload() (map[string]bool, error) {
 	if c == nil || c.mx == nil {
-		return nil, ErrConfigIsNil
+		return nil, ErrNilConfig
 	}
 
 	if c.file == "" {
@@ -600,6 +600,10 @@ func (c *Config) Props(section string) []string {
 
 // File returns path to configuration file
 func (c *Config) File() string {
+	if c == nil || c.mx == nil {
+		return ""
+	}
+
 	return c.file
 }
 
@@ -607,7 +611,7 @@ func (c *Config) File() string {
 // returns slice with validation errors
 func (c *Config) Validate(validators []*Validator) []error {
 	if c == nil || c.mx == nil {
-		return []error{ErrConfigIsNil}
+		return []error{ErrNilConfig}
 	}
 
 	var result []error

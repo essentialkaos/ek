@@ -172,7 +172,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	updated, err := Reload()
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.DeepEquals, ErrConfigIsNil)
+	c.Assert(err, check.DeepEquals, ErrNilConfig)
 	c.Assert(updated, check.IsNil)
 
 	c.Assert(GetS("test"), check.Equals, "")
@@ -190,7 +190,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(HasProp("test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
-	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrConfigIsNil})
+	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrNilConfig})
 
 	config := &Config{mx: &sync.RWMutex{}}
 
@@ -434,16 +434,17 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.HasProp("formating:test1"), check.Equals, false)
 	c.Assert(nilConf.Sections(), check.HasLen, 0)
 	c.Assert(nilConf.Props("formating"), check.HasLen, 0)
+	c.Assert(nilConf.File(), check.Equals, "")
 
 	_, err := nilConf.Reload()
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.DeepEquals, ErrConfigIsNil)
+	c.Assert(err, check.DeepEquals, ErrNilConfig)
 
 	errs := nilConf.Validate([]*Validator{})
 
 	c.Assert(errs, check.Not(check.HasLen), 0)
-	c.Assert(errs, check.DeepEquals, []error{ErrConfigIsNil})
+	c.Assert(errs, check.DeepEquals, []error{ErrNilConfig})
 }
 
 func (s *KNFSuite) TestDefault(c *check.C) {
