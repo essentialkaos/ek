@@ -10,38 +10,47 @@ package container
 
 import (
 	"os"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DOCKER = "docker" // Docker
+	DOCKER = "docker" // Docker (Moby)
 	PODMAN = "podman" // Podman
+	LXC    = "lxc"    // LXC
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var dockerEnv = "/.dockerenv"
-var podmanEnv = "/run/.containerenv"
+// mountsFile is path to mounts file for init process
+var mountsFile = "/proc/1/mounts"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetEngine returns container engine name if used
 func GetEngine() string {
-	switch {
-	case isFileExist(dockerEnv):
-		return DOCKER
-	case isFileExist(podmanEnv):
-		return PODMAN
+	mountsData, err := os.ReadFile(mountsFile)
+
+	if err != nil {
+		return ""
 	}
 
-	return ""
+	return guessEngine(string(mountsData))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// isFileExist returns true if given file exist
-func isFileExist(file string) bool {
-	_, err := os.Stat(file)
-	return !os.IsNotExist(err)
+// guessEngine tries to guess container engine based on information from /proc/1/mounts
+func guessEngine(mountsData string) string {
+	switch {
+	case strings.Contains(mountsData, "lxcfs "):
+		return LXC
+	case strings.Contains(mountsData, "workdir=/var/lib/containers"):
+		return PODMAN
+	case strings.Contains(mountsData, "workdir=/var/lib/docker"):
+		return DOCKER
+	}
+
+	return ""
 }
