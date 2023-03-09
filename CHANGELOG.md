@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.62.0
+
+* `[system/containers]` More precise method for checking container engine
+* `[system/containers]` Added LXC support
+
 ### 12.61.0
 
 * `[lscolors]` Sub-package moved from `fmtc` to root of the package
