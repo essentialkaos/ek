@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.62.1
+
+* `[knf]` Fixed bug with using method `Is` for checking for empty values
+
 ### 12.62.0
 
 * `[system/containers]` More precise method for checking container engine
