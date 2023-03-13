@@ -24,11 +24,26 @@ var Prompt = "> "
 // ❗ MaskSymbol is symbol used for masking passwords
 var MaskSymbol = "*"
 
+// ❗ HideLength is flag for hiding password length
+var HideLength = false
+
 // ❗ MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
 
 // ❗ TitleColorTag is fmtc color tag used for input titles
-var TitleColorTag = ""
+var TitleColorTag = "{c}"
+
+// ❗ ErrorColorTag is fmtc color tag used for error messages
+var ErrorColorTag = "{r}"
+
+// ❗ WarnColorTag is fmtc color tag used for warning messages
+var WarnColorTag = "{y}"
+
+// ❗ ErrorPrefix is prefix for error messages
+var ErrorPrefix = ""
+
+// ❗ WarnPrefix is prefix for warning messages
+var WarnPrefix = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 

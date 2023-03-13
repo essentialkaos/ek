@@ -3,6 +3,7 @@
 ### 12.62.1
 
 * `[knf]` Fixed bug with using method `Is` for checking for empty values
+* `[terminal]` Added prefix feature for error and warning messages
 
 ### 12.62.0
 
