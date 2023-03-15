@@ -64,12 +64,19 @@ var tmux int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ReadUI reads user input
-func ReadUI(title string, nonEmpty bool) (string, error) {
+// Read reads user's input
+func Read(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, false)
 }
 
-// ReadAnswer reads user answer for yes/no question
+// ReadUI reads user's input
+//
+// Deprecated: Use method Read instead
+func ReadUI(title string, nonEmpty bool) (string, error) {
+	return Read(title, nonEmpty)
+}
+
+// ReadAnswer reads user's answer for yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	var defaultAnswer string
 

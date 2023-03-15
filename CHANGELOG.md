@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.64.0
+
+* `[terminal]` Method `ReadUI` marked as deprecated (_use method `Read` instead_)
+
 ### 12.63.0
 
 * `[knf]` Fixed bug with using method `Is` for checking for empty values
