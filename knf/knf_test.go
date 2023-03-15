@@ -200,7 +200,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetB("test"), check.Equals, false)
 	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
 	c.Assert(config.GetD("test"), check.Equals, time.Duration(0))
-	c.Assert(config.Is("test", ""), check.Equals, false)
+	c.Assert(config.Is("test", ""), check.Equals, true)
 	c.Assert(config.HasSection("test"), check.Equals, false)
 	c.Assert(config.HasProp("test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
@@ -382,6 +382,7 @@ func (s *KNFSuite) TestIs(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	c.Assert(Is("string:test1", "test"), check.Equals, true)
+	c.Assert(Is("string:test6", ""), check.Equals, true)
 	c.Assert(Is("boolean:test1", true), check.Equals, true)
 	c.Assert(Is("integer:test1", 1), check.Equals, true)
 	c.Assert(Is("integer:test6", 123.4), check.Equals, true)

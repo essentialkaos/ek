@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.63.0
+
+* `[knf]` Fixed bug with using method `Is` for checking for empty values
+* `[terminal]` Added prefix feature for error and warning messages
+
 ### 12.62.0
 
 * `[system/containers]` More precise method for checking container engine

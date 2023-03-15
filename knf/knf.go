@@ -207,7 +207,7 @@ func Is(name string, value any) bool {
 	return global.Is(name, value)
 }
 
-// HasSection checks if section exist
+// HasSection checks if the section exists
 func HasSection(section string) bool {
 	if global == nil {
 		return false
@@ -216,7 +216,7 @@ func HasSection(section string) bool {
 	return global.HasSection(section)
 }
 
-// HasProp checks if property exist
+// HasProp checks if the property is defined and set
 func HasProp(name string) bool {
 	if global == nil {
 		return false
@@ -506,10 +506,6 @@ func (c *Config) Is(name string, value any) bool {
 		return false
 	}
 
-	if !c.HasProp(name) {
-		return false
-	}
-
 	switch t := value.(type) {
 	case string:
 		return c.GetS(name) == t
@@ -534,7 +530,7 @@ func (c *Config) Is(name string, value any) bool {
 	return false
 }
 
-// HasSection checks if section exist
+// HasSection checks if section exists
 func (c *Config) HasSection(section string) bool {
 	if c == nil || c.mx == nil {
 		return false
@@ -546,7 +542,7 @@ func (c *Config) HasSection(section string) bool {
 	return c.data[strings.ToLower(section)] == "!"
 }
 
-// HasProp checks if property exist
+// HasProp checks if property is defined and set
 func (c *Config) HasProp(name string) bool {
 	if c == nil || c.mx == nil {
 		return false
