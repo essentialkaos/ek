@@ -80,6 +80,14 @@ func (s *TimeUtilSuite) TestShortDuration(c *C) {
 	c.Assert(ShortDuration("ABCD"), Equals, "")
 }
 
+func (s *TimeUtilSuite) TestMiniDuration(c *C) {
+	c.Assert(MiniDuration(time.Duration(0)), Equals, "0 ns")
+	c.Assert(MiniDuration(3*time.Second), Equals, "3 s")
+	c.Assert(MiniDuration(3*time.Millisecond), Equals, "3 ms")
+	c.Assert(MiniDuration(3*time.Microsecond), Equals, "3 μs")
+	c.Assert(MiniDuration(3*time.Nanosecond), Equals, "3 ns")
+}
+
 func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
 	c.Assert(SecondsToDuration(1), Equals, time.Second)
 	c.Assert(SecondsToDuration(1.5), Equals, 1500*time.Millisecond)

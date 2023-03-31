@@ -83,6 +83,11 @@ func ShortDuration(d any, highPrecision ...bool) string {
 	return getShortDuration(dur, false)
 }
 
+// MiniDuration returns formatted value for short durations (e.g. s/ms/us/ns)
+func MiniDuration(d time.Duration) string {
+	return getPrettyShortDuration(d)
+}
+
 // Format returns formatted date as a string
 //
 // Interpreted sequences:
@@ -720,20 +725,27 @@ MAINLOOP:
 // codebeat:enable[BLOCK_NESTING]
 
 func getPrettyShortDuration(d time.Duration) string {
-	var duration float64
-
 	switch {
-	case d > time.Millisecond:
-		duration = float64(d) / float64(time.Millisecond)
-		return fmt.Sprintf("%g ms", formatFloat(duration))
+	case d >= time.Second:
+		return fmt.Sprintf(
+			"%g s",
+			formatFloat(float64(d)/float64(time.Second)),
+		)
 
-	case d > time.Microsecond:
-		duration = float64(d) / float64(time.Microsecond)
-		return fmt.Sprintf("%g μs", formatFloat(duration))
+	case d >= time.Millisecond:
+		return fmt.Sprintf(
+			"%g ms",
+			formatFloat(float64(d)/float64(time.Millisecond)),
+		)
+
+	case d >= time.Microsecond:
+		return fmt.Sprintf(
+			"%g μs",
+			formatFloat(float64(d)/float64(time.Microsecond)),
+		)
 
 	default:
 		return fmt.Sprintf("%d ns", d.Nanoseconds())
-
 	}
 }
 

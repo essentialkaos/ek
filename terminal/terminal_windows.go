@@ -47,13 +47,21 @@ var WarnPrefix = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ ReadUI reads user input
+// ❗ Read reads user's input
+func Read(title string, nonEmpty bool) (string, error) {
+	panic("UNSUPPORTED")
+	return "", nil
+}
+
+// ❗ ReadUI reads user's input
+//
+// Deprecated: Use method Read instead
 func ReadUI(title string, nonEmpty bool) (string, error) {
 	panic("UNSUPPORTED")
 	return "", nil
 }
 
-// ❗ ReadAnswer reads user answer for yes/no question
+// ❗ ReadAnswer reads user's answer for yes/no question
 func ReadAnswer(title, defaultAnswer string) (bool, error) {
 	panic("UNSUPPORTED")
 	return true, nil
