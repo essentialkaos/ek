@@ -55,7 +55,7 @@ jobs:
         run: .scripts/nix.sh 12
 
       - name: Send coverage data
-        uses: essentialkaos/goveralls-action@v1
+        uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -151,7 +151,7 @@ jobs:
 
     steps:
       - name: Finish parallel tests
-        uses: essentialkaos/goveralls-action@v1
+        uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
