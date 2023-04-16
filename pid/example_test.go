@@ -14,7 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleCreate() {
-	// You can set default derectory for pid files
+	// You can set default directory for pid files
 	Dir = "/home/user/my-pids"
 
 	err := Create("servicename")

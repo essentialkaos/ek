@@ -14,7 +14,7 @@ type ProcessInfo struct {
 	PID      int            // ❗ PID
 	IsThread bool           // ❗ True if process is thread
 	Parent   int            // ❗ Parent process PID
-	Childs   []*ProcessInfo // ❗ Slice with child processes
+	Children []*ProcessInfo // ❗ Slice with child processes
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

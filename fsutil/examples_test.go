@@ -383,7 +383,7 @@ func ExampleCountLines() {
 func ExampleList() {
 	dir := "/home/john/documents"
 
-	// List all objects including hidden (files and directries
+	// List all objects including hidden (files and directories
 	// with the dot at the beginning of the file name)
 	objects := List(dir, false)
 
@@ -402,7 +402,7 @@ func ExampleList() {
 func ExampleListAll() {
 	dir := "/home/john/documents"
 
-	// List all objects excluding hidden (files and directries
+	// List all objects excluding hidden (files and directories
 	// with the dot at the beginning of the file name)
 	objects := ListAll(dir, true)
 
@@ -421,7 +421,7 @@ func ExampleListAll() {
 func ExampleListAllDirs() {
 	target := "/home/john/documents"
 
-	// List all directories including hidden (directries
+	// List all directories including hidden (directories
 	// with the dot at the beginning of the file name)
 	dirs := ListAllDirs(target, true)
 
@@ -459,7 +459,7 @@ func ExampleListAllFiles() {
 func ExampleListToAbsolute() {
 	dir := "/home/john/documents"
 
-	// List all objects including hidden (files and directries
+	// List all objects including hidden (files and directories
 	// with the dot at the beginning of the file name)
 	objects := List(dir, false)
 

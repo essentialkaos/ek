@@ -22,7 +22,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const _CONFIG_DATA = `
-    [formating]
+    [formatting]
 test1:      1
             test2:2
 
@@ -246,7 +246,7 @@ func (s *KNFSuite) TestSections(c *check.C) {
 		sections,
 		check.DeepEquals,
 		[]string{
-			"formating",
+			"formatting",
 			"string",
 			"boolean",
 			"integer",
@@ -289,15 +289,15 @@ func (s *KNFSuite) TestCheckers(c *check.C) {
 	c.Assert(HasProp("strings:test6"), check.Equals, false)
 }
 
-func (s *KNFSuite) TestFormating(c *check.C) {
+func (s *KNFSuite) TestFormatting(c *check.C) {
 	err := Global(s.ConfigPath)
 
 	c.Assert(global, check.NotNil)
 	c.Assert(err, check.IsNil)
 
-	c.Assert(GetI("formating:test1"), check.Equals, 1)
-	c.Assert(GetI("formating:test2"), check.Equals, 2)
-	c.Assert(GetI("formating:test3"), check.Equals, 3)
+	c.Assert(GetI("formatting:test1"), check.Equals, 1)
+	c.Assert(GetI("formatting:test2"), check.Equals, 2)
+	c.Assert(GetI("formatting:test3"), check.Equals, 3)
 }
 
 func (s *KNFSuite) TestStrings(c *check.C) {
@@ -424,17 +424,17 @@ func (s *KNFSuite) TestMacro(c *check.C) {
 func (s *KNFSuite) TestNil(c *check.C) {
 	var nilConf *Config
 
-	c.Assert(nilConf.GetS("formating:test1"), check.Equals, "")
-	c.Assert(nilConf.GetI("formating:test1"), check.Equals, 0)
-	c.Assert(nilConf.GetF("formating:test1"), check.Equals, 0.0)
-	c.Assert(nilConf.GetB("formating:test1"), check.Equals, false)
-	c.Assert(nilConf.GetM("formating:test1"), check.Equals, os.FileMode(0))
-	c.Assert(nilConf.GetD("formating:test1"), check.Equals, time.Duration(0))
-	c.Assert(nilConf.Is("formating:test1", ""), check.Equals, false)
-	c.Assert(nilConf.HasSection("formating"), check.Equals, false)
-	c.Assert(nilConf.HasProp("formating:test1"), check.Equals, false)
+	c.Assert(nilConf.GetS("formatting:test1"), check.Equals, "")
+	c.Assert(nilConf.GetI("formatting:test1"), check.Equals, 0)
+	c.Assert(nilConf.GetF("formatting:test1"), check.Equals, 0.0)
+	c.Assert(nilConf.GetB("formatting:test1"), check.Equals, false)
+	c.Assert(nilConf.GetM("formatting:test1"), check.Equals, os.FileMode(0))
+	c.Assert(nilConf.GetD("formatting:test1"), check.Equals, time.Duration(0))
+	c.Assert(nilConf.Is("formatting:test1", ""), check.Equals, false)
+	c.Assert(nilConf.HasSection("formatting"), check.Equals, false)
+	c.Assert(nilConf.HasProp("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.Sections(), check.HasLen, 0)
-	c.Assert(nilConf.Props("formating"), check.HasLen, 0)
+	c.Assert(nilConf.Props("formatting"), check.HasLen, 0)
 	c.Assert(nilConf.File(), check.Equals, "")
 
 	_, err := nilConf.Reload()

@@ -38,7 +38,7 @@ func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	return nil, nil
 }
 
-// ❗ CalculateCPUUsage calcualtes CPU usage based on CPUStats
+// ❗ CalculateCPUUsage calculates CPU usage based on CPUStats
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	panic("UNSUPPORTED")
 	return nil

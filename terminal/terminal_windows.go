@@ -102,7 +102,7 @@ func PrintActionStatus(status int) {
 }
 
 // ❗ AddHistory adds line to input history
-func AddHstory(ui string) {
+func AddHistory(ui string) {
 	panic("UNSUPPORTED")
 }
 

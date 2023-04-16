@@ -215,7 +215,7 @@ func genCommandsFunc(info *usage.Info) string {
 	return result
 }
 
-// genConflictsExclusion generates list with conflicts exlusions
+// genConflictsExclusion generates list with conflicts exclusions
 func genConflictsExclusion(opts string) string {
 	var result []string
 

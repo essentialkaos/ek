@@ -19,7 +19,7 @@ import (
 
 // Model is spellcheck model struct
 type Model struct {
-	Threshold int // Score treshold (default: 2)
+	Threshold int // Score threshold (default: 2)
 
 	terms []string
 }

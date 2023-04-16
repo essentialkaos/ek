@@ -149,7 +149,7 @@ func ExampleFloat() {
 }
 
 func ExampleWrap() {
-	text := "Aenean tincidunt metus a tortor varius, ut bibendum magna fringilla."
+	text := "Aenean tincidunt metus a tortor aramus, ut bibendum magna fringilla."
 
 	fmt.Println(
 		Wrap(text, "", 36),

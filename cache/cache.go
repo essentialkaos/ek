@@ -87,7 +87,7 @@ func (s *Cache) Size() int {
 	return len(s.data)
 }
 
-// Expired returns number of exipred items in cache
+// Expired returns number of expired items in cache
 func (s *Cache) Expired() int {
 	if s == nil {
 		return 0

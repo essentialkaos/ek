@@ -31,7 +31,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// macroRE is a regexp for extracting macroses
+// macroRE is a regexp for extracting macro
 var macroRE = regexp.MustCompile(`\{([\w\-]+):([\w\-]+)\}`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -136,7 +136,7 @@ func parseKNFProperty(line string, config *Config) (string, string, error) {
 
 	var err error
 
-	value, err = evalMacroses(value, config)
+	value, err = evalMacros(value, config)
 
 	if err != nil {
 		return "", "", err
@@ -145,12 +145,12 @@ func parseKNFProperty(line string, config *Config) (string, string, error) {
 	return name, value, nil
 }
 
-// evalMacroses evaluates all macroses in given string
-func evalMacroses(value string, config *Config) (string, error) {
-	macroses := macroRE.FindAllStringSubmatch(value, -1)
+// evalMacros evaluates all macros in given string
+func evalMacros(value string, config *Config) (string, error) {
+	macros := macroRE.FindAllStringSubmatch(value, -1)
 
-	for _, macros := range macroses {
-		full, section, prop := macros[0], macros[1], macros[2]
+	for _, macro := range macros {
+		full, section, prop := macro[0], macro[1], macro[2]
 
 		if !config.HasProp(genPropName(section, prop)) {
 			return "", fmt.Errorf("Unknown property %s", full)
