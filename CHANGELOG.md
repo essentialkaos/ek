@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.65.0
+
+* `[processes]` `ProcessInfo.Childs` renamed to `ProcessInfo.Children`
+* Fixed typos
+
 ### 12.64.0
 
 * `[timeutil]` Added method `MiniDuration` which returns formatted value for short durations (_e.g. s/ms/us/ns_)
@@ -414,7 +419,7 @@
 
 ### 12.21.0
 
-* `[knf]` Added new getter `GetD` which returns valus as duration in seconds
+* `[knf]` Added new getter `GetD` which returns value as duration in seconds
 * `[system/process]` Improved tests
 
 ### 12.20.3
@@ -545,7 +550,7 @@
 
 ### 12.6.0
 
-* `[timeutil]` Added method `SecondsToDuration` for convertation `float64` to `time.Duration`
+* `[timeutil]` Added method `SecondsToDuration` for conversion `float64` to `time.Duration`
 * `[timeutil]` `DurationToSeconds` now returns the result as a float64 number
 * `[hash]` Code refactoring
 
@@ -1387,11 +1392,11 @@
 ### 3.3.0
 
 * `[system/process]` Added new package for getting information about active system processes
-* `[terminal]` Fixed bug with title formating in `ReadAnswer` method
+* `[terminal]` Fixed bug with title formatting in `ReadAnswer` method
 
 ### 3.2.3
 
-* `[terminal]` Fixed bug with title formating in `ReadUI` method
+* `[terminal]` Fixed bug with title formatting in `ReadUI` method
 
 ### 3.2.2
 

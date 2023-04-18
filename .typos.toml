@@ -1,0 +1,13 @@
+[files]
+extend-exclude = ["go.sum"]
+
+[default.extend-identifiers]
+Childs = "Childs"
+dows = "dows"
+testin = "testin"
+Fo = "Fo"
+2nd_place_medal = "2nd_place_medal"
+womens = "womens"
+mrs_claus = "mrs_claus"
+NewCFBEncrypter = "NewCFBEncrypter"
+iterm = "iterm"

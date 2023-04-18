@@ -326,7 +326,7 @@ func (l *Logger) Print(level uint8, f string, a ...any) error {
 		return nil
 	}
 
-	w := l.getWritter(level)
+	w := l.getWriter(level)
 	showPrefix := l.showPrefix(level)
 
 	if f == "" || f[len(f)-1:] != "\n" {
@@ -425,7 +425,7 @@ func (l *Logger) Aux(f string, a ...any) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (l *Logger) getWritter(level uint8) io.Writer {
+func (l *Logger) getWriter(level uint8) io.Writer {
 	var w io.Writer
 
 	if l.fd == nil {

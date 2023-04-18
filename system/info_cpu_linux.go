@@ -58,7 +58,7 @@ func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 // It's ok to have so complex method for calculation
 // codebeat:disable[CYCLO]
 
-// CalculateCPUUsage calcualtes CPU usage based on CPUStats
+// CalculateCPUUsage calculates CPU usage based on CPUStats
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	prevIdle := c1.Idle + c1.Wait
 	idle := c2.Idle + c2.Wait

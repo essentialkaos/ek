@@ -101,7 +101,7 @@ func (t *Table) SetSizes(sizes ...int) *Table {
 	return t
 }
 
-// SetAlignments sets aligment of columns
+// SetAlignments sets alignment of columns
 func (t *Table) SetAlignments(align ...uint8) *Table {
 	if t == nil {
 		return nil

@@ -123,7 +123,7 @@ func (s *UsageSuite) TestVersionInfo(c *C) {
 	printNewVersionInfo("1.0.0", "1.0.1", d3)
 }
 
-func (s *UsageSuite) TestDepricated(c *C) {
+func (s *UsageSuite) TestDeprecated(c *C) {
 	i := &Info{}
 	i.Render()
 

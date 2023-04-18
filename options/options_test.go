@@ -334,7 +334,7 @@ func (s *OptUtilSuite) TestMixed(c *C) {
 	c.Assert(opts.GetS("t:test"), Equals, "123")
 }
 
-func (s *OptUtilSuite) TestValueConvertation(c *C) {
+func (s *OptUtilSuite) TestValueConversion(c *C) {
 	optMap := Map{"t:test": {Value: 1}}
 	opts := NewOptions()
 	opts.Parse([]string{}, optMap)
@@ -506,7 +506,7 @@ func (s *OptUtilSuite) TestArguments(c *C) {
 	c.Assert(a.Filter("*.txt"), HasLen, 0)
 }
 
-func (s *OptUtilSuite) TestArgumentsConvertion(c *C) {
+func (s *OptUtilSuite) TestArgumentsConversion(c *C) {
 	a := Arguments{"test", "6", "2.67", "true"}
 
 	c.Assert(a.Has(1), Equals, true)

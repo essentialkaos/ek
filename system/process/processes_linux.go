@@ -29,7 +29,7 @@ type ProcessInfo struct {
 	User     string         // Username
 	PID      int            // PID
 	Parent   int            // Parent process PID
-	Childs   []*ProcessInfo // Slice with child processes
+	Children []*ProcessInfo // Slice with child processes
 	IsThread bool           // True if process is thread
 }
 
@@ -256,7 +256,7 @@ func processListToTree(processes []*ProcessInfo, root int) *ProcessInfo {
 			continue
 		}
 
-		parentProcess.Childs = append(parentProcess.Childs, process)
+		parentProcess.Children = append(parentProcess.Children, process)
 	}
 
 	return result[root]
