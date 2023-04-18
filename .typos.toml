@@ -2,6 +2,7 @@
 extend-exclude = ["go.sum"]
 
 [default.extend-identifiers]
+Childs = "Childs"
 dows = "dows"
 testin = "testin"
 Fo = "Fo"
