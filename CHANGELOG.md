@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.65.0
+
+* `[processes]` `ProcessInfo.Childs` renamed to `ProcessInfo.Children`
+* Fixed typos
+
 ### 12.64.0
 
 * `[timeutil]` Added method `MiniDuration` which returns formatted value for short durations (_e.g. s/ms/us/ns_)
