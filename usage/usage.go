@@ -41,6 +41,13 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type Environment []EnvironmentInfo
+
+type EnvironmentInfo struct {
+	Name    string
+	Version string
+}
+
 // About contains info about application
 type About struct {
 	App        string // App is application name
@@ -55,6 +62,8 @@ type About struct {
 
 	AppNameColorTag string // AppNameColorTag contains default app name color tag
 	VersionColorTag string // VersionColorTag contains default app version color tag
+
+	Environment Environment // Environment contains info about environment
 
 	// Function for checking application updates
 	UpdateChecker UpdateChecker
@@ -473,17 +482,31 @@ func (a *About) Print() {
 	switch {
 	case a.Build != "":
 		fmtc.Printf(
-			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} {s-}(%s){!} - %s\n\n",
+			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} {s-}(%s){!} - %s\n",
 			a.App, a.Version,
 			a.Release, a.Build, a.Desc,
 		)
 	default:
 		fmtc.Printf(
-			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} - %s\n\n",
+			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} - %s\n",
 			a.App, a.Version,
 			a.Release, a.Desc,
 		)
 	}
+
+	if len(a.Environment) > 0 {
+		fmtc.Printf("{s-}│{!}\n")
+
+		for i, env := range a.Environment {
+			if len(a.Environment) != i+1 {
+				fmtc.Printf("{s-}├ %s: %s{!}\n", env.Name, env.Version)
+			} else {
+				fmtc.Printf("{s-}└ %s: %s{!}\n", env.Name, env.Version)
+			}
+		}
+	}
+
+	fmtc.NewLine()
 
 	if a.Owner != "" {
 		if a.Year == 0 {

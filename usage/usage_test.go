@@ -28,14 +28,15 @@ var _ = Suite(&UsageSuite{})
 
 func (s *UsageSuite) TestAbout(c *C) {
 	about := &About{
-		App:     "Application",
-		Version: "1.0.0",
-		Release: ".A45",
-		Build:   "37163",
-		Desc:    "Test application",
-		Year:    2010,
-		Owner:   "Some company",
-		License: "MIT",
+		App:         "Application",
+		Version:     "1.0.0",
+		Release:     ".A45",
+		Build:       "37163",
+		Desc:        "Test application",
+		Year:        2010,
+		Owner:       "Some company",
+		License:     "MIT",
+		Environment: Environment{{"A", "1"}, {"B", "2"}},
 	}
 
 	about.Render()

@@ -3,6 +3,7 @@
 ### 12.65.0
 
 * `[fmtutil]` Added method `Align` for aligning text with ANSI control sequences (_for example colors_)
+* `[usage]` Added feature for adding and rendering environment info
 
 ### 12.64.1
 
