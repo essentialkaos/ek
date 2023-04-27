@@ -24,6 +24,12 @@ func ExampleAbout_Render() {
 		License: "MIT",
 		Owner:   "John Dow <john@domain.com>",
 
+		Environment: Environment{
+			{"Client", "1.8.1"},
+			{"Server", "4.x"},
+			{"Encoder", "h265/AV1"},
+		},
+
 		AppNameColorTag: "{r*}", // Use custom color for application name
 		VersionColorTag: "{r}",  // Use custom color for application version
 	}

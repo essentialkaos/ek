@@ -22,6 +22,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type Alignment uint8
+
+const (
+	LEFT   Alignment = 0
+	CENTER Alignment = 1
+	RIGHT  Alignment = 2
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 const (
 	_KILO = 1024
 	_MEGA = 1048576
@@ -47,6 +57,10 @@ var OrderSeparator = ","
 
 // SizeSeparator is a default size separator
 var SizeSeparator = ""
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var spaces = strings.Repeat(" ", 256)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -197,6 +211,26 @@ func Float(f float64) float64 {
 	}
 
 	return mathutil.Round(f, 1)
+}
+
+// Align can align text with ANSI control sequences (for example colors)
+func Align(text string, alignment Alignment, size int) string {
+	len := strutil.Len(ansi.RemoveCodes(text))
+
+	if len >= size {
+		return text
+	}
+
+	switch alignment {
+	case RIGHT:
+		return spaces[:size-len] + text
+	case CENTER:
+		pad := (size - len) / 2
+		return spaces[:pad] +
+			text + spaces[:size-(len+pad)]
+	default:
+		return text + spaces[:size-len]
+	}
 }
 
 // Wrap wraps text using max line length

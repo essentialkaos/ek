@@ -27,7 +27,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 
 ### Installation
 
-Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.18+ workspace (_[instructions](https://go.dev/doc/install)_), then:
 
 ```
 go get github.com/essentialkaos/ek/v12
