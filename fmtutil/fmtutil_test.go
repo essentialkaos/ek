@@ -117,6 +117,15 @@ func (s *FmtUtilSuite) TestFloat(c *C) {
 	c.Assert(Float(math.NaN()), Equals, 0.0)
 }
 
+func (s *FmtUtilSuite) TestAlign(c *C) {
+	text := "\033[1;33;4;44mTeSt TeXt 12345\033[0m"
+
+	c.Assert(Align(text, LEFT, 20), Equals, "\033[1;33;4;44mTeSt TeXt 12345\033[0m     ")
+	c.Assert(Align(text, CENTER, 20), Equals, "  \033[1;33;4;44mTeSt TeXt 12345\033[0m   ")
+	c.Assert(Align(text, RIGHT, 20), Equals, "     \033[1;33;4;44mTeSt TeXt 12345\033[0m")
+	c.Assert(Align(text, RIGHT, 2), Equals, text)
+}
+
 func (s *FmtUtilSuite) TestWrap(c *C) {
 	input := `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
 eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam 
@@ -234,5 +243,12 @@ func (s *FmtUtilSuite) BenchmarkPrettyNumFloat(c *C) {
 func (s *FmtUtilSuite) BenchmarkWrap(c *C) {
 	for i := 0; i < c.N; i++ {
 		Wrap("0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", "  ", 10)
+	}
+}
+
+func (s *FmtUtilSuite) BenchmarkAlign(c *C) {
+	text := "\033[1;33;4;44mYellow Underlined Text on Blue Background\033[0m"
+	for i := 0; i < c.N; i++ {
+		Align(text, CENTER, 63)
 	}
 }
