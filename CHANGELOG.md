@@ -3,6 +3,7 @@
 ### 12.66.0
 
 * `[options]` Added method `Arguments.Flatten` for converting arguments into a string
+* `[usage/update]` Added update checker for GitLab
 
 ### 12.65.0
 

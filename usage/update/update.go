@@ -47,7 +47,7 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "go.ek")
+	engine.SetUserAgent(app, version, "GoEK.v12")
 
 	response, err := engine.Get(req.Request{
 		URL:         storage + "/latest.json",
