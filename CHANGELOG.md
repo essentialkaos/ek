@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.66.0
+
+* `[options]` Added method `Arguments.Flatten` for converting arguments into a string
+
 ### 12.65.0
 
 * `[fmtutil]` Added method `Align` for aligning text with ANSI control sequences (_for example colors_)
