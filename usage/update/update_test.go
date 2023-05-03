@@ -50,7 +50,7 @@ func (s *UpdateSuite) TearDownSuite(c *C) {
 }
 
 func (s *UpdateSuite) TestGitHubChecker(c *C) {
-	githubAPI = s.url
+	githubAPI = s.url + "/github"
 
 	newVersion, releaseDate, hasUpdate := GitHubChecker("", "", "")
 
@@ -84,23 +84,59 @@ func (s *UpdateSuite) TestGitHubChecker(c *C) {
 	c.Assert(hasUpdate, Equals, true)
 }
 
+func (s *UpdateSuite) TestGitLabChecker(c *C) {
+	gitlabAPI = s.url + "/gitlab"
+
+	newVersion, releaseDate, hasUpdate := GitLabChecker("", "", "")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/unknown")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/limited")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/garbage")
+
+	c.Assert(newVersion, Equals, "")
+	c.Assert(hasUpdate, Equals, false)
+
+	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/project")
+
+	c.Assert(newVersion, Equals, "1.2.3")
+	c.Assert(releaseDate.Unix(), Equals, int64(1589810841))
+	c.Assert(hasUpdate, Equals, true)
+}
+
 func (s *UpdateSuite) TestUpdateChecker(c *C) {
+	basicAPI := s.url + "/basic"
 	newVersion, releaseDate, hasUpdate := UpdateChecker("", "", "")
 
 	c.Assert(newVersion, Equals, "")
 	c.Assert(hasUpdate, Equals, false)
 
-	newVersion, releaseDate, hasUpdate = UpdateChecker("GitHubChecker", "0.9.9", s.url+"/unknown")
+	newVersion, releaseDate, hasUpdate = UpdateChecker("BasicChecker", "0.9.9", basicAPI+"/unknown")
 
 	c.Assert(newVersion, Equals, "")
 	c.Assert(hasUpdate, Equals, false)
 
-	newVersion, releaseDate, hasUpdate = UpdateChecker("GitHubChecker", "0.9.9", s.url+"/garbage")
+	newVersion, releaseDate, hasUpdate = UpdateChecker("BasicChecker", "0.9.9", basicAPI+"/garbage")
 
 	c.Assert(newVersion, Equals, "")
 	c.Assert(hasUpdate, Equals, false)
 
-	newVersion, releaseDate, hasUpdate = UpdateChecker("GitHubChecker", "0.9.9", s.url+"/project")
+	newVersion, releaseDate, hasUpdate = UpdateChecker("BasicChecker", "0.9.9", basicAPI+"/project")
 
 	c.Assert(newVersion, Equals, "1.2.3")
 	c.Assert(releaseDate.Unix(), Equals, int64(1578064700))
@@ -125,14 +161,19 @@ func runHTTPServer(s *UpdateSuite, c *C) {
 
 	s.listener = listener
 
-	server.Handler.(*http.ServeMux).HandleFunc("/repos/essentialkaos/project/releases/latest", ghInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/repos/essentialkaos/unknown/releases/latest", ghNotFoundHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/repos/essentialkaos/limited/releases/latest", ghLimitedHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/repos/essentialkaos/garbage/releases/latest", ghWrongFormatHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/project/releases/latest", githubInfoHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/unknown/releases/latest", githubNotFoundHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/limited/releases/latest", githubLimitedHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/garbage/releases/latest", githubWrongFormatHandler)
 
-	server.Handler.(*http.ServeMux).HandleFunc("/project/latest.json", updInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/unknown/latest.json", updUnknownHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/garbage/latest.json", updWrongFormatHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/project/releases/permalink/latest", gitlabInfoHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/unknown/releases/permalink/latest", gitlabNotFoundHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/limited/releases/permalink/latest", gitlabLimitedHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/garbage/releases/permalink/latest", gitlabWrongFormatHandler)
+
+	server.Handler.(*http.ServeMux).HandleFunc("/basic/project/latest.json", basicInfoHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/basic/unknown/latest.json", basicUnknownHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/basic/garbage/latest.json", basicWrongFormatHandler)
 
 	err = server.Serve(listener)
 
@@ -141,37 +182,58 @@ func runHTTPServer(s *UpdateSuite, c *C) {
 	}
 }
 
-func ghInfoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("X-RateLimit-Remaining", "1000")
+func githubInfoHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("X-RateLimit-Remaining", "60")
 	w.WriteHeader(200)
 	w.Write([]byte(`{"tag_name": "v1.2.3","published_at": "2020-05-18T14:07:21Z"}`))
 }
 
-func ghNotFoundHandler(w http.ResponseWriter, r *http.Request) {
+func githubNotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(404)
 }
 
-func ghLimitedHandler(w http.ResponseWriter, r *http.Request) {
+func githubLimitedHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("X-RateLimit-Remaining", "0")
 	w.WriteHeader(200)
 	w.Write([]byte(`{"tag_name": "v1.2.3","published_at": "2020-05-18T14:07:21Z"}`))
 }
 
-func ghWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
+func githubWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write([]byte(`DEADBEEF`))
 }
 
-func updInfoHandler(w http.ResponseWriter, r *http.Request) {
+func gitlabInfoHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("RateLimit-Remaining", "2000")
+	w.WriteHeader(200)
+	w.Write([]byte(`{"tag_name":"v1.2.3","released_at":"2020-05-18T14:07:21.814Z"}`))
+}
+
+func gitlabNotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(404)
+}
+
+func gitlabLimitedHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("RateLimit-Remaining", "0")
+	w.WriteHeader(200)
+	w.Write([]byte(`{"tag_name":"v1.2.3","released_at":"2020-05-18T14:07:21.814Z"}`))
+}
+
+func gitlabWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
+	w.Write([]byte(`DEADBEEF`))
+}
+
+func basicInfoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write([]byte(`{"version": "1.2.3", "date": "2020-01-03T15:18:20Z"}`))
 }
 
-func updUnknownHandler(w http.ResponseWriter, r *http.Request) {
+func basicUnknownHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(404)
 }
 
-func updWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
+func basicWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write([]byte(`DEADBEEF`))
 }

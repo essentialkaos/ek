@@ -16,45 +16,48 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type githubRelease struct {
-	Tag       string    `json:"tag_name"`
-	Published time.Time `json:"published_at"`
+type gitlabRelease struct {
+	Tag      string    `json:"tag_name"`
+	Released time.Time `json:"released_at"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var githubAPI = "https://api.github.com"
+var gitlabAPI = "https://gitlab.com/api/v4"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitHubChecker checks new releases on GitHub
-func GitHubChecker(app, version, data string) (string, time.Time, bool) {
+// GitLabChecker checks new releases on GitLab
+func GitLabChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
 	}
 
-	release := getLatestGitHubRelease(app, version, data)
+	release := getLatestGitLabRelease(app, version, data)
 
 	if release == nil {
 		return "", time.Time{}, false
 	}
 
-	return strings.TrimLeft(release.Tag, "v"), release.Published, true
+	return strings.TrimLeft(release.Tag, "v"), release.Released, true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestGitHubRelease fetches the latest release from GitHub
-func getLatestGitHubRelease(app, version, repository string) *githubRelease {
+// getLatestGitLabRelease fetches the latest release from GitLab
+func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 	engine := req.Engine{}
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
 	engine.SetUserAgent(app, version, "GoEK.v12")
 
+	if strings.Contains(repository, "/") {
+		repository = strings.ReplaceAll(repository, "/", "%2F")
+	}
+
 	response, err := engine.Get(req.Request{
-		URL:         githubAPI + "/repos/" + repository + "/releases/latest",
-		Headers:     req.Headers{"X-GitHub-Api-Version": "2022-11-28"},
+		URL:         gitlabAPI + "/projects/" + repository + "/releases/permalink/latest",
 		AutoDiscard: true,
 	})
 
@@ -62,11 +65,11 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 		return nil
 	}
 
-	if response.Header.Get("X-RateLimit-Remaining") == "0" {
+	if response.Header.Get("RateLimit-Remaining") == "0" {
 		return nil
 	}
 
-	release := &githubRelease{}
+	release := &gitlabRelease{}
 	err = response.JSON(release)
 
 	if err != nil {

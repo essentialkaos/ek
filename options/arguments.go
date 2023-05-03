@@ -85,6 +85,18 @@ func (a Arguments) Unshift(args ...string) Arguments {
 	return append(result, a...)
 }
 
+// Flatten converts arguments to the string (useful for custom parsing logic)
+func (a Arguments) Flatten() string {
+	var result strings.Builder
+
+	for _, arg := range a {
+		result.WriteString(string(arg))
+		result.WriteRune(' ')
+	}
+
+	return result.String()[:result.Len()-1]
+}
+
 // Strings converts arguments to slice with strings
 func (a Arguments) Strings() []string {
 	var result []string

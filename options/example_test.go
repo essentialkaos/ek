@@ -428,6 +428,18 @@ func ExampleArguments_Append() {
 	// Arguments: [head file.txt 10]
 }
 
+func ExampleArguments_Flatten() {
+	opts := NewOptions()
+
+	args, _ := opts.Parse(
+		[]string{"head", "file.txt", "10"},
+	)
+
+	fmt.Printf("Arguments: %v\n", args.Flatten())
+	// Output:
+	// Arguments: head file.txt 10
+}
+
 func ExampleArguments_Strings() {
 	opts := NewOptions()
 
