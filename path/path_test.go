@@ -46,13 +46,13 @@ func (s *PathUtilSuite) TestBase(c *C) {
 }
 
 func (s *PathUtilSuite) TestJoinSecure(c *C) {
-	p, err := JoinSecure("/etc", "myapp")
+	p, err := JoinSecure("/test", "myapp")
 	c.Assert(err, IsNil)
-	c.Assert(p, Equals, "/etc/myapp")
+	c.Assert(p, Equals, "/test/myapp")
 
-	p, err = JoinSecure("/etc", "myapp/config/../global.cfg")
+	p, err = JoinSecure("/test", "myapp/config/../global.cfg")
 	c.Assert(err, IsNil)
-	c.Assert(p, Equals, "/etc/myapp/global.cfg")
+	c.Assert(p, Equals, "/test/myapp/global.cfg")
 
 	p, err = JoinSecure("/unknown", "myapp/config/../global.cfg")
 	c.Assert(err, IsNil)
