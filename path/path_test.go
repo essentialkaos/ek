@@ -45,6 +45,32 @@ func (s *PathUtilSuite) TestBase(c *C) {
 	c.Assert(f, Equals, "file.jpg")
 }
 
+func (s *PathUtilSuite) TestJoinSecure(c *C) {
+	p, err := JoinSecure("/etc", "myapp")
+	c.Assert(err, IsNil)
+	c.Assert(p, Equals, "/etc/myapp")
+
+	p, err = JoinSecure("/etc", "myapp/config/../global.cfg")
+	c.Assert(err, IsNil)
+	c.Assert(p, Equals, "/etc/myapp/global.cfg")
+
+	testDir := c.MkDir()
+	os.WriteFile(testDir+"/test.log", []byte("\n"), 0644)
+	os.Symlink(testDir+"/test.log", testDir+"/test1.link")
+	os.Symlink("/etc", testDir+"/test2.link")
+	os.Symlink(testDir+"/test3.link", testDir+"/test3.link")
+
+	p, err = JoinSecure(testDir, "mytest/../test1.link")
+	c.Assert(err, IsNil)
+	c.Assert(p, Equals, testDir+"/test.log")
+
+	p, err = JoinSecure(testDir, "mytest/../test2.link")
+	c.Assert(err, NotNil)
+
+	p, err = JoinSecure(testDir, "mytest/../test3.link")
+	c.Assert(err, NotNil)
+}
+
 func (s *PathUtilSuite) TestDirN(c *C) {
 	c.Assert(DirN("", 99), Equals, "")
 	c.Assert(DirN("1", 99), Equals, "1")

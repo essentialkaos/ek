@@ -49,10 +49,17 @@ func ExampleIsAbs() {
 }
 
 func ExampleJoin() {
-	fmt.Println(Join("home", "user", "project"))
+	fmt.Println(Join("/home/user", "project/app1", "main.go"))
 
 	// Output:
-	// home/user/project
+	// /home/user/project/app1/main.go
+}
+
+func ExampleJoinSecure() {
+	fmt.Println(Join("/home/user", "project/app1/../app2", "main.go"))
+
+	// Output:
+	// /home/user/project/app2/main.go
 }
 
 func ExampleMatch() {
