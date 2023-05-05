@@ -112,19 +112,23 @@ func Join(elem ...string) string {
 // JoinSecure joins all elements of path, makes lexical processing, and evaluating all symlinks.
 // Method returns error if final destination is not a child path of root.
 func JoinSecure(root string, elem ...string) (string, error) {
-	var err error
+	result, err := filepath.EvalSymlinks(root)
 
-	result := root
+	if err != nil {
+		result = root
+	} else {
+		root = result
+	}
 
 	for _, e := range elem {
 		result = Clean(result + "/" + e)
 
 		if isLink(result) {
 			result, err = filepath.EvalSymlinks(result)
-		}
 
-		if err != nil {
-			return "", fmt.Errorf("Can't eval symlinks: %w", err)
+			if err != nil {
+				return "", fmt.Errorf("Can't eval symlinks: %w", err)
+			}
 		}
 	}
 

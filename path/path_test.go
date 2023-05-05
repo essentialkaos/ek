@@ -54,7 +54,16 @@ func (s *PathUtilSuite) TestJoinSecure(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(p, Equals, "/etc/myapp/global.cfg")
 
-	testDir := c.MkDir()
+	p, err = JoinSecure("/unknown", "myapp/config/../global.cfg")
+	c.Assert(err, IsNil)
+	c.Assert(p, Equals, "/unknown/myapp/global.cfg")
+
+	tmpDir := c.MkDir()
+	os.Mkdir(tmpDir+"/test", 0755)
+	os.Symlink(tmpDir+"/test", tmpDir+"/testlink")
+	testDir := tmpDir + "/testlink"
+
+	os.Symlink(testDir+"/test.log", testDir+"/test1.link")
 	os.WriteFile(testDir+"/test.log", []byte("\n"), 0644)
 	os.Symlink(testDir+"/test.log", testDir+"/test1.link")
 	os.Symlink("/etc", testDir+"/test2.link")
@@ -62,7 +71,7 @@ func (s *PathUtilSuite) TestJoinSecure(c *C) {
 
 	p, err = JoinSecure(testDir, "mytest/../test1.link")
 	c.Assert(err, IsNil)
-	c.Assert(p, Equals, testDir+"/test.log")
+	c.Assert(p, Equals, tmpDir+"/test/test.log")
 
 	p, err = JoinSecure(testDir, "mytest/../test2.link")
 	c.Assert(err, NotNil)
