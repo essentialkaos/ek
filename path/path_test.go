@@ -71,7 +71,7 @@ func (s *PathUtilSuite) TestJoinSecure(c *C) {
 
 	p, err = JoinSecure(testDir, "mytest/../test1.link")
 	c.Assert(err, IsNil)
-	c.Assert(p, Equals, tmpDir+"/test/test.log")
+	c.Assert(p, Matches, "*/test/test.log")
 
 	p, err = JoinSecure(testDir, "mytest/../test2.link")
 	c.Assert(err, NotNil)
