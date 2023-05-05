@@ -13,16 +13,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleAbout_Render() {
+func ExampleAbout_Print() {
 	about := About{
 		App:     "MySupperApp",
 		Desc:    "My super golang utility",
 		Version: "1.0.1",
-		Release: "-44",
-		Build:   "17746", // Number of build or commit hash
-		Year:    2009,    // Year when company was founded
+		Release: "β4",
+		Build:   "git:ce9d5c6", // Number of build or commit hash
+		Year:    2009,          // Year when company was founded
 		License: "MIT",
-		Owner:   "John Dow <john@domain.com>",
+		Owner:   "SUPPA DUPPA LLC <opensource@suppaduppa.com>",
 
 		Environment: Environment{
 			{"Client", "1.8.1"},
@@ -34,7 +34,9 @@ func ExampleAbout_Render() {
 		VersionColorTag: "{r}",  // Use custom color for application version
 	}
 
-	about.Render()
+	about.Print()
+	// or print raw version
+	about.Print(VERSION_FULL)
 }
 
 func ExampleNewInfo() {
@@ -54,7 +56,7 @@ func ExampleNewInfo() {
 	info = NewInfo("", "files…")
 	info = NewInfo("", "input", "num-files", "output")
 
-	info.Render()
+	info.Print()
 }
 
 func ExampleInfo_AddGroup() {
@@ -69,8 +71,8 @@ func ExampleInfo_AddGroup() {
 	// You can define option (output) and payload (file) name
 	info.AddOption("o:output", "Output", "file")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_AddCommand() {
@@ -88,8 +90,8 @@ func ExampleInfo_AddCommand() {
 
 	info.AddCommand("publish", "Publish items")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_AddOption() {
@@ -101,8 +103,8 @@ func ExampleInfo_AddOption() {
 	// You can define option (output) and payload (file) name
 	info.AddOption("o:output", "Output", "file")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_AddExample() {
@@ -117,8 +119,8 @@ func ExampleInfo_AddExample() {
 	// This is example with description
 	info.AddExample("remove file.dat", "Remove file.dat")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_AddRawExample() {
@@ -133,8 +135,8 @@ func ExampleInfo_AddRawExample() {
 	// Raw example (without application name) with description
 	info.AddRawExample("remove file.dat", "Remove file.dat")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_AddSpoiler() {
@@ -143,8 +145,8 @@ func ExampleInfo_AddSpoiler() {
 	// Spoiler will be shown before all commands and options
 	info.AddSpoiler("This is my supadupa utility")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_BoundOptions() {
@@ -157,8 +159,8 @@ func ExampleInfo_BoundOptions() {
 	// Link command and options (will be used for completion generation)
 	info.BoundOptions("publish", "o:output")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }
 
 func ExampleInfo_GetCommand() {
@@ -192,7 +194,7 @@ func ExampleInfo_GetOption() {
 	// Output: Output file
 }
 
-func ExampleInfo_Render() {
+func ExampleInfo_Print() {
 	info := NewInfo("", "items…")
 
 	// Spoiler will be shown before all commands and options
@@ -233,6 +235,6 @@ func ExampleInfo_Render() {
 	// Raw example with description
 	info.AddRawExample("remove file.dat", "Remove file.dat")
 
-	// render all data
-	info.Render()
+	// Print data
+	info.Print()
 }

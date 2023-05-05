@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.67.0
+
+* `[usage]` Added support of raw version printing
+* `[usage]` Code refactoring
+
 ### 12.66.0
 
 * `[options]` Added method `Arguments.Flatten` for converting arguments into a string

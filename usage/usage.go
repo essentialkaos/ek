@@ -39,6 +39,16 @@ const (
 	DEFAULT_APP_VER_COLOR_TAG  = "{c}"
 )
 
+const (
+	VERSION_FULL    = "full"
+	VERSION_SIMPLE  = "simple"
+	VERSION_MAJOR   = "major"
+	VERSION_MINOR   = "minor"
+	VERSION_PATCH   = "patch"
+	VERSION_RELEASE = "release"
+	VERSION_BUILD   = "build"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Environment []EnvironmentInfo
@@ -471,28 +481,29 @@ func (a *About) Render() {
 }
 
 // Print prints version info
-func (a *About) Print() {
+func (a *About) Print(infoType ...string) {
 	if a == nil {
 		return
+	}
+
+	if len(infoType) != 0 {
+		ver := getRawVersion(a, infoType[0])
+
+		if ver != "" {
+			fmtc.Println(ver)
+			return
+		}
 	}
 
 	nc := strutil.Q(a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
 	vc := strutil.Q(a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG)
 
-	switch {
-	case a.Build != "":
-		fmtc.Printf(
-			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} {s-}(%s){!} - %s\n",
-			a.App, a.Version,
-			a.Release, a.Build, a.Desc,
-		)
-	default:
-		fmtc.Printf(
-			"\n"+nc+"%s{!} "+vc+"%s{!}{s}%s{!} - %s\n",
-			a.App, a.Version,
-			a.Release, a.Desc,
-		)
-	}
+	fmtc.Printf("\n"+nc+"%s{!} "+vc+"%s{!}", a.App, a.Version)
+
+	fmtc.If(a.Release != "").Printf("{s}-%s{!} ", a.Release)
+	fmtc.If(a.Build != "").Printf("{s-}(%s){!} ", a.Build)
+
+	fmtc.Printf("- %s\n", a.Desc)
 
 	if len(a.Environment) > 0 {
 		fmtc.Printf("{s-}│{!}\n")
@@ -509,28 +520,22 @@ func (a *About) Print() {
 	fmtc.NewLine()
 
 	if a.Owner != "" {
-		if a.Year == 0 {
-			fmtc.Printf(
-				"{s-}Copyright (C) %d %s{!}\n",
-				time.Now().Year(), a.Owner,
-			)
-		} else {
-			fmtc.Printf(
-				"{s-}Copyright (C) %d-%d %s{!}\n",
-				a.Year, time.Now().Year(), a.Owner,
-			)
-		}
+		fmtc.If(a.Year == 0).Printf(
+			"{s-}Copyright (C) %d %s{!}\n",
+			time.Now().Year(), a.Owner,
+		)
+
+		fmtc.If(a.Year != 0).Printf(
+			"{s-}Copyright (C) %d-%d %s{!}\n",
+			a.Year, time.Now().Year(), a.Owner,
+		)
 	}
 
-	if a.License != "" {
-		fmtc.Printf("{s-}%s{!}\n", a.License)
-	}
+	fmtc.If(a.License != "").Printf("{s-}%s{!}\n", a.License)
 
 	if a.UpdateChecker.CheckFunc != nil && a.UpdateChecker.Payload != "" {
 		newVersion, releaseDate, hasUpdate := a.UpdateChecker.CheckFunc(
-			a.App,
-			a.Version,
-			a.UpdateChecker.Payload,
+			a.App, a.Version, a.UpdateChecker.Payload,
 		)
 
 		if hasUpdate && isNewerVersion(a.Version, newVersion) {
@@ -594,6 +599,39 @@ func printArgs(args ...string) string {
 	}
 
 	return fmtc.Sprint(strings.TrimRight(result, " "))
+}
+
+// getRawVersion prints raw (just numbers) version info
+func getRawVersion(about *About, infoType string) string {
+	switch infoType {
+	case VERSION_FULL:
+		return about.Version +
+			fmtc.If(about.Release != "").Sprint("-"+about.Release) +
+			fmtc.If(about.Build != "").Sprint("+"+about.Build)
+	case VERSION_SIMPLE:
+		return about.Version
+	case VERSION_RELEASE:
+		return about.Release
+	case VERSION_BUILD:
+		return about.Build
+	}
+
+	ver, _ := version.Parse(about.Version)
+
+	if ver.IsZero() {
+		return ""
+	}
+
+	switch infoType {
+	case VERSION_MAJOR:
+		return fmtc.Sprintf("%d", ver.Major())
+	case VERSION_MINOR:
+		return fmtc.Sprintf("%d", ver.Minor())
+	case VERSION_PATCH:
+		return fmtc.Sprintf("%d", ver.Patch())
+	}
+
+	return ""
 }
 
 // formatOptionName formats option name
