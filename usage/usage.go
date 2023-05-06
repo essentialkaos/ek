@@ -543,7 +543,7 @@ func (a *About) Print(infoType ...string) {
 		}
 	}
 
-	fmtc.NewLine()
+	fmtc.If(a.Owner != "" || a.License != "").NewLine()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
