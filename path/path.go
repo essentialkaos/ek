@@ -13,10 +13,12 @@ package path
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	PATH "path"
 	"path/filepath"
 	"strings"
+	"syscall"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -107,6 +109,36 @@ func Join(elem ...string) string {
 	return PATH.Join(elem...)
 }
 
+// JoinSecure joins all elements of path, makes lexical processing, and evaluating all symlinks.
+// Method returns error if final destination is not a child path of root.
+func JoinSecure(root string, elem ...string) (string, error) {
+	result, err := filepath.EvalSymlinks(root)
+
+	if err != nil {
+		result = root
+	} else {
+		root = result
+	}
+
+	for _, e := range elem {
+		result = Clean(result + "/" + e)
+
+		if isLink(result) {
+			result, err = filepath.EvalSymlinks(result)
+
+			if err != nil {
+				return "", fmt.Errorf("Can't eval symlinks: %w", err)
+			}
+		}
+	}
+
+	if !strings.HasPrefix(result, root) {
+		return "", fmt.Errorf("Final destination (%s) is outside root (%s)", result, root)
+	}
+
+	return result, nil
+}
+
 // Match reports whether name matches the shell file name pattern
 func Match(pattern, name string) (matched bool, err error) {
 	return PATH.Match(pattern, name)
@@ -195,6 +227,13 @@ func IsGlob(pattern string) bool {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func isLink(path string) bool {
+	var buf = make([]byte, 1)
+	_, err := syscall.Readlink(path, buf)
+
+	return err == nil
+}
 
 func evalHome(path string) string {
 	if path == "" || path[0:1] != "~" {

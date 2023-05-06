@@ -29,9 +29,9 @@ var _ = Suite(&UsageSuite{})
 func (s *UsageSuite) TestAbout(c *C) {
 	about := &About{
 		App:         "Application",
-		Version:     "1.0.0",
-		Release:     ".A45",
-		Build:       "37163",
+		Version:     "1.8.13",
+		Release:     "β4",
+		Build:       "ce9d5c6",
 		Desc:        "Test application",
 		Year:        2010,
 		Owner:       "Some company",
@@ -48,7 +48,7 @@ func (s *UsageSuite) TestAbout(c *C) {
 	about = &About{
 		App:           "Application",
 		Version:       "1.0.0",
-		Release:       ".A45",
+		Release:       "β4",
 		Desc:          "Test application",
 		Owner:         "Some company",
 		License:       "MIT",
@@ -56,6 +56,35 @@ func (s *UsageSuite) TestAbout(c *C) {
 	}
 
 	about.Render()
+}
+
+func (s *UsageSuite) TestRawVersion(c *C) {
+	about := &About{
+		App:         "Application",
+		Version:     "1.8.13",
+		Release:     "β4",
+		Build:       "ce9d5c6",
+		Desc:        "Test application",
+		Year:        2010,
+		Owner:       "Some company",
+		License:     "MIT",
+		Environment: Environment{{"A", "1"}, {"B", "2"}},
+	}
+
+	about.Print(VERSION_SIMPLE)
+
+	c.Assert(getRawVersion(about, VERSION_FULL), Equals, "1.8.13-β4+ce9d5c6")
+	c.Assert(getRawVersion(about, VERSION_SIMPLE), Equals, "1.8.13")
+	c.Assert(getRawVersion(about, VERSION_MAJOR), Equals, "1")
+	c.Assert(getRawVersion(about, VERSION_MINOR), Equals, "8")
+	c.Assert(getRawVersion(about, VERSION_PATCH), Equals, "13")
+	c.Assert(getRawVersion(about, VERSION_RELEASE), Equals, "β4")
+	c.Assert(getRawVersion(about, VERSION_BUILD), Equals, "ce9d5c6")
+
+	c.Assert(getRawVersion(about, "unknown"), Equals, "")
+
+	about.Version = "UnKnOwN"
+	c.Assert(getRawVersion(about, VERSION_MAJOR), Equals, "")
 }
 
 func (s *UsageSuite) TestUsage(c *C) {

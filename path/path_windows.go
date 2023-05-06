@@ -61,6 +61,13 @@ func Join(elem ...string) string {
 	return ""
 }
 
+// ❗ JoinSecure joins all elements of path, makes lexical processing, and evaluating all symlinks.
+// Method returns error if final destination is not a child path of root.
+func JoinSecure(root string, elem ...string) (string, error) {
+	panic("UNSUPPORTED")
+	return "", nil
+}
+
 // ❗ Match reports whether name matches the shell file name pattern
 func Match(pattern, name string) (matched bool, err error) {
 	panic("UNSUPPORTED")
