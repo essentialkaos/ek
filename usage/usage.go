@@ -500,10 +500,10 @@ func (a *About) Print(infoType ...string) {
 
 	fmtc.Printf("\n"+nc+"%s{!} "+vc+"%s{!}", a.App, a.Version)
 
-	fmtc.If(a.Release != "").Printf("{s}-%s{!} ", a.Release)
-	fmtc.If(a.Build != "").Printf("{s-}(%s){!} ", a.Build)
+	fmtc.If(a.Release != "").Printf("{s}-%s{!}", a.Release)
+	fmtc.If(a.Build != "").Printf(" {s-}(%s){!}", a.Build)
 
-	fmtc.Printf("- %s\n", a.Desc)
+	fmtc.Printf(" - %s\n", a.Desc)
 
 	if len(a.Environment) > 0 {
 		fmtc.Printf("{s-}│{!}\n")
