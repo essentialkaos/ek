@@ -87,6 +87,10 @@ func (a Arguments) Unshift(args ...string) Arguments {
 
 // Flatten converts arguments to the string (useful for custom parsing logic)
 func (a Arguments) Flatten() string {
+	if len(a) == 0 {
+		return ""
+	}
+
 	var result strings.Builder
 
 	for _, arg := range a {
