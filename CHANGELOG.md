@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.67.1
+
+* `[options]` Fixed bug with flattening empty arguments
+
 ### 12.67.0
 
 * `[usage]` Added support of raw version printing

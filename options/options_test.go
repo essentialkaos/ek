@@ -639,6 +639,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 func (s *OptUtilSuite) TestNilArguments(c *C) {
 	var a Arguments
 
+	c.Assert(a.Flatten(), Equals, "")
 	c.Assert(a.Has(0), Equals, false)
 	c.Assert(a.Get(0).String(), Equals, "")
 	c.Assert(a.Last().String(), Equals, "")
