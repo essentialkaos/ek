@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.67.2
+
+* `[options]` Improved short options parsing logic
+
 ### 12.67.1
 
 * `[options]` Fixed bug with flattening empty arguments

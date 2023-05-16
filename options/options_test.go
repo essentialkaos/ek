@@ -194,7 +194,7 @@ func (s *OptUtilSuite) TestBound(c *C) {
 }
 
 func (s *OptUtilSuite) TestGetters(c *C) {
-	argline := "file.mp3 -s STRING --required TEST -i 320 -b -f 1.098765 -S2 100 -f1 5 -f2 1 -ms ABC --merg-string DEF -mi 6 --merg-int 6 -f3 12 -mf 10.1 -mf 10.1 -i1 5"
+	argline := "file.mp3 -SAT -s STRING --required TEST -i 320 -b -f 1.098765 -S2 100 -f1 5 -f2 1 -ms ABC --merg-string DEF -mi 6 --merg-int 6 -f3 12 -mf 10.1 -mf 10.1 -i1 5"
 
 	optMap := Map{
 		"s:string":          {Type: STRING, Value: "STRING"},
@@ -220,7 +220,13 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	}
 
 	opts := NewOptions()
-	opts.Parse(strings.Split(argline, " "), optMap)
+	args, errs := opts.Parse(strings.Split(argline, " "), optMap)
+
+	c.Assert(errs, HasLen, 0)
+	c.Assert(args, HasLen, 2)
+
+	c.Assert(args.Get(0).String(), Equals, "file.mp3")
+	c.Assert(args.Get(1).String(), Equals, "-SAT")
 
 	c.Assert(opts.GetS("_not_exist_"), Equals, "")
 	c.Assert(opts.GetI("_not_exist_"), Equals, 0)
