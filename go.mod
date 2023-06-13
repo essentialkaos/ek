@@ -6,7 +6,7 @@ require (
 	github.com/essentialkaos/check v1.4.0
 	github.com/essentialkaos/go-linenoise/v3 v3.4.0
 	golang.org/x/crypto v0.9.0
-	golang.org/x/sys v0.8.0
+	golang.org/x/sys v0.9.0
 )
 
 require (
