@@ -277,7 +277,7 @@ func (b *Bar) Add64(v int64) {
 	atomic.AddInt64(&b.current, v)
 }
 
-// IsFinished returns true if progress proccesing is finished
+// IsFinished returns true if progress processing is finished
 func (b *Bar) IsFinished() bool {
 	if b == nil {
 		return false
@@ -288,7 +288,7 @@ func (b *Bar) IsFinished() bool {
 	return b.finished
 }
 
-// IsStarted returns true if progress proccesing is started
+// IsStarted returns true if progress processing is started
 func (b *Bar) IsStarted() bool {
 	if b == nil {
 		return false

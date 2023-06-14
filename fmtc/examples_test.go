@@ -91,7 +91,7 @@ func ExamplePrint() {
 	// Print using named color
 	Print("{?error}lawngreen text{!}\n")
 
-	// Redifine "error" color to 24-bit color
+	// Redefine "error" color to 24-bit color
 	NameColor("error", "{#ff0000}")
 
 	// Remove named color
@@ -358,7 +358,7 @@ func ExampleNameColor() {
 	// Print a message with named color
 	Print("{?error}lawngreen text{!}\n")
 
-	// Redifine "error" color to 24-bit color
+	// Redefine "error" color to 24-bit color
 	NameColor("error", "{#ff0000}")
 
 	// Print a message with new color
