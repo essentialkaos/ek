@@ -1,8 +1,10 @@
 ## Changelog
 
-### 12.67.2
+### 12.68.0
 
 * `[options]` Improved short options parsing logic
+* `[progress]` Added window size configuration for passtru calculator
+* Fixed typos
 
 ### 12.67.1
 

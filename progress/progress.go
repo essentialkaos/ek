@@ -11,6 +11,7 @@ package progress
 import (
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 	"sync"
@@ -80,6 +81,8 @@ type Settings struct {
 	Width    int
 	NameSize int
 
+	WindowSizeSec int64 // Window size for passtru reader
+
 	IsSize bool
 }
 
@@ -114,6 +117,7 @@ var DefaultSettings = Settings{
 	ShowRemaining:     true,
 	IsSize:            true,
 	Width:             88,
+	WindowSizeSec:     15.0,
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -155,7 +159,9 @@ func (b *Bar) Start() {
 	}
 
 	if b.total > 0 {
-		b.passThruCalc = NewPassThruCalc(b.total, 10.0)
+		b.passThruCalc = NewPassThruCalc(
+			b.total, math.Max(1.0, float64(b.settings.WindowSizeSec)),
+		)
 	}
 
 	go b.renderer()
@@ -223,7 +229,9 @@ func (b *Bar) SetTotal(v int64) {
 	b.mu.Lock()
 
 	if b.passThruCalc == nil {
-		b.passThruCalc = NewPassThruCalc(v, 10.0)
+		b.passThruCalc = NewPassThruCalc(
+			v, math.Max(1.0, float64(b.settings.WindowSizeSec)),
+		)
 	} else {
 		b.passThruCalc.SetTotal(v)
 	}

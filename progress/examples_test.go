@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func SimpleExample() {
+func ExampleNew_simple() {
 	pb := progress.New(1000, "Counting…")
 
 	// You can use default settings as a starting point
@@ -41,7 +41,7 @@ func SimpleExample() {
 	pb.Finish() // Stop async progress handling
 }
 
-func DownloadExample() {
+func ExampleNew_download() {
 	pb := progress.New(0, "file.zip")
 	resp, err := req.Request{URL: "https://domain.com/file.zip"}.Get()
 
