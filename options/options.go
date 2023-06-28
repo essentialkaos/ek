@@ -495,10 +495,10 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 				arguments = append(arguments, Argument(curOpt))
 				continue
 
-			case curOptLen > 2 && curOpt[0:2] == "--":
+			case curOptLen > 2 && curOpt[:2] == "--":
 				curOptName, curOptValue, err = opts.parseLongOption(curOpt[2:curOptLen])
 
-			case curOptLen > 1 && curOpt[0:1] == "-":
+			case curOptLen > 1 && curOpt[:1] == "-":
 				curOptName, curOptValue, err = opts.parseShortOption(curOpt[1:curOptLen])
 
 			case mixedOpt:
@@ -516,6 +516,11 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 
 			if err != nil {
 				errorList = append(errorList, err)
+				continue
+			}
+
+			if curOptName == "" && curOptValue == "" {
+				arguments = append(arguments, Argument(curOpt))
 				continue
 			}
 
@@ -610,6 +615,10 @@ func (opts *Options) parseShortOption(opt string) (string, string, error) {
 		}
 
 		return opts.short[optName], strings.Join(optSlice[1:], "="), nil
+	}
+
+	if len(opt) > 2 {
+		return "", "", nil
 	}
 
 	if opts.short[opt] == "" {

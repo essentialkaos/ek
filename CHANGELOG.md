@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.68.0
+
+* `[options]` Improved short options parsing logic
+* `[progress]` Added window size configuration for passthru calculator
+* Fixed typos
+
 ### 12.67.1
 
 * `[options]` Fixed bug with flattening empty arguments

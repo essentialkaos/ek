@@ -25,7 +25,7 @@ type Reader struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrEmptyDest is returned by the ReadTo method if empty destintation slice was given
+// ErrEmptyDest is returned by the ReadTo method if empty destination slice was given
 var ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
 
 // ErrNilReader is returned when reader struct is nil
