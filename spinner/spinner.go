@@ -38,7 +38,7 @@ var OkColorTag = "{g}"
 var ErrColorTag = "{r}"
 
 // SkipColorTag is skipped action color tag (see fmtc package)
-var SkipColorTag = "{s}"
+var SkipColorTag = "{s-}"
 
 // TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
@@ -50,7 +50,7 @@ var OkSymbol = "✔ "
 var ErrSymbol = "✖ "
 
 // SkipSymbol contains symbol for skipped action
-var SkipSymbol = "❕ "
+var SkipSymbol = "✔ "
 
 // DisableAnimation is global animation off switch flag
 var DisableAnimation = false
