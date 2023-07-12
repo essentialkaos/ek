@@ -3,6 +3,8 @@
 ### 12.69.0
 
 * `[spinner]` Added symbols customization
+* `[spinner]` Change default skip symbol to check mark
+* `[spinner]` Change default skip symbol color to dark grey
 
 ### 12.68.0
 
