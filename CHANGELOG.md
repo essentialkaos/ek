@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.69.0
+
+* `[spinner]` Added symbols customization
+
 ### 12.68.0
 
 * `[options]` Improved short options parsing logic

@@ -28,7 +28,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-//  SpinnerColorTag is spinner animation color tag (see fmtc package)
+// SpinnerColorTag is spinner animation color tag (see fmtc package)
 var SpinnerColorTag = "{y}"
 
 // OkColorTag is check color tag (see fmtc package)
@@ -42,6 +42,15 @@ var SkipColorTag = "{s}"
 
 // TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
+
+// OkSymbol contains symbol for action with no problems
+var OkSymbol = "✔ "
+
+// ErrSymbol contains symbol for action with problems
+var ErrSymbol = "✖ "
+
+// SkipSymbol contains symbol for skipped action
+var SkipSymbol = "❕ "
 
 // DisableAnimation is global animation off switch flag
 var DisableAnimation = false
@@ -173,17 +182,17 @@ func stopSpinner(action uint8) {
 	switch action {
 	case _ACTION_ERROR:
 		fmtc.Printf(
-			ErrColorTag+"✖  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			ErrColorTag+ErrSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	case _ACTION_SKIP:
 		fmtc.Printf(
-			SkipColorTag+"⚠  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			SkipColorTag+SkipSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	default:
 		fmtc.Printf(
-			OkColorTag+"✔  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			OkColorTag+OkSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	}
