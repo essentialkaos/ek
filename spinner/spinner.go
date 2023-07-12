@@ -12,6 +12,7 @@ package spinner
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
@@ -73,8 +74,8 @@ var framesDelay = []time.Duration{
 var desc string
 var start time.Time
 
-var isActive = false
-var isHidden = true
+var isActive = &atomic.Bool{}
+var isHidden = &atomic.Bool{}
 
 var mu = &sync.RWMutex{}
 
@@ -82,20 +83,19 @@ var mu = &sync.RWMutex{}
 
 // Show shows spinner with given task description
 func Show(message string, args ...any) {
-	mu.RLock()
-	if !isHidden {
-		mu.RUnlock()
+	if isActive.Load() {
 		return
 	}
-	mu.RUnlock()
 
 	mu.Lock()
 	desc = fmt.Sprintf(message, args...)
-	isActive, isHidden = true, false
 	start = time.Now()
 
+	isActive.Store(true)
+	isHidden.Store(false)
+
 	if DisableAnimation {
-		isHidden = true
+		isHidden.Store(true)
 	} else {
 		go showSpinner()
 	}
@@ -104,12 +104,9 @@ func Show(message string, args ...any) {
 
 // Update updates task description
 func Update(message string, args ...any) {
-	mu.RLock()
-	if isHidden {
-		mu.RUnlock()
+	if !isActive.Load() || isHidden.Load() {
 		return
 	}
-	mu.RUnlock()
 
 	mu.Lock()
 	desc = fmt.Sprintf(message, args...)
@@ -118,6 +115,10 @@ func Update(message string, args ...any) {
 
 // Done finishes spinner animation and shows task status
 func Done(ok bool) {
+	if !isActive.Load() {
+		return
+	}
+
 	if ok {
 		stopSpinner(_ACTION_DONE)
 	} else {
@@ -127,6 +128,10 @@ func Done(ok bool) {
 
 // Skip finishes spinner animation and mark it as skipped
 func Skip() {
+	if !isActive.Load() {
+		return
+	}
+
 	stopSpinner(_ACTION_SKIP)
 }
 
@@ -141,13 +146,12 @@ func showSpinner() {
 				frame, timeutil.ShortDuration(time.Since(start)),
 			)
 			mu.RUnlock()
+
 			time.Sleep(framesDelay[i])
 			fmt.Print("\033[2K\r")
 
-			if !isActive {
-				mu.Lock()
-				isHidden = true
-				mu.Unlock()
+			if !isActive.Load() {
+				isHidden.Store(true)
 				return
 			}
 		}
@@ -155,30 +159,19 @@ func showSpinner() {
 }
 
 func stopSpinner(action uint8) {
-	mu.RLock()
-
-	if !isActive {
-		mu.RUnlock()
+	if !isActive.Load() {
 		return
 	}
 
-	mu.RUnlock()
+	isActive.Store(false)
 
-	mu.Lock()
-	isActive = false
-	mu.Unlock()
-
-	for {
-		mu.RLock()
-		if isHidden {
-			mu.RUnlock()
+	for range time.NewTicker(time.Millisecond).C {
+		if isHidden.Load() {
 			break
 		}
-		mu.RUnlock()
 	}
 
 	mu.RLock()
-
 	switch action {
 	case _ACTION_ERROR:
 		fmtc.Printf(
@@ -200,6 +193,6 @@ func stopSpinner(action uint8) {
 	mu.RUnlock()
 
 	mu.Lock()
-	desc, isActive, isHidden, start = "", false, true, time.Time{}
+	desc, start = "", time.Time{}
 	mu.Unlock()
 }
