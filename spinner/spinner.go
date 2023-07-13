@@ -159,10 +159,6 @@ func showSpinner() {
 }
 
 func stopSpinner(action uint8) {
-	if !isActive.Load() {
-		return
-	}
-
 	isActive.Store(false)
 
 	for range time.NewTicker(time.Millisecond).C {

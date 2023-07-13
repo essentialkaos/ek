@@ -47,5 +47,4 @@ func (s *SpinnerSuite) TestSpinner(c *C) {
 	Done(true)
 
 	Skip()
-	stopSpinner(_ACTION_DONE)
 }
