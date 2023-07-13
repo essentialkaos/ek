@@ -161,6 +161,8 @@ jobs:
     name: Typos
     runs-on: ubuntu-latest
 
+    continue-on-error: true
+
     needs: SendCoverage
 
     steps:

@@ -103,6 +103,7 @@ go get -u github.com/essentialkaos/ek/v12
 
 ### Projects with `EK`
 
+* [artefactor](https://kaos.sh/artefactor) — Utility for downloading artefacts from GitHub
 * [aligo](https://kaos.sh/aligo) — Utility for checking and viewing Golang struct alignment info
 * [Bastion](https://kaos.sh/bastion) — Utility for temporary disabling access to server
 * [bibop](https://kaos.sh/bibop) — Utility for testing command-line tools
@@ -117,9 +118,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [jira-reindex-runner](https://kaos.sh/jira-reindex-runner) — Application for periodical running Jira re-index process
 * [knf](https://kaos.sh/knf) — Simple utility for reading values from KNF files
 * [MDToc](https://kaos.sh/mdtoc) — Utility for generating table of contents for markdown files
-* [Mockka](https://kaos.sh/mockka) — Mockka is a simple utility for mocking HTTP API's
 * [perfecto](https://kaos.sh/perfecto) — Tool for checking perfectly written RPM specs
-* [pkg.re Morpher](https://kaos.sh/pkgre) — Part of pkg.re service (_provides versioned URLs for Go_)
 * [RBInstall](https://kaos.sh/rbinstall) — Utility for installing prebuilt ruby to RBEnv
 * [Redis CLI Monitor](https://kaos.sh/redis-cli-monitor) — Tiny redis client for renamed MONITOR commands
 * [Redis Latency Monitor](https://kaos.sh/redis-latency-monitor) — Tiny Redis client for latency measurement
@@ -134,7 +133,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [swptop](https://kaos.sh/swptop) — Simple utility for viewing swap consumption of processes
 * [uc](https://kaos.sh/uc) — Simple utility for counting unique lines
 * [updown-badge-server](https://kaos.sh/updown-badge-server) — Service for generating badges for updown.io checks
-* [Yo](https://kaos.sh/yo) — Command-line YAML processor
+* [yo](https://kaos.sh/yo) — Command-line YAML processor
 
 ### CI Status
 

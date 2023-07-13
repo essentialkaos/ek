@@ -64,3 +64,26 @@ func ExampleReader_ReadTo() {
 		fmt.Printf("%#v\n", data)
 	}
 }
+
+func ExampleReader_WithComma() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	reader := NewReader(fd).WithComma(',')
+
+	for {
+		data, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		fmt.Printf("%#v\n", data)
+	}
+}

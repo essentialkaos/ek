@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.69.0
+
+* `[csv]` Added method `WithComma` to CSV reader
+* `[spinner]` Added symbols customization
+* `[spinner]` Change default skip symbol to check mark
+* `[spinner]` Change default skip symbol color to dark grey
+* `[spinner]` Code refactoring
+
 ### 12.68.0
 
 * `[options]` Improved short options parsing logic

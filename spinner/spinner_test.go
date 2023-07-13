@@ -45,4 +45,6 @@ func (s *SpinnerSuite) TestSpinner(c *C) {
 	DisableAnimation = true
 	Show("ABCD")
 	Done(true)
+
+	Skip()
 }

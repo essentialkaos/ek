@@ -15,6 +15,11 @@ import (
 
 func ExampleShow() {
 	file := "file.txt"
+
+	// Customize design
+	OkSymbol = "🤟"     // Set success status symbol
+	OkColorTag = "{b}" // Set success status symbol color
+
 	Show("Removing file %s", file)
 	time.Sleep(time.Second)
 	Done(true)
@@ -36,4 +41,10 @@ func ExampleDone() {
 	Show("My long running task with bad result")
 	time.Sleep(time.Second)
 	Done(false)
+}
+
+func ExampleSkip() {
+	Show("My skipped running task")
+	time.Sleep(time.Second)
+	Skip()
 }

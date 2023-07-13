@@ -12,6 +12,7 @@ package spinner
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
@@ -28,7 +29,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-//  SpinnerColorTag is spinner animation color tag (see fmtc package)
+// SpinnerColorTag is spinner animation color tag (see fmtc package)
 var SpinnerColorTag = "{y}"
 
 // OkColorTag is check color tag (see fmtc package)
@@ -38,10 +39,19 @@ var OkColorTag = "{g}"
 var ErrColorTag = "{r}"
 
 // SkipColorTag is skipped action color tag (see fmtc package)
-var SkipColorTag = "{s}"
+var SkipColorTag = "{s-}"
 
 // TimeColorTag is time color tag (see fmtc package)
 var TimeColorTag = "{s-}"
+
+// OkSymbol contains symbol for action with no problems
+var OkSymbol = "✔ "
+
+// ErrSymbol contains symbol for action with problems
+var ErrSymbol = "✖ "
+
+// SkipSymbol contains symbol for skipped action
+var SkipSymbol = "✔ "
 
 // DisableAnimation is global animation off switch flag
 var DisableAnimation = false
@@ -64,8 +74,8 @@ var framesDelay = []time.Duration{
 var desc string
 var start time.Time
 
-var isActive = false
-var isHidden = true
+var isActive = &atomic.Bool{}
+var isHidden = &atomic.Bool{}
 
 var mu = &sync.RWMutex{}
 
@@ -73,20 +83,19 @@ var mu = &sync.RWMutex{}
 
 // Show shows spinner with given task description
 func Show(message string, args ...any) {
-	mu.RLock()
-	if !isHidden {
-		mu.RUnlock()
+	if isActive.Load() {
 		return
 	}
-	mu.RUnlock()
 
 	mu.Lock()
 	desc = fmt.Sprintf(message, args...)
-	isActive, isHidden = true, false
 	start = time.Now()
 
+	isActive.Store(true)
+	isHidden.Store(false)
+
 	if DisableAnimation {
-		isHidden = true
+		isHidden.Store(true)
 	} else {
 		go showSpinner()
 	}
@@ -95,12 +104,9 @@ func Show(message string, args ...any) {
 
 // Update updates task description
 func Update(message string, args ...any) {
-	mu.RLock()
-	if isHidden {
-		mu.RUnlock()
+	if !isActive.Load() || isHidden.Load() {
 		return
 	}
-	mu.RUnlock()
 
 	mu.Lock()
 	desc = fmt.Sprintf(message, args...)
@@ -109,6 +115,10 @@ func Update(message string, args ...any) {
 
 // Done finishes spinner animation and shows task status
 func Done(ok bool) {
+	if !isActive.Load() {
+		return
+	}
+
 	if ok {
 		stopSpinner(_ACTION_DONE)
 	} else {
@@ -118,6 +128,10 @@ func Done(ok bool) {
 
 // Skip finishes spinner animation and mark it as skipped
 func Skip() {
+	if !isActive.Load() {
+		return
+	}
+
 	stopSpinner(_ACTION_SKIP)
 }
 
@@ -132,13 +146,12 @@ func showSpinner() {
 				frame, timeutil.ShortDuration(time.Since(start)),
 			)
 			mu.RUnlock()
+
 			time.Sleep(framesDelay[i])
 			fmt.Print("\033[2K\r")
 
-			if !isActive {
-				mu.Lock()
-				isHidden = true
-				mu.Unlock()
+			if !isActive.Load() {
+				isHidden.Store(true)
 				return
 			}
 		}
@@ -146,44 +159,29 @@ func showSpinner() {
 }
 
 func stopSpinner(action uint8) {
-	mu.RLock()
+	isActive.Store(false)
 
-	if !isActive {
-		mu.RUnlock()
-		return
-	}
-
-	mu.RUnlock()
-
-	mu.Lock()
-	isActive = false
-	mu.Unlock()
-
-	for {
-		mu.RLock()
-		if isHidden {
-			mu.RUnlock()
+	for range time.NewTicker(time.Millisecond).C {
+		if isHidden.Load() {
 			break
 		}
-		mu.RUnlock()
 	}
 
 	mu.RLock()
-
 	switch action {
 	case _ACTION_ERROR:
 		fmtc.Printf(
-			ErrColorTag+"✖  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			ErrColorTag+ErrSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	case _ACTION_SKIP:
 		fmtc.Printf(
-			SkipColorTag+"⚠  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			SkipColorTag+SkipSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	default:
 		fmtc.Printf(
-			OkColorTag+"✔  {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			OkColorTag+OkSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	}
@@ -191,6 +189,6 @@ func stopSpinner(action uint8) {
 	mu.RUnlock()
 
 	mu.Lock()
-	desc, isActive, isHidden, start = "", false, true, time.Time{}
+	desc, start = "", time.Time{}
 	mu.Unlock()
 }
