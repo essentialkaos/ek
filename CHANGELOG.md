@@ -2,6 +2,7 @@
 
 ### 12.69.0
 
+* `[csv]` Added method `WithComma` to CSV reader
 * `[spinner]` Added symbols customization
 * `[spinner]` Change default skip symbol to check mark
 * `[spinner]` Change default skip symbol color to dark grey

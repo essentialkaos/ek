@@ -56,9 +56,7 @@ func (s *CSVSuite) TestRead(c *C) {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
-	reader.Comma = ','
-
+	reader := NewReader(fd).WithComma(',')
 	count := 0
 
 	for {
@@ -146,6 +144,7 @@ func (s *CSVSuite) TestNil(c *C) {
 
 	c.Assert(err, DeepEquals, ErrNilReader)
 	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
+	c.Assert(r.WithComma('X'), IsNil)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

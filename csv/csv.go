@@ -79,8 +79,20 @@ func (r *Reader) ReadTo(dst []string) error {
 	return nil
 }
 
+// WithComma sets comma (fields delimiter) for CSV reader
+func (r *Reader) WithComma(comma rune) *Reader {
+	if r == nil {
+		return nil
+	}
+
+	r.Comma = comma
+
+	return r
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// parseAndFill parses line
 func parseAndFill(src string, dst []string, sep string) {
 	l := len(dst)
 
@@ -116,6 +128,7 @@ func parseAndFill(src string, dst []string, sep string) {
 	}
 }
 
+// clean cleans destination slice
 func clean(dst []string, since, to int) {
 	for i := since; i < to; i++ {
 		dst[i] = ""
