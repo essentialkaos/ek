@@ -41,6 +41,11 @@ var MaskSymbol = "*"
 // HideLength is flag for hiding password length
 var HideLength = false
 
+// HidePassword is flag for hiding password while typing
+// Because of using the low-level linenoise method for this feature, we can not use a
+// custom masking symbol, so it always will be an asterisk (*).
+var HidePassword = false
+
 var (
 	// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
 	MaskSymbolColorTag = ""
@@ -288,8 +293,16 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	var input string
 	var err error
 
+	if private && HidePassword {
+		linenoise.SetMaskMode(true)
+	}
+
 	for {
 		input, err = linenoise.Line(fmtc.Sprintf(Prompt))
+
+		if private && HidePassword {
+			linenoise.SetMaskMode(false)
+		}
 
 		if err != nil {
 			return "", err
@@ -301,10 +314,12 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 		}
 
 		if private && input != "" {
-			if MaskSymbolColorTag == "" {
-				fmt.Println(getMask(input))
-			} else {
-				fmtc.Println(MaskSymbolColorTag + getMask(input) + "{!}")
+			if !HidePassword {
+				if MaskSymbolColorTag == "" {
+					fmt.Println(getMask(input))
+				} else {
+					fmtc.Println(MaskSymbolColorTag + getMask(input) + "{!}")
+				}
 			}
 		} else {
 			if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {

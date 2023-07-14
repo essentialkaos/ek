@@ -2,6 +2,7 @@
 
 ### 12.70.0
 
+* `[terminal]` Added flag `HidePassword` for masking passwords while typing
 * `[terminal]` Added method `Info` for showing informative messages
 * `[terminal]` Added method `Panel` for showing panel with custom label, title, and message
 * `[terminal]` Added method `ErrorPanel` for showing panel with error message
