@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.70.0
+
+* `[terminal]` Method `PrintErrorMessage` marked as deprecated (_use method `Error` instead_)
+* `[terminal]` Method `PrintWarnMessage` marked as deprecated (_use method `Warn` instead_)
+
 ### 12.69.0
 
 * `[csv]` Added method `WithComma` to CSV reader

@@ -69,13 +69,6 @@ func Read(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, false)
 }
 
-// ReadUI reads user's input
-//
-// Deprecated: Use method Read instead
-func ReadUI(title string, nonEmpty bool) (string, error) {
-	return Read(title, nonEmpty)
-}
-
 // ReadAnswer reads user's answer for yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	var defaultAnswer string
@@ -126,24 +119,6 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	return secstr.NewSecureString(&password)
 }
 
-// PrintErrorMessage prints error message
-func PrintErrorMessage(message string, args ...any) {
-	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", message)
-	} else {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
-	}
-}
-
-// PrintWarnMessage prints warning message
-func PrintWarnMessage(message string, args ...any) {
-	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", message)
-	} else {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
-	}
-}
-
 // PrintActionMessage prints message about action currently in progress
 func PrintActionMessage(message string) {
 	fmtc.Printf("{*}%s:{!} ", message)
@@ -156,6 +131,24 @@ func PrintActionStatus(status int) {
 		fmtc.Println("{g}OK{!}")
 	case 1:
 		fmtc.Println("{r}ERROR{!}")
+	}
+}
+
+// Error prints error message
+func Error(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+	}
+}
+
+// Warn prints warning message
+func Warn(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
 	}
 }
 
@@ -172,6 +165,29 @@ func SetCompletionHandler(h func(input string) []string) {
 // SetHintHandler adds function for input hints
 func SetHintHandler(h func(input string) string) {
 	linenoise.SetHintHandler(h)
+}
+
+// DEPRECATED /////////////////////////////////////////////////////////////////////// //
+
+// ReadUI reads user's input
+//
+// Deprecated: Use method Read instead
+func ReadUI(title string, nonEmpty bool) (string, error) {
+	return Read(title, nonEmpty)
+}
+
+// PrintErrorMessage prints error message
+//
+// Deprecated: Use method Error instead
+func PrintErrorMessage(message string, args ...any) {
+	Error(message, args...)
+}
+
+// PrintWarnMessage prints warning message
+//
+// Deprecated: Use method Warn instead
+func PrintWarnMessage(message string, args ...any) {
+	Warn(message, args...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

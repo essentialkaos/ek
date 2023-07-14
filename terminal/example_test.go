@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleReadUI() {
+func ExampleRead() {
 	// User must enter name
 	input, err := ReadUI("Please enter user name", true)
 
@@ -106,12 +106,12 @@ func ExamplePrintActionStatus() {
 	}
 }
 
-func ExamplePrintErrorMessage() {
+func ExampleError() {
 	// Print red text to stderr
-	PrintErrorMessage("Error while sending data")
+	Error("Error while sending data")
 }
 
-func ExamplePrintWarnMessage() {
+func ExampleWarn() {
 	// Print yellow text to stderr
-	PrintWarnMessage("Warning file is not found")
+	Warn("Warning file is not found")
 }
