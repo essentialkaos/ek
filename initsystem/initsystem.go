@@ -171,7 +171,7 @@ func hasUpstartService(name string) bool {
 }
 
 func hasSystemdService(name string) bool {
-	if strings.Index(name, ".") == -1 {
+	if !strings.Contains(name, ".") {
 		name = name + ".service"
 	}
 
