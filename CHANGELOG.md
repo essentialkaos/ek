@@ -10,6 +10,7 @@
 * `[terminal]` Added method `InfoPanel` for showing panel with informative message
 * `[terminal]` Method `PrintErrorMessage` marked as deprecated (_use method `Error` instead_)
 * `[terminal]` Method `PrintWarnMessage` marked as deprecated (_use method `Warn` instead_)
+* `[fmtc]` Code refactoring
 * `[initsystem]` Code refactoring
 
 ### 12.69.0
