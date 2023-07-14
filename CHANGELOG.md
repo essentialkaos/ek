@@ -2,6 +2,11 @@
 
 ### 12.70.0
 
+* `[terminal]` Added method `Info` for showing informative messages
+* `[terminal]` Added method `Panel` for showing panel with custom label, title, and message
+* `[terminal]` Added method `ErrorPanel` for showing panel with error message
+* `[terminal]` Added method `WarnPanel` for showing panel with warning message
+* `[terminal]` Added method `InfoPanel` for showing panel with informative message
 * `[terminal]` Method `PrintErrorMessage` marked as deprecated (_use method `Error` instead_)
 * `[terminal]` Method `PrintWarnMessage` marked as deprecated (_use method `Warn` instead_)
 

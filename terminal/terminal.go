@@ -17,13 +17,14 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/essentialkaos/go-linenoise/v3"
-
 	"github.com/essentialkaos/ek/v12/ansi"
 	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/fmtutil"
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/secstr"
+
+	"github.com/essentialkaos/go-linenoise/v3"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,23 +41,33 @@ var MaskSymbol = "*"
 // HideLength is flag for hiding password length
 var HideLength = false
 
-// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
-var MaskSymbolColorTag = ""
+var (
+	// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+	MaskSymbolColorTag = ""
 
-// TitleColorTag is fmtc color tag used for input titles
-var TitleColorTag = "{c}"
+	// TitleColorTag is fmtc color tag used for input titles
+	TitleColorTag = "{s}"
 
-// ErrorColorTag is fmtc color tag used for error messages
-var ErrorColorTag = "{r}"
+	// ErrorColorTag is fmtc color tag used for error messages
+	ErrorColorTag = "{r}"
 
-// WarnColorTag is fmtc color tag used for warning messages
-var WarnColorTag = "{y}"
+	// WarnColorTag is fmtc color tag used for warning messages
+	WarnColorTag = "{y}"
 
-// ErrorPrefix is prefix for error messages
-var ErrorPrefix = ""
+	// InfoColorTag is fmtc color tag used for info messages
+	InfoColorTag = "{c-}"
+)
 
-// WarnPrefix is prefix for warning messages
-var WarnPrefix = ""
+var (
+	// ErrorPrefix is prefix for error messages
+	ErrorPrefix = ""
+
+	// WarnPrefix is prefix for warning messages
+	WarnPrefix = ""
+
+	// InfoPrefix is prefix for info messages
+	InfoPrefix = ""
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -150,6 +161,40 @@ func Warn(message string, args ...any) {
 	} else {
 		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
 	}
+}
+
+// Info prints info message
+func Info(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+	}
+}
+
+// ErrorPanel shows panel with error message
+func ErrorPanel(title, message string) {
+	Panel("ERROR", ErrorColorTag, title, message)
+}
+
+// WarnPanel shows panel with warning message
+func WarnPanel(title, message string) {
+	Panel("WARNING", WarnColorTag, title, message)
+}
+
+// InfoPanel shows panel with warning message
+func InfoPanel(title, message string) {
+	Panel("INFO", InfoColorTag, title, message)
+}
+
+// Panel show panel with given label, title, and message
+func Panel(label, colorTag, title, message string) {
+	fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+
+	fmtc.Print(fmtutil.Wrap(
+		fmtc.Sprint(message),
+		fmtc.Sprint(colorTag+"┃{!} "), 88,
+	) + "\n")
 }
 
 // AddHistory adds line to input history

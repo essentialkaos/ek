@@ -39,7 +39,7 @@ func ExampleReadPassword() {
 	MaskSymbol = "•"
 	MaskSymbolColorTag = "{s}"
 
-	// User must enter password
+	// User must enter the password
 	password, err := ReadPassword("Please enter password", true)
 
 	if err != nil {
@@ -54,7 +54,7 @@ func ExampleReadPasswordSecure() {
 	MaskSymbol = "•"
 	MaskSymbolColorTag = "{s}"
 
-	// User must enter password
+	// User must enter the password
 	password, err := ReadPasswordSecure("Please enter password", true)
 
 	if err != nil {
@@ -108,10 +108,52 @@ func ExamplePrintActionStatus() {
 
 func ExampleError() {
 	// Print red text to stderr
-	Error("Error while sending data")
+	Error("Error while sending data to %s", "https://example.com")
 }
 
 func ExampleWarn() {
 	// Print yellow text to stderr
-	Warn("Warning file is not found")
+	Warn("Warning file %s is not found", "/home/john/test.txt")
+}
+
+func ExampleInfo() {
+	// Print cyan text to stdout
+	Warn("User %q will be created automatically", "bob")
+}
+
+func ExampleErrorPanel() {
+	ErrorPanel(
+		"Can't send data to remote server.",
+		`{*}Lorem ipsum{!} dolor sit amet, {r*}consectetur{!} adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`,
+	)
+}
+
+func ExampleWarnPanel() {
+	WarnPanel(
+		"Can't find user bob on system.",
+		`{*}Lorem ipsum{!} dolor sit amet, {r*}consectetur{!} adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`,
+	)
+}
+
+func ExampleInfoPanel() {
+	InfoPanel(
+		"Auto-saving is enabled - data will be saved after editing.",
+		`{*}Lorem ipsum{!} dolor sit amet, {r*}consectetur{!} adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`,
+	)
+}
+
+func ExamplePanel() {
+	Panel(
+		"Yolo", "{m}",
+		"Excepteur sint occaecat cupidatat non proident.",
+		`{*}Lorem ipsum{!} dolor sit amet, {r*}consectetur{!} adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`,
+	)
 }
