@@ -107,16 +107,25 @@ func ExamplePrintActionStatus() {
 }
 
 func ExampleError() {
+	// Add custom error message prefix
+	ErrorPrefix = "▲ "
+
 	// Print red text to stderr
 	Error("Error while sending data to %s", "https://example.com")
 }
 
 func ExampleWarn() {
+	// Add custom warning message prefix
+	WarnPrefix = "△ "
+
 	// Print yellow text to stderr
 	Warn("Warning file %s is not found", "/home/john/test.txt")
 }
 
 func ExampleInfo() {
+	// Add custom info message prefix
+	InfoPrefix = "❕ "
+
 	// Print cyan text to stdout
 	Warn("User %q will be created automatically", "bob")
 }
