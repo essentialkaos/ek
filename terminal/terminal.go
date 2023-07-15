@@ -17,13 +17,14 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/essentialkaos/go-linenoise/v3"
-
 	"github.com/essentialkaos/ek/v12/ansi"
 	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/fmtutil"
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/secstr"
+
+	"github.com/essentialkaos/go-linenoise/v3"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,23 +41,38 @@ var MaskSymbol = "*"
 // HideLength is flag for hiding password length
 var HideLength = false
 
-// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
-var MaskSymbolColorTag = ""
+// HidePassword is flag for hiding password while typing
+// Because of using the low-level linenoise method for this feature, we can not use a
+// custom masking symbol, so it always will be an asterisk (*).
+var HidePassword = false
 
-// TitleColorTag is fmtc color tag used for input titles
-var TitleColorTag = "{c}"
+var (
+	// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+	MaskSymbolColorTag = ""
 
-// ErrorColorTag is fmtc color tag used for error messages
-var ErrorColorTag = "{r}"
+	// TitleColorTag is fmtc color tag used for input titles
+	TitleColorTag = "{s}"
 
-// WarnColorTag is fmtc color tag used for warning messages
-var WarnColorTag = "{y}"
+	// ErrorColorTag is fmtc color tag used for error messages
+	ErrorColorTag = "{r}"
 
-// ErrorPrefix is prefix for error messages
-var ErrorPrefix = ""
+	// WarnColorTag is fmtc color tag used for warning messages
+	WarnColorTag = "{y}"
 
-// WarnPrefix is prefix for warning messages
-var WarnPrefix = ""
+	// InfoColorTag is fmtc color tag used for info messages
+	InfoColorTag = "{c-}"
+)
+
+var (
+	// ErrorPrefix is prefix for error messages
+	ErrorPrefix = ""
+
+	// WarnPrefix is prefix for warning messages
+	WarnPrefix = ""
+
+	// InfoPrefix is prefix for info messages
+	InfoPrefix = ""
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -67,13 +83,6 @@ var tmux int8
 // Read reads user's input
 func Read(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, false)
-}
-
-// ReadUI reads user's input
-//
-// Deprecated: Use method Read instead
-func ReadUI(title string, nonEmpty bool) (string, error) {
-	return Read(title, nonEmpty)
 }
 
 // ReadAnswer reads user's answer for yes/no question
@@ -126,24 +135,6 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	return secstr.NewSecureString(&password)
 }
 
-// PrintErrorMessage prints error message
-func PrintErrorMessage(message string, args ...any) {
-	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", message)
-	} else {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
-	}
-}
-
-// PrintWarnMessage prints warning message
-func PrintWarnMessage(message string, args ...any) {
-	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", message)
-	} else {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
-	}
-}
-
 // PrintActionMessage prints message about action currently in progress
 func PrintActionMessage(message string) {
 	fmtc.Printf("{*}%s:{!} ", message)
@@ -159,6 +150,58 @@ func PrintActionStatus(status int) {
 	}
 }
 
+// Error prints error message
+func Error(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+	}
+}
+
+// Warn prints warning message
+func Warn(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+	}
+}
+
+// Info prints info message
+func Info(message string, args ...any) {
+	if len(args) == 0 {
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", message)
+	} else {
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+	}
+}
+
+// ErrorPanel shows panel with error message
+func ErrorPanel(title, message string) {
+	Panel("ERROR", ErrorColorTag, title, message)
+}
+
+// WarnPanel shows panel with warning message
+func WarnPanel(title, message string) {
+	Panel("WARNING", WarnColorTag, title, message)
+}
+
+// InfoPanel shows panel with warning message
+func InfoPanel(title, message string) {
+	Panel("INFO", InfoColorTag, title, message)
+}
+
+// Panel show panel with given label, title, and message
+func Panel(label, colorTag, title, message string) {
+	fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+
+	fmtc.Print(fmtutil.Wrap(
+		fmtc.Sprint(message),
+		fmtc.Sprint(colorTag+"┃{!} "), 88,
+	) + "\n")
+}
+
 // AddHistory adds line to input history
 func AddHistory(data string) {
 	linenoise.AddHistory(data)
@@ -172,6 +215,29 @@ func SetCompletionHandler(h func(input string) []string) {
 // SetHintHandler adds function for input hints
 func SetHintHandler(h func(input string) string) {
 	linenoise.SetHintHandler(h)
+}
+
+// DEPRECATED /////////////////////////////////////////////////////////////////////// //
+
+// ReadUI reads user's input
+//
+// Deprecated: Use method Read instead
+func ReadUI(title string, nonEmpty bool) (string, error) {
+	return Read(title, nonEmpty)
+}
+
+// PrintErrorMessage prints error message
+//
+// Deprecated: Use method Error instead
+func PrintErrorMessage(message string, args ...any) {
+	Error(message, args...)
+}
+
+// PrintWarnMessage prints warning message
+//
+// Deprecated: Use method Warn instead
+func PrintWarnMessage(message string, args ...any) {
+	Warn(message, args...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -227,8 +293,16 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	var input string
 	var err error
 
+	if private && HidePassword {
+		linenoise.SetMaskMode(true)
+	}
+
 	for {
 		input, err = linenoise.Line(fmtc.Sprintf(Prompt))
+
+		if private && HidePassword {
+			linenoise.SetMaskMode(false)
+		}
 
 		if err != nil {
 			return "", err
@@ -240,10 +314,12 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 		}
 
 		if private && input != "" {
-			if MaskSymbolColorTag == "" {
-				fmt.Println(getMask(input))
-			} else {
-				fmtc.Println(MaskSymbolColorTag + getMask(input) + "{!}")
+			if !HidePassword {
+				if MaskSymbolColorTag == "" {
+					fmt.Println(getMask(input))
+				} else {
+					fmtc.Println(MaskSymbolColorTag + getMask(input) + "{!}")
+				}
 			}
 		} else {
 			if !fsutil.IsCharacterDevice("/dev/stdin") && os.Getenv("FAKETTY") == "" {
