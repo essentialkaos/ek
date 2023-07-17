@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.71.0
+
+* `[terminal]` Added panel size configuration feature
+* `[terminal]` Improved panel rendering for messages with newlines
+
 ### 12.70.0
 
 * `[terminal]` Added flag `HidePassword` for masking passwords while typing

@@ -12,6 +12,7 @@ package terminal
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -73,6 +74,9 @@ var (
 	// InfoPrefix is prefix for info messages
 	InfoPrefix = ""
 )
+
+// PanelWidth is panel width (≥ 40)
+var PanelWidth = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -196,10 +200,19 @@ func InfoPanel(title, message string) {
 func Panel(label, colorTag, title, message string) {
 	fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
 
-	fmtc.Print(fmtutil.Wrap(
-		fmtc.Sprint(message),
-		fmtc.Sprint(colorTag+"┃{!} "), 88,
-	) + "\n")
+	buf := bytes.NewBufferString(
+		fmtutil.Wrap(fmtc.Sprint(message), "", mathutil.Max(38, PanelWidth-2)) + "\n",
+	)
+
+	for {
+		line, err := buf.ReadString('\n')
+
+		if err != nil {
+			break
+		}
+
+		fmtc.Print(colorTag + "┃{!} " + line)
+	}
 }
 
 // AddHistory adds line to input history
