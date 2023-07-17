@@ -4,6 +4,7 @@
 
 * `[terminal]` Added panel size configuration feature
 * `[terminal]` Improved panel rendering for messages with newlines
+* `[initsystem]` Removed systemd statuses `activating` and `deactivating` from checking service state
 
 ### 12.70.0
 
