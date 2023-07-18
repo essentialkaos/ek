@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.72.0
+
+* `[mathutil]` Sub-package migrated to generics
+
 ### 12.71.0
 
 * `[terminal]` Added panel size configuration feature
