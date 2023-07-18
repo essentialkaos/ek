@@ -333,10 +333,10 @@ func parseSystemdStatusOutput(name, data string) (bool, error) {
 	activeStateValue := strutil.ReadField(activeState, 1, false, "=")
 
 	switch strings.Trim(activeStateValue, "\r\n") {
-	case "active", "activating":
+	case "active":
 		return true, nil
 
-	case "inactive", "deactivating", "failed":
+	case "inactive", "failed":
 		return false, nil
 	}
 

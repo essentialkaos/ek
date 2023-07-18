@@ -27,36 +27,43 @@ var MaskSymbol = "*"
 // ❗ HideLength is flag for hiding password length
 var HideLength = false
 
-// ❗ MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
-var MaskSymbolColorTag = ""
+// ❗ HidePassword is flag for hiding password while typing
+// Because of using the low-level linenoise method for this feature, we can not use a
+// custom masking symbol, so it always will be an asterisk (*).
+var HidePassword = false
 
-// ❗ TitleColorTag is fmtc color tag used for input titles
-var TitleColorTag = "{c}"
+var (
+	// ❗ MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+	MaskSymbolColorTag = ""
 
-// ❗ ErrorColorTag is fmtc color tag used for error messages
-var ErrorColorTag = "{r}"
+	// ❗ TitleColorTag is fmtc color tag used for input titles
+	TitleColorTag = "{s}"
 
-// ❗ WarnColorTag is fmtc color tag used for warning messages
-var WarnColorTag = "{y}"
+	// ❗ ErrorColorTag is fmtc color tag used for error messages
+	ErrorColorTag = "{r}"
 
-// ❗ ErrorPrefix is prefix for error messages
-var ErrorPrefix = ""
+	// ❗ WarnColorTag is fmtc color tag used for warning messages
+	WarnColorTag = "{y}"
 
-// ❗ WarnPrefix is prefix for warning messages
-var WarnPrefix = ""
+	// ❗ InfoColorTag is fmtc color tag used for info messages
+	InfoColorTag = "{c-}"
+)
+
+var (
+	// ❗ ErrorPrefix is prefix for error messages
+	ErrorPrefix = ""
+
+	// ❗ WarnPrefix is prefix for warning messages
+	WarnPrefix = ""
+
+	// ❗ InfoPrefix is prefix for info messages
+	InfoPrefix = ""
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ Read reads user's input
 func Read(title string, nonEmpty bool) (string, error) {
-	panic("UNSUPPORTED")
-	return "", nil
-}
-
-// ❗ ReadUI reads user's input
-//
-// Deprecated: Use method Read instead
-func ReadUI(title string, nonEmpty bool) (string, error) {
 	panic("UNSUPPORTED")
 	return "", nil
 }
@@ -81,16 +88,6 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	return "", nil
 }
 
-// ❗ PrintErrorMessage prints error message
-func PrintErrorMessage(message string, args ...any) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ PrintWarnMessage prints warning message
-func PrintWarnMessage(message string, args ...any) {
-	panic("UNSUPPORTED")
-}
-
 // ❗ PrintActionMessage prints message about action currently in progress
 func PrintActionMessage(message string) {
 	panic("UNSUPPORTED")
@@ -98,6 +95,41 @@ func PrintActionMessage(message string) {
 
 // ❗ PrintActionStatus prints message with action execution status
 func PrintActionStatus(status int) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Error prints error message
+func Error(message string, args ...any) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Warn prints warning message
+func Warn(message string, args ...any) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Info prints info message
+func Info(message string, args ...any) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ ErrorPanel shows panel with error message
+func ErrorPanel(title, message string) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ WarnPanel shows panel with warning message
+func WarnPanel(title, message string) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ InfoPanel shows panel with warning message
+func InfoPanel(title, message string) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Panel show panel with given label, title, and message
+func Panel(label, colorTag, title, message string) {
 	panic("UNSUPPORTED")
 }
 
