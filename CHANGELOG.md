@@ -6,6 +6,7 @@
 * `[mathutil]` Sub-package migrated to generics
 * `[sliceutil]` Sub-package migrated to generics
 * `[color]` Code refactoring
+* `[spinner]` Code refactoring
 
 ### 12.71.0
 
