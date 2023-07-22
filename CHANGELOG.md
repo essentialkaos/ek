@@ -2,6 +2,7 @@
 
 ### 12.72.0
 
+* `[terminal]` Added support of options for panels
 * `[mathutil]` Sub-package migrated to generics
 * `[sliceutil]` Sub-package migrated to generics
 * `[color]` Code refactoring

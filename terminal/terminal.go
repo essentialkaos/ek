@@ -24,8 +24,24 @@ import (
 	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/secstr"
+	"github.com/essentialkaos/ek/v12/sliceutil"
 
 	"github.com/essentialkaos/go-linenoise/v3"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type PanelOption uint8
+
+const (
+	// PANEL_WRAP is panel option for automatic text wrapping
+	PANEL_WRAP PanelOption = iota + 1
+
+	// PANEL_BOTTOM_LINE is panel option for drawing bottom line of panel
+	PANEL_BOTTOM_LINE
+
+	// PANEL_LABEL_POWERLINE is panel option for using powerline symbols
+	PANEL_LABEL_POWERLINE
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -182,27 +198,39 @@ func Info(message string, args ...any) {
 }
 
 // ErrorPanel shows panel with error message
-func ErrorPanel(title, message string) {
-	Panel("ERROR", ErrorColorTag, title, message)
+func ErrorPanel(title, message string, options ...PanelOption) {
+	Panel("ERROR", ErrorColorTag, title, message, options...)
 }
 
 // WarnPanel shows panel with warning message
-func WarnPanel(title, message string) {
-	Panel("WARNING", WarnColorTag, title, message)
+func WarnPanel(title, message string, options ...PanelOption) {
+	Panel("WARNING", WarnColorTag, title, message, options...)
 }
 
 // InfoPanel shows panel with warning message
-func InfoPanel(title, message string) {
-	Panel("INFO", InfoColorTag, title, message)
+func InfoPanel(title, message string, options ...PanelOption) {
+	Panel("INFO", InfoColorTag, title, message, options...)
 }
 
 // Panel show panel with given label, title, and message
-func Panel(label, colorTag, title, message string) {
-	fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+func Panel(label, colorTag, title, message string, options ...PanelOption) {
+	var buf *bytes.Buffer
 
-	buf := bytes.NewBufferString(
-		fmtutil.Wrap(fmtc.Sprint(message), "", mathutil.Max(38, PanelWidth-2)) + "\n",
-	)
+	if sliceutil.Contains(options, PANEL_LABEL_POWERLINE) {
+		fmtc.Printf(colorTag+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}\n", label, title)
+	} else {
+		fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+	}
+
+	switch {
+	case sliceutil.Contains(options, PANEL_WRAP):
+		buf = bytes.NewBufferString(
+			fmtutil.Wrap(fmtc.Sprint(message), "", mathutil.Max(38, PanelWidth-2)) + "\n",
+		)
+	default:
+		buf = bytes.NewBufferString(message)
+		buf.WriteRune('\n')
+	}
 
 	for {
 		line, err := buf.ReadString('\n')
@@ -212,6 +240,10 @@ func Panel(label, colorTag, title, message string) {
 		}
 
 		fmtc.Print(colorTag + "┃{!} " + line)
+	}
+
+	if sliceutil.Contains(options, PANEL_BOTTOM_LINE) {
+		fmtc.Println(colorTag + "┖" + strings.Repeat("─", mathutil.Max(38, PanelWidth-2)))
 	}
 }
 
