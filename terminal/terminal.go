@@ -34,13 +34,17 @@ import (
 type PanelOption uint8
 
 const (
-	// PANEL_WRAP is panel option for automatic text wrapping
+	// PANEL_WRAP is panel rendering option for automatic text wrapping
 	PANEL_WRAP PanelOption = iota + 1
 
-	// PANEL_BOTTOM_LINE is panel option for drawing bottom line of panel
+	// PANEL_INDENT is panel rendering option for indent using new lines
+	// before and after panel
+	PANEL_INDENT
+
+	// PANEL_BOTTOM_LINE is panel rendering option for drawing bottom line of panel
 	PANEL_BOTTOM_LINE
 
-	// PANEL_LABEL_POWERLINE is panel option for using powerline symbols
+	// PANEL_LABEL_POWERLINE is panel rendering option for using powerline symbols
 	PANEL_LABEL_POWERLINE
 )
 
@@ -216,6 +220,10 @@ func InfoPanel(title, message string, options ...PanelOption) {
 func Panel(label, colorTag, title, message string, options ...PanelOption) {
 	var buf *bytes.Buffer
 
+	if sliceutil.Contains(options, PANEL_INDENT) {
+		fmtc.NewLine()
+	}
+
 	if sliceutil.Contains(options, PANEL_LABEL_POWERLINE) {
 		fmtc.Printf(colorTag+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}\n", label, title)
 	} else {
@@ -244,6 +252,10 @@ func Panel(label, colorTag, title, message string, options ...PanelOption) {
 
 	if sliceutil.Contains(options, PANEL_BOTTOM_LINE) {
 		fmtc.Println(colorTag + "┖" + strings.Repeat("─", mathutil.Max(38, PanelWidth-2)))
+	}
+
+	if sliceutil.Contains(options, PANEL_INDENT) {
+		fmtc.NewLine()
 	}
 }
 
