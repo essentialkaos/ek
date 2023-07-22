@@ -18,13 +18,17 @@ import (
 type PanelOption uint8
 
 const (
-	// PANEL_WRAP is panel option for automatic text wrapping
+	// PANEL_WRAP is panel rendering option for automatic text wrapping
 	PANEL_WRAP PanelOption = iota + 1
 
-	// PANEL_BOTTOM_LINE is panel option for drawing bottom line of panel
+	// PANEL_INDENT is panel rendering option for indent using new lines
+	// before and after panel
+	PANEL_INDENT
+
+	// PANEL_BOTTOM_LINE is panel rendering option for drawing bottom line of panel
 	PANEL_BOTTOM_LINE
 
-	// PANEL_LABEL_POWERLINE is panel option for using powerline symbols
+	// PANEL_LABEL_POWERLINE is panel rendering option for using powerline symbols
 	PANEL_LABEL_POWERLINE
 )
 
