@@ -192,15 +192,16 @@ jobs:
         os: [ 'ubuntu-latest', 'macos-latest' ]
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.19.x'
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           path: ${{env.SRC_DIR}}
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.19.x'
+          cache-dependency-path: ${{env.SRC_DIR}}/go.sum
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
