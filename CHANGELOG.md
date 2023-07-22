@@ -3,6 +3,7 @@
 ### 12.72.0
 
 * `[mathutil]` Sub-package migrated to generics
+* `[sliceutil]` Sub-package migrated to generics
 
 ### 12.71.0
 

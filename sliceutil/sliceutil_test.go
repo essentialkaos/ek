@@ -28,9 +28,13 @@ var _ = Suite(&SliceSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SliceSuite) TestCopy(c *C) {
-	c.Assert(Copy(nil), IsNil)
-	c.Assert(CopyInts(nil), IsNil)
-	c.Assert(CopyFloats(nil), IsNil)
+	var ss []string
+	var is []int
+	var fs []float64
+
+	c.Assert(Copy(ss), IsNil)
+	c.Assert(CopyInts(is), IsNil)
+	c.Assert(CopyFloats(fs), IsNil)
 
 	c.Assert(Copy([]string{"A"}), DeepEquals, []string{"A"})
 	c.Assert(CopyInts([]int{1}), DeepEquals, []int{1})

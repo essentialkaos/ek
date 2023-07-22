@@ -15,39 +15,29 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Copy creates copy of given slice
-func Copy(slice []string) []string {
+func Copy[K comparable](slice []K) []K {
 	if len(slice) == 0 {
 		return nil
 	}
 
-	s := make([]string, len(slice))
+	s := make([]K, len(slice))
 	copy(s, slice)
 
 	return s
 }
 
 // CopyInts creates copy of given slice
+//
+// Deprecated: Use method Copy instead
 func CopyInts(slice []int) []int {
-	if len(slice) == 0 {
-		return nil
-	}
-
-	s := make([]int, len(slice))
-	copy(s, slice)
-
-	return s
+	return Copy(slice)
 }
 
 // CopyFloats creates copy of given slice
+//
+// Deprecated: Use method Copy instead
 func CopyFloats(slice []float64) []float64 {
-	if len(slice) == 0 {
-		return nil
-	}
-
-	s := make([]float64, len(slice))
-	copy(s, slice)
-
-	return s
+	return Copy(slice)
 }
 
 // StringToInterface converts slice with strings to slice with any
@@ -111,7 +101,7 @@ func ErrorToString(data []error) []string {
 }
 
 // Index returns index of given item in a slice or -1 otherwise
-func Index(slice []string, item string) int {
+func Index[K comparable](slice []K, item K) int {
 	if len(slice) == 0 {
 		return -1
 	}
@@ -126,12 +116,12 @@ func Index(slice []string, item string) int {
 }
 
 // Contains checks if string slice contains some value
-func Contains(slice []string, value string) bool {
+func Contains[K comparable](slice []K, value K) bool {
 	return Index(slice, value) != -1
 }
 
 // Exclude removes items from slice
-func Exclude(slice []string, items ...string) []string {
+func Exclude[K comparable](slice []K, items ...K) []K {
 	var n int
 
 	s := Copy(slice)
@@ -157,7 +147,7 @@ LOOP:
 
 // Deduplicate removes duplicates from slice.
 // Slice must be sorted before deduplication.
-func Deduplicate(slice []string) []string {
+func Deduplicate[K comparable](slice []K) []K {
 	var n int
 
 	s := Copy(slice)
