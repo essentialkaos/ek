@@ -13,6 +13,10 @@ permissions:
   contents: read
   statuses: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Linux:
     name: Linux
@@ -31,6 +35,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
+          cache: false
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -83,6 +88,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
+          cache: false
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -133,6 +139,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
+          cache: false
 
       - name: Checkout
         uses: actions/checkout@v3
