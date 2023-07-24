@@ -14,8 +14,20 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type Numeric interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
+		~float32 | ~float64
+}
+
+type NumericNeg interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Between returns value between min and max values
-func Between(val, min, max int) int {
+func Between[N Numeric](val, min, max N) N {
 	switch {
 	case val < min:
 		return min
@@ -27,7 +39,7 @@ func Between(val, min, max int) int {
 }
 
 // Min returns a smaller value
-func Min(val1, val2 int) int {
+func Min[N Numeric](val1, val2 N) N {
 	if val1 < val2 {
 		return val1
 	}
@@ -36,7 +48,7 @@ func Min(val1, val2 int) int {
 }
 
 // Max returns a greater value
-func Max(val1, val2 int) int {
+func Max[N Numeric](val1, val2 N) N {
 	if val1 > val2 {
 		return val1
 	}
@@ -45,306 +57,215 @@ func Max(val1, val2 int) int {
 }
 
 // BetweenU returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenU(val, min, max uint) uint {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // MinU returns a smaller value
+//
+// Deprecated: Use method Min instead
 func MinU(val1, val2 uint) uint {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // MaxU returns a greater value
+//
+// Deprecated: Use method Max instead
 func MaxU(val1, val2 uint) uint {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // Between8 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func Between8(val, min, max int8) int8 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // Min8 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func Min8(val1, val2 int8) int8 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // Max8 returns a greater value
+//
+// Deprecated: Use method Max instead
 func Max8(val1, val2 int8) int8 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // Between16 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func Between16(val, min, max int16) int16 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // Min16 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func Min16(val1, val2 int16) int16 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // Max16 returns a greater value
+//
+// Deprecated: Use method Max instead
 func Max16(val1, val2 int16) int16 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // Between32 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func Between32(val, min, max int32) int32 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // Min32 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func Min32(val1, val2 int32) int32 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // Max32 returns a greater value
+//
+// Deprecated: Use method Max instead
 func Max32(val1, val2 int32) int32 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // Between64 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func Between64(val, min, max int64) int64 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // Min64 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func Min64(val1, val2 int64) int64 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // Max64 returns a greater value
+//
+// Deprecated: Use method Max instead
 func Max64(val1, val2 int64) int64 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // BetweenU8 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenU8(val, min, max uint8) uint8 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // MinU8 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func MinU8(val1, val2 uint8) uint8 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // MaxU8 returns a greater value
+//
+// Deprecated: Use method Max instead
 func MaxU8(val1, val2 uint8) uint8 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // BetweenU16 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenU16(val, min, max uint16) uint16 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // MinU16 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func MinU16(val1, val2 uint16) uint16 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // MaxU16 returns a greater value
+//
+// Deprecated: Use method Max instead
 func MaxU16(val1, val2 uint16) uint16 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // BetweenU32 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenU32(val, min, max uint32) uint32 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // MinU32 returns a smaller value
+//
+// Deprecated: Use method Min instead
 func MinU32(val1, val2 uint32) uint32 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // MaxU32 returns a greater value
+//
+// Deprecated: Use method Max instead
 func MaxU32(val1, val2 uint32) uint32 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // BetweenU64 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenU64(val, min, max uint64) uint64 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // MinU64 returns a smaller value
 func MinU64(val1, val2 uint64) uint64 {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
+	return Min(val1, val2)
 }
 
 // MaxU64 returns a greater value
+//
+// Deprecated: Use method Max instead
 func MaxU64(val1, val2 uint64) uint64 {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
+	return Max(val1, val2)
 }
 
 // BetweenF returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenF(val, min, max float64) float64 {
-	return BetweenF64(val, min, max)
+	return Between(val, min, max)
 }
 
 // BetweenF32 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenF32(val, min, max float32) float32 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // BetweenF64 returns value between min and max values
+//
+// Deprecated: Use method Between instead
 func BetweenF64(val, min, max float64) float64 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
+	return Between(val, min, max)
 }
 
 // Abs returns absolute value
-func Abs(val int) int {
+func Abs[N NumericNeg](val N) N {
 	if val < 0 {
 		return val * -1
 	}
@@ -353,62 +274,52 @@ func Abs(val int) int {
 }
 
 // Abs8 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func Abs8(val int8) int8 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // Abs16 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func Abs16(val int16) int16 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // Abs32 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func Abs32(val int32) int32 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // Abs64 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func Abs64(val int64) int64 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // AbsF returns absolute value
+//
+// Deprecated: Use method Abs instead
 func AbsF(val float64) float64 {
-	return AbsF64(val)
+	return Abs(val)
 }
 
 // AbsF32 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func AbsF32(val float32) float32 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // AbsF64 returns absolute value
+//
+// Deprecated: Use method Abs instead
 func AbsF64(val float64) float64 {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
+	return Abs(val)
 }
 
 // Round returns rounded value

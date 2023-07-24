@@ -15,6 +15,25 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type PanelOption uint8
+
+const (
+	// PANEL_WRAP is panel rendering option for automatic text wrapping
+	PANEL_WRAP PanelOption = iota + 1
+
+	// PANEL_INDENT is panel rendering option for indent using new lines
+	// before and after panel
+	PANEL_INDENT
+
+	// PANEL_BOTTOM_LINE is panel rendering option for drawing bottom line of panel
+	PANEL_BOTTOM_LINE
+
+	// PANEL_LABEL_POWERLINE is panel rendering option for using powerline symbols
+	PANEL_LABEL_POWERLINE
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ ErrKillSignal is error type when user cancel input
 var ErrKillSignal = errors.New("")
 
@@ -114,22 +133,22 @@ func Info(message string, args ...any) {
 }
 
 // ❗ ErrorPanel shows panel with error message
-func ErrorPanel(title, message string) {
+func ErrorPanel(title, message string, options ...PanelOption) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ WarnPanel shows panel with warning message
-func WarnPanel(title, message string) {
+func WarnPanel(title, message string, options ...PanelOption) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ InfoPanel shows panel with warning message
-func InfoPanel(title, message string) {
+func InfoPanel(title, message string, options ...PanelOption) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ Panel show panel with given label, title, and message
-func Panel(label, colorTag, title, message string) {
+func Panel(label, colorTag, title, message string, options ...PanelOption) {
 	panic("UNSUPPORTED")
 }
 

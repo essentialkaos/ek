@@ -417,10 +417,10 @@ func RGB2CMYK(c RGB) CMYK {
 
 // CMYK2RGB converts CMYK color to RGB
 func CMYK2RGB(c CMYK) RGB {
-	C := mathutil.BetweenF(c.C, 0.0, 1.0)
-	M := mathutil.BetweenF(c.M, 0.0, 1.0)
-	Y := mathutil.BetweenF(c.Y, 0.0, 1.0)
-	K := mathutil.BetweenF(c.K, 0.0, 1.0)
+	C := mathutil.Between(c.C, 0.0, 1.0)
+	M := mathutil.Between(c.M, 0.0, 1.0)
+	Y := mathutil.Between(c.Y, 0.0, 1.0)
+	K := mathutil.Between(c.K, 0.0, 1.0)
 
 	return RGB{
 		uint8(255 * (1 - C) * (1 - K)),
