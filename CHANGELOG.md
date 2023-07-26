@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.73.0
+
+* `[panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package
+
 ### 12.72.0
 
 * `[terminal]` Added support of options for panels

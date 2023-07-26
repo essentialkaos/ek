@@ -12,6 +12,7 @@
 * + fmtc
 * + fmtutil
 * + fmtutil/table
+* + fmtutil/panel
 * + fsutil
 * + hash
 * + httputil

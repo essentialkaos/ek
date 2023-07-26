@@ -15,25 +15,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type PanelOption uint8
-
-const (
-	// PANEL_WRAP is panel rendering option for automatic text wrapping
-	PANEL_WRAP PanelOption = iota + 1
-
-	// PANEL_INDENT is panel rendering option for indent using new lines
-	// before and after panel
-	PANEL_INDENT
-
-	// PANEL_BOTTOM_LINE is panel rendering option for drawing bottom line of panel
-	PANEL_BOTTOM_LINE
-
-	// PANEL_LABEL_POWERLINE is panel rendering option for using powerline symbols
-	PANEL_LABEL_POWERLINE
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // ❗ ErrKillSignal is error type when user cancel input
 var ErrKillSignal = errors.New("")
 
@@ -104,7 +85,7 @@ func ReadPassword(title string, nonEmpty bool) (string, error) {
 // after pressing Enter
 func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	panic("UNSUPPORTED")
-	return "", nil
+	return nil, nil
 }
 
 // ❗ PrintActionMessage prints message about action currently in progress
@@ -129,26 +110,6 @@ func Warn(message string, args ...any) {
 
 // ❗ Info prints info message
 func Info(message string, args ...any) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ ErrorPanel shows panel with error message
-func ErrorPanel(title, message string, options ...PanelOption) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WarnPanel shows panel with warning message
-func WarnPanel(title, message string, options ...PanelOption) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ InfoPanel shows panel with warning message
-func InfoPanel(title, message string, options ...PanelOption) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ Panel show panel with given label, title, and message
-func Panel(label, colorTag, title, message string, options ...PanelOption) {
 	panic("UNSUPPORTED")
 }
 
