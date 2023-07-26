@@ -26,15 +26,15 @@ var _ = Suite(&PanelSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *PanelSuite) TestBasicErrorPanel(c *C) {
-	ErrorPanel("Test error", "Message")
+	Error("Test error", "Message")
 }
 
 func (s *PanelSuite) TestBasicWarnPanel(c *C) {
-	WarnPanel("Test warn", "Message")
+	Warn("Test warn", "Message")
 }
 
 func (s *PanelSuite) TestBasicInfoPanel(c *C) {
-	InfoPanel("Test info", "Message")
+	Info("Test info", "Message")
 }
 
 func (s *PanelSuite) TestPanelAllOptions(c *C) {

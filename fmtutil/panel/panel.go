@@ -64,22 +64,22 @@ var minWidth = 38
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrorPanel shows panel with error message
-func ErrorPanel(title, message string, options ...Option) {
+// Error shows panel with error message
+func Error(title, message string, options ...Option) {
 	Panel("ERROR", ErrorColorTag, title, message, options...)
 }
 
-// WarnPanel shows panel with warning message
-func WarnPanel(title, message string, options ...Option) {
+// Warn shows panel with warning message
+func Warn(title, message string, options ...Option) {
 	Panel("WARNING", WarnColorTag, title, message, options...)
 }
 
-// InfoPanel shows panel with warning message
-func InfoPanel(title, message string, options ...Option) {
+// Info shows panel with warning message
+func Info(title, message string, options ...Option) {
 	Panel("INFO", InfoColorTag, title, message, options...)
 }
 
-// Panel show panel with given label, title, and message
+// Panel shows panel with given label, title, and message
 func Panel(label, colorTag, title, message string, options ...Option) {
 	var buf *bytes.Buffer
 

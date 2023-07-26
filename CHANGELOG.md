@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.73.0
+### 12.73.1
 
 * `[panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package
 
