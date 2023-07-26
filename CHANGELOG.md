@@ -2,7 +2,7 @@
 
 ### 12.73.0
 
-* `[panel]` Panel rendering moved from `terminal` sub-package to it's own
+* `[panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package
 
 ### 12.72.0
 
