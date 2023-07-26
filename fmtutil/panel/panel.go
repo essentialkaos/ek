@@ -122,7 +122,7 @@ func Panel(label, colorTag, title, message string, options ...Option) {
 	}
 
 	if sliceutil.Contains(options, BOTTOM_LINE) {
-		fmtc.Println(colorTag + "┖" + strings.Repeat("─", mathutil.Max(minWidth, Width-2)))
+		fmtc.Println(colorTag + "┖" + strings.Repeat("─", mathutil.Max(minWidth, Width-1)))
 	}
 
 	if sliceutil.Contains(options, INDENT_OUTER) {
