@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.73.2
+
+* `[fmtutil]` Fixed handling negative numbers in `PrettySize`
+
 ### 12.73.1
 
 * `[panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package

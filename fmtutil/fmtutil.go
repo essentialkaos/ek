@@ -33,10 +33,10 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_KILO = 1024
-	_MEGA = 1048576
-	_GIGA = 1073741824
-	_TERA = 1099511627776
+	_KILO float64 = 1024
+	_MEGA float64 = 1048576
+	_GIGA float64 = 1073741824
+	_TERA float64 = 1099511627776
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -148,13 +148,13 @@ func PrettySize(i any, separator ...string) string {
 	}
 
 	switch {
-	case f >= _TERA:
+	case math.Abs(f) >= _TERA:
 		return fmt.Sprintf("%g", Float(f/_TERA)) + sep + "TB"
-	case f >= _GIGA:
+	case math.Abs(f) >= _GIGA:
 		return fmt.Sprintf("%g", Float(f/_GIGA)) + sep + "GB"
-	case f >= _MEGA:
+	case math.Abs(f) >= _MEGA:
 		return fmt.Sprintf("%g", Float(f/_MEGA)) + sep + "MB"
-	case f >= _KILO:
+	case math.Abs(f) >= _KILO:
 		return fmt.Sprintf("%g", Float(f/_KILO)) + sep + "KB"
 	default:
 		return fmt.Sprintf("%g", mathutil.Round(f, 0)) + sep + "B"
