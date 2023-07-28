@@ -3,6 +3,7 @@
 ### 12.73.2
 
 * `[fmtutil]` Fixed handling negative numbers in `PrettySize`
+* `[fsutil]` Fixed handling empty paths in `ProperPath`
 
 ### 12.73.1
 
