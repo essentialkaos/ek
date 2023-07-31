@@ -223,7 +223,7 @@ func (s *FSSuite) TestProperPath(c *check.C) {
 
 	os.OpenFile(tmpFile, os.O_CREATE, 0644)
 
-	paths := []string{"/etc/passwd", tmpFile, "/etc"}
+	paths := []string{"", "/etc/passwd", tmpFile, "/etc"}
 
 	c.Assert(ProperPath("DR", paths), check.Equals, "/etc")
 	c.Assert(ProperPath("FR", paths), check.Equals, "/etc/passwd")
