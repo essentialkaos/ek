@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.74.0
+
+* `[timeutil]` Added method `PrettyDurationSimple` for printing duration in simple format
+
 ### 12.73.2
 
 * `[fmtutil]` Fixed handling negative numbers in `PrettySize`

@@ -15,10 +15,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExamplePrettyDuration() {
-	// you can use int ...
+	// you can use int/int64/uint as seconds...
 	fmt.Println(PrettyDuration(300))
 
-	// ... and time.Duration types
+	// ...or time.Duration types
 	fmt.Println(PrettyDuration(123456 * time.Second))
 
 	// Output:
@@ -26,11 +26,20 @@ func ExamplePrettyDuration() {
 	// 1 day 10 hours 17 minutes and 36 seconds
 }
 
-func ExamplePrettyDurationInDays() {
-	// you can use int ...
-	fmt.Println(PrettyDurationInDays(2 * time.Hour))
+func ExamplePrettyDurationSimple() {
+	// you can use int/int64/uint as seconds...
+	fmt.Println(PrettyDurationSimple(300))
 
-	// ... and time.Duration types
+	// ...or time.Duration types
+	fmt.Println(PrettyDurationSimple(50400 * time.Second))
+
+	// Output:
+	// 5 minutes
+	// 14 hours
+}
+
+func ExamplePrettyDurationInDays() {
+	fmt.Println(PrettyDurationInDays(2 * time.Hour))
 	fmt.Println(PrettyDurationInDays(168 * time.Hour))
 
 	// Output:
