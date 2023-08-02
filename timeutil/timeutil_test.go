@@ -51,6 +51,16 @@ func (s *TimeUtilSuite) TestPretyDuration(c *C) {
 	c.Assert(PrettyDuration(time.Second/36698888), Equals, "27 ns")
 }
 
+func (s *TimeUtilSuite) TestPrettyDurationSimple(c *C) {
+	c.Assert(PrettyDurationSimple(true), Equals, "")
+	c.Assert(PrettyDurationSimple(0), Equals, "< 1 second")
+	c.Assert(PrettyDurationSimple(1), Equals, "1 second")
+	c.Assert(PrettyDurationSimple(123), Equals, "2 minutes")
+	c.Assert(PrettyDurationSimple(12134), Equals, "3 hours")
+	c.Assert(PrettyDurationSimple(112345), Equals, "1 day")
+	c.Assert(PrettyDurationSimple(4523412), Equals, "52 days")
+}
+
 func (s *TimeUtilSuite) TestPretyDurationInDays(c *C) {
 	c.Assert(PrettyDurationInDays("ABC"), Equals, "")
 	c.Assert(PrettyDurationInDays(120), Equals, "1 day")
