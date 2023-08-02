@@ -73,6 +73,10 @@ var (
 	InfoPrefix = ""
 )
 
+// AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
+// with option for forced actions)
+var AlwaysYes = false
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var tmux int8
@@ -86,6 +90,10 @@ func Read(title string, nonEmpty bool) (string, error) {
 
 // ReadAnswer reads user's answer for yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
+	if AlwaysYes {
+		return true, nil
+	}
+
 	var defaultAnswer string
 
 	if len(defaultAnswers) != 0 {

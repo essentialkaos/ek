@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.75.0
+
+* `[terminal]` Added flag `AlwaysYes`, if set `ReadAnswer` will always return true without reading user input (_useful for working with option for forced actions_)
+
 ### 12.74.0
 
 * `[timeutil]` Added method `PrettyDurationSimple` for printing duration in simple format

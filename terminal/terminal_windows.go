@@ -60,6 +60,10 @@ var (
 	InfoPrefix = ""
 )
 
+// ❗ AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
+// with option for forced actions)
+var AlwaysYes = false
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ Read reads user's input
