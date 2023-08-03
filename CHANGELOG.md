@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.75.1
+
+* `[terminal]` Improved `AlwaysYes` flag handling
+
 ### 12.75.0
 
 * `[terminal]` Added flag `AlwaysYes`, if set `ReadAnswer` will always return true without reading user input (_useful for working with option for forced actions_)
