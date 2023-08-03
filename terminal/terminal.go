@@ -90,14 +90,18 @@ func Read(title string, nonEmpty bool) (string, error) {
 
 // ReadAnswer reads user's answer for yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
-	if AlwaysYes {
-		return true, nil
-	}
-
 	var defaultAnswer string
 
 	if len(defaultAnswers) != 0 {
 		defaultAnswer = defaultAnswers[0]
+	}
+
+	if AlwaysYes {
+		if title != "" {
+			fmtc.Println(TitleColorTag + getAnswerTitle(title, defaultAnswer) + "{!}")
+		}
+		fmtc.Println(Prompt + "y")
+		return true, nil
 	}
 
 	for {
