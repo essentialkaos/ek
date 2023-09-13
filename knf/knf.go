@@ -186,7 +186,7 @@ func GetM(name string, defvals ...os.FileMode) os.FileMode {
 }
 
 // GetD returns configuration values as duration
-func GetD(name string, defvals ...time.Duration) time.Duration {
+func GetD(name string, mod time.Duration, defvals ...time.Duration) time.Duration {
 	if global == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
@@ -195,7 +195,7 @@ func GetD(name string, defvals ...time.Duration) time.Duration {
 		return defvals[0]
 	}
 
-	return global.GetD(name, defvals...)
+	return global.GetD(name, mod, defvals...)
 }
 
 // Is checks if given property contains given value
@@ -476,7 +476,7 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 }
 
 // GetD returns configuration value as duration
-func (c *Config) GetD(name string, defvals ...time.Duration) time.Duration {
+func (c *Config) GetD(name string, mod time.Duration, defvals ...time.Duration) time.Duration {
 	if c == nil || c.mx == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
@@ -497,7 +497,7 @@ func (c *Config) GetD(name string, defvals ...time.Duration) time.Duration {
 		return defvals[0]
 	}
 
-	return time.Duration(c.GetI64(name)) * time.Second
+	return time.Duration(c.GetI64(name)) * mod
 }
 
 // Is checks if given property contains given value
@@ -524,7 +524,7 @@ func (c *Config) Is(name string, value any) bool {
 	case os.FileMode:
 		return c.GetM(name) == t
 	case time.Duration:
-		return c.GetD(name) == t
+		return c.GetD(name, time.Second) == t
 	}
 
 	return false

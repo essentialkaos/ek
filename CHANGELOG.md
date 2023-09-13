@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.76.0
+
+* `[knf]` Add modificator support for `GetD`
+
 ### 12.75.1
 
 * `[terminal]` Improved `AlwaysYes` flag handling

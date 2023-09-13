@@ -9,6 +9,7 @@ package knf
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -37,8 +38,11 @@ func ExampleGlobal() {
 	// Read file mode value
 	GetM("section:file-mode")
 
-	// Read duration in seconds
-	GetD("section:duration")
+	// Read duration as seconds
+	GetD("section:duration", time.Second)
+
+	// Read duration as minutes
+	GetD("section:duration", time.Minute)
 
 	// Check section
 	if HasSection("section") {
@@ -174,7 +178,7 @@ func ExampleGetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config: %v\n", GetD("section:duration"))
+	fmt.Printf("Duration value from config: %v\n", GetD("section:duration", time.Second))
 }
 
 func ExampleIs() {
@@ -344,7 +348,7 @@ func ExampleConfig_GetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config: %v\n", cfg.GetD("section:duration"))
+	fmt.Printf("Duration value from config: %v\n", cfg.GetD("section:duration", time.Second))
 }
 
 func ExampleConfig_Is() {
