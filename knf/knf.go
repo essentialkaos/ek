@@ -39,11 +39,24 @@ type Validator struct {
 // PropertyValidator is default type of property validation function
 type PropertyValidator func(config *Config, prop string, value any) error
 
+// DurationMod is type for duration modificator
+type DurationMod int64
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
 	ErrNilConfig  = errors.New("Config is nil")
 	ErrFileNotSet = errors.New("Path to config file is empty (non initialized struct?)")
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var (
+	Millisecond = DurationMod(time.Millisecond)
+	Second      = 1000 * Millisecond
+	Minute      = 60 * Second
+	Hour        = 60 * Minute
+	Day         = 24 * Hour
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -186,7 +199,7 @@ func GetM(name string, defvals ...os.FileMode) os.FileMode {
 }
 
 // GetD returns configuration values as duration
-func GetD(name string, mod time.Duration, defvals ...time.Duration) time.Duration {
+func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
 	if global == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
@@ -476,7 +489,7 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 }
 
 // GetD returns configuration value as duration
-func (c *Config) GetD(name string, mod time.Duration, defvals ...time.Duration) time.Duration {
+func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
 	if c == nil || c.mx == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
@@ -497,7 +510,7 @@ func (c *Config) GetD(name string, mod time.Duration, defvals ...time.Duration) 
 		return defvals[0]
 	}
 
-	return time.Duration(c.GetI64(name)) * mod
+	return time.Duration(c.GetI64(name)) * time.Duration(mod)
 }
 
 // Is checks if given property contains given value
@@ -524,7 +537,7 @@ func (c *Config) Is(name string, value any) bool {
 	case os.FileMode:
 		return c.GetM(name) == t
 	case time.Duration:
-		return c.GetD(name, time.Second) == t
+		return c.GetD(name, Second) == t
 	}
 
 	return false

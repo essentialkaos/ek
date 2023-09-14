@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.76.1
+
+* `[knf]` Added dedicated type for duration modifiers
+
 ### 12.76.0
 
 * `[knf]` Added modificator support for `GetD`

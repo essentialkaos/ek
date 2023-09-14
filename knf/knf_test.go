@@ -184,7 +184,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetF("test"), check.Equals, 0.0)
 	c.Assert(GetB("test"), check.Equals, false)
 	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
-	c.Assert(GetD("test", time.Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("test", Second), check.Equals, time.Duration(0))
 	c.Assert(Is("test", ""), check.Equals, false)
 	c.Assert(HasSection("test"), check.Equals, false)
 	c.Assert(HasProp("test"), check.Equals, false)
@@ -199,7 +199,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetF("test"), check.Equals, 0.0)
 	c.Assert(config.GetB("test"), check.Equals, false)
 	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
-	c.Assert(config.GetD("test", time.Second), check.Equals, time.Duration(0))
+	c.Assert(config.GetD("test", Second), check.Equals, time.Duration(0))
 	c.Assert(config.Is("test", ""), check.Equals, true)
 	c.Assert(config.HasSection("test"), check.Equals, false)
 	c.Assert(config.HasProp("test"), check.Equals, false)
@@ -369,10 +369,10 @@ func (s *KNFSuite) TestDuration(c *check.C) {
 	c.Assert(global, check.NotNil)
 	c.Assert(err, check.IsNil)
 
-	c.Assert(GetD("duration:test1", time.Second), check.Equals, time.Duration(0))
-	c.Assert(GetD("duration:test2", time.Second), check.Equals, time.Minute)
-	c.Assert(GetD("duration:test3", time.Second), check.Equals, time.Duration(0))
-	c.Assert(GetD("duration:test4", time.Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test1", Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test2", Second), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test3", Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test4", Second), check.Equals, time.Duration(0))
 }
 
 func (s *KNFSuite) TestIs(c *check.C) {
@@ -429,7 +429,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.GetF("formatting:test1"), check.Equals, 0.0)
 	c.Assert(nilConf.GetB("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formatting:test1"), check.Equals, os.FileMode(0))
-	c.Assert(nilConf.GetD("formatting:test1", time.Second), check.Equals, time.Duration(0))
+	c.Assert(nilConf.GetD("formatting:test1", Second), check.Equals, time.Duration(0))
 	c.Assert(nilConf.Is("formatting:test1", ""), check.Equals, false)
 	c.Assert(nilConf.HasSection("formatting"), check.Equals, false)
 	c.Assert(nilConf.HasProp("formatting:test1"), check.Equals, false)
@@ -459,7 +459,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(GetD("duration:test100", time.Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	err := Global(s.ConfigPath)
@@ -475,7 +475,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(GetD("duration:test100", time.Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	var nc *Config
@@ -488,7 +488,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(nc.GetD("duration:test100", time.Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(nc.GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
