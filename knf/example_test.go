@@ -178,7 +178,8 @@ func ExampleGetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config: %v\n", GetD("section:duration", time.Second))
+	fmt.Printf("Duration value from config (as seconds): %v\n", GetD("section:duration", time.Second))
+	fmt.Printf("Duration value from config (as minutes): %v\n", GetD("section:duration", time.Minute))
 }
 
 func ExampleIs() {
@@ -348,7 +349,8 @@ func ExampleConfig_GetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config: %v\n", cfg.GetD("section:duration", time.Second))
+	fmt.Printf("Duration value from config (as seconds): %v\n", cfg.GetD("section:duration", time.Second))
+	fmt.Printf("Duration value from config (as minutes): %v\n", cfg.GetD("section:duration", time.Minute))
 }
 
 func ExampleConfig_Is() {
