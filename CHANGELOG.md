@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.76.0
+
+* `[knf]` Added modificator support for `GetD`
+* `[spinner]` Added initial spinner animation
+
 ### 12.75.1
 
 * `[terminal]` Improved `AlwaysYes` flag handling

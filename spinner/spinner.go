@@ -58,9 +58,11 @@ var DisableAnimation = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var spinnerFrames = []string{"⠸", "⠴", "⠤", "⠦", "⠇", "⠋", "⠉", "⠙"}
+var spinnerFrames = []string{"⠒", "⠲", "⠴", "⠤", "⠦", "⠇", "⠋", "⠉", "⠙", "⠸"}
 
 var framesDelay = []time.Duration{
+	105 * time.Millisecond,
+	95 * time.Millisecond,
 	75 * time.Millisecond,
 	55 * time.Millisecond,
 	35 * time.Millisecond,
@@ -68,7 +70,7 @@ var framesDelay = []time.Duration{
 	75 * time.Millisecond,
 	75 * time.Millisecond,
 	75 * time.Millisecond,
-	75 * time.Millisecond,
+	95 * time.Millisecond,
 }
 
 var desc string
@@ -138,22 +140,28 @@ func Skip() {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func showSpinner() {
+	var i int
+
 	for {
-		for i, frame := range spinnerFrames {
-			mu.RLock()
-			fmtc.Printf(
-				SpinnerColorTag+"%s  {!}"+desc+"… "+TimeColorTag+"[%s]{!}",
-				frame, timeutil.ShortDuration(time.Since(start)),
-			)
-			mu.RUnlock()
+		mu.RLock()
+		fmtc.Printf(
+			SpinnerColorTag+"%s  {!}"+desc+"… "+TimeColorTag+"[%s]{!}",
+			spinnerFrames[i], timeutil.ShortDuration(time.Since(start)),
+		)
+		mu.RUnlock()
 
-			time.Sleep(framesDelay[i])
-			fmt.Print("\033[2K\r")
+		i++
 
-			if !isActive.Load() {
-				isHidden.Store(true)
-				return
-			}
+		if i == 10 {
+			i = 2
+		}
+
+		time.Sleep(framesDelay[i])
+		fmt.Print("\033[2K\r")
+
+		if !isActive.Load() {
+			isHidden.Store(true)
+			return
 		}
 	}
 }
