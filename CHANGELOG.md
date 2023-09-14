@@ -2,7 +2,8 @@
 
 ### 12.76.0
 
-* `[knf]` Add modificator support for `GetD`
+* `[knf]` Added modificator support for `GetD`
+* `[spinner]` Added initial spinner animation
 
 ### 12.75.1
 

@@ -30,7 +30,7 @@ func (s *SpinnerSuite) TestSpinner(c *C) {
 	Done(true) // skipped
 	Show("ABCD")
 	Show("ABCD") // skipped
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 800)
 	Update("ABCD")
 	time.Sleep(time.Millisecond * 100)
 	Done(true)
