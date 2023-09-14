@@ -9,7 +9,6 @@ package knf
 
 import (
 	"fmt"
-	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -39,10 +38,10 @@ func ExampleGlobal() {
 	GetM("section:file-mode")
 
 	// Read duration as seconds
-	GetD("section:duration", time.Second)
+	GetD("section:duration", Second)
 
 	// Read duration as minutes
-	GetD("section:duration", time.Minute)
+	GetD("section:duration", Minute)
 
 	// Check section
 	if HasSection("section") {
@@ -178,8 +177,8 @@ func ExampleGetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config (as seconds): %v\n", GetD("section:duration", time.Second))
-	fmt.Printf("Duration value from config (as minutes): %v\n", GetD("section:duration", time.Minute))
+	fmt.Printf("Duration value from config (as seconds): %v\n", GetD("section:duration", Second))
+	fmt.Printf("Duration value from config (as minutes): %v\n", GetD("section:duration", Minute))
 }
 
 func ExampleIs() {
@@ -349,8 +348,8 @@ func ExampleConfig_GetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config (as seconds): %v\n", cfg.GetD("section:duration", time.Second))
-	fmt.Printf("Duration value from config (as minutes): %v\n", cfg.GetD("section:duration", time.Minute))
+	fmt.Printf("Duration value from config (as seconds): %v\n", cfg.GetD("section:duration", Second))
+	fmt.Printf("Duration value from config (as minutes): %v\n", cfg.GetD("section:duration", Minute))
 }
 
 func ExampleConfig_Is() {
