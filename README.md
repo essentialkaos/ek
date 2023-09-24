@@ -29,7 +29,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 
 ### Installation
 
-Make sure you have a working Go 1.18+ workspace (_[instructions](https://go.dev/doc/install)_), then:
+Make sure you have a working Go 1.20+ workspace (_[instructions](https://go.dev/doc/install)_), then:
 
 ```
 go get github.com/essentialkaos/ek/v12
@@ -104,8 +104,8 @@ go get -u github.com/essentialkaos/ek/v12
 
 ### Projects with `EK`
 
-* [artefactor](https://kaos.sh/artefactor) — Utility for downloading artefacts from GitHub
 * [aligo](https://kaos.sh/aligo) — Utility for checking and viewing Golang struct alignment info
+* [artefactor](https://kaos.sh/artefactor) — Utility for downloading artefacts from GitHub
 * [Bastion](https://kaos.sh/bastion) — Utility for temporary disabling access to server
 * [bibop](https://kaos.sh/bibop) — Utility for testing command-line tools
 * [bop](https://kaos.sh/bop) — Utility for generating bibop tests for RPM packages
@@ -131,6 +131,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [Sonar](https://kaos.sh/sonar) — Utility for showing user Slack status in Atlassian Jira
 * [SourceIndex](https://kaos.sh/source-index) — Utility for generating an index for source archives
 * [SSLScan Client](https://kaos.sh/sslcli) — Pretty awesome command-line client for public SSLLabs API
+* [subdy](https://kaos.sh/subdy) — CLI for subdomain.center API
 * [swptop](https://kaos.sh/swptop) — Simple utility for viewing swap consumption of processes
 * [uc](https://kaos.sh/uc) — Simple utility for counting unique lines
 * [updown-badge-server](https://kaos.sh/updown-badge-server) — Service for generating badges for updown.io checks
