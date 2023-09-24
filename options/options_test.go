@@ -295,6 +295,7 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.GetF("float-between"), Equals, 10.0)
 
 	c.Assert(opts.GetS("merg-string"), Equals, "ABC DEF")
+	c.Assert(opts.Split("merg-string"), DeepEquals, []string{"ABC", "DEF"})
 	c.Assert(opts.GetI("merg-int"), Equals, 12)
 	c.Assert(opts.GetF("merg-float"), Equals, 20.2)
 

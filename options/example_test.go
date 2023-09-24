@@ -10,6 +10,7 @@ package options
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -290,6 +291,30 @@ func ExampleOptions_GetB() {
 	// Force: true
 }
 
+func ExampleOptions_Split() {
+	opts := NewOptions()
+
+	// Add options
+	opts.AddMap(Map{
+		"u:user":  {Mergeble: true},
+		"r:ratio": {Type: FLOAT},
+	})
+
+	// Use null-terminated string instead of default spaces for merging
+	MergeSymbol = "\x00"
+
+	input := "-u bob -u john -u dave -r 3.14 file.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Users: %s\n", opts.Split("u:user"))
+	fmt.Printf("Ratio: %g\n", opts.GetF("r:ratio"))
+	// Output:
+	// Arguments: [file.txt]
+	// Users: [bob john dave]
+	// Ratio: 3.14
+}
+
 func ExampleOptions_GetF() {
 	opts := NewOptions()
 
@@ -298,16 +323,6 @@ func ExampleOptions_GetF() {
 		"u:user":  {Type: STRING, Value: "john"},
 		"r:ratio": {Type: FLOAT},
 	})
-
-	args, _ := opts.Parse([]string{"-u", "bob", "-r", "2.35", "file.txt"})
-
-	fmt.Printf("Arguments: %v\n", args)
-	fmt.Printf("User: %s\n", opts.GetS("u:user"))
-	fmt.Printf("Ratio: %g\n", opts.GetF("r:ratio"))
-	// Output:
-	// Arguments: [file.txt]
-	// User: bob
-	// Ratio: 2.35
 }
 
 func ExampleOptions_Has() {

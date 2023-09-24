@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.77.0
+
+* `[options]` Added merge symbol customization
+* `[options]` Added method `Split` for splitting string value of mergeble option
+
 ### 12.76.1
 
 * `[knf]` Added dedicated type for duration modifiers

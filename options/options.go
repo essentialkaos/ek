@@ -90,6 +90,11 @@ var ErrNilOptions = fmt.Errorf("Options struct is nil")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// MergeSymbol used for joining several mergeble options with string value
+var MergeSymbol = " "
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // global is global options
 var global *Options
 
@@ -292,6 +297,11 @@ func (opts *Options) GetF(name string) float64 {
 	}
 }
 
+// Split splits mergeble option to it's values
+func (opts *Options) Split(name string) []string {
+	return strings.Split(opts.GetS(name), MergeSymbol)
+}
+
 // Is checks if option with given name has given value
 func (opts *Options) Is(name string, value any) bool {
 	if opts == nil {
@@ -419,6 +429,15 @@ func GetF(name string) float64 {
 	}
 
 	return global.GetF(name)
+}
+
+// Split splits mergeble option to it's values
+func Split(name string) []string {
+	if global == nil || !global.initialized {
+		return nil
+	}
+
+	return global.Split(name)
 }
 
 // Has checks if option with given name exists and set
@@ -721,7 +740,7 @@ func updateOption(opt *V, name, value string) error {
 
 func updateStringOption(opt *V, value string) error {
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(string) + " " + value
+		opt.Value = opt.Value.(string) + MergeSymbol + value
 	} else {
 		opt.Value = value
 		opt.set = true
