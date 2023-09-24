@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.77.1
+
+* `[options]` Fixed bug with `Split` result for empty options
+
 ### 12.77.0
 
 * `[options]` Added merge symbol customization

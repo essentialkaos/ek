@@ -112,6 +112,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(Is("s:string", "Test"), Equals, true)
 	c.Assert(Is("string1", "Test"), Equals, false)
 	c.Assert(Split("s:string"), DeepEquals, []string{"Test"})
+	c.Assert(Split("s:string1"), IsNil)
 }
 
 func (s *OptUtilSuite) TestLimiters(c *C) {
