@@ -171,13 +171,14 @@ func ExampleGetF() {
 }
 
 func ExampleSplit() {
+	// Use null-terminated string instead of default whitespace for merge.
+	// Note that the merge symbol must be set before the parsing options.
+	MergeSymbol = "\x00"
+
 	args, _ := Parse(Map{
 		"u:user":  {Mergeble: true},
 		"r:ratio": {Type: FLOAT},
 	})
-
-	// Use null-terminated string instead of default spaces for merging
-	MergeSymbol = "\x00"
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Users: %s\n", Split("u:user"))
@@ -335,7 +336,8 @@ func ExampleOptions_Split() {
 		"r:ratio": {Type: FLOAT},
 	})
 
-	// Use null-terminated string instead of default spaces for merging
+	// Use null-terminated string instead of default whitespace for merge.
+	// Note that the merge symbol must be set before the parsing options.
 	MergeSymbol = "\x00"
 
 	input := "-u bob -u john -u dave -r 3.14 file.txt"
