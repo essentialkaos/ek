@@ -4,6 +4,7 @@
 
 * `[options]` Added merge symbol customization
 * `[options]` Added method `Split` for splitting string value of mergeble option
+* `[options]` Improve usage examples
 
 ### 12.76.1
 

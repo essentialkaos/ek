@@ -75,6 +75,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetI("i:int"), Equals, 0)
 	c.Assert(GetF("f:float"), Equals, 0.0)
 	c.Assert(GetB("b:bool"), Equals, false)
+	c.Assert(Split("s:string"), IsNil)
 	c.Assert(Is("s:string", ""), Equals, false)
 	c.Assert(Has("s:string"), Equals, false)
 
@@ -110,6 +111,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetB("b:bool"), Equals, true)
 	c.Assert(Is("s:string", "Test"), Equals, true)
 	c.Assert(Is("string1", "Test"), Equals, false)
+	c.Assert(Split("s:string"), DeepEquals, []string{"Test"})
 }
 
 func (s *OptUtilSuite) TestLimiters(c *C) {
