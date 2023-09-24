@@ -299,7 +299,13 @@ func (opts *Options) GetF(name string) float64 {
 
 // Split splits mergeble option to it's values
 func (opts *Options) Split(name string) []string {
-	return strings.Split(opts.GetS(name), MergeSymbol)
+	value := opts.GetS(name)
+
+	if value == "" {
+		return nil
+	}
+
+	return strings.Split(value, MergeSymbol)
 }
 
 // Is checks if option with given name has given value
