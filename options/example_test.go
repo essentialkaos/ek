@@ -10,6 +10,7 @@ package options
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -22,7 +23,8 @@ func ExampleNewOptions() {
 	opts.Add("l:lines", &V{Type: INT, Min: 1, Max: 100})
 
 	// args contains unparsed values
-	args, errs := opts.Parse([]string{"-u", "bob", "-l", "12", "file.txt"})
+	input := "-u bob -l 12 file.txt"
+	args, errs := opts.Parse(strings.Split(input, " "))
 
 	if len(errs) != 0 {
 		for _, err := range errs {
@@ -160,11 +162,26 @@ func ExampleGetB() {
 func ExampleGetF() {
 	args, _ := Parse(Map{
 		"u:user":  {Type: STRING, Value: "john"},
-		"l:lines": {Type: INT, Min: 1, Max: 100},
+		"r:ratio": {Type: FLOAT},
 	})
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("User: %s\n", GetS("u:user"))
+	fmt.Printf("Ratio: %g\n", GetF("r:ratio"))
+}
+
+func ExampleSplit() {
+	// Use null-terminated string instead of default whitespace for merge.
+	// Note that the merge symbol must be set before the parsing options.
+	MergeSymbol = "\x00"
+
+	args, _ := Parse(Map{
+		"u:user":  {Mergeble: true},
+		"r:ratio": {Type: FLOAT},
+	})
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Users: %s\n", Split("u:user"))
 	fmt.Printf("Ratio: %g\n", GetF("r:ratio"))
 }
 
@@ -310,6 +327,31 @@ func ExampleOptions_GetF() {
 	// Ratio: 2.35
 }
 
+func ExampleOptions_Split() {
+	opts := NewOptions()
+
+	// Add options
+	opts.AddMap(Map{
+		"u:user":  {Mergeble: true},
+		"r:ratio": {Type: FLOAT},
+	})
+
+	// Use null-terminated string instead of default whitespace for merge.
+	// Note that the merge symbol must be set before the parsing options.
+	MergeSymbol = "\x00"
+
+	input := "-u bob -u john -u dave -r 3.14 file.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Users: %s\n", opts.Split("u:user"))
+	fmt.Printf("Ratio: %g\n", opts.GetF("r:ratio"))
+	// Output:
+	// Arguments: [file.txt]
+	// Users: [bob john dave]
+	// Ratio: 3.14
+}
+
 func ExampleOptions_Has() {
 	opts := NewOptions()
 
@@ -319,7 +361,8 @@ func ExampleOptions_Has() {
 		"l:lines": {Type: INT, Min: 1, Max: 100},
 	})
 
-	args, _ := opts.Parse([]string{"-u", "bob", "file.txt"})
+	input := "-u bob file.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Has user option: %t\n", opts.Has("u:user"))
@@ -333,8 +376,9 @@ func ExampleOptions_Has() {
 func ExampleOptions_Parse() {
 	opts := NewOptions()
 
+	input := "-u bob -l 12 file.txt"
 	args, _ := opts.Parse(
-		[]string{"-u", "bob", "-l", "12", "file.txt"},
+		strings.Split(input, " "),
 		Map{
 			"u:user":  {Type: STRING, Value: "john"},
 			"l:lines": {Type: INT, Min: 1, Max: 100},
@@ -355,9 +399,8 @@ func ExampleOptions_Parse() {
 func ExampleArguments_Has() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Has command: %t\n", args.Has(0))
@@ -369,9 +412,8 @@ func ExampleArguments_Has() {
 func ExampleArguments_Get() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Command: %s\n", args.Get(0).String())
@@ -389,9 +431,8 @@ func ExampleArguments_Get() {
 func ExampleArguments_Last() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Last argument: %s\n", args.Last())
@@ -403,9 +444,8 @@ func ExampleArguments_Last() {
 func ExampleArguments_Unshift() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"file.txt", "10"},
-	)
+	input := "file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	args = args.Unshift("head")
 
@@ -417,9 +457,8 @@ func ExampleArguments_Unshift() {
 func ExampleArguments_Append() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt"},
-	)
+	input := "head file.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	args = args.Append("10")
 
@@ -431,9 +470,8 @@ func ExampleArguments_Append() {
 func ExampleArguments_Flatten() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args.Flatten())
 	// Output:
@@ -443,9 +481,8 @@ func ExampleArguments_Flatten() {
 func ExampleArguments_Strings() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args.Strings())
 	// Output:
@@ -455,9 +492,8 @@ func ExampleArguments_Strings() {
 func ExampleArguments_Filter() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"parse", "fileA.txt", "fileB.jpg", "fileC.txt"},
-	)
+	input := "parse fileA.txt fileB.jpg fileC.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Text files: %s\n", args[1:].Filter("*.txt"))
@@ -471,9 +507,8 @@ func ExampleArguments_Filter() {
 func ExampleArgument_String() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Command: %s\n", args.Get(0).String())
@@ -485,9 +520,8 @@ func ExampleArgument_String() {
 func ExampleArgument_Is() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"parse", "fileA.txt", "fileB.jpg", "fileC.txt"},
-	)
+	input := "parse fileA.txt fileB.jpg fileC.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Command is \"parse\": %t\n", args.Get(0).Is("parse"))
@@ -501,9 +535,8 @@ func ExampleArgument_Is() {
 func ExampleArgument_Int() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	lines, _ := args.Get(2).Int()
@@ -516,9 +549,8 @@ func ExampleArgument_Int() {
 func ExampleArgument_Int64() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	lines, _ := args.Get(2).Int64()
@@ -531,9 +563,8 @@ func ExampleArgument_Int64() {
 func ExampleArgument_Uint() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"head", "file.txt", "10"},
-	)
+	input := "head file.txt 10"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	lines, _ := args.Get(2).Uint()
@@ -546,9 +577,8 @@ func ExampleArgument_Uint() {
 func ExampleArgument_Float() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"ratio", "2.37"},
-	)
+	input := "ratio 2.37"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	lines, _ := args.Get(1).Float()
@@ -561,9 +591,8 @@ func ExampleArgument_Float() {
 func ExampleArgument_Bool() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"release", "yes"},
-	)
+	input := "release yes"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	force, _ := args.Get(1).Bool()
@@ -576,9 +605,8 @@ func ExampleArgument_Bool() {
 func ExampleArgument_ToLower() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"add-user", "John"},
-	)
+	input := "add-user John"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("User: %s\n", args.Get(1).ToLower().String())
@@ -590,9 +618,8 @@ func ExampleArgument_ToLower() {
 func ExampleArgument_ToUpper() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"add-user", "John"},
-	)
+	input := "add-user John"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("User: %s\n", args.Get(1).ToUpper().String())
@@ -604,9 +631,8 @@ func ExampleArgument_ToUpper() {
 func ExampleArgument_Clean() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"run", "/srv/app//conf/myapp.conf"},
-	)
+	input := "run /srv/app//conf/myapp.conf"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Clean: %s\n", args.Get(1).Clean())
@@ -626,9 +652,8 @@ func ExampleArgument_Clean() {
 func ExampleArgument_Base() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"run", "/srv/app//conf/myapp.conf"},
-	)
+	input := "run /srv/app//conf/myapp.conf"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Clean: %s\n", args.Get(1).Clean())
@@ -648,9 +673,8 @@ func ExampleArgument_Base() {
 func ExampleArgument_Dir() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"run", "/srv/app//conf/myapp.conf"},
-	)
+	input := "run /srv/app//conf/myapp.conf"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Clean: %s\n", args.Get(1).Clean())
@@ -670,9 +694,8 @@ func ExampleArgument_Dir() {
 func ExampleArgument_Ext() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"run", "/srv/app//conf/myapp.conf"},
-	)
+	input := "run /srv/app//conf/myapp.conf"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Clean: %s\n", args.Get(1).Clean())
@@ -692,9 +715,8 @@ func ExampleArgument_Ext() {
 func ExampleArgument_IsAbs() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"run", "/srv/app//conf/myapp.conf"},
-	)
+	input := "run /srv/app//conf/myapp.conf"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	fmt.Printf("Clean: %s\n", args.Get(1).Clean())
@@ -714,9 +736,8 @@ func ExampleArgument_IsAbs() {
 func ExampleArgument_Match() {
 	opts := NewOptions()
 
-	args, _ := opts.Parse(
-		[]string{"parse", "fileA.txt", "fileB.jpg"},
-	)
+	input := "parse fileA.txt fileB.jpg"
+	args, _ := opts.Parse(strings.Split(input, " "))
 
 	fmt.Printf("Arguments: %v\n", args)
 	m1, _ := args.Get(1).Match("*.txt")

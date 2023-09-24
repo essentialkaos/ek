@@ -75,6 +75,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetI("i:int"), Equals, 0)
 	c.Assert(GetF("f:float"), Equals, 0.0)
 	c.Assert(GetB("b:bool"), Equals, false)
+	c.Assert(Split("s:string"), IsNil)
 	c.Assert(Is("s:string", ""), Equals, false)
 	c.Assert(Has("s:string"), Equals, false)
 
@@ -110,6 +111,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(GetB("b:bool"), Equals, true)
 	c.Assert(Is("s:string", "Test"), Equals, true)
 	c.Assert(Is("string1", "Test"), Equals, false)
+	c.Assert(Split("s:string"), DeepEquals, []string{"Test"})
 }
 
 func (s *OptUtilSuite) TestLimiters(c *C) {
@@ -295,6 +297,7 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.GetF("float-between"), Equals, 10.0)
 
 	c.Assert(opts.GetS("merg-string"), Equals, "ABC DEF")
+	c.Assert(opts.Split("merg-string"), DeepEquals, []string{"ABC", "DEF"})
 	c.Assert(opts.GetI("merg-int"), Equals, 12)
 	c.Assert(opts.GetF("merg-float"), Equals, 20.2)
 
