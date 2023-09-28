@@ -11,8 +11,9 @@
 * + directio
 * + fmtc
 * + fmtutil
-* + fmtutil/table
+* + fmtutil/barcode
 * + fmtutil/panel
+* + fmtutil/table
 * + fsutil
 * + hash
 * + httputil
