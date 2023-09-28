@@ -56,8 +56,9 @@ go get -u github.com/essentialkaos/ek/v12
 * [`directio`](https://kaos.sh/g/ek.v12/directio) — Package provides methods for reading/writing files with direct io
 * [`fmtc`](https://kaos.sh/g/ek.v12/fmtc) — Package provides methods similar to fmt for colored output
 * [`fmtutil`](https://kaos.sh/g/ek.v12/fmtutil) — Package provides methods for output formatting
-* [`fmtutil/table`](https://kaos.sh/g/ek.v12/fmtutil/table) — Package contains methods and structs for rendering data in tabular format
+* [`fmtutil/barcode`](https://kaos.sh/g/ek.v12/fmtutil/barcode) — Package provides methods to generate colored representation of unique data
 * [`fmtutil/panel`](https://kaos.sh/g/ek.v12/fmtutil/panel) — Package contains methods for rendering panels with text
+* [`fmtutil/table`](https://kaos.sh/g/ek.v12/fmtutil/table) — Package contains methods and structs for rendering data in tabular format
 * [`fsutil`](https://kaos.sh/g/ek.v12/fsutil) — Package provides methods for working with files on POSIX compatible systems (BSD/Linux/macOS)
 * [`hash`](https://kaos.sh/g/ek.v12/hash) — Package hash contains different hash algorithms and utilities
 * [`httputil`](https://kaos.sh/g/ek.v12/httputil) — Package provides methods for working with HTTP request/responses

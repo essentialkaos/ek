@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.78.0
+
+* `[barcode]` New package with methods to generate colored representation of unique data
+
 ### 12.77.1
 
 * `[options]` Fixed bug with `Split` result for empty options
