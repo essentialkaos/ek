@@ -57,6 +57,9 @@ var (
 // Width is panel width (≥ 40) if option WRAP is set
 var Width = 88
 
+// Indent is indent from the left side of terminal
+var Indent = 0
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // minWidth is minimal panel width
@@ -83,24 +86,26 @@ func Info(title, message string, options ...Option) {
 func Panel(label, colorTag, title, message string, options ...Option) {
 	var buf *bytes.Buffer
 
+	indent := strings.Repeat(" ", mathutil.Max(0, Indent))
+
 	if sliceutil.Contains(options, INDENT_OUTER) {
 		fmtc.NewLine()
 	}
 
 	if sliceutil.Contains(options, LABEL_POWERLINE) {
-		fmtc.Printf(colorTag+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}\n", label, title)
+		fmtc.Printf(colorTag+indent+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}\n", label, title)
 	} else {
-		fmtc.Printf(colorTag+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+		fmtc.Printf(colorTag+indent+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
 	}
 
 	if sliceutil.Contains(options, INDENT_INNER) {
-		fmtc.Println(colorTag + "┃{!}")
+		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
 	switch {
 	case sliceutil.Contains(options, WRAP):
 		buf = bytes.NewBufferString(
-			fmtutil.Wrap(fmtc.Sprint(message), "", mathutil.Max(minWidth, Width-2)) + "\n",
+			fmtutil.Wrap(fmtc.Sprint(message), indent, mathutil.Max(minWidth, Width-2)) + "\n",
 		)
 	default:
 		buf = bytes.NewBufferString(message)
@@ -114,15 +119,15 @@ func Panel(label, colorTag, title, message string, options ...Option) {
 			break
 		}
 
-		fmtc.Print(colorTag + "┃{!} " + line)
+		fmtc.Print(colorTag + indent + "┃{!} " + line)
 	}
 
 	if sliceutil.Contains(options, INDENT_INNER) {
-		fmtc.Println(colorTag + "┃{!}")
+		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
 	if sliceutil.Contains(options, BOTTOM_LINE) {
-		fmtc.Println(colorTag + "┖" + strings.Repeat("─", mathutil.Max(minWidth, Width-1)))
+		fmtc.Println(colorTag + indent + "┖" + strings.Repeat("─", mathutil.Max(minWidth, Width-1)))
 	}
 
 	if sliceutil.Contains(options, INDENT_OUTER) {

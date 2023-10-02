@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.79.0
+
+* `[panel]` Added indent customization
+
 ### 12.78.0
 
 * `[barcode]` New package with methods to generate colored representation of unique data
