@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.79.1
+
+* `[strutil]` Improved usage examples
+
 ### 12.79.0
 
 * `[panel]` Added indent customization

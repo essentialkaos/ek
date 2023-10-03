@@ -80,9 +80,11 @@ func ExampleExclude() {
 
 func ExampleLen() {
 	fmt.Println(Len("Пример 例子 例 მაგალითად"))
+	fmt.Println(Len("😚😘🥰"))
 
 	// Output:
 	// 21
+	// 3
 }
 
 func ExampleHead() {
