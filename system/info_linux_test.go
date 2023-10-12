@@ -637,6 +637,7 @@ HOME_URL="https://www.ubuntu.com/"
 SUPPORT_URL="https://help.ubuntu.com/"
 BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
 VERSION_CODENAME=groovy
+ANSI_COLOR="0;34"
 VARIANT="Server"
 VARIANT_ID="server"
 PLATFORM_ID="platform:el8"
@@ -668,6 +669,13 @@ REDHAT_SUPPORT_PRODUCT_VERSION="7"
 	c.Assert(osInfo.Logo, Equals, "fedora-logo-icon")
 	c.Assert(osInfo.SupportProduct, Equals, "centos")
 	c.Assert(osInfo.SupportProductVersion, Equals, "7")
+	c.Assert(osInfo.ANSIColor, Equals, "0;34")
+
+	c.Assert(osInfo.ColoredPrettyName(), Equals, "\x1b[0;34mUbuntu 20.10\x1b[0m")
+	c.Assert(osInfo.ColoredName(), Equals, "\x1b[0;34mUbuntu\x1b[0m")
+	osInfo.ANSIColor = "ABCD"
+	c.Assert(osInfo.ColoredPrettyName(), Equals, "Ubuntu 20.10")
+	c.Assert(osInfo.ColoredName(), Equals, "Ubuntu")
 
 	c.Assert(getArchName("i386"), Equals, "386")
 	c.Assert(getArchName("i586"), Equals, "586")

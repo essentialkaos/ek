@@ -113,6 +113,8 @@ func applyOSInfo(info *OSInfo, name, value string) {
 		info.DocumentationURL = value
 	case "LOGO":
 		info.Logo = value
+	case "ANSI_COLOR":
+		info.ANSIColor = value
 	}
 
 	switch {
