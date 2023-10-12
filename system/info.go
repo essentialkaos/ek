@@ -12,6 +12,7 @@ import (
 	"bufio"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -149,9 +150,30 @@ type OSInfo struct {
 	BugReportURL          string `json:"bugreport_url"`
 	DocumentationURL      string `json:"documentation_url"`
 	Logo                  string `json:"logo"`
+	ANSIColor             string `json:"ansi_color"`
 	SupportURL            string `json:"support_url"`
 	SupportProduct        string `json:"support_product"`
 	SupportProductVersion string `json:"support_product_version"`
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ColoredPrettyName returns pretty name with applied color
+func (i *OSInfo) ColoredPrettyName() string {
+	if !isValidANSIColor(i.ANSIColor) {
+		return i.PrettyName
+	}
+
+	return "\033[" + i.ANSIColor + "m" + i.PrettyName + "\033[0m"
+}
+
+// ColoredName returns name with applied color
+func (i *OSInfo) ColoredName() string {
+	if !isValidANSIColor(i.ANSIColor) {
+		return i.Name
+	}
+
+	return "\033[" + i.ANSIColor + "m" + i.Name + "\033[0m"
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -179,4 +201,9 @@ func parseSize(v string) (uint64, error) {
 	}
 
 	return size * 1024, nil
+}
+
+// isValidANSIColor validates ansi color code
+func isValidANSIColor(color string) bool {
+	return color != "" && strings.Trim(color, "0123456789;") == ""
 }

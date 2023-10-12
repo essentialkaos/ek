@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.80.0
+
+* `[system]` Added ANSI color info to `OSInfo`
+* `[system]` Added methods `OSInfo.ColoredPrettyName` and `OSInfo.ColoredName`
+* `[strutil]` Improved usage examples
+
 ### 12.79.0
 
 * `[panel]` Added indent customization
