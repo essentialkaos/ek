@@ -6,6 +6,7 @@
 * `[uuid]` `GenUUID` renamed to `UUID`
 * `[uuid]` `GenUUID4` renamed to `UUID4`
 * `[uuid]` `GenUUID5` renamed to `UUID5`
+* `[uuid]` Code refactoring
 
 ### 12.80.0
 

@@ -13,14 +13,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleGenUUID() {
-	fmt.Printf("UUID: %s\n", GenUUID())
-}
-
 func ExampleGenUUID4() {
-	fmt.Printf("UUID v4: %s\n", GenUUID4())
+	fmt.Printf("UUID v4: %s\n", UUID4().String())
 }
 
 func ExampleGenUUID5() {
-	fmt.Printf("UUID v5: %s\n", GenUUID5(NsURL, "http://www.domain.com"))
+	fmt.Printf("UUID v5: %s\n", UUID5(NsURL, "http://www.domain.com").String())
 }
