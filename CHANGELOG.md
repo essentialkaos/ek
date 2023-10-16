@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.81.0
+
+* `[strutil]` Added method `ReplaceIgnoreCase`
+
 ### 12.80.0
 
 * `[system]` Added ANSI color info to `OSInfo`

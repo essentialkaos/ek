@@ -122,6 +122,15 @@ func ExampleReplaceAll() {
 	// M???ag?
 }
 
+func ExampleReplaceIgnoreCase() {
+	fmt.Println(ReplaceIgnoreCase(
+		"User bob has no item. Add items to user Bob?", "bob", "[Bob]",
+	))
+
+	// Output:
+	// User [Bob] has no item. Add items to user [Bob]?
+}
+
 func ExampleFields() {
 	fmt.Printf("%#v\n", Fields("Bob  Alice, 'Mary Key', \"John Dow\""))
 

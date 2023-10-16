@@ -125,6 +125,13 @@ func (s *StrUtilSuite) TestReplaceAll(c *C) {
 	c.Assert(ReplaceAll("", "AB12", "?"), Equals, "")
 }
 
+func (s *StrUtilSuite) TestReplaceIgnoreCase(c *C) {
+	c.Assert(ReplaceIgnoreCase("ABCD1234abcd1234AbCd11ABcd", "abcd", "????"), Equals, "????1234????1234????11????")
+	c.Assert(ReplaceIgnoreCase("TESTtestTEST", "abcd", "????"), Equals, "TESTtestTEST")
+	c.Assert(ReplaceIgnoreCase("", "abcd", "????"), Equals, "")
+	c.Assert(ReplaceIgnoreCase("ABCD1234abcd1234AbCd11ABcd", "abcd", ""), Equals, "1234123411")
+}
+
 func (s *StrUtilSuite) TestFields(c *C) {
 	c.Assert(Fields(""), IsNil)
 	c.Assert(Fields(""), HasLen, 0)
@@ -250,5 +257,11 @@ func (s *StrUtilSuite) BenchmarkLen(c *C) {
 func (s *StrUtilSuite) BenchmarkReplaceAll(c *C) {
 	for i := 0; i < c.N; i++ {
 		ReplaceAll("ABCDABCD12341234", "AB12", "?")
+	}
+}
+
+func (s *StrUtilSuite) BenchmarkReplaceIgnoreCase(c *C) {
+	for i := 0; i < c.N; i++ {
+		ReplaceIgnoreCase("ABCD1234abcd1234AbCd11ABcd", "abcd", "????")
 	}
 }
