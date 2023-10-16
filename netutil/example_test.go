@@ -17,6 +17,30 @@ func ExampleGetIP() {
 	ip := GetIP()
 
 	if ip != "" {
-		fmt.Printf("Your IP is %s\n", ip)
+		fmt.Printf("Your IPv4 is %s\n", ip)
+	}
+}
+
+func ExampleGetIP6() {
+	ip := GetIP6()
+
+	if ip != "" {
+		fmt.Printf("Your IPv6 is %s\n", ip)
+	}
+}
+
+func ExampleGetAllIP() {
+	ips := GetAllIP()
+
+	if len(ips) > 0 {
+		fmt.Printf("All IPv4: %v\n", ips)
+	}
+}
+
+func ExampleGetAllIP6() {
+	ips := GetAllIP6()
+
+	if len(ips) > 0 {
+		fmt.Printf("All IPv6: %v\n", ips)
 	}
 }

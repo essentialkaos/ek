@@ -28,9 +28,47 @@ func GetIP6() string {
 	return getMainIP(true)
 }
 
+// GetAllIP returns all IPv4 addresses
+func GetAllIP() []string {
+	return getAllIP(false)
+}
+
+// GetAllIP6 returns all IPv6 addresses
+func GetAllIP6() []string {
+	return getAllIP(true)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getMainIP(ipv6 bool) string {
+func getAllIP(v6 bool) []string {
+	interfaces, err := net.Interfaces()
+
+	if err != nil {
+		return nil
+	}
+
+	var result []string
+
+	for _, i := range interfaces {
+		addr, err := i.Addrs()
+
+		if err != nil {
+			continue
+		}
+
+		for _, a := range addr {
+			ipnet, ok := a.(*net.IPNet)
+
+			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
+				result = append(result, ipnet.IP.String())
+			}
+		}
+	}
+
+	return result
+}
+
+func getMainIP(v6 bool) string {
 	interfaces, err := net.Interfaces()
 
 	if err != nil {
@@ -64,7 +102,7 @@ func getMainIP(ipv6 bool) string {
 				continue
 			}
 
-			if ok && strings.Contains(ipnet.IP.String(), "::") == ipv6 {
+			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
 				return ipnet.IP.String()
 			}
 		}
