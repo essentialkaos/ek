@@ -3,6 +3,9 @@
 ### 12.81.0
 
 * `[strutil]` Added method `ReplaceIgnoreCase`
+* `[uuid]` `GenUUID` renamed to `UUID`
+* `[uuid]` `GenUUID4` renamed to `UUID4`
+* `[uuid]` `GenUUID5` renamed to `UUID5`
 
 ### 12.80.0
 
