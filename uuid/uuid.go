@@ -31,7 +31,7 @@ type UUID []byte
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UUID4 generates random generated UUID
+// UUID4 generates random generated UUID v4
 func UUID4() UUID {
 	uuid := make(UUID, 16)
 
@@ -43,7 +43,7 @@ func UUID4() UUID {
 	return UUID(uuid)
 }
 
-// UUID5 generates UUID based on SHA-1 hash of namespace UUID and name
+// UUID5 generates UUID v5 based on SHA-1 hash of namespace UUID and name
 func UUID5(ns []byte, name string) UUID {
 	uuid := make(UUID, 16)
 

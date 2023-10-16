@@ -13,10 +13,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleGenUUID4() {
+func ExampleUUID4() {
 	fmt.Printf("UUID v4: %s\n", UUID4().String())
 }
 
-func ExampleGenUUID5() {
+func ExampleUUID5() {
 	fmt.Printf("UUID v5: %s\n", UUID5(NsURL, "http://www.domain.com").String())
 }
