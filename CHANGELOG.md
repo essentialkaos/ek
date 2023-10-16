@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.82.0
+
+* `[netutil]` Added method `GetAllIP`
+* `[netutil]` Added method `GetAllIP6`
+
 ### 12.81.0
 
 * `[knf/validators/network]` Added `HasIP` validator
