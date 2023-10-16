@@ -23,6 +23,7 @@ const _CONFIG_DATA = `
 	test0:
 	test1: 127.0.0.1
 	test2: 300.0.400.5
+	test3: 192.168.1.254
 
 [port]
 	test0:
@@ -81,6 +82,27 @@ func (s *ValidatorSuite) TestIPValidator(c *C) {
 
 	c.Assert(errs, HasLen, 1)
 	c.Assert(errs[0].Error(), Equals, "300.0.400.5 is not a valid IP address")
+}
+
+func (s *ValidatorSuite) TestHasIPValidator(c *C) {
+	configFile := createConfig(c, _CONFIG_DATA)
+
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
+
+	errs := knf.Validate([]*knf.Validator{
+		{"ip:test0", HasIP, nil},
+		{"ip:test1", HasIP, nil},
+	})
+
+	c.Assert(errs, HasLen, 0)
+
+	errs = knf.Validate([]*knf.Validator{
+		{"ip:test3", HasIP, nil},
+	})
+
+	c.Assert(errs, HasLen, 1)
+	c.Assert(errs[0].Error(), Equals, "The system does not have an interface with the address 192.168.1.254")
 }
 
 func (s *ValidatorSuite) TestPortValidator(c *C) {

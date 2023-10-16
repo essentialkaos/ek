@@ -33,6 +33,9 @@ var (
 
 	// URL returns error if config property isn't a valid URL
 	URL = validateURL
+
+	// HasIP returns error if system doesn't have interface with IP from config property
+	HasIP = validateHasIP
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -82,7 +85,7 @@ func validateMAC(config *knf.Config, prop string, value any) error {
 		return fmt.Errorf("%s is not a valid MAC address: %v", macStr, err)
 	}
 
-	return err
+	return nil
 }
 
 func validateCIDR(config *knf.Config, prop string, value any) error {
@@ -98,7 +101,7 @@ func validateCIDR(config *knf.Config, prop string, value any) error {
 		return fmt.Errorf("%s is not a valid CIDR address: %v", cidrStr, err)
 	}
 
-	return err
+	return nil
 }
 
 func validateURL(config *knf.Config, prop string, value any) error {
@@ -114,5 +117,35 @@ func validateURL(config *knf.Config, prop string, value any) error {
 		return fmt.Errorf("%s is not a valid URL address: %v", urlStr, err)
 	}
 
-	return err
+	return nil
+}
+
+func validateHasIP(config *knf.Config, prop string, value any) error {
+	ipStr := config.GetS(prop)
+
+	if ipStr == "" {
+		return nil
+	}
+
+	interfaces, err := net.Interfaces()
+
+	if err != nil {
+		return fmt.Errorf("Can't get interfaces info for check: %v", err)
+	}
+
+	for _, i := range interfaces {
+		addr, err := i.Addrs()
+
+		if err != nil {
+			continue
+		}
+
+		for _, a := range addr {
+			if ipStr == a.(*net.IPNet).IP.String() {
+				return nil
+			}
+		}
+	}
+
+	return fmt.Errorf("The system does not have an interface with the address %s", ipStr)
 }

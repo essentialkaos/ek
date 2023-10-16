@@ -2,6 +2,7 @@
 
 ### 12.81.0
 
+* `[knf/validators/network]` Added `HasIP` validator
 * `[strutil]` Added method `ReplaceIgnoreCase`
 * `[uuid]` `GenUUID4` renamed to `UUID4`
 * `[uuid]` `GenUUID5` renamed to `UUID5`
