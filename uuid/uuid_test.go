@@ -25,18 +25,19 @@ var _ = Suite(&UUIDSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *UUIDSuite) TestGenUUID(c *C) {
-	c.Assert(GenUUID(), HasLen, 36)
-	c.Assert(GenUUID(), Not(Equals), "00000000-0000-0000-0000-000000000000")
-}
-
 func (s *UUIDSuite) TestGenUUID4(c *C) {
-	c.Assert(GenUUID4(), HasLen, 36)
-	c.Assert(GenUUID4(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+	c.Assert(UUID4(), HasLen, 16)
+	c.Assert(UUID4().String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
 }
 
 func (s *UUIDSuite) TestGenUUID5(c *C) {
-	c.Assert(GenUUID5(NsURL, "TEST"), HasLen, 36)
+	c.Assert(UUID5(NsURL, "TEST"), HasLen, 16)
+	c.Assert(UUID5(NsURL, "TEST").String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+}
+
+func (s *UUIDSuite) TestDeprecated(c *C) {
+	c.Assert(GenUUID(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+	c.Assert(GenUUID4(), Not(Equals), "00000000-0000-0000-0000-000000000000")
 	c.Assert(GenUUID5(NsURL, "TEST"), Not(Equals), "00000000-0000-0000-0000-000000000000")
 }
 

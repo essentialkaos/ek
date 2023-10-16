@@ -234,8 +234,8 @@ func SuffixSize(str string, suffix rune) int {
 	return result
 }
 
-// ReplaceAll replaces all symbols in given string
-func ReplaceAll(source, from, to string) string {
+// ReplaceAll replaces all symbols from replset in string
+func ReplaceAll(source, replset, to string) string {
 	if source == "" {
 		return ""
 	}
@@ -244,7 +244,7 @@ func ReplaceAll(source, from, to string) string {
 
 SOURCELOOP:
 	for _, sourceSym := range source {
-		for _, fromSym := range from {
+		for _, fromSym := range replset {
 			if fromSym == sourceSym {
 				result.WriteString(to)
 				continue SOURCELOOP
@@ -252,6 +252,35 @@ SOURCELOOP:
 		}
 
 		result.WriteRune(sourceSym)
+	}
+
+	return result.String()
+}
+
+// ReplaceIgnoreCase replaces part of the string ignoring case
+func ReplaceIgnoreCase(source, from, to string) string {
+	if source == "" || from == "" {
+		return source
+	}
+
+	var result strings.Builder
+
+	from = strings.ToLower(from)
+	lowSource := strings.ToLower(source)
+
+	for {
+		index := strings.Index(lowSource, from)
+
+		if index == -1 {
+			result.WriteString(source)
+			break
+		}
+
+		result.WriteString(source[:index])
+		result.WriteString(to)
+
+		source = source[index+len(from):]
+		lowSource = lowSource[index+len(from):]
 	}
 
 	return result.String()

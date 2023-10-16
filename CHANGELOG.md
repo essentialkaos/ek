@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.81.0
+
+* `[knf/validators/network]` Added `HasIP` validator
+* `[strutil]` Added method `ReplaceIgnoreCase`
+* `[uuid]` `GenUUID4` renamed to `UUID4`
+* `[uuid]` `GenUUID5` renamed to `UUID5`
+* `[uuid]` Code refactoring
+
 ### 12.80.0
 
 * `[system]` Added ANSI color info to `OSInfo`
