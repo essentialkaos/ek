@@ -133,7 +133,7 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 	if !options.Has(TOP_LINE) {
 		fmtc.NewLine()
 	} else {
-		lineSize := width - (strutil.Len(label+title) + 4)
+		lineSize := width - (strutil.LenVisual(label+title) + 4)
 
 		if options.Has(LABEL_POWERLINE) {
 			lineSize--
