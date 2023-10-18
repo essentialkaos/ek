@@ -1,5 +1,16 @@
 ## Changelog
 
+### 12.83.0
+
+* `[fmtutil/panel]` Added `TOP_LINE` option
+* `[fmtutil/panel]` Improved panel rendering when `BOTTOM_LINE` option is used
+* `[fmtutil/panel]` Improved panel rendering when `label` is empty
+* `[fmtutil/panel]` Added limit for minimal panel size (_256 symbols_)
+* `[fmtutil/panel]` Added limit for maximum panel size (_256 symbols_)
+* `[fmtutil/panel]` Added limit for maximum indent size (_24 symbols_)
+* `[fmtutil/panel]` Fixed bug with panel rendering if `Indent` > 0
+* `[fmtutil/panel]` Code refactoring
+
 ### 12.82.0
 
 * `[netutil]` Added method `GetAllIP`
@@ -21,7 +32,7 @@
 
 ### 12.79.0
 
-* `[panel]` Added indent customization
+* `[fmtutil/panel]` Added indent customization
 
 ### 12.78.0
 
@@ -65,7 +76,7 @@
 
 ### 12.73.1
 
-* `[panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package
+* `[fmtutil/panel]` Panel rendering moved from `terminal` sub-package to it's own sub-package
 
 ### 12.72.0
 
