@@ -2,6 +2,7 @@
 
 ### 12.83.0
 
+* `[protip]` Added new package for showing usage tips
 * `[fmtc]` Added method `IsTag` for color tag validation
 * `[fmtutil/panel]` Added `TOP_LINE` option
 * `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels

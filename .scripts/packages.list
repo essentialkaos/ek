@@ -36,6 +36,7 @@ L + netutil
 * + pid
 * + pluralize
 * + progress
+* + protip
 * + rand
 * + req
 * + secstr

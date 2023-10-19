@@ -76,6 +76,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`pid`](https://kaos.sh/g/ek.v12/pid) — Package for working with PID files
 * [`pluralize`](https://kaos.sh/g/ek.v12/pluralize) — Package provides methods for pluralization
 * [`progress`](https://kaos.sh/g/ek.v12/progress) — Package provides methods and structs for creating terminal progress bar
+* [`protip`](https://kaos.sh/g/ek.v12/protip) — Package for displaying usage tips
 * [`rand`](https://kaos.sh/g/ek.v12/rand) — Package for generating random data
 * [`req`](https://kaos.sh/g/ek.v12/req) — Package simplify working with an HTTP requests
 * [`secstr`](https://kaos.sh/g/ek.v12/secstr) — Package provides methods and structs for working with protected (secure) strings
