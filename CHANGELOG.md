@@ -18,6 +18,7 @@
 * `[fmtutil/panel]` Added limit for maximum indent size (_24 symbols_)
 * `[fmtutil/panel]` Fixed bug with panel rendering if `Indent` > 0
 * `[fmtutil/panel]` Code refactoring
+* `[netutil]` Fixed stubs for Windows
 
 ### 12.82.0
 
