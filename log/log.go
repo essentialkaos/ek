@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -337,9 +338,11 @@ func (l *Logger) Print(level uint8, f string, a ...any) error {
 
 	switch {
 	case l.UseColors && showPrefix:
-		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+Colors[level]+"%s %s{!}"), getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
+		color := strutil.B(fmtc.IsTag(Colors[level]), Colors[level], "")
+		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+color+"%s %s{!}"), getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 	case l.UseColors && !showPrefix:
-		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+Colors[level]+"%s{!}"), getTime(), fmt.Sprintf(f, a...))
+		color := strutil.B(fmtc.IsTag(Colors[level]), Colors[level], "")
+		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+color+"%s{!}"), getTime(), fmt.Sprintf(f, a...))
 	case !l.UseColors && showPrefix:
 		_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
 	case !l.UseColors && !showPrefix:

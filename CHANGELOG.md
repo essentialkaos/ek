@@ -6,6 +6,7 @@
 * `[fmtutil/panel]` Added `TOP_LINE` option
 * `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels
 * `[strutil]` Added method `LenVisual`
+* `[log]` Added color tag validation
 * `[progress]` Added settings validation
 * `[spinner]` Added color tag validation
 * `[usage]` Added color tag validation
