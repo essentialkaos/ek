@@ -28,6 +28,9 @@ import (
 // MIN_WIDTH is minimal progress bar width
 const MIN_WIDTH = 80
 
+// MIN_REFRESH_RATE is minimal refresh rate (1 ms)
+const MIN_REFRESH_RATE = time.Duration(time.Millisecond)
+
 // PROGRESS_BAR_SYMBOL is symbol for creating progress bar
 const PROGRESS_BAR_SYMBOL = "—"
 
@@ -120,6 +123,10 @@ var DefaultSettings = Settings{
 	WindowSizeSec:     15.0,
 }
 
+var (
+	ErrBarIsNil = fmt.Errorf("Progress bar struct is nil")
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // New creates new progress bar struct
@@ -135,13 +142,13 @@ func New(total int64, name string) *Bar {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Start starts progress processing
-func (b *Bar) Start() {
+func (b *Bar) Start() error {
 	if b == nil {
-		return
+		return ErrBarIsNil
 	}
 
 	if b.IsStarted() && !b.IsFinished() {
-		return
+		return nil
 	}
 
 	b.phCounter = 0
@@ -151,12 +158,7 @@ func (b *Bar) Start() {
 	b.startTime = time.Now()
 	b.finishChan = make(chan bool)
 	b.finishGroup = sync.WaitGroup{}
-
-	if b.settings.RefreshRate >= time.Millisecond {
-		b.ticker = time.NewTicker(b.settings.RefreshRate)
-	} else {
-		b.ticker = time.NewTicker(100 * time.Millisecond)
-	}
+	b.ticker = time.NewTicker(b.settings.RefreshRate)
 
 	if b.total > 0 {
 		b.passThruCalc = NewPassThruCalc(
@@ -165,19 +167,21 @@ func (b *Bar) Start() {
 	}
 
 	go b.renderer()
+
+	return nil
 }
 
 // Finish finishes progress processing
-func (b *Bar) Finish() {
+func (b *Bar) Finish() error {
 	if b == nil {
-		return
+		return ErrBarIsNil
 	}
 
 	b.mu.RLock()
 
 	if b.finished || !b.started {
 		b.mu.RUnlock()
-		return
+		return nil
 	}
 
 	b.mu.RUnlock()
@@ -185,17 +189,27 @@ func (b *Bar) Finish() {
 	b.finishGroup.Add(1)
 	b.finishChan <- true
 	b.finishGroup.Wait()
+
+	return nil
 }
 
 // UpdateSettings updates progress settings
-func (b *Bar) UpdateSettings(s Settings) {
+func (b *Bar) UpdateSettings(s Settings) error {
 	if b == nil {
-		return
+		return ErrBarIsNil
+	}
+
+	err := s.Validate()
+
+	if err != nil {
+		return err
 	}
 
 	b.mu.Lock()
 	b.settings = s
 	b.mu.Unlock()
+
+	return nil
 }
 
 // SetName sets progress bar name
@@ -628,6 +642,39 @@ func (b *Bar) renderPlaceholder(size int) string {
 	}
 
 	return result + "{!}"
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Validate validates settings struct
+func (s Settings) Validate() error {
+	switch {
+	case !fmtc.IsTag(s.NameColorTag):
+		return fmt.Errorf("NameColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.BarFgColorTag):
+		return fmt.Errorf("BarFgColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.BarBgColorTag):
+		return fmt.Errorf("BarBgColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.PercentColorTag):
+		return fmt.Errorf("PercentColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.ProgressColorTag):
+		return fmt.Errorf("ProgressColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.SpeedColorTag):
+		return fmt.Errorf("SpeedColorTag value is not a valid color tag")
+
+	case !fmtc.IsTag(s.RemainingColorTag):
+		return fmt.Errorf("RemainingColorTag value is not a valid color tag")
+
+	case s.RefreshRate != 0 && s.RefreshRate < MIN_REFRESH_RATE:
+		return fmt.Errorf("RefreshRate too small (less than 1ms)")
+	}
+
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
