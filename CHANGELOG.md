@@ -2,6 +2,7 @@
 
 ### 12.83.0
 
+* `[fmtc]` Added method `IsTag` for color tag validation
 * `[fmtutil/panel]` Added `TOP_LINE` option
 * `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels
 * `[strutil]` Added method `LenVisual`

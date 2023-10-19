@@ -122,48 +122,47 @@ func RemoveColor(name string) {
 //
 // Supported color codes:
 //
-//    Modificators:
-//     - Light colors
-//     ! Default
-//     * Bold
-//     ^ Dim
-//     _ Underline
-//     ~ Blink
-//     @ Reverse
+//	Modificators:
+//	 - Light colors
+//	 ! Default
+//	 * Bold
+//	 ^ Dim
+//	 _ Underline
+//	 ~ Blink
+//	 @ Reverse
 //
-//    Foreground colors:
-//     d Black (Dark)
-//     r Red
-//     g Green
-//     y Yellow
-//     b Blue
-//     m Magenta
-//     c Cyan
-//     s Gray (Smokey)
-//     w White
+//	Foreground colors:
+//	 d Black (Dark)
+//	 r Red
+//	 g Green
+//	 y Yellow
+//	 b Blue
+//	 m Magenta
+//	 c Cyan
+//	 s Gray (Smokey)
+//	 w White
 //
-//    Background colors:
-//     D Black (Dark)
-//     R Red
-//     G Green
-//     Y Yellow
-//     B Blue
-//     M Magenta
-//     C Cyan
-//     S Gray (Smokey)
-//     W White
+//	Background colors:
+//	 D Black (Dark)
+//	 R Red
+//	 G Green
+//	 Y Yellow
+//	 B Blue
+//	 M Magenta
+//	 C Cyan
+//	 S Gray (Smokey)
+//	 W White
 //
-//    256 colors:
-//     #code foreground color
-//     %code background color
+//	256 colors:
+//	 #code foreground color
+//	 %code background color
 //
-//    24-bit colors (TrueColor):
-//      #hex foreground color
-//      %hex background color
+//	24-bit colors (TrueColor):
+//	  #hex foreground color
+//	  %hex background color
 //
-//    Named colors:
-//      ?name
-//
+//	Named colors:
+//	  ?name
 func Print(a ...any) (int, error) {
 	applyColors(&a, -1, DisableColors)
 	return fmt.Print(a...)
@@ -343,6 +342,22 @@ func IsTrueColorSupported() bool {
 	checkForColorsSupport()
 
 	return colorsTCSupported
+}
+
+// IsTag checks if the given value is valid color tag and can be encoded
+// to escape sequence
+func IsTag(tag string) bool {
+	if tag == "" {
+		return true // Empty value is valid color tag ¯\_(ツ)_/¯
+	}
+
+	if !strings.HasPrefix(tag, "{") || !strings.HasSuffix(tag, "}") {
+		return false
+	}
+
+	tag = tag[1 : len(tag)-1]
+
+	return isValidTag(tag)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -542,10 +557,6 @@ func applyColors(a *[]any, limit int, clean bool) {
 	}
 }
 
-func isValidTag(tag string) bool {
-	return isValidSimpleTag(tag) || isValidExtendedTag(tag) || isValidNamedTag(tag)
-}
-
 func isValidSimpleTag(tag string) bool {
 	switch {
 	case tag == "",
@@ -575,6 +586,10 @@ func isExtendedColorTag(tag string) bool {
 	}
 
 	return true
+}
+
+func isValidTag(tag string) bool {
+	return isValidSimpleTag(tag) || isValidExtendedTag(tag) || isValidNamedTag(tag)
 }
 
 func isValidExtendedTag(tag string) bool {
