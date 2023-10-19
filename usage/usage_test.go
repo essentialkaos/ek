@@ -37,6 +37,9 @@ func (s *UsageSuite) TestAbout(c *C) {
 		Owner:       "Some company",
 		License:     "MIT",
 		Environment: Environment{{"A", "1"}, {"B", "2"}},
+
+		AppNameColorTag: "{#99}",
+		VersionColorTag: "{#125}",
 	}
 
 	about.Render()
@@ -53,6 +56,9 @@ func (s *UsageSuite) TestAbout(c *C) {
 		Owner:         "Some company",
 		License:       "MIT",
 		UpdateChecker: UpdateChecker{"1", testChecker},
+
+		AppNameColorTag: "{ABCD}",
+		VersionColorTag: "{ABCD}",
 	}
 
 	about.Render()
@@ -116,6 +122,9 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.AddRawExample("echo 123 | myapp")
 	info.AddRawExample("echo 123 | myapp", "Example with description")
 
+	info.GetOption("t:test").ColorTag = "{r}"
+	info.GetCommand("read").ColorTag = "{r}"
+
 	info.Render()
 
 	info.Breadcrumbs = false
@@ -135,6 +144,20 @@ func (s *UsageSuite) TestUsage(c *C) {
 	c.Assert(info.GetCommand("unknown").String(), Equals, "")
 	c.Assert(info.GetOption("t:test").String(), Equals, "--test")
 	c.Assert(info.GetOption("u:unknown").String(), Equals, "")
+}
+
+func (s *UsageSuite) TestDeattachedPrint(c *C) {
+	cmd := &Command{Name: "test", Desc: "Test command", ColorTag: "{#99}"}
+	opt := &Option{Long: "test", Short: "T", Desc: "Test option", ColorTag: "{#99}"}
+
+	cmd.Print()
+	opt.Print()
+
+	cmd.ColorTag = ""
+	opt.ColorTag = ""
+
+	cmd.Print()
+	opt.Print()
 }
 
 func (s *UsageSuite) TestVersionInfo(c *C) {

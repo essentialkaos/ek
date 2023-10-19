@@ -6,6 +6,7 @@
 * `[fmtutil/panel]` Added `TOP_LINE` option
 * `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels
 * `[strutil]` Added method `LenVisual`
+* `[usage]` Added color tag validation
 * `[fmtutil/panel]` Improved panel rendering when `BOTTOM_LINE` option is used
 * `[fmtutil/panel]` Improved panel rendering when `label` is empty
 * `[fmtutil/panel]` Added limit for minimal panel size (_256 symbols_)
