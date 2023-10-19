@@ -66,6 +66,10 @@ var Width = 88
 // Indent is indent from the left side of terminal
 var Indent = 0
 
+// DefaultOptions is the default options used for rendering the panel if
+// no options are passed
+var DefaultOptions Options
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // minWidth is the minimal panel width
@@ -97,6 +101,11 @@ func Info(title, message string, options ...Option) {
 // Panel shows panel with given label, title, and message
 func Panel(label, colorTag, title, message string, options ...Option) {
 	label = strutil.Q(label, "•••")
+
+	if len(options) == 0 {
+		options = DefaultOptions
+	}
+
 	renderPanel(label, colorTag, title, message, options)
 }
 

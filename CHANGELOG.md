@@ -3,6 +3,7 @@
 ### 12.83.0
 
 * `[fmtutil/panel]` Added `TOP_LINE` option
+* `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels
 * `[strutil]` Added method `LenVisual`
 * `[fmtutil/panel]` Improved panel rendering when `BOTTOM_LINE` option is used
 * `[fmtutil/panel]` Improved panel rendering when `label` is empty
