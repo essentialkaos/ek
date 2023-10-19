@@ -159,6 +159,8 @@ func Len(s string) int {
 
 // LenVisual returns number of space required for rendering given string using
 // monospaced font.
+//
+// Warning: This method can be inaccurate in some cases, use with care
 func LenVisual(s string) int {
 	if s == "" {
 		return 0
