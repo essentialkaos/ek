@@ -106,6 +106,8 @@ func Panel(label, colorTag, title, message string, options ...Option) {
 		options = DefaultOptions
 	}
 
+	colorTag = strutil.B(fmtc.IsTag(colorTag), colorTag, "")
+
 	renderPanel(label, colorTag, title, message, options)
 }
 
