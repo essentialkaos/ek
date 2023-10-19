@@ -7,6 +7,7 @@
 * `[fmtutil/panel]` Added `DefaultOptions` variable to set default options for all panels
 * `[strutil]` Added method `LenVisual`
 * `[progress]` Added settings validation
+* `[spinner]` Added color tag validation
 * `[usage]` Added color tag validation
 * `[fmtutil/panel]` Improved panel rendering when `BOTTOM_LINE` option is used
 * `[fmtutil/panel]` Improved panel rendering when `label` is empty

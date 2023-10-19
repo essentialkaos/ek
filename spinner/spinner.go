@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/strutil"
 	"github.com/essentialkaos/ek/v12/timeutil"
 )
 
@@ -142,10 +143,13 @@ func Skip() {
 func showSpinner() {
 	var i int
 
+	spinnerColorTag := strutil.B(fmtc.IsTag(SpinnerColorTag), SpinnerColorTag, "{y}")
+	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
+
 	for {
 		mu.RLock()
 		fmtc.Printf(
-			SpinnerColorTag+"%s  {!}"+desc+"… "+TimeColorTag+"[%s]{!}",
+			spinnerColorTag+"%s  {!}"+desc+"… "+timeColorTag+"[%s]{!}",
 			spinnerFrames[i], timeutil.ShortDuration(time.Since(start)),
 		)
 		mu.RUnlock()
@@ -176,20 +180,26 @@ func stopSpinner(action uint8) {
 	}
 
 	mu.RLock()
+
+	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
+
 	switch action {
 	case _ACTION_ERROR:
+		errColorTag := strutil.B(fmtc.IsTag(ErrColorTag), ErrColorTag, "{r}")
 		fmtc.Printf(
-			ErrColorTag+ErrSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			errColorTag+ErrSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	case _ACTION_SKIP:
+		skipColorTag := strutil.B(fmtc.IsTag(SkipColorTag), SkipColorTag, "{s-}")
 		fmtc.Printf(
-			SkipColorTag+SkipSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			skipColorTag+SkipSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	default:
+		okColorTag := strutil.B(fmtc.IsTag(OkColorTag), OkColorTag, "{g}")
 		fmtc.Printf(
-			OkColorTag+OkSymbol+" {!}"+desc+" "+TimeColorTag+"(%s){!}\n",
+			okColorTag+OkSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
 			timeutil.ShortDuration(time.Since(start), true),
 		)
 	}
