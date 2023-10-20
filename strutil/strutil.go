@@ -157,6 +157,28 @@ func Len(s string) int {
 	return count
 }
 
+// LenVisual returns number of space required for rendering given string using
+// monospaced font.
+//
+// Warning: This method can be inaccurate in some cases, use with care
+func LenVisual(s string) int {
+	if s == "" {
+		return 0
+	}
+
+	var count int
+
+	for _, r := range s {
+		if r > 11263 {
+			count += 2
+		} else {
+			count++
+		}
+	}
+
+	return count
+}
+
 // Ellipsis trims given string (unicode supported)
 func Ellipsis(s string, maxSize int) string {
 	if Len(s) <= maxSize {

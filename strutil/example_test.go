@@ -9,6 +9,7 @@ package strutil
 
 import (
 	"fmt"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -85,6 +86,18 @@ func ExampleLen() {
 	// Output:
 	// 21
 	// 3
+}
+
+func ExampleLenVisual() {
+	k := "🥰 Пример 例子 例 მაგალითად"
+	l := LenVisual(k)
+
+	fmt.Println(k)
+	fmt.Println(strings.Repeat("^", l))
+
+	// Output:
+	// 🥰 Пример 例子 例 მაგალითად
+	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }
 
 func ExampleHead() {

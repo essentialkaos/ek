@@ -88,6 +88,25 @@ func (s *FormatSuite) TestParsing(c *C) {
 	c.Assert(Sprint("Test"+string(rune(65533))), Equals, "Test")
 }
 
+func (s *FormatSuite) TestIsTag(c *C) {
+	c.Assert(IsTag(""), Equals, true)
+	c.Assert(IsTag("{r}"), Equals, true)
+	c.Assert(IsTag("{r*}"), Equals, true)
+	c.Assert(IsTag("{#123}"), Equals, true)
+	c.Assert(IsTag("{%123}"), Equals, true)
+	c.Assert(IsTag("{*}"), Equals, true)
+	c.Assert(IsTag("{w-}"), Equals, true)
+	c.Assert(IsTag("{S*_}"), Equals, true)
+	c.Assert(IsTag("{%1F2E3D}"), Equals, true)
+
+	c.Assert(IsTag("{}"), Equals, false)
+	c.Assert(IsTag("{-}"), Equals, false)
+	c.Assert(IsTag("W"), Equals, false)
+	c.Assert(IsTag("{"), Equals, false)
+	c.Assert(IsTag("{r"), Equals, false)
+	c.Assert(IsTag("{{r}}"), Equals, false)
+}
+
 func (s *FormatSuite) Test256Colors(c *C) {
 	term = "xterm-256color"
 	colorTerm = ""

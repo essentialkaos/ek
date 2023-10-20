@@ -44,9 +44,15 @@ func (s *ProgressSuite) TestBar(c *C) {
 
 	pbs := DefaultSettings
 	pbs.Width = 60
+	pbs.RefreshRate = time.Microsecond
+
+	err := pb.UpdateSettings(pbs)
+	c.Assert(err, NotNil)
+
 	pbs.RefreshRate = time.Millisecond
 
-	pb.UpdateSettings(pbs)
+	err = pb.UpdateSettings(pbs)
+	c.Assert(err, IsNil)
 
 	pb.SetName("ABC")
 	c.Assert(pb.Name(), Equals, "ABC")
@@ -87,9 +93,6 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pb.Finish() // should be skipped (not started)
 	c.Assert(pb.IsFinished(), Equals, false)
 
-	pbs.RefreshRate = 0
-	pb.UpdateSettings(pbs)
-
 	pb.Start()
 	pb.renderElements(false)
 
@@ -105,6 +108,36 @@ func (s *ProgressSuite) TestBar(c *C) {
 	pb.SetCurrent(1000)
 	time.Sleep(time.Millisecond * 100)
 	pb.Finish()
+}
+
+func (s *ProgressSuite) TestSettingsValidation(c *C) {
+	pbs := DefaultSettings
+
+	c.Assert(pbs.Validate(), IsNil)
+
+	pbs.RefreshRate = 2
+	c.Assert(pbs.Validate().Error(), Equals, "RefreshRate too small (less than 1ms)")
+
+	pbs.RemainingColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "RemainingColorTag value is not a valid color tag")
+
+	pbs.SpeedColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "SpeedColorTag value is not a valid color tag")
+
+	pbs.ProgressColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "ProgressColorTag value is not a valid color tag")
+
+	pbs.PercentColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "PercentColorTag value is not a valid color tag")
+
+	pbs.BarBgColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "BarBgColorTag value is not a valid color tag")
+
+	pbs.BarFgColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "BarFgColorTag value is not a valid color tag")
+
+	pbs.NameColorTag = "{ABCD}"
+	c.Assert(pbs.Validate().Error(), Equals, "NameColorTag value is not a valid color tag")
 }
 
 func (s *ProgressSuite) TestBarRender(c *C) {

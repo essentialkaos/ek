@@ -345,6 +345,15 @@ func ExampleIsTrueColorSupported() {
 	fmt.Printf("TrueColor Supported: %t\n", IsTrueColorSupported())
 }
 
+func ExampleIsTag() {
+	fmt.Printf("%s is tag: %t\n", "{r}", IsTag("{r}"))
+	fmt.Printf("%s is tag: %t\n", "[r]", IsTag("[r]"))
+
+	// Output:
+	// {r} is tag: true
+	// [r] is tag: false
+}
+
 func ExampleIf() {
 	userIsAdmin := true
 

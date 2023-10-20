@@ -39,12 +39,41 @@ func (s *PanelSuite) TestBasicInfoPanel(c *C) {
 
 func (s *PanelSuite) TestPanelAllOptions(c *C) {
 	Width = 60
+	Indent = 2
 
 	Panel(
-		"YOLO", "{m}", "Test all options",
+		"使用上のヒント", "{m}", "Test all options",
 		`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
-		WRAP, INDENT_OUTER, INDENT_INNER, BOTTOM_LINE, LABEL_POWERLINE,
+		WRAP, INDENT_OUTER, INDENT_INNER, TOP_LINE, BOTTOM_LINE, LABEL_POWERLINE,
 	)
 
 	Width = 88
+	Indent = 0
+}
+
+func (s *PanelSuite) TestPanelWeird(c *C) {
+	Width = -10
+	Indent = -10
+
+	Panel(
+		"", "{g}", "",
+		`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
+		WRAP, INDENT_OUTER, INDENT_INNER, TOP_LINE, BOTTOM_LINE, LABEL_POWERLINE,
+	)
+
+	Panel(
+		"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "{#120}",
+		"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+		`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
+		WRAP, INDENT_OUTER, INDENT_INNER, TOP_LINE, BOTTOM_LINE, LABEL_POWERLINE,
+	)
+
+	Width = 999
+	Indent = 999
+
+	Panel(
+		"", "{#222}", "",
+		`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
+		WRAP, INDENT_OUTER, INDENT_INNER, TOP_LINE, BOTTOM_LINE, LABEL_POWERLINE,
+	)
 }

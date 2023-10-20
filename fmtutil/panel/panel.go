@@ -16,11 +16,14 @@ import (
 	"github.com/essentialkaos/ek/v12/fmtutil"
 	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/sliceutil"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Option uint8
+
+type Options []Option
 
 const (
 	// WRAP is panel rendering option for automatic text wrapping
@@ -33,6 +36,9 @@ const (
 	// INDENT_INNER is panel rendering option for indent using new lines
 	// before and after panel data
 	INDENT_INNER
+
+	// TOP_LINE is panel rendering option for drawing top line of panel
+	TOP_LINE
 
 	// BOTTOM_LINE is panel rendering option for drawing bottom line of panel
 	BOTTOM_LINE
@@ -60,10 +66,20 @@ var Width = 88
 // Indent is indent from the left side of terminal
 var Indent = 0
 
+// DefaultOptions is the default options used for rendering the panel if
+// no options are passed
+var DefaultOptions Options
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// minWidth is minimal panel width
+// minWidth is the minimal panel width
 var minWidth = 38
+
+// maxWidth is the maximum panel width
+var maxWidth = 256
+
+// maxIndent is the maximum indent value
+var maxIndent = 24
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -84,28 +100,71 @@ func Info(title, message string, options ...Option) {
 
 // Panel shows panel with given label, title, and message
 func Panel(label, colorTag, title, message string, options ...Option) {
+	label = strutil.Q(label, "•••")
+
+	if len(options) == 0 {
+		options = DefaultOptions
+	}
+
+	colorTag = strutil.B(fmtc.IsTag(colorTag), colorTag, "")
+
+	renderPanel(label, colorTag, title, message, options)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Has returns true if options slice contains given option
+func (o Options) Has(option Option) bool {
+	if len(o) == 0 {
+		return false
+	}
+
+	return sliceutil.Contains(o, option)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// renderPanel renders panel
+func renderPanel(label, colorTag, title, message string, options Options) {
 	var buf *bytes.Buffer
 
-	indent := strings.Repeat(" ", mathutil.Max(0, Indent))
+	width := mathutil.Between(Width, minWidth, maxWidth)
+	indent := strings.Repeat(" ", mathutil.Between(Indent, 0, maxIndent))
 
-	if sliceutil.Contains(options, INDENT_OUTER) {
+	if options.Has(INDENT_OUTER) {
 		fmtc.NewLine()
 	}
 
-	if sliceutil.Contains(options, LABEL_POWERLINE) {
-		fmtc.Printf(colorTag+indent+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}\n", label, title)
+	if options.Has(LABEL_POWERLINE) {
+		fmtc.Printf(colorTag+indent+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}", label, title)
 	} else {
-		fmtc.Printf(colorTag+indent+"{@*} %s {!} "+colorTag+"%s{!}\n", label, title)
+		fmtc.Printf(colorTag+indent+"{@*} %s {!} "+colorTag+"%s{!}", label, title)
 	}
 
-	if sliceutil.Contains(options, INDENT_INNER) {
+	if !options.Has(TOP_LINE) {
+		fmtc.NewLine()
+	} else {
+		lineSize := width - (strutil.LenVisual(label+title) + 4)
+
+		if options.Has(LABEL_POWERLINE) {
+			lineSize--
+		}
+
+		if lineSize > 0 {
+			fmtc.Printf(colorTag+" %s{!}\n", strings.Repeat("─", lineSize))
+		} else {
+			fmtc.NewLine()
+		}
+	}
+
+	if options.Has(INDENT_INNER) || options.Has(BOTTOM_LINE) {
 		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
 	switch {
-	case sliceutil.Contains(options, WRAP):
+	case options.Has(WRAP):
 		buf = bytes.NewBufferString(
-			fmtutil.Wrap(fmtc.Sprint(message), indent, mathutil.Max(minWidth, Width-2)) + "\n",
+			fmtutil.Wrap(fmtc.Sprint(message), "", width-2) + "\n",
 		)
 	default:
 		buf = bytes.NewBufferString(message)
@@ -122,15 +181,15 @@ func Panel(label, colorTag, title, message string, options ...Option) {
 		fmtc.Print(colorTag + indent + "┃{!} " + line)
 	}
 
-	if sliceutil.Contains(options, INDENT_INNER) {
+	if options.Has(INDENT_INNER) {
 		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
-	if sliceutil.Contains(options, BOTTOM_LINE) {
-		fmtc.Println(colorTag + indent + "┖" + strings.Repeat("─", mathutil.Max(minWidth, Width-1)))
+	if options.Has(BOTTOM_LINE) {
+		fmtc.Println(colorTag + indent + "┖" + strings.Repeat("─", width-1))
 	}
 
-	if sliceutil.Contains(options, INDENT_OUTER) {
+	if options.Has(INDENT_OUTER) {
 		fmtc.NewLine()
 	}
 }

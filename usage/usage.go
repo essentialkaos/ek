@@ -311,14 +311,18 @@ func (i *Info) Print() {
 		return
 	}
 
-	usageMessage := "\n{*}Usage:{!} " + i.AppNameColorTag + i.Name + "{!}"
+	appNameColorTag := strutil.B(fmtc.IsTag(i.AppNameColorTag), i.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
+	optionsColorTag := strutil.B(fmtc.IsTag(i.OptionsColorTag), i.OptionsColorTag, DEFAULT_OPTIONS_COLOR_TAG)
+	commandsColorTag := strutil.B(fmtc.IsTag(i.CommandsColorTag), i.CommandsColorTag, DEFAULT_COMMANDS_COLOR_TAG)
+
+	usageMessage := "\n{*}Usage:{!} " + appNameColorTag + i.Name + "{!}"
 
 	if len(i.Options) != 0 {
-		usageMessage += " " + i.OptionsColorTag + "{options}{!}"
+		usageMessage += " " + optionsColorTag + "{options}{!}"
 	}
 
 	if len(i.Commands) != 0 {
-		usageMessage += " " + i.CommandsColorTag + "{command}{!}"
+		usageMessage += " " + commandsColorTag + "{command}{!}"
 	}
 
 	if len(i.Args) != 0 {
@@ -396,10 +400,11 @@ func (c *Command) Print() {
 		return
 	}
 
-	colorTag := strutil.Q(DEFAULT_COMMANDS_COLOR_TAG, c.ColorTag)
 	size := getCommandSize(c)
 	useBreadcrumbs := true
 	maxSize := size
+
+	colorTag := strutil.Q(strutil.B(fmtc.IsTag(c.ColorTag), c.ColorTag, DEFAULT_COMMANDS_COLOR_TAG), DEFAULT_COMMANDS_COLOR_TAG)
 
 	if c.info != nil {
 		colorTag = c.info.CommandsColorTag
@@ -425,10 +430,11 @@ func (o *Option) Print() {
 		return
 	}
 
-	colorTag := strutil.Q(DEFAULT_OPTIONS_COLOR_TAG, o.ColorTag)
 	size := getOptionSize(o)
 	useBreadcrumbs := true
 	maxSize := size
+
+	colorTag := strutil.Q(strutil.B(fmtc.IsTag(o.ColorTag), o.ColorTag, DEFAULT_OPTIONS_COLOR_TAG), DEFAULT_OPTIONS_COLOR_TAG)
 
 	if o.info != nil {
 		colorTag = o.info.OptionsColorTag
@@ -495,8 +501,8 @@ func (a *About) Print(infoType ...string) {
 		}
 	}
 
-	nc := strutil.Q(a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
-	vc := strutil.Q(a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG)
+	nc := strutil.Q(strutil.B(fmtc.IsTag(a.AppNameColorTag), a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG), DEFAULT_APP_NAME_COLOR_TAG)
+	vc := strutil.Q(strutil.B(fmtc.IsTag(a.VersionColorTag), a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG), DEFAULT_APP_VER_COLOR_TAG)
 
 	fmtc.Printf("\n"+nc+"%s{!} "+vc+"%s{!}", a.App, a.Version)
 

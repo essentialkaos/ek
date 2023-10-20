@@ -172,6 +172,12 @@ func (s *StrUtilSuite) TestLen(c *C) {
 	c.Assert(Len("✶✈12AB例例子예"), Equals, 10)
 }
 
+func (s *StrUtilSuite) TestLenVisual(c *C) {
+	c.Assert(LenVisual("ABCDABCD12341234"), Equals, 16)
+	c.Assert(LenVisual(""), Equals, 0)
+	c.Assert(LenVisual("✶✈12AB例例子예"), Equals, 14)
+}
+
 func (s *StrUtilSuite) TestBefore(c *C) {
 	c.Assert(Before("", "@"), Equals, "")
 	c.Assert(Before("test::1234", "@"), Equals, "test::1234")
