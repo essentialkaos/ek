@@ -63,3 +63,11 @@ func (s *TipSuite) TestShow(c *C) {
 
 	c.Assert(Show(true), Equals, true)
 }
+
+func (s *TipSuite) TestIntSearch(c *C) {
+	k := []int{1, 3, 5}
+
+	c.Assert(searchInts(k, 1), Equals, 0)
+	c.Assert(searchInts(k, 3), Equals, 1)
+	c.Assert(searchInts(k, 5), Equals, 2)
+}

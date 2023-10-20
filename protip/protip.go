@@ -35,6 +35,9 @@ var Probability = 0.25
 // ColorTag is default panel color tag
 var ColorTag = "{#75}"
 
+// Options contains default panel options
+var Options = panel.Options{panel.TOP_LINE, panel.BOTTOM_LINE}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var collection *Tips
@@ -88,17 +91,14 @@ func Show(force bool) bool {
 	color := strutil.Q(tip.ColorTag, ColorTag)
 	color = strutil.B(fmtc.IsTag(color), color, "{#75}")
 
-	panel.Panel(
-		"❏ PROTIP", color, tip.Title, tip.Message,
-		panel.BOTTOM_LINE, panel.TOP_LINE, panel.INDENT_OUTER,
-	)
+	panel.Panel("❏ PROTIP", color, tip.Title, tip.Message, Options...)
 
 	return true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// searchInts improved searchInts version
+// searchInts improved sort.SearchInts version
 //
 // Original: https://github.com/mroth/weightedrand
 func searchInts(a []int, x int) int {
