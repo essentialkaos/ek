@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.83.1
+
+* `[protip]` Disabling tips using environment vairable (`PROTIP=0`)
+
 ### 12.83.0
 
 * `[protip]` Added new package for showing usage tips

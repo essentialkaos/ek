@@ -3,6 +3,7 @@ package protip
 
 import (
 	"math/rand"
+	"os"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fmtutil/panel"
@@ -40,6 +41,8 @@ var Options = panel.Options{panel.TOP_LINE, panel.BOTTOM_LINE}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var disabled = os.Getenv("PROTIP") == "0"
+
 var collection *Tips
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,6 +51,11 @@ var collection *Tips
 func Add(tips ...*Tip) {
 	if collection == nil {
 		collection = &Tips{}
+	}
+
+	// Don't add if tips are disabled by env vars
+	if disabled {
+		return
 	}
 
 	for _, tip := range tips {
@@ -66,7 +74,7 @@ func Add(tips ...*Tip) {
 
 // Show shows random tip if required
 func Show(force bool) bool {
-	if collection == nil || len(collection.data) == 0 {
+	if collection == nil || len(collection.data) == 0 || disabled {
 		return false
 	}
 
