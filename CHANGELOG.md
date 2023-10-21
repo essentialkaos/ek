@@ -2,7 +2,7 @@
 
 ### 12.83.1
 
-* `[protip]` Disabling tips using environment vairable (`PROTIP=0`)
+* `[protip]` Disabling tips using environment variable (`PROTIP=0`)
 
 ### 12.83.0
 
