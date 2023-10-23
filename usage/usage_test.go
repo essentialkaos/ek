@@ -146,7 +146,7 @@ func (s *UsageSuite) TestUsage(c *C) {
 	c.Assert(info.GetOption("u:unknown").String(), Equals, "")
 }
 
-func (s *UsageSuite) TestDeattachedPrint(c *C) {
+func (s *UsageSuite) TestDetachedPrint(c *C) {
 	cmd := &Command{Name: "test", Desc: "Test command", ColorTag: "{#99}"}
 	opt := &Option{Long: "test", Short: "T", Desc: "Test option", ColorTag: "{#99}"}
 

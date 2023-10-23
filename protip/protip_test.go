@@ -42,6 +42,14 @@ func (s *TipSuite) TestAdd(c *C) {
 	c.Assert(collection.data, HasLen, 0)
 
 	tip.Message = "Test message"
+
+	disabled = true
+
+	Add(tip)
+	c.Assert(collection.data, HasLen, 0)
+
+	disabled = false
+
 	Add(tip)
 	c.Assert(collection.data, HasLen, 1)
 	c.Assert(collection.data[0].Weight, Equals, 0.5)
