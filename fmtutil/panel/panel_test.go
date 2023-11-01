@@ -10,6 +10,8 @@ package panel
 import (
 	"testing"
 
+	"github.com/essentialkaos/ek/v12/fmtc"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -35,6 +37,16 @@ func (s *PanelSuite) TestBasicWarnPanel(c *C) {
 
 func (s *PanelSuite) TestBasicInfoPanel(c *C) {
 	Info("Test info", "Message")
+}
+
+func (s *PanelSuite) TestNoColor(c *C) {
+	fmtc.DisableColors = true
+	Panel(
+		"使用上のヒント", "{m}", "Test with no colors",
+		`Lorem ipsum dolor sit amet.`,
+		WRAP, INDENT_OUTER, INDENT_INNER, TOP_LINE, BOTTOM_LINE, LABEL_POWERLINE,
+	)
+	fmtc.DisableColors = false
 }
 
 func (s *PanelSuite) TestPanelAllOptions(c *C) {

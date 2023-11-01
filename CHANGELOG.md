@@ -2,6 +2,7 @@
 
 ### 12.83.2
 
+* `[fmtutil/panel]` Improved panel rendering with disabled colors
 * `[fmtc]` Fixed `IsTag` compatibility with sequence of tags (e.g. `{*}{_}{r}`)
 * `[fmtc]` Fixed bug in `Clean` with writing reset escape sequence if there is no reset tag in the given string
 

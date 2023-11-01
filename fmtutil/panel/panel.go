@@ -135,10 +135,16 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 		fmtc.NewLine()
 	}
 
-	if options.Has(LABEL_POWERLINE) {
-		fmtc.Printf(colorTag+indent+"{@*} %s {!}"+colorTag+"{!} "+colorTag+"%s{!}", label, title)
+	labelFormat := "{@*} %s {!}"
+
+	if fmtc.DisableColors {
+		labelFormat = "[%s]"
+	}
+
+	if options.Has(LABEL_POWERLINE) && !fmtc.DisableColors {
+		fmtc.Printf(colorTag+indent+labelFormat+colorTag+"{!} "+colorTag+"%s{!}", label, title)
 	} else {
-		fmtc.Printf(colorTag+indent+"{@*} %s {!} "+colorTag+"%s{!}", label, title)
+		fmtc.Printf(colorTag+indent+labelFormat+colorTag+" %s{!}", label, title)
 	}
 
 	if !options.Has(TOP_LINE) {
@@ -146,7 +152,7 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 	} else {
 		lineSize := width - (strutil.LenVisual(label+title) + 4)
 
-		if options.Has(LABEL_POWERLINE) {
+		if options.Has(LABEL_POWERLINE) && !fmtc.DisableColors {
 			lineSize--
 		}
 
