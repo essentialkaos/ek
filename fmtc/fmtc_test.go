@@ -93,6 +93,7 @@ func (s *FormatSuite) TestIsTag(c *C) {
 	c.Assert(IsTag("{r}"), Equals, true)
 	c.Assert(IsTag("{r*}"), Equals, true)
 	c.Assert(IsTag("{#123}"), Equals, true)
+	c.Assert(IsTag("{*}{_}{#123}"), Equals, true)
 	c.Assert(IsTag("{%123}"), Equals, true)
 	c.Assert(IsTag("{*}"), Equals, true)
 	c.Assert(IsTag("{w-}"), Equals, true)
