@@ -344,8 +344,8 @@ func IsTrueColorSupported() bool {
 	return colorsTCSupported
 }
 
-// IsTag checks if the given value is valid color tag and can be encoded
-// to escape sequence
+// IsTag tests whether the given value is a valid color tag (or sequence
+// of tags) and can be encoded into an escape sequence
 func IsTag(tag string) bool {
 	if tag == "" {
 		return true // Empty value is valid color tag ¯\_(ツ)_/¯
@@ -355,9 +355,7 @@ func IsTag(tag string) bool {
 		return false
 	}
 
-	tag = tag[1 : len(tag)-1]
-
-	return isValidTag(tag)
+	return Clean(tag) == ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -542,7 +540,7 @@ func searchColors(text string, limit int, clean bool) string {
 		}
 	}
 
-	if !closed {
+	if !closed && !clean {
 		output.WriteString(_CODE_RESET)
 	}
 

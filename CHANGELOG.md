@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.83.2
+
+* `[fmtc]` Fixed `IsTag` compatibility with sequence of tags (e.g. `{*}{_}{r}`)
+* `[fmtc]` Fixed bug in `Clean` with writing reset escape sequence if there is no reset tag in the given string
+
 ### 12.83.1
 
 * `[protip]` Disabling tips using environment variable (`PROTIP=0`)
