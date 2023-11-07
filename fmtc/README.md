@@ -109,10 +109,12 @@ For more information about named colors see documentation for method `NameColor`
 ```
 
 ```
-{rG*}OMG!{!} Check your mail{!}
- ┬──                         ┬
- │                           │
- │                           └ Reset everything
+{rG*}OMG!{!*} Check your mail{!}
+ ┬──      ┬─                  ┬
+ │        │                   │
+ │        │                   └ Reset everything
+ │        │
+ │        └ Unset bold modificator
  │
  └ Bold, red text with green background
 ```
