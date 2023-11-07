@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.84.0
+
+* `[fmtutil/table]` Added short form of align flags
+
 ### 12.83.2
 
 * `[fmtutil/panel]` Improved panel rendering with disabled colors

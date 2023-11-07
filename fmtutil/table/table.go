@@ -25,6 +25,9 @@ const (
 	ALIGN_LEFT   uint8 = 0
 	ALIGN_CENTER uint8 = 1
 	ALIGN_RIGHT  uint8 = 2
+	AL           uint8 = 0 // Short form of ALIGN_LEFT
+	AC           uint8 = 1 // Short form of ALIGN_CENTER
+	AR           uint8 = 2 // Short form of ALIGN_RIGHT
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
