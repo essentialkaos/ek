@@ -1,5 +1,11 @@
 ### `fmtc` color tags
 
+#### Editors support
+
+If you are using SublimeText 4 (`4075+`), we strongly recommend that you install [extended Go syntax highlighting](https://github.com/essentialkaos/blackhole-theme-sublime/blob/master/fmtc.sublime-syntax) with support for `fmtc` tags.
+
+![#colors](../.github/images/fmtc_highlight.png)
+
 #### Modificators
 
 | Name      | Tag   | Reset Tag | Code |
