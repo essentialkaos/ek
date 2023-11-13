@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.84.1
+
+* `[terminal]` Updated Windows stubs
+
 ### 12.84.0
 
 * `[errutil]` Added method `Errors.First`
