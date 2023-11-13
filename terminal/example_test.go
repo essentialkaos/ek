@@ -8,6 +8,7 @@ package terminal
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -112,6 +113,10 @@ func ExampleError() {
 
 	// Print red text to stderr
 	Error("Error while sending data to %s", "https://example.com")
+
+	// Print message from error struct
+	err := errors.New("My error")
+	Error(err)
 }
 
 func ExampleWarn() {
@@ -120,6 +125,10 @@ func ExampleWarn() {
 
 	// Print yellow text to stderr
 	Warn("Warning file %s is not found", "/home/john/test.txt")
+
+	// Print message from error struct
+	err := errors.New("My warning")
+	Warn(err)
 }
 
 func ExampleInfo() {

@@ -43,7 +43,12 @@ func (s *ErrSuite) TestPositive(c *C) {
 	c.Assert(errs.Num(), Equals, 5)
 	c.Assert(errs.All(), HasLen, 5)
 	c.Assert(errs.HasErrors(), Equals, true)
+	c.Assert(errs.First(), DeepEquals, errors.New("1"))
 	c.Assert(errs.Last(), DeepEquals, errors.New("5"))
+	c.Assert(errs.Get(0), DeepEquals, errors.New("1"))
+	c.Assert(errs.Get(4), DeepEquals, errors.New("5"))
+	c.Assert(errs.Get(100), IsNil)
+	c.Assert(errs.Get(-100), IsNil)
 	c.Assert(errs.All(), DeepEquals,
 		[]error{
 			errors.New("1"),
@@ -134,6 +139,7 @@ func (s *ErrSuite) TestNil(c *C) {
 	c.Assert(errs.Cap(), Equals, 0)
 	c.Assert(errs.All(), HasLen, 0)
 	c.Assert(errs.HasErrors(), Equals, false)
+	c.Assert(errs.First(), IsNil)
 	c.Assert(errs.Last(), IsNil)
 	c.Assert(errs.Error(), Equals, "")
 }

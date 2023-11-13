@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.84.0
+
+* `[errutil]` Added method `Errors.First`
+* `[errutil]` Added method `Errors.Get`
+* `[fmtutil/table]` Added short form of align flags
+* `[terminal]` `Error`, `Warn` and `Info` now accept custom message objects
+* `[errutil]` Added more usage examples
+
 ### 12.83.2
 
 * `[fmtutil/panel]` Improved panel rendering with disabled colors

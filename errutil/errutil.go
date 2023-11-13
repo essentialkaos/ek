@@ -89,13 +89,32 @@ func (e *Errors) Add(errs ...any) *Errors {
 	return e
 }
 
+// First returns the first error
+func (e *Errors) First() error {
+	if e == nil || len(e.errors) == 0 {
+		return nil
+	}
+
+	return e.errors[0]
+}
+
 // Last returns the last error
 func (e *Errors) Last() error {
-	if e == nil || e.errors == nil {
+	if e == nil || len(e.errors) == 0 {
 		return nil
 	}
 
 	return e.errors[len(e.errors)-1]
+}
+
+// Get returns error by it index
+func (e *Errors) Get(index int) error {
+	if e == nil || len(e.errors) == 0 ||
+		index < 0 || index >= len(e.errors) {
+		return nil
+	}
+
+	return e.errors[index]
 }
 
 // All returns all errors in slice

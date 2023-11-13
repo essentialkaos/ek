@@ -41,6 +41,12 @@ If you want to update `ek` to latest stable release, do:
 go get -u github.com/essentialkaos/ek/v12
 ```
 
+<details><summary><b>Information for SublimeText 4 users</b></summary><p>
+
+If you are using SublimeText 4 (`4075+`), we strongly recommend that you install [extended Go syntax highlighting](https://github.com/essentialkaos/blackhole-theme-sublime/blob/master/fmtc.sublime-syntax) with support for `fmtc` tags.
+
+</p></details>
+
 ### Sub-packages
 
 * [`ansi`](https://kaos.sh/g/ek.v12/ansi) — Package provides methods for working with ANSI/VT100 control sequences

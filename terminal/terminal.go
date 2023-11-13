@@ -162,29 +162,35 @@ func PrintActionStatus(status int) {
 }
 
 // Error prints error message
-func Error(message string, args ...any) {
+func Error(message any, args ...any) {
+	msg := formatMessage(message)
+
 	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", msg)
 	} else {
-		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, ErrorPrefix+ErrorColorTag+"%s{!}\n", fmt.Sprintf(msg, args...))
 	}
 }
 
 // Warn prints warning message
-func Warn(message string, args ...any) {
+func Warn(message any, args ...any) {
+	msg := formatMessage(message)
+
 	if len(args) == 0 {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", message)
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", msg)
 	} else {
-		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stderr, WarnPrefix+WarnColorTag+"%s{!}\n", fmt.Sprintf(msg, args...))
 	}
 }
 
 // Info prints info message
-func Info(message string, args ...any) {
+func Info(message any, args ...any) {
+	msg := formatMessage(message)
+
 	if len(args) == 0 {
-		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", message)
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", msg)
 	} else {
-		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", fmt.Sprintf(message, args...))
+		fmtc.Fprintf(os.Stdout, InfoPrefix+InfoColorTag+"%s{!}\n", fmt.Sprintf(msg, args...))
 	}
 }
 
@@ -227,6 +233,18 @@ func PrintWarnMessage(message string, args ...any) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// formatMessage formats message based on it type
+func formatMessage(message any) string {
+	switch m := message.(type) {
+	case string:
+		return m
+	case error:
+		return m.Error()
+	}
+
+	return fmt.Sprint(message)
+}
 
 // getMask returns mask for password
 func getMask(message string) string {

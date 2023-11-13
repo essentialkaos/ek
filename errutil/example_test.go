@@ -57,3 +57,144 @@ func ExampleErrors() {
 	// Capacity: 10
 	// Has errors: true
 }
+
+func ExampleErrors_Add() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("First: %v\n", myErrs.First())
+	fmt.Printf("Last: %v\n", myErrs.Last())
+
+	// Output:
+	// First: Error 1
+	// Last: Error 3
+}
+
+func ExampleErrors_First() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("First: %v\n", myErrs.First())
+
+	// Output:
+	// First: Error 1
+}
+
+func ExampleErrors_Last() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Last: %v\n", myErrs.Last())
+
+	// Output:
+	// Last: Error 3
+}
+
+func ExampleErrors_Get() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Index 1: %v\n", myErrs.Get(1))
+	fmt.Printf("Index 99: %v\n", myErrs.Get(99))
+
+	// Output:
+	// Index 1: Error 2
+	// Index 99: <nil>
+}
+
+func ExampleErrors_All() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors: %v\n", myErrs.All())
+
+	// Output:
+	// Errors: [Error 1 Error 2 Error 3]
+}
+
+func ExampleErrors_HasErrors() {
+	var myErrs Errors
+
+	fmt.Printf("Has errors: %t\n", myErrs.HasErrors())
+
+	myErrs.Add(fmt.Errorf("Error"))
+
+	fmt.Printf("Has errors: %t\n", myErrs.HasErrors())
+
+	// Output:
+	// Has errors: false
+	// Has errors: true
+}
+
+func ExampleErrors_Num() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors num: %d\n", myErrs.Num())
+
+	// Output:
+	// Errors num: 3
+}
+
+func ExampleErrors_Cap() {
+	myErrs := NewErrors(2)
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors cap: %d\n", myErrs.Cap())
+	fmt.Printf("First: %v\n", myErrs.First())
+	fmt.Printf("Last: %v\n", myErrs.Last())
+
+	// Output:
+	// Errors cap: 2
+	// First: Error 2
+	// Last: Error 3
+}
+
+func ExampleErrors_Error() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error 1"))
+	myErrs.Add(fmt.Errorf("Error 2"))
+	myErrs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors:\n%s\n", myErrs.Error())
+
+	// Output:
+	// Errors:
+	//   Error 1
+	//   Error 2
+	//   Error 3
+}
+
+func ExampleErrors_Reset() {
+	var myErrs Errors
+
+	myErrs.Add(fmt.Errorf("Error"))
+	myErrs.Reset()
+
+	fmt.Printf("Has errors: %t\n", myErrs.HasErrors())
+
+	// Output:
+	// Has errors: false
+}
