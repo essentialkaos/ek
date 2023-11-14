@@ -123,6 +123,10 @@ func (ls *LogSuite) TestErrors(c *C) {
 func (ls *LogSuite) TestLevel(c *C) {
 	l := &Logger{minLevel: WARN, mu: &sync.Mutex{}}
 
+	c.Assert(l.Is(DEBUG), Equals, false)
+	c.Assert(l.Is(WARN), Equals, true)
+	c.Assert(l.Is(ERROR), Equals, true)
+
 	c.Assert(l.MinLevel(-1), IsNil)
 	c.Assert(l.MinLevel(6), IsNil)
 	c.Assert(l.MinLevel("debug"), IsNil)
@@ -280,6 +284,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(Global, Not(IsNil))
+	c.Assert(Is(DEBUG), Equals, true)
 
 	Global.PrefixDebug = true
 	Global.PrefixInfo = true

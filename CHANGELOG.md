@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.85.0
+
+* `[log]` Added method `Is` and `Logger.Is`
+* `[log]` Added more usage examples
+* `[terminal]` Updated Windows stubs
+
 ### 12.84.0
 
 * `[errutil]` Added method `Errors.First`

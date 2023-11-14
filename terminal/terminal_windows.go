@@ -103,17 +103,17 @@ func PrintActionStatus(status int) {
 }
 
 // ❗ Error prints error message
-func Error(message string, args ...any) {
+func Error(message any, args ...any) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ Warn prints warning message
-func Warn(message string, args ...any) {
+func Warn(message any, args ...any) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ Info prints info message
-func Info(message string, args ...any) {
+func Info(message any, args ...any) {
 	panic("UNSUPPORTED")
 }
 
