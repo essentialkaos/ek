@@ -211,6 +211,12 @@ func Aux(f string, a ...any) error {
 	return Global.Aux(f, a...)
 }
 
+// Is returns true if current minimal logging level is equal or greater than
+// given
+func Is(level uint8) bool {
+	return Global.Is(level)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Reopen closes file descriptor and opens it again
@@ -424,6 +430,12 @@ func (l *Logger) Aux(f string, a ...any) error {
 	}
 
 	return l.Print(AUX, f, a...)
+}
+
+// Is returns true if current minimal logging level is equal or greater than
+// given
+func (l *Logger) Is(level uint8) bool {
+	return l != nil && level >= l.minLevel
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
