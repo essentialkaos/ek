@@ -2,8 +2,8 @@
 
 ### 12.86.0
 
-* `[usage]` `Info.AddCommand` now returns pointer to command
-* `[usage]` `Info.AddOption` now returns pointer to option
+* `[usage]` `Info.AddCommand` now returns pointer to added command
+* `[usage]` `Info.AddOption` now returns pointer to added option
 * `[usage]` Added color customization for release and build info
 * `[usage]` Added release separator customization
 * `[usage]` Improved command group rendering
