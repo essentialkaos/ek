@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.86.0
+
+* `[usage]` `Info.AddCommand` now returns pointer to added command
+* `[usage]` `Info.AddOption` now returns pointer to added option
+* `[usage]` Added color customization for release and build info
+* `[usage]` Added release separator customization
+* `[usage]` Improved command group rendering
+* `[usage]` Improved options rendering
+
 ### 12.85.0
 
 * `[log]` Added method `Is` and `Logger.Is`
