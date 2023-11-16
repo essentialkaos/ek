@@ -63,14 +63,15 @@ type EnvironmentInfo struct {
 
 // About contains info about app
 type About struct {
-	App     string // App is app name
-	Version string // Version is current app version in semver notation
-	Release string // Release is current app release
-	Build   string // Build is current app build
-	Desc    string // Desc is short info about app
-	Year    int    // Year is year when owner company was founded
-	License string // License is name of license
-	Owner   string // Owner is name of owner (company/developer)
+	App        string // App is app name
+	Version    string // Version is current app version in semver notation
+	Release    string // Release is current app release
+	Build      string // Build is current app build
+	Desc       string // Desc is short info about app
+	Year       int    // Year is year when owner company was founded
+	License    string // License is name of license
+	Owner      string // Owner is name of owner (company/developer)
+	BugTracker string // BugTracker is URL of bug tracker
 
 	AppNameColorTag string // AppNameColorTag contains default app name color tag
 	VersionColorTag string // VersionColorTag contains default app version color tag
