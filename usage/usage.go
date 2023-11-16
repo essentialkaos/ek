@@ -10,6 +10,7 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,10 +34,12 @@ const _BREADCRUMBS_MIN_SIZE = 8
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DEFAULT_COMMANDS_COLOR_TAG = "{y}"
-	DEFAULT_OPTIONS_COLOR_TAG  = "{g}"
-	DEFAULT_APP_NAME_COLOR_TAG = "{c*}"
-	DEFAULT_APP_VER_COLOR_TAG  = "{c}"
+	DEFAULT_COMMANDS_COLOR_TAG  = "{y}"
+	DEFAULT_OPTIONS_COLOR_TAG   = "{g}"
+	DEFAULT_APP_NAME_COLOR_TAG  = "{c*}"
+	DEFAULT_APP_VER_COLOR_TAG   = "{c}"
+	DEFAULT_APP_REL_COLOR_TAG   = "{s}"
+	DEFAULT_APP_BUILD_COLOR_TAG = "{s-}"
 )
 
 const (
@@ -58,13 +61,13 @@ type EnvironmentInfo struct {
 	Version string
 }
 
-// About contains info about application
+// About contains info about app
 type About struct {
-	App        string // App is application name
-	Version    string // Version is current application version in semver notation
-	Release    string // Release is current application release
-	Build      string // Build is current application build
-	Desc       string // Desc is short info about application
+	App        string // App is app name
+	Version    string // Version is current app version in semver notation
+	Release    string // Release is current app release
+	Build      string // Build is current app build
+	Desc       string // Desc is short info about app
 	Year       int    // Year is year when owner company was founded
 	License    string // License is name of license
 	Owner      string // Owner is name of owner (company/developer)
@@ -72,10 +75,15 @@ type About struct {
 
 	AppNameColorTag string // AppNameColorTag contains default app name color tag
 	VersionColorTag string // VersionColorTag contains default app version color tag
+	ReleaseColorTag string // ReleaseColorTag contains default app release color tag
+	BuildColorTag   string // BuildColorTag contains default app build color tag
+
+	ReleaseSeparator string // ReleaseSeparator contains symbol for version and release separation (default: -)
+	DescSeparator    string // DescSeparator contains symbol for version and description separation (default: -)
 
 	Environment Environment // Environment contains info about environment
 
-	// Function for checking application updates
+	// Function for checking app updates
 	UpdateChecker UpdateChecker
 }
 
@@ -109,7 +117,7 @@ type UpdateChecker struct {
 type Command struct {
 	Name         string   // Name is command name
 	Desc         string   // Desc is command description
-	Group        string   // Group is group name
+	Group        string   // Group is command group name
 	Args         []string // Args is slice with arguments
 	BoundOptions []string // BoundOptions is slice with long names of related options
 
@@ -174,9 +182,9 @@ func (i *Info) AddGroup(group string) {
 }
 
 // AddCommand adds command (name, description, args)
-func (i *Info) AddCommand(a ...string) {
+func (i *Info) AddCommand(a ...string) *Command {
 	if i == nil || len(a) < 2 {
-		return
+		return nil
 	}
 
 	group := "Commands"
@@ -185,36 +193,37 @@ func (i *Info) AddCommand(a ...string) {
 		group = i.curGroup
 	}
 
-	i.Commands = append(
-		i.Commands,
-		&Command{
-			Name:  a[0],
-			Desc:  a[1],
-			Args:  a[2:],
-			Group: group,
-			info:  i,
-		},
-	)
+	cmd := &Command{
+		Name:  a[0],
+		Desc:  a[1],
+		Args:  a[2:],
+		Group: group,
+		info:  i,
+	}
+
+	i.Commands = append(i.Commands, cmd)
+
+	return cmd
 }
 
 // AddOption adds option (name, description, args)
-func (i *Info) AddOption(a ...string) {
+func (i *Info) AddOption(a ...string) *Option {
 	if i == nil || len(a) < 2 {
-		return
+		return nil
 	}
 
 	long, short := parseOptionName(a[0])
+	opt := &Option{
+		Long:  long,
+		Short: short,
+		Desc:  a[1],
+		Arg:   strings.Join(a[2:], " "),
+		info:  i,
+	}
 
-	i.Options = append(
-		i.Options,
-		&Option{
-			Long:  long,
-			Short: short,
-			Desc:  a[1],
-			Arg:   strings.Join(a[2:], " "),
-			info:  i,
-		},
-	)
+	i.Options = append(i.Options, opt)
+
+	return opt
 }
 
 // AddExample adds example of application usage
@@ -408,7 +417,7 @@ func (c *Command) Print() {
 
 	if c.info != nil {
 		colorTag = c.info.CommandsColorTag
-		maxSize = getMaxCommandSize(c.info.Commands)
+		maxSize = getMaxCommandSize(c.info.Commands, c.Group)
 		useBreadcrumbs = c.info.Breadcrumbs
 	}
 
@@ -442,7 +451,7 @@ func (o *Option) Print() {
 		useBreadcrumbs = o.info.Breadcrumbs
 	}
 
-	fmtc.Printf("  "+colorTag+"%s{!}", formatOptionName(o))
+	fmtc.Printf("  " + formatOptionName(o, colorTag))
 
 	if o.Arg != "" {
 		fmtc.Print(" " + printArgs(o.Arg))
@@ -501,15 +510,19 @@ func (a *About) Print(infoType ...string) {
 		}
 	}
 
-	nc := strutil.Q(strutil.B(fmtc.IsTag(a.AppNameColorTag), a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG), DEFAULT_APP_NAME_COLOR_TAG)
-	vc := strutil.Q(strutil.B(fmtc.IsTag(a.VersionColorTag), a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG), DEFAULT_APP_VER_COLOR_TAG)
+	nameColor := strutil.Q(strutil.B(fmtc.IsTag(a.AppNameColorTag), a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG), DEFAULT_APP_NAME_COLOR_TAG)
+	versionColor := strutil.Q(strutil.B(fmtc.IsTag(a.VersionColorTag), a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG), DEFAULT_APP_VER_COLOR_TAG)
+	releaseColor := strutil.Q(strutil.B(fmtc.IsTag(a.ReleaseColorTag), a.ReleaseColorTag, DEFAULT_APP_REL_COLOR_TAG), DEFAULT_APP_REL_COLOR_TAG)
+	buildColor := strutil.Q(strutil.B(fmtc.IsTag(a.BuildColorTag), a.BuildColorTag, DEFAULT_APP_BUILD_COLOR_TAG), DEFAULT_APP_BUILD_COLOR_TAG)
+	relSeparator := strutil.Q(a.ReleaseSeparator, "-")
+	descSeparator := strutil.Q(a.DescSeparator, "-")
 
-	fmtc.Printf("\n"+nc+"%s{!} "+vc+"%s{!}", a.App, a.Version)
+	fmtc.Printf("\n"+nameColor+"%s{!} "+versionColor+"%s{!}", a.App, a.Version)
 
-	fmtc.If(a.Release != "").Printf("{s}-%s{!}", a.Release)
-	fmtc.If(a.Build != "").Printf(" {s-}(%s){!}", a.Build)
+	fmtc.If(a.Release != "").Printf(releaseColor+relSeparator+"%s{!}", a.Release)
+	fmtc.If(a.Build != "").Printf(buildColor+" (%s){!}", a.Build)
 
-	fmtc.Printf(" - %s\n", a.Desc)
+	fmtc.Printf(" "+descSeparator+" %s\n", a.Desc)
 
 	if len(a.Environment) > 0 {
 		fmtc.Printf("{s-}│{!}\n")
@@ -641,12 +654,15 @@ func getRawVersion(about *About, infoType string) string {
 }
 
 // formatOptionName formats option name
-func formatOptionName(opt *Option) string {
+func formatOptionName(opt *Option, colorTag string) string {
 	if opt.Short != "" {
-		return "--" + opt.Long + ", -" + opt.Short
+		return fmt.Sprintf(
+			"%s--%s{s}, %s-%s{!}",
+			colorTag, opt.Long, colorTag, opt.Short,
+		)
 	}
 
-	return "--" + opt.Long
+	return colorTag + "--" + opt.Long + "{!}"
 }
 
 // parseOptionName parses option name
@@ -670,10 +686,14 @@ func getSeparator(size, maxSize int, breadcrumbs bool) string {
 }
 
 // getMaxCommandSize returns the biggest command size
-func getMaxCommandSize(commands []*Command) int {
+func getMaxCommandSize(commands []*Command, group string) int {
 	var size int
 
 	for _, command := range commands {
+		if group != "" && command.Group != group {
+			continue
+		}
+
 		size = mathutil.Max(size, getCommandSize(command)+2)
 	}
 

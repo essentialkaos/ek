@@ -38,8 +38,12 @@ func (s *UsageSuite) TestAbout(c *C) {
 		License:     "MIT",
 		Environment: Environment{{"A", "1"}, {"B", "2"}},
 
-		AppNameColorTag: "{#99}",
-		VersionColorTag: "{#125}",
+		AppNameColorTag:  "{#99}",
+		VersionColorTag:  "{#125}",
+		ReleaseColorTag:  "{#214}",
+		BuildColorTag:    "{#170}",
+		ReleaseSeparator: "+",
+		DescSeparator:    "—",
 	}
 
 	about.Render()
