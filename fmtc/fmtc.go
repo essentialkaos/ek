@@ -43,7 +43,7 @@ var codes = map[rune]int{
 	'~': 5,  // Blink
 	'@': 7,  // Reverse
 	'+': 8,  // Hidden
-	'=': 9,  // Strike
+	'=': 9,  // Strikethrough
 
 	// Text
 	'd': 30, // Black (Dark)
@@ -132,7 +132,7 @@ func RemoveColor(name string) {
 //	 & Italic
 //	 ^ Dim
 //	 _ Underline
-//	 = Strike
+//	 = Strikethrough
 //	 ~ Blink
 //	 @ Reverse
 //	 + Hidden
