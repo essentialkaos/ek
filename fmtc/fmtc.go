@@ -38,9 +38,12 @@ var codes = map[rune]int{
 	'!': 0,  // Default
 	'*': 1,  // Bold
 	'^': 2,  // Dim
+	'&': 3,  // Italic
 	'_': 4,  // Underline
 	'~': 5,  // Blink
 	'@': 7,  // Reverse
+	'+': 8,  // Hidden
+	'=': 9,  // Strikethrough
 
 	// Text
 	'd': 30, // Black (Dark)
@@ -126,10 +129,13 @@ func RemoveColor(name string) {
 //	 - Light colors
 //	 ! Default
 //	 * Bold
+//	 & Italic
 //	 ^ Dim
 //	 _ Underline
+//	 = Strikethrough
 //	 ~ Blink
 //	 @ Reverse
+//	 + Hidden
 //
 //	Foreground colors:
 //	 d Black (Dark)
@@ -393,7 +399,7 @@ func tag2ANSI(tag string, clean bool) string {
 		case '-', '!':
 			continue
 
-		case '*', '^', '_', '~', '@':
+		case '*', '&', '^', '_', '=', '~', '@', '+':
 			if reset {
 				chars += getResetCode(code)
 			} else {

@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.87.0
+
+* `[fmtc]` Added tag for italic text (`{&}`)
+* `[fmtc]` Added tag for striked text (`{=}`)
+* `[fmtc]` Added tag for hidden text (`{+}`)
+
 ### 12.86.0
 
 * `[usage]` `Info.AddCommand` now returns pointer to added command
