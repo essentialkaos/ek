@@ -13,9 +13,12 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 | Reset     | `{!}` | —         | `0`  |
 | Bold      | `{*}` | `{!*}`    | `1`  |
 | Dim       | `{^}` | `{!^}`    | `2`  |
+| Italic    | `{&}` | `{!&}`    | `3`  |
 | Underline | `{_}` | `{!_}`    | `4`  |
 | Blink     | `{~}` | `{!~}`    | `5`  |
 | Reverse   | `{@}` | `{!@}`    | `7`  |
+| Hidden    | `{+}` | `{!+}`    | `8`  |
+| Strike    | `{=}` | `{!=}`    | `9`  |
 
 #### 8/16 Colors
 
