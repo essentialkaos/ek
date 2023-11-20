@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.88.0
+
+* `[pager]` Added new package for pager (`less`/`more`) setup
+
 ### 12.87.0
 
 * `[fmtc]` Added tag for italic text (`{&}`)
