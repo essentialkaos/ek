@@ -31,6 +31,7 @@
 * + mathutil
 L + netutil
 * + options
+* + pager
 * + passwd
 * + path
 * + pid
@@ -53,7 +54,8 @@ L - system/process
 * - system/procname
 L + system/sensors
 * - terminal
-* ! terminal/window
+* ! terminal/tty
+* - terminal/window
 * + timeutil
 * + tmp
 * + usage

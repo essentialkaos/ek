@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package pager
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,21 +7,14 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
+func ExampleSetup() {
+	// Use pager from PAGER env var or default (more)
+	Setup("")
 
-	"github.com/essentialkaos/go-linenoise/v3"
-)
+	// Or provide specific command.
+	Setup("less -MQR")
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// VERSION is current ek package version
-const VERSION = "12.88.0"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	// Complete must be called at the end of the program work. You can call it with defer
+	// in your main function.
+	defer Complete()
 }

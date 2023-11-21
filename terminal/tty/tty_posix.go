@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package tty provides methods for working with TTY
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +9,31 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
+	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.88.0"
+var stdin = os.Stdin
+var stdout = os.Stdout
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+// IsTTY returns true if current output device is TTY
+func IsTTY() bool {
+	si, _ := stdin.Stat()
+	so, _ := stdout.Stat()
+
+	if si.Mode()&os.ModeCharDevice != 0 &&
+		so.Mode()&os.ModeCharDevice == 0 &&
+		!IsFakeTTY() {
+		return false
+	}
+
+	return true
+}
+
+// IsFakeTTY returns true is fake TTY is used
+func IsFakeTTY() bool {
+	return os.Getenv("FAKETTY") != ""
 }

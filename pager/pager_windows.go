@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package pager provides methods for pager setup (more/less)
+package pager
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,21 +8,26 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
-)
+import "errors"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.88.0"
+// DEFAULT is default pager command
+const DEFAULT = "more"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+var ErrAlreadySet = errors.New("Pager already set")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ Setup set up pager for work. After calling this method, any data sent to Stdout and
+// Stderr (using fmt, fmtc, or terminal packages) will go to the pager.
+func Setup(pager string) error {
+	return nil
+}
+
+// ❗ Complete finishes pager work
+func Complete() {
+	return
 }

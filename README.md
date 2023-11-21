@@ -77,6 +77,7 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 * [`mathutil`](https://kaos.sh/g/ek.v12/mathutil) — Package provides some additional math methods
 * [`netutil`](https://kaos.sh/g/ek.v12/netutil) — Package provides methods for working with network
 * [`options`](https://kaos.sh/g/ek.v12/options) — Package provides methods for working with command-line options
+* [`pager`](https://kaos.sh/g/ek.v12/pager) — Package provides methods for pager setup (more/less)
 * [`passwd`](https://kaos.sh/g/ek.v12/passwd) — Package contains methods for working with passwords
 * [`path`](https://kaos.sh/g/ek.v12/path) — Package for working with paths (fully compatible with base path package)
 * [`pid`](https://kaos.sh/g/ek.v12/pid) — Package for working with PID files
@@ -99,7 +100,7 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 * [`system/sensors`](https://kaos.sh/g/ek.v12/system/sensors) — Package provide methods for collecting sensors information
 * [`system`](https://kaos.sh/g/ek.v12/system) — Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://kaos.sh/g/ek.v12/terminal) — Package provides methods for working with user input
-* [`terminal/window`](https://kaos.sh/g/ek.v12/terminal/window) — Package provides methods for working terminal window
+* [`terminal/tty`](https://kaos.sh/g/ek.v12/terminal/tty) — Package provides methods for working with TTY
 * [`timeutil`](https://kaos.sh/g/ek.v12/timeutil) — Package provides methods for working with time and date
 * [`tmp`](https://kaos.sh/g/ek.v12/tmp) — Package provides methods for working with temporary data
 * [`usage`](https://kaos.sh/g/ek.v12/usage) — Package usage provides methods and structs for generating usage info for command-line tools

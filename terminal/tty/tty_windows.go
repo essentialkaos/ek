@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package window provides methods for working terminal window
-package window
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,31 +7,32 @@ package window
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"github.com/essentialkaos/ek/v12/terminal/tty"
-)
+// ❗ IsTTY returns true if current output device is TTY
+func IsTTY() bool {
+	panic("UNSUPPORTED")
+	return false
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// ❗ IsFakeTTY returns true is fake TTY is used
+func IsFakeTTY() bool {
+	panic("UNSUPPORTED")
+	return false
+}
 
-// GetSize returns window width and height
-//
-// Deprecated: Use method package tty instead
+// ❗ GetSize returns window width and height
 func GetSize() (int, int) {
-	return tty.GetSize()
+	panic("UNSUPPORTED")
+	return -1, -1
 }
 
-// GetWidth returns window width
-//
-// Deprecated: Use method package tty instead
+// ❗ GetWidth returns window width
 func GetWidth() int {
-	w, _ := GetSize()
-	return w
+	panic("UNSUPPORTED")
+	return -1
 }
 
-// GetHeight returns window height
-//
-// Deprecated: Use method package tty instead
+// ❗ GetHeight returns window height
 func GetHeight() int {
-	_, h := GetSize()
-	return h
+	panic("UNSUPPORTED")
+	return -1
 }

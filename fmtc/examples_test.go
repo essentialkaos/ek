@@ -337,6 +337,10 @@ func ExampleClean() {
 	// Output: Text
 }
 
+func ExampleIsColorsSupported() {
+	fmt.Printf("16 Colors Supported: %t\n", IsColorsSupported())
+}
+
 func ExampleIs256ColorsSupported() {
 	fmt.Printf("256 Colors Supported: %t\n", Is256ColorsSupported())
 }
