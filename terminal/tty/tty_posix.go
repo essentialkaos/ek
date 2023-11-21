@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 // Package tty provides methods for working with TTY
 package tty
 

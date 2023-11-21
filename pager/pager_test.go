@@ -32,24 +32,50 @@ func (s *PagerSuite) TearDownSuite(c *C) {
 
 func (s *PagerSuite) TestPager(c *C) {
 	c.Assert(Setup("cat"), IsNil)
-	c.Assert(Setup("cat"), NotNil)
+	c.Assert(Setup("cat"), DeepEquals, ErrAlreadySet)
 
 	Complete()
 
 	c.Assert(pagerCmd, IsNil)
 	c.Assert(pagerOut, IsNil)
+
+	os.Setenv("PAGER", "")
+
+	binMore = "_unknown_"
+	binLess = "_unknown_"
+
+	c.Assert(Setup(""), DeepEquals, ErrNoPager)
 }
 
 func (s *PagerSuite) TestPagerSearch(c *C) {
 	os.Setenv("PAGER", "")
+	os.Setenv("LESS", "")
+	os.Setenv("MORE", "")
 
 	cmd := getPagerCommand("cat")
 	c.Assert(cmd.Args, DeepEquals, []string{"cat"})
 
+	binMore = "echo"
+	binLess = "echo"
+
 	cmd = getPagerCommand("")
 	c.Assert(cmd.Args, DeepEquals, []string{"more"})
 
-	os.Setenv("PAGER", "less -MQR")
+	os.Setenv("MORE", "-l -s")
+
 	cmd = getPagerCommand("")
-	c.Assert(cmd.Args, DeepEquals, []string{"less", "-MQR"})
+	c.Assert(cmd.Args, DeepEquals, []string{"more", "-l", "-s"})
+
+	binMore = "_unknown_"
+
+	cmd = getPagerCommand("")
+	c.Assert(cmd.Args, DeepEquals, []string{"less", "-R"})
+
+	os.Setenv("LESS", "-MRQ")
+
+	cmd = getPagerCommand("")
+	c.Assert(cmd.Args, DeepEquals, []string{"less", "-MRQ"})
+
+	binMore = "more"
+	binLess = "less"
 }

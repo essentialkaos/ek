@@ -15,7 +15,7 @@ import (
 	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/mathutil"
 	"github.com/essentialkaos/ek/v12/strutil"
-	"github.com/essentialkaos/ek/v12/terminal/window"
+	"github.com/essentialkaos/ek/v12/terminal/tty"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -483,5 +483,5 @@ func getWindowWidth() int {
 		return mathutil.Between(MaxWidth, 80, 9999)
 	}
 
-	return mathutil.Between(window.GetWidth(), 80, 9999)
+	return mathutil.Between(tty.GetWidth(), 80, 9999)
 }
