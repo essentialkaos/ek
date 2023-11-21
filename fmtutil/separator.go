@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/terminal/window"
+	"github.com/essentialkaos/ek/v12/terminal/tty"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -39,7 +39,7 @@ func Separator(tiny bool, args ...string) {
 	var size int
 
 	if SeparatorFullscreen {
-		size = between(window.GetWidth(), 16, 999999)
+		size = between(tty.GetWidth(), 16, 999999)
 	} else {
 		size = between(SeparatorSize, 80, 999999)
 	}
