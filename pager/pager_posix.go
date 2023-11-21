@@ -20,11 +20,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DEFAULT is default pager command
-const DEFAULT = "more"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 var pagerCmd *exec.Cmd
 var pagerOut *os.File
 
@@ -33,7 +28,15 @@ var stderr *os.File
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var ErrAlreadySet = errors.New("Pager already set")
+var binLess = "less"
+var binMore = "more"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var (
+	ErrAlreadySet = errors.New("Pager already set")
+	ErrNoPager    = errors.New("There is no pager on the system")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -45,6 +48,10 @@ func Setup(pager string) error {
 	}
 
 	pagerCmd = getPagerCommand(pager)
+
+	if pagerCmd == nil {
+		return ErrNoPager
+	}
 
 	pagerCmd.Stdout, stdout = os.Stdout, os.Stdout
 	pagerCmd.Stderr, stderr = os.Stderr, os.Stderr
@@ -86,7 +93,11 @@ func getPagerCommand(pager string) *exec.Cmd {
 	}
 
 	if pager == "" {
-		pager = DEFAULT
+		pager = findPager()
+	}
+
+	if pager == "" {
+		return nil
 	}
 
 	if strings.Contains(pager, " ") {
@@ -95,4 +106,33 @@ func getPagerCommand(pager string) *exec.Cmd {
 	}
 
 	return exec.Command(pager)
+}
+
+// findPager tries to find pager an it options
+func findPager() string {
+	_, err := exec.LookPath(binMore)
+
+	if err == nil {
+		moreOpts := os.Getenv("MORE")
+
+		if moreOpts != "" {
+			return "more " + moreOpts
+		}
+
+		return "more"
+	}
+
+	_, err = exec.LookPath(binLess)
+
+	if err == nil {
+		lessOpts := os.Getenv("LESS")
+
+		if lessOpts != "" {
+			return "less " + lessOpts
+		}
+
+		return "less -R"
+	}
+
+	return ""
 }

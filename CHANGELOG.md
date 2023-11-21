@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.88.1
+
+* `[pager]` Improved pager search
+* `[fmtutil]` Code refactoring
+* `[fmtutil/table]` Code refactoring
+* `[pager]` Fixed build tags
+* `[terminal/tty]` Fixed build tags
+
 ### 12.88.0
 
 * `[pager]` Added new package for pager (`less`/`more`) setup
