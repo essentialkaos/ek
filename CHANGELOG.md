@@ -3,6 +3,7 @@
 ### 12.88.0
 
 * `[pager]` Added new package for pager (`less`/`more`) setup
+* `[fmtc]` Added method `IsColorsSupported`
 
 ### 12.87.0
 

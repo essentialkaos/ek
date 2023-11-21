@@ -146,6 +146,7 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 
 	c.Assert(IsTrueColorSupported(), Equals, true)
 	c.Assert(Is256ColorsSupported(), Equals, true)
+	c.Assert(IsColorsSupported(), Equals, true)
 
 	colorsSupportChecked = false
 	colors256Supported = false

@@ -75,8 +75,9 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var colors256Supported bool
-var colorsTCSupported bool
+var colorsSupported bool    // 16 colors support
+var colors256Supported bool // 256 colors support
+var colorsTCSupported bool  // 24bit (TrueColor) colors support
 var colorsSupportChecked bool
 
 var colorsMap *sync.Map
@@ -326,6 +327,17 @@ func Render(s string) string {
 // Bell prints alert (bell) symbol
 func Bell() {
 	fmt.Print(_CODE_BELL)
+}
+
+// IsColorsSupported returns true if 16 colors is supported by terminal
+func IsColorsSupported() bool {
+	if colorsSupportChecked {
+		return colorsSupported
+	}
+
+	checkForColorsSupport()
+
+	return colorsSupported
 }
 
 // Is256ColorsSupported returns true if 256 colors is supported by terminal
@@ -644,6 +656,13 @@ func isValidNamedTag(tag string) bool {
 }
 
 func checkForColorsSupport() {
+	switch {
+	case strings.Contains(term, "xterm"),
+		strings.Contains(term, "color"),
+		term == "screen":
+		colorsSupported = true
+	}
+
 	if strings.Contains(term, "256color") {
 		colors256Supported = true
 	}
