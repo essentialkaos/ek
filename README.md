@@ -100,7 +100,7 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 * [`system/sensors`](https://kaos.sh/g/ek.v12/system/sensors) — Package provide methods for collecting sensors information
 * [`system`](https://kaos.sh/g/ek.v12/system) — Package provides methods for working with system data (metrics/users)
 * [`terminal`](https://kaos.sh/g/ek.v12/terminal) — Package provides methods for working with user input
-* [`terminal/window`](https://kaos.sh/g/ek.v12/terminal/window) — Package provides methods for working terminal window
+* [`terminal/tty`](https://kaos.sh/g/ek.v12/terminal/tty) — Package provides methods for working with TTY
 * [`timeutil`](https://kaos.sh/g/ek.v12/timeutil) — Package provides methods for working with time and date
 * [`tmp`](https://kaos.sh/g/ek.v12/tmp) — Package provides methods for working with temporary data
 * [`usage`](https://kaos.sh/g/ek.v12/usage) — Package usage provides methods and structs for generating usage info for command-line tools

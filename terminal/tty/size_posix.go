@@ -1,4 +1,7 @@
-package window
+//go:build !windows
+// +build !windows
+
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,49 +11,54 @@ package window
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"testing"
-
-	. "github.com/essentialkaos/check"
+	"os"
+	"syscall"
+	"unsafe"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Test(t *testing.T) { TestingT(t) }
-
-type WindowSuite struct{}
+type winsize struct {
+	rows    uint16
+	cols    uint16
+	xpixels uint16
+	ypixels uint16
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _ = Suite(&WindowSuite{})
+// tty is a path to TTY device file
+var tty = "/dev/tty"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *WindowSuite) TestGetSize(c *C) {
-	w, h := GetSize()
+// GetSize returns window width and height
+func GetSize() (int, int) {
+	t, err := os.OpenFile(tty, syscall.O_RDONLY, 0)
 
-	c.Assert(w, Not(Equals), -1)
-	c.Assert(w, Not(Equals), 0)
-	c.Assert(h, Not(Equals), -1)
-	c.Assert(h, Not(Equals), 0)
+	if err != nil {
+		return -1, -1
+	}
+
+	var sz winsize
+
+	_, _, _ = syscall.Syscall(
+		syscall.SYS_IOCTL, t.Fd(),
+		uintptr(syscall.TIOCGWINSZ),
+		uintptr(unsafe.Pointer(&sz)),
+	)
+
+	return int(sz.cols), int(sz.rows)
 }
 
-func (s *WindowSuite) TestGetWidth(c *C) {
-	c.Assert(GetWidth(), Not(Equals), -1)
-	c.Assert(GetWidth(), Not(Equals), 0)
+// GetWidth returns window width
+func GetWidth() int {
+	w, _ := GetSize()
+	return w
 }
 
-func (s *WindowSuite) TestGetHeight(c *C) {
-	c.Assert(GetHeight(), Not(Equals), -1)
-	c.Assert(GetHeight(), Not(Equals), 0)
-}
-
-func (s *WindowSuite) TestErrors(c *C) {
-	tty = "/non-exist"
-
-	w, h := GetSize()
-
-	c.Assert(w, Equals, -1)
-	c.Assert(h, Equals, -1)
-
-	tty = "/dev/tty"
+// GetHeight returns window height
+func GetHeight() int {
+	_, h := GetSize()
+	return h
 }

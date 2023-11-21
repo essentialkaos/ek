@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package window provides methods for working terminal window
-package window
+// Package tty provides methods for working with TTY
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,30 +9,31 @@ package window
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek/v12/terminal/tty"
+	"os"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize returns window width and height
-//
-// Deprecated: Use method package tty instead
-func GetSize() (int, int) {
-	return tty.GetSize()
+var stdin = os.Stdin
+var stdout = os.Stdout
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// IsTTY returns true if current output device is TTY
+func IsTTY() bool {
+	si, _ := stdin.Stat()
+	so, _ := stdout.Stat()
+
+	if si.Mode()&os.ModeCharDevice != 0 &&
+		so.Mode()&os.ModeCharDevice == 0 &&
+		!IsFakeTTY() {
+		return false
+	}
+
+	return true
 }
 
-// GetWidth returns window width
-//
-// Deprecated: Use method package tty instead
-func GetWidth() int {
-	w, _ := GetSize()
-	return w
-}
-
-// GetHeight returns window height
-//
-// Deprecated: Use method package tty instead
-func GetHeight() int {
-	_, h := GetSize()
-	return h
+// IsFakeTTY returns true is fake TTY is used
+func IsFakeTTY() bool {
+	return os.Getenv("FAKETTY") != ""
 }
