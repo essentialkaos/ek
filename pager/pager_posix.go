@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 // Package pager provides methods for pager setup (more/less)
 package pager
 
