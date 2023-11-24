@@ -100,7 +100,7 @@ func (s *UsageSuite) TestRawVersion(c *C) {
 func (s *UsageSuite) TestUsage(c *C) {
 	info := NewInfo("", "file")
 
-	info.AddSpoiler("This is usage of spoiler with {g}c{c}o{r}l{m}o{b}r{g}s{!} support")
+	info.AddSpoiler("This is usage of spoiler with {#240}c{#241}o{#242}l{#243}o{#244}r{#245}s {#246}s{#247}u{#248}p{#249}p{#250}o{#251}r{#252}t{!}")
 
 	info.AddCommand() // will be ignored
 	info.AddCommand("print", "Print command")
@@ -132,8 +132,10 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.Render()
 
 	info.Breadcrumbs = false
+	info.AppNameColorTag = "{#202}"
 	info.CommandsColorTag = "{m}"
 	info.OptionsColorTag = "{b}"
+	info.ExampleDescColorTag = "{&}{b}"
 
 	info.Render()
 
