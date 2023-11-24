@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.89.0
+
+* `[usage]` Added color customization for example description
+* `[usage]` Changed default color for example description
+
 ### 12.88.1
 
 * `[pager]` Improved pager search

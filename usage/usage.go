@@ -34,12 +34,13 @@ const _BREADCRUMBS_MIN_SIZE = 8
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DEFAULT_COMMANDS_COLOR_TAG  = "{y}"
-	DEFAULT_OPTIONS_COLOR_TAG   = "{g}"
-	DEFAULT_APP_NAME_COLOR_TAG  = "{c*}"
-	DEFAULT_APP_VER_COLOR_TAG   = "{c}"
-	DEFAULT_APP_REL_COLOR_TAG   = "{s}"
-	DEFAULT_APP_BUILD_COLOR_TAG = "{s-}"
+	DEFAULT_COMMANDS_COLOR_TAG     = "{y}"
+	DEFAULT_OPTIONS_COLOR_TAG      = "{g}"
+	DEFAULT_EXAMPLE_DESC_COLOR_TAG = "{&}{s-}"
+	DEFAULT_APP_NAME_COLOR_TAG     = "{c*}"
+	DEFAULT_APP_VER_COLOR_TAG      = "{c}"
+	DEFAULT_APP_REL_COLOR_TAG      = "{s}"
+	DEFAULT_APP_BUILD_COLOR_TAG    = "{s-}"
 )
 
 const (
@@ -89,10 +90,12 @@ type About struct {
 
 // Info contains info about commands, options, and examples
 type Info struct {
-	AppNameColorTag  string // AppNameColorTag contains default app name color tag
-	CommandsColorTag string // CommandsColorTag contains default commands color tag
-	OptionsColorTag  string // OptionsColorTag contains default options color tag
-	Breadcrumbs      bool   // Breadcrumbs is flag for using bread crumbs for commands and options output
+	AppNameColorTag     string // AppNameColorTag contains default app name color tag
+	CommandsColorTag    string // CommandsColorTag contains default commands color tag
+	OptionsColorTag     string // OptionsColorTag contains default options color tag
+	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
+
+	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
 
 	Name    string   // Name is app name
 	Args    []string // Args is slice with app arguments
@@ -482,7 +485,8 @@ func (e *Example) Print() {
 	}
 
 	if e.Desc != "" {
-		fmtc.Printf("  {s-}%s{!}\n", e.Desc)
+		descColor := strutil.Q(strutil.B(fmtc.IsTag(e.info.ExampleDescColorTag), e.info.ExampleDescColorTag, DEFAULT_EXAMPLE_DESC_COLOR_TAG), DEFAULT_EXAMPLE_DESC_COLOR_TAG)
+		fmtc.Printf("  "+descColor+"%s{!}\n", e.Desc)
 	}
 }
 
