@@ -18,7 +18,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type Hex uint32 // Hex color 0x00000000 - 0xFFFFFFFF
+type Hex struct {
+	v uint32 // Hex color 0x00000000 - 0xFFFFFFFF
+	a bool   // alpha flag
+}
 
 type RGB struct {
 	R uint8 // Red
@@ -55,7 +58,7 @@ type HSL struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // colors is colors keywords
-var colors = map[string]Hex{
+var colors = map[string]uint32{
 	"aliceblue":            0xf0f8ff,
 	"antiquewhite":         0xfaebd7,
 	"aqua":                 0x00ffff,
@@ -210,7 +213,7 @@ var colors = map[string]Hex{
 
 // IsRGBA returns true if color contains info about alpha channel
 func (c Hex) IsRGBA() bool {
-	return c > 0xFFFFFF
+	return c.a
 }
 
 // ToHex converts RGB color to hex
@@ -272,15 +275,26 @@ func (c Hex) ToRGBA() RGBA {
 func (c Hex) ToWeb(caps bool) string {
 	var k string
 
-	if caps {
-		k = fmt.Sprintf("%06X", uint32(c))
-	} else {
-		k = fmt.Sprintf("%06x", uint32(c))
+	switch {
+	case c.a && caps:
+		k = fmt.Sprintf("%08X", uint32(c.v))
+	case c.a && !caps:
+		k = fmt.Sprintf("%08x", uint32(c.v))
+	case caps:
+		k = fmt.Sprintf("%06X", uint32(c.v))
+	default:
+		k = fmt.Sprintf("%06x", uint32(c.v))
 	}
 
-	// Generate shorthand color only for RGB
-	if c <= 0xFFFFFF && k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
-		k = k[0:1] + k[2:3] + k[4:5]
+	// Generate shorthand color
+	if !c.a {
+		if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
+			k = k[0:1] + k[2:3] + k[4:5]
+		}
+	} else {
+		if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] && k[6] == k[7] {
+			k = k[0:1] + k[2:3] + k[4:5] + k[6:7]
+		}
 	}
 
 	return "#" + k
@@ -336,16 +350,18 @@ func (c HSL) String() string {
 // Parse parses color
 func Parse(c string) (Hex, error) {
 	if colors[c] != 0 {
-		return colors[c], nil
+		return Hex{v: colors[c]}, nil
 	}
 
 	if c != "" && c[0] == '#' {
 		c = c[1:]
 	}
 
+	var hasAlpha bool
+
 	switch len(c) {
 	case 0:
-		return 0x0, fmt.Errorf("Color is empty")
+		return Hex{}, fmt.Errorf("Color is empty")
 
 	// Shorthand #RGB
 	case 3:
@@ -353,36 +369,37 @@ func Parse(c string) (Hex, error) {
 
 	// Shorthand #RGBA
 	case 4:
+		hasAlpha = true
 		c = c[0:1] + c[0:1] + c[1:2] + c[1:2] + c[2:3] + c[2:3] + c[3:4] + c[3:4]
 	}
 
 	k, err := strconv.ParseUint(c, 16, 32)
 
-	return Hex(k), err
+	return Hex{v: uint32(k), a: k > 0xFFFFFF || hasAlpha}, err
 }
 
 // RGB2Hex converts RGB color to Hex
 func RGB2Hex(c RGB) Hex {
-	return Hex(int(c.R)<<16 | int(c.G)<<8 | int(c.B))
+	return Hex{v: (uint32(c.R)<<16 | uint32(c.G)<<8 | uint32(c.B))}
 }
 
 // Hex2RGB converts Hex color to RGB
 func Hex2RGB(h Hex) RGB {
-	return RGB{uint8(h >> 16 & 0xFF), uint8(h >> 8 & 0xFF), uint8(h & 0xFF)}
+	return RGB{uint8(h.v >> 16 & 0xFF), uint8(h.v >> 8 & 0xFF), uint8(h.v & 0xFF)}
 }
 
 // RGBA2Hex converts RGBA color to Hex
 func RGBA2Hex(c RGBA) Hex {
-	return Hex(int64(c.R)<<24 | int64(c.G)<<16 | int64(c.B)<<8 | int64(c.A))
+	return Hex{v: (uint32(c.R)<<24 | uint32(c.G)<<16 | uint32(c.B)<<8 | uint32(c.A))}
 }
 
 // Hex2RGBA converts Hex color to RGBA
 func Hex2RGBA(h Hex) RGBA {
-	if h >= 0xFFFFFF {
-		return RGBA{uint8(h>>24) & 0xFF, uint8(h>>16) & 0xFF, uint8(h>>8) & 0xFF, uint8(h) & 0xFF}
+	if h.IsRGBA() {
+		return RGBA{uint8(h.v>>24) & 0xFF, uint8(h.v>>16) & 0xFF, uint8(h.v>>8) & 0xFF, uint8(h.v) & 0xFF}
 	}
 
-	return RGBA{uint8(h>>16) & 0xFF, uint8(h>>8) & 0xFF, uint8(h) & 0xFF, 0}
+	return RGBA{uint8(h.v>>16) & 0xFF, uint8(h.v>>8) & 0xFF, uint8(h.v) & 0xFF, 0}
 }
 
 // RGB2Term convert rgb color to terminal color code
