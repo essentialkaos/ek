@@ -425,7 +425,7 @@ func Hex2RGB(h Hex) RGB {
 
 // RGBA2Hex converts RGBA color to Hex
 func RGBA2Hex(c RGBA) Hex {
-	return Hex{v: (uint32(c.R)<<24 | uint32(c.G)<<16 | uint32(c.B)<<8 | uint32(c.A))}
+	return Hex{v: (uint32(c.R)<<24 | uint32(c.G)<<16 | uint32(c.B)<<8 | uint32(c.A)), a: true}
 }
 
 // Hex2RGBA converts Hex color to RGBA
