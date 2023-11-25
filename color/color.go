@@ -47,12 +47,14 @@ type HSV struct {
 	H float64 // Hue
 	S float64 // Saturation
 	V float64 // Lightness
+	A float64 // Alpha
 }
 
 type HSL struct {
 	H float64 // Hue
 	S float64 // Saturation
 	L float64 // Value
+	A float64 // Alpha
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -211,9 +213,16 @@ var colors = map[string]uint32{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// NewHex creates new hex color from uint32 number
+func NewHex(c uint32) Hex {
+	return Hex{v: c}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // IsRGBA returns true if color contains info about alpha channel
 func (c Hex) IsRGBA() bool {
-	return c.a
+	return c.v > 0xFFFFFF || c.a
 }
 
 // ToHex converts RGB color to hex
@@ -246,6 +255,16 @@ func (c RGBA) ToHex() Hex {
 	return RGBA2Hex(c)
 }
 
+// ToHSL converts RGBA color to HSL
+func (c RGBA) ToHSL() HSL {
+	return RGBA2HSL(c)
+}
+
+// ToHSV converts RGBA color to HSV
+func (c RGBA) ToHSV() HSV {
+	return RGBA2HSV(c)
+}
+
 // ToRGB converts CMYK color to RGB
 func (c CMYK) ToRGB() RGB {
 	return CMYK2RGB(c)
@@ -256,9 +275,19 @@ func (c HSV) ToRGB() RGB {
 	return HSV2RGB(c)
 }
 
+// ToRGBA converts HSV color to RGBA
+func (c HSV) ToRGBA() RGBA {
+	return HSV2RGBA(c)
+}
+
 // ToRGB converts HSL color to RGB
 func (c HSL) ToRGB() RGB {
 	return HSL2RGB(c)
+}
+
+// ToRGBA converts HSL color to RGBA
+func (c HSL) ToRGBA() RGBA {
+	return HSL2RGBA(c)
 }
 
 // ToRGB converts hex color to RGB
@@ -271,14 +300,20 @@ func (c Hex) ToRGBA() RGBA {
 	return Hex2RGBA(c)
 }
 
+// WithAlpha returns color with given alpha value
+func (c RGBA) WithAlpha(alpha float64) RGBA {
+	c.A = uint8(255.0 * mathutil.Between(alpha, 0, 1))
+	return c
+}
+
 // ToWeb converts hex color notation used in web (#RGB / #RRGGBB/#RRGGBBAA)
 func (c Hex) ToWeb(caps bool) string {
 	var k string
 
 	switch {
-	case c.a && caps:
+	case c.IsRGBA() && caps:
 		k = fmt.Sprintf("%08X", uint32(c.v))
-	case c.a && !caps:
+	case c.IsRGBA() && !caps:
 		k = fmt.Sprintf("%08x", uint32(c.v))
 	case caps:
 		k = fmt.Sprintf("%06X", uint32(c.v))
@@ -287,7 +322,7 @@ func (c Hex) ToWeb(caps bool) string {
 	}
 
 	// Generate shorthand color
-	if !c.a {
+	if !c.IsRGBA() {
 		if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
 			k = k[0:1] + k[2:3] + k[4:5]
 		}
@@ -332,16 +367,16 @@ func (c CMYK) String() string {
 // String returns string representation of HSV color
 func (c HSV) String() string {
 	return fmt.Sprintf(
-		"HSV{H:%.0f° S:%.0f%% V:%.0f%%}",
-		c.H*360, c.S*100, c.V*100,
+		"HSV{H:%.0f° S:%.0f%% V:%.0f%% A:%.0f%%}",
+		c.H*360, c.S*100, c.V*100, c.A*100,
 	)
 }
 
 // String returns string representation of HSL color
 func (c HSL) String() string {
 	return fmt.Sprintf(
-		"HSL{H:%.0f° S:%.0f%% L:%.0f%%}",
-		c.H*360, c.S*100, c.L*100,
+		"HSL{H:%.0f° S:%.0f%% L:%.0f%% A:%.0f%%}",
+		c.H*360, c.S*100, c.L*100, c.A*100,
 	)
 }
 
@@ -448,96 +483,50 @@ func CMYK2RGB(c CMYK) RGB {
 
 // RGB2HSV converts RGB color to HSV (HSB)
 func RGB2HSV(c RGB) HSV {
-	R, G, B := float64(c.R)/255.0, float64(c.G)/255.0, float64(c.B)/255.0
+	h, s, v := rgbToHsv(c.R, c.G, c.B)
+	return HSV{h, s, v, 0.0}
+}
 
-	max := math.Max(math.Max(R, G), B)
-	min := math.Min(math.Min(R, G), B)
-
-	h, s, v := 0.0, 0.0, max
-
-	if max != min {
-		d := max - min
-		s = d / max
-		h = calcHUE(max, R, G, B, d)
-	}
-
-	return HSV{h, s, v}
+// RGBA2HSV converts RGBA color to HSV (HSB)
+func RGBA2HSV(c RGBA) HSV {
+	h, s, v := rgbToHsv(c.R, c.G, c.B)
+	return HSV{h, s, v, float64(c.A) / 255.0}
 }
 
 // HSV2RGB converts HSV (HSB) color to RGB
 func HSV2RGB(c HSV) RGB {
-	i := (c.H * 360.0) / 60.0
-	f := i - math.Floor(i)
+	r, g, b := hsvToRgb(c.H, c.S, c.V)
+	return RGB{r, g, b}
+}
 
-	p := c.V * (1 - c.S)
-	q := c.V * (1 - f*c.S)
-	t := c.V * (1 - (1-f)*c.S)
-
-	var R, G, B float64
-
-	switch int(c.H*6) % 6 {
-	case 0:
-		R, G, B = c.V, t, p
-	case 1:
-		R, G, B = q, c.V, p
-	case 2:
-		R, G, B = p, c.V, t
-	case 3:
-		R, G, B = p, q, c.V
-	case 4:
-		R, G, B = t, p, c.V
-	case 5:
-		R, G, B = c.V, p, q
-	}
-
-	return RGB{uint8(R * 0xFF), uint8(G * 0xFF), uint8(B * 0xFF)}
+// HSV2RGBA converts HSV (HSB) color to RGBA
+func HSV2RGBA(c HSV) RGBA {
+	r, g, b := hsvToRgb(c.H, c.S, c.V)
+	return RGBA{r, g, b, uint8(255.0 * mathutil.Between(c.A, 0, 1))}
 }
 
 // RGB2HSL converts RGB color to HSL
 func RGB2HSL(c RGB) HSL {
-	R, G, B := float64(c.R)/255.0, float64(c.G)/255.0, float64(c.B)/255.0
+	h, s, l := rgbToHsl(c.R, c.G, c.B)
+	return HSL{h, s, l, 0.0}
+}
 
-	max := math.Max(math.Max(R, G), B)
-	min := math.Min(math.Min(R, G), B)
-
-	h, s, l := 0.0, 0.0, (min+max)/2.0
-
-	if max != min {
-		d := max - min
-
-		if l > 0.5 {
-			s = d / (2.0 - max - min)
-		} else {
-			s = d / (max + min)
-		}
-
-		h = calcHUE(max, R, G, B, d)
-	}
-
-	return HSL{h, s, l}
+// RGBA2HSL converts RGBA color to HSL
+func RGBA2HSL(c RGBA) HSL {
+	h, s, l := rgbToHsl(c.R, c.G, c.B)
+	return HSL{h, s, l, float64(c.A) / 255.0}
 }
 
 // HSL2RGB converts HSL color to RGB
 func HSL2RGB(c HSL) RGB {
-	R, G, B := c.L, c.L, c.L
+	r, g, b := hsl2Rgb(c.H, c.S, c.L)
+	return RGB{r, g, b}
+}
 
-	if c.S != 0 {
-		var q float64
-
-		if c.L > 0.5 {
-			q = c.L + c.S - (c.L * c.S)
-		} else {
-			q = c.L * (1.0 + c.S)
-		}
-
-		p := (2.0 * c.L) - q
-
-		R = HUE2RGB(p, q, c.H+1.0/3.0)
-		G = HUE2RGB(p, q, c.H)
-		B = HUE2RGB(p, q, c.H-1.0/3.0)
-	}
-
-	return RGB{uint8(R * 255), uint8(G * 255), uint8(B * 255)}
+// HSL2RGBA converts HSL color to RGBA
+func HSL2RGBA(c HSL) RGBA {
+	r, g, b := hsl2Rgb(c.H, c.S, c.L)
+	return RGBA{r, g, b, uint8(255.0 * mathutil.Between(c.A, 0, 1))}
 }
 
 // HUE2RGB calculates HUE value for given RGB color
@@ -584,6 +573,96 @@ func Contrast(fg, bg Hex) float64 {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func rgbToHsv(r, g, b uint8) (float64, float64, float64) {
+	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
+
+	max := math.Max(math.Max(R, G), B)
+	min := math.Min(math.Min(R, G), B)
+
+	h, s, v := 0.0, 0.0, max
+
+	if max != min {
+		d := max - min
+		s = d / max
+		h = calcHUE(max, R, G, B, d)
+	}
+
+	return h, s, v
+}
+
+func hsvToRgb(h, s, v float64) (uint8, uint8, uint8) {
+	i := (h * 360.0) / 60.0
+	f := i - math.Floor(i)
+
+	p := v * (1 - s)
+	q := v * (1 - f*s)
+	t := v * (1 - (1-f)*s)
+
+	var r, g, b float64
+
+	switch int(h*6) % 6 {
+	case 0:
+		r, g, b = v, t, p
+	case 1:
+		r, g, b = q, v, p
+	case 2:
+		r, g, b = p, v, t
+	case 3:
+		r, g, b = p, q, v
+	case 4:
+		r, g, b = t, p, v
+	case 5:
+		r, g, b = v, p, q
+	}
+
+	return uint8(r * 0xFF), uint8(g * 0xFF), uint8(b * 0xFF)
+}
+
+func rgbToHsl(r, g, b uint8) (float64, float64, float64) {
+	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
+
+	max := math.Max(math.Max(R, G), B)
+	min := math.Min(math.Min(R, G), B)
+
+	h, s, l := 0.0, 0.0, (min+max)/2.0
+
+	if max != min {
+		d := max - min
+
+		if l > 0.5 {
+			s = d / (2.0 - max - min)
+		} else {
+			s = d / (max + min)
+		}
+
+		h = calcHUE(max, R, G, B, d)
+	}
+
+	return h, s, l
+}
+
+func hsl2Rgb(h, s, l float64) (uint8, uint8, uint8) {
+	R, G, B := l, l, l
+
+	if s != 0 {
+		var q float64
+
+		if l > 0.5 {
+			q = l + s - (l * s)
+		} else {
+			q = l * (1.0 + s)
+		}
+
+		p := (2.0 * l) - q
+
+		R = HUE2RGB(p, q, h+1.0/3.0)
+		G = HUE2RGB(p, q, h)
+		B = HUE2RGB(p, q, h-1.0/3.0)
+	}
+
+	return uint8(R * 255), uint8(G * 255), uint8(B * 255)
+}
 
 func calcCMYKColor(c, k float64) float64 {
 	if c == 0 && k == 1 {
