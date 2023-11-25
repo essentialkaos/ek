@@ -2,11 +2,11 @@
 
 ### 12.90.0
 
-* `[color]` Fixed shorthand hex generation for #FFF
+* `[color]` Added alpha channel info to `HSL` and `HSV`
+* `[color]` Added method `RGBA.WithAlpha`
 * `[color]` Improved support for hex colors with alpha
 * `[color]` Use web color representation for `Hex.String`
-* `[color]` Added method `RGBA.SetAlpha`
-* `[color]` Added alpha channel info to `HSL` and `HSV`
+* `[color]` Fixed shorthand hex generation for `#FFF`
 
 ### 12.89.0
 
