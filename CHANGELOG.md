@@ -7,6 +7,7 @@
 * `[color]` Improved support for hex colors with alpha
 * `[color]` Use web color representation for `Hex.String`
 * `[color]` Fixed shorthand hex generation for `#FFF`
+* `[color]` Fixed `RGBA` to `Hex` conversion
 
 ### 12.89.0
 
