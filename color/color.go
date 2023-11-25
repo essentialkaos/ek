@@ -304,7 +304,7 @@ func (c RGBA) String() string {
 
 // String returns string representation of hex color
 func (c Hex) String() string {
-	return fmt.Sprintf("Hex{#%X}", uint32(c))
+	return fmt.Sprintf("Hex{%s}", c.ToWeb(true))
 }
 
 // String returns string representation of CMYK color
