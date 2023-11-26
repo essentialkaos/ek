@@ -21,13 +21,13 @@ func ExampleParse() {
 
 	// Output:
 	// Hex{#FF6347} <nil>
-	// Hex{#B8F} <nil>
+	// Hex{#BB88FF} <nil>
 	// Hex{#FF3B21A6} <nil>
 	// Hex{#F5FFFA} <nil>
 }
 
 func ExampleRGB2Hex() {
-	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true))
+	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true, false))
 
 	// Output: #7F194B
 }
@@ -47,7 +47,7 @@ func ExampleHex2RGBA() {
 func ExampleRGBA2Hex() {
 	c := RGBA2Hex(RGBA{127, 25, 75, 204})
 
-	fmt.Printf("%s\n", c.ToWeb(true))
+	fmt.Printf("%s\n", c.ToWeb(true, false))
 
 	// Output: #7F194BCC
 }
@@ -125,7 +125,7 @@ func ExampleContrast() {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleRGB_ToHex() {
-	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHex().ToWeb(true))
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHex().ToWeb(true, false))
 
 	// Output: #7F194B
 }
@@ -159,7 +159,7 @@ func ExampleRGB_ToTerm() {
 func ExampleRGBA_ToHex() {
 	c := RGBA{127, 25, 75, 204}.ToHex()
 
-	fmt.Printf("%s\n", c.ToWeb(true))
+	fmt.Printf("%s\n", c.ToWeb(true, false))
 
 	// Output: #7F194BCC
 }
@@ -190,8 +190,8 @@ func ExampleHex_IsRGBA() {
 	c1 := NewHex(0x7F194B)
 	c2 := NewHex(0x7F194B5F)
 
-	fmt.Printf("%s → %t\n", c1.ToWeb(true), c1.IsRGBA())
-	fmt.Printf("%s → %t\n", c2.ToWeb(true), c2.IsRGBA())
+	fmt.Printf("%s → %t\n", c1.ToWeb(true, false), c1.IsRGBA())
+	fmt.Printf("%s → %t\n", c2.ToWeb(true, false), c2.IsRGBA())
 
 	// Output:
 	// #7F194B → false
@@ -211,10 +211,10 @@ func ExampleHex_ToRGBA() {
 }
 
 func ExampleHex_ToWeb() {
-	fmt.Printf("%s\n", NewHex(0x7F194B).ToWeb(true))
-	fmt.Printf("%s\n", NewHex(0x7F194B).ToWeb(false))
+	fmt.Printf("%s\n", NewHex(0xFFAA44CC).ToWeb(true, false))
+	fmt.Printf("%s\n", NewHex(0xFFAA44CC).ToWeb(false, true))
 
 	// Output:
-	// #7F194B
-	// #7f194b
+	// #FFAA44CC
+	// #fa4c
 }

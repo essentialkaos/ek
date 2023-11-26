@@ -306,29 +306,30 @@ func (c RGBA) WithAlpha(alpha float64) RGBA {
 	return c
 }
 
-// ToWeb converts hex color notation used in web (#RGB / #RRGGBB/#RRGGBBAA)
-func (c Hex) ToWeb(caps bool) string {
+// ToWeb converts hex color to notation used in web (#RGB/#RGBA/#RRGGBB/#RRGGBBAA)
+func (c Hex) ToWeb(useCaps, allowShorthand bool) string {
 	var k string
 
 	switch {
-	case c.IsRGBA() && caps:
+	case c.IsRGBA() && useCaps:
 		k = fmt.Sprintf("%08X", uint32(c.v))
-	case c.IsRGBA() && !caps:
+	case c.IsRGBA() && !useCaps:
 		k = fmt.Sprintf("%08x", uint32(c.v))
-	case caps:
+	case useCaps:
 		k = fmt.Sprintf("%06X", uint32(c.v))
 	default:
 		k = fmt.Sprintf("%06x", uint32(c.v))
 	}
 
-	// Generate shorthand color
-	if !c.IsRGBA() {
-		if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
-			k = k[0:1] + k[2:3] + k[4:5]
-		}
-	} else {
-		if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] && k[6] == k[7] {
-			k = k[0:1] + k[2:3] + k[4:5] + k[6:7]
+	if allowShorthand {
+		if !c.IsRGBA() {
+			if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] {
+				k = k[0:1] + k[2:3] + k[4:5]
+			}
+		} else {
+			if k[0] == k[1] && k[2] == k[3] && k[4] == k[5] && k[6] == k[7] {
+				k = k[0:1] + k[2:3] + k[4:5] + k[6:7]
+			}
 		}
 	}
 
@@ -353,7 +354,7 @@ func (c RGBA) String() string {
 
 // String returns string representation of hex color
 func (c Hex) String() string {
-	return fmt.Sprintf("Hex{%s}", c.ToWeb(true))
+	return fmt.Sprintf("Hex{%s}", c.ToWeb(true, false))
 }
 
 // String returns string representation of CMYK color

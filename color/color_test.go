@@ -81,12 +81,15 @@ func (s *ColorSuite) TestHex(c *C) {
 
 	c.Assert(NewHex(0x49d62d).String(), Equals, "Hex{#49D62D}")
 	c.Assert(NewHex(0x49d62df7).String(), Equals, "Hex{#49D62DF7}")
-	c.Assert(NewHex(0x49d62d).ToWeb(false), Equals, "#49d62d")
-	c.Assert(NewHex(0x49d62df7).ToWeb(true), Equals, "#49D62DF7")
-	c.Assert(NewHex(0x49d62df7).ToWeb(false), Equals, "#49d62df7")
-	c.Assert(NewHex(0xFFAA44).ToWeb(true), Equals, "#FA4")
-	c.Assert(NewHex(0xFFAA44CC).ToWeb(true), Equals, "#FA4C")
-	c.Assert(NewHex(0x0).ToWeb(true), Equals, "#000")
+	c.Assert(NewHex(0x49d62d).ToWeb(false, false), Equals, "#49d62d")
+	c.Assert(NewHex(0x49d62df7).ToWeb(true, false), Equals, "#49D62DF7")
+	c.Assert(NewHex(0x49d62df7).ToWeb(false, false), Equals, "#49d62df7")
+	c.Assert(NewHex(0xFFAA44).ToWeb(true, false), Equals, "#FFAA44")
+	c.Assert(NewHex(0xFFAA44).ToWeb(true, true), Equals, "#FA4")
+	c.Assert(NewHex(0xFFAA44CC).ToWeb(true, false), Equals, "#FFAA44CC")
+	c.Assert(NewHex(0xFFAA44CC).ToWeb(true, true), Equals, "#FA4C")
+	c.Assert(NewHex(0x0).ToWeb(true, false), Equals, "#000000")
+	c.Assert(NewHex(0x0).ToWeb(true, true), Equals, "#000")
 }
 
 func (s *ColorSuite) TestRGBA(c *C) {
