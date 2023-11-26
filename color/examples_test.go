@@ -27,19 +27,19 @@ func ExampleParse() {
 }
 
 func ExampleRGB2Hex() {
-	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true))
+	fmt.Printf("%s\n", RGB2Hex(RGB{127, 25, 75}).ToWeb(true, false))
 
 	// Output: #7F194B
 }
 
 func ExampleHex2RGB() {
-	fmt.Printf("%s\n", Hex2RGB(0x7F194B))
+	fmt.Printf("%s\n", Hex2RGB(NewHex(0x7F194B)))
 
 	// Output: RGB{R:127 G:25 B:75}
 }
 
 func ExampleHex2RGBA() {
-	fmt.Printf("%s\n", Hex2RGBA(0x7F194BCC))
+	fmt.Printf("%s\n", Hex2RGBA(NewHex(0x7F194BCC)))
 
 	// Output: RGBA{R:127 G:25 B:75 A:0.80}
 }
@@ -47,7 +47,7 @@ func ExampleHex2RGBA() {
 func ExampleRGBA2Hex() {
 	c := RGBA2Hex(RGBA{127, 25, 75, 204})
 
-	fmt.Printf("%s\n", c.ToWeb(true))
+	fmt.Printf("%s\n", c.ToWeb(true, false))
 
 	// Output: #7F194BCC
 }
@@ -75,11 +75,11 @@ func ExampleCMYK2RGB() {
 func ExampleRGB2HSV() {
 	fmt.Printf("%s\n", RGB2HSV(RGB{127, 25, 75}))
 
-	// Output: HSV{H:331° S:80% V:50%}
+	// Output: HSV{H:331° S:80% V:50% A:0%}
 }
 
 func ExampleHSV2RGB() {
-	c := HSV2RGB(HSV{331.0 / 360.0, 80.0 / 100.0, 50.0 / 100.0})
+	c := HSV2RGB(HSV{H: 331.0 / 360.0, S: 80.0 / 100.0, V: 50.0 / 100.0})
 
 	fmt.Printf("%s\n", c)
 
@@ -89,11 +89,11 @@ func ExampleHSV2RGB() {
 func ExampleRGB2HSL() {
 	fmt.Printf("%s\n", RGB2HSL(RGB{127, 25, 75}))
 
-	// Output: HSL{H:331° S:67% L:30%}
+	// Output: HSL{H:331° S:67% L:30% A:0%}
 }
 
 func ExampleHSL2RGB() {
-	c := HSL2RGB(HSL{331.0 / 360.0, 67.0 / 100.0, 30.0 / 100.0})
+	c := HSL2RGB(HSL{H: 331.0 / 360.0, S: 67.0 / 100.0, L: 30.0 / 100.0})
 
 	fmt.Printf("%s\n", c)
 
@@ -115,7 +115,7 @@ func ExampleLuminance() {
 }
 
 func ExampleContrast() {
-	c := Contrast(0x222222, 0x40abf7)
+	c := Contrast(NewHex(0x222222), NewHex(0x40abf7))
 
 	fmt.Printf("ratio: %.2f:1\n", c)
 
@@ -125,7 +125,7 @@ func ExampleContrast() {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleRGB_ToHex() {
-	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHex().ToWeb(true))
+	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHex().ToWeb(true, false))
 
 	// Output: #7F194B
 }
@@ -139,13 +139,13 @@ func ExampleRGB_ToCMYK() {
 func ExampleRGB_ToHSV() {
 	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHSV())
 
-	// Output: HSV{H:331° S:80% V:50%}
+	// Output: HSV{H:331° S:80% V:50% A:0%}
 }
 
 func ExampleRGB_ToHSL() {
 	fmt.Printf("%s\n", RGB{127, 25, 75}.ToHSL())
 
-	// Output: HSL{H:331° S:67% L:30%}
+	// Output: HSL{H:331° S:67% L:30% A:0%}
 }
 
 func ExampleRGB_ToTerm() {
@@ -159,7 +159,7 @@ func ExampleRGB_ToTerm() {
 func ExampleRGBA_ToHex() {
 	c := RGBA{127, 25, 75, 204}.ToHex()
 
-	fmt.Printf("%s\n", c.ToWeb(true))
+	fmt.Printf("%s\n", c.ToWeb(true, false))
 
 	// Output: #7F194BCC
 }
@@ -171,7 +171,7 @@ func ExampleCMYK_ToRGB() {
 }
 
 func ExampleHSV_ToRGB() {
-	c := HSV{331.0 / 360.0, 80.0 / 100.0, 50.0 / 100.0}.ToRGB()
+	c := HSV{H: 331.0 / 360.0, S: 80.0 / 100.0, V: 50.0 / 100.0}.ToRGB()
 
 	fmt.Printf("%s\n", c)
 
@@ -179,7 +179,7 @@ func ExampleHSV_ToRGB() {
 }
 
 func ExampleHSL_ToRGB() {
-	c := HSL{331.0 / 360.0, 67.0 / 100.0, 30.0 / 100.0}.ToRGB()
+	c := HSL{H: 331.0 / 360.0, S: 67.0 / 100.0, L: 30.0 / 100.0}.ToRGB()
 
 	fmt.Printf("%s\n", c)
 
@@ -187,11 +187,11 @@ func ExampleHSL_ToRGB() {
 }
 
 func ExampleHex_IsRGBA() {
-	c1 := Hex(0x7F194B)
-	c2 := Hex(0x7F194B5F)
+	c1 := NewHex(0x7F194B)
+	c2 := NewHex(0x7F194B5F)
 
-	fmt.Printf("%s → %t\n", c1.ToWeb(true), c1.IsRGBA())
-	fmt.Printf("%s → %t\n", c2.ToWeb(true), c2.IsRGBA())
+	fmt.Printf("%s → %t\n", c1.ToWeb(true, false), c1.IsRGBA())
+	fmt.Printf("%s → %t\n", c2.ToWeb(true, false), c2.IsRGBA())
 
 	// Output:
 	// #7F194B → false
@@ -199,22 +199,22 @@ func ExampleHex_IsRGBA() {
 }
 
 func ExampleHex_ToRGB() {
-	fmt.Printf("%s\n", Hex(0x7F194B).ToRGB())
+	fmt.Printf("%s\n", NewHex(0x7F194B).ToRGB())
 
 	// Output: RGB{R:127 G:25 B:75}
 }
 
 func ExampleHex_ToRGBA() {
-	fmt.Printf("%s\n", Hex(0x7F194B5F).ToRGBA())
+	fmt.Printf("%s\n", NewHex(0x7F194B5F).ToRGBA())
 
 	// Output: RGBA{R:127 G:25 B:75 A:0.37}
 }
 
 func ExampleHex_ToWeb() {
-	fmt.Printf("%s\n", Hex(0x7F194B).ToWeb(true))
-	fmt.Printf("%s\n", Hex(0x7F194B).ToWeb(false))
+	fmt.Printf("%s\n", NewHex(0xFFAA44CC).ToWeb(true, false))
+	fmt.Printf("%s\n", NewHex(0xFFAA44CC).ToWeb(false, true))
 
 	// Output:
-	// #7F194B
-	// #7f194b
+	// #FFAA44CC
+	// #fa4c
 }

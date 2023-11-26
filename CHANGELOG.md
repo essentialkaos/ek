@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.90.0
+
+* `[color]` Added alpha channel info to `HSL` and `HSV`
+* `[color]` Added method `RGBA.WithAlpha`
+* `[color]` Improved support for hex colors with alpha
+* `[color]` Use web color representation for `Hex.String`
+* `[color]` Added flag to `Hex.ToWeb` to disable shorthand generation
+* `[color]` Fixed shorthand hex generation for `#FFF`
+* `[color]` Fixed `RGBA` to `Hex` conversion
+
 ### 12.89.0
 
 * `[usage]` Added color customization for example description
