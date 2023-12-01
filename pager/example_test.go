@@ -8,8 +8,8 @@ package pager
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleSetup() {
-	// Use pager from PAGER env var or default (more)
-	Setup("")
+	// Use pager from PAGER env var or default (more -f)
+	Setup()
 
 	// Or provide specific command.
 	Setup("less -MQR")

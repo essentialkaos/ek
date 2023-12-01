@@ -42,12 +42,16 @@ var (
 
 // Setup set up pager for work. After calling this method, any data sent to Stdout and
 // Stderr (using fmt, fmtc, or terminal packages) will go to the pager.
-func Setup(pager string) error {
+func Setup(pager ...string) error {
 	if pagerCmd != nil {
 		return ErrAlreadySet
 	}
 
-	pagerCmd = getPagerCommand(pager)
+	if len(pager) == 0 {
+		pagerCmd = getPagerCommand("")
+	} else {
+		pagerCmd = getPagerCommand(pager[0])
+	}
 
 	if pagerCmd == nil {
 		return ErrNoPager
@@ -119,7 +123,7 @@ func findPager() string {
 			return "more " + moreOpts
 		}
 
-		return "more"
+		return "more -f"
 	}
 
 	_, err = exec.LookPath(binLess)

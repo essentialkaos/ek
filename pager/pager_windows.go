@@ -23,7 +23,7 @@ var ErrAlreadySet = errors.New("Pager already set")
 
 // ❗ Setup set up pager for work. After calling this method, any data sent to Stdout and
 // Stderr (using fmt, fmtc, or terminal packages) will go to the pager.
-func Setup(pager string) error {
+func Setup(pager ...string) error {
 	return nil
 }
 

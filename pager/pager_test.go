@@ -31,9 +31,11 @@ func (s *PagerSuite) TearDownSuite(c *C) {
 }
 
 func (s *PagerSuite) TestPager(c *C) {
+	c.Assert(Setup(), IsNil)
+	Complete()
+
 	c.Assert(Setup("cat"), IsNil)
 	c.Assert(Setup("cat"), DeepEquals, ErrAlreadySet)
-
 	Complete()
 
 	c.Assert(pagerCmd, IsNil)
@@ -59,7 +61,7 @@ func (s *PagerSuite) TestPagerSearch(c *C) {
 	binLess = "echo"
 
 	cmd = getPagerCommand("")
-	c.Assert(cmd.Args, DeepEquals, []string{"more"})
+	c.Assert(cmd.Args, DeepEquals, []string{"more", "-f"})
 
 	os.Setenv("MORE", "-l -s")
 
