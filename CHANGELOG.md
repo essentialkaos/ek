@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.90.1
+
+* `[pager]` Use `more -f` by default
+* `[pager]` Code refactoring
+
 ### 12.90.0
 
 * `[color]` Added alpha channel info to `HSL` and `HSV`
