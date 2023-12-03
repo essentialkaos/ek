@@ -1,9 +1,5 @@
 ## Changelog
 
-### 12.91.0
-
-* `[pager]` Added method `Redirect`
-
 ### 12.90.1
 
 * `[pager]` Use `more -f` by default

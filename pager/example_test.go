@@ -18,7 +18,3 @@ func ExampleSetup() {
 	// in your main function.
 	defer Complete()
 }
-
-func ExampleRedirect() {
-	defer Redirect("less -MQR")
-}

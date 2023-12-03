@@ -31,9 +31,6 @@ func (s *PagerSuite) TearDownSuite(c *C) {
 }
 
 func (s *PagerSuite) TestPager(c *C) {
-	Redirect()()
-	c.Assert(pagerCmd, IsNil)
-
 	c.Assert(Setup(), IsNil)
 	Complete()
 

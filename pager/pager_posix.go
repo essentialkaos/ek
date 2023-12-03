@@ -88,13 +88,6 @@ func Complete() {
 	os.Stderr = stderr
 }
 
-// In most cases, you should use Setup and Complete because you can handle an
-// error from Setup.
-func Redirect(pager ...string) func() {
-	Setup(pager...)
-	return Complete
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getPagerCommand creates command for pager

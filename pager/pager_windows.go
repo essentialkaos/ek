@@ -31,9 +31,3 @@ func Setup(pager ...string) error {
 func Complete() {
 	return
 }
-
-// ❗ In most cases, you should use Setup and Complete because you can handle an
-// error from Setup.
-func Redirect(pager ...string) func() {
-	return nil
-}
