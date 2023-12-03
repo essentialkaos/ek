@@ -72,7 +72,7 @@ func Setup(pager ...string) error {
 	return pagerCmd.Start()
 }
 
-// Complete finishes pager work
+// Complete finishes output redirect to pager
 func Complete() {
 	if pagerOut != nil {
 		pagerOut.Close()
@@ -86,6 +86,13 @@ func Complete() {
 
 	os.Stdout = stdout
 	os.Stderr = stderr
+}
+
+// In most cases, you should use Setup and Complete because you can handle an
+// error from Setup.
+func Redirect(pager ...string) func() {
+	Setup(pager...)
+	return Complete
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

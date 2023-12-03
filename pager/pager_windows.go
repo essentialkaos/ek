@@ -27,7 +27,13 @@ func Setup(pager ...string) error {
 	return nil
 }
 
-// ❗ Complete finishes pager work
+// ❗ Complete finishes output redirect to pager
 func Complete() {
 	return
+}
+
+// ❗ In most cases, you should use Setup and Complete because you can handle an
+// error from Setup.
+func Redirect(pager ...string) func() {
+	return nil
 }
