@@ -238,28 +238,28 @@ func (s *TimeUtilSuite) TestTimezone(c *C) {
 
 func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	d, _ := ParseDuration("")
-	c.Assert(d, Equals, int64(0))
+	c.Assert(d, Equals, time.Duration(0))
 
 	d, _ = ParseDuration("25s")
-	c.Assert(d, Equals, int64(25))
+	c.Assert(d, Equals, time.Duration(25)*time.Second)
 
 	d, _ = ParseDuration("1m30s")
-	c.Assert(d, Equals, int64(90))
+	c.Assert(d, Equals, time.Duration(90)*time.Second)
 
 	d, _ = ParseDuration("1h30m30s")
-	c.Assert(d, Equals, int64(5430))
+	c.Assert(d, Equals, time.Duration(5430)*time.Second)
 
 	d, _ = ParseDuration("1d3h30m30s")
-	c.Assert(d, Equals, int64(99030))
+	c.Assert(d, Equals, time.Duration(99030)*time.Second)
 
 	d, _ = ParseDuration("1w3d12h30m30s")
-	c.Assert(d, Equals, int64(909030))
+	c.Assert(d, Equals, time.Duration(909030)*time.Second)
 
 	d, _ = ParseDuration("10w")
-	c.Assert(d, Equals, int64(6048000))
+	c.Assert(d, Equals, time.Duration(6048000)*time.Second)
 
 	d, _ = ParseDuration("180")
-	c.Assert(d, Equals, int64(180))
+	c.Assert(d, Equals, time.Duration(180)*time.Second)
 
 	_, err := ParseDuration("180k")
 	c.Assert(err, NotNil)
@@ -274,19 +274,19 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	c.Assert(err, NotNil)
 
 	d, _ = ParseDuration("30", 's')
-	c.Assert(d, Equals, int64(30))
+	c.Assert(d, Equals, time.Duration(30)*time.Second)
 
 	d, _ = ParseDuration("25", 'm')
-	c.Assert(d, Equals, int64(1500))
+	c.Assert(d, Equals, time.Duration(1500)*time.Second)
 
 	d, _ = ParseDuration("14", 'h')
-	c.Assert(d, Equals, int64(50400))
+	c.Assert(d, Equals, time.Duration(50400)*time.Second)
 
 	d, _ = ParseDuration("5", 'd')
-	c.Assert(d, Equals, int64(432000))
+	c.Assert(d, Equals, time.Duration(432000)*time.Second)
 
 	d, _ = ParseDuration("2", 'w')
-	c.Assert(d, Equals, int64(1209600))
+	c.Assert(d, Equals, time.Duration(1209600)*time.Second)
 
 	_, err = ParseDuration("9999999999999999999999999999999999999", 's')
 	c.Assert(err, NotNil)

@@ -4,6 +4,7 @@
 
 * `[terminal/tty]` Added method `IsTMUX`
 * `[terminal/tty]` Added more usage examples
+* `[timeutil]` `ParseDuration` now returns `time.Duration` instead of seconds
 
 ### 12.90.1
 
