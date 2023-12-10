@@ -54,7 +54,7 @@ L - system/process
 * - system/procname
 L + system/sensors
 * - terminal
-* ! terminal/tty
+* + terminal/tty
 * - terminal/window
 * + timeutil
 * + tmp
