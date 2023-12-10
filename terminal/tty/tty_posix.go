@@ -36,7 +36,18 @@ func IsTTY() bool {
 	return true
 }
 
+// IsTMUX returns true if we are currently working in tmux
+func IsTMUX() (bool, error) {
+	if os.Getenv("TMUX") != "" {
+		return true, nil
+	}
+
+	return isTmuxAncestor()
+}
+
 // IsFakeTTY returns true is fake TTY is used
 func IsFakeTTY() bool {
 	return os.Getenv("FAKETTY") != ""
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //

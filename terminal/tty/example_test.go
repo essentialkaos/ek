@@ -13,6 +13,28 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleIsTTY() {
+	if IsTTY() {
+		fmt.Println("Output is TTY")
+	} else {
+		fmt.Println("Output is not TTY")
+	}
+}
+
+func ExampleIsTMUX() {
+	isTmux, err := IsTMUX()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if isTmux {
+		fmt.Println("App works in tmux")
+	} else {
+		fmt.Println("App works in bare terminal")
+	}
+}
+
 func ExampleGetSize() {
 	width, height := GetSize()
 

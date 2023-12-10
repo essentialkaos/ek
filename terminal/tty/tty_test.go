@@ -9,6 +9,8 @@ package tty
 
 import (
 	"os"
+	"runtime"
+	"strconv"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -32,6 +34,37 @@ func (s *TTYSuite) TestIsTTY(c *C) {
 	os.Setenv("FAKETTY", "1")
 	c.Assert(IsFakeTTY(), Equals, true)
 	os.Setenv("FAKETTY", "")
+}
+
+func (s *TTYSuite) TestIsTMUX(c *C) {
+	os.Setenv("TMUX", "/tmp/tmux-1000/default,3739,0")
+
+	isTmux, err := IsTMUX()
+	c.Assert(isTmux, Equals, true)
+	c.Assert(err, IsNil)
+
+	if runtime.GOOS != "linux" {
+		return
+	}
+
+	os.Setenv("TMUX", "")
+
+	IsTMUX()
+
+	procFS = "/__unknown__"
+
+	_, err = IsTMUX()
+	c.Assert(err, NotNil)
+
+	procFS = c.MkDir()
+	ppid := os.Getppid()
+	statDir := procFS + "/" + strconv.Itoa(ppid)
+	os.MkdirAll(statDir, 0755)
+	os.WriteFile(statDir+"/stat", []byte(`1 (systemd) S 0 1 1 0`), 0644)
+
+	isTmux, err = IsTMUX()
+	c.Assert(isTmux, Equals, false)
+	c.Assert(err, IsNil)
 }
 
 func (s *TTYSuite) TestGetSize(c *C) {

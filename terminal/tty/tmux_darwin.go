@@ -1,8 +1,7 @@
-//go:build !windows
-// +build !windows
+//go:build darwin
+// +build darwin
 
-// Package ek is a set of auxiliary packages
-package ek
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,21 +10,7 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// VERSION is current ek package version
-const VERSION = "12.91.0"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+// isTmuxAncestor returns true if the current process is an ancestor of tmux
+func isTmuxAncestor() (bool, error) {
+	return false, nil
 }
