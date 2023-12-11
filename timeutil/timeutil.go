@@ -180,7 +180,7 @@ func SecondsToDuration(d float64) time.Duration {
 }
 
 // ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
-func ParseDuration(dur string, defMod ...rune) (int64, error) {
+func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 	if dur == "" {
 		return 0, nil
 	}
@@ -244,7 +244,7 @@ func ParseDuration(dur string, defMod ...rune) (int64, error) {
 		}
 	}
 
-	return result, nil
+	return time.Second * time.Duration(result), nil
 }
 
 // StartOfHour returns start of the hour

@@ -72,7 +72,7 @@ func Setup(pager ...string) error {
 	return pagerCmd.Start()
 }
 
-// Complete finishes pager work
+// Complete finishes output redirect to pager
 func Complete() {
 	if pagerOut != nil {
 		pagerOut.Close()

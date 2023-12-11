@@ -50,11 +50,9 @@ func ExamplePrettyDurationInDays() {
 func ExampleParseDuration() {
 	d, _ := ParseDuration("2w3d10h20m35s")
 
-	fmt.Println(d)
 	fmt.Println(PrettyDuration(d))
 
 	// Output:
-	// 1506035
 	// 2 weeks 3 days 10 hours 20 minutes and 35 seconds
 }
 

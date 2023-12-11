@@ -19,6 +19,11 @@ func IsFakeTTY() bool {
 	return false
 }
 
+// ❗ IsTMUX returns true if we are currently working in tmux
+func IsTMUX() (bool, error) {
+	return false, nil
+}
+
 // ❗ GetSize returns window width and height
 func GetSize() (int, int) {
 	panic("UNSUPPORTED")

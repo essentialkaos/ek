@@ -27,7 +27,7 @@ func Setup(pager ...string) error {
 	return nil
 }
 
-// ❗ Complete finishes pager work
+// ❗ Complete finishes output redirect to pager
 func Complete() {
 	return
 }
