@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.92.0
+
+* `[color]` Added method `Term2RGB`
+
 ### 12.91.0
 
 * `[terminal/tty]` Added method `IsTMUX`

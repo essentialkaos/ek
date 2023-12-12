@@ -176,11 +176,31 @@ func (s *ColorSuite) TestTerm(c *C) {
 	c.Assert(RGB{0, 175, 175}.ToTerm(), Equals, 37)
 	c.Assert(RGB{255, 255, 0}.ToTerm(), Equals, 226)
 	c.Assert(RGB{135, 175, 215}.ToTerm(), Equals, 110)
-	// grayscale
 	c.Assert(RGB{175, 175, 175}.ToTerm(), Equals, 145)
 	c.Assert(RGB{18, 18, 18}.ToTerm(), Equals, 233)
 	c.Assert(RGB{48, 48, 48}.ToTerm(), Equals, 236)
 	c.Assert(RGB{238, 238, 238}.ToTerm(), Equals, 255)
+
+	c.Assert(Term2RGB(0), DeepEquals, RGB{0, 0, 0})
+	c.Assert(Term2RGB(1), DeepEquals, RGB{255, 0, 0})
+	c.Assert(Term2RGB(2), DeepEquals, RGB{0, 255, 0})
+	c.Assert(Term2RGB(3), DeepEquals, RGB{255, 255, 0})
+	c.Assert(Term2RGB(4), DeepEquals, RGB{0, 0, 255})
+	c.Assert(Term2RGB(5), DeepEquals, RGB{255, 0, 255})
+	c.Assert(Term2RGB(6), DeepEquals, RGB{0, 255, 255})
+	c.Assert(Term2RGB(7), DeepEquals, RGB{191, 191, 191})
+	c.Assert(Term2RGB(8), DeepEquals, RGB{64, 64, 64})
+	c.Assert(Term2RGB(9), DeepEquals, RGB{255, 127, 127})
+	c.Assert(Term2RGB(10), DeepEquals, RGB{127, 255, 127})
+	c.Assert(Term2RGB(11), DeepEquals, RGB{255, 255, 127})
+	c.Assert(Term2RGB(12), DeepEquals, RGB{127, 127, 255})
+	c.Assert(Term2RGB(13), DeepEquals, RGB{255, 127, 255})
+	c.Assert(Term2RGB(14), DeepEquals, RGB{127, 255, 255})
+	c.Assert(Term2RGB(15), DeepEquals, RGB{127, 127, 127})
+
+	c.Assert(Term2RGB(238), DeepEquals, RGB{68, 68, 68})
+	c.Assert(Term2RGB(153), DeepEquals, RGB{175, 215, 255})
+
 }
 
 func (s *ColorSuite) TestLuminance(c *C) {
