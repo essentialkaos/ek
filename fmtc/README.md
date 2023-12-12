@@ -66,21 +66,15 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 
 #### 88/256 Colors
 
+![#256colors](../.github/images/256_colors.png)
+
 ##### Foreground (Text)
 
 Tag: `{#code}`
 
-![#colors](../.github/images/256_colors_fg.png)
-
-_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting) website_
-
 ##### Background
 
 Tag: `{%code}`
-
-![#colors](../.github/images/256_colors_bg.png)
-
-_Image from [FLOZz' MISC](https://misc.flogisoft.com/bash/tip_colors_and_formatting) website_
 
 #### 24-bit Colors (_TrueColor_)
 
