@@ -26,43 +26,43 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 
 | Name          | Tag   | Code  | Color Preview |
 |---------------|-------|-------|---------------|
-| Black         | `{d}` |  `30` | ![#color](https://via.placeholder.com/100x16/000000/000000?text=+) |
-| Red           | `{r}` |  `31` | ![#color](https://via.placeholder.com/100x16/CC0000/000000?text=+) |
-| Green         | `{g}` |  `32` | ![#color](https://via.placeholder.com/100x16/4D9A05/000000?text=+) |
-| Yellow        | `{y}` |  `33` | ![#color](https://via.placeholder.com/100x16/C4A000/000000?text=+) |
-| Blue          | `{b}` |  `34` | ![#color](https://via.placeholder.com/100x16/3465A4/000000?text=+) |
-| Magenta       | `{m}` |  `35` | ![#color](https://via.placeholder.com/100x16/754F7B/000000?text=+) |
-| Cyan          | `{c}` |  `36` | ![#color](https://via.placeholder.com/100x16/069899/000000?text=+) |
-| Light gray    | `{s}` |  `37` | ![#color](https://via.placeholder.com/100x16/D3D7CE/000000?text=+) |
-| Dark gray     | `{s-}`|  `90` | ![#color](https://via.placeholder.com/100x16/555752/000000?text=+) |
-| Light red     | `{r-}`|  `91` | ![#color](https://via.placeholder.com/100x16/EE2828/000000?text=+) |
-| Light green   | `{g-}`|  `92` | ![#color](https://via.placeholder.com/100x16/8AE234/000000?text=+) |
-| Light yellow  | `{y-}`|  `93` | ![#color](https://via.placeholder.com/100x16/FCE94F/000000?text=+) |
-| Light blue    | `{b-}`|  `94` | ![#color](https://via.placeholder.com/100x16/729FCE/000000?text=+) |
-| Light magenta | `{m-}`|  `95` | ![#color](https://via.placeholder.com/100x16/AD7EA8/000000?text=+) |
-| Light cyan    | `{c-}`|  `96` | ![#color](https://via.placeholder.com/100x16/34E1E1/000000?text=+) |
-| White         | `{w-}`|  `97` | ![#color](https://via.placeholder.com/100x16/EEEEEC/000000?text=+) |
+| Black         | `{d}` |  `30` | ![#color](../.github/images/color_d.svg) |
+| Red           | `{r}` |  `31` | ![#color](../.github/images/color_r.svg) |
+| Green         | `{g}` |  `32` | ![#color](../.github/images/color_g.svg) |
+| Yellow        | `{y}` |  `33` | ![#color](../.github/images/color_y.svg) |
+| Blue          | `{b}` |  `34` | ![#color](../.github/images/color_b.svg) |
+| Magenta       | `{m}` |  `35` | ![#color](../.github/images/color_m.svg) |
+| Cyan          | `{c}` |  `36` | ![#color](../.github/images/color_c.svg) |
+| Light gray    | `{s}` |  `37` | ![#color](../.github/images/color_s.svg) |
+| Dark gray     | `{s-}`|  `90` | ![#color](../.github/images/color_sl.svg) |
+| Light red     | `{r-}`|  `91` | ![#color](../.github/images/color_rl.svg) |
+| Light green   | `{g-}`|  `92` | ![#color](../.github/images/color_gl.svg) |
+| Light yellow  | `{y-}`|  `93` | ![#color](../.github/images/color_yl.svg) |
+| Light blue    | `{b-}`|  `94` | ![#color](../.github/images/color_bl.svg) |
+| Light magenta | `{m-}`|  `95` | ![#color](../.github/images/color_ml.svg) |
+| Light cyan    | `{c-}`|  `96` | ![#color](../.github/images/color_cl.svg) |
+| White         | `{w-}`|  `97` | ![#color](../.github/images/color_w.svg) |
 
 ##### Background
 
 | Name          | Tag   | Code   | Color Preview |
 |---------------|-------|--------|---------------|
-| Black         | `{D}` |  `40`  | ![#color](https://via.placeholder.com/100x16/000000/000000?text=+) |
-| Red           | `{R}` |  `41`  | ![#color](https://via.placeholder.com/100x16/CC0000/000000?text=+) |
-| Green         | `{G}` |  `42`  | ![#color](https://via.placeholder.com/100x16/4D9A05/000000?text=+) |
-| Yellow        | `{Y}` |  `43`  | ![#color](https://via.placeholder.com/100x16/C4A000/000000?text=+) |
-| Blue          | `{B}` |  `44`  | ![#color](https://via.placeholder.com/100x16/3465A4/000000?text=+) |
-| Magenta       | `{M}` |  `45`  | ![#color](https://via.placeholder.com/100x16/754F7B/000000?text=+) |
-| Cyan          | `{C}` |  `46`  | ![#color](https://via.placeholder.com/100x16/069899/000000?text=+) |
-| Light gray    | `{S}` |  `47`  | ![#color](https://via.placeholder.com/100x16/D3D7CE/000000?text=+) |
-| Dark gray     | `{S-}`|  `100` | ![#color](https://via.placeholder.com/100x16/555752/000000?text=+) |
-| Light red     | `{R-}`|  `101` | ![#color](https://via.placeholder.com/100x16/EE2828/000000?text=+) |
-| Light green   | `{G-}`|  `102` | ![#color](https://via.placeholder.com/100x16/8AE234/000000?text=+) |
-| Light yellow  | `{Y-}`|  `103` | ![#color](https://via.placeholder.com/100x16/FCE94F/000000?text=+) |
-| Light blue    | `{B-}`|  `104` | ![#color](https://via.placeholder.com/100x16/729FCE/000000?text=+) |
-| Light magenta | `{M-}`|  `105` | ![#color](https://via.placeholder.com/100x16/AD7EA8/000000?text=+) |
-| Light cyan    | `{C-}`|  `106` | ![#color](https://via.placeholder.com/100x16/34E1E1/000000?text=+) |
-| White         | `{W-}`|  `107` | ![#color](https://via.placeholder.com/100x16/EEEEEC/000000?text=+) |
+| Black         | `{D}` |  `40`  | ![#color](../.github/images/color_d.svg) |
+| Red           | `{R}` |  `41`  | ![#color](../.github/images/color_r.svg) |
+| Green         | `{G}` |  `42`  | ![#color](../.github/images/color_g.svg) |
+| Yellow        | `{Y}` |  `43`  | ![#color](../.github/images/color_y.svg) |
+| Blue          | `{B}` |  `44`  | ![#color](../.github/images/color_b.svg) |
+| Magenta       | `{M}` |  `45`  | ![#color](../.github/images/color_m.svg) |
+| Cyan          | `{C}` |  `46`  | ![#color](../.github/images/color_c.svg) |
+| Light gray    | `{S}` |  `47`  | ![#color](../.github/images/color_s.svg) |
+| Dark gray     | `{S-}`|  `100` | ![#color](../.github/images/color_sl.svg) |
+| Light red     | `{R-}`|  `101` | ![#color](../.github/images/color_rl.svg) |
+| Light green   | `{G-}`|  `102` | ![#color](../.github/images/color_gl.svg) |
+| Light yellow  | `{Y-}`|  `103` | ![#color](../.github/images/color_yl.svg) |
+| Light blue    | `{B-}`|  `104` | ![#color](../.github/images/color_bl.svg) |
+| Light magenta | `{M-}`|  `105` | ![#color](../.github/images/color_ml.svg) |
+| Light cyan    | `{C-}`|  `106` | ![#color](../.github/images/color_cl.svg) |
+| White         | `{W-}`|  `107` | ![#color](../.github/images/color_w.svg) |
 
 #### 88/256 Colors
 
