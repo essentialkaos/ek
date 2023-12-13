@@ -60,6 +60,14 @@ func ExampleRGB2Term() {
 	// Output: RGB{R:255 G:0 B:0} → \e[38;5;196m
 }
 
+func ExampleTerm2RGB() {
+	c := uint8(162)
+
+	fmt.Printf("%d → %s\n", c, Term2RGB(c))
+
+	// Output: 162 → RGB{R:215 G:0 B:135}
+}
+
 func ExampleRGB2CMYK() {
 	fmt.Printf("%s\n", RGB2CMYK(RGB{127, 25, 75}))
 

@@ -21,11 +21,8 @@ Auxiliary packages for Go.
 
 Currently we support Linux and macOS (_except some packages_). All packages have stubs for unsupported platforms (_for autocomplete_).
 
-<details><summary><b>More info about stubs</b></summary><p>
-
-> Some packages cannot be used on some platforms, like `fsutil` package, which cannot be used on Windows due to using syscalls, or `system` sub-packages which require [procfs](https://en.wikipedia.org/wiki/Procfs). But you can write code on these platforms with no problem because almost all packages have stubs with information about all constants, variables, and functions available on other platforms. So, for example, Sublime with [LSP](https://lsp.sublimetext.io) on Windows will show all information about methods available only on the Linux platform. All descriptions from stubs contain symbol ❗ at the beginning as a mark of unsupported code. Code with stubs can be compiled, but any method invocation from stubs will lead to panic.
-
-</p></details>
+> [!NOTE]
+> Some packages cannot be used on some platforms, such as the `fsutil` package, which cannot be used on Windows because it uses syscalls, or `system` subpackages that require [procfs](https://en.wikipedia.org/wiki/Procfs). But you can still write code on these platforms, because almost all packages have stubs with information about all the constants, variables, and functions available on other platforms. For example, Sublime with [LSP](https://lsp.sublimetext.io) on Windows will show all the information about methods that are only available on the Linux platform. All stub descriptions contain the ❗ symbol at the beginning to indicate unsupported code. Code with stubs can be compiled, but any method call from stubs will cause panic.
 
 ### Installation
 
@@ -41,11 +38,8 @@ If you want to update `ek` to latest stable release, do:
 go get -u github.com/essentialkaos/ek/v12
 ```
 
-<details><summary><b>Information for SublimeText 4 users</b></summary><p>
-
-If you are using SublimeText 4 (`4075+`), we strongly recommend that you install [extended Go syntax highlighting](https://github.com/essentialkaos/blackhole-theme-sublime/blob/master/fmtc.sublime-syntax) with support for `fmtc` tags.
-
-</p></details>
+> [!TIP]
+> If you are using SublimeText 4 (`4075+`), we strongly recommend that you install [extended Go syntax highlighting](https://github.com/essentialkaos/blackhole-theme-sublime/blob/master/fmtc.sublime-syntax) with support for `fmtc` [tags](fmtc).
 
 ### Sub-packages
 

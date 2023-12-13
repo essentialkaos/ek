@@ -438,12 +438,12 @@ func Hex2RGBA(h Hex) RGBA {
 	return RGBA{uint8(h.v>>16) & 0xFF, uint8(h.v>>8) & 0xFF, uint8(h.v) & 0xFF, 0}
 }
 
-// RGB2Term convert rgb color to terminal color code
+// RGB2Term converts RGB color to terminal color code
 // https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
 func RGB2Term(c RGB) int {
 	R, G, B := int(c.R), int(c.G), int(c.B)
 
-	// grayscale
+	// Grayscale
 	if R == G && G == B {
 		if R == 175 {
 			return 145
@@ -453,6 +453,72 @@ func RGB2Term(c RGB) int {
 	}
 
 	return 36*(R/51) + 6*(G/51) + (B / 51) + 16
+}
+
+// Term2RGB converts terminal color code (0-255) to RGB color
+// https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
+func Term2RGB(c uint8) RGB {
+	// Grayscale
+	if c > 231 {
+		c = ((c - 232) * 10) + 8
+		return RGB{c, c, c}
+	}
+
+	// Default colors (not standardized, average values)
+	switch c {
+	case 0:
+		return RGB{}
+	case 1:
+		return RGB{255, 0, 0}
+	case 2:
+		return RGB{0, 255, 0}
+	case 3:
+		return RGB{255, 255, 0}
+	case 4:
+		return RGB{0, 0, 255}
+	case 5:
+		return RGB{255, 0, 255}
+	case 6:
+		return RGB{0, 255, 255}
+	case 7:
+		return RGB{191, 191, 191}
+	case 8:
+		return RGB{64, 64, 64}
+	case 9:
+		return RGB{255, 127, 127}
+	case 10:
+		return RGB{127, 255, 127}
+	case 11:
+		return RGB{255, 255, 127}
+	case 12:
+		return RGB{127, 127, 255}
+	case 13:
+		return RGB{255, 127, 255}
+	case 14:
+		return RGB{127, 255, 255}
+	case 15:
+		return RGB{127, 127, 127}
+	}
+
+	var r, g, b, ir, ig, ib uint8
+
+	ir = (c - 16) / 36
+	ig = ((c - 16) % 36) / 6
+	ib = (c - 16) % 6
+
+	if ir > 0 {
+		r = (ir * 40) + 55
+	}
+
+	if ig > 0 {
+		g = (ig * 40) + 55
+	}
+
+	if ib > 0 {
+		b = (ib * 40) + 55
+	}
+
+	return RGB{r, g, b}
 }
 
 // RGB2CMYK converts RGB color to CMYK
