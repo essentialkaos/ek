@@ -145,7 +145,10 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	colorsSupportChecked = false
 
 	c.Assert(IsTrueColorSupported(), Equals, true)
+	colorsSupportChecked = false
 	c.Assert(Is256ColorsSupported(), Equals, true)
+	colorsSupportChecked = false
+	c.Assert(IsColorsSupported(), Equals, true)
 	c.Assert(IsColorsSupported(), Equals, true)
 
 	colorsSupportChecked = false
@@ -170,7 +173,7 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 
 func (s *FormatSuite) TestNamedColors(c *C) {
 	RemoveColor("myTest_1")
-	parseNamedColor("?myTest_1")
+	parseNamedColor("?myTest_1", false)
 
 	c.Assert(NameColor("", "{r}"), ErrorMatches, `Can't add named color: name can't be empty`)
 	c.Assert(NameColor("test", ""), ErrorMatches, `Can't add named color: tag can't be empty`)
@@ -185,6 +188,9 @@ func (s *FormatSuite) TestNamedColors(c *C) {
 
 	NameColor("myTest_1", "{#f1c1b2}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
+
+	NameColor("myTest_1", "{#f1c1b2}{_}{&}")
+	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;2;241;193;178m\x1b[4m\x1b[3mo\x1b[0m")
 
 	RemoveColor("myTest_1")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "o\x1b[0m")
