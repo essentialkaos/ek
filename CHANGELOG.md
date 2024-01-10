@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.93.0
+
+* `[fmtc]` Added complex tags support for named colors
+* `[fmtc]` Added named colors nesting
+
 ### 12.92.0
 
 * `[color]` Added method `Term2RGB`

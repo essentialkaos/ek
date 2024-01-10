@@ -376,6 +376,12 @@ func ExampleNameColor() {
 
 	// Print a message with new color
 	Print("{?error}lawngreen text{!}\n")
+
+	// Create complex named color: pink, italic & underline
+	NameColor("notice", "{#ff728a}{_}{&}")
+
+	// Print a message with complex color
+	Print("{?notice}lawngreen text{!}\n")
 }
 
 func ExampleRemoveColor() {

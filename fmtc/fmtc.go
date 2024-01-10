@@ -93,20 +93,18 @@ func NameColor(name, tag string) error {
 		colorsMap = &sync.Map{}
 	}
 
-	tag = strings.Trim(tag, "{}")
-
 	switch {
 	case name == "":
-		return fmt.Errorf("Can't add named color: name can't be empty")
+		return errors.New("Can't add named color: name can't be empty")
 	case tag == "":
-		return fmt.Errorf("Can't add named color: tag can't be empty")
-	case !isValidSimpleTag(tag) && !isValidExtendedTag(tag):
-		return fmt.Errorf("Can't add named color: \"{%s}\" is not valid color tag", tag)
+		return errors.New("Can't add named color: tag can't be empty")
+	case !IsTag(tag):
+		return fmt.Errorf("Can't add named color: %q is not valid color tag", tag)
 	case !isValidNamedTag("?" + name):
 		return fmt.Errorf("Can't add named color: %q is not valid name", name)
 	}
 
-	colorsMap.Store(name, tag)
+	colorsMap.Store(name, searchColors(tag, -1, false, false))
 
 	return nil
 }
@@ -186,7 +184,7 @@ func Println(a ...any) (int, error) {
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
 func Printf(f string, a ...any) (int, error) {
-	return fmt.Printf(searchColors(f, -1, DisableColors), a...)
+	return fmt.Printf(searchColors(f, -1, DisableColors, true), a...)
 }
 
 // Fprint formats using the default formats for its operands and writes to w.
@@ -208,7 +206,7 @@ func Fprintln(w io.Writer, a ...any) (int, error) {
 // Fprintf formats according to a format specifier and writes to w. It returns
 // the number of bytes written and any write error encountered.
 func Fprintf(w io.Writer, f string, a ...any) (int, error) {
-	return fmt.Fprintf(w, searchColors(f, -1, DisableColors), a...)
+	return fmt.Fprintf(w, searchColors(f, -1, DisableColors, true), a...)
 }
 
 // Sprint formats using the default formats for its operands and returns the
@@ -221,7 +219,7 @@ func Sprint(a ...any) string {
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
 func Sprintf(f string, a ...any) string {
-	return fmt.Sprintf(searchColors(f, -1, DisableColors), a...)
+	return fmt.Sprintf(searchColors(f, -1, DisableColors, true), a...)
 }
 
 // Sprintln formats using the default formats for its operands and returns the
@@ -261,14 +259,14 @@ func TPrintln(a ...any) (int, error) {
 // output limited by the text size
 func LPrint(maxSize int, a ...any) (int, error) {
 	s := fmt.Sprint(a...)
-	return fmt.Print(searchColors(s, maxSize, DisableColors))
+	return fmt.Print(searchColors(s, maxSize, DisableColors, true))
 }
 
 // LPrintf formats according to a format specifier and writes to standard output
 // limited by the text size
 func LPrintf(maxSize int, f string, a ...any) (int, error) {
 	s := fmt.Sprintf(f, a...)
-	return fmt.Print(searchColors(s, maxSize, DisableColors))
+	return fmt.Print(searchColors(s, maxSize, DisableColors, true))
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard
@@ -316,12 +314,12 @@ func NewLine(num ...int) (int, error) {
 
 // Clean returns string without color tags
 func Clean(s string) string {
-	return searchColors(s, -1, true)
+	return searchColors(s, -1, true, true)
 }
 
 // Render converts color tags to ANSI escape codes
 func Render(s string) string {
-	return searchColors(s, -1, false)
+	return searchColors(s, -1, false, true)
 }
 
 // Bell prints alert (bell) symbol
@@ -387,7 +385,7 @@ func tag2ANSI(tag string, clean bool) string {
 	case isExtendedColorTag(tag):
 		return parseExtendedColor(tag)
 	case isNamedColorTag(tag):
-		return parseNamedColor(tag)
+		return parseNamedColor(tag, clean)
 	}
 
 	light := strings.Contains(tag, "-")
@@ -461,8 +459,8 @@ func parseExtendedColor(tag string) string {
 	return "\033[48;5;" + tag[1:] + "m"
 }
 
-func parseNamedColor(tag string) string {
-	if colorsMap == nil {
+func parseNamedColor(tag string, clean bool) string {
+	if colorsMap == nil || clean {
 		return ""
 	}
 
@@ -473,7 +471,7 @@ func parseNamedColor(tag string) string {
 		return ""
 	}
 
-	return tag2ANSI(t.(string), false)
+	return t.(string)
 }
 
 func getResetCode(code int) string {
@@ -527,7 +525,7 @@ LOOP:
 	return false
 }
 
-func searchColors(text string, limit int, clean bool) string {
+func searchColors(text string, limit int, clean, close bool) string {
 	if text == "" {
 		return ""
 	}
@@ -558,7 +556,7 @@ func searchColors(text string, limit int, clean bool) string {
 		}
 	}
 
-	if !closed && !clean {
+	if !closed && !clean && close {
 		output.WriteString(_CODE_RESET)
 	}
 
@@ -568,7 +566,7 @@ func searchColors(text string, limit int, clean bool) string {
 func applyColors(a *[]any, limit int, clean bool) {
 	for i, x := range *a {
 		if s, ok := x.(string); ok {
-			(*a)[i] = searchColors(s, limit, clean)
+			(*a)[i] = searchColors(s, limit, clean, true)
 		}
 	}
 }
