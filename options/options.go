@@ -726,13 +726,13 @@ func initOptions(opts *Options) {
 }
 
 func parseName(name string) optionName {
-	na := strings.Split(name, ":")
+	short, long, ok := strings.Cut(name, ":")
 
-	if len(na) == 1 {
-		return optionName{na[0], ""}
+	if !ok {
+		return optionName{short, ""}
 	}
 
-	return optionName{na[1], na[0]}
+	return optionName{long, short}
 }
 
 func parseOptionsList(list string) []optionName {
@@ -760,7 +760,7 @@ func updateOption(opt *V, name, value string) error {
 		return updateIntOption(name, opt, value)
 	}
 
-	return fmt.Errorf("Option --%s has unsupported type", parseName(name).Long)
+	return fmt.Errorf("Option %s has unsupported type", Format(name))
 }
 
 func updateStringOption(opt *V, value string) error {
