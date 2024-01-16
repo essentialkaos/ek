@@ -37,8 +37,10 @@ CL_BL_GREY="\e[1;${GREY};49m"
 
 main() {
   if ! type -P go-fuzz-build &> /dev/null ; then
-    error "This utility requires go-fuzz-build" $RED
-    exit 1
+    show "\nInstalling go-fuzz tooling…"
+    go install github.com/dvyukov/go-fuzz/go-fuzz@latest &> /dev/null
+    go install github.com/dvyukov/go-fuzz/go-fuzz-build@latest &> /dev/null
+    show "go-fuzz tooling successfully installed\n" $GREEN
   fi
 
   if ! grep -q 'go-fuzz' go.mod ; then

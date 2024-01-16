@@ -474,14 +474,33 @@ func Parse(optMap ...Map) (Arguments, []error) {
 }
 
 // ParseOptionName parses combined name and returns long and short options
-func ParseOptionName(name string) (string, string) {
-	a := parseName(name)
+func ParseOptionName(opt string) (string, string) {
+	a := parseName(opt)
 	return a.Long, a.Short
 }
 
-// Q merges several options into string
-func Q(opts ...string) string {
+// Format formats option name
+func Format(opt string) string {
+	a := parseName(opt)
+
+	switch {
+	case a.Long == "":
+		return ""
+	case a.Short == "":
+		return "--" + a.Long
+	default:
+		return fmt.Sprintf("--%s/-%s", a.Long, a.Short)
+	}
+}
+
+// Merge merges several options into string
+func Merge(opts ...string) string {
 	return strings.Join(opts, " ")
+}
+
+// Q merges several options into string (shortcut for Merge)
+func Q(opts ...string) string {
+	return Merge(opts...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -707,13 +726,13 @@ func initOptions(opts *Options) {
 }
 
 func parseName(name string) optionName {
-	na := strings.Split(name, ":")
+	short, long, ok := strings.Cut(name, ":")
 
-	if len(na) == 1 {
-		return optionName{na[0], ""}
+	if !ok {
+		return optionName{short, ""}
 	}
 
-	return optionName{na[1], na[0]}
+	return optionName{long, short}
 }
 
 func parseOptionsList(list string) []optionName {
@@ -741,7 +760,7 @@ func updateOption(opt *V, name, value string) error {
 		return updateIntOption(name, opt, value)
 	}
 
-	return fmt.Errorf("Option --%s has unsupported type", parseName(name).Long)
+	return fmt.Errorf("Option %s has unsupported type", Format(name))
 }
 
 func updateStringOption(opt *V, value string) error {

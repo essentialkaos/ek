@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.94.0
+
+* `[options]` Added method `Format`
+* `[options]` Code refactoring
+
 ### 12.93.0
 
 * `[fmtc]` Added complex tags support for named colors
