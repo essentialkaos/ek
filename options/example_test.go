@@ -207,6 +207,14 @@ func ExampleHas() {
 	fmt.Printf("Has lines option: %t\n", Has("l:lines"))
 }
 
+func ExampleFormat() {
+	o := "t:test"
+
+	fmt.Printf("Option: %s\n", Format(o))
+	// Output:
+	// Option: --test/-t
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleOptions_Add() {

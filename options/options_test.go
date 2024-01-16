@@ -482,6 +482,12 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	c.Assert(errs[0].Error(), Equals, "Some option does not have a name")
 }
 
+func (s *OptUtilSuite) TestFormat(c *C) {
+	c.Assert(Format(""), Equals, "")
+	c.Assert(Format("test"), Equals, "--test")
+	c.Assert(Format("t:test"), Equals, "--test/-t")
+}
+
 func (s *OptUtilSuite) TestMerging(c *C) {
 	c.Assert(Q(), Equals, "")
 	c.Assert(Q("test"), Equals, "test")
