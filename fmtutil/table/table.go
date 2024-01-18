@@ -471,6 +471,7 @@ func setColumnsSizes(t *Table, columns int) {
 
 		if index+1 == columns {
 			if totalSize+(columns*3) < tableWidth {
+				fmt.Println(1001)
 				t.columnSizes[index]++
 			}
 

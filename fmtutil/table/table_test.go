@@ -160,7 +160,7 @@ func (s *TableSuite) TestAuxi(c *C) {
 
 	c.Assert(getColumnsNum(t), Equals, len(t.Sizes))
 
-	t = &Table{columnSizes: []int{4, 4}}
+	t = &Table{columnSizes: []int{4, 4}, Width: 88}
 	renderRowData(t, []string{"ABCDABCDABCD", "ABCDABCDABCD"}, 2)
 
 	setColumnsSizes(t, 3)
