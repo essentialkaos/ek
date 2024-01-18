@@ -25,15 +25,16 @@ const (
 	ALIGN_LEFT   uint8 = 0
 	ALIGN_CENTER uint8 = 1
 	ALIGN_RIGHT  uint8 = 2
-	AL           uint8 = 0 // Short form of ALIGN_LEFT
-	AC           uint8 = 1 // Short form of ALIGN_CENTER
-	AR           uint8 = 2 // Short form of ALIGN_RIGHT
+
+	AL uint8 = 0 // Short form of ALIGN_LEFT
+	AC uint8 = 1 // Short form of ALIGN_CENTER
+	AR uint8 = 2 // Short form of ALIGN_RIGHT
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// _SEPARATOR_TAG is tag used for rendering separator
-const _SEPARATOR_TAG = "[@SEPARATOR@]"
+// _SEPARATOR_TAG is unique value used as placeholder for data separator
+const _SEPARATOR_TAG = "--[@SEPARATOR@]--"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -42,6 +43,42 @@ type Table struct {
 	Sizes     []int    // Custom columns sizes
 	Headers   []string // Slice with headers
 	Alignment []uint8  // Columns alignment
+
+	// Width is table maximum width
+	Width int
+
+	// SeparatorSymbol is symbol used for borders rendering
+	BorderSymbol string
+
+	// SeparatorSymbol is symbol used for separator rendering
+	SeparatorSymbol string
+
+	// ColumnSeparatorSymbol is column separator symbol
+	ColumnSeparatorSymbol string
+
+	// HeaderColorTag is fmtc tag used for headers
+	HeaderColorTag string
+
+	// BorderColorTag is fmtc tag used for separator
+	BorderColorTag string
+
+	// SeparatorColorTag is fmtc tag used for separator
+	SeparatorColorTag string
+
+	// HeaderCapitalize is a flag for capitalizing headers
+	HeaderCapitalize bool
+
+	// HideTopBorder is a flag for disabling bottom border rendering
+	HideTopBorder bool
+
+	// HideBottomBorder is a flag for disabling bottom border rendering
+	HideBottomBorder bool
+
+	// FullScreen is a flag for fullscreen table
+	FullScreen bool
+
+	// Processor is function used for processing and formatting input data
+	Processor func(data []any) []string
 
 	// Slice with data
 	data [][]string
@@ -58,26 +95,36 @@ type Table struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// HeaderCapitalize is flag for capitalizing headers by default
+// HeaderCapitalize is a flag for capitalizing headers by default
 var HeaderCapitalize = false
 
-// HeaderColorTag is fmtc tag used for headers by default for all tables
+// HeaderColorTag is default fmtc tag used for headers
 var HeaderColorTag = "{*}"
 
-// SeparatorSymbol used for separator generation
+// SeparatorSymbol is default symbol used for borders rendering
+var BorderSymbol = "-"
+
+// BorderColorTag is default fmtc tag used for separator
+var BorderColorTag = "{s}"
+
+// SeparatorSymbol is default symbol used for separator rendering
 var SeparatorSymbol = "-"
 
-// ColumnSeparatorSymbol is column separator symbol
-var ColumnSeparatorSymbol = "|"
+// SeparatorColorTag is default fmtc tag used for separator
+var SeparatorColorTag = "{s}"
 
-// MaxWidth is a maximum table width
-var MaxWidth = 0
+// ColumnSeparatorSymbol is default column separator symbol
+var ColumnSeparatorSymbol = "|"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTable creates new table struct
 func NewTable(headers ...string) *Table {
-	return &Table{Headers: headers}
+	return &Table{
+		HeaderCapitalize: HeaderCapitalize,
+		Headers:          headers,
+		Processor:        convertSlice,
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -125,12 +172,12 @@ func (t *Table) Add(data ...any) *Table {
 		return t
 	}
 
-	t.data = append(t.data, convertSlice(data))
+	t.data = append(t.data, t.Processor(data))
 
 	return t
 }
 
-// Print renders given data
+// Print immediately prints given data
 func (t *Table) Print(data ...any) *Table {
 	if t == nil {
 		return nil
@@ -145,7 +192,7 @@ func (t *Table) Print(data ...any) *Table {
 	}
 
 	prepareRender(t)
-	renderRowData(t, convertSlice(data), len(t.columnSizes))
+	renderRowData(t, t.Processor(data), len(t.columnSizes))
 
 	return t
 }
@@ -166,6 +213,17 @@ func (t *Table) Separator() *Table {
 	} else {
 		t.Add(_SEPARATOR_TAG)
 	}
+
+	return t
+}
+
+// Border renders table border
+func (t *Table) Border() *Table {
+	if t == nil {
+		return nil
+	}
+
+	renderBorder(t)
 
 	return t
 }
@@ -196,8 +254,8 @@ func (t *Table) Render() *Table {
 
 	prepareRender(t)
 
-	if len(t.Headers) == 0 {
-		renderSeparator(t)
+	if len(t.Headers) == 0 && !t.HideTopBorder {
+		renderBorder(t)
 	}
 
 	if t.data != nil {
@@ -234,7 +292,9 @@ func renderHeaders(t *Table) {
 		return
 	}
 
-	renderSeparator(t)
+	if !t.HideTopBorder {
+		renderBorder(t)
+	}
 
 	totalHeaders := len(t.Headers)
 	totalColumns := len(t.columnSizes)
@@ -248,14 +308,20 @@ func renderHeaders(t *Table) {
 			headerText = t.Headers[columnIndex]
 		}
 
-		if HeaderCapitalize {
+		if t.HeaderCapitalize {
 			headerText = strings.ToUpper(headerText)
 		}
 
-		fmtc.Print(" " + HeaderColorTag + formatText(headerText, t.columnSizes[columnIndex], getAlignment(t, columnIndex)) + "{!} ")
+		fmtc.Print(
+			" " + strutil.Q(t.HeaderColorTag, HeaderColorTag) + formatText(headerText, t.columnSizes[columnIndex],
+				getAlignment(t, columnIndex)) + "{!} ",
+		)
 
 		if columnIndex+1 != totalColumns {
-			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)
+			fmtc.Printf(
+				strutil.Q(t.SeparatorColorTag, SeparatorColorTag)+"%s{!}",
+				strutil.Q(t.ColumnSeparatorSymbol, ColumnSeparatorSymbol),
+			)
 		} else {
 			fmtc.NewLine()
 		}
@@ -277,17 +343,19 @@ func renderData(t *Table) {
 		renderRowData(t, rowData, totalColumns)
 	}
 
-	renderSeparator(t)
+	if !t.HideBottomBorder {
+		renderBorder(t)
+	}
 }
 
 // renderRowData render data in row
-func renderRowData(t *Table, rowData []string, totalColumns int) {
-	for columnIndex, columnData := range rowData {
+func renderRowData(t *Table, data []string, totalColumns int) {
+	for columnIndex, columnData := range data {
 		if columnIndex == totalColumns {
 			break
 		}
 
-		if strutil.Len(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
+		if strutil.LenVisual(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
 			fmtc.Print(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
 		} else {
 			if columnIndex+1 == totalColumns && getAlignment(t, columnIndex) == ALIGN_LEFT {
@@ -298,7 +366,10 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 		}
 
 		if columnIndex+1 != totalColumns {
-			fmtc.Printf("{s}%s{!}", ColumnSeparatorSymbol)
+			fmtc.Printf(
+				strutil.Q(t.SeparatorColorTag, SeparatorColorTag)+"%s{!}",
+				strutil.Q(t.ColumnSeparatorSymbol, ColumnSeparatorSymbol),
+			)
 		}
 	}
 
@@ -308,10 +379,17 @@ func renderRowData(t *Table, rowData []string, totalColumns int) {
 // renderSeparator prints separator
 func renderSeparator(t *Table) {
 	if t.separator == "" {
-		t.separator = strings.Repeat(SeparatorSymbol, getSeparatorSize(t))
+		t.separator = strings.Repeat(strutil.Q(t.SeparatorSymbol, SeparatorSymbol), getSeparatorSize(t))
 	}
 
-	fmtc.Println("{s}" + t.separator + "{!}")
+	fmtc.Println(strutil.Q(t.SeparatorColorTag, SeparatorColorTag) + t.separator + "{!}")
+}
+
+// renderBorder renders table border
+func renderBorder(t *Table) {
+	border := strings.Repeat(strutil.Q(t.BorderSymbol, BorderSymbol), getSeparatorSize(t))
+
+	fmtc.Println(strutil.Q(t.BorderColorTag, BorderColorTag) + border + "{!}")
 }
 
 // convertSlice convert slice with any to slice with strings
@@ -345,7 +423,7 @@ func calculateColumnSizes(t *Table) {
 					continue
 				}
 
-				itemSizes := strutil.Len(fmtc.Clean(item))
+				itemSizes := strutil.LenVisual(fmtc.Clean(item))
 
 				if itemSizes > t.columnSizes[index] {
 					t.columnSizes[index] = itemSizes
@@ -356,7 +434,7 @@ func calculateColumnSizes(t *Table) {
 
 	if len(t.Headers) > 0 {
 		for index, header := range t.Headers {
-			headerSize := strutil.Len(header)
+			headerSize := strutil.LenVisual(header)
 
 			if headerSize > t.columnSizes[index] {
 				t.columnSizes[index] = headerSize
@@ -364,33 +442,35 @@ func calculateColumnSizes(t *Table) {
 		}
 	}
 
-	var fullSize int
+	tableWidth := getTableWidth(t)
 
-	windowWidth := getWindowWidth()
+	if tableWidth > 0 {
+		var fullSize int
 
-	for columnIndex, columnSize := range t.columnSizes {
-		if columnIndex+1 == totalColumns {
-			t.columnSizes[columnIndex] = ((windowWidth - fullSize) - (totalColumns * 3)) + 1
+		for columnIndex, columnSize := range t.columnSizes {
+			if columnIndex+1 == totalColumns {
+				t.columnSizes[columnIndex] = ((tableWidth - fullSize) - (totalColumns * 3)) + 1
+			}
+
+			fullSize += columnSize
 		}
-
-		fullSize += columnSize
 	}
 }
 
 // setColumnsSizes set columns sizes by number of columns
 func setColumnsSizes(t *Table, columns int) {
-	windowWidth := getWindowWidth()
+	tableWidth := getTableWidth(t)
 	t.columnSizes = make([]int, columns)
 
 	totalSize := 0
-	columnSize := (windowWidth / columns) - 3
+	columnSize := (tableWidth / columns) - 3
 
 	for index := range t.columnSizes {
 		t.columnSizes[index] = columnSize
 		totalSize += columnSize
 
 		if index+1 == columns {
-			if totalSize+(columns*3) < windowWidth {
+			if totalSize+(columns*3) < tableWidth {
 				t.columnSizes[index]++
 			}
 
@@ -429,9 +509,9 @@ func formatText(data string, size int, align uint8) string {
 	var dataSize int
 
 	if strings.Contains(data, "{") {
-		dataSize = strutil.Len(fmtc.Clean(data))
+		dataSize = strutil.LenVisual(fmtc.Clean(data))
 	} else {
-		dataSize = strutil.Len(data)
+		dataSize = strutil.LenVisual(data)
 	}
 
 	if dataSize >= size {
@@ -464,8 +544,10 @@ func getAlignment(t *Table, columnIndex int) uint8 {
 
 // getSeparatorSize return separator size based on size of all columns
 func getSeparatorSize(t *Table) int {
-	if len(t.columnSizes) == 0 {
-		return getWindowWidth()
+	tableWidth := getTableWidth(t)
+
+	if tableWidth > 0 {
+		return tableWidth
 	}
 
 	var size int
@@ -477,11 +559,15 @@ func getSeparatorSize(t *Table) int {
 	return size + (len(t.columnSizes) * 3) - 1
 }
 
-// getWindowWidth return window width
-func getWindowWidth() int {
-	if MaxWidth > 0 {
-		return mathutil.Between(MaxWidth, 80, 9999)
+// getTableWidth returns maximum width of table
+func getTableWidth(t *Table) int {
+	if t.Width > 0 {
+		return mathutil.Between(t.Width, 80, 9999)
 	}
 
-	return mathutil.Between(tty.GetWidth(), 80, 9999)
+	if t.FullScreen || len(t.columnSizes) == 0 {
+		return mathutil.Between(tty.GetWidth(), 80, 9999)
+	}
+
+	return 0
 }

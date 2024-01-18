@@ -1,5 +1,17 @@
 ## Changelog
 
+### 12.95.0
+
+* `[fmtutil/table]` Added table border symbol customization
+* `[fmtutil/table]` Added table border symbol color customization
+* `[fmtutil/table]` Added table separator symbol customization
+* `[fmtutil/table]` Added table separator symbol color customization
+* `[fmtutil/table]` Added table header color customization
+* `[fmtutil/table]` Added table options for hiding top and bottom borders
+* `[fmtutil/table]` Added data preprocessing feature using custom input processing function
+* `[fmtutil/table]` Improved data rendering
+* `[fmtutil/table]` Code refactoring
+
 ### 12.94.0
 
 * `[options]` Added method `Format`
