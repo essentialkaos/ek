@@ -561,7 +561,7 @@ func getSeparatorSize(t *Table) int {
 		size += columnSize
 	}
 
-	return size + (len(t.columnSizes) * 3) - 1
+	return size + (len(t.columnSizes) * 3) - 2
 }
 
 // getTableWidth returns maximum width of table

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.96.2
+
+* `[fmtutil/table]` Improved borders and separators rendering
+
 ### 12.96.1
 
 * `[terminal/tty]` Fixed bug in checking for TTY when stdin is a character device
