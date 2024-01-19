@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.96.1
+
+* `[terminal/tty]` Fixed bug in checking for TTY when stdin is not a character device
+
 ### 12.96.0
 
 * `[fmtutil/table]` Added global flag `FullScreen` for full screen table mode

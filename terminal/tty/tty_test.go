@@ -12,15 +12,22 @@ import (
 	"runtime"
 	"strconv"
 	"testing"
+	"time"
 
 	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Test(t *testing.T) { TestingT(t) }
-
 type TTYSuite struct{}
+
+type FakeInfo struct {
+	IsChar bool
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func Test(t *testing.T) { TestingT(t) }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -29,11 +36,15 @@ var _ = Suite(&TTYSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *TTYSuite) TestIsTTY(c *C) {
-	IsTTY()
+	stdout = &FakeInfo{true}
+	c.Assert(IsTTY(), Equals, true)
+	stdout = &FakeInfo{false}
+	c.Assert(IsTTY(), Equals, false)
 
 	os.Setenv("FAKETTY", "1")
 	c.Assert(IsFakeTTY(), Equals, true)
 	os.Setenv("FAKETTY", "")
+	c.Assert(IsFakeTTY(), Equals, false)
 }
 
 func (s *TTYSuite) TestIsTMUX(c *C) {
@@ -95,4 +106,20 @@ func (s *TTYSuite) TestErrors(c *C) {
 	c.Assert(h, Equals, -1)
 
 	tty = "/dev/tty"
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (f *FakeInfo) Name() string       { return "" }
+func (f *FakeInfo) Size() int64        { return 0 }
+func (f *FakeInfo) ModTime() time.Time { return time.Time{} }
+func (f *FakeInfo) IsDir() bool        { return false }
+func (f *FakeInfo) Sys() any           { return nil }
+
+func (f *FakeInfo) Mode() os.FileMode {
+	if f.IsChar {
+		return os.ModeCharDevice
+	}
+
+	return os.ModeSymlink
 }
