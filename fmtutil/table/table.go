@@ -74,7 +74,7 @@ type Table struct {
 	// HideBottomBorder is a flag for disabling bottom border rendering
 	HideBottomBorder bool
 
-	// FullScreen is a flag for fullscreen table
+	// FullScreen is a flag for full-screen table
 	FullScreen bool
 
 	// Processor is function used for processing and formatting input data
@@ -116,12 +116,16 @@ var SeparatorColorTag = "{s}"
 // ColumnSeparatorSymbol is default column separator symbol
 var ColumnSeparatorSymbol = "|"
 
+// FullScreen is a flag for full-screen table by default
+var FullScreen = true
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewTable creates new table struct
 func NewTable(headers ...string) *Table {
 	return &Table{
 		HeaderCapitalize: HeaderCapitalize,
+		FullScreen:       FullScreen,
 		Headers:          headers,
 		Processor:        convertSlice,
 	}
