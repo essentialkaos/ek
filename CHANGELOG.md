@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.96.0
+
+* `[fmtutil/table]` Added global flag `FullScreen` for full screen table mode
+* `[fmtutil/table]` Full-screen table mode enabled by default
+
 ### 12.95.0
 
 * `[fmtutil/table]` Added table border symbol customization
