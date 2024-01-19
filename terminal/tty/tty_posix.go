@@ -17,19 +17,13 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var stdin = os.Stdin
-var stdout = os.Stdout
+var stdout, _ = os.Stdout.Stat()
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // IsTTY returns true if current output device is TTY
 func IsTTY() bool {
-	si, _ := stdin.Stat()
-	so, _ := stdout.Stat()
-
-	if si.Mode()&os.ModeCharDevice != 0 &&
-		so.Mode()&os.ModeCharDevice == 0 &&
-		!IsFakeTTY() {
+	if stdout.Mode()&os.ModeCharDevice == 0 && !IsFakeTTY() {
 		return false
 	}
 
