@@ -3,6 +3,7 @@
 ### 12.96.1
 
 * `[terminal/tty]` Fixed bug in checking for TTY when stdin is a character device
+* `[terminal/tty]` Improved tests
 
 ### 12.96.0
 
