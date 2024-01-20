@@ -3,6 +3,7 @@
 ### 12.96.2
 
 * `[fmtutil/table]` Improved borders and separators rendering
+* `[usage]` Improved environment info output
 
 ### 12.96.1
 
