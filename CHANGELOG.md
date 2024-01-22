@@ -4,6 +4,7 @@
 
 * `[fmtutil/table]` Improved borders and separators rendering
 * `[usage]` Improved environment info output
+* `[spinner]` Improved message rendering
 
 ### 12.96.1
 
