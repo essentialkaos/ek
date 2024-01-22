@@ -1,4 +1,4 @@
-package passthru
+package passthru_test
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v12/fmtutil"
+	"github.com/essentialkaos/ek/v12/passthru"
 	"github.com/essentialkaos/ek/v12/path"
 	"github.com/essentialkaos/ek/v12/req"
 	"github.com/essentialkaos/ek/v12/spinner"
@@ -22,7 +23,7 @@ import (
 type DLSpinner struct {
 	file       string
 	lastUpdate time.Time
-	reader     *Reader
+	reader     *passthru.Reader
 }
 
 func Example() {
@@ -47,7 +48,7 @@ func Example() {
 		return
 	}
 
-	r := NewReader(resp.Body, resp.ContentLength)
+	r := passthru.NewReader(resp.Body, resp.ContentLength)
 	s := &DLSpinner{file: filename, reader: r}
 	s.reader.Update = s.Update
 

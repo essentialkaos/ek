@@ -100,17 +100,13 @@ func (r *Reader) Read(p []byte) (int, error) {
 
 	n, err := r.r.Read(p)
 
-	if err != nil {
-		return n, err
-	}
-
 	atomic.AddInt64(&r.current, int64(n))
 
-	if r.Update != nil {
+	if r.Update != nil && n > 0 {
 		r.Update(n)
 	}
 
-	return n, nil
+	return n, err
 }
 
 // Current returns read amount of data
@@ -195,17 +191,13 @@ func (w *Writer) Write(p []byte) (int, error) {
 
 	n, err := w.w.Write(p)
 
-	if err != nil {
-		return n, err
-	}
-
 	atomic.AddInt64(&w.current, int64(n))
 
-	if w.Update != nil {
+	if w.Update != nil && n > 0 {
 		w.Update(n)
 	}
 
-	return n, nil
+	return n, err
 }
 
 // Current returns written amount of data
