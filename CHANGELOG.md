@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.96.2
+### 12.97.0
 
+* `[passthru]` Added package with pass-thru reader and writer
 * `[fmtutil/table]` Improved borders and separators rendering
 * `[usage]` Improved environment info output
 * `[spinner]` Improved message rendering

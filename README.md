@@ -72,6 +72,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`netutil`](https://kaos.sh/g/ek.v12/netutil) — Package provides methods for working with network
 * [`options`](https://kaos.sh/g/ek.v12/options) — Package provides methods for working with command-line options
 * [`pager`](https://kaos.sh/g/ek.v12/pager) — Package provides methods for pager setup (more/less)
+* [`passthru`](https://kaos.sh/g/ek.v12/passthru) — Package provides Reader and Writer with information about the amount of data being passed
 * [`passwd`](https://kaos.sh/g/ek.v12/passwd) — Package contains methods for working with passwords
 * [`path`](https://kaos.sh/g/ek.v12/path) — Package for working with paths (fully compatible with base path package)
 * [`pid`](https://kaos.sh/g/ek.v12/pid) — Package for working with PID files
