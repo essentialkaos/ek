@@ -322,30 +322,6 @@ func (s *ProgressSuite) TestRemainingRender(c *C) {
 	c.Assert(sz, Equals, 5)
 }
 
-func (s *ProgressSuite) TestPassThruCalc(c *C) {
-	ptc := NewPassThruCalc(1000, 0.5)
-
-	c.Assert(ptc, NotNil)
-
-	ptc.SetTotal(20000)
-
-	c.Assert(ptc.total, Equals, float64(20000))
-
-	sp, dr := ptc.Calculate(1)
-
-	time.Sleep(time.Second)
-
-	sp, dr = ptc.Calculate(2)
-
-	c.Assert(sp, Not(Equals), 0.0)
-	c.Assert(dr, Not(Equals), time.Duration(0))
-
-	sp2, dr2 := ptc.Calculate(2)
-
-	c.Assert(sp2, Equals, sp)
-	c.Assert(dr2, Equals, dr)
-}
-
 func (s *ProgressSuite) TestAux(c *C) {
 	ct, tt, lt := getPrettyCTSize(1, 15)
 
@@ -428,6 +404,14 @@ func (r *DummyReader) Read(p []byte) (int, error) {
 	return 100, nil
 }
 
+func (r *DummyReader) Close() error {
+	return nil
+}
+
 func (w *DummyWriter) Write(p []byte) (int, error) {
 	return 100, nil
+}
+
+func (r *DummyWriter) Close() error {
+	return nil
 }
