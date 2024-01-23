@@ -148,10 +148,9 @@ func showSpinner() {
 
 	for {
 		mu.RLock()
-		fmtc.Printf(
-			spinnerColorTag+"%s  {!}"+desc+"… "+timeColorTag+"[%s]{!}",
-			spinnerFrames[i], timeutil.ShortDuration(time.Since(start)),
-		)
+		fmtc.Printf(spinnerColorTag+"%s  {!}", spinnerFrames[i])
+		fmtc.Print(desc + "… ")
+		fmtc.Printf(timeColorTag+"[%s]{!}", timeutil.ShortDuration(time.Since(start)))
 		mu.RUnlock()
 
 		i++
@@ -186,23 +185,17 @@ func stopSpinner(action uint8) {
 	switch action {
 	case _ACTION_ERROR:
 		errColorTag := strutil.B(fmtc.IsTag(ErrColorTag), ErrColorTag, "{r}")
-		fmtc.Printf(
-			errColorTag+ErrSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
-			timeutil.ShortDuration(time.Since(start), true),
-		)
+		fmtc.Printf(errColorTag + ErrSymbol + " {!}")
 	case _ACTION_SKIP:
 		skipColorTag := strutil.B(fmtc.IsTag(SkipColorTag), SkipColorTag, "{s-}")
-		fmtc.Printf(
-			skipColorTag+SkipSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
-			timeutil.ShortDuration(time.Since(start), true),
-		)
+		fmtc.Printf(skipColorTag + SkipSymbol + " {!}")
 	default:
 		okColorTag := strutil.B(fmtc.IsTag(OkColorTag), OkColorTag, "{g}")
-		fmtc.Printf(
-			okColorTag+OkSymbol+" {!}"+desc+" "+timeColorTag+"(%s){!}\n",
-			timeutil.ShortDuration(time.Since(start), true),
-		)
+		fmtc.Printf(okColorTag + OkSymbol + " {!}")
 	}
+
+	fmtc.Print(desc + " ")
+	fmtc.Printf(timeColorTag+"(%s){!}\n", timeutil.ShortDuration(time.Since(start), true))
 
 	mu.RUnlock()
 

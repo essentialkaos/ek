@@ -21,6 +21,7 @@ import (
 	"github.com/essentialkaos/ek/v12/fmtc"
 	"github.com/essentialkaos/ek/v12/fmtutil"
 	"github.com/essentialkaos/ek/v12/mathutil"
+	"github.com/essentialkaos/ek/v12/passthru"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -54,11 +55,11 @@ type Bar struct {
 	buffer string
 
 	ticker       *time.Ticker
-	passThruCalc *PassThruCalc
+	passThruCalc *passthru.Calculator
 	phCounter    int
 
-	reader *passThruReader
-	writer *passThruWriter
+	reader *passthru.Reader
+	writer *passthru.Writer
 
 	mu *sync.RWMutex
 }
@@ -87,18 +88,6 @@ type Settings struct {
 	WindowSizeSec int64 // Window size for passtru reader
 
 	IsSize bool
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-type passThruReader struct {
-	io.Reader
-	bar *Bar
-}
-
-type passThruWriter struct {
-	io.Writer
-	bar *Bar
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -161,7 +150,7 @@ func (b *Bar) Start() error {
 	b.ticker = time.NewTicker(b.settings.RefreshRate)
 
 	if b.total > 0 {
-		b.passThruCalc = NewPassThruCalc(
+		b.passThruCalc = passthru.NewCalculator(
 			b.total, math.Max(1.0, float64(b.settings.WindowSizeSec)),
 		)
 	}
@@ -243,7 +232,7 @@ func (b *Bar) SetTotal(v int64) {
 	b.mu.Lock()
 
 	if b.passThruCalc == nil {
-		b.passThruCalc = NewPassThruCalc(
+		b.passThruCalc = passthru.NewCalculator(
 			v, math.Max(1.0, float64(b.settings.WindowSizeSec)),
 		)
 	} else {
@@ -321,40 +310,30 @@ func (b *Bar) IsStarted() bool {
 	return b.started
 }
 
-// Reader creates and returns pass thru proxy reader
-func (b *Bar) Reader(r io.Reader) io.Reader {
+// Reader creates and returns pass thru-proxy reader
+func (b *Bar) Reader(r io.ReadCloser) io.ReadCloser {
 	if b == nil {
 		return nil
 	}
 
-	if b.reader != nil {
-		b.reader.Reader = r
-	} else {
-		b.reader = &passThruReader{
-			Reader: r,
-			bar:    b,
-		}
-	}
+	pr := passthru.NewReader(r, b.total)
+	pr.Update = b.Add
+	b.reader = pr
 
-	return b.reader
+	return pr
 }
 
-// Writer creates and returns pass thru proxy reader
-func (b *Bar) Writer(w io.Writer) io.Writer {
+// Writer creates and returns pass-thru proxy reader
+func (b *Bar) Writer(w io.WriteCloser) io.WriteCloser {
 	if b == nil {
 		return nil
 	}
 
-	if b.writer != nil {
-		b.writer.Writer = w
-	} else {
-		b.writer = &passThruWriter{
-			Writer: w,
-			bar:    b,
-		}
-	}
+	pw := passthru.NewWriter(w, b.total)
+	pw.Update = b.Add
+	b.writer = pw
 
-	return b.writer
+	return pw
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -675,30 +654,6 @@ func (s Settings) Validate() error {
 	}
 
 	return nil
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Read reads data and updates progress bar
-func (r *passThruReader) Read(p []byte) (int, error) {
-	n, err := r.Reader.Read(p)
-
-	if n > 0 {
-		r.bar.Add(n)
-	}
-
-	return n, err
-}
-
-// Write writes data and updates progress bar
-func (w *passThruWriter) Write(p []byte) (int, error) {
-	n, err := w.Writer.Write(p)
-
-	if n > 0 {
-		w.bar.Add(n)
-	}
-
-	return n, err
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

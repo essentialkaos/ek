@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.97.0
+
+* `[passthru]` Added package with pass-thru reader and writer
+* `[progress]` Migrate to `passthru` package
+* `[fmtutil/table]` Improved borders and separators rendering
+* `[usage]` Improved environment info output
+* `[spinner]` Improved message rendering
+
 ### 12.96.1
 
 * `[terminal/tty]` Fixed bug in checking for TTY when stdin is a character device

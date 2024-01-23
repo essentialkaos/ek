@@ -533,9 +533,9 @@ func (a *About) Print(infoType ...string) {
 
 		for i, env := range a.Environment {
 			if len(a.Environment) != i+1 {
-				fmtc.Printf("{s-}├ %s: %s{!}\n", env.Name, env.Version)
+				fmtc.Printf("{s-}├ %s: %s{!}\n", env.Name, strutil.Q(env.Version, "—"))
 			} else {
-				fmtc.Printf("{s-}└ %s: %s{!}\n", env.Name, env.Version)
+				fmtc.Printf("{s-}└ %s: %s{!}\n", env.Name, strutil.Q(env.Version, "—"))
 			}
 		}
 	}
