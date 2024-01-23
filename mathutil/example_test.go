@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package mathutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +8,53 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.98.0"
+func ExampleBetween() {
+	fmt.Println(Between(10, 1, 5))
+	fmt.Println(Between(-3, 1, 5))
+	fmt.Println(Between(4, 1, 5))
+	// Output:
+	// 5
+	// 1
+	// 4
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+func ExampleMin() {
+	fmt.Println(Min(1, 10))
+	fmt.Println(Min(3, -3))
+	// Output:
+	// 1
+	// -3
+}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func ExampleMax() {
+	fmt.Println(Max(1, 10))
+	fmt.Println(Max(3, -3))
+	// Output:
+	// 10
+	// 3
+}
+
+func ExampleAbs() {
+	fmt.Println(Abs(10))
+	fmt.Println(Abs(-10))
+	// Output:
+	// 10
+	// 10
+}
+
+func ExamplePerc() {
+	fmt.Printf("%g%%\n", Perc(180, 600))
+	// Output:
+	// 30%
+}
+
+func ExampleRound() {
+	fmt.Println(Round(3.14159, 2))
+	// Output:
+	// 3.14
 }

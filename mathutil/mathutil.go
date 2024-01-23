@@ -56,6 +56,37 @@ func Max[N Numeric](val1, val2 N) N {
 	return val2
 }
 
+// Abs returns absolute value
+func Abs[N NumericNeg](val N) N {
+	if val < 0 {
+		return val * -1
+	}
+
+	return val
+}
+
+// Perc calculates percentage
+func Perc[N Numeric](val1, val2 N) float64 {
+	if val2 == 0 {
+		return 0
+	}
+
+	return float64(val1) / float64(val2) * 100.0
+}
+
+// Round returns rounded value
+func Round(v float64, p int) float64 {
+	pow := math.Pow(10, float64(p))
+	digit := pow * v
+	_, div := math.Modf(digit)
+
+	if div >= 0.5 {
+		return math.Ceil(digit) / pow
+	}
+
+	return math.Floor(digit) / pow
+}
+
 // BetweenU returns value between min and max values
 //
 // Deprecated: Use method Between instead
@@ -264,15 +295,6 @@ func BetweenF64(val, min, max float64) float64 {
 	return Between(val, min, max)
 }
 
-// Abs returns absolute value
-func Abs[N NumericNeg](val N) N {
-	if val < 0 {
-		return val * -1
-	}
-
-	return val
-}
-
 // Abs8 returns absolute value
 //
 // Deprecated: Use method Abs instead
@@ -320,19 +342,6 @@ func AbsF32(val float32) float32 {
 // Deprecated: Use method Abs instead
 func AbsF64(val float64) float64 {
 	return Abs(val)
-}
-
-// Round returns rounded value
-func Round(v float64, p int) float64 {
-	pow := math.Pow(10, float64(p))
-	digit := pow * v
-	_, div := math.Modf(digit)
-
-	if div >= 0.5 {
-		return math.Ceil(digit) / pow
-	}
-
-	return math.Floor(digit) / pow
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

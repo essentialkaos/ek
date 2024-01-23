@@ -75,7 +75,7 @@ func PrettyNum(i any, separator ...string) string {
 	}
 
 	switch v := i.(type) {
-	case int, int32, int64, uint, uint32, uint64:
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
 		str = fmt.Sprintf("%d", v)
 
 		return appendPrettySymbol(str, sep)
@@ -115,33 +115,14 @@ func PrettyPerc(i float64) string {
 }
 
 // PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
-func PrettySize(i any, separator ...string) string {
-	var f float64
-
+func PrettySize[N mathutil.Numeric](i N, separator ...string) string {
 	sep := SizeSeparator
 
 	if len(separator) > 0 {
 		sep = separator[0]
 	}
 
-	switch u := i.(type) {
-	case int:
-		f = float64(u)
-	case int32:
-		f = float64(u)
-	case int64:
-		f = float64(u)
-	case uint:
-		f = float64(u)
-	case uint32:
-		f = float64(u)
-	case uint64:
-		f = float64(u)
-	case float32:
-		f = float64(u)
-	case float64:
-		f = i.(float64)
-	}
+	f := float64(i)
 
 	if math.IsNaN(f) {
 		return "0" + sep + "B"

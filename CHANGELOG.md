@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.98.0
+
+* `[mathutil]` Added method `Perc`
+* `[system]` Added methods `MemUsage.MemUsedPerc` and `MemUsage.SwapUsedPerc`
+* `[fmtutil]` Code refactoring
+* `[fmtutil/table]` Improved tests
+* `[mathutil]` Added usage examples
+
 ### 12.97.0
 
 * `[passthru]` Added package with pass-thru reader and writer

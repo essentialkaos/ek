@@ -164,4 +164,9 @@ func (s *TableSuite) TestAuxi(c *C) {
 	renderRowData(t, []string{"ABCDABCDABCD", "ABCDABCDABCD"}, 2)
 
 	setColumnsSizes(t, 3)
+
+	t = &Table{columnSizes: []int{3, 3, 3}}
+
+	c.Assert(getTableWidth(t), Equals, 0)
+	c.Assert(getSeparatorSize(t), Equals, 16)
 }

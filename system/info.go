@@ -178,6 +178,28 @@ func (i *OSInfo) ColoredName() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// MemUsedPerc returns memory usage as a percentage of the total amount of physical
+// memory
+func (m *MemUsage) MemUsedPerc() float64 {
+	if m == nil {
+		return 0
+	}
+
+	return (float64(m.MemUsed) / float64(m.MemTotal)) * 100.0
+}
+
+// SwapUsedPerc returns swap usage as a percentage of the total amount of swap
+// memory
+func (m *MemUsage) SwapUsedPerc() float64 {
+	if m == nil || m.SwapTotal == 0 {
+		return 0
+	}
+
+	return (float64(m.SwapUsed) / float64(m.SwapTotal)) * 100.0
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // getFileScanner opens file and creates scanner for reading text files line by line
 func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
 	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
