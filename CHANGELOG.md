@@ -5,6 +5,7 @@
 * `[mathutil]` Added method `Perc`
 * `[system]` Added methods `MemUsage.MemUsedPerc` and `MemUsage.SwapUsedPerc`
 * `[fmtutil]` Code refactoring
+* `[fmtutil/table]` Improved tests
 * `[mathutil]` Added usage examples
 
 ### 12.97.0
