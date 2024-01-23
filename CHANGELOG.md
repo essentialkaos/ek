@@ -3,6 +3,7 @@
 ### 12.98.0
 
 * `[system]` Added methods `MemUsage.MemUsedPerc` and `MemUsage.SwapUsedPerc`
+* `[fmtutil]` Code refactoring
 
 ### 12.97.0
 
