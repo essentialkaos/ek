@@ -331,7 +331,7 @@ func renderHeaders(t *Table) {
 		}
 	}
 
-	renderSeparator(t)
+	renderBorder(t)
 }
 
 // renderData render table data
