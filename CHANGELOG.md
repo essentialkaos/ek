@@ -2,8 +2,10 @@
 
 ### 12.98.0
 
+* `[mathutil]` Added method `Perc`
 * `[system]` Added methods `MemUsage.MemUsedPerc` and `MemUsage.SwapUsedPerc`
 * `[fmtutil]` Code refactoring
+* `[mathutil]` Added usage examples
 
 ### 12.97.0
 

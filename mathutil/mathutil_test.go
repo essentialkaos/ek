@@ -177,3 +177,11 @@ func (s *MathUtilSuite) TestRound(c *C) {
 	c.Assert(Round(5.50, 0), Equals, 6.0)
 	c.Assert(Round(5.51, 0), Equals, 6.0)
 }
+
+func (s *MathUtilSuite) TestPerc(c *C) {
+	c.Assert(Perc(0, 0), Equals, 0.0)
+	c.Assert(Perc(0, 100), Equals, 0.0)
+	c.Assert(Perc(25, 100), Equals, 25.0)
+	c.Assert(Perc(100, 100), Equals, 100.0)
+	c.Assert(Perc(200, 100), Equals, 200.0)
+}
