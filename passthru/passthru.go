@@ -42,7 +42,7 @@ type Writer struct {
 	isClosed *atomic.Bool
 }
 
-// Calculator calcluates pass-thru speed and remaining time
+// Calculator calculates pass-thru speed and remaining time
 type Calculator struct {
 	total      float64
 	prev       float64
