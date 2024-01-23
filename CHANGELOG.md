@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.98.0
+
+* `[system]` Added methods `MemUsage.MemUsedPerc` and `MemUsage.SwapUsedPerc`
+
 ### 12.97.0
 
 * `[passthru]` Added package with pass-thru reader and writer

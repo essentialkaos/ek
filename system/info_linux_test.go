@@ -286,6 +286,14 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 	c.Assert(mem.Slab, Equals, uint64(1024*3021828))
 	c.Assert(mem.SReclaimable, Equals, uint64(1024*2789624))
 
+	mem.MemTotal = 32 * 1024 * 1024 * 1024
+	mem.MemUsed = 8 * 1024 * 1024 * 1024
+	mem.SwapTotal = 16 * 1024 * 1024 * 1024
+	mem.SwapUsed = 4 * 1024 * 1024 * 1024
+
+	c.Assert(mem.MemUsedPerc(), Equals, 25.0)
+	c.Assert(mem.SwapUsedPerc(), Equals, 25.0)
+
 	procMemInfoFile = "/_unknown_"
 
 	mem, err = GetMemUsage()
