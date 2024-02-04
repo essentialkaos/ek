@@ -5,6 +5,7 @@
 * `[knf]` Add method `Parse`
 * `[knf]` Add method `Config.Merge`
 * `[knf]` Code refactoring
+* `[knf]` Improved usage examples
 
 ### 12.98.0
 
