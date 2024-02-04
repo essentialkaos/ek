@@ -211,9 +211,19 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.DeepEquals, ErrFileNotSet)
+	c.Assert(err, check.DeepEquals, ErrCantReload)
 
 	config = &Config{file: "/_not_exists_", mx: &sync.RWMutex{}}
+
+	updated, err = config.Reload()
+
+	c.Assert(updated, check.IsNil)
+	c.Assert(err, check.NotNil)
+
+	config, err = Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(config, check.NotNil)
 
 	updated, err = config.Reload()
 
@@ -231,6 +241,11 @@ func (s *KNFSuite) TestParsing(c *check.C) {
 
 	c.Assert(err, check.IsNil)
 	c.Assert(global.File(), check.Equals, s.ConfigPath)
+
+	config, err := Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(config, check.NotNil)
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {

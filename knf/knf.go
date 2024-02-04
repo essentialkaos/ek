@@ -9,6 +9,7 @@ package knf
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"errors"
 	"os"
 	"path"
@@ -47,7 +48,7 @@ type DurationMod int64
 
 var (
 	ErrNilConfig  = errors.New("Config is nil")
-	ErrFileNotSet = errors.New("Path to config file is empty (non initialized struct?)")
+	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -100,6 +101,12 @@ func Read(file string) (*Config, error) {
 	config.file = file
 
 	return config, nil
+}
+
+// Parse parses data with KNF configuration
+func Parse(data []byte) (*Config, error) {
+	buf := bytes.NewBuffer(data)
+	return readData(buf)
 }
 
 // Reload reloads global configuration file
@@ -292,7 +299,7 @@ func (c *Config) Reload() (map[string]bool, error) {
 	}
 
 	if c.file == "" {
-		return nil, ErrFileNotSet
+		return nil, ErrCantReload
 	}
 
 	nc, err := Read(c.file)

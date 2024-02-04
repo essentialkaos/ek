@@ -2,6 +2,7 @@
 
 ### 12.99.0
 
+* `[knf]` Add method `Parse`
 * `[knf]` Code refactoring
 
 ### 12.98.0
