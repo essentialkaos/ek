@@ -68,7 +68,23 @@ func ExampleRead() {
 		return
 	}
 
-	fmt.Printf("Value from config: %s\n", cfg.GetS("section:string"))
+	fmt.Printf("Value from config: %s\n", cfg.GetS("service:user"))
+}
+
+func ExampleParse() {
+	cfg, err := Parse([]byte(`
+[service]
+	user: john
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %s\n", cfg.GetS("service:user"))
+	// Output:
+	// Value from config: john
 }
 
 func ExampleReload() {
@@ -100,7 +116,18 @@ func ExampleGetS() {
 		return
 	}
 
-	fmt.Printf("String value from config: %s\n", GetS("section:string"))
+	fmt.Printf("Value from config: %s\n", GetS("user:name"))
+}
+
+func ExampleGetB() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %t\n", GetB("user:is-admin"))
 }
 
 func ExampleGetI() {
@@ -111,7 +138,7 @@ func ExampleGetI() {
 		return
 	}
 
-	fmt.Printf("Integer (int) value from config: %d\n", GetI("section:int"))
+	fmt.Printf("Value from config: %d\n", GetI("user:uid"))
 }
 
 func ExampleGetI64() {
@@ -122,7 +149,7 @@ func ExampleGetI64() {
 		return
 	}
 
-	fmt.Printf("Integer (int64) value from config: %d\n", GetI64("section:int64"))
+	fmt.Printf("Value from config: %d\n", GetI64("user:uid"))
 }
 
 func ExampleGetU() {
@@ -133,7 +160,7 @@ func ExampleGetU() {
 		return
 	}
 
-	fmt.Printf("Integer (uint) value from config: %d\n", GetU("section:uint"))
+	fmt.Printf("Value from config: %d\n", GetU("user:uid"))
 }
 
 func ExampleGetU64() {
@@ -144,7 +171,7 @@ func ExampleGetU64() {
 		return
 	}
 
-	fmt.Printf("Integer (uint64) value from config: %d\n", GetU64("section:uint64"))
+	fmt.Printf("Value from config: %d\n", GetU64("user:uid"))
 }
 
 func ExampleGetF() {
@@ -155,7 +182,7 @@ func ExampleGetF() {
 		return
 	}
 
-	fmt.Printf("Floating number value from config: %g\n", GetF("section:float"))
+	fmt.Printf("Value from config: %g\n", GetF("user:priority"))
 }
 
 func ExampleGetM() {
@@ -166,7 +193,7 @@ func ExampleGetM() {
 		return
 	}
 
-	fmt.Printf("File mode value from config: %v\n", GetM("section:file-mode"))
+	fmt.Printf("Value from config: %v\n", GetF("user:default-mode"))
 }
 
 func ExampleGetD() {
@@ -177,8 +204,7 @@ func ExampleGetD() {
 		return
 	}
 
-	fmt.Printf("Duration value from config (as seconds): %v\n", GetD("section:duration", Second))
-	fmt.Printf("Duration value from config (as minutes): %v\n", GetD("section:duration", Minute))
+	fmt.Printf("Value from config: %v\n", GetD("user:timeout", Minute))
 }
 
 func ExampleIs() {
@@ -189,9 +215,8 @@ func ExampleIs() {
 		return
 	}
 
-	fmt.Printf("String value from config equals \"test\": %t\n", Is("section:string", "test"))
-	fmt.Printf("Integer value from config equals \"123\": %t\n", Is("section:int", 123))
-	fmt.Printf("Floating number value from config equals \"12.34\": %t\n", Is("section:float", 12.34))
+	fmt.Printf("user.name == bob: %t\n", Is("user:name", "bob"))
+	fmt.Printf("user.uid == 512: %t\n", Is("user:uid", 512))
 }
 
 func ExampleHasSection() {
@@ -203,6 +228,7 @@ func ExampleHasSection() {
 	}
 
 	fmt.Printf("Is section \"main\" exist: %t\n", HasSection("main"))
+	fmt.Printf("Is section \"user\" exist: %t\n", HasSection("user"))
 }
 
 func ExampleHasProp() {
@@ -213,7 +239,8 @@ func ExampleHasProp() {
 		return
 	}
 
-	fmt.Printf("Is property \"section:string\" exist: %t\n", HasProp("section:string"))
+	fmt.Printf("Is property \"user:name\" exist: %t\n", HasProp("user:name"))
+	fmt.Printf("Is property \"user:path\" exist: %t\n", HasProp("user:path"))
 }
 
 func ExampleSections() {
@@ -225,7 +252,7 @@ func ExampleSections() {
 	}
 
 	for index, section := range Sections() {
-		fmt.Printf("%d: %s\n", index, section)
+		fmt.Printf("%d: %s\n", index+1, section)
 	}
 }
 
@@ -237,9 +264,36 @@ func ExampleProps() {
 		return
 	}
 
-	for index, prop := range Props("section") {
-		fmt.Printf("%d: %s\n", index, prop)
+	for index, prop := range Props("user") {
+		fmt.Printf("%d: %s\n", index+1, prop)
 	}
+}
+
+func ExampleConfig_Merge() {
+	cfg1, _ := Parse([]byte(`
+[service]
+	user: john
+`))
+
+	cfg2, _ := Parse([]byte(`
+[service]
+	user: bob
+`))
+
+	fmt.Printf("Value from config (before merge): %s\n", cfg1.GetS("service:user"))
+
+	err := cfg1.Merge(cfg2)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config (after merge): %s\n", cfg1.GetS("service:user"))
+
+	// Output:
+	// Value from config (before merge): john
+	// Value from config (after merge): bob
 }
 
 func ExampleConfig_Reload() {
@@ -264,109 +318,237 @@ func ExampleConfig_Reload() {
 }
 
 func ExampleConfig_GetS() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("String value from config: %s\n", cfg.GetS("section:string"))
+	fmt.Printf("Value from config: %s\n", cfg.GetS("user:name"))
+
+	// Output:
+	// Value from config: john
+}
+
+func ExampleConfig_GetB() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %t\n", cfg.GetB("user:is-admin"))
+
+	// Output:
+	// Value from config: true
 }
 
 func ExampleConfig_GetI() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Integer (int) value from config: %d\n", cfg.GetI("section:int"))
+	fmt.Printf("Value from config: %d\n", cfg.GetI("user:uid"))
+
+	// Output:
+	// Value from config: 512
 }
 
 func ExampleConfig_GetI64() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Integer (int64) value from config: %d\n", cfg.GetI64("section:int64"))
+	fmt.Printf("Value from config: %d\n", cfg.GetI64("user:uid"))
+
+	// Output:
+	// Value from config: 512
 }
 
 func ExampleConfig_GetU() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Integer (uint) value from config: %d\n", cfg.GetU("section:uint"))
+	fmt.Printf("Value from config: %d\n", cfg.GetU("user:uid"))
+
+	// Output:
+	// Value from config: 512
 }
 
 func ExampleConfig_GetU64() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Integer (uint64) value from config: %d\n", cfg.GetU64("section:uint64"))
+	fmt.Printf("Value from config: %d\n", cfg.GetU64("user:uid"))
+
+	// Output:
+	// Value from config: 512
 }
 
 func ExampleConfig_GetF() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Floating number value from config: %g\n", cfg.GetF("section:float"))
+	fmt.Printf("Value from config: %g\n", cfg.GetF("user:priority"))
+
+	// Output:
+	// Value from config: 3.7
 }
 
 func ExampleConfig_GetM() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("File mode value from config: %v\n", cfg.GetM("section:file-mode"))
+	fmt.Printf("Value from config: %v\n", cfg.GetF("user:default-mode"))
+
+	// Output:
+	// Value from config: 644
 }
 
 func ExampleConfig_GetD() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Duration value from config (as seconds): %v\n", cfg.GetD("section:duration", Second))
-	fmt.Printf("Duration value from config (as minutes): %v\n", cfg.GetD("section:duration", Minute))
+	fmt.Printf("Value from config: %v\n", cfg.GetD("user:timeout", Minute))
+
+	// Output:
+	// Value from config: 5m0s
 }
 
 func ExampleConfig_Is() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("String value from config equals \"test\": %t\n", cfg.Is("section:string", "test"))
-	fmt.Printf("Integer value from config equals \"123\": %t\n", cfg.Is("section:int", 123))
-	fmt.Printf("Floating number value from config equals \"12.34\": %t\n", cfg.Is("section:float", 12.34))
+	fmt.Printf("user.name == bob: %t\n", cfg.Is("user:name", "bob"))
+	fmt.Printf("user.uid == 512: %t\n", cfg.Is("user:uid", 512))
+
+	// Output:
+	// user.name == bob: false
+	// user.uid == 512: true
 }
 
 func ExampleConfig_HasSection() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -374,21 +556,50 @@ func ExampleConfig_HasSection() {
 	}
 
 	fmt.Printf("Is section \"main\" exist: %t\n", cfg.HasSection("main"))
+	fmt.Printf("Is section \"user\" exist: %t\n", cfg.HasSection("user"))
+
+	// Output:
+	// Is section "main" exist: false
+	// Is section "user" exist: true
 }
 
 func ExampleConfig_HasProp() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Is property \"section:string\" exist: %t\n", cfg.HasProp("section:string"))
+	fmt.Printf("Is property \"user:name\" exist: %t\n", cfg.HasProp("user:name"))
+	fmt.Printf("Is property \"user:path\" exist: %t\n", cfg.HasProp("user:path"))
+
+	// Output:
+	// Is property "user:name" exist: true
+	// Is property "user:path" exist: false
 }
 
 func ExampleConfig_Sections() {
-	cfg, err := Read("/path/to/your/config.knf")
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+
+[log]
+	file: /var/log/app/app.log
+`))
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -396,11 +607,44 @@ func ExampleConfig_Sections() {
 	}
 
 	for index, section := range cfg.Sections() {
-		fmt.Printf("%d: %s\n", index, section)
+		fmt.Printf("%d: %s\n", index+1, section)
 	}
+
+	// Output:
+	// 1: user
+	// 2: log
 }
 
 func ExampleConfig_Props() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 5
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	for index, prop := range cfg.Props("user") {
+		fmt.Printf("%d: %s\n", index+1, prop)
+	}
+
+	// Output:
+	// 1: name
+	// 2: uid
+	// 3: is-admin
+	// 4: priority
+	// 5: default-mode
+	// 6: timeout
+}
+
+func ExampleConfig_File() {
 	cfg, err := Read("/path/to/your/config.knf")
 
 	if err != nil {
@@ -408,7 +652,5 @@ func ExampleConfig_Props() {
 		return
 	}
 
-	for index, prop := range cfg.Props("section") {
-		fmt.Printf("%d: %s\n", index, prop)
-	}
+	fmt.Printf("Path to config: %s\n", cfg.File())
 }
