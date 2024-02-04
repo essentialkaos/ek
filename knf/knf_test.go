@@ -519,8 +519,8 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 		ABCD
 	`)
 
-	_, err := readKNFData(r)
-	c.Assert(err.Error(), check.Equals, "Error at line 3: Property must have \":\" as a delimiter")
+	_, err := readData(r)
+	c.Assert(err.Error(), check.Equals, `Error at line 3: Property must have ":" as a delimiter`)
 
 	r = strings.NewReader(`
 		[section]
@@ -528,14 +528,14 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 		A: 2
 	`)
 
-	_, err = readKNFData(r)
-	c.Assert(err.Error(), check.Equals, "Error at line 4: Property \"A\" defined more than once")
+	_, err = readData(r)
+	c.Assert(err.Error(), check.Equals, `Error at line 4: Property "A" defined more than once`)
 
 	r = strings.NewReader(`
 		[section]
 		A: {abcd:test}
 	`)
 
-	_, err = readKNFData(r)
+	_, err = readData(r)
 	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
 }

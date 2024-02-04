@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.99.0
+
+* `[knf]` Code refactoring
+
 ### 12.98.0
 
 * `[mathutil]` Added method `Perc`

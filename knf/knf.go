@@ -11,6 +11,7 @@ package knf
 import (
 	"errors"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -82,7 +83,23 @@ func Global(file string) error {
 
 // Read reads and parses configuration file
 func Read(file string) (*Config, error) {
-	return readKNFFile(file)
+	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	config, err := readData(fd)
+
+	if err != nil {
+		return nil, err
+	}
+
+	config.file = file
+
+	return config, nil
 }
 
 // Reload reloads global configuration file
@@ -597,7 +614,7 @@ func (c *Config) Props(section string) []string {
 			continue
 		}
 
-		if prop[:snLength] == section+_PROP_DELIMITER {
+		if prop[:snLength] == section+_SYMBOL_DELIMITER {
 			result = append(result, prop[snLength:])
 		}
 	}
