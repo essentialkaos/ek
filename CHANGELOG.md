@@ -3,6 +3,7 @@
 ### 12.99.0
 
 * `[knf]` Add method `Parse`
+* `[knf]` Add method `Config.Merge`
 * `[knf]` Code refactoring
 
 ### 12.98.0

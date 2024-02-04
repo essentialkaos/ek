@@ -275,6 +275,10 @@ func (s *KNFSuite) TestMerging(c *check.C) {
 	err = c1.Merge(c2)
 
 	c.Assert(err, check.IsNil)
+
+	c.Assert(c1.GetS("string:test1"), check.Equals, "test-new")
+	c.Assert(c1.GetB("boolean:test1"), check.Equals, false)
+	c.Assert(c1.GetS("extra:test1"), check.Equals, "extra-data")
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {
