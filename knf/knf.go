@@ -49,6 +49,7 @@ type DurationMod int64
 var (
 	ErrNilConfig  = errors.New("Config is nil")
 	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
+	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -291,6 +292,45 @@ func Validate(validators []*Validator) []error {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Merge merges two configurations
+func (c *Config) Merge(cfg *Config) error {
+	if c == nil || c.mx == nil {
+		return ErrNilConfig
+	}
+
+	if cfg == nil || cfg.mx == nil {
+		return ErrCantMerge
+	}
+
+	for k, v := range cfg.data {
+		c.data[k] = v
+	}
+
+SECTION_LOOP:
+	for _, ss := range cfg.sections {
+		for _, ts := range c.sections {
+			if ss == ts {
+				continue SECTION_LOOP
+			}
+		}
+
+		c.sections = append(c.sections, ss)
+	}
+
+PROP_LOOP:
+	for _, sp := range cfg.props {
+		for _, tp := range c.props {
+			if sp == tp {
+				continue PROP_LOOP
+			}
+		}
+
+		c.props = append(c.props, sp)
+	}
+
+	return nil
+}
 
 // Reload reloads configuration file
 func (c *Config) Reload() (map[string]bool, error) {

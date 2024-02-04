@@ -85,6 +85,17 @@ test1:      1
   t: 1
 `
 
+const _MERGE_DATA = `
+[string]
+  test1: test-new
+
+[boolean]
+  test1: false
+
+[extra]
+	test1: extra-data
+`
+
 const _CONFIG_MALF_DATA = `
   test1: 123
   test2: 111
@@ -191,6 +202,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
 	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(global.Merge(nil), check.NotNil)
 
 	config := &Config{mx: &sync.RWMutex{}}
 
@@ -206,6 +218,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.Sections(), check.HasLen, 0)
 	c.Assert(config.Props("test"), check.HasLen, 0)
 	c.Assert(config.Validate([]*Validator{}), check.HasLen, 0)
+	c.Assert(config.Merge(nil), check.NotNil)
 
 	updated, err = config.Reload()
 
@@ -246,6 +259,22 @@ func (s *KNFSuite) TestParsing(c *check.C) {
 
 	c.Assert(err, check.IsNil)
 	c.Assert(config, check.NotNil)
+}
+
+func (s *KNFSuite) TestMerging(c *check.C) {
+	c1, err := Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(c1, check.NotNil)
+
+	c2, err := Parse([]byte(_MERGE_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(c2, check.NotNil)
+
+	err = c1.Merge(c2)
+
+	c.Assert(err, check.IsNil)
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {
