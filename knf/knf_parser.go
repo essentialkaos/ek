@@ -11,8 +11,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"os"
-	"path"
 	"regexp"
 	"strings"
 	"sync"
@@ -21,12 +19,12 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_COMMENT_SYMBOL       = "#"
-	_SECTION_START_SYMBOL = "["
-	_SECTION_END_SYMBOL   = "["
-	_PROP_DELIMITER       = ":"
-	_MACRO_START_SYMBOL   = "{"
-	_MACRO_END_SYMBOL     = "}"
+	_SYMBOL_COMMENT       = "#"
+	_SYMBOL_SECTION_START = "["
+	_SYMBOL_SECTION_END   = "["
+	_SYMBOL_DELIMITER     = ":"
+	_SYMBOL_MACRO_START   = "{"
+	_SYMBOL_MACRO_END     = "}"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,32 +34,8 @@ var macroRE = regexp.MustCompile(`\{([\w\-]+):([\w\-]+)\}`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// readKNFFile reads KNF file
-func readKNFFile(file string) (*Config, error) {
-	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer fd.Close()
-
-	config, err := readKNFData(fd)
-
-	if err != nil {
-		return nil, err
-	}
-
-	config.file = file
-
-	return config, nil
-}
-
-// readKNFData reads data from given reader
-func readKNFData(r io.Reader) (*Config, error) {
-	reader := bufio.NewReader(r)
-	scanner := bufio.NewScanner(reader)
-
+// readData reads data from given reader
+func readData(r io.Reader) (*Config, error) {
 	config := &Config{
 		data: make(map[string]string),
 		mx:   &sync.RWMutex{},
@@ -71,18 +45,20 @@ func readKNFData(r io.Reader) (*Config, error) {
 	var section string
 	var lineNum int
 
+	scanner := bufio.NewScanner(r)
+
 	for scanner.Scan() {
 		line := strings.Trim(scanner.Text(), " \t")
 		lineNum++
 
-		if line == "" || strings.HasPrefix(line, _COMMENT_SYMBOL) {
+		if line == "" || strings.HasPrefix(line, _SYMBOL_COMMENT) {
 			continue
 		}
 
 		isDataRead = true
 
-		if strings.HasPrefix(line, _SECTION_START_SYMBOL) &&
-			strings.HasPrefix(line, _SECTION_END_SYMBOL) {
+		if strings.HasPrefix(line, _SYMBOL_SECTION_START) &&
+			strings.HasPrefix(line, _SYMBOL_SECTION_END) {
 			section = strings.Trim(line, "[]")
 			config.data[strings.ToLower(section)] = "!"
 			config.sections = append(config.sections, section)
@@ -93,7 +69,7 @@ func readKNFData(r io.Reader) (*Config, error) {
 			return nil, fmt.Errorf("Error at line %d: Data defined before section", lineNum)
 		}
 
-		propName, propValue, err := parseKNFProperty(line, config)
+		propName, propValue, err := parseProperty(line, config)
 
 		if err != nil {
 			return nil, fmt.Errorf("Error at line %d: %w", lineNum, err)
@@ -116,12 +92,12 @@ func readKNFData(r io.Reader) (*Config, error) {
 	return config, scanner.Err()
 }
 
-// parseKNFProperty parses line with property name and value
-func parseKNFProperty(line string, config *Config) (string, string, error) {
-	di := strings.Index(line, _PROP_DELIMITER)
+// parseProperty parses line with property name and value
+func parseProperty(line string, config *Config) (string, string, error) {
+	di := strings.Index(line, _SYMBOL_DELIMITER)
 
 	if di == -1 {
-		return "", "", fmt.Errorf("Property must have \":\" as a delimiter")
+		return "", "", fmt.Errorf(`Property must have ":" as a delimiter`)
 	}
 
 	name, value := line[:di], line[di+1:]
@@ -129,8 +105,8 @@ func parseKNFProperty(line string, config *Config) (string, string, error) {
 	name = strings.Trim(name, " \t")
 	value = strings.Trim(value, " \t")
 
-	if !strings.Contains(value, _MACRO_START_SYMBOL) &&
-		!strings.Contains(value, _MACRO_END_SYMBOL) {
+	if !strings.Contains(value, _SYMBOL_MACRO_START) &&
+		!strings.Contains(value, _SYMBOL_MACRO_END) {
 		return name, value, nil
 	}
 
@@ -166,5 +142,5 @@ func evalMacros(value string, config *Config) (string, error) {
 // genPropName generates "full property name" which contains section and
 // property name
 func genPropName(section, prop string) string {
-	return section + _PROP_DELIMITER + prop
+	return section + _SYMBOL_DELIMITER + prop
 }

@@ -9,8 +9,10 @@ package knf
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"errors"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -46,7 +48,8 @@ type DurationMod int64
 
 var (
 	ErrNilConfig  = errors.New("Config is nil")
-	ErrFileNotSet = errors.New("Path to config file is empty (non initialized struct?)")
+	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
+	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -82,7 +85,29 @@ func Global(file string) error {
 
 // Read reads and parses configuration file
 func Read(file string) (*Config, error) {
-	return readKNFFile(file)
+	fd, err := os.OpenFile(path.Clean(file), os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	config, err := readData(fd)
+
+	if err != nil {
+		return nil, err
+	}
+
+	config.file = file
+
+	return config, nil
+}
+
+// Parse parses data with KNF configuration
+func Parse(data []byte) (*Config, error) {
+	buf := bytes.NewBuffer(data)
+	return readData(buf)
 }
 
 // Reload reloads global configuration file
@@ -268,6 +293,45 @@ func Validate(validators []*Validator) []error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Merge merges two configurations
+func (c *Config) Merge(cfg *Config) error {
+	if c == nil || c.mx == nil {
+		return ErrNilConfig
+	}
+
+	if cfg == nil || cfg.mx == nil {
+		return ErrCantMerge
+	}
+
+	for k, v := range cfg.data {
+		c.data[k] = v
+	}
+
+SECTION_LOOP:
+	for _, ss := range cfg.sections {
+		for _, ts := range c.sections {
+			if ss == ts {
+				continue SECTION_LOOP
+			}
+		}
+
+		c.sections = append(c.sections, ss)
+	}
+
+PROP_LOOP:
+	for _, sp := range cfg.props {
+		for _, tp := range c.props {
+			if sp == tp {
+				continue PROP_LOOP
+			}
+		}
+
+		c.props = append(c.props, sp)
+	}
+
+	return nil
+}
+
 // Reload reloads configuration file
 func (c *Config) Reload() (map[string]bool, error) {
 	if c == nil || c.mx == nil {
@@ -275,7 +339,7 @@ func (c *Config) Reload() (map[string]bool, error) {
 	}
 
 	if c.file == "" {
-		return nil, ErrFileNotSet
+		return nil, ErrCantReload
 	}
 
 	nc, err := Read(c.file)
@@ -597,7 +661,7 @@ func (c *Config) Props(section string) []string {
 			continue
 		}
 
-		if prop[:snLength] == section+_PROP_DELIMITER {
+		if prop[:snLength] == section+_SYMBOL_DELIMITER {
 			result = append(result, prop[snLength:])
 		}
 	}

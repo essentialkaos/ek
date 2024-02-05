@@ -85,6 +85,17 @@ test1:      1
   t: 1
 `
 
+const _MERGE_DATA = `
+[string]
+  test1: test-new
+
+[boolean]
+  test1: false
+
+[extra]
+	test1: extra-data
+`
+
 const _CONFIG_MALF_DATA = `
   test1: 123
   test2: 111
@@ -191,6 +202,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
 	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(global.Merge(nil), check.NotNil)
 
 	config := &Config{mx: &sync.RWMutex{}}
 
@@ -206,14 +218,25 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.Sections(), check.HasLen, 0)
 	c.Assert(config.Props("test"), check.HasLen, 0)
 	c.Assert(config.Validate([]*Validator{}), check.HasLen, 0)
+	c.Assert(config.Merge(nil), check.NotNil)
 
 	updated, err = config.Reload()
 
 	c.Assert(updated, check.IsNil)
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.DeepEquals, ErrFileNotSet)
+	c.Assert(err, check.DeepEquals, ErrCantReload)
 
 	config = &Config{file: "/_not_exists_", mx: &sync.RWMutex{}}
+
+	updated, err = config.Reload()
+
+	c.Assert(updated, check.IsNil)
+	c.Assert(err, check.NotNil)
+
+	config, err = Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(config, check.NotNil)
 
 	updated, err = config.Reload()
 
@@ -231,6 +254,31 @@ func (s *KNFSuite) TestParsing(c *check.C) {
 
 	c.Assert(err, check.IsNil)
 	c.Assert(global.File(), check.Equals, s.ConfigPath)
+
+	config, err := Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(config, check.NotNil)
+}
+
+func (s *KNFSuite) TestMerging(c *check.C) {
+	c1, err := Parse([]byte(_CONFIG_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(c1, check.NotNil)
+
+	c2, err := Parse([]byte(_MERGE_DATA))
+
+	c.Assert(err, check.IsNil)
+	c.Assert(c2, check.NotNil)
+
+	err = c1.Merge(c2)
+
+	c.Assert(err, check.IsNil)
+
+	c.Assert(c1.GetS("string:test1"), check.Equals, "test-new")
+	c.Assert(c1.GetB("boolean:test1"), check.Equals, false)
+	c.Assert(c1.GetS("extra:test1"), check.Equals, "extra-data")
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {
@@ -519,8 +567,8 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 		ABCD
 	`)
 
-	_, err := readKNFData(r)
-	c.Assert(err.Error(), check.Equals, "Error at line 3: Property must have \":\" as a delimiter")
+	_, err := readData(r)
+	c.Assert(err.Error(), check.Equals, `Error at line 3: Property must have ":" as a delimiter`)
 
 	r = strings.NewReader(`
 		[section]
@@ -528,14 +576,14 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 		A: 2
 	`)
 
-	_, err = readKNFData(r)
-	c.Assert(err.Error(), check.Equals, "Error at line 4: Property \"A\" defined more than once")
+	_, err = readData(r)
+	c.Assert(err.Error(), check.Equals, `Error at line 4: Property "A" defined more than once`)
 
 	r = strings.NewReader(`
 		[section]
 		A: {abcd:test}
 	`)
 
-	_, err = readKNFData(r)
+	_, err = readData(r)
 	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
 }

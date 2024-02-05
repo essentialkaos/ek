@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.99.0
+
+* `[knf]` Add method `Parse`
+* `[knf]` Add method `Config.Merge`
+* `[knf]` Code refactoring
+* `[knf]` Improved usage examples
+
 ### 12.98.0
 
 * `[mathutil]` Added method `Perc`

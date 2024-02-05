@@ -7,7 +7,7 @@
   <a href="https://kaos.sh/b/ek"><img src="https://kaos.sh/b/3649d737-e5b9-4465-9765-b9f4ebec60ec.svg" alt="Codebeat badge" /></a>
   <br/>
   <a href="https://kaos.sh/w/ek/ci"><img src="https://kaos.sh/w/ek/ci.svg" alt="GitHub Actions CI Status" /></a>
-  <a href="https://kaos.sh/w/ek/codeql"><img src="https://kaos.sh/w/ek/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
+  <a href="https://kaos.sh/w/ek/codeql-analysis"><img src="https://kaos.sh/w/ek/codeql-analysis.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg" /></a>
 </p>
 
