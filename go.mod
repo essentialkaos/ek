@@ -5,8 +5,8 @@ go 1.18
 require (
 	github.com/essentialkaos/check v1.4.0
 	github.com/essentialkaos/go-linenoise/v3 v3.4.0
-	golang.org/x/crypto v0.18.0
-	golang.org/x/sys v0.16.0
+	golang.org/x/crypto v0.19.0
+	golang.org/x/sys v0.17.0
 )
 
 require (
