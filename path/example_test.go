@@ -99,12 +99,17 @@ func ExampleDirN() {
 	path1 := "/home/user/project/config/file.cfg"
 	path2 := "/usr/sbin/myapp"
 
-	fmt.Printf("Config dir: %s\n", DirN(path1, 4))
-	fmt.Printf("Bin dir: %s\n", DirN(path2, 2))
+	fmt.Printf("Config dir (→): %s\n", DirN(path1, 4))
+	fmt.Printf("Config dir (←): %s\n", DirN(path1, -1))
+	fmt.Printf("Bin dir (→): %s\n", DirN(path2, 2))
+	fmt.Printf("Bin dir (←): %s\n", DirN(path2, -1))
 
 	// Output:
-	// Config dir: /home/user/project/config
-	// Bin dir: /usr/sbin
+	// Config dir (→): /home/user/project/config
+	// Config dir (←): /home/user/project/config
+	// Bin dir (→): /usr/sbin
+	// Bin dir (←): /usr/sbin
+
 }
 
 func ExampleIsDotfile() {

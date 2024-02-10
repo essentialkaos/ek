@@ -3,6 +3,7 @@
 ### 12.100.0
 
 * `[log]` Added `NilLogger`
+* `[path]` Handle both directions in `DirN`
 
 ### 12.99.0
 
