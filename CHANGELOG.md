@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.100.0
+
+* `[log]` Added `NilLogger`
+
 ### 12.99.0
 
 * `[knf]` Add method `Parse`

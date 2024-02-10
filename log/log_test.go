@@ -455,6 +455,24 @@ func (ls *LogSuite) TestBufIO(c *C) {
 	c.Assert(fsutil.GetSize(logfile), Not(Equals), fileSize)
 }
 
+func (ls *LogSuite) TestLoggerIsNil(c *C) {
+	var l *Logger
+
+	c.Assert(l.Reopen(), Equals, ErrNilLogger)
+	c.Assert(l.MinLevel(1), Equals, ErrNilLogger)
+	c.Assert(l.Set("", 0644), Equals, ErrNilLogger)
+	c.Assert(l.Print(CRIT, ""), Equals, ErrNilLogger)
+	c.Assert(l.Flush(), Equals, ErrNilLogger)
+	c.Assert(l.Debug(""), Equals, ErrNilLogger)
+	c.Assert(l.Info(""), Equals, ErrNilLogger)
+	c.Assert(l.Warn(""), Equals, ErrNilLogger)
+	c.Assert(l.Error(""), Equals, ErrNilLogger)
+	c.Assert(l.Crit(""), Equals, ErrNilLogger)
+	c.Assert(l.Aux(""), Equals, ErrNilLogger)
+
+	c.Assert(func() { l.EnableBufIO(time.Second) }, NotPanics)
+}
+
 func (ls *LogSuite) TestStdLogger(c *C) {
 	l := &Logger{mu: &sync.Mutex{}}
 	l.Set(ls.TempDir+"/file5.log", 0644)
@@ -488,19 +506,13 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 }
 
 func (ls *LogSuite) TestNilLogger(c *C) {
-	var l *Logger
+	var l *NilLogger
 
-	c.Assert(l.Reopen(), Equals, ErrNilLogger)
-	c.Assert(l.MinLevel(1), Equals, ErrNilLogger)
-	c.Assert(l.Set("", 0644), Equals, ErrNilLogger)
-	c.Assert(l.Print(CRIT, ""), Equals, ErrNilLogger)
-	c.Assert(l.Flush(), Equals, ErrNilLogger)
-	c.Assert(l.Debug(""), Equals, ErrNilLogger)
-	c.Assert(l.Info(""), Equals, ErrNilLogger)
-	c.Assert(l.Warn(""), Equals, ErrNilLogger)
-	c.Assert(l.Error(""), Equals, ErrNilLogger)
-	c.Assert(l.Crit(""), Equals, ErrNilLogger)
-	c.Assert(l.Aux(""), Equals, ErrNilLogger)
-
-	c.Assert(func() { l.EnableBufIO(time.Second) }, NotPanics)
+	c.Assert(func() { l.Aux("test") }, NotPanics)
+	c.Assert(func() { l.Debug("test") }, NotPanics)
+	c.Assert(func() { l.Info("test") }, NotPanics)
+	c.Assert(func() { l.Warn("test") }, NotPanics)
+	c.Assert(func() { l.Error("test") }, NotPanics)
+	c.Assert(func() { l.Crit("test") }, NotPanics)
+	c.Assert(func() { l.Print(0, "test") }, NotPanics)
 }
