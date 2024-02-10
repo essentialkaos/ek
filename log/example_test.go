@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleNew() {
+func Example() {
 	logger, err := New("/path/to/file.log", 0644)
 
 	if err != nil {
@@ -49,7 +49,26 @@ func ExampleNew() {
 	logger.Flush()
 }
 
-func Example_Reopen() {
+func ExampleNew() {
+	logger, err := New("/path/to/file.log", 0644)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	// Package provides different methods for each level
+	logger.Debug("This is %d %s message", 2, "debug")
+	logger.Info("This is info message")
+	logger.Warn("This is warning message")
+	logger.Error("This is error message")
+	logger.Crit("This is critical message")
+
+	// If buffered IO is used, you should flush data before exit
+	logger.Flush()
+}
+
+func ExampleReopen() {
 	err := Set("/path/to/file.log", 0644)
 
 	if err != nil {
