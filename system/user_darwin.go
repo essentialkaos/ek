@@ -53,20 +53,20 @@ func getUserInfo(name string) (*User, error) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		field := strutil.ReadField(line, 0, false, ":")
+		field := strutil.ReadField(line, 0, false, ':')
 
 		switch field {
 		case "UniqueID":
-			user.UID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ":")))
+			user.UID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ':')))
 		case "PrimaryGroupID":
-			user.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ":")))
+			user.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(line, 1, false, ':')))
 		case "NFSHomeDirectory":
 			user.HomeDir = strutil.ReadField(
-				strings.TrimSpace(strutil.ReadField(line, 1, false, ":")),
-				0, false, " ",
+				strings.TrimSpace(strutil.ReadField(line, 1, false, ':')),
+				0, false, ' ',
 			)
 		case "UserShell":
-			user.Shell = strings.TrimSpace(strutil.ReadField(line, 1, false, ":"))
+			user.Shell = strings.TrimSpace(strutil.ReadField(line, 1, false, ':'))
 		}
 
 		if err != nil {
@@ -93,7 +93,7 @@ func getGroupInfo(name string) (*Group, error) {
 	group := &Group{Name: name}
 	data := string(out)
 
-	group.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(data, 1, false, ":")))
+	group.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(data, 1, false, ':')))
 
 	if err != nil {
 		return nil, fmt.Errorf("Can't parse PrimaryGroupID field value: %v", err)

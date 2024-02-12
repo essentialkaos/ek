@@ -69,8 +69,8 @@ func GetOSInfo() (*OSInfo, error) {
 	info := &OSInfo{}
 
 	for _, line := range strings.Split(string(versionData), "\n") {
-		name := strutil.ReadField(line, 0, false, ":")
-		value := strutil.ReadField(line, 1, false, ":")
+		name := strutil.ReadField(line, 0, false, ':')
+		value := strutil.ReadField(line, 1, false, ':')
 		value = strings.Trim(value, " \r\t\n")
 
 		switch name {
