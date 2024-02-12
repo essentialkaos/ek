@@ -33,10 +33,10 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_SYMBOL_PERIOD   = "-"
-	_SYMBOL_INTERVAL = "/"
-	_SYMBOL_ENUM     = ","
-	_SYMBOL_ANY      = "*"
+	_SYMBOL_PERIOD   = '-'
+	_SYMBOL_INTERVAL = '/'
+	_SYMBOL_ENUM     = ','
+	_SYMBOL_ANY      = '*'
 )
 
 const (
@@ -106,7 +106,7 @@ func Parse(expr string) (*Expr, error) {
 		var data []uint8
 		var err error
 
-		token := strutil.ReadField(expr, tn, true, " ")
+		token := strutil.ReadField(expr, tn, true, ' ')
 
 		switch {
 		case isAnyToken(token):
@@ -322,25 +322,25 @@ func (e *Expr) String() string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func isAnyToken(t string) bool {
-	return t == _SYMBOL_ANY
+	return t == string(_SYMBOL_ANY)
 }
 
 func isEnumToken(t string) bool {
-	return strings.Contains(t, _SYMBOL_ENUM)
+	return strings.ContainsRune(t, _SYMBOL_ENUM)
 }
 
 func isPeriodToken(t string) bool {
-	return strings.Contains(t, _SYMBOL_PERIOD)
+	return strings.ContainsRune(t, _SYMBOL_PERIOD)
 }
 
 func isIntervalToken(t string) bool {
-	return strings.Contains(t, _SYMBOL_INTERVAL)
+	return strings.ContainsRune(t, _SYMBOL_INTERVAL)
 }
 
 func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 	var result []uint8
 
-	for i := 0; i <= strings.Count(t, _SYMBOL_ENUM); i++ {
+	for i := 0; i <= strings.Count(t, string(_SYMBOL_ENUM)); i++ {
 		tt := strutil.ReadField(t, i, false, _SYMBOL_ENUM)
 
 		switch {

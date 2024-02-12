@@ -301,13 +301,13 @@ func CountDigits(i int) int {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func formatPrettyFloat(str, sep string) string {
-	flt := strings.TrimRight(strutil.ReadField(str, 1, false, "."), "0")
+	flt := strings.TrimRight(strutil.ReadField(str, 1, false, '.'), "0")
 
 	if flt == "" {
-		return appendPrettySymbol(strutil.ReadField(str, 0, false, "."), sep)
+		return appendPrettySymbol(strutil.ReadField(str, 0, false, '.'), sep)
 	}
 
-	return appendPrettySymbol(strutil.ReadField(str, 0, false, "."), sep) + "." + flt
+	return appendPrettySymbol(strutil.ReadField(str, 0, false, '.'), sep) + "." + flt
 }
 
 func appendPrettySymbol(str, sep string) string {

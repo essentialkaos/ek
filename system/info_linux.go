@@ -67,8 +67,8 @@ func ParseOSInfo(file string) (*OSInfo, error) {
 			continue
 		}
 
-		name := strutil.ReadField(line, 0, false, "=")
-		value := strings.Trim(strutil.ReadField(line, 1, false, "="), "\"")
+		name := strutil.ReadField(line, 0, false, '=')
+		value := strings.Trim(strutil.ReadField(line, 1, false, '='), "\"")
 
 		applyOSInfo(info, name, value)
 	}

@@ -38,13 +38,13 @@ func isTmuxAncestor() (bool, error) {
 		}
 
 		statString := string(statData)
-		processName := strutil.ReadField(statString, 1, false, " ")
+		processName := strutil.ReadField(statString, 1, false, ' ')
 
 		if strings.HasPrefix(processName, "(tmux:") {
 			return true, nil
 		}
 
-		parentPID := strutil.ReadField(statString, 3, false, " ")
+		parentPID := strutil.ReadField(statString, 3, false, ' ')
 
 		if parentPID == "1" || parentPID == "0" {
 			break

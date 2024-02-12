@@ -20,7 +20,7 @@ var EllipsisSuffix = "..."
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var defaultFieldsSeparators = []string{" ", "\t"}
+var defaultFieldsSeparators = []rune{' ', '\t'}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -318,7 +318,7 @@ func Exclude(data, substr string) string {
 }
 
 // ReadField reads field with given index from data
-func ReadField(data string, index int, multiSep bool, separators ...string) string {
+func ReadField(data string, index int, multiSep bool, separators ...rune) string {
 	if data == "" || index < 0 {
 		return ""
 	}
@@ -332,7 +332,7 @@ func ReadField(data string, index int, multiSep bool, separators ...string) stri
 MAINLOOP:
 	for i, r := range data {
 		for _, s := range separators {
-			if r == rune(s[0]) {
+			if r == s {
 				if curIndex == index {
 					return data[startPointer:i]
 				}
