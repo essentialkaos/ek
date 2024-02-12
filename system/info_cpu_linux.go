@@ -246,25 +246,25 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 
 		switch {
 		case strings.HasPrefix(text, "vendor_id"):
-			vendor = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+			vendor = strings.Trim(strutil.ReadField(text, 1, false, ':'), " ")
 
 		case strings.HasPrefix(text, "model name"):
-			model = strings.Trim(strutil.ReadField(text, 1, false, ":"), " ")
+			model = strings.Trim(strutil.ReadField(text, 1, false, ':'), " ")
 
 		case strings.HasPrefix(text, "cache size"):
-			cache, err = parseSize(strings.Trim(strutil.ReadField(text, 1, false, ":"), " KB"))
+			cache, err = parseSize(strings.Trim(strutil.ReadField(text, 1, false, ':'), " KB"))
 
 		case strings.HasPrefix(text, "cpu MHz"):
-			speed, err = strconv.ParseFloat(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "), 64)
+			speed, err = strconv.ParseFloat(strings.Trim(strutil.ReadField(text, 1, false, ':'), " "), 64)
 
 		case strings.HasPrefix(text, "physical id"):
-			id, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+			id, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ':'), " "))
 
 		case strings.HasPrefix(text, "siblings"):
-			siblings, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+			siblings, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ':'), " "))
 
 		case strings.HasPrefix(text, "cpu cores"):
-			cores, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ":"), " "))
+			cores, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ':'), " "))
 
 		case strings.HasPrefix(text, "flags"):
 			if len(info) < id+1 {
@@ -292,8 +292,8 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 
 // parseCPUCountInfo parses CPU count data
 func parseCPUCountInfo(data string) uint32 {
-	startNum := strings.Trim(strutil.ReadField(data, 0, false, "-"), "\n\r")
-	endNum := strings.Trim(strutil.ReadField(data, 1, false, "-"), "\n\r")
+	startNum := strings.Trim(strutil.ReadField(data, 0, false, '-'), "\n\r")
+	endNum := strings.Trim(strutil.ReadField(data, 1, false, '-'), "\n\r")
 
 	start, _ := strconv.ParseUint(startNum, 10, 32)
 	end, _ := strconv.ParseUint(endNum, 10, 32)

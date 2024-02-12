@@ -322,15 +322,15 @@ func parseSysvEnabledOutput(data string) (bool, error) {
 }
 
 func parseSystemdStatusOutput(name, data string) (bool, error) {
-	loadState := strutil.ReadField(data, 0, false, "\n")
-	loadStateValue := strutil.ReadField(loadState, 1, false, "=")
+	loadState := strutil.ReadField(data, 0, false, '\n')
+	loadStateValue := strutil.ReadField(loadState, 1, false, '=')
 
 	if strings.Trim(loadStateValue, "\r\n") == "not-found" {
 		return false, fmt.Errorf("Unit %s could not be found", name)
 	}
 
-	activeState := strutil.ReadField(data, 1, false, "\n")
-	activeStateValue := strutil.ReadField(activeState, 1, false, "=")
+	activeState := strutil.ReadField(data, 1, false, '\n')
+	activeStateValue := strutil.ReadField(activeState, 1, false, '=')
 
 	switch strings.Trim(activeStateValue, "\r\n") {
 	case "active":
@@ -345,7 +345,7 @@ func parseSystemdStatusOutput(name, data string) (bool, error) {
 
 func parseUpstartStatusOutput(data string) (bool, error) {
 	data = strings.TrimRight(data, "\r\n")
-	status := strutil.ReadField(data, 1, false, " ")
+	status := strutil.ReadField(data, 1, false, ' ')
 
 	switch status {
 	case "start/running":

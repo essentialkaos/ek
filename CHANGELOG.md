@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.100.0
+
+* `[log]` Added `NilLogger`
+* `[path]` Handle both directions in `DirN`
+* `[strutil]` Code refactoring
+
 ### 12.99.0
 
 * `[knf]` Add method `Parse`

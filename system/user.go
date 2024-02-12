@@ -427,14 +427,14 @@ func extractGroupsInfo(data string) []*Group {
 	var result []*Group
 
 	data = strings.TrimRight(data, "\n")
-	groupsInfo := strutil.ReadField(data, 3, false, "=")
+	groupsInfo := strutil.ReadField(data, 3, false, '=')
 
 	if groupsInfo == "" {
 		return nil
 	}
 
 	for {
-		groupInfo := strutil.ReadField(groupsInfo, field, false, ",")
+		groupInfo := strutil.ReadField(groupsInfo, field, false, ',')
 
 		if groupInfo == "" {
 			break
@@ -454,8 +454,8 @@ func extractGroupsInfo(data string) []*Group {
 
 // parseGroupInfo parse group info from 'id' command
 func parseGroupInfo(data string) (*Group, error) {
-	id := strutil.ReadField(data, 0, false, "(")
-	name := strutil.ReadField(data, 1, false, "(")
+	id := strutil.ReadField(data, 0, false, '(')
+	name := strutil.ReadField(data, 1, false, '(')
 	gid, _ := strconv.Atoi(id)
 
 	if len(name) == 0 {

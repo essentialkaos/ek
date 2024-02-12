@@ -71,27 +71,15 @@ func Dir(path string) string {
 
 // DirN returns first N elements of path
 func DirN(path string, n int) string {
-	if len(path) <= 1 || n < 1 {
+	if len(path) <= 1 || n == 0 {
 		return path
 	}
 
-	if path[0] == '/' {
-		n++
+	if n > 0 {
+		return dirNRight(path, n)
 	}
 
-	var k int
-
-	for i, r := range path {
-		if r == '/' {
-			k++
-		}
-
-		if k == n {
-			return path[:i]
-		}
-	}
-
-	return path
+	return dirNLeft(path, n*-1)
 }
 
 // Ext returns the file name extension used by path
@@ -227,6 +215,46 @@ func IsGlob(pattern string) bool {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func dirNRight(path string, n int) string {
+	if path[0] == '/' {
+		n++
+	}
+
+	var k int
+
+	for i, r := range path {
+		if r == '/' {
+			k++
+		}
+
+		if k == n {
+			return path[:i]
+		}
+	}
+
+	return path
+}
+
+func dirNLeft(path string, n int) string {
+	if path[len(path)-1] == '/' {
+		n++
+	}
+
+	var k int
+
+	for i := len(path) - 1; i > 0; i-- {
+		if path[i] == '/' {
+			k++
+		}
+
+		if k == n {
+			return path[:i]
+		}
+	}
+
+	return path
+}
 
 func isLink(path string) bool {
 	var buf = make([]byte, 1)

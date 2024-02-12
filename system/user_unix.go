@@ -67,26 +67,26 @@ func getGroupInfo(nameOrID string) (*Group, error) {
 func parseGetentPasswdOutput(data string) (*User, error) {
 	data = strings.TrimRight(data, "\r\n")
 
-	uid, err := strconv.Atoi(strutil.ReadField(data, 2, false, ":"))
+	uid, err := strconv.Atoi(strutil.ReadField(data, 2, false, ':'))
 
 	if err != nil {
 		return nil, ErrCantParseGetentOutput
 	}
 
-	gid, err := strconv.Atoi(strutil.ReadField(data, 3, false, ":"))
+	gid, err := strconv.Atoi(strutil.ReadField(data, 3, false, ':'))
 
 	if err != nil {
 		return nil, ErrCantParseGetentOutput
 	}
 
 	return &User{
-		Name:     strutil.ReadField(data, 0, false, ":"),
+		Name:     strutil.ReadField(data, 0, false, ':'),
 		UID:      uid,
 		GID:      gid,
-		Comment:  strutil.ReadField(data, 4, false, ":"),
-		HomeDir:  strutil.ReadField(data, 5, false, ":"),
-		Shell:    strutil.ReadField(data, 6, false, ":"),
-		RealName: strutil.ReadField(data, 0, false, ":"),
+		Comment:  strutil.ReadField(data, 4, false, ':'),
+		HomeDir:  strutil.ReadField(data, 5, false, ':'),
+		Shell:    strutil.ReadField(data, 6, false, ':'),
+		RealName: strutil.ReadField(data, 0, false, ':'),
 		RealUID:  uid,
 		RealGID:  gid,
 	}, nil
@@ -94,8 +94,8 @@ func parseGetentPasswdOutput(data string) (*User, error) {
 
 // parseGetentGroupOutput parse 'getent group' command output
 func parseGetentGroupOutput(data string) (*Group, error) {
-	name := strutil.ReadField(data, 0, false, ":")
-	id := strutil.ReadField(data, 2, false, ":")
+	name := strutil.ReadField(data, 0, false, ':')
+	id := strutil.ReadField(data, 2, false, ':')
 
 	if name == "" || id == "" {
 		return nil, ErrCantParseGetentOutput

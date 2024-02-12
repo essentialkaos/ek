@@ -83,7 +83,7 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 
 	for i := 0; i < 128; i++ {
 		pseudoIndex := i - optFieldsNum
-		value := strutil.ReadField(data, i, false, " ")
+		value := strutil.ReadField(data, i, false, ' ')
 
 		if i >= 6 && !optFieldParsed {
 			if value != "-" {
@@ -131,13 +131,13 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 
 // parseStDevValue parses st_dev major and minor values
 func parseStDevValue(data string) (uint16, uint16, error) {
-	major, err := parseFieldUint16(strutil.ReadField(data, 0, false, ":"), "StDevMajor")
+	major, err := parseFieldUint16(strutil.ReadField(data, 0, false, ':'), "StDevMajor")
 
 	if err != nil {
 		return 0, 0, err
 	}
 
-	minor, err := parseFieldUint16(strutil.ReadField(data, 1, false, ":"), "StDevMinor")
+	minor, err := parseFieldUint16(strutil.ReadField(data, 1, false, ':'), "StDevMinor")
 
 	if err != nil {
 		return 0, 0, err

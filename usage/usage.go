@@ -672,8 +672,8 @@ func formatOptionName(opt *Option, colorTag string) string {
 // parseOptionName parses option name
 func parseOptionName(name string) (string, string) {
 	if strings.Contains(name, ":") {
-		return strutil.ReadField(name, 1, false, ":"),
-			strutil.ReadField(name, 0, false, ":")
+		return strutil.ReadField(name, 1, false, ':'),
+			strutil.ReadField(name, 0, false, ':')
 	}
 
 	return name, ""
