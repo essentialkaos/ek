@@ -198,6 +198,7 @@ type Request struct {
 	Accept            string  // Accept header
 	BasicAuthUsername string  // Basic auth username
 	BasicAuthPassword string  // Basic auth password
+	BearerAuth        string  // Bearer auth token
 	AutoDiscard       bool    // Automatically discard all responses with status code != 200
 	FollowRedirect    bool    // Follow redirect
 	Close             bool    // Close indicates whether to close the connection after sending request
@@ -679,6 +680,10 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, e
 
 	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
 		req.SetBasicAuth(r.BasicAuthUsername, r.BasicAuthPassword)
+	}
+
+	if r.BearerAuth != "" {
+		req.Header.Add("Authorization", "Bearer "+r.BearerAuth)
 	}
 
 	if r.Close {
