@@ -38,6 +38,7 @@ const (
 	_URL_ACCEPT       = "/accept"
 	_URL_USER_AGENT   = "/user-agent"
 	_URL_BASIC_AUTH   = "/basic-auth"
+	_URL_BEARER       = "/bearer"
 	_URL_STRING_RESP  = "/string-response"
 	_URL_JSON_RESP    = "/json-response"
 	_URL_DISCARD      = "/discard"
@@ -48,6 +49,7 @@ const (
 	_TEST_ACCEPT          = "application/vnd.example.api+json;version=2"
 	_TEST_BASIC_AUTH_USER = "admin"
 	_TEST_BASIC_AUTH_PASS = "password"
+	_TEST_BEARER_TOKEN    = "XUWjA4EnRqUNyqmz"
 	_TEST_STRING_RESP     = "Test String Response"
 )
 
@@ -351,6 +353,16 @@ func (s *ReqSuite) TestBasicAuth(c *C) {
 	c.Assert(resp.StatusCode, Equals, 200)
 }
 
+func (s *ReqSuite) TestBearerAuth(c *C) {
+	resp, err := Request{
+		URL:        s.url + _URL_BEARER,
+		BearerAuth: _TEST_BEARER_TOKEN,
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+}
+
 func (s *ReqSuite) TestStringResp(c *C) {
 	resp, err := Request{
 		URL: s.url + _URL_STRING_RESP,
@@ -643,6 +655,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_ACCEPT, acceptRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_USER_AGENT, uaRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_BASIC_AUTH, basicAuthRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_BEARER, bearerRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_STRING_RESP, stringRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
@@ -888,6 +901,17 @@ func basicAuthRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	if pass != _TEST_BASIC_AUTH_PASS {
 		w.WriteHeader(952)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
+func bearerRequestHandler(w http.ResponseWriter, r *http.Request) {
+	header := r.Header.Get("Authorization")
+
+	if header != "Bearer "+_TEST_BEARER_TOKEN {
+		w.WriteHeader(960)
 		return
 	}
 

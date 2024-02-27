@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.101.0
+
+* `[req]` Added Bearer Token property to `Request` struct
+
 ### 12.100.0
 
 * `[log]` Added `NilLogger`
