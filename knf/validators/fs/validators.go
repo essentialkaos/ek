@@ -91,13 +91,13 @@ func validateOwner(config *knf.Config, prop string, value any) error {
 	user, err := system.LookupUser(owner)
 
 	if err != nil {
-		return fmt.Errorf("Can't find user %s on system", owner)
+		return fmt.Errorf("Can't find user %q on system", owner)
 	}
 
 	uid, _, err := fsutil.GetOwner(target)
 
 	if err != nil {
-		return fmt.Errorf("Can't get owner for %s", target)
+		return fmt.Errorf("Can't get owner for %q", target)
 	}
 
 	if user.UID != uid {
@@ -118,13 +118,13 @@ func validateOwnerGroup(config *knf.Config, prop string, value any) error {
 	group, err := system.LookupGroup(ownerGroup)
 
 	if err != nil {
-		return fmt.Errorf("Can't find group %s on system", ownerGroup)
+		return fmt.Errorf("Can't find group %q on system", ownerGroup)
 	}
 
 	_, gid, err := fsutil.GetOwner(target)
 
 	if err != nil {
-		return fmt.Errorf("Can't get owner group for %s", target)
+		return fmt.Errorf("Can't get owner group for %q", target)
 	}
 
 	if group.GID != gid {
@@ -145,7 +145,7 @@ func validateFileMode(config *knf.Config, prop string, value any) error {
 	targetPerms := fsutil.GetMode(target)
 
 	if targetPerms == 0 {
-		return fmt.Errorf("Can't get mode for %s", target)
+		return fmt.Errorf("Can't get mode for %q", target)
 	}
 
 	if perms != targetPerms {
@@ -171,7 +171,7 @@ func validateMatchPattern(config *knf.Config, prop string, value any) error {
 	}
 
 	if !isMatch {
-		return fmt.Errorf("Property %s must match shell pattern %s", prop, pattern)
+		return fmt.Errorf("Property %s must match shell pattern %q", prop, pattern)
 	}
 
 	return nil

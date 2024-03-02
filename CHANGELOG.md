@@ -3,6 +3,7 @@
 ### 12.102.0
 
 * `[knf/validators/network]` Added `Mail` validator
+* `[knf/validators/fs]` Code refactoring
 * `[knf/validators/network]` Code refactoring
 
 ### 12.101.0
