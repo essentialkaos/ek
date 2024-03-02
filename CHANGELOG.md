@@ -5,6 +5,8 @@
 * `[knf/validators/network]` Added `Mail` validator
 * `[knf/validators/fs]` Code refactoring
 * `[knf/validators/network]` Code refactoring
+* `[knf/validators/regexp]` Code refactoring
+* `[knf/validators/system]` Code refactoring
 
 ### 12.101.0
 
