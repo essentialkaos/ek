@@ -38,7 +38,7 @@ func validateUser(config *knf.Config, prop string, value any) error {
 	}
 
 	if !system.IsUserExist(userNameOrID) {
-		return fmt.Errorf("User %s is not present on the system", userNameOrID)
+		return fmt.Errorf("User %q is not present on the system", userNameOrID)
 	}
 
 	return nil
@@ -52,7 +52,7 @@ func validateGroup(config *knf.Config, prop string, value any) error {
 	}
 
 	if !system.IsGroupExist(groupNameOrID) {
-		return fmt.Errorf("Group %s is not present on the system", groupNameOrID)
+		return fmt.Errorf("Group %q is not present on the system", groupNameOrID)
 	}
 
 	return nil

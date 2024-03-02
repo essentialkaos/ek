@@ -42,7 +42,7 @@ func validateInterface(config *knf.Config, prop string, value any) error {
 	_, isPresent := stats[interfaceName]
 
 	if !isPresent {
-		return fmt.Errorf("Interface %s is not present on the system", interfaceName)
+		return fmt.Errorf("Interface %q is not present on the system", interfaceName)
 	}
 
 	return nil
