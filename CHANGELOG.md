@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.102.0
+
+* `[knf/validators/network]` Added `Mail` validator
+
 ### 12.101.0
 
 * `[req]` Added Bearer Token property to `Request` struct

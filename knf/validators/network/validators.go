@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"strings"
 
 	"github.com/essentialkaos/ek/v12/knf"
 )
@@ -33,6 +34,9 @@ var (
 
 	// URL returns error if config property isn't a valid URL
 	URL = validateURL
+
+	// Mail returns error if config property isn't a valid email address
+	Mail = validateMail
 
 	// HasIP returns error if system doesn't have interface with IP from config property
 	HasIP = validateHasIP
@@ -115,6 +119,20 @@ func validateURL(config *knf.Config, prop string, value any) error {
 
 	if err != nil {
 		return fmt.Errorf("%s is not a valid URL address: %v", urlStr, err)
+	}
+
+	return nil
+}
+
+func validateMail(config *knf.Config, prop string, value any) error {
+	mailStr := config.GetS(prop)
+
+	if mailStr == "" {
+		return nil
+	}
+
+	if !strings.ContainsRune(mailStr, '@') || !strings.ContainsRune(mailStr, '.') {
+		return fmt.Errorf("%q is not a valid email address", mailStr)
 	}
 
 	return nil

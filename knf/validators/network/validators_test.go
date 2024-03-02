@@ -45,6 +45,12 @@ const _CONFIG_DATA = `
 	test0:
 	test1: https://google.com
 	test2: google.com/abcd.php
+
+[mail]
+	test0:
+	test1: unknown
+	test2: unknown@domain
+	test3: unknown@domain.com
 `
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -188,7 +194,25 @@ func (s *ValidatorSuite) TestURLValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "google.com/abcd.php is not a valid URL address: parse \"google.com/abcd.php\": invalid URI for request")
+	c.Assert(errs[0].Error(), Equals, `google.com/abcd.php is not a valid URL address: parse "google.com/abcd.php": invalid URI for request`)
+}
+
+func (s *ValidatorSuite) TestMailValidator(c *C) {
+	configFile := createConfig(c, _CONFIG_DATA)
+
+	err := knf.Global(configFile)
+	c.Assert(err, IsNil)
+
+	errs := knf.Validate([]*knf.Validator{
+		{"mail:test0", Mail, nil},
+		{"mail:test1", Mail, nil},
+		{"mail:test2", Mail, nil},
+		{"mail:test3", Mail, nil},
+	})
+
+	c.Assert(errs, HasLen, 2)
+	c.Assert(errs[0].Error(), Equals, `"unknown" is not a valid email address`)
+	c.Assert(errs[1].Error(), Equals, `"unknown@domain" is not a valid email address`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
