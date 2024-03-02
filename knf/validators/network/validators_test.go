@@ -87,7 +87,7 @@ func (s *ValidatorSuite) TestIPValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "300.0.400.5 is not a valid IP address")
+	c.Assert(errs[0].Error(), Equals, `"300.0.400.5" is not a valid IP address`)
 }
 
 func (s *ValidatorSuite) TestHasIPValidator(c *C) {
@@ -108,7 +108,7 @@ func (s *ValidatorSuite) TestHasIPValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "The system does not have an interface with the address 192.168.1.254")
+	c.Assert(errs[0].Error(), Equals, `The system does not have an interface with the address "192.168.1.254"`)
 }
 
 func (s *ValidatorSuite) TestPortValidator(c *C) {
@@ -130,8 +130,8 @@ func (s *ValidatorSuite) TestPortValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 2)
-	c.Assert(errs[0].Error(), Equals, "ABCD is not a valid port number")
-	c.Assert(errs[1].Error(), Equals, "78361 is not a valid port number")
+	c.Assert(errs[0].Error(), Equals, `"ABCD" is not a valid port number`)
+	c.Assert(errs[1].Error(), Equals, `"78361" is not a valid port number`)
 }
 
 func (s *ValidatorSuite) TestMACValidator(c *C) {
@@ -152,7 +152,7 @@ func (s *ValidatorSuite) TestMACValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "ABCD is not a valid MAC address: address ABCD: invalid MAC address")
+	c.Assert(errs[0].Error(), Equals, `"ABCD" is not a valid MAC address: address ABCD: invalid MAC address`)
 }
 
 func (s *ValidatorSuite) TestCIDRValidator(c *C) {
@@ -173,7 +173,7 @@ func (s *ValidatorSuite) TestCIDRValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "127.0.0.1/200 is not a valid CIDR address: invalid CIDR address: 127.0.0.1/200")
+	c.Assert(errs[0].Error(), Equals, `"127.0.0.1/200" is not a valid CIDR address: invalid CIDR address: 127.0.0.1/200`)
 }
 
 func (s *ValidatorSuite) TestURLValidator(c *C) {
@@ -194,7 +194,7 @@ func (s *ValidatorSuite) TestURLValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, `google.com/abcd.php is not a valid URL address: parse "google.com/abcd.php": invalid URI for request`)
+	c.Assert(errs[0].Error(), Equals, `"google.com/abcd.php" is not a valid URL address: parse "google.com/abcd.php": invalid URI for request`)
 }
 
 func (s *ValidatorSuite) TestMailValidator(c *C) {

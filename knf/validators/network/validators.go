@@ -54,7 +54,7 @@ func validateIP(config *knf.Config, prop string, value any) error {
 	ip := net.ParseIP(ipStr)
 
 	if ip == nil {
-		return fmt.Errorf("%s is not a valid IP address", ipStr)
+		return fmt.Errorf("%q is not a valid IP address", ipStr)
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func validatePort(config *knf.Config, prop string, value any) error {
 	portInt := config.GetI(prop)
 
 	if portInt == 0 || portInt > 65535 {
-		return fmt.Errorf("%s is not a valid port number", portStr)
+		return fmt.Errorf("%q is not a valid port number", portStr)
 	}
 
 	return nil
@@ -86,7 +86,7 @@ func validateMAC(config *knf.Config, prop string, value any) error {
 	_, err := net.ParseMAC(macStr)
 
 	if err != nil {
-		return fmt.Errorf("%s is not a valid MAC address: %v", macStr, err)
+		return fmt.Errorf("%q is not a valid MAC address: %v", macStr, err)
 	}
 
 	return nil
@@ -102,7 +102,7 @@ func validateCIDR(config *knf.Config, prop string, value any) error {
 	_, _, err := net.ParseCIDR(cidrStr)
 
 	if err != nil {
-		return fmt.Errorf("%s is not a valid CIDR address: %v", cidrStr, err)
+		return fmt.Errorf("%q is not a valid CIDR address: %v", cidrStr, err)
 	}
 
 	return nil
@@ -118,7 +118,7 @@ func validateURL(config *knf.Config, prop string, value any) error {
 	_, err := url.ParseRequestURI(urlStr)
 
 	if err != nil {
-		return fmt.Errorf("%s is not a valid URL address: %v", urlStr, err)
+		return fmt.Errorf("%q is not a valid URL address: %v", urlStr, err)
 	}
 
 	return nil
@@ -165,5 +165,5 @@ func validateHasIP(config *knf.Config, prop string, value any) error {
 		}
 	}
 
-	return fmt.Errorf("The system does not have an interface with the address %s", ipStr)
+	return fmt.Errorf("The system does not have an interface with the address %q", ipStr)
 }
