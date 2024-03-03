@@ -63,7 +63,7 @@ func (s *ValidatorSuite) TestRegexpValidator(c *check.C) {
 	})
 
 	c.Assert(errs, check.HasLen, 2)
-	c.Assert(errs[0].Error(), check.Equals, "Property regexp:test2 must match regexp pattern ^[A-Z0-9]{4}$")
+	c.Assert(errs[0].Error(), check.Equals, `Property regexp:test2 must match regexp pattern "^[A-Z0-9]{4}$"`)
 	c.Assert(errs[1].Error(), check.Equals, "Can't use given regexp pattern: error parsing regexp: trailing backslash at end of expression: ``")
 }
 

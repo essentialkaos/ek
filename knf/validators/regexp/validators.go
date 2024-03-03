@@ -39,7 +39,7 @@ func validateRegexp(config *knf.Config, prop string, value any) error {
 	}
 
 	if !isMatch {
-		return fmt.Errorf("Property %s must match regexp pattern %s", prop, pattern)
+		return fmt.Errorf("Property %s must match regexp pattern %q", prop, pattern)
 	}
 
 	return nil

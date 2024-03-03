@@ -108,7 +108,7 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 
 	c.Assert(errs, HasLen, 2)
 	c.Assert(errs[0].Error(), Equals, "User nobody must be owner of /etc/passwd")
-	c.Assert(errs[1].Error(), Equals, "Can't find user somerandomuser on system")
+	c.Assert(errs[1].Error(), Equals, `Can't find user "somerandomuser" on system`)
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -120,7 +120,7 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "Can't get owner for /etc/__unknown__")
+	c.Assert(errs[0].Error(), Equals, `Can't get owner for "/etc/__unknown__"`)
 }
 
 func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
@@ -152,7 +152,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 
 	c.Assert(errs, HasLen, 2)
 	c.Assert(errs[0].Error(), Equals, "Group daemon must be owner of /etc/passwd")
-	c.Assert(errs[1].Error(), Equals, "Can't find group somerandomgroup on system")
+	c.Assert(errs[1].Error(), Equals, `Can't find group "somerandomgroup" on system`)
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -164,7 +164,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "Can't get owner group for /etc/__unknown__")
+	c.Assert(errs[0].Error(), Equals, `Can't get owner group for "/etc/__unknown__"`)
 }
 
 func (s *ValidatorSuite) TestFileModeValidator(c *C) {
@@ -197,7 +197,7 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, "Can't get mode for /etc/__unknown__")
+	c.Assert(errs[0].Error(), Equals, `Can't get mode for "/etc/__unknown__"`)
 }
 
 func (s *ValidatorSuite) TestMatchPattern(c *C) {
@@ -219,7 +219,7 @@ func (s *ValidatorSuite) TestMatchPattern(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 2)
-	c.Assert(errs[0].Error(), Equals, "Property test:test1 must match shell pattern /var/*")
+	c.Assert(errs[0].Error(), Equals, `Property test:test1 must match shell pattern "/var/*"`)
 	c.Assert(errs[1].Error(), Equals, "Can't parse shell pattern: syntax error in pattern")
 }
 

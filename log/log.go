@@ -211,6 +211,11 @@ func Aux(f string, a ...any) error {
 	return Global.Aux(f, a...)
 }
 
+// Divider writes simple divider to logger output
+func Divider() error {
+	return Global.Divider()
+}
+
 // Is returns true if current minimal logging level is equal or greater than
 // given
 func Is(level uint8) bool {
@@ -430,6 +435,15 @@ func (l *Logger) Aux(f string, a ...any) error {
 	}
 
 	return l.Print(AUX, f, a...)
+}
+
+// Divider writes simple divider to logger output
+func (l *Logger) Divider() error {
+	if l == nil || l.mu == nil {
+		return ErrNilLogger
+	}
+
+	return l.Print(AUX, strings.Repeat("-", 80))
 }
 
 // Is returns true if current minimal logging level is equal or greater than

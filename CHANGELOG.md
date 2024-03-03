@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.102.0
+
+* `[knf/validators/network]` Added `Mail` validator
+* `[log]` Added `Divider` method
+* `[knf/validators/fs]` Code refactoring
+* `[knf/validators/network]` Code refactoring
+* `[knf/validators/regexp]` Code refactoring
+* `[knf/validators/system]` Code refactoring
+
 ### 12.101.0
 
 * `[req]` Added Bearer Token property to `Request` struct
