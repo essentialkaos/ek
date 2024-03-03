@@ -42,6 +42,9 @@ func Example() {
 	// any minimum level
 	logger.Aux("This is aux message")
 
+	// Print simple divider
+	logger.Divider()
+
 	// For log rotation we provide method Reopen
 	logger.Reopen()
 
@@ -223,6 +226,17 @@ func ExampleAux() {
 	Aux("Auxiliary message")
 }
 
+func ExampleDivider() {
+	err := Set("/path/to/file.log", 0644)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	Divider()
+}
+
 func ExampleIs() {
 	err := Set("/path/to/file.log", 0644)
 
@@ -389,6 +403,17 @@ func ExampleLogger_Aux() {
 	}
 
 	logger.Aux("Auxiliary message")
+}
+
+func ExampleLogger_Divider() {
+	logger, err := New("/path/to/file.log", 0644)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	logger.Divider()
 }
 
 func ExampleLogger_Is() {

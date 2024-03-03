@@ -103,6 +103,11 @@ func (ls *LogSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err, DeepEquals, ErrNilLogger)
 
+	err = l.Divider()
+
+	c.Assert(err, NotNil)
+	c.Assert(err, DeepEquals, ErrNilLogger)
+
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
@@ -226,23 +231,25 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
-	l.Print(DEBUG, "Test debug %d", DEBUG)
-	l.Print(INFO, "Test info %d", INFO)
-	l.Print(WARN, "Test warn %d", WARN)
-	l.Print(ERROR, "Test error %d", ERROR)
-	l.Print(CRIT, "Test crit %d", CRIT)
+	c.Assert(l.Print(DEBUG, "Test debug %d", DEBUG), IsNil)
+	c.Assert(l.Print(INFO, "Test info %d", INFO), IsNil)
+	c.Assert(l.Print(WARN, "Test warn %d", WARN), IsNil)
+	c.Assert(l.Print(ERROR, "Test error %d", ERROR), IsNil)
+	c.Assert(l.Print(CRIT, "Test crit %d", CRIT), IsNil)
 
-	l.Print(DEBUG, "Test debug")
-	l.Print(INFO, "Test info")
-	l.Print(WARN, "Test warn")
-	l.Print(ERROR, "Test error")
-	l.Print(CRIT, "Test crit")
+	c.Assert(l.Print(DEBUG, "Test debug"), IsNil)
+	c.Assert(l.Print(INFO, "Test info"), IsNil)
+	c.Assert(l.Print(WARN, "Test warn"), IsNil)
+	c.Assert(l.Print(ERROR, "Test error"), IsNil)
+	c.Assert(l.Print(CRIT, "Test crit"), IsNil)
 
-	l.Debug("Test debug %d\n", DEBUG)
-	l.Info("Test info %d\n", INFO)
-	l.Warn("Test warn %d\n", WARN)
-	l.Error("Test error %d\n", ERROR)
-	l.Crit("Test crit %d\n", CRIT)
+	c.Assert(l.Debug("Test debug %d\n", DEBUG), IsNil)
+	c.Assert(l.Info("Test info %d\n", INFO), IsNil)
+	c.Assert(l.Warn("Test warn %d\n", WARN), IsNil)
+	c.Assert(l.Error("Test error %d\n", ERROR), IsNil)
+	c.Assert(l.Crit("Test crit %d\n", CRIT), IsNil)
+
+	l.Divider()
 
 	l.Print(DEBUG, "")
 
@@ -253,7 +260,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 
 	dataSlice := strings.Split(string(data), "\n")
 
-	c.Assert(len(dataSlice), Equals, 17)
+	c.Assert(len(dataSlice), Equals, 18)
 
 	c.Assert(dataSlice[0][28:], Equals, "Test debug 0")
 	c.Assert(dataSlice[1][28:], Equals, "Test info 1")
@@ -273,7 +280,9 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 	c.Assert(dataSlice[13][28:], Equals, "Test error 3")
 	c.Assert(dataSlice[14][28:], Equals, "Test crit 4")
 
-	c.Assert(dataSlice[15][28:], Equals, "")
+	c.Assert(dataSlice[15][28:], Equals, "--------------------------------------------------------------------------------")
+
+	c.Assert(dataSlice[16][28:], Equals, "")
 }
 
 func (ls *LogSuite) TestWithPrefixes(c *C) {
@@ -294,26 +303,28 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
-	Print(DEBUG, "Test debug %d", DEBUG)
-	Print(INFO, "Test info %d", INFO)
-	Print(WARN, "Test warn %d", WARN)
-	Print(ERROR, "Test error %d", ERROR)
-	Print(CRIT, "Test crit %d", CRIT)
-	Print(AUX, "Test aux %d", AUX)
+	c.Assert(Print(DEBUG, "Test debug %d", DEBUG), IsNil)
+	c.Assert(Print(INFO, "Test info %d", INFO), IsNil)
+	c.Assert(Print(WARN, "Test warn %d", WARN), IsNil)
+	c.Assert(Print(ERROR, "Test error %d", ERROR), IsNil)
+	c.Assert(Print(CRIT, "Test crit %d", CRIT), IsNil)
+	c.Assert(Print(AUX, "Test aux %d", AUX), IsNil)
 
-	Print(DEBUG, "Test debug")
-	Print(INFO, "Test info")
-	Print(WARN, "Test warn")
-	Print(ERROR, "Test error")
-	Print(CRIT, "Test crit")
-	Print(AUX, "Test aux")
+	c.Assert(Print(DEBUG, "Test debug"), IsNil)
+	c.Assert(Print(INFO, "Test info"), IsNil)
+	c.Assert(Print(WARN, "Test warn"), IsNil)
+	c.Assert(Print(ERROR, "Test error"), IsNil)
+	c.Assert(Print(CRIT, "Test crit"), IsNil)
+	c.Assert(Print(AUX, "Test aux"), IsNil)
 
-	Debug("Test debug %d", DEBUG)
-	Info("Test info %d", INFO)
-	Warn("Test warn %d", WARN)
-	Error("Test error %d", ERROR)
-	Crit("Test crit %d", CRIT)
-	Aux("Test aux %d", AUX)
+	c.Assert(Debug("Test debug %d", DEBUG), IsNil)
+	c.Assert(Info("Test info %d", INFO), IsNil)
+	c.Assert(Warn("Test warn %d", WARN), IsNil)
+	c.Assert(Error("Test error %d", ERROR), IsNil)
+	c.Assert(Crit("Test crit %d", CRIT), IsNil)
+	c.Assert(Aux("Test aux %d", AUX), IsNil)
+
+	c.Assert(Divider(), IsNil)
 
 	data, err := os.ReadFile(logfile)
 
@@ -322,7 +333,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 
 	dataSlice := strings.Split(string(data), "\n")
 
-	c.Assert(len(dataSlice), Equals, 19)
+	c.Assert(len(dataSlice), Equals, 20)
 
 	c.Assert(dataSlice[0][28:], Equals, "[DEBUG] Test debug 0")
 	c.Assert(dataSlice[1][28:], Equals, "[INFO] Test info 1")
@@ -344,6 +355,7 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	c.Assert(dataSlice[15][28:], Equals, "[ERROR] Test error 3")
 	c.Assert(dataSlice[16][28:], Equals, "[CRITICAL] Test crit 4")
 	c.Assert(dataSlice[17][28:], Equals, "Test aux 99")
+	c.Assert(dataSlice[18][28:], Equals, "--------------------------------------------------------------------------------")
 }
 
 func (ls *LogSuite) TestBufIODaemon(c *C) {

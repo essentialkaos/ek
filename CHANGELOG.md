@@ -3,6 +3,7 @@
 ### 12.102.0
 
 * `[knf/validators/network]` Added `Mail` validator
+* `[log]` Added `Divider` method
 * `[knf/validators/fs]` Code refactoring
 * `[knf/validators/network]` Code refactoring
 * `[knf/validators/regexp]` Code refactoring
