@@ -406,6 +406,13 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
+	_, errs = NewOptions().Parse([]string{"--test=abcd"}, Map{"s:string": {}})
+
+	c.Assert(errs, Not(HasLen), 0)
+	c.Assert(errs[0].Error(), Equals, "Option --test is not supported")
+
+	// //////////////////////////////////////////////////////////////////////////////// //
+
 	fArgs, errs := NewOptions().Parse([]string{"-", "--"}, Map{"t:test": {}})
 
 	c.Assert(errs, HasLen, 0)

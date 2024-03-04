@@ -634,7 +634,13 @@ func (opts *Options) parseLongOption(opt string) (string, string, error) {
 			return "", "", OptionError{"--" + optSlice[0], "", ERROR_WRONG_FORMAT}
 		}
 
-		return optSlice[0], strings.Join(optSlice[1:], "="), nil
+		optName := optSlice[0]
+
+		if opts.full[optName] == nil {
+			return "", "", OptionError{"--" + optName, "", ERROR_UNSUPPORTED}
+		}
+
+		return optName, strings.Join(optSlice[1:], "="), nil
 	}
 
 	if opts.full[opt] != nil {
