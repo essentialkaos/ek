@@ -628,19 +628,17 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 
 func (opts *Options) parseLongOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
-		optSlice := strings.Split(opt, "=")
+		optName, optValue, ok := strings.Cut(opt, "=")
 
-		if len(optSlice) <= 1 || optSlice[1] == "" {
-			return "", "", OptionError{"--" + optSlice[0], "", ERROR_WRONG_FORMAT}
+		if ok && optValue == "" {
+			return "", "", OptionError{"--" + optName, "", ERROR_WRONG_FORMAT}
 		}
-
-		optName := optSlice[0]
 
 		if opts.full[optName] == nil {
 			return "", "", OptionError{"--" + optName, "", ERROR_UNSUPPORTED}
 		}
 
-		return optName, strings.Join(optSlice[1:], "="), nil
+		return optName, optValue, nil
 	}
 
 	if opts.full[opt] != nil {
@@ -652,19 +650,17 @@ func (opts *Options) parseLongOption(opt string) (string, string, error) {
 
 func (opts *Options) parseShortOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
-		optSlice := strings.Split(opt, "=")
+		optName, optValue, ok := strings.Cut(opt, "=")
 
-		if len(optSlice) <= 1 || optSlice[1] == "" {
-			return "", "", OptionError{"-" + optSlice[0], "", ERROR_WRONG_FORMAT}
+		if ok && optValue == "" {
+			return "", "", OptionError{"-" + optName, "", ERROR_WRONG_FORMAT}
 		}
-
-		optName := optSlice[0]
 
 		if opts.short[optName] == "" {
 			return "", "", OptionError{"-" + optName, "", ERROR_UNSUPPORTED}
 		}
 
-		return opts.short[optName], strings.Join(optSlice[1:], "="), nil
+		return opts.short[optName], optValue, nil
 	}
 
 	if len(opt) > 2 {
