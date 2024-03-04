@@ -25,6 +25,7 @@
 * + knf/validators/network
 * + knf/validators/regexp
 * + knf/validators/system
+* + knf/value
 * + lock
 * + log
 * + lscolors

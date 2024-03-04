@@ -13,10 +13,11 @@ import (
 	"errors"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/essentialkaos/ek/v12/knf/value"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -405,32 +406,7 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return 0
-		}
-
-		return defvals[0]
-	}
-
-	// HEX Parsing
-	if len(val) >= 3 && val[0:2] == "0x" {
-		valHex, err := strconv.ParseInt(val[2:], 16, 0)
-
-		if err != nil {
-			return 0
-		}
-
-		return valHex
-	}
-
-	valInt, err := strconv.ParseInt(val, 10, 0)
-
-	if err != nil {
-		return 0
-	}
-
-	return valInt
+	return value.ParseInt64(val, defvals...)
 }
 
 // GetI returns configuration value as int
@@ -474,21 +450,7 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return 0.0
-		}
-
-		return defvals[0]
-	}
-
-	valFl, err := strconv.ParseFloat(val, 64)
-
-	if err != nil {
-		return 0.0
-	}
-
-	return valFl
+	return value.ParseFloat(val, defvals...)
 }
 
 // GetB returns configuration value as boolean
@@ -505,20 +467,7 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return false
-		}
-
-		return defvals[0]
-	}
-
-	switch val {
-	case "", "0", "false", "no":
-		return false
-	default:
-		return true
-	}
+	return value.ParseBool(val, defvals...)
 }
 
 // GetM returns configuration value as file mode
@@ -535,21 +484,7 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return os.FileMode(0)
-		}
-
-		return defvals[0]
-	}
-
-	valM, err := strconv.ParseUint(val, 8, 32)
-
-	if err != nil {
-		return 0
-	}
-
-	return os.FileMode(valM)
+	return value.ParseMode(val, defvals...)
 }
 
 // GetD returns configuration value as duration
@@ -566,15 +501,7 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return time.Duration(0)
-		}
-
-		return defvals[0]
-	}
-
-	return time.Duration(c.GetI64(name)) * time.Duration(mod)
+	return value.ParseDuration(val, time.Duration(mod), defvals...)
 }
 
 // Is checks if given property contains given value

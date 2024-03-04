@@ -4,6 +4,7 @@
 
 * `[options]` Fixed panic when parsing unsupported option with value passed with equal sign (`=`)
 * `[options]` Code refactoring
+* `[knf]` Code refactoring
 
 ### 12.102.0
 
