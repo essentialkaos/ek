@@ -123,3 +123,30 @@ func (s *ValuesSuite) TestParseTime(c *C) {
 
 	c.Assert(ParseTime("ABCD"), Equals, time.Duration(0))
 }
+
+func (s *ValuesSuite) TestParseTimestamp(c *C) {
+	c.Assert(ParseTimestamp("").IsZero(), Equals, true)
+	c.Assert(ParseTimestamp("", time.Unix(1709627257, 0)).Unix(), Equals, int64(1709627257))
+
+	c.Assert(ParseTimestamp("1709627257").Unix(), Equals, int64(1709627257))
+
+	c.Assert(ParseTimestamp("ABCD").IsZero(), Equals, true)
+}
+
+func (s *ValuesSuite) TestParseTimezone(c *C) {
+	l, _ := time.LoadLocation("America/Los_Angeles")
+
+	c.Assert(ParseTimezone(""), IsNil)
+	c.Assert(ParseTimezone("", l), NotNil)
+
+	c.Assert(ParseTimezone("Europe/Vienna"), NotNil)
+
+	c.Assert(ParseTimezone("ABCD"), IsNil)
+}
+
+func (s *ValuesSuite) TestParseList(c *C) {
+	c.Assert(ParseList(""), IsNil)
+	c.Assert(ParseList("", []string{"A", "B"}), DeepEquals, []string{"A", "B"})
+
+	c.Assert(ParseList("A, B"), DeepEquals, []string{"A", "B"})
+}

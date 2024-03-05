@@ -12,11 +12,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ParseInt64 parses value as Int64
+// ParseInt64 parses value as 64-bit int
 func ParseInt64(v string, defvals ...int64) int64 {
 	if v == "" {
 		if len(defvals) == 0 {
@@ -28,25 +30,25 @@ func ParseInt64(v string, defvals ...int64) int64 {
 
 	// HEX Parsing
 	if len(v) >= 3 && v[0:2] == "0x" {
-		vHex, err := strconv.ParseInt(v[2:], 16, 0)
+		h, err := strconv.ParseInt(v[2:], 16, 0)
 
 		if err != nil {
 			return 0
 		}
 
-		return vHex
+		return h
 	}
 
-	vInt, err := strconv.ParseInt(v, 10, 0)
+	i, err := strconv.ParseInt(v, 10, 64)
 
 	if err != nil {
 		return 0
 	}
 
-	return vInt
+	return i
 }
 
-// ParseInt parses value as Int
+// ParseInt parses value as int
 func ParseInt(v string, defvals ...int) int {
 	if len(defvals) != 0 {
 		return int(ParseInt64(v, int64(defvals[0])))
@@ -55,7 +57,7 @@ func ParseInt(v string, defvals ...int) int {
 	return int(ParseInt64(v))
 }
 
-// ParseUint parses value as Uint
+// ParseUint parses value as uint
 func ParseUint(v string, defvals ...uint) uint {
 	if len(defvals) != 0 {
 		return uint(ParseInt64(v, int64(defvals[0])))
@@ -64,7 +66,7 @@ func ParseUint(v string, defvals ...uint) uint {
 	return uint(ParseInt64(v))
 }
 
-// ParseUint64 parses value as Uint64
+// ParseUint64 parses value as 64-bit uint
 func ParseUint64(v string, defvals ...uint64) uint64 {
 	if len(defvals) != 0 {
 		return uint64(ParseInt64(v, int64(defvals[0])))
@@ -83,13 +85,13 @@ func ParseFloat(v string, defvals ...float64) float64 {
 		return defvals[0]
 	}
 
-	vF, err := strconv.ParseFloat(v, 64)
+	f, err := strconv.ParseFloat(v, 64)
 
 	if err != nil {
 		return 0.0
 	}
 
-	return vF
+	return f
 }
 
 // ParseFloat parses value as boolean
@@ -120,13 +122,13 @@ func ParseMode(v string, defvals ...os.FileMode) os.FileMode {
 		return defvals[0]
 	}
 
-	vM, err := strconv.ParseUint(v, 8, 32)
+	m, err := strconv.ParseUint(v, 8, 32)
 
 	if err != nil {
 		return 0
 	}
 
-	return os.FileMode(vM)
+	return os.FileMode(m)
 }
 
 // ParseDuration parses value as duration
@@ -175,4 +177,51 @@ func ParseTime(v string, defvals ...time.Duration) time.Duration {
 	}
 
 	return time.Duration(i*m) * time.Second
+}
+
+// ParseTimestamp parses value as Unix timestamp
+func ParseTimestamp(v string, defvals ...time.Time) time.Time {
+	if v == "" {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	i, err := strconv.ParseInt(v, 10, 64)
+
+	if err != nil {
+		return time.Time{}
+	}
+
+	return time.Unix(i, 0)
+}
+
+// ParseTimezone parses value as timezone
+func ParseTimezone(v string, defvals ...*time.Location) *time.Location {
+	if v == "" {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	l, _ := time.LoadLocation(v)
+
+	return l
+}
+
+// ParseList parses value as list
+func ParseList(v string, defvals ...[]string) []string {
+	if v == "" {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return strutil.Fields(v)
 }
