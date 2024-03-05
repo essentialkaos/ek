@@ -119,17 +119,17 @@ func (s *ValuesSuite) TestParseDuration(c *C) {
 	c.Assert(ParseDuration("ABCD", time.Minute), Equals, time.Duration(0))
 }
 
-func (s *ValuesSuite) TestParseTime(c *C) {
-	c.Assert(ParseTime(""), Equals, time.Duration(0))
-	c.Assert(ParseTime("", time.Hour), Equals, time.Hour)
+func (s *ValuesSuite) TestParseTimeDuration(c *C) {
+	c.Assert(ParseTimeDuration(""), Equals, time.Duration(0))
+	c.Assert(ParseTimeDuration("", time.Hour), Equals, time.Hour)
 
-	c.Assert(ParseTime("7s"), Equals, 7*time.Second)
-	c.Assert(ParseTime("6m"), Equals, 6*time.Minute)
-	c.Assert(ParseTime("3h"), Equals, 3*time.Hour)
-	c.Assert(ParseTime("2d"), Equals, 48*time.Hour)
-	c.Assert(ParseTime("3w"), Equals, 3*7*24*time.Hour)
+	c.Assert(ParseTimeDuration("7s"), Equals, 7*time.Second)
+	c.Assert(ParseTimeDuration("6m"), Equals, 6*time.Minute)
+	c.Assert(ParseTimeDuration("3h"), Equals, 3*time.Hour)
+	c.Assert(ParseTimeDuration("2d"), Equals, 48*time.Hour)
+	c.Assert(ParseTimeDuration("3w"), Equals, 3*7*24*time.Hour)
 
-	c.Assert(ParseTime("ABCD"), Equals, time.Duration(0))
+	c.Assert(ParseTimeDuration("ABCD"), Equals, time.Duration(0))
 }
 
 func (s *ValuesSuite) TestParseTimestamp(c *C) {

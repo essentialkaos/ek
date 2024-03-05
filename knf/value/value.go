@@ -184,8 +184,8 @@ func ParseDuration(v string, mod time.Duration, defvals ...time.Duration) time.D
 	return time.Duration(ParseInt64(v)) * mod
 }
 
-// ParseTime parses value as time duration
-func ParseTime(v string, defvals ...time.Duration) time.Duration {
+// ParseTimeDuration parses value as time duration
+func ParseTimeDuration(v string, defvals ...time.Duration) time.Duration {
 	if v == "" {
 		if len(defvals) == 0 {
 			return time.Duration(0)

@@ -594,7 +594,7 @@ func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	return value.ParseTime(val, defvals...)
+	return value.ParseTimeDuration(val, defvals...)
 }
 
 // GetTS returns configuration timestamp value as time
