@@ -65,6 +65,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`initsystem`](https://kaos.sh/g/ek.v12/initsystem) — Package provides methods for working with different init systems (sysv, upstart, systemd)
 * [`jsonutil`](https://kaos.sh/g/ek.v12/jsonutil) — Package provides methods for working with JSON data
 * [`knf`](https://kaos.sh/g/ek.v12/knf) — Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
+* [`knf/united`](https://kaos.sh/g/ek.v12/knf/united) — Package provides united configuration (_knf + options + environment variables_)
 * [`log`](https://kaos.sh/g/ek.v12/log) — Package with an improved logger
 * [`lock`](https://kaos.sh/g/ek.v12/lock) — Package provides methods for working with lock files
 * [`lscolors`](https://kaos.sh/g/ek.v12/lscolors) — Package provides methods for colorizing file names based on colors from dircolors
