@@ -8,6 +8,7 @@ package value
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -15,6 +16,10 @@ import (
 
 	"github.com/essentialkaos/ek/v12/strutil"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var maxCheckFail = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -28,8 +33,7 @@ func ParseInt64(v string, defvals ...int64) int64 {
 		return defvals[0]
 	}
 
-	// HEX Parsing
-	if len(v) >= 3 && v[0:2] == "0x" {
+	if isHex(v) {
 		h, err := strconv.ParseInt(v[2:], 16, 0)
 
 		if err != nil {
@@ -50,29 +54,65 @@ func ParseInt64(v string, defvals ...int64) int64 {
 
 // ParseInt parses value as int
 func ParseInt(v string, defvals ...int) int {
+	var i int64
+
 	if len(defvals) != 0 {
-		return int(ParseInt64(v, int64(defvals[0])))
+		i = ParseInt64(v, int64(defvals[0]))
+	} else {
+		i = ParseInt64(v)
 	}
 
-	return int(ParseInt64(v))
-}
-
-// ParseUint parses value as uint
-func ParseUint(v string, defvals ...uint) uint {
-	if len(defvals) != 0 {
-		return uint(ParseInt64(v, int64(defvals[0])))
+	if maxCheckFail || i > math.MaxInt {
+		return 0
 	}
 
-	return uint(ParseInt64(v))
+	return int(i)
 }
 
 // ParseUint64 parses value as 64-bit uint
 func ParseUint64(v string, defvals ...uint64) uint64 {
-	if len(defvals) != 0 {
-		return uint64(ParseInt64(v, int64(defvals[0])))
+	if v == "" {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
-	return uint64(ParseInt64(v))
+	if isHex(v) {
+		h, err := strconv.ParseUint(v[2:], 16, 0)
+
+		if err != nil {
+			return 0
+		}
+
+		return h
+	}
+
+	i, err := strconv.ParseUint(v, 10, 64)
+
+	if err != nil {
+		return 0
+	}
+
+	return i
+}
+
+// ParseUint parses value as uint
+func ParseUint(v string, defvals ...uint) uint {
+	var u uint64
+
+	if len(defvals) != 0 {
+		u = ParseUint64(v, uint64(defvals[0]))
+	} else {
+		u = ParseUint64(v)
+	}
+
+	if maxCheckFail || u > math.MaxUint {
+		return 0
+	}
+
+	return uint(u)
 }
 
 // ParseFloat parses value as float
@@ -224,4 +264,10 @@ func ParseList(v string, defvals ...[]string) []string {
 	}
 
 	return strutil.Fields(v)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func isHex(v string) bool {
+	return len(v) >= 3 && v[0:2] == "0x"
 }

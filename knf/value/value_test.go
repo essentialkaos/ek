@@ -47,6 +47,10 @@ func (s *ValuesSuite) TestParseInt(c *C) {
 
 	c.Assert(ParseInt("ABCD"), Equals, 0)
 	c.Assert(ParseInt("0xZZ"), Equals, 0)
+
+	maxCheckFail = true
+	c.Assert(ParseInt("9999"), Equals, 0)
+	maxCheckFail = false
 }
 
 func (s *ValuesSuite) TestParseUint(c *C) {
@@ -58,6 +62,10 @@ func (s *ValuesSuite) TestParseUint(c *C) {
 
 	c.Assert(ParseUint("ABCD"), Equals, uint(0))
 	c.Assert(ParseUint("0xZZ"), Equals, uint(0))
+
+	maxCheckFail = true
+	c.Assert(ParseUint("9999"), Equals, uint(0))
+	maxCheckFail = false
 }
 
 func (s *ValuesSuite) TestParseUint64(c *C) {
