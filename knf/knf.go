@@ -444,6 +444,23 @@ func (c *Config) GetS(name string, defvals ...string) string {
 	return val
 }
 
+// GetI returns configuration value as int
+func (c *Config) GetI(name string, defvals ...int) int {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseInt(val, defvals...)
+}
+
 // GetI64 returns configuration value as int64
 func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	if c == nil || c.mx == nil {
@@ -461,31 +478,38 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	return value.ParseInt64(val, defvals...)
 }
 
-// GetI returns configuration value as int
-func (c *Config) GetI(name string, defvals ...int) int {
-	if len(defvals) != 0 {
-		return int(c.GetI64(name, int64(defvals[0])))
-	}
-
-	return int(c.GetI64(name))
-}
-
 // GetU returns configuration value as uint
 func (c *Config) GetU(name string, defvals ...uint) uint {
-	if len(defvals) != 0 {
-		return uint(c.GetI64(name, int64(defvals[0])))
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
-	return uint(c.GetI64(name))
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseUint(val, defvals...)
 }
 
 // GetU64 returns configuration value as uint64
 func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
-	if len(defvals) != 0 {
-		return uint64(c.GetI64(name, int64(defvals[0])))
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
-	return uint64(c.GetI64(name))
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseUint64(val, defvals...)
 }
 
 // GetF returns configuration value as floating number

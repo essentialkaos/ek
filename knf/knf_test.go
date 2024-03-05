@@ -519,6 +519,9 @@ func (s *KNFSuite) TestNil(c *check.C) {
 
 	c.Assert(nilConf.GetS("formatting:test1"), check.Equals, "")
 	c.Assert(nilConf.GetI("formatting:test1"), check.Equals, 0)
+	c.Assert(nilConf.GetI64("formatting:test1"), check.Equals, int64(0))
+	c.Assert(nilConf.GetU("formatting:test1"), check.Equals, uint(0))
+	c.Assert(nilConf.GetU64("formatting:test1"), check.Equals, uint64(0))
 	c.Assert(nilConf.GetF("formatting:test1"), check.Equals, 0.0)
 	c.Assert(nilConf.GetB("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formatting:test1"), check.Equals, os.FileMode(0))
