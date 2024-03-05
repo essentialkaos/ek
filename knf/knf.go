@@ -237,6 +237,58 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 	return global.GetD(name, mod, defvals...)
 }
 
+// GetTD returns configuration value as time duration
+func GetTD(name string, defvals ...time.Duration) time.Duration {
+	if global == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTD(name, defvals...)
+}
+
+// GetTS returns configuration timestamp value as time
+func GetTS(name string, defvals ...time.Time) time.Time {
+	if global == nil {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTS(name, defvals...)
+}
+
+// GetTS returns configuration value as timezone
+func GetTZ(name string, defvals ...*time.Location) *time.Location {
+	if global == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTZ(name, defvals...)
+}
+
+// GetL returns configuration value as list
+func GetL(name string, defvals ...[]string) []string {
+	if global == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetL(name, defvals...)
+}
+
 // Is checks if given property contains given value
 func Is(name string, value any) bool {
 	if global == nil {
@@ -502,6 +554,74 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	c.mx.RUnlock()
 
 	return value.ParseDuration(val, time.Duration(mod), defvals...)
+}
+
+// GetTD returns configuration value as time duration
+func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTime(val, defvals...)
+}
+
+// GetTS returns configuration timestamp value as time
+func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTimestamp(val, defvals...)
+}
+
+// GetTS returns configuration value as timezone
+func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTimezone(val, defvals...)
+}
+
+// GetL returns configuration value as list
+func (c *Config) GetL(name string, defvals ...[]string) []string {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseList(val, defvals...)
 }
 
 // Is checks if given property contains given value

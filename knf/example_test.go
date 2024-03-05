@@ -43,6 +43,18 @@ func ExampleGlobal() {
 	// Read duration as minutes
 	GetD("section:duration", Minute)
 
+	// Read time duration
+	GetTD("section:time-duration")
+
+	// Read timestamp
+	GetTS("section:timestamp")
+
+	// Read timezone
+	GetTZ("section:timezone")
+
+	// Read list
+	GetL("section:list")
+
 	// Check section
 	if HasSection("section") {
 		// Section exist
@@ -207,6 +219,50 @@ func ExampleGetD() {
 	fmt.Printf("Value from config: %v\n", GetD("user:timeout", Minute))
 }
 
+func ExampleGetTD() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", GetTD("user:timeout"))
+}
+
+func ExampleGetTS() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", GetTS("user:created"))
+}
+
+func ExampleGetTZ() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", GetTZ("service:timezone"))
+}
+
+func ExampleGetL() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", GetL("issue:labels"))
+}
+
 func ExampleIs() {
 	err := Global("/path/to/your/config.knf")
 
@@ -325,7 +381,10 @@ func ExampleConfig_GetS() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -347,7 +406,10 @@ func ExampleConfig_GetB() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -369,7 +431,10 @@ func ExampleConfig_GetI() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -391,7 +456,10 @@ func ExampleConfig_GetI64() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -413,7 +481,10 @@ func ExampleConfig_GetU() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -435,7 +506,10 @@ func ExampleConfig_GetU64() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -457,7 +531,10 @@ func ExampleConfig_GetF() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -479,7 +556,10 @@ func ExampleConfig_GetM() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -501,7 +581,10 @@ func ExampleConfig_GetD() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -512,7 +595,104 @@ func ExampleConfig_GetD() {
 	fmt.Printf("Value from config: %v\n", cfg.GetD("user:timeout", Minute))
 
 	// Output:
-	// Value from config: 5m0s
+	// Value from config: 3m0s
+}
+
+func ExampleConfig_GetTD() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", cfg.GetTD("user:timeout"))
+
+	// Output:
+	// Value from config: 3m0s
+}
+
+func ExampleConfig_GetTS() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", cfg.GetTS("user:created"))
+}
+
+func ExampleConfig_GetTZ() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %s\n", cfg.GetTZ("user:timezone"))
+
+	// Output:
+	// Value from config: Europe/Madrid
+}
+
+func ExampleConfig_GetL() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %s\n", cfg.GetL("user:labels"))
+
+	// Output:
+	// Value from config: [system admin]
 }
 
 func ExampleConfig_Is() {
@@ -523,7 +703,10 @@ func ExampleConfig_Is() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -547,7 +730,10 @@ func ExampleConfig_HasSection() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -571,7 +757,10 @@ func ExampleConfig_HasProp() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -595,7 +784,10 @@ func ExampleConfig_Sections() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 
 [log]
 	file: /var/log/app/app.log
@@ -623,7 +815,10 @@ func ExampleConfig_Props() {
 	is-admin: true
 	priority: 3.7
 	default-mode: 0644
-	timeout: 5
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
 `))
 
 	if err != nil {
@@ -642,6 +837,9 @@ func ExampleConfig_Props() {
 	// 4: priority
 	// 5: default-mode
 	// 6: timeout
+	// 7: created
+	// 8: timezone
+	// 9: labels
 }
 
 func ExampleConfig_File() {
