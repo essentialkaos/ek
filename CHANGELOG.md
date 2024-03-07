@@ -3,6 +3,7 @@
 ### 12.104.0
 
 * `[knf/united]` Added validation using `knf` validators
+* `[knf/united]` Added usage examples
 
 ### 12.103.0
 

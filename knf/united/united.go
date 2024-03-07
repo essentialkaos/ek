@@ -38,6 +38,17 @@ type DurationMod = knf.DurationMod
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var (
+	Millisecond = knf.Millisecond
+	Second      = knf.Second
+	Minute      = knf.Minute
+	Hour        = knf.Hour
+	Day         = knf.Day
+	Week        = knf.Week
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var global *config
 
 var optionHasFunc = options.Has
@@ -47,7 +58,7 @@ var optionGetFunc = options.GetS
 
 // Combine applies mappings to combine knf properties, options, and environment
 // variables
-func Combine(mappings ...Mapping) error {
+func Combine(mappings ...Mapping) {
 	config := &config{
 		mappings: make(map[string]Mapping),
 	}
@@ -57,8 +68,6 @@ func Combine(mappings ...Mapping) error {
 	}
 
 	global = config
-
-	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
