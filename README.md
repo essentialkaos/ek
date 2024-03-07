@@ -124,6 +124,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [jira-reindex-runner](https://kaos.sh/jira-reindex-runner) — Application for periodical running Jira re-index process
 * [knf](https://kaos.sh/knf) — Simple utility for reading values from KNF files
 * [MDToc](https://kaos.sh/mdtoc) — Utility for generating table of contents for markdown files
+* [path](https://kaos.sh/path) — Dead simple tool for working with paths
 * [perfecto](https://kaos.sh/perfecto) — Tool for checking perfectly written RPM specs
 * [RBInstall](https://kaos.sh/rbinstall) — Utility for installing prebuilt ruby to RBEnv
 * [Redis CLI Monitor](https://kaos.sh/redis-cli-monitor) — Tiny redis client for renamed MONITOR commands
