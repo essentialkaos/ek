@@ -612,7 +612,7 @@ func (s *KNFSuite) TestSimpleValidator(c *check.C) {
 	c.Assert(global, check.NotNil)
 	c.Assert(err, check.IsNil)
 
-	var simpleValidator = func(config *Config, prop string, value any) error {
+	var simpleValidator = func(config IConfig, prop string, value any) error {
 		if prop == "string:test2" {
 			return fmt.Errorf("ERROR")
 		}

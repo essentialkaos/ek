@@ -1,7 +1,13 @@
 ## Changelog
 
+### 12.104.0
+
+* `[knf/united]` Added validation using `knf` validators
+* `[knf/united]` Added usage examples
+
 ### 12.103.0
 
+* `[knf/united]` Added new package for working with united configuration (_knf + options + environment variables_)
 * `[knf]` Added method `GetTD`
 * `[knf]` Added method `GetTS`
 * `[knf]` Added method `GetTZ`

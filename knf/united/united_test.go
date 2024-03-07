@@ -15,6 +15,8 @@ import (
 	"github.com/essentialkaos/ek/v12/knf"
 	"github.com/essentialkaos/ek/v12/options"
 
+	knfv "github.com/essentialkaos/ek/v12/knf/validators"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -78,7 +80,7 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Zurich")
 	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1", "Test2"})
 
-	err := Combine(
+	Combine(
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -90,8 +92,6 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
-
-	c.Assert(err, IsNil)
 
 	c.Assert(GetS("test:string"), Equals, "Test")
 	c.Assert(GetI("test:integer"), Equals, 123)
@@ -141,7 +141,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 
 	c.Assert(errs, HasLen, 0)
 
-	err := Combine(
+	Combine(
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -153,8 +153,6 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
-
-	c.Assert(err, IsNil)
 
 	optionHasFunc = opts.Has
 	optionGetFunc = opts.GetS
@@ -189,7 +187,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	os.Setenv("TEST_TIMEZONE", "Europe/Berlin")
 	os.Setenv("TEST_LIST", "Test1Env,Test2Env")
 
-	err := Combine(
+	Combine(
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -201,8 +199,6 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
-
-	c.Assert(err, IsNil)
 
 	c.Assert(GetS("test:string"), Equals, "TestEnv")
 	c.Assert(GetI("test:integer"), Equals, 789)
@@ -217,4 +213,34 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	c.Assert(GetTS("test:timestamp").Unix(), Equals, int64(1591014600))
 	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Berlin")
 	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1Env", "Test2Env"})
+}
+
+func (s *UnitedSuite) TestValidation(c *C) {
+	global = nil
+
+	errs := Validate([]*knf.Validator{
+		{"test:string", knfv.Empty, nil},
+	})
+
+	c.Assert(errs, HasLen, 1)
+
+	Combine(
+		Mapping{"test:string", "test-string", "TEST_STRING"},
+		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
+		Mapping{"test:float", "test-float", "TEST_FLOAT"},
+		Mapping{"test:boolean", "test-boolean", "TEST_BOOLEAN"},
+		Mapping{"test:file-mode", "test-file-mode", "TEST_FILE_MODE"},
+		Mapping{"test:duration", "test-duration", "TEST_DURATION"},
+		Mapping{"test:time-duration", "test-time-duration", "TEST_TIME_DURATION"},
+		Mapping{"test:timestamp", "test-timestamp", "TEST_TIMESTAMP"},
+		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
+		Mapping{"test:list", "test-list", "TEST_LIST"},
+	)
+
+	errs = Validate([]*knf.Validator{
+		{"test:string", knfv.Empty, nil},
+		{"test:integer", knfv.Greater, 100},
+	})
+
+	c.Assert(errs, HasLen, 1)
 }

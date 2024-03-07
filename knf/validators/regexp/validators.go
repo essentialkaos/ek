@@ -24,7 +24,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateRegexp(config *knf.Config, prop string, value any) error {
+func validateRegexp(config knf.IConfig, prop string, value any) error {
 	pattern := value.(string)
 	confVal := config.GetS(prop)
 

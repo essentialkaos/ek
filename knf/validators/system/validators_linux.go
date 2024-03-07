@@ -26,7 +26,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateInterface(config *knf.Config, prop string, value any) error {
+func validateInterface(config knf.IConfig, prop string, value any) error {
 	interfaceName := config.GetS(prop)
 
 	if interfaceName == "" {
