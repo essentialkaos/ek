@@ -13,10 +13,11 @@ import (
 	"errors"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/essentialkaos/ek/v12/knf/value"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -236,6 +237,58 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 	return global.GetD(name, mod, defvals...)
 }
 
+// GetTD returns configuration value as time duration
+func GetTD(name string, defvals ...time.Duration) time.Duration {
+	if global == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTD(name, defvals...)
+}
+
+// GetTS returns configuration timestamp value as time
+func GetTS(name string, defvals ...time.Time) time.Time {
+	if global == nil {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTS(name, defvals...)
+}
+
+// GetTS returns configuration value as timezone
+func GetTZ(name string, defvals ...*time.Location) *time.Location {
+	if global == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetTZ(name, defvals...)
+}
+
+// GetL returns configuration value as list
+func GetL(name string, defvals ...[]string) []string {
+	if global == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetL(name, defvals...)
+}
+
 // Is checks if given property contains given value
 func Is(name string, value any) bool {
 	if global == nil {
@@ -391,6 +444,23 @@ func (c *Config) GetS(name string, defvals ...string) string {
 	return val
 }
 
+// GetI returns configuration value as int
+func (c *Config) GetI(name string, defvals ...int) int {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseInt(val, defvals...)
+}
+
 // GetI64 returns configuration value as int64
 func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	if c == nil || c.mx == nil {
@@ -405,7 +475,12 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
+	return value.ParseInt64(val, defvals...)
+}
+
+// GetU returns configuration value as uint
+func (c *Config) GetU(name string, defvals ...uint) uint {
+	if c == nil || c.mx == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -413,51 +488,28 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 		return defvals[0]
 	}
 
-	// HEX Parsing
-	if len(val) >= 3 && val[0:2] == "0x" {
-		valHex, err := strconv.ParseInt(val[2:], 16, 0)
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
 
-		if err != nil {
-			return 0
-		}
-
-		return valHex
-	}
-
-	valInt, err := strconv.ParseInt(val, 10, 0)
-
-	if err != nil {
-		return 0
-	}
-
-	return valInt
-}
-
-// GetI returns configuration value as int
-func (c *Config) GetI(name string, defvals ...int) int {
-	if len(defvals) != 0 {
-		return int(c.GetI64(name, int64(defvals[0])))
-	}
-
-	return int(c.GetI64(name))
-}
-
-// GetU returns configuration value as uint
-func (c *Config) GetU(name string, defvals ...uint) uint {
-	if len(defvals) != 0 {
-		return uint(c.GetI64(name, int64(defvals[0])))
-	}
-
-	return uint(c.GetI64(name))
+	return value.ParseUint(val, defvals...)
 }
 
 // GetU64 returns configuration value as uint64
 func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
-	if len(defvals) != 0 {
-		return uint64(c.GetI64(name, int64(defvals[0])))
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
-	return uint64(c.GetI64(name))
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseUint64(val, defvals...)
 }
 
 // GetF returns configuration value as floating number
@@ -474,21 +526,7 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return 0.0
-		}
-
-		return defvals[0]
-	}
-
-	valFl, err := strconv.ParseFloat(val, 64)
-
-	if err != nil {
-		return 0.0
-	}
-
-	return valFl
+	return value.ParseFloat(val, defvals...)
 }
 
 // GetB returns configuration value as boolean
@@ -505,20 +543,7 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return false
-		}
-
-		return defvals[0]
-	}
-
-	switch val {
-	case "", "0", "false", "no":
-		return false
-	default:
-		return true
-	}
+	return value.ParseBool(val, defvals...)
 }
 
 // GetM returns configuration value as file mode
@@ -535,21 +560,7 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
-		if len(defvals) == 0 {
-			return os.FileMode(0)
-		}
-
-		return defvals[0]
-	}
-
-	valM, err := strconv.ParseUint(val, 8, 32)
-
-	if err != nil {
-		return 0
-	}
-
-	return os.FileMode(valM)
+	return value.ParseMode(val, defvals...)
 }
 
 // GetD returns configuration value as duration
@@ -566,7 +577,12 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	val := c.data[strings.ToLower(name)]
 	c.mx.RUnlock()
 
-	if val == "" {
+	return value.ParseDuration(val, time.Duration(mod), defvals...)
+}
+
+// GetTD returns configuration value as time duration
+func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
+	if c == nil || c.mx == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -574,7 +590,62 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 		return defvals[0]
 	}
 
-	return time.Duration(c.GetI64(name)) * time.Duration(mod)
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTimeDuration(val, defvals...)
+}
+
+// GetTS returns configuration timestamp value as time
+func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTimestamp(val, defvals...)
+}
+
+// GetTS returns configuration value as timezone
+func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseTimezone(val, defvals...)
+}
+
+// GetL returns configuration value as list
+func (c *Config) GetL(name string, defvals ...[]string) []string {
+	if c == nil || c.mx == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	c.mx.RLock()
+	val := c.data[strings.ToLower(name)]
+	c.mx.RUnlock()
+
+	return value.ParseList(val, defvals...)
 }
 
 // Is checks if given property contains given value

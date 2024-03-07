@@ -1,5 +1,15 @@
 ## Changelog
 
+### 12.103.0
+
+* `[knf]` Added method `GetTD`
+* `[knf]` Added method `GetTS`
+* `[knf]` Added method `GetTZ`
+* `[knf]` Added method `GetL`
+* `[options]` Fixed panic when parsing unsupported option with value passed with equal sign (`=`)
+* `[options]` Code refactoring
+* `[knf]` Code refactoring
+
 ### 12.102.0
 
 * `[knf/validators/network]` Added `Mail` validator

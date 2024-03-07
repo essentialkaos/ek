@@ -69,6 +69,26 @@ test1:      1
 	test3: ABC
 	test4: true
 
+[time-duration]
+	test1: 0
+	test2: 15
+	test3: 45s
+	test4: 12M
+	test5: ABCD
+
+[timestamp]
+	test1: 0
+	test2: 1709629048
+	test3: ABCD
+
+[timezone]
+	test1: Europe/Zurich
+	test2: ABCD
+
+[list]
+	test1:
+	test2: Test1, Test2
+
 [comment]
   test1: 100
   # test2: 100
@@ -196,6 +216,10 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetB("test"), check.Equals, false)
 	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
 	c.Assert(GetD("test", Second), check.Equals, time.Duration(0))
+	c.Assert(GetTD("test"), check.Equals, time.Duration(0))
+	c.Assert(GetTS("test").IsZero(), check.Equals, true)
+	c.Assert(GetTZ("test"), check.IsNil)
+	c.Assert(GetL("test"), check.IsNil)
 	c.Assert(Is("test", ""), check.Equals, false)
 	c.Assert(HasSection("test"), check.Equals, false)
 	c.Assert(HasProp("test"), check.Equals, false)
@@ -212,6 +236,10 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetB("test"), check.Equals, false)
 	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
 	c.Assert(config.GetD("test", Second), check.Equals, time.Duration(0))
+	c.Assert(config.GetTD("test"), check.Equals, time.Duration(0))
+	c.Assert(config.GetTS("test").IsZero(), check.Equals, true)
+	c.Assert(config.GetTZ("test"), check.IsNil)
+	c.Assert(config.GetL("test"), check.IsNil)
 	c.Assert(config.Is("test", ""), check.Equals, true)
 	c.Assert(config.HasSection("test"), check.Equals, false)
 	c.Assert(config.HasProp("test"), check.Equals, false)
@@ -289,7 +317,7 @@ func (s *KNFSuite) TestSections(c *check.C) {
 
 	sections := Sections()
 
-	c.Assert(sections, check.HasLen, 9)
+	c.Assert(sections, check.HasLen, 13)
 	c.Assert(
 		sections,
 		check.DeepEquals,
@@ -300,6 +328,10 @@ func (s *KNFSuite) TestSections(c *check.C) {
 			"integer",
 			"file-mode",
 			"duration",
+			"time-duration",
+			"timestamp",
+			"timezone",
+			"list",
 			"comment",
 			"macro",
 			"k",
@@ -423,6 +455,19 @@ func (s *KNFSuite) TestDuration(c *check.C) {
 	c.Assert(GetD("duration:test4", Second), check.Equals, time.Duration(0))
 }
 
+func (s *KNFSuite) TestTimeDuration(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(GetTD("time-duration:test1"), check.Equals, time.Duration(0))
+	c.Assert(GetTD("time-duration:test2"), check.Equals, 15*time.Second)
+	c.Assert(GetTD("time-duration:test3"), check.Equals, 45*time.Second)
+	c.Assert(GetTD("time-duration:test4"), check.Equals, 12*time.Minute)
+	c.Assert(GetTD("time-duration:test5"), check.Equals, time.Duration(0))
+}
+
 func (s *KNFSuite) TestIs(c *check.C) {
 	err := Global(s.ConfigPath)
 
@@ -474,10 +519,17 @@ func (s *KNFSuite) TestNil(c *check.C) {
 
 	c.Assert(nilConf.GetS("formatting:test1"), check.Equals, "")
 	c.Assert(nilConf.GetI("formatting:test1"), check.Equals, 0)
+	c.Assert(nilConf.GetI64("formatting:test1"), check.Equals, int64(0))
+	c.Assert(nilConf.GetU("formatting:test1"), check.Equals, uint(0))
+	c.Assert(nilConf.GetU64("formatting:test1"), check.Equals, uint64(0))
 	c.Assert(nilConf.GetF("formatting:test1"), check.Equals, 0.0)
 	c.Assert(nilConf.GetB("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formatting:test1"), check.Equals, os.FileMode(0))
 	c.Assert(nilConf.GetD("formatting:test1", Second), check.Equals, time.Duration(0))
+	c.Assert(nilConf.GetTD("formatting:test1"), check.Equals, time.Duration(0))
+	c.Assert(nilConf.GetTS("formatting:test1").IsZero(), check.Equals, true)
+	c.Assert(nilConf.GetTZ("formatting:test1"), check.IsNil)
+	c.Assert(nilConf.GetL("formatting:test1"), check.IsNil)
 	c.Assert(nilConf.Is("formatting:test1", ""), check.Equals, false)
 	c.Assert(nilConf.HasSection("formatting"), check.Equals, false)
 	c.Assert(nilConf.HasProp("formatting:test1"), check.Equals, false)
@@ -499,6 +551,8 @@ func (s *KNFSuite) TestNil(c *check.C) {
 func (s *KNFSuite) TestDefault(c *check.C) {
 	global = nil
 
+	l, _ := time.LoadLocation("Asia/Yerevan")
+
 	c.Assert(GetS("string:test100", "fail"), check.Equals, "fail")
 	c.Assert(GetB("boolean:test100", true), check.Equals, true)
 	c.Assert(GetI("integer:test100", 9999), check.Equals, 9999)
@@ -508,6 +562,10 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
+	c.Assert(GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
+	c.Assert(GetTZ("duration:test100", l), check.Equals, l)
+	c.Assert(GetL("duration:test100", []string{"A", "B"}), check.DeepEquals, []string{"A", "B"})
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	err := Global(s.ConfigPath)
@@ -524,6 +582,10 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
+	c.Assert(GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
+	c.Assert(GetTZ("duration:test100", l), check.Equals, l)
+	c.Assert(GetL("duration:test100", []string{"A", "B"}), check.DeepEquals, []string{"A", "B"})
 	c.Assert(GetS("string:test6", "fail"), check.Equals, "fail")
 
 	var nc *Config
@@ -537,6 +599,10 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
 	c.Assert(nc.GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(nc.GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
+	c.Assert(nc.GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
+	c.Assert(nc.GetTZ("duration:test100", l), check.Equals, l)
+	c.Assert(nc.GetL("duration:test100", []string{"A", "B"}), check.DeepEquals, []string{"A", "B"})
 	c.Assert(nc.GetS("string:test6", "fail"), check.Equals, "fail")
 }
 
