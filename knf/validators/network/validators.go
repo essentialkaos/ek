@@ -44,7 +44,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validateIP(config *knf.Config, prop string, value any) error {
+func validateIP(config knf.IConfig, prop string, value any) error {
 	ipStr := config.GetS(prop)
 
 	if ipStr == "" {
@@ -60,7 +60,7 @@ func validateIP(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validatePort(config *knf.Config, prop string, value any) error {
+func validatePort(config knf.IConfig, prop string, value any) error {
 	portStr := config.GetS(prop)
 
 	if portStr == "" {
@@ -76,7 +76,7 @@ func validatePort(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validateMAC(config *knf.Config, prop string, value any) error {
+func validateMAC(config knf.IConfig, prop string, value any) error {
 	macStr := config.GetS(prop)
 
 	if macStr == "" {
@@ -92,7 +92,7 @@ func validateMAC(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validateCIDR(config *knf.Config, prop string, value any) error {
+func validateCIDR(config knf.IConfig, prop string, value any) error {
 	cidrStr := config.GetS(prop)
 
 	if cidrStr == "" {
@@ -108,7 +108,7 @@ func validateCIDR(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validateURL(config *knf.Config, prop string, value any) error {
+func validateURL(config knf.IConfig, prop string, value any) error {
 	urlStr := config.GetS(prop)
 
 	if urlStr == "" {
@@ -124,7 +124,7 @@ func validateURL(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validateMail(config *knf.Config, prop string, value any) error {
+func validateMail(config knf.IConfig, prop string, value any) error {
 	mailStr := config.GetS(prop)
 
 	if mailStr == "" {
@@ -138,7 +138,7 @@ func validateMail(config *knf.Config, prop string, value any) error {
 	return nil
 }
 
-func validateHasIP(config *knf.Config, prop string, value any) error {
+func validateHasIP(config knf.IConfig, prop string, value any) error {
 	ipStr := config.GetS(prop)
 
 	if ipStr == "" {

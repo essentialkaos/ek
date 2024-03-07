@@ -22,6 +22,50 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// IConfig is knf like configuration
+type IConfig interface {
+	// GetS returns configuration value as string
+	GetS(name string, defvals ...string) string
+
+	// GetI returns configuration value as int
+	GetI(name string, defvals ...int) int
+
+	// GetI64 returns configuration value as int64
+	GetI64(name string, defvals ...int64) int64
+
+	// GetU returns configuration value as uint
+	GetU(name string, defvals ...uint) uint
+
+	// GetU64 returns configuration value as uint64
+	GetU64(name string, defvals ...uint64) uint64
+
+	// GetF returns configuration value as floating number
+	GetF(name string, defvals ...float64) float64
+
+	// GetB returns configuration value as boolean
+	GetB(name string, defvals ...bool) bool
+
+	// GetM returns configuration value as file mode
+	GetM(name string, defvals ...os.FileMode) os.FileMode
+
+	// GetD returns configuration values as duration
+	GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration
+
+	// GetTD returns configuration value as time duration
+	GetTD(name string, defvals ...time.Duration) time.Duration
+
+	// GetTS returns configuration timestamp value as time
+	GetTS(name string, defvals ...time.Time) time.Time
+
+	// GetTS returns configuration value as timezone
+	GetTZ(name string, defvals ...*time.Location) *time.Location
+
+	// GetL returns configuration value as list
+	GetL(name string, defvals ...[]string) []string
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Config is basic config struct
 type Config struct {
 	sections []string
@@ -40,7 +84,7 @@ type Validator struct {
 }
 
 // PropertyValidator is default type of property validation function
-type PropertyValidator func(config *Config, prop string, value any) error
+type PropertyValidator func(config IConfig, prop string, value any) error
 
 // DurationMod is type for duration modificator
 type DurationMod int64
