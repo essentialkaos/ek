@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.105.0
+
+* [`log`] Added JSON output format
+* [`log`] Added caller info to messages
+* [`log`] Code refactoring
+
 ### 12.104.0
 
 * `[knf/united]` Added validation using `knf` validators

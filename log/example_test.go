@@ -38,8 +38,25 @@ func Example() {
 	logger.Error("This is error message")
 	logger.Crit("This is critical message")
 
+	// Enable colors for output
+	logger.UseColors = true
+
+	// Encode messages to JSON
+	logger.UseJSON = true
+
+	// Print caller info
+	logger.WithCaller = true
+
+	// Use custom date & time layout
+	logger.TimeLayout = time.RFC3339
+
+	// Add fields to message
+	logger.Debug("This is %d %s message", 2, "debug", F{"user", "bob"}, F{"id", 200})
+
 	// AUX message it's unskippable message which will be printed to log file with
 	// any minimum level
+	//
+	// Note that all AUX messages are dropped when using JSON format
 	logger.Aux("This is aux message")
 
 	// Print simple divider
