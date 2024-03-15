@@ -840,18 +840,8 @@ func getCallerFromStack() string {
 	return "unknown"
 }
 
+// extractCallerFromFrame extracts caller info from frame
 func extractCallerFromFrame(f runtime.Frame) string {
-	index, sepCount := 0, 0
-
-	for index = len(f.File) - 1; index > 0; index-- {
-		if f.File[index] == '/' {
-			sepCount++
-		}
-
-		if sepCount == 2 {
-			break
-		}
-	}
-
+	index := strutil.IndexByteSkip(f.File, '/', -1)
 	return f.File[index+1:] + ":" + strconv.Itoa(f.Line)
 }

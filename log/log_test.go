@@ -485,8 +485,8 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(unknown:0) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(unknown:0) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:470) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:475) Test info 2")
 }
 
 func (ls *LogSuite) TestWithFields(c *C) {
