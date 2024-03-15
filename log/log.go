@@ -814,9 +814,9 @@ func splitPayload(payload []any) ([]any, []any) {
 // getCallerFromStack returns caller function and line from stack
 func getCallerFromStack() string {
 	pcs := make([]uintptr, 64)
-	n := runtime.Callers(4, pcs)
+	n := runtime.Callers(2, pcs)
 
-	foundNil := false
+	file := ""
 	frames := runtime.CallersFrames(pcs[:n])
 
 	for {
@@ -826,14 +826,32 @@ func getCallerFromStack() string {
 			break
 		}
 
-		if frame.Func == nil {
-			foundNil = true
+		if file == "" {
+			file = frame.File
 		}
 
-		if foundNil && frame.Func != nil {
-			return frame.File + ":" + strconv.Itoa(frame.Line)
+		if file == frame.File {
+			continue
+		}
+
+		return extractCallerFromFrame(frame)
+	}
+
+	return "unknown"
+}
+
+func extractCallerFromFrame(f runtime.Frame) string {
+	index, sepCount := 0, 0
+
+	for index = len(f.File) - 1; index > 0; index-- {
+		if f.File[index] == '/' {
+			sepCount++
+		}
+
+		if sepCount == 2 {
+			break
 		}
 	}
 
-	return "unknown:0"
+	return f.File[index+1:] + ":" + strconv.Itoa(f.Line)
 }

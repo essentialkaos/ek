@@ -198,3 +198,15 @@ func ExampleHasSuffixAny() {
 	// true
 	// false
 }
+
+func ExampleIndexByteSkip() {
+	// Index from left
+	fmt.Println(IndexByteSkip("/home/john/projects/test.log", '/', 2))
+
+	// Index from right
+	fmt.Println(IndexByteSkip("/home/john/projects/test.log", '/', -1))
+
+	// Output:
+	// 10
+	// 10
+}

@@ -446,6 +446,42 @@ func HasSuffixAny(s string, suffix ...string) bool {
 	return false
 }
 
+// IndexByteSkip returns the index of the given byte in the string after skipping
+// the first or the last N occurrences
+func IndexByteSkip(s string, c byte, skip int) int {
+	if skip == 0 {
+		return strings.IndexByte(s, c)
+	}
+
+	counter := 0
+
+	if skip > 0 {
+		for i := 0; i < len(s); i++ {
+			if s[i] == c {
+				counter++
+			}
+
+			if counter > skip {
+				return i
+			}
+		}
+	} else {
+		skip *= -1
+
+		for i := len(s) - 1; i > 0; i-- {
+			if s[i] == c {
+				counter++
+			}
+
+			if counter > skip {
+				return i
+			}
+		}
+	}
+
+	return -1
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func appendField(data []string, item string) []string {

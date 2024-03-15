@@ -2,9 +2,10 @@
 
 ### 12.105.0
 
-* [`log`] Added JSON output format
-* [`log`] Added caller info to messages
-* [`log`] Code refactoring
+* `[log]` Added JSON output format
+* `[log]` Added caller info to messages
+* `[strutil]` Added method `IndexByteSkip`
+* `[log]` Code refactoring
 
 ### 12.104.0
 
