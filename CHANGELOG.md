@@ -5,6 +5,7 @@
 * `[log]` Added JSON output format
 * `[log]` Added caller info to messages
 * `[strutil]` Added method `IndexByteSkip`
+* `[timeutil]` Added method `FromISOWeek`
 * `[log]` Code refactoring
 
 ### 12.104.0

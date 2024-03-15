@@ -106,6 +106,7 @@ func ExampleStartOfHour() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(StartOfHour(d))
+
 	// Output:
 	// 2021-06-15 12:00:00 +0000 UTC
 }
@@ -114,6 +115,7 @@ func ExampleStartOfDay() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(StartOfDay(d))
+
 	// Output:
 	// 2021-06-15 00:00:00 +0000 UTC
 }
@@ -122,6 +124,7 @@ func ExampleStartOfWeek() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(StartOfWeek(d, time.Monday))
+
 	// Output:
 	// 2021-06-14 00:00:00 +0000 UTC
 }
@@ -130,6 +133,7 @@ func ExampleStartOfMonth() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(StartOfMonth(d))
+
 	// Output:
 	// 2021-06-01 00:00:00 +0000 UTC
 }
@@ -138,6 +142,7 @@ func ExampleStartOfYear() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(StartOfYear(d))
+
 	// Output:
 	// 2021-01-01 00:00:00 +0000 UTC
 }
@@ -146,6 +151,7 @@ func ExamplePrevDay() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(PrevDay(d))
+
 	// Output:
 	// 2021-05-31 12:30:15 +0000 UTC
 }
@@ -154,6 +160,7 @@ func ExamplePrevMonth() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(PrevMonth(d))
+
 	// Output:
 	// 2021-05-01 12:30:15 +0000 UTC
 }
@@ -162,6 +169,7 @@ func ExamplePrevYear() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(PrevYear(d))
+
 	// Output:
 	// 2020-06-01 12:30:15 +0000 UTC
 }
@@ -170,6 +178,7 @@ func ExampleNextDay() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(NextDay(d))
+
 	// Output:
 	// 2021-06-02 12:30:15 +0000 UTC
 }
@@ -178,6 +187,7 @@ func ExampleNextMonth() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(NextMonth(d))
+
 	// Output:
 	// 2021-07-01 12:30:15 +0000 UTC
 }
@@ -186,6 +196,7 @@ func ExampleNextYear() {
 	d := time.Date(2021, 6, 1, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(NextYear(d))
+
 	// Output:
 	// 2022-06-01 12:30:15 +0000 UTC
 }
@@ -194,6 +205,7 @@ func ExamplePrevWorkday() {
 	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(PrevWorkday(d))
+
 	// Output:
 	// 2021-06-04 12:30:15 +0000 UTC
 }
@@ -202,6 +214,7 @@ func ExamplePrevWeekend() {
 	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(PrevWeekend(d))
+
 	// Output:
 	// 2021-06-05 12:30:15 +0000 UTC
 }
@@ -210,6 +223,7 @@ func ExampleNextWorkday() {
 	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(NextWorkday(d))
+
 	// Output:
 	// 2021-06-07 12:30:15 +0000 UTC
 }
@@ -218,8 +232,18 @@ func ExampleNextWeekend() {
 	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
 
 	fmt.Println(NextWeekend(d))
+
 	// Output:
 	// 2021-06-12 12:30:15 +0000 UTC
+}
+
+func ExampleFromISOWeek() {
+	t := FromISOWeek(25, 2021, time.UTC)
+
+	fmt.Println(t)
+
+	// Output:
+	// 2021-06-18 00:00:00 +0000 UTC
 }
 
 func ExampleDate_Unix() {

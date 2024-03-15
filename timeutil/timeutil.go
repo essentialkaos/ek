@@ -378,6 +378,17 @@ func NextWeekend(t time.Time) time.Time {
 	}
 }
 
+// FromISOWeek returns date for given week number in given year
+func FromISOWeek(week, year int, loc *time.Location) time.Time {
+	week = mathutil.Between(week, 1, 53)
+
+	if year <= 0 {
+		year = time.Now().In(loc).Year()
+	}
+
+	return time.Date(year, 1, 1, 0, 0, 0, 0, loc).AddDate(0, 0, 7*(week-1))
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // It's ok to have so long method here
