@@ -8,6 +8,7 @@ package log
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"sync"
@@ -24,6 +25,15 @@ import (
 
 type LogSuite struct {
 	TempDir string
+}
+
+type JSONRecord struct {
+	Level  string `json:"level"`
+	TS     string `json:"ts"`
+	Caller string `json:"caller"`
+	Msg    string `json:"msg"`
+	ID     int    `json:"id"`
+	User   string `json:"user"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -108,6 +118,8 @@ func (ls *LogSuite) TestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err, DeepEquals, ErrNilLogger)
 
+	c.Assert(l.Is(DEBUG), Equals, false)
+
 	err = l.Set("", 0)
 
 	c.Assert(err, NotNil)
@@ -141,6 +153,7 @@ func (ls *LogSuite) TestLevel(c *C) {
 	c.Assert(l.MinLevel("error"), IsNil)
 	c.Assert(l.MinLevel("crit"), IsNil)
 	c.Assert(l.MinLevel("critical"), IsNil)
+	c.Assert(l.MinLevel("fatal"), IsNil)
 	c.Assert(l.MinLevel(int8(1)), IsNil)
 	c.Assert(l.MinLevel(int16(1)), IsNil)
 	c.Assert(l.MinLevel(int32(1)), IsNil)
@@ -150,8 +163,6 @@ func (ls *LogSuite) TestLevel(c *C) {
 	c.Assert(l.MinLevel(uint16(1)), IsNil)
 	c.Assert(l.MinLevel(uint32(1)), IsNil)
 	c.Assert(l.MinLevel(uint64(1)), IsNil)
-	c.Assert(l.MinLevel(float32(1)), IsNil)
-	c.Assert(l.MinLevel(float64(1)), IsNil)
 
 	c.Assert(l.MinLevel("abcd"), NotNil)
 	c.Assert(l.MinLevel(time.Now()), NotNil)
@@ -190,11 +201,11 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 
 	l := &Logger{mu: &sync.Mutex{}}
 
-	err = l.Print(INFO, "info")
+	err = l.Print(INFO, "Info message")
 
 	c.Assert(err, IsNil)
 
-	err = l.Print(ERROR, "error")
+	err = l.Print(ERROR, "Error message")
 
 	c.Assert(err, IsNil)
 
@@ -203,19 +214,23 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 	l.UseColors = true
 	l.PrefixError = true
 
-	err = l.Print(INFO, "info")
+	err = l.Print(INFO, "Info message")
 
 	c.Assert(err, IsNil)
 
-	err = l.Print(ERROR, "error")
+	err = l.Print(ERROR, "Error message")
 
 	c.Assert(err, IsNil)
 
 	fmtc.DisableColors = false
+
+	l.UseJSON = true
+
+	err = l.Print(ERROR, "Error message")
 }
 
 func (ls *LogSuite) TestWithoutPrefixes(c *C) {
-	logfile := ls.TempDir + "/file1.log"
+	logfile := ls.TempDir + "/basic.log"
 	l, err := New(logfile, 0644)
 
 	l.MinLevel(DEBUG)
@@ -286,7 +301,7 @@ func (ls *LogSuite) TestWithoutPrefixes(c *C) {
 }
 
 func (ls *LogSuite) TestWithPrefixes(c *C) {
-	logfile := ls.TempDir + "/file2.log"
+	logfile := ls.TempDir + "/prefixes.log"
 	err := Set(logfile, 0644)
 
 	MinLevel(DEBUG)
@@ -358,8 +373,152 @@ func (ls *LogSuite) TestWithPrefixes(c *C) {
 	c.Assert(dataSlice[18][28:], Equals, "--------------------------------------------------------------------------------")
 }
 
+func (ls *LogSuite) TestJSON(c *C) {
+	logfile := ls.TempDir + "/json.log"
+	l, err := New(logfile, 0644)
+
+	l.MinLevel(DEBUG)
+
+	c.Assert(err, IsNil)
+	c.Assert(l, Not(IsNil))
+
+	l.UseJSON = true
+	l.WithCaller = true
+	l.TimeLayout = time.RFC822
+
+	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
+
+	c.Assert(l.Print(DEBUG, "Test debug %d (%s)", DEBUG, F{"id", 101}, "test1", F{"user", "john"}), IsNil)
+	c.Assert(l.Print(INFO, "Test info %d", INFO, F{"id", 102}, F{"user", "bob"}), IsNil)
+	c.Assert(l.Print(WARN, "Test warn %d", WARN, F{"id", 103}, F{"user", "frida"}), IsNil)
+	c.Assert(l.Print(ERROR, "Test error %d", ERROR, F{"id", 104}, F{"user", "alisa"}), IsNil)
+	c.Assert(l.Print(CRIT, "Test crit %d", CRIT, F{"id", 105}, F{"user", "simon"}), IsNil)
+
+	c.Assert(l.Info("Test message"), IsNil)
+
+	l.TimeLayout = ""
+
+	c.Assert(l.Info("Test message"), IsNil)
+
+	l.Print(DEBUG, "")
+	l.Aux("Test")
+
+	data, err := os.ReadFile(logfile)
+
+	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
+
+	dataSlice := strings.Split(string(data), "\n")
+
+	c.Assert(len(dataSlice), Equals, 8)
+
+	records := parseJSONRecords(dataSlice)
+
+	c.Assert(len(records), Equals, 7)
+
+	c.Assert(records[0].Level, Equals, "debug")
+	c.Assert(records[0].TS, Not(Equals), "")
+	c.Assert(records[0].Caller, Not(Equals), "")
+	c.Assert(records[0].Msg, Equals, "Test debug 0 (test1)")
+	c.Assert(records[0].ID, Equals, 101)
+	c.Assert(records[0].User, Equals, "john")
+
+	c.Assert(records[1].Level, Equals, "info")
+	c.Assert(records[1].TS, Not(Equals), "")
+	c.Assert(records[1].Caller, Not(Equals), "")
+	c.Assert(records[1].Msg, Equals, "Test info 1")
+	c.Assert(records[1].ID, Equals, 102)
+	c.Assert(records[1].User, Equals, "bob")
+
+	c.Assert(records[2].Level, Equals, "warn")
+	c.Assert(records[2].TS, Not(Equals), "")
+	c.Assert(records[2].Caller, Not(Equals), "")
+	c.Assert(records[2].Msg, Equals, "Test warn 2")
+	c.Assert(records[2].ID, Equals, 103)
+	c.Assert(records[2].User, Equals, "frida")
+
+	c.Assert(records[3].Level, Equals, "error")
+	c.Assert(records[3].TS, Not(Equals), "")
+	c.Assert(records[3].Caller, Not(Equals), "")
+	c.Assert(records[3].Msg, Equals, "Test error 3")
+	c.Assert(records[3].ID, Equals, 104)
+	c.Assert(records[3].User, Equals, "alisa")
+
+	c.Assert(records[4].Level, Equals, "fatal")
+	c.Assert(records[4].TS, Not(Equals), "")
+	c.Assert(records[4].Caller, Not(Equals), "")
+	c.Assert(records[4].Msg, Equals, "Test crit 4")
+	c.Assert(records[4].ID, Equals, 105)
+	c.Assert(records[4].User, Equals, "simon")
+
+	c.Assert(records[5].Level, Equals, "info")
+	c.Assert(records[5].TS, Not(Equals), "")
+	c.Assert(records[5].Caller, Not(Equals), "")
+	c.Assert(records[5].Msg, Equals, "Test message")
+	c.Assert(records[5].ID, Equals, 0)
+	c.Assert(records[5].User, Equals, "")
+}
+
+func (ls *LogSuite) TestWithCaller(c *C) {
+	logfile := ls.TempDir + "/caller.log"
+	l, err := New(logfile, 0644)
+
+	c.Assert(err, IsNil)
+
+	l.WithCaller = true
+
+	c.Assert(l.Print(INFO, "Test info 1"), IsNil)
+
+	l.UseColors = true
+	fmtc.DisableColors = true
+
+	c.Assert(l.Print(INFO, "Test info 2"), IsNil)
+
+	fmtc.DisableColors = false
+
+	data, err := os.ReadFile(logfile)
+
+	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
+
+	dataSlice := strings.Split(string(data), "\n")
+
+	c.Assert(len(dataSlice), Equals, 3)
+
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:470) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:475) Test info 2")
+}
+
+func (ls *LogSuite) TestWithFields(c *C) {
+	logfile := ls.TempDir + "/fields.log"
+	l, err := New(logfile, 0644)
+
+	c.Assert(err, IsNil)
+
+	c.Assert(l.Info("Test info %d", 1, F{"name", "john"}, F{"id", 1}), IsNil)
+
+	l.UseColors = true
+	fmtc.DisableColors = true
+
+	c.Assert(l.Info("Test info %d", 2, F{"name", "john"}, F{"id", 1}), IsNil)
+
+	fmtc.DisableColors = false
+
+	data, err := os.ReadFile(logfile)
+
+	c.Assert(err, IsNil)
+	c.Assert(len(data), Not(Equals), 0)
+
+	dataSlice := strings.Split(string(data), "\n")
+
+	c.Assert(len(dataSlice), Equals, 3)
+
+	c.Assert(dataSlice[0][28:], Equals, "Test info 1 {name: john | id: 1}")
+	c.Assert(dataSlice[1][28:], Equals, "Test info 2 {name: john | id: 1}")
+}
+
 func (ls *LogSuite) TestBufIODaemon(c *C) {
-	logfile := ls.TempDir + "/file3.log"
+	logfile := ls.TempDir + "/bufio-daemon.log"
 	err := Set(logfile, 0644)
 
 	MinLevel(DEBUG)
@@ -436,7 +595,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 }
 
 func (ls *LogSuite) TestBufIO(c *C) {
-	logfile := ls.TempDir + "/file4.log"
+	logfile := ls.TempDir + "/bufio.log"
 	err := Set(logfile, 0644)
 
 	c.Assert(err, IsNil)
@@ -486,8 +645,10 @@ func (ls *LogSuite) TestLoggerIsNil(c *C) {
 }
 
 func (ls *LogSuite) TestStdLogger(c *C) {
+	logfile := ls.TempDir + "/stdlogger.log"
 	l := &Logger{mu: &sync.Mutex{}}
-	l.Set(ls.TempDir+"/file5.log", 0644)
+
+	l.Set(logfile, 0644)
 
 	std := &StdLogger{l}
 
@@ -506,7 +667,7 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	c.Assert(func() { std.Panicf("%s", "testPanic") }, PanicMatches, "testPanic")
 	c.Assert(func() { std.Panicln("testPanic") }, PanicMatches, "testPanic\n")
 
-	data, err := os.ReadFile(ls.TempDir + "/file5.log")
+	data, err := os.ReadFile(logfile)
 
 	if err != nil {
 		c.Fatal(err)
@@ -527,4 +688,147 @@ func (ls *LogSuite) TestNilLogger(c *C) {
 	c.Assert(func() { l.Error("test") }, NotPanics)
 	c.Assert(func() { l.Crit("test") }, NotPanics)
 	c.Assert(func() { l.Print(0, "test") }, NotPanics)
+}
+
+func (ls *LogSuite) TestTimeLayout(c *C) {
+	l := &Logger{mu: &sync.Mutex{}}
+	t := time.Unix(1704067200, 0)
+
+	jf := l.formatDateTime(t, true)
+	tf := l.formatDateTime(t, false)
+
+	l.TimeLayout = time.Kitchen
+	cf := l.formatDateTime(t, false)
+
+	c.Assert(jf, Not(Equals), "")
+	c.Assert(tf, Not(Equals), "")
+	c.Assert(cf, Not(Equals), "")
+
+	c.Assert(jf != tf, Equals, true)
+	c.Assert(tf != cf, Equals, true)
+	c.Assert(jf != cf, Equals, true)
+}
+
+func (ls *LogSuite) TestFields(c *C) {
+	f := F{"test", 123}
+	c.Assert(f.String(), Equals, "test:123")
+
+	l := &Logger{mu: &sync.Mutex{}}
+	l.writeJSONField(F{"test", "abcd"})
+	c.Assert(l.buf.String(), Equals, "\"test\":\"abcd\"")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", false})
+	c.Assert(l.buf.String(), Equals, "\"test\":false")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", 123})
+	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", int8(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", int8(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", int16(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", int32(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", int64(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint(123)})
+	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint8(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint8(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint16(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint32(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", uint64(33)})
+	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", float32(1.23)})
+	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", float64(1.23)})
+	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", time.Minute - (150 * time.Millisecond)})
+	c.Assert(l.buf.String(), Equals, "\"test\":59.85")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", time.Now()})
+	c.Assert(l.buf.String(), Not(Equals), "")
+	l.buf.Reset()
+
+	l.writeJSONField(F{"test", []string{"A"}})
+	c.Assert(l.buf.String(), Equals, "\"test\":\"[A]\"")
+	l.buf.Reset()
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *LogSuite) BenchmarkJSONWrite(c *C) {
+	l, err := New(os.DevNull, 0644)
+
+	c.Assert(err, IsNil)
+
+	l.UseJSON = true
+
+	for i := 0; i < c.N; i++ {
+		l.Info("Test %s %s", "test", F{"test1", 1}, "abcd", F{"test2", false})
+	}
+}
+
+func (s *LogSuite) BenchmarkTextWrite(c *C) {
+	l, err := New(os.DevNull, 0644)
+
+	c.Assert(err, IsNil)
+
+	for i := 0; i < c.N; i++ {
+		l.Info("Test %s %s", "test", "abcd")
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func parseJSONRecords(data []string) []*JSONRecord {
+	var result []*JSONRecord
+
+	for _, l := range data {
+		if l == "" {
+			continue
+		}
+
+		r := &JSONRecord{}
+		json.Unmarshal([]byte(l), r)
+		result = append(result, r)
+	}
+
+	return result
 }

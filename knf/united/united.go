@@ -1,4 +1,4 @@
-// Package united provides KNF configuration extended by enviroment variables and options
+// Package united provides KNF configuration extended by environment variables and options
 package united
 
 // ////////////////////////////////////////////////////////////////////////////////// //

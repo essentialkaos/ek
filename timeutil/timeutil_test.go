@@ -315,6 +315,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(StartOfWeek(time.Time{}, time.Monday), DeepEquals, time.Time{})
 	c.Assert(StartOfMonth(d), DeepEquals, time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfYear(d), DeepEquals, time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local))
+
+	y := time.Now().In(time.Local).Year()
+	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2021, 12, 31, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 4, 0, 0, 0, 0, time.Local))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

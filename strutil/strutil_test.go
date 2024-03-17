@@ -200,6 +200,16 @@ func (s *StrUtilSuite) TestHasSuffixAny(c *C) {
 	c.Assert(HasSuffixAny("abcd#", "$", "@"), Equals, false)
 }
 
+func (s *StrUtilSuite) TestIndexByteSkip(c *C) {
+	c.Assert(IndexByteSkip("", '/', 0), Equals, -1)
+	c.Assert(IndexByteSkip("", '/', 1), Equals, -1)
+	c.Assert(IndexByteSkip("/", '/', 1), Equals, -1)
+	c.Assert(IndexByteSkip("/home/john/projects/test.log", '/', 2), Equals, 10)
+	c.Assert(IndexByteSkip("/home/john/projects/test.log", '/', -1), Equals, 10)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
 	for i := 0; i < c.N; i++ {
 		Substr("test1234TEST", 4, 8)

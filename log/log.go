@@ -10,10 +10,13 @@ package log
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"os"
+	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -33,6 +36,11 @@ const (
 	AUX   uint8 = 99 // AUX unskipable messages (separators, headers, etc...)
 )
 
+const (
+	DATE_LAYOUT_TEXT = "2006/01/02 15:04:05.000" // Datetime layout for text logs
+	DATE_LAYOUT_JSON = time.RFC3339              // Datetime layout for JSON logs
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ILogger is interface for compatible loggers
@@ -50,21 +58,34 @@ type ILogger interface {
 
 // Logger is a basic logger struct
 type Logger struct {
-	PrefixDebug bool // Prefix for debug messages
-	PrefixInfo  bool // Prefix for info messages
-	PrefixWarn  bool // Prefix for warning messages
-	PrefixError bool // Prefix for error messages
-	PrefixCrit  bool // Prefix for critical error messages
+	PrefixDebug bool // Show prefix for debug messages
+	PrefixInfo  bool // Show prefix for info messages
+	PrefixWarn  bool // Show prefix for warning messages
+	PrefixError bool // Show prefix for error messages
+	PrefixCrit  bool // Show prefix for critical/fatal messages
 
-	UseColors bool // Enable ANSI escape codes for colors in output
+	TimeLayout string // Date and time layout used for rendering dates
+	UseColors  bool   // Enable ANSI escape codes for colors in output
+	UseJSON    bool   // Encode messages to JSON
+	WithCaller bool   // Show caller info
 
 	file     string
+	buf      bytes.Buffer
 	fd       *os.File
 	w        *bufio.Writer
 	mu       *sync.Mutex
 	minLevel uint8
 	perms    os.FileMode
 	useBufIO bool
+}
+
+// F is a shortcut for Field struct
+type F = Field
+
+// Field contains key and value for JSON log
+type Field struct {
+	Key   string
+	Value any
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -95,12 +116,9 @@ var Colors = map[uint8]string{
 	DEBUG: "{s-}",
 	INFO:  "",
 	WARN:  "{y}",
-	ERROR: "{r}",
-	CRIT:  "{r*}",
+	ERROR: "{#208}",
+	CRIT:  "{#196}{*}",
 }
-
-// TimeFormat contains format string for time in logs
-var TimeFormat = "2006/01/02 15:04:05.000"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -126,6 +144,7 @@ var logLevelsNames = map[string]uint8{
 	"error":    3,
 	"crit":     4,
 	"critical": 4,
+	"fatal":    4,
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -273,7 +292,7 @@ func (l *Logger) MinLevel(level any) error {
 }
 
 // EnableBufIO enables buffered I/O support
-func (l *Logger) EnableBufIO(interval time.Duration) {
+func (l *Logger) EnableBufIO(flushInterval time.Duration) {
 	if l == nil || l.mu == nil {
 		return
 	}
@@ -287,7 +306,7 @@ func (l *Logger) EnableBufIO(interval time.Duration) {
 		l.w = bufio.NewWriter(l.fd)
 	}
 
-	go l.flushDaemon(interval)
+	go l.flushDaemon(flushInterval)
 }
 
 // Set changes logger output target
@@ -338,29 +357,11 @@ func (l *Logger) Print(level uint8, f string, a ...any) error {
 		return nil
 	}
 
-	w := l.getWriter(level)
-	showPrefix := l.showPrefix(level)
-
-	if f == "" || f[len(f)-1:] != "\n" {
-		f += "\n"
+	if l.UseJSON {
+		return l.writeJSON(level, f, a...)
 	}
 
-	var err error
-
-	switch {
-	case l.UseColors && showPrefix:
-		color := strutil.B(fmtc.IsTag(Colors[level]), Colors[level], "")
-		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+color+"%s %s{!}"), getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
-	case l.UseColors && !showPrefix:
-		color := strutil.B(fmtc.IsTag(Colors[level]), Colors[level], "")
-		_, err = fmt.Fprintf(w, fmtc.Render("{s-}%s{!} "+color+"%s{!}"), getTime(), fmt.Sprintf(f, a...))
-	case !l.UseColors && showPrefix:
-		_, err = fmt.Fprintf(w, "%s %s %s", getTime(), PrefixMap[level], fmt.Sprintf(f, a...))
-	case !l.UseColors && !showPrefix:
-		_, err = fmt.Fprintf(w, "%s %s", getTime(), fmt.Sprintf(f, a...))
-	}
-
-	return err
+	return l.writeText(level, f, a...)
 }
 
 // Flush writes buffered data to file
@@ -454,15 +455,137 @@ func (l *Logger) Is(level uint8) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// String returns string representation of field
+func (f Field) String() string {
+	return fmt.Sprintf("%s:%v", f.Key, f.Value)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// writeText writes text message into log
+func (l *Logger) writeText(level uint8, f string, a ...any) error {
+	var color string
+
+	w := l.getWriter(level)
+
+	if l.UseColors {
+		color = strutil.B(fmtc.IsTag(Colors[level]), Colors[level], "")
+	}
+
+	var err error
+
+	l.buf.Reset()
+
+	if l.UseColors {
+		fmtc.Fprintf(&l.buf, "{s}[ %s ]{!} ", l.formatDateTime(time.Now(), false))
+	} else {
+		l.buf.WriteString("[ " + l.formatDateTime(time.Now(), false) + " ] ")
+	}
+
+	if l.WithCaller {
+		if l.UseColors {
+			fmtc.Fprintf(&l.buf, "{s-}(%s){!} ", getCallerFromStack())
+		} else {
+			l.buf.WriteString("(" + getCallerFromStack() + ") ")
+		}
+	}
+
+	if l.isPrefixRequired(level) {
+		if l.UseColors {
+			fmtc.Fprintf(&l.buf, color+"{@}%s{!} ", PrefixMap[level])
+		} else {
+			fmt.Fprintf(&l.buf, PrefixMap[level]+" ")
+		}
+	}
+
+	operands, fields := splitPayload(a)
+
+	if l.UseColors {
+		fmtc.Fprintf(&l.buf, color+f+"{!}", operands...)
+	} else {
+		fmt.Fprintf(&l.buf, f, operands...)
+	}
+
+	if len(fields) > 0 {
+		l.buf.WriteRune(' ')
+		if l.UseColors {
+			fmtc.Fprint(&l.buf, "{b}"+fieldsToText(fields)+"{!}")
+		} else {
+			l.buf.WriteString(fieldsToText(fields))
+		}
+	}
+
+	if f == "" || f[len(f)-1:] != "\n" {
+		l.buf.WriteRune('\n')
+	}
+
+	_, err = l.buf.WriteTo(w)
+
+	l.buf.Reset()
+
+	return err
+}
+
+// writeJSON writes JSON encoded message into log
+func (l *Logger) writeJSON(level uint8, msg string, a ...any) error {
+	// Aux ignored in JSON format
+	if level == AUX {
+		return nil
+	}
+
+	if msg == "" && len(a) == 0 {
+		return nil
+	}
+
+	l.buf.Reset()
+	l.buf.WriteRune('{')
+
+	l.writeJSONLevel(level)
+	l.writeJSONTimestamp()
+
+	if l.WithCaller {
+		l.buf.WriteString(`"caller":"` + getCallerFromStack() + `",`)
+	}
+
+	operands, fields := splitPayload(a)
+
+	if msg != "" {
+		if len(operands) > 0 {
+			l.buf.WriteString(`"msg":` + strconv.Quote(fmt.Sprintf(msg, operands...)))
+		} else {
+			l.buf.WriteString(`"msg":` + strconv.Quote(msg))
+		}
+	}
+
+	if len(fields) != 0 {
+		l.buf.WriteRune(',')
+		l.writeJSONFields(fields)
+	}
+
+	l.buf.WriteRune('}')
+	l.buf.WriteRune('\n')
+
+	_, err := l.buf.WriteTo(l.getWriter(level))
+
+	l.buf.Reset()
+
+	return err
+}
+
+// getWriter returns writer based on logger configuration
 func (l *Logger) getWriter(level uint8) io.Writer {
 	var w io.Writer
 
 	if l.fd == nil {
-		switch level {
-		case ERROR, CRIT:
-			w = os.Stderr
-		default:
+		if l.UseJSON {
 			w = os.Stdout
+		} else {
+			switch level {
+			case ERROR, CRIT:
+				w = os.Stderr
+			default:
+				w = os.Stdout
+			}
 		}
 	} else {
 		if l.w != nil {
@@ -475,7 +598,20 @@ func (l *Logger) getWriter(level uint8) io.Writer {
 	return w
 }
 
-func (l *Logger) showPrefix(level uint8) bool {
+// formatDateTime applies logger datetime layout for given date
+func (l *Logger) formatDateTime(t time.Time, isJSON bool) string {
+	switch {
+	case l.TimeLayout == "" && isJSON:
+		return t.Format(DATE_LAYOUT_JSON)
+	case l.TimeLayout == "" && !isJSON:
+		return t.Format(DATE_LAYOUT_TEXT)
+	}
+
+	return t.Format(l.TimeLayout)
+}
+
+// isPrefixRequired returns true if prefix must be shown
+func (l *Logger) isPrefixRequired(level uint8) bool {
 	switch {
 	case level == DEBUG && l.PrefixDebug,
 		level == INFO && l.PrefixInfo,
@@ -488,6 +624,7 @@ func (l *Logger) showPrefix(level uint8) bool {
 	return false
 }
 
+// flushDaemon periodically flashes buffered data
 func (l *Logger) flushDaemon(interval time.Duration) {
 	for range time.NewTicker(interval).C {
 		l.Flush()
@@ -496,49 +633,125 @@ func (l *Logger) flushDaemon(interval time.Duration) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getTime() string {
-	return "[ " + time.Now().Format(TimeFormat) + " ]"
+// writeJSONLevel writes level JSON into buffer
+func (l *Logger) writeJSONLevel(level uint8) {
+	switch level {
+	case DEBUG:
+		l.buf.WriteString(`"level":"debug",`)
+	case INFO:
+		l.buf.WriteString(`"level":"info",`)
+	case WARN:
+		l.buf.WriteString(`"level":"warn",`)
+	case ERROR:
+		l.buf.WriteString(`"level":"error",`)
+	case CRIT:
+		l.buf.WriteString(`"level":"fatal",`)
+	}
 }
 
-func convertMinLevelValue(level any) (uint8, error) {
-	switch u := level.(type) {
+// writeJSONTimestamp writes timestamp JSON into buffer
+func (l *Logger) writeJSONTimestamp() {
+	l.buf.WriteString(`"ts":`)
+
+	if l.TimeLayout == "" {
+		l.buf.WriteString(strconv.FormatFloat(float64(time.Now().UnixMicro())/1000000, 'f', -1, 64))
+	} else {
+		l.buf.WriteRune('"')
+		l.buf.WriteString(l.formatDateTime(time.Now(), true))
+		l.buf.WriteRune('"')
+	}
+
+	l.buf.WriteRune(',')
+}
+
+// writeJSONFields writes fields JSON into buffer
+func (l *Logger) writeJSONFields(fields []any) {
+	for i, f := range fields {
+		switch t := f.(type) {
+		case Field:
+			l.writeJSONField(t)
+
+			if i+1 != len(fields) {
+				l.buf.WriteRune(',')
+			}
+		}
+	}
+}
+
+// writeJSONField writes field JSON into buffer
+func (l *Logger) writeJSONField(field Field) {
+	l.buf.WriteString(strconv.Quote(field.Key) + ":")
+
+	switch t := field.Value.(type) {
+	case string:
+		l.buf.WriteString(strconv.Quote(t))
+
+	case bool:
+		l.buf.WriteString(strconv.FormatBool(t))
 
 	case int:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.Itoa(t))
 	case int8:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatInt(int64(t), 10))
 	case int16:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatInt(int64(t), 10))
 	case int32:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatInt(int64(t), 10))
 	case int64:
-		return uint8(u), nil
+		l.buf.WriteString(strconv.FormatInt(t, 10))
 
 	case uint:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatUint(uint64(t), 10))
 	case uint8:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatUint(uint64(t), 10))
 	case uint16:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatUint(uint64(t), 10))
 	case uint32:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatUint(uint64(t), 10))
 	case uint64:
-		return uint8(u), nil
+		l.buf.WriteString(strconv.FormatUint(t, 10))
 
 	case float32:
-		return uint8(u), nil
-
+		l.buf.WriteString(strconv.FormatFloat(float64(t), 'f', -1, 32))
 	case float64:
-		return uint8(u), nil
+		l.buf.WriteString(strconv.FormatFloat(t, 'f', -1, 64))
 
+	case time.Duration:
+		l.buf.WriteString(strconv.FormatFloat(t.Seconds(), 'f', -1, 64))
+	case time.Time:
+		l.buf.WriteString(strconv.Quote(l.formatDateTime(t, true)))
+
+	default:
+		l.buf.WriteString(strconv.Quote(fmt.Sprintf("%v", field.Value)))
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// convertMinLevelValue converts any supported format of minimal level to uint8 used
+// for default levels
+func convertMinLevelValue(level any) (uint8, error) {
+	switch u := level.(type) {
+	case int:
+		return uint8(u), nil
+	case int8:
+		return uint8(u), nil
+	case int16:
+		return uint8(u), nil
+	case int32:
+		return uint8(u), nil
+	case int64:
+		return uint8(u), nil
+	case uint:
+		return uint8(u), nil
+	case uint8:
+		return uint8(u), nil
+	case uint16:
+		return uint8(u), nil
+	case uint32:
+		return uint8(u), nil
+	case uint64:
+		return uint8(u), nil
 	case string:
 		code, ok := logLevelsNames[strings.ToLower(level.(string))]
 
@@ -550,4 +763,85 @@ func convertMinLevelValue(level any) (uint8, error) {
 	}
 
 	return 255, ErrUnexpectedLevel
+}
+
+// fieldsToText converts fields slice to string
+func fieldsToText(fields []any) string {
+	var result string
+
+	result += "{"
+
+	for i, f := range fields {
+		field := f.(Field)
+
+		result += fmt.Sprintf("%s: %v", field.Key, field.Value)
+
+		if i+1 != len(fields) {
+			result += " | "
+		}
+	}
+
+	result += "}"
+
+	return result
+}
+
+// splitPayload split mixed payload to format string operands and fields
+func splitPayload(payload []any) ([]any, []any) {
+	firstField := -1
+
+	for i, p := range payload {
+		switch p.(type) {
+		case Field:
+			if firstField < 0 {
+				firstField = i
+			}
+		default:
+			if firstField > 0 {
+				payload[firstField], payload[i] = payload[i], payload[firstField]
+				firstField++
+			}
+		}
+	}
+
+	if firstField == -1 {
+		return payload, nil
+	}
+
+	return payload[:firstField], payload[firstField:]
+}
+
+// getCallerFromStack returns caller function and line from stack
+func getCallerFromStack() string {
+	pcs := make([]uintptr, 64)
+	n := runtime.Callers(2, pcs)
+
+	file := ""
+	frames := runtime.CallersFrames(pcs[:n])
+
+	for {
+		frame, more := frames.Next()
+
+		if !more {
+			break
+		}
+
+		if file == "" {
+			file = frame.File
+		}
+
+		if file == frame.File {
+			continue
+		}
+
+		return extractCallerFromFrame(frame)
+	}
+
+	return "unknown"
+}
+
+// extractCallerFromFrame extracts caller info from frame
+func extractCallerFromFrame(f runtime.Frame) string {
+	index := strutil.IndexByteSkip(f.File, '/', -1)
+	return f.File[index+1:] + ":" + strconv.Itoa(f.Line)
 }
