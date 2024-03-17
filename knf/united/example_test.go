@@ -47,6 +47,17 @@ func ExampleCombine() {
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
 
+	// Also you can set options and environment variables using helpers
+	var (
+		optOne = "test:option-one"
+		optTwo = "test:option-two"
+	)
+
+	Combine(
+		Mapping{optOne, ToOption(optOne), ToEnvVar(optOne)},
+		Mapping{optTwo, ToOption(optTwo), ToEnvVar(optTwo)},
+	)
+
 	// Read string value
 	GetS("section:string")
 
@@ -79,6 +90,30 @@ func ExampleCombine() {
 
 	// Read list
 	GetL("section:list")
+}
+
+func ExampleToOption() {
+	fmt.Println(ToOption("section:time-duration"))
+
+	// Output: section-time-duration
+}
+
+func ExampleToEnvVar() {
+	fmt.Println(ToEnvVar("section:time-duration"))
+
+	// Output: SECTION_TIME_DURATION
+}
+
+func ExampleO() {
+	fmt.Println(ToOption("section:time-duration"))
+
+	// Output: section-time-duration
+}
+
+func ExampleE() {
+	fmt.Println(ToEnvVar("section:time-duration"))
+
+	// Output: SECTION_TIME_DURATION
 }
 
 func ExampleGetS() {

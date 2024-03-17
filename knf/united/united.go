@@ -10,11 +10,13 @@ package united
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/essentialkaos/ek/v12/knf"
 	"github.com/essentialkaos/ek/v12/knf/value"
 	"github.com/essentialkaos/ek/v12/options"
+	"github.com/essentialkaos/ek/v12/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -68,6 +70,26 @@ func Combine(mappings ...Mapping) {
 	}
 
 	global = config
+}
+
+// ToOption converts knf property name to option name
+func ToOption(name string) string {
+	return strutil.ReplaceAll(strings.ToLower(name), "_:", "-")
+}
+
+// ToEnvVar converts knf property name to environment variable name
+func ToEnvVar(name string) string {
+	return strutil.ReplaceAll(strings.ToUpper(name), "-:", "_")
+}
+
+// O is a shortcut for ToOption
+func O(name string) string {
+	return ToOption(name)
+}
+
+// E is a shortcut for ToEnvVar
+func E(name string) string {
+	return ToEnvVar(name)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
