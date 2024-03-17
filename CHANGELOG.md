@@ -2,6 +2,10 @@
 
 ### 12.106.0
 
+* `[knf/united]` Added method `Simple`
+
+### 12.106.0
+
 * `[knf/united]` Added method `ToOption` with shortcut `O`
 * `[knf/united]` Added method `ToEnvVar` with shortcut `E`
 

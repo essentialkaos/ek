@@ -72,6 +72,12 @@ func Combine(mappings ...Mapping) {
 	global = config
 }
 
+// Simple creates simple mapping for knf property
+// section:property → --section-property + SECTION_PROPERTY
+func Simple(name string) Mapping {
+	return Mapping{name, O(name), E(name)}
+}
+
 // ToOption converts knf property name to option name
 func ToOption(name string) string {
 	return strutil.ReplaceAll(strings.ToLower(name), "_:", "-")

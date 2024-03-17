@@ -54,8 +54,10 @@ func ExampleCombine() {
 	)
 
 	Combine(
+		// Create mapping manually
 		Mapping{optOne, ToOption(optOne), ToEnvVar(optOne)},
-		Mapping{optTwo, ToOption(optTwo), ToEnvVar(optTwo)},
+		// Create simple mapping
+		Simple(optTwo),
 	)
 
 	// Read string value
@@ -90,6 +92,15 @@ func ExampleCombine() {
 
 	// Read list
 	GetL("section:list")
+}
+
+func ExampleSimple() {
+	m := Simple("test:option-one")
+
+	fmt.Printf("%s → --%s + %s\n", m.Property, m.Option, m.Variable)
+
+	// Output:
+	// test:option-one → --test-option-one + TEST_OPTION_ONE
 }
 
 func ExampleToOption() {
