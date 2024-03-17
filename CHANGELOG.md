@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.106.0
+### 12.107.0
 
 * `[knf/united]` Added method `Simple`
 
