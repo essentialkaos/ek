@@ -253,4 +253,10 @@ func (s *UnitedSuite) TestHelpers(c *C) {
 	c.Assert(E(""), Equals, "")
 	c.Assert(E("section:prop-one"), Equals, "SECTION_PROP_ONE")
 	c.Assert(E("Section:Prop-Two"), Equals, "SECTION_PROP_TWO")
+
+	m := Simple("test:option-one")
+
+	c.Assert(m.Property, Equals, "test:option-one")
+	c.Assert(m.Option, Equals, "test-option-one")
+	c.Assert(m.Variable, Equals, "TEST_OPTION_ONE")
 }

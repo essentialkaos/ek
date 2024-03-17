@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.107.0
+
+* `[knf/united]` Added method `Simple`
+
 ### 12.106.0
 
 * `[knf/united]` Added method `ToOption` with shortcut `O`
