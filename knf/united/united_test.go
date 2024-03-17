@@ -244,3 +244,13 @@ func (s *UnitedSuite) TestValidation(c *C) {
 
 	c.Assert(errs, HasLen, 1)
 }
+
+func (s *UnitedSuite) TestHelpers(c *C) {
+	c.Assert(O(""), Equals, "")
+	c.Assert(O("section:prop-one"), Equals, "section-prop-one")
+	c.Assert(O("Section:Prop-Two"), Equals, "section-prop-two")
+
+	c.Assert(E(""), Equals, "")
+	c.Assert(E("section:prop-one"), Equals, "SECTION_PROP_ONE")
+	c.Assert(E("Section:Prop-Two"), Equals, "SECTION_PROP_TWO")
+}
