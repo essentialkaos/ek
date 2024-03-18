@@ -36,6 +36,7 @@ var binMore = "more"
 var (
 	ErrAlreadySet = errors.New("Pager already set")
 	ErrNoPager    = errors.New("There is no pager on the system")
+	ErrStdinPipe  = errors.New("Can't get pager stdin")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -66,8 +67,13 @@ func Setup(pager ...string) error {
 		return err
 	}
 
-	pagerOut = w.(*os.File)
-	os.Stdout = pagerOut
+	switch t := w.(type) {
+	case *os.File:
+		pagerOut = t
+		os.Stdout = pagerOut
+	default:
+		return ErrStdinPipe
+	}
 
 	return pagerCmd.Start()
 }

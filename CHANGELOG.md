@@ -7,6 +7,7 @@
 * `[options]` Added shortcut `F` for method `Format`
 * `[system/container]` Added method `IsContainer`
 * `[system/container]` Added engine info caching
+* `[pager]` Fixed panic when pager stdin is not a file
 * `[usage]` Fixed bug with changing color for certain command or option
 * `[options]` Code refactoring
 * `[usage]` Code refactoring
