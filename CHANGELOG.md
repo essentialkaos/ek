@@ -5,8 +5,11 @@
 * `[options]` Added method `Map.Set`
 * `[options]` Added method `Map.Delete`
 * `[options]` Added shortcut `F` for method `Format`
+* `[system/container]` Added method `IsContainer`
+* `[system/container]` Added engine info caching
 * `[options]` Code refactoring
 * `[options]` Tests refactoring
+* `[system/container]` Added usage examples
 
 ### 12.107.0
 

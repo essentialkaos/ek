@@ -52,15 +52,29 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = "/__unknown__"
 	c.Assert(GetEngine(), Equals, "")
 
+	engineChecked = false
+
 	mountsFile = s.DataDir + "/default"
 	c.Assert(GetEngine(), Equals, "")
+	c.Assert(IsContainer(), Equals, false)
+
+	engineChecked = false
 
 	mountsFile = s.DataDir + "/lxc"
 	c.Assert(GetEngine(), Equals, LXC)
 
+	engineChecked = false
+
 	mountsFile = s.DataDir + "/docker"
 	c.Assert(GetEngine(), Equals, DOCKER)
 
+	engineChecked = false
+
 	mountsFile = s.DataDir + "/podman"
 	c.Assert(GetEngine(), Equals, PODMAN)
+
+	// Check cached info
+	mountsFile = s.DataDir + "/podman"
+	c.Assert(GetEngine(), Equals, PODMAN)
+	c.Assert(IsContainer(), Equals, true)
 }
