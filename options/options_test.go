@@ -29,8 +29,8 @@ var _ = Suite(&OptUtilSuite{})
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
-	c.Assert(opts.Add("", &V{}), ErrorMatches, `Some option does not have a name`)
-	c.Assert(opts.Add("t:", &V{}), ErrorMatches, `Some option does not have a name`)
+	c.Assert(opts.Add("", &V{}), Equals, ErrEmptyName)
+	c.Assert(opts.Add("t:", &V{}), Equals, ErrEmptyName)
 
 	c.Assert(opts.Add("test", &V{}), IsNil)
 	c.Assert(opts.Add(":test1", &V{}), IsNil)
@@ -39,6 +39,22 @@ func (s *OptUtilSuite) TestAdd(c *C) {
 	c.Assert(opts.Add("t1:test", &V{}), ErrorMatches, `Option --test defined 2 or more times`)
 	c.Assert(opts.Add("t:test3", &V{}), ErrorMatches, `Option -t defined 2 or more times`)
 	c.Assert(opts.Add("t:test3", nil), ErrorMatches, `Struct for option --test3 is nil`)
+}
+
+func (s *OptUtilSuite) TestMap(c *C) {
+	var m Map
+
+	c.Assert(m.Set("test", &V{}), Equals, ErrNilMap)
+	c.Assert(m.Delete("test"), Equals, false)
+
+	m = Map{}
+
+	c.Assert(m.Set("", &V{}), Equals, ErrEmptyName)
+	c.Assert(m.Set("test", nil), ErrorMatches, `Struct for option --test is nil`)
+	c.Assert(m.Delete("_unknown_"), Equals, false)
+
+	c.Assert(m.Set("test", &V{}), IsNil)
+	c.Assert(m.Delete("test"), Equals, true)
 }
 
 func (s *OptUtilSuite) TestAddMap(c *C) {
@@ -55,6 +71,9 @@ func (s *OptUtilSuite) TestAddMap(c *C) {
 
 	c.Assert(opts.AddMap(m3), HasLen, 0)
 	c.Assert(opts.AddMap(m4), HasLen, 0)
+
+	c.Assert(opts.AddMap(nil), HasLen, 1)
+	c.Assert(opts.AddMap(nil)[0], Equals, ErrNilMap)
 
 	m5 := Map{
 		"t:test":  {},
@@ -486,13 +505,13 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs = NewOptions().Parse([]string{}, Map{"": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Some option does not have a name")
+	c.Assert(errs[0], Equals, ErrEmptyName)
 }
 
 func (s *OptUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(""), Equals, "")
 	c.Assert(Format("test"), Equals, "--test")
-	c.Assert(Format("t:test"), Equals, "--test/-t")
+	c.Assert(Format("t:test"), Equals, "-t/--test")
 }
 
 func (s *OptUtilSuite) TestMerging(c *C) {

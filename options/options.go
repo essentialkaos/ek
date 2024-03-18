@@ -29,7 +29,6 @@ const (
 // Error codes
 const (
 	ERROR_UNSUPPORTED = iota
-	ERROR_NO_NAME
 	ERROR_DUPLICATE_LONGNAME
 	ERROR_DUPLICATE_SHORTNAME
 	ERROR_OPTION_IS_NIL
@@ -85,8 +84,16 @@ type optionName struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrNilOptions returns if options struct is nil
-var ErrNilOptions = fmt.Errorf("Options struct is nil")
+var (
+	// ErrNilOptions returns if options struct is nil
+	ErrNilOptions = fmt.Errorf("Options struct is nil")
+
+	// ErrNilMap returns if options map is nil
+	ErrNilMap = fmt.Errorf("Options map is nil")
+
+	// ErrEmptyName returns if option have no name
+	ErrEmptyName = fmt.Errorf("One or more options do not have a name")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -113,10 +120,10 @@ func (opts *Options) Add(name string, option *V) error {
 	optName := parseName(name)
 
 	switch {
+	case optName.Long == "":
+		return ErrEmptyName
 	case option == nil:
 		return OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}
-	case optName.Long == "":
-		return OptionError{"", "", ERROR_NO_NAME}
 	case opts.full[optName.Long] != nil:
 		return OptionError{"--" + optName.Long, "", ERROR_DUPLICATE_LONGNAME}
 	case optName.Short != "" && opts.short[optName.Short] != "":
@@ -146,6 +153,10 @@ func (opts *Options) Add(name string, option *V) error {
 
 // AddMap adds map with supported options
 func (opts *Options) AddMap(optMap Map) []error {
+	if optMap == nil {
+		return []error{ErrNilMap}
+	}
+
 	var errs []error
 
 	for name, opt := range optMap {
@@ -374,6 +385,38 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Set set option in map
+// Note that if the option is already set, it will be replaced
+func (m Map) Set(name string, opt *V) error {
+	optName := parseName(name)
+
+	switch {
+	case m == nil:
+		return ErrNilMap
+	case optName.Long == "":
+		return ErrEmptyName
+	case opt == nil:
+		return OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}
+	}
+
+	m[name] = opt
+
+	return nil
+}
+
+// Delete removes option from map
+func (m Map) Delete(name string) bool {
+	if m == nil || m[name] == nil {
+		return false
+	}
+
+	delete(m, name)
+
+	return true
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // NewOptions creates new options struct
 func NewOptions() *Options {
 	return &Options{
@@ -489,7 +532,7 @@ func Format(opt string) string {
 	case a.Short == "":
 		return "--" + a.Long
 	default:
-		return fmt.Sprintf("--%s/-%s", a.Long, a.Short)
+		return fmt.Sprintf("-%s/--%s", a.Short, a.Long)
 	}
 }
 
@@ -501,6 +544,11 @@ func Merge(opts ...string) string {
 // Q merges several options into string (shortcut for Merge)
 func Q(opts ...string) string {
 	return Merge(opts...)
+}
+
+// F formats option name (shortcut for Format)
+func F(opt string) string {
+	return Format(opt)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -517,12 +565,10 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 		return nil, opts.validate()
 	}
 
-	var (
-		optName   string
-		mixedOpt  bool
-		arguments Arguments
-		errorList []error
-	)
+	var optName string
+	var mixedOpt bool
+	var arguments Arguments
+	var errorList []error
 
 	for _, curOpt := range rawOpts {
 		if optName == "" || mixedOpt {
@@ -903,8 +949,6 @@ func (e OptionError) Error() string {
 		return fmt.Sprintf("Struct for option %s is nil", e.Option)
 	case ERROR_DUPLICATE_LONGNAME, ERROR_DUPLICATE_SHORTNAME:
 		return fmt.Sprintf("Option %s defined 2 or more times", e.Option)
-	case ERROR_NO_NAME:
-		return "Some option does not have a name"
 	case ERROR_CONFLICT:
 		return fmt.Sprintf("Option %s conflicts with option %s", e.Option, e.BoundOption)
 	case ERROR_BOUND_NOT_SET:

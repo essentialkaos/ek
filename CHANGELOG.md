@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.108.0
+
+* `[options]` Added method `Map.Set`
+* `[options]` Added method `Map.Delete`
+* `[options]` Added shortcut `F` for method `Format`
+* `[options]` Code refactoring
+
 ### 12.107.0
 
 * `[knf/united]` Added method `Simple`
