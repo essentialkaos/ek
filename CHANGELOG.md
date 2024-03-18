@@ -7,7 +7,9 @@
 * `[options]` Added shortcut `F` for method `Format`
 * `[system/container]` Added method `IsContainer`
 * `[system/container]` Added engine info caching
+* `[usage]` Fixed bug with changing color for certain command or option
 * `[options]` Code refactoring
+* `[usage]` Code refactoring
 * `[options]` Tests refactoring
 * `[system/container]` Added usage examples
 

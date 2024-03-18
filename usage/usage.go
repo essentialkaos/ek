@@ -164,12 +164,9 @@ func NewInfo(args ...string) *Info {
 	name = strutil.Q(name, filepath.Base(os.Args[0]))
 
 	info := &Info{
-		Name: name,
-		Args: args,
-
-		CommandsColorTag: DEFAULT_COMMANDS_COLOR_TAG,
-		OptionsColorTag:  DEFAULT_OPTIONS_COLOR_TAG,
-		Breadcrumbs:      true,
+		Name:        name,
+		Args:        args,
+		Breadcrumbs: true,
 	}
 
 	return info
@@ -323,9 +320,20 @@ func (i *Info) Print() {
 		return
 	}
 
-	appNameColorTag := strutil.B(fmtc.IsTag(i.AppNameColorTag), i.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG)
-	optionsColorTag := strutil.B(fmtc.IsTag(i.OptionsColorTag), i.OptionsColorTag, DEFAULT_OPTIONS_COLOR_TAG)
-	commandsColorTag := strutil.B(fmtc.IsTag(i.CommandsColorTag), i.CommandsColorTag, DEFAULT_COMMANDS_COLOR_TAG)
+	appNameColorTag := strutil.B(
+		i.AppNameColorTag != "" && fmtc.IsTag(i.AppNameColorTag),
+		i.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG,
+	)
+
+	optionsColorTag := strutil.B(
+		i.OptionsColorTag != "" && fmtc.IsTag(i.OptionsColorTag),
+		i.OptionsColorTag, DEFAULT_OPTIONS_COLOR_TAG,
+	)
+
+	commandsColorTag := strutil.B(
+		i.CommandsColorTag != "" && fmtc.IsTag(i.CommandsColorTag),
+		i.CommandsColorTag, DEFAULT_COMMANDS_COLOR_TAG,
+	)
 
 	usageMessage := "\n{*}Usage:{!} " + appNameColorTag + i.Name + "{!}"
 
@@ -416,10 +424,13 @@ func (c *Command) Print() {
 	useBreadcrumbs := true
 	maxSize := size
 
-	colorTag := strutil.Q(strutil.B(fmtc.IsTag(c.ColorTag), c.ColorTag, DEFAULT_COMMANDS_COLOR_TAG), DEFAULT_COMMANDS_COLOR_TAG)
+	colorTag := strutil.Q(
+		strutil.B(c.ColorTag != "" && fmtc.IsTag(c.ColorTag), c.ColorTag, ""),
+		DEFAULT_COMMANDS_COLOR_TAG,
+	)
 
 	if c.info != nil {
-		colorTag = c.info.CommandsColorTag
+		colorTag = strutil.Q(c.info.CommandsColorTag, colorTag)
 		maxSize = getMaxCommandSize(c.info.Commands, c.Group)
 		useBreadcrumbs = c.info.Breadcrumbs
 	}
@@ -446,10 +457,13 @@ func (o *Option) Print() {
 	useBreadcrumbs := true
 	maxSize := size
 
-	colorTag := strutil.Q(strutil.B(fmtc.IsTag(o.ColorTag), o.ColorTag, DEFAULT_OPTIONS_COLOR_TAG), DEFAULT_OPTIONS_COLOR_TAG)
+	colorTag := strutil.Q(
+		strutil.B(o.ColorTag != "" && fmtc.IsTag(o.ColorTag), o.ColorTag, ""),
+		DEFAULT_OPTIONS_COLOR_TAG,
+	)
 
 	if o.info != nil {
-		colorTag = o.info.OptionsColorTag
+		colorTag = strutil.Q(o.info.OptionsColorTag, colorTag)
 		maxSize = getMaxOptionSize(o.info.Options)
 		useBreadcrumbs = o.info.Breadcrumbs
 	}
@@ -485,7 +499,12 @@ func (e *Example) Print() {
 	}
 
 	if e.Desc != "" {
-		descColor := strutil.Q(strutil.B(fmtc.IsTag(e.info.ExampleDescColorTag), e.info.ExampleDescColorTag, DEFAULT_EXAMPLE_DESC_COLOR_TAG), DEFAULT_EXAMPLE_DESC_COLOR_TAG)
+		descColor := strutil.Q(
+			strutil.B(
+				e.info.ExampleDescColorTag != "" && fmtc.IsTag(e.info.ExampleDescColorTag),
+				e.info.ExampleDescColorTag, "",
+			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
+		)
 		fmtc.Printf("  "+descColor+"%s{!}\n", e.Desc)
 	}
 }
@@ -514,10 +533,26 @@ func (a *About) Print(infoType ...string) {
 		}
 	}
 
-	nameColor := strutil.Q(strutil.B(fmtc.IsTag(a.AppNameColorTag), a.AppNameColorTag, DEFAULT_APP_NAME_COLOR_TAG), DEFAULT_APP_NAME_COLOR_TAG)
-	versionColor := strutil.Q(strutil.B(fmtc.IsTag(a.VersionColorTag), a.VersionColorTag, DEFAULT_APP_VER_COLOR_TAG), DEFAULT_APP_VER_COLOR_TAG)
-	releaseColor := strutil.Q(strutil.B(fmtc.IsTag(a.ReleaseColorTag), a.ReleaseColorTag, DEFAULT_APP_REL_COLOR_TAG), DEFAULT_APP_REL_COLOR_TAG)
-	buildColor := strutil.Q(strutil.B(fmtc.IsTag(a.BuildColorTag), a.BuildColorTag, DEFAULT_APP_BUILD_COLOR_TAG), DEFAULT_APP_BUILD_COLOR_TAG)
+	nameColor := strutil.Q(
+		strutil.B(a.AppNameColorTag != "" && fmtc.IsTag(a.AppNameColorTag), a.AppNameColorTag, ""),
+		DEFAULT_APP_NAME_COLOR_TAG,
+	)
+
+	versionColor := strutil.Q(
+		strutil.B(a.VersionColorTag != "" && fmtc.IsTag(a.VersionColorTag), a.VersionColorTag, ""),
+		DEFAULT_APP_VER_COLOR_TAG,
+	)
+
+	releaseColor := strutil.Q(
+		strutil.B(a.ReleaseColorTag != "" && fmtc.IsTag(a.ReleaseColorTag), a.ReleaseColorTag, ""),
+		DEFAULT_APP_REL_COLOR_TAG,
+	)
+
+	buildColor := strutil.Q(
+		strutil.B(a.BuildColorTag != "" && fmtc.IsTag(a.BuildColorTag), a.BuildColorTag, ""),
+		DEFAULT_APP_BUILD_COLOR_TAG,
+	)
+
 	relSeparator := strutil.Q(a.ReleaseSeparator, "-")
 	descSeparator := strutil.Q(a.DescSeparator, "-")
 
