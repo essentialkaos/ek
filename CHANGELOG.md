@@ -6,6 +6,7 @@
 * `[options]` Added method `Map.Delete`
 * `[options]` Added shortcut `F` for method `Format`
 * `[options]` Code refactoring
+* `[options]` Tests refactoring
 
 ### 12.107.0
 
