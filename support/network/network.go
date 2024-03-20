@@ -13,6 +13,7 @@ import (
 
 	"github.com/essentialkaos/ek/v12/netutil"
 	"github.com/essentialkaos/ek/v12/req"
+
 	"github.com/essentialkaos/ek/v12/support"
 )
 

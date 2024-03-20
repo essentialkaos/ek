@@ -14,6 +14,7 @@ By default, it collects information about the application and environment:
 
 There are also some sub-packages to collect/parse additional information:
 
+- apps: Package for extracting apps versions info
 - deps: Package for extracting dependency information from gomod data
 - pkgs: Package for collecting information about installed packages
 - fs: Package for collecting information about the file system
@@ -24,6 +25,7 @@ Example of collecting maximum information about the application and system:
 	support.Collect("TestApp", "12.3.4").
 		WithRevision("fc8d81e").
 		WithDeps(deps.Extract(gomodData)).
+		WithApps(apps.Golang(), apps.GCC()).
 		WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
 		WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 		WithNetwork(network.Collect("https://domain.com/ip-echo")).
@@ -36,6 +38,7 @@ it to the console.
 	info := support.Collect("TestApp", "12.3.4").
 		WithRevision("fc8d81e").
 		WithDeps(deps.Extract(gomodData)).
+		WithApps(apps.Golang(), apps.GCC()).
 		WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
 		WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 		WithNetwork(network.Collect("https://domain.com/ip-echo")).
@@ -219,7 +222,7 @@ func (i *Info) WithPackages(pkgs []Pkg) *Info {
 }
 
 // WithPackages adds information about system apps
-func (i *Info) WithApps(apps []App) *Info {
+func (i *Info) WithApps(apps ...App) *Info {
 	if i == nil {
 		return nil
 	}
