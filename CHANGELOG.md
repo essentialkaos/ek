@@ -10,6 +10,7 @@
 * `[system/container]` Added engine info caching
 * `[pager]` Fixed panic when pager stdin is not a file
 * `[usage]` Fixed bug with changing color for certain command or option
+* `[lock]` Fixed build tags
 * `[options]` Code refactoring
 * `[usage]` Code refactoring
 * `[options]` Tests refactoring
