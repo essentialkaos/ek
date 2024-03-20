@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 /*
 Package support provides methods for collecting and printing support information
 about system.

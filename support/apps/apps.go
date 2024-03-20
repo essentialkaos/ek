@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 // Package apps provides methods for obtaining version information about various tools
 package apps
 
