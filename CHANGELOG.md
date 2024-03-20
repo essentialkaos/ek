@@ -2,6 +2,7 @@
 
 ### 12.108.0
 
+* `[support]` Added new package for collecting support information
 * `[options]` Added method `Map.Set`
 * `[options]` Added method `Map.Delete`
 * `[options]` Added shortcut `F` for method `Format`
