@@ -2,7 +2,7 @@
 
 ### 12.108.1
 
-* `[support]` Fixed documentaion formatting
+* `[support]` Fixed documentation formatting
 
 ### 12.108.0
 
