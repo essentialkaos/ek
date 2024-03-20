@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.108.1
+
+* `[support]` Fixed documentaion formatting
+
 ### 12.108.0
 
 * `[support]` Added new package for collecting support information
