@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package pkgs provides methods for collecting information about used dependencies
+package deps
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +9,24 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"github.com/essentialkaos/ek/v12/support"
 
-	"github.com/essentialkaos/go-linenoise/v3"
+	"github.com/essentialkaos/depsy"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.108.0"
+// Extract extracts dependencies info from gomod data
+func Extract(gomod []byte) []support.Dep {
+	var result []support.Dep
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	for _, dep := range depsy.Extract(gomod, false) {
+		result = append(result, support.Dep{
+			Version: dep.Version,
+			Path:    dep.Path,
+			Extra:   dep.Extra,
+		})
+	}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	return result
 }

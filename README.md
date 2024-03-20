@@ -89,6 +89,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`spellcheck`](https://kaos.sh/g/ek.v12/spellcheck) — Package provides spellcheck based on Damerau–Levenshtein distance algorithm
 * [`spinner`](https://kaos.sh/g/ek.v12/spinner) — Package provides methods for creating spinner animation for long-running tasks
 * [`strutil`](https://kaos.sh/g/ek.v12/strutil) — Package provides methods for working with strings
+* [`support`](https://kaos.sh/g/ek.v12/support) — Package provides methods for collecting and printing support information about system
 * [`system/container`](https://kaos.sh/g/ek.v12/system/container) — Package provides methods for checking container engine info
 * [`system/exec`](https://kaos.sh/g/ek.v12/system/exec) — Package provides methods for executing commands
 * [`system/process`](https://kaos.sh/g/ek.v12/system/process) — Package provides methods for gathering information about active processes

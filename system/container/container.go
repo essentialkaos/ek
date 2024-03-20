@@ -28,15 +28,35 @@ var mountsFile = "/proc/1/mounts"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// engineChecked set to true if engine was checked
+var engineChecked bool
+
+// engineCache cached engine info
+var engineCache string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // GetEngine returns container engine name if used
 func GetEngine() string {
+	if engineChecked {
+		return engineCache
+	}
+
 	mountsData, err := os.ReadFile(mountsFile)
 
 	if err != nil {
 		return ""
 	}
 
-	return guessEngine(string(mountsData))
+	engineChecked = true
+	engineCache = guessEngine(string(mountsData))
+
+	return engineCache
+}
+
+// IsContainer returns true if we are inside container
+func IsContainer() bool {
+	return GetEngine() != ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -29,8 +29,8 @@ var _ = Suite(&OptUtilSuite{})
 func (s *OptUtilSuite) TestAdd(c *C) {
 	opts := &Options{}
 
-	c.Assert(opts.Add("", &V{}), ErrorMatches, `Some option does not have a name`)
-	c.Assert(opts.Add("t:", &V{}), ErrorMatches, `Some option does not have a name`)
+	c.Assert(opts.Add("", &V{}), Equals, ErrEmptyName)
+	c.Assert(opts.Add("t:", &V{}), Equals, ErrEmptyName)
 
 	c.Assert(opts.Add("test", &V{}), IsNil)
 	c.Assert(opts.Add(":test1", &V{}), IsNil)
@@ -39,6 +39,22 @@ func (s *OptUtilSuite) TestAdd(c *C) {
 	c.Assert(opts.Add("t1:test", &V{}), ErrorMatches, `Option --test defined 2 or more times`)
 	c.Assert(opts.Add("t:test3", &V{}), ErrorMatches, `Option -t defined 2 or more times`)
 	c.Assert(opts.Add("t:test3", nil), ErrorMatches, `Struct for option --test3 is nil`)
+}
+
+func (s *OptUtilSuite) TestMap(c *C) {
+	var m Map
+
+	c.Assert(m.Set("test", &V{}), Equals, ErrNilMap)
+	c.Assert(m.Delete("test"), Equals, false)
+
+	m = Map{}
+
+	c.Assert(m.Set("", &V{}), Equals, ErrEmptyName)
+	c.Assert(m.Set("test", nil), ErrorMatches, `Struct for option --test is nil`)
+	c.Assert(m.Delete("_unknown_"), Equals, false)
+
+	c.Assert(m.Set("test", &V{}), IsNil)
+	c.Assert(m.Delete("test"), Equals, true)
 }
 
 func (s *OptUtilSuite) TestAddMap(c *C) {
@@ -55,6 +71,9 @@ func (s *OptUtilSuite) TestAddMap(c *C) {
 
 	c.Assert(opts.AddMap(m3), HasLen, 0)
 	c.Assert(opts.AddMap(m4), HasLen, 0)
+
+	c.Assert(opts.AddMap(nil), HasLen, 1)
+	c.Assert(opts.AddMap(nil)[0], Equals, ErrNilMap)
 
 	m5 := Map{
 		"t:test":  {},
@@ -151,7 +170,7 @@ func (s *OptUtilSuite) TestConflicts(c *C) {
 
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0].(OptionError).Type, Equals, ERROR_CONFLICT)
-	c.Assert(errs[0].Error(), Equals, "Option test1 conflicts with option test2")
+	c.Assert(errs[0], ErrorMatches, "Option test1 conflicts with option test2")
 
 	argline = "--test0 xyz"
 
@@ -180,7 +199,7 @@ func (s *OptUtilSuite) TestBound(c *C) {
 
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0].(OptionError).Type, Equals, ERROR_BOUND_NOT_SET)
-	c.Assert(errs[0].Error(), Equals, "Option test2 must be defined with option test1")
+	c.Assert(errs[0], ErrorMatches, "Option test2 must be defined with option test1")
 
 	argline = "--test0 xyz"
 
@@ -374,42 +393,42 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs = NewOptions().Parse([]string{"--test", "100"}, Map{"t:test": {Type: 10}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test has unsupported type")
+	c.Assert(errs[0], ErrorMatches, "Option --test has unsupported type")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"s:string": {}, "s:trace": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option -s defined 2 or more times")
+	c.Assert(errs[0], ErrorMatches, "Option -s defined 2 or more times")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option -t is not supported")
+	c.Assert(errs[0], ErrorMatches, "Option -t is not supported")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t=100"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option -t is not supported")
+	c.Assert(errs[0], ErrorMatches, "Option -t is not supported")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test is not supported")
+	c.Assert(errs[0], ErrorMatches, "Option --test is not supported")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test=abcd"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test is not supported")
+	c.Assert(errs[0], ErrorMatches, "Option --test is not supported")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -423,76 +442,76 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs = NewOptions().Parse([]string{"--asd="}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --asd has wrong format")
+	c.Assert(errs[0], ErrorMatches, "Option --asd has wrong format")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-j="}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option -j has wrong format")
+	c.Assert(errs[0], ErrorMatches, "Option -j has wrong format")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Required: true}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Required option test is not set")
+	c.Assert(errs[0], ErrorMatches, "Required option test is not set")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t"}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Non-boolean option --test is empty")
+	c.Assert(errs[0], ErrorMatches, "Non-boolean option --test is empty")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test=!"}, Map{"t:test": {Type: FLOAT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test has wrong format")
+	c.Assert(errs[0], ErrorMatches, "Option --test has wrong format")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t=!"}, Map{"t:test": {Type: INT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test has wrong format")
+	c.Assert(errs[0], ErrorMatches, "Option --test has wrong format")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test", "!"}, Map{"t:test": {Type: INT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option --test has wrong format")
+	c.Assert(errs[0], ErrorMatches, "Option --test has wrong format")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": nil})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Struct for option --test is nil")
+	c.Assert(errs[0], ErrorMatches, "Struct for option --test is nil")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Value: []string{}}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Option test contains unsupported default value")
+	c.Assert(errs[0], ErrorMatches, "Option test contains unsupported default value")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0].Error(), Equals, "Some option does not have a name")
+	c.Assert(errs[0], Equals, ErrEmptyName)
 }
 
 func (s *OptUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(""), Equals, "")
 	c.Assert(Format("test"), Equals, "--test")
-	c.Assert(Format("t:test"), Equals, "--test/-t")
+	c.Assert(Format("t:test"), Equals, "-t/--test")
 }
 
 func (s *OptUtilSuite) TestMerging(c *C) {

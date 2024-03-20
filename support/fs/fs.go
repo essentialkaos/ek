@@ -1,8 +1,8 @@
 //go:build !windows
 // +build !windows
 
-// Package ek is a set of auxiliary packages
-package ek
+// Package pkgs provides methods for collecting information about filesystem
+package fs
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +12,32 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"github.com/essentialkaos/ek/v12/system"
 
-	"github.com/essentialkaos/go-linenoise/v3"
+	"github.com/essentialkaos/ek/v12/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.108.0"
+// Collect collects info about filesystem
+func Collect() []support.FSInfo {
+	fsInfo, err := system.GetFSUsage()
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	if err != nil {
+		return nil
+	}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+	var info []support.FSInfo
+
+	for mPath, mInfo := range fsInfo {
+		info = append(info, support.FSInfo{
+			Path:   mPath,
+			Device: mInfo.Device,
+			Type:   mInfo.Type,
+			Used:   mInfo.Used,
+			Free:   mInfo.Free,
+		})
+	}
+
+	return info
 }

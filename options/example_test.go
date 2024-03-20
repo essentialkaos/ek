@@ -212,7 +212,7 @@ func ExampleFormat() {
 
 	fmt.Printf("Option: %s\n", Format(o))
 	// Output:
-	// Option: --test/-t
+	// Option: -t/--test
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -508,6 +508,35 @@ func ExampleArguments_Filter() {
 	// Output:
 	// Arguments: [parse fileA.txt fileB.jpg fileC.txt]
 	// Text files: [fileA.txt fileC.txt]
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleMap_Set() {
+	m := Map{}
+
+	err := m.Set("t:test", &V{Value: "abcd"})
+
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func ExampleMap_Delete() {
+	optName := "t:test"
+
+	m := Map{
+		optName: &V{Value: "abcd"},
+	}
+
+	if m.Delete(optName) {
+		fmt.Printf("Option %s deleted\n", F(optName))
+	} else {
+		fmt.Printf("There is no option %s\n", F(optName))
+	}
+
+	// Output:
+	// Option -t/--test deleted
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

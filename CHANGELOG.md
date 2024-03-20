@@ -1,5 +1,21 @@
 ## Changelog
 
+### 12.108.0
+
+* `[support]` Added new package for collecting support information
+* `[options]` Added method `Map.Set`
+* `[options]` Added method `Map.Delete`
+* `[options]` Added shortcut `F` for method `Format`
+* `[system/container]` Added method `IsContainer`
+* `[system/container]` Added engine info caching
+* `[pager]` Fixed panic when pager stdin is not a file
+* `[usage]` Fixed bug with changing color for certain command or option
+* `[lock]` Fixed build tags
+* `[options]` Code refactoring
+* `[usage]` Code refactoring
+* `[options]` Tests refactoring
+* `[system/container]` Added usage examples
+
 ### 12.107.0
 
 * `[knf/united]` Added method `Simple`

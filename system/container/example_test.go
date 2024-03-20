@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package container
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,20 +8,19 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/go-linenoise/v3"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.108.0"
+func ExampleGetEngine() {
+	fmt.Printf("Container engine: %s\n", GetEngine())
+}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	bcrypt.Cost(nil)
+func ExampleIsContainer() {
+	if !IsContainer() {
+		fmt.Println("It's not containerized")
+	} else {
+		fmt.Printf("It's containerized using %s engine\n", GetEngine())
+	}
 }
