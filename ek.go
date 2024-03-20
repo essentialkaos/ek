@@ -14,6 +14,7 @@ package ek
 import (
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/essentialkaos/depsy"
 	"github.com/essentialkaos/go-linenoise/v3"
 )
 
@@ -27,5 +28,6 @@ const VERSION = "12.108.0"
 // worthless is used as dependency fix
 func worthless() {
 	linenoise.Clear()
+	depsy.Extract(nil, false)
 	bcrypt.Cost(nil)
 }
