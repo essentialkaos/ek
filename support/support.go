@@ -6,22 +6,20 @@ Package support provides methods for collecting and printing support information
 about system.
 
 By default, it collects information about the application and environment:
-
-- Name
-- Version
-- Go version used
-- Binary SHA
-- Git commit SHA
-- Environment variables
-- Applications
+  - Name
+  - Version
+  - Go version used
+  - Binary SHA
+  - Git commit SHA
+  - Environment variables
+  - Applications
 
 There are also some sub-packages to collect/parse additional information:
-
-- apps: Package for extracting apps versions info
-- deps: Package for extracting dependency information from gomod data
-- pkgs: Package for collecting information about installed packages
-- fs: Package for collecting information about the file system
-- network: Package to collect information about the network
+  - apps: Package for extracting apps versions info
+  - deps: Package for extracting dependency information from gomod data
+  - pkgs: Package for collecting information about installed packages
+  - fs: Package for collecting information about the file system
+  - network: Package to collect information about the network
 
 Example of collecting maximum information about the application and system:
 
