@@ -1,5 +1,50 @@
-// Package support provides methods for collecting and printing support information
-// about system
+/*
+Package support provides methods for collecting and printing support information
+about system.
+
+By default, it collects information about the application and environment:
+
+- Name
+- Version
+- Go version used
+- Binary SHA
+- Git commit SHA
+- Environment variables
+- Applications
+
+There are also some sub-packages to collect/parse additional information:
+
+- deps: Package for extracting dependency information from gomod data
+- pkgs: Package for collecting information about installed packages
+- fs: Package for collecting information about the file system
+- network: Package to collect information about the network
+
+Example of collecting maximum information about the application and system:
+
+	support.Collect("TestApp", "12.3.4").
+		WithRevision("fc8d81e").
+		WithDeps(deps.Extract(gomodData)).
+		WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
+		WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
+		WithNetwork(network.Collect("https://domain.com/ip-echo")).
+		WithFS(fs.Collect()).
+		Print()
+
+Also, you can't encode data to JSON/GOB and send it to your server instead of printing
+it to the console.
+
+	info := support.Collect("TestApp", "12.3.4").
+		WithRevision("fc8d81e").
+		WithDeps(deps.Extract(gomodData)).
+		WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
+		WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
+		WithNetwork(network.Collect("https://domain.com/ip-echo")).
+		WithFS(fs.Collect())
+
+	b, _ := json.Marshal(info)
+
+	fmt.Println(string(b))
+*/
 package support
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -139,7 +184,9 @@ func (i *Info) WithDeps(deps []Dep) *Info {
 		return nil
 	}
 
-	i.Deps = deps
+	if len(deps) > 0 {
+		i.Deps = deps
+	}
 
 	return i
 }
@@ -189,6 +236,10 @@ func (i *Info) WithEnvVars(vars ...string) *Info {
 	}
 
 	for _, k := range vars {
+		if k == "" {
+			continue
+		}
+
 		v := os.Getenv(k)
 
 		if v != "" {
@@ -240,6 +291,7 @@ func (i *Info) Print() {
 	i.printFSInfo()
 	i.printEnvVars()
 	i.printPackagesInfo()
+	i.printAppsInfo()
 	i.printDependencies()
 
 	fmtutil.Separator(false)
@@ -357,6 +409,21 @@ func (i *Info) printPackagesInfo() {
 	}
 }
 
+// printAppsInfo prints info about applications
+func (i *Info) printAppsInfo() {
+	if len(i.Apps) == 0 {
+		return
+	}
+
+	fmtutil.Separator(false, "APPLICATIONS")
+
+	size := getMaxAppNameSize(i.Apps)
+
+	for _, a := range i.Apps {
+		format(size, true, a.Name, a.Version)
+	}
+}
+
 // printNetworkInfo prints network info
 func (i *Info) printNetworkInfo() {
 	if i.Network == nil {
@@ -384,6 +451,10 @@ func (i *Info) printFSInfo() {
 	size := getMaxDeviceNameSize(i.FS)
 
 	for _, m := range i.FS {
+		if m.Path == "" || m.Device == "" {
+			continue
+		}
+
 		format(size, false, m.Device, fmtc.Sprintf(
 			"%s {s}(%s){!} %s{s}/{!}%s {s-}(%s){!}",
 			m.Path, m.Type, fmtutil.PrettySize(m.Used),
