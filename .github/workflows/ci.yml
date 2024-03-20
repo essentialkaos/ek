@@ -148,7 +148,7 @@ jobs:
 
       - name: Run tests on Windows
         working-directory: ${{env.SRC_DIR}}
-        run: .scripts/windows.sh 12
+        run: .scripts/windows.ps1
 
   SendCoverage:
     name: Send Coverage
