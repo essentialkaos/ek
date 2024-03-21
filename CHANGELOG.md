@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.109.0
+
+* `[support]` Added custom checks support
+* `[knf/united]` Improved handling of environment variables
+* `[support]` Improved application info formatting
+* `[support]` Code refactoring
+* `[support]` Added more tests
+
 ### 12.108.1
 
 * `[support]` Fixed documentation formatting
