@@ -281,6 +281,10 @@ func (i *Info) printPackagesInfo() {
 	size := getMaxAppNameSize(i.Pkgs)
 
 	for _, p := range i.Pkgs {
+		if p.Name == "" {
+			continue
+		}
+
 		format(size, true, p.Name, p.Version)
 	}
 }
@@ -296,6 +300,10 @@ func (i *Info) printAppsInfo() {
 	size := getMaxAppNameSize(i.Apps)
 
 	for _, a := range i.Apps {
+		if a.Name == "" {
+			continue
+		}
+
 		v := a.Version
 
 		v = strings.ReplaceAll(v, "(", "{s}(")
@@ -442,7 +450,7 @@ func extractGitRevFromBuildInfo() string {
 
 // getHashColorBullet return bullet with color from hash
 func getHashColorBullet(v string) string {
-	if fmtc.DisableColors || !fmtc.IsTrueColorSupported() {
+	if v == "" || fmtc.DisableColors || !fmtc.IsTrueColorSupported() {
 		return ""
 	}
 

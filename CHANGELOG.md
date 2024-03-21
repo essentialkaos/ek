@@ -6,6 +6,7 @@
 * `[knf/united]` Improved handling of environment variables
 * `[support]` Improved application info formatting
 * `[support]` Code refactoring
+* `[support]` Added more tests
 
 ### 12.108.1
 
