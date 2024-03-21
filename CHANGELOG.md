@@ -1,8 +1,10 @@
 ## Changelog
 
-### 12.108.2
+### 12.109.0
 
+* `[support]` Added custom checks support
 * `[support]` Improved application info formatting
+* `[support]` Code refactoring
 
 ### 12.108.1
 
