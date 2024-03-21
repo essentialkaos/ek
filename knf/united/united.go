@@ -24,6 +24,7 @@ import (
 // Config is extended configuration
 type config struct {
 	mappings map[string]Mapping
+	env      map[string]string
 }
 
 // Mapping contains mapping [knf property] → [option] → [envvar]
@@ -60,13 +61,22 @@ var optionGetFunc = options.GetS
 
 // Combine applies mappings to combine knf properties, options, and environment
 // variables
+//
+// Note that the environment variable will be moved to config after combining (e.g.
+// won't be accessible with os.Getenv)
 func Combine(mappings ...Mapping) {
 	config := &config{
 		mappings: make(map[string]Mapping),
+		env:      make(map[string]string),
 	}
 
 	for _, m := range mappings {
 		config.mappings[m.Property] = m
+
+		if m.Variable != "" {
+			config.env[m.Variable] = os.Getenv(m.Variable)
+			os.Setenv(m.Variable, "")
+		}
 	}
 
 	global = config
@@ -309,6 +319,7 @@ func (c *config) GetL(name string, defvals ...[]string) []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getProp returns property value for knf configuration, env vars, or options
 func (c *config) getProp(name string) string {
 	m := c.mappings[name]
 
@@ -319,13 +330,14 @@ func (c *config) getProp(name string) string {
 	switch {
 	case m.Option != "" && optionHasFunc(m.Option):
 		return optionGetFunc(m.Option)
-	case m.Variable != "" && os.Getenv(m.Variable) != "":
-		return os.Getenv(m.Variable)
+	case m.Variable != "" && c.env[m.Variable] != "":
+		return c.env[m.Variable]
 	default:
 		return knf.GetS(name)
 	}
 }
 
+// validate runs validators over configuration
 func validate(validators []*knf.Validator) []error {
 	var result []error
 
