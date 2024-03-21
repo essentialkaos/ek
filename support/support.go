@@ -424,7 +424,12 @@ func (i *Info) printAppsInfo() {
 	size := getMaxAppNameSize(i.Apps)
 
 	for _, a := range i.Apps {
-		format(size, true, a.Name, a.Version)
+		v := a.Version
+
+		v = strings.ReplaceAll(v, "(", "{s}(")
+		v = strings.ReplaceAll(v, ")", "){!}")
+
+		format(size, true, a.Name, fmtc.Sprint(v))
 	}
 }
 

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.108.2
+
+* `[support]` Improved application info formatting
+
 ### 12.108.1
 
 * `[support]` Fixed documentation formatting
