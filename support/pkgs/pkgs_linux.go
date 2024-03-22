@@ -21,9 +21,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	_RPM uint8 = 1
-	_DEB uint8 = 2
-	_APK uint8 = 3
+	_RPM  uint8 = 1
+	_DPKG uint8 = 2
+	_APK  uint8 = 3
+	_TDNF uint8 = 4
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -55,9 +56,11 @@ func getPackageManagerType() uint8 {
 	case fsutil.IsExist("/usr/bin/rpm"):
 		return _RPM
 	case fsutil.IsExist("/usr/bin/dpkg-query"):
-		return _DEB
+		return _DPKG
 	case fsutil.IsExist("/sbin/apk"):
 		return _APK
+	case fsutil.IsExist("/usr/bin/tdnf"):
+		return _TDNF
 	}
 
 	return 0
@@ -76,8 +79,8 @@ func getPackageInfo(names string) support.Pkg {
 		switch pkgManager {
 		case _RPM:
 			info = getRPMPackageInfo(pkgName)
-		case _DEB:
-			info = getDEBPackageInfo(pkgName)
+		case _DPKG:
+			info = getDPKGPackageInfo(pkgName)
 		case _APK:
 			info = getAPKPackageInfo(pkgName)
 		}
@@ -90,9 +93,9 @@ func getPackageInfo(names string) support.Pkg {
 	return support.Pkg{firstPackage, ""}
 }
 
-// getRPMPackageInfo returns info about RPM package
+// getRPMPackageInfo returns info about package from rpm
 func getRPMPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("rpm", "-q", name)
+	cmd := exec.Command("rpm", "-q", "--qf", "%{version}.%{release}", name)
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
@@ -102,9 +105,9 @@ func getRPMPackageInfo(name string) support.Pkg {
 	return support.Pkg{name, strings.TrimRight(string(out), "\n\r")}
 }
 
-// getDEBPackageInfo returns info about DEB package
-func getDEBPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("dpkg-query", "--show", "--showformat=${Package}-${Version}", name)
+// getDPKGPackageInfo returns info about package from dpkg
+func getDPKGPackageInfo(name string) support.Pkg {
+	cmd := exec.Command("dpkg-query", "--show", "--showformat=${Version}", name)
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
@@ -114,7 +117,7 @@ func getDEBPackageInfo(name string) support.Pkg {
 	return support.Pkg{name, string(out)}
 }
 
-// getAPKPackageInfo returns info about APK package
+// getAPKPackageInfo returns info about package from apk
 func getAPKPackageInfo(name string) support.Pkg {
 	cmd := exec.Command("apk", "list", "--installed", name)
 	out, err := cmd.Output()
@@ -123,8 +126,23 @@ func getAPKPackageInfo(name string) support.Pkg {
 		return support.Pkg{name, ""}
 	}
 
-	return support.Pkg{
-		name,
-		strutil.ReadField(strings.TrimRight(string(out), "\n\r"), 0, false, ' '),
+	ver := strutil.ReadField(strings.TrimRight(string(out), "\n\r"), 0, false, ' ')
+	ver = strings.Replace(ver, name+"-", "", 1)
+
+	return support.Pkg{name, ver}
+}
+
+// getTDNFPackageInfo returns info about package from tndf
+func getTDNFPackageInfo(name string) support.Pkg {
+	cmd := exec.Command("tdnf", "repoquery", "--installed", name)
+	out, err := cmd.Output()
+
+	if err != nil || len(out) == 0 {
+		return support.Pkg{name, ""}
 	}
+
+	ver := strutil.ReadField(strings.TrimRight(string(out), "\n\r"), 0, false, ' ')
+	ver = strings.Replace(ver, name+"-", "", 1)
+
+	return support.Pkg{name, ver}
 }

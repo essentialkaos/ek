@@ -1,7 +1,9 @@
 ## Changelog
 
-### 12.109.1
+### 12.110.0
 
+* `[support/pkgs]` Added `tdnf` support
+* `[support/pkgs]` Package name removed from version info
 * `[support]` Fixed stubs for Windows
 
 ### 12.109.0
