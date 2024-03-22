@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.109.1
+
+* `[support]` Fixed stubs for Windows
+
 ### 12.109.0
 
 * `[support]` Added custom checks support

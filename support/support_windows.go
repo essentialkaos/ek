@@ -34,6 +34,11 @@ func (i *Info) WithApps(apps ...App) *Info {
 	panic("UNSUPPORTED")
 }
 
+// ❗ WithChecks adds information custom checks
+func (i *Info) WithChecks(check ...Check) *Info {
+	panic("UNSUPPORTED")
+}
+
 // ❗ WithEnvVars adds information with environment variables
 func (i *Info) WithEnvVars(vars ...string) *Info {
 	panic("UNSUPPORTED")
