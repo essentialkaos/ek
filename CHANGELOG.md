@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.110.1
+
+* `[support/pkgs]` Improved formatting
+
 ### 12.110.0
 
 * `[support/pkgs]` Added `tdnf` (_Photon Linux_) support
