@@ -83,6 +83,8 @@ func getPackageInfo(names string) support.Pkg {
 			info = getDPKGPackageInfo(pkgName)
 		case _APK:
 			info = getAPKPackageInfo(pkgName)
+		case _TDNF:
+			info = getTDNFPackageInfo(pkgName)
 		}
 
 		if info.Version != "" {
@@ -95,54 +97,63 @@ func getPackageInfo(names string) support.Pkg {
 
 // getRPMPackageInfo returns info about package from rpm
 func getRPMPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("rpm", "-q", "--qf", "%{version}.%{release}", name)
-	out, err := cmd.Output()
+	out := getCommandOutput("rpm", "-q", "--qf", "%{version}.%{release}.%{arch}", name)
 
-	if err != nil || len(out) == 0 {
+	if len(out) == 0 {
 		return support.Pkg{name, ""}
 	}
 
-	return support.Pkg{name, strings.TrimRight(string(out), "\n\r")}
+	return support.Pkg{name, out}
 }
 
 // getDPKGPackageInfo returns info about package from dpkg
 func getDPKGPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("dpkg-query", "--show", "--showformat=${Version}", name)
-	out, err := cmd.Output()
+	out := getCommandOutput("dpkg-query", "--show", "--showformat=${Version}.${Architecture}", name)
 
-	if err != nil || len(out) == 0 {
+	if len(out) == 0 {
 		return support.Pkg{name, ""}
 	}
 
-	return support.Pkg{name, string(out)}
+	return support.Pkg{name, out}
 }
 
 // getAPKPackageInfo returns info about package from apk
 func getAPKPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("apk", "list", "--installed", name)
-	out, err := cmd.Output()
+	out := getCommandOutput("apk", "list", "--installed", name)
 
-	if err != nil || len(out) == 0 {
+	if len(out) == 0 {
 		return support.Pkg{name, ""}
 	}
 
-	ver := strutil.ReadField(strings.TrimRight(string(out), "\n\r"), 0, false, ' ')
+	ver := strutil.ReadField(out, 0, false, ' ')
+	ver = strings.Replace(ver, name+"-", "", 1)
+	arch := strutil.ReadField(out, 1, false, ' ')
+
+	return support.Pkg{name, ver + "." + arch}
+}
+
+// getTDNFPackageInfo returns info about package from tndf
+func getTDNFPackageInfo(name string) support.Pkg {
+	out := getCommandOutput("tdnf", "repoquery", "--installed", name)
+
+	if len(out) == 0 {
+		return support.Pkg{name, ""}
+	}
+
+	ver := strutil.ReadField(out, 0, false, ' ')
 	ver = strings.Replace(ver, name+"-", "", 1)
 
 	return support.Pkg{name, ver}
 }
 
-// getTDNFPackageInfo returns info about package from tndf
-func getTDNFPackageInfo(name string) support.Pkg {
-	cmd := exec.Command("tdnf", "repoquery", "--installed", name)
-	out, err := cmd.Output()
+// getCommandOutput runs command and returns output as a string
+func getCommandOutput(cmd string, args ...string) string {
+	c := exec.Command(cmd, args...)
+	out, err := c.Output()
 
-	if err != nil || len(out) == 0 {
-		return support.Pkg{name, ""}
+	if err != nil {
+		return ""
 	}
 
-	ver := strutil.ReadField(strings.TrimRight(string(out), "\n\r"), 0, false, ' ')
-	ver = strings.Replace(ver, name+"-", "", 1)
-
-	return support.Pkg{name, ver}
+	return strings.TrimRight(string(out), "\n\r")
 }
