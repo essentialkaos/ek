@@ -25,8 +25,8 @@ import (
 // Collect collects network info
 func Collect(ipResolverURL ...string) *support.NetworkInfo {
 	info := &support.NetworkInfo{
-		IPv4: netutil.GetAllIP(),
-		IPv6: netutil.GetAllIP6(),
+		IPv4: cleanIPList(netutil.GetAllIP()),
+		IPv6: cleanIPList(netutil.GetAllIP6()),
 	}
 
 	info.Hostname, _ = os.Hostname()
@@ -39,6 +39,22 @@ func Collect(ipResolverURL ...string) *support.NetworkInfo {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// cleanIPList returns IP slice without local IP's
+func cleanIPList(ips []string) []string {
+	var result []string
+
+	for _, ip := range ips {
+		switch ip {
+		case "127.0.0.1", "::1":
+			continue
+		default:
+			result = append(result, ip)
+		}
+	}
+
+	return result
+}
 
 // resolvePublicIP resolves public IP using IP resolver
 func resolvePublicIP(resolver string) string {
