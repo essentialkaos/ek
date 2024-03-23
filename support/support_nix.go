@@ -363,7 +363,7 @@ func (i *Info) printNetworkInfo() {
 
 	fmtutil.Separator(false, "NETWORK")
 
-	format(9, false,
+	format(0, false,
 		"Hostname", i.Network.Hostname,
 		"Public IP", i.Network.PublicIP,
 		"IP v4", strings.Join(i.Network.IPv4, " "),
@@ -416,6 +416,16 @@ func (i *Info) printDependencies() {
 
 // format formats and prints records
 func format(size int, printEmpty bool, records ...string) {
+	if size <= 0 {
+		for i := 0; i < len(records); i += 2 {
+			if records[i+1] == "" && !printEmpty {
+				continue
+			}
+
+			size = mathutil.Max(size, len(records[i]))
+		}
+	}
+
 	size++
 
 	for i := 0; i < len(records); i += 2 {

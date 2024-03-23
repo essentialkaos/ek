@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.110.1
+
+* `[support/pkgs]` Improved formatting
+* `[support/network]` Local IPs removed from IPv4/IPv6 address lists
+
 ### 12.110.0
 
 * `[support/pkgs]` Added `tdnf` (_Photon Linux_) support

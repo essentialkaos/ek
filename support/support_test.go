@@ -87,7 +87,7 @@ func (s *SupportSuite) TestCollect(c *C) {
 	c.Assert(i.WithApps(apps...), NotNil)
 	c.Assert(i.WithChecks(chks...), NotNil)
 	c.Assert(i.WithEnvVars("", "SUPPORT_VAR", "TERM", "CI"), NotNil)
-	c.Assert(i.WithNetwork(&NetworkInfo{PublicIP: "192.168.1.1"}), NotNil)
+	c.Assert(i.WithNetwork(&NetworkInfo{PublicIP: "192.168.1.1", Hostname: "test.loc"}), NotNil)
 	c.Assert(i.WithFS([]FSInfo{FSInfo{}, FSInfo{"/", "/dev/vda1", "ext4", 1000, 10000}}), NotNil)
 
 	i.Print()
