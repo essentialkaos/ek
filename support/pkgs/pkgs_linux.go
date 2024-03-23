@@ -25,6 +25,7 @@ const (
 	_DPKG uint8 = 2
 	_APK  uint8 = 3
 	_TDNF uint8 = 4
+	_AUR  uint8 = 5
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -61,6 +62,8 @@ func getPackageManagerType() uint8 {
 		return _APK
 	case fsutil.IsExist("/usr/bin/tdnf"):
 		return _TDNF
+	case fsutil.IsExist("/usr/bin/pacman"):
+		return _AUR
 	}
 
 	return 0
@@ -85,6 +88,8 @@ func getPackageInfo(names string) support.Pkg {
 			info = getAPKPackageInfo(pkgName)
 		case _TDNF:
 			info = getTDNFPackageInfo(pkgName)
+		case _AUR:
+			info = getAURPackageInfo(pkgName)
 		}
 
 		if info.Version != "" {
@@ -144,6 +149,17 @@ func getTDNFPackageInfo(name string) support.Pkg {
 	ver = strings.Replace(ver, name+"-", "", 1)
 
 	return support.Pkg{name, ver}
+}
+
+// getAURPackageInfo returns info about package from pacman
+func getAURPackageInfo(name string) support.Pkg {
+	out := getCommandOutput("pacman", "-Q", name)
+
+	if len(out) == 0 {
+		return support.Pkg{name, ""}
+	}
+
+	return support.Pkg{name, strutil.ReadField(out, 1, false, ' ')}
 }
 
 // getCommandOutput runs command and returns output as a string

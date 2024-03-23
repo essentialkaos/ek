@@ -2,7 +2,8 @@
 
 ### 12.110.0
 
-* `[support/pkgs]` Added `tdnf` support
+* `[support/pkgs]` Added `tdnf` (_Photon Linux_) support
+* `[support/pkgs]` Added `pacman` (_Arch Linux_) support
 * `[support/pkgs]` Package name removed from version info
 * `[support]` Fixed stubs for Windows
 
