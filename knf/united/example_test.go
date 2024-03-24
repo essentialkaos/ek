@@ -94,6 +94,17 @@ func ExampleCombine() {
 	GetL("section:list")
 }
 
+func ExampleAddOptions() {
+	m := options.Map{}
+
+	AddOptions(m, "test:option-one", "test:option-two")
+
+	fmt.Printf("Map size: %d\n", len(m))
+
+	// Output:
+	// Map size: 2
+}
+
 func ExampleSimple() {
 	m := Simple("test:option-one")
 

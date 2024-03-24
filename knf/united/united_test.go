@@ -259,4 +259,14 @@ func (s *UnitedSuite) TestHelpers(c *C) {
 	c.Assert(m.Property, Equals, "test:option-one")
 	c.Assert(m.Option, Equals, "test-option-one")
 	c.Assert(m.Variable, Equals, "TEST_OPTION_ONE")
+
+	var op options.Map
+
+	c.Assert(func() { AddOptions(op, "test") }, NotPanics)
+
+	op = options.Map{}
+
+	AddOptions(op, "test")
+
+	c.Assert(op, HasLen, 1)
 }

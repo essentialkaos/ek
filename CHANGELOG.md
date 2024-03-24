@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.111.0
+
+* `[knf/united]` Added helper method `AddOptions`
+
 ### 12.110.1
 
 * `[support/pkgs]` Improved formatting
