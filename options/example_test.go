@@ -217,6 +217,44 @@ func ExampleFormat() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleV_String() {
+	v := &V{
+		Type:      INT,
+		Value:     25,
+		Alias:     "items",
+		Conflicts: "E:empty",
+		Bound:     "c:create",
+		Min:       10,
+		Max:       1000,
+	}
+
+	fmt.Println(v.String())
+
+	// Output:
+	// Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}
+}
+
+func ExampleMap_String() {
+	m := Map{
+		"s:size": &V{
+			Type:      INT,
+			Value:     25,
+			Alias:     "items",
+			Conflicts: "E:empty",
+			Bound:     "c:create",
+			Min:       10,
+			Max:       1000,
+		},
+	}
+
+	fmt.Println(m.String())
+
+	// Output:
+	// options.Map[size:Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}]
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func ExampleOptions_Add() {
 	opts := NewOptions()
 

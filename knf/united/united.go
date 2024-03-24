@@ -82,6 +82,17 @@ func Combine(mappings ...Mapping) {
 	global = config
 }
 
+// AddOptions adds options with knf properties to map
+func AddOptions(m options.Map, names ...string) {
+	if m == nil {
+		return
+	}
+
+	for _, n := range names {
+		m.Set(ToOption(n), &options.V{})
+	}
+}
+
 // Simple creates simple mapping for knf property
 // section:property → --section-property + SECTION_PROPERTY
 func Simple(name string) Mapping {

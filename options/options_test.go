@@ -528,6 +528,52 @@ func (s *OptUtilSuite) TestGuessType(c *C) {
 	c.Assert(guessType(3.3), Equals, FLOAT)
 }
 
+func (s *OptUtilSuite) TestVString(c *C) {
+	var v *V
+
+	c.Assert(v.String(), Equals, "Nil{}")
+
+	v = &V{
+		Type:      STRING,
+		Value:     "test",
+		Alias:     "test2",
+		Conflicts: "test3",
+		Bound:     "test4",
+		Min:       10,
+		Max:       1000,
+		Mergeble:  true,
+		Required:  true,
+	}
+
+	c.Assert(v.String(), Equals, "String{Value:test Min:10 Max:1000 Alias:test2 Conflicts:test3 Bound:test4 Mergeble:Yes Required:Yes}")
+
+	v = &V{Type: INT}
+	c.Assert(v.String(), Equals, "Int{}")
+
+	v = &V{Type: BOOL}
+	c.Assert(v.String(), Equals, "Bool{}")
+
+	v = &V{Type: FLOAT}
+	c.Assert(v.String(), Equals, "Float{}")
+
+	v = &V{Type: MIXED}
+	c.Assert(v.String(), Equals, "Mixed{}")
+
+	v = &V{Type: 10}
+	c.Assert(v.String(), Equals, "Unknown{}")
+}
+
+func (s *OptUtilSuite) TestMapString(c *C) {
+	var m Map
+	c.Assert(m.String(), Equals, "options.Map[Nil]")
+
+	m = Map{}
+	c.Assert(m.String(), Equals, "options.Map[]")
+
+	m = Map{"t:test": &V{Type: INT, Value: 25}}
+	c.Assert(m.String(), Equals, "options.Map[test:Int{Value:25}]")
+}
+
 func (s *OptUtilSuite) TestArguments(c *C) {
 	a := Arguments{"A.txt", "b.png", "c.txt", "d.jpg", "e.txte"}
 

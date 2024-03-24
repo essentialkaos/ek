@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.111.0
+
+* `[knf/united]` Added helper method `AddOptions`
+* `[options]` Added methods `V.String` and `Map.String`
+* `[support]` Minor UI improvement
+* `[options]` Code refactoring
+
 ### 12.110.1
 
 * `[support/pkgs]` Improved formatting

@@ -348,9 +348,9 @@ func (i *Info) printChecksInfo() {
 		case CHECK_OK, CHECK_SKIP:
 			fmtc.Printf(" {s}— {&}%s{!}\n", c.Message)
 		case CHECK_WARN:
-			fmtc.Printf(" {y}— {&}%s{!}\n", c.Message)
+			fmtc.Printf(" {s}— {y}{&}%s{!}\n", c.Message)
 		case CHECK_ERROR:
-			fmtc.Printf(" {r}— {&}%s{!}\n", c.Message)
+			fmtc.Printf(" {s}— {r}{&}%s{!}\n", c.Message)
 		}
 	}
 }
