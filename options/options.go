@@ -19,11 +19,11 @@ import (
 
 // Options types
 const (
-	STRING = iota // String option
-	INT           // Int/Uint option
-	BOOL          // Boolean option
-	FLOAT         // Floating number option
-	MIXED         // String or boolean option
+	STRING uint8 = iota // String option
+	INT                 // Int/Uint option
+	BOOL                // Boolean option
+	FLOAT               // Floating number option
+	MIXED               // String or boolean option
 )
 
 // Error codes
@@ -44,7 +44,7 @@ const (
 
 // V is basic option struct
 type V struct {
-	Type      int     // option type
+	Type      uint8   // option type
 	Max       float64 // maximum integer option value
 	Min       float64 // minimum integer option value
 	Alias     string  // list of aliases
@@ -553,6 +553,85 @@ func F(opt string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// String returns string representation of options map
+func (m Map) String() string {
+	if m == nil {
+		return "options.Map[Nil]"
+	}
+
+	if len(m) == 0 {
+		return "options.Map[]"
+	}
+
+	result := "options.Map["
+
+	for n, v := range m {
+		result += parseName(n).Long + ":" + v.String() + " "
+	}
+
+	return strings.TrimRight(result, " ") + "]"
+}
+
+// String returns string representation of option
+func (v *V) String() string {
+	if v == nil {
+		return "Nil{}"
+	}
+
+	var result string
+
+	switch v.Type {
+	case STRING:
+		result = "String{"
+	case INT:
+		result = "Int{"
+	case BOOL:
+		result = "Bool{"
+	case FLOAT:
+		result = "Float{"
+	case MIXED:
+		result = "Mixed{"
+	default:
+		result = "Unknown{"
+	}
+
+	if v.Value != nil {
+		result += fmt.Sprintf("Value:%v ", v.Value)
+	}
+
+	if v.Min != 0 {
+		result += fmt.Sprintf("Min:%g ", v.Min)
+	}
+
+	if v.Max != 0 {
+		result += fmt.Sprintf("Max:%g ", v.Max)
+	}
+
+	if v.Alias != "" {
+		result += fmt.Sprintf("Alias:%s ", v.Alias)
+	}
+
+	if v.Conflicts != "" {
+		result += fmt.Sprintf("Conflicts:%s ", v.Conflicts)
+	}
+
+	if v.Bound != "" {
+		result += fmt.Sprintf("Bound:%s ", v.Bound)
+	}
+
+	if v.Mergeble {
+		result += "Mergeble:Yes "
+	}
+
+	if v.Required {
+		result += "Required:Yes "
+	}
+
+	return strings.TrimRight(result, " ") + "}"
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // I think it is okay to have such a long and complicated method for parsing data
 // because it has a lot of logic which can't be separated into different methods
 // without losing code readability
@@ -918,7 +997,7 @@ func isSupportedType(v any) bool {
 	return false
 }
 
-func guessType(v any) int {
+func guessType(v any) uint8 {
 	switch v.(type) {
 	case string:
 		return STRING
