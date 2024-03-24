@@ -4,7 +4,7 @@
 
 * `[knf/united]` Added helper method `AddOptions`
 * `[options]` Added methods `V.String` and `Map.String`
-* `[support]` Minor UI fix
+* `[support]` Minor UI improvement
 * `[options]` Code refactoring
 
 ### 12.110.1
