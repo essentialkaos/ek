@@ -3,6 +3,7 @@
 ### 12.111.0
 
 * `[knf/united]` Added helper method `AddOptions`
+* `[support]` Minor UI fix
 
 ### 12.110.1
 
