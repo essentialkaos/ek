@@ -21,12 +21,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Config is extended configuration
-type config struct {
-	mappings map[string]Mapping
-	env      map[string]string
-}
-
 // Mapping contains mapping [knf property] → [option] → [envvar]
 type Mapping struct {
 	Property string // Property from KNF configuration file
@@ -41,6 +35,15 @@ type DurationMod = knf.DurationMod
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// united is united configuration wrapper
+type united struct {
+	knf      *knf.Config
+	mappings map[string]Mapping
+	env      map[string]string
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var (
 	Millisecond = knf.Millisecond
 	Second      = knf.Second
@@ -52,7 +55,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var global *config
+var global *united
 
 var optionHasFunc = options.Has
 var optionGetFunc = options.GetS
@@ -61,25 +64,30 @@ var optionGetFunc = options.GetS
 
 // Combine applies mappings to combine knf properties, options, and environment
 // variables
-//
+
 // Note that the environment variable will be moved to config after combining (e.g.
 // won't be accessible with os.Getenv)
-func Combine(mappings ...Mapping) {
-	config := &config{
+func Combine(config *knf.Config, mappings ...Mapping) error {
+	if config == nil {
+		return knf.ErrNilConfig
+	}
+
+	global = &united{
+		knf:      config,
 		mappings: make(map[string]Mapping),
 		env:      make(map[string]string),
 	}
 
 	for _, m := range mappings {
-		config.mappings[m.Property] = m
+		global.mappings[m.Property] = m
 
 		if m.Variable != "" {
-			config.env[m.Variable] = os.Getenv(m.Variable)
+			global.env[m.Variable] = os.Getenv(m.Variable)
 			os.Setenv(m.Variable, "")
 		}
 	}
 
-	global = config
+	return nil
 }
 
 // AddOptions adds options with knf properties to map
@@ -206,9 +214,13 @@ func (m Mapping) IsEmpty() bool {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetS returns configuration value as string
-func (c *config) GetS(name string, defvals ...string) string {
+func (c *united) GetS(name string, defvals ...string) string {
 	if c == nil {
-		return knf.GetS(name, defvals...)
+		if len(defvals) == 0 {
+			return ""
+		}
+
+		return defvals[0]
 	}
 
 	val := c.getProp(name)
@@ -221,108 +233,156 @@ func (c *config) GetS(name string, defvals ...string) string {
 }
 
 // GetI returns configuration value as int
-func (c *config) GetI(name string, defvals ...int) int {
+func (c *united) GetI(name string, defvals ...int) int {
 	if c == nil {
-		return knf.GetI(name, defvals...)
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseInt(c.getProp(name), defvals...)
 }
 
 // GetI64 returns configuration value as int64
-func (c *config) GetI64(name string, defvals ...int64) int64 {
+func (c *united) GetI64(name string, defvals ...int64) int64 {
 	if c == nil {
-		return knf.GetI64(name, defvals...)
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseInt64(c.getProp(name), defvals...)
 }
 
 // GetU returns configuration value as uint
-func (c *config) GetU(name string, defvals ...uint) uint {
+func (c *united) GetU(name string, defvals ...uint) uint {
 	if c == nil {
-		return knf.GetU(name, defvals...)
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseUint(c.getProp(name), defvals...)
 }
 
 // GetU64 returns configuration value as uint64
-func (c *config) GetU64(name string, defvals ...uint64) uint64 {
+func (c *united) GetU64(name string, defvals ...uint64) uint64 {
 	if c == nil {
-		return knf.GetU64(name, defvals...)
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseUint64(c.getProp(name), defvals...)
 }
 
 // GetF returns configuration value as floating number
-func (c *config) GetF(name string, defvals ...float64) float64 {
+func (c *united) GetF(name string, defvals ...float64) float64 {
 	if c == nil {
-		return knf.GetF(name, defvals...)
+		if len(defvals) == 0 {
+			return 0.0
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseFloat(c.getProp(name), defvals...)
 }
 
 // GetB returns configuration value as boolean
-func (c *config) GetB(name string, defvals ...bool) bool {
+func (c *united) GetB(name string, defvals ...bool) bool {
 	if c == nil {
-		return knf.GetB(name, defvals...)
+		if len(defvals) == 0 {
+			return false
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseBool(c.getProp(name), defvals...)
 }
 
 // GetM returns configuration value as file mode
-func (c *config) GetM(name string, defvals ...os.FileMode) os.FileMode {
+func (c *united) GetM(name string, defvals ...os.FileMode) os.FileMode {
 	if c == nil {
-		return knf.GetM(name, defvals...)
+		if len(defvals) == 0 {
+			return os.FileMode(0)
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseMode(c.getProp(name), defvals...)
 }
 
 // GetD returns configuration values as duration
-func (c *config) GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
+func (c *united) GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
 	if c == nil {
-		return knf.GetD(name, mod, defvals...)
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseDuration(c.getProp(name), time.Duration(mod), defvals...)
 }
 
 // GetTD returns configuration value as time duration
-func (c *config) GetTD(name string, defvals ...time.Duration) time.Duration {
+func (c *united) GetTD(name string, defvals ...time.Duration) time.Duration {
 	if c == nil {
-		return knf.GetTD(name, defvals...)
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseTimeDuration(c.getProp(name), defvals...)
 }
 
 // GetTS returns configuration timestamp value as time
-func (c *config) GetTS(name string, defvals ...time.Time) time.Time {
+func (c *united) GetTS(name string, defvals ...time.Time) time.Time {
 	if c == nil {
-		return knf.GetTS(name, defvals...)
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseTimestamp(c.getProp(name), defvals...)
 }
 
 // GetTS returns configuration value as timezone
-func (c *config) GetTZ(name string, defvals ...*time.Location) *time.Location {
+func (c *united) GetTZ(name string, defvals ...*time.Location) *time.Location {
 	if c == nil {
-		return knf.GetTZ(name, defvals...)
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseTimezone(c.getProp(name), defvals...)
 }
 
 // GetL returns configuration value as list
-func (c *config) GetL(name string, defvals ...[]string) []string {
+func (c *united) GetL(name string, defvals ...[]string) []string {
 	if c == nil {
-		return knf.GetL(name, defvals...)
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
 	}
 
 	return value.ParseList(c.getProp(name), defvals...)
@@ -331,11 +391,11 @@ func (c *config) GetL(name string, defvals ...[]string) []string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getProp returns property value for knf configuration, env vars, or options
-func (c *config) getProp(name string) string {
+func (c *united) getProp(name string) string {
 	m := c.mappings[name]
 
 	if m.IsEmpty() {
-		return knf.GetS(name)
+		return c.knf.GetS(name)
 	}
 
 	switch {
@@ -344,7 +404,7 @@ func (c *config) getProp(name string) string {
 	case m.Variable != "" && c.env[m.Variable] != "":
 		return c.env[m.Variable]
 	default:
-		return knf.GetS(name)
+		return c.knf.GetS(name)
 	}
 }
 

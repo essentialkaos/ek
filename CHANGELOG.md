@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.111.1
+
+* `[knf/united]` United configuration separated from global KNF configuration
+
 ### 12.111.0
 
 * `[knf/united]` Added helper method `AddOptions`
