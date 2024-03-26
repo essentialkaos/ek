@@ -17,8 +17,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleCombine() {
-	// Load global KNF config
-	err := knf.Global("/path/to/your/config.knf")
+	// Load KNF config
+	config, err := knf.Read("/path/to/your/config.knf")
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -43,6 +43,7 @@ func ExampleCombine() {
 
 	// Combine combine KNF configuration, options and environment variables
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -54,6 +55,7 @@ func ExampleCombine() {
 	)
 
 	Combine(
+		config,
 		// Create mapping manually
 		Mapping{optOne, ToOption(optOne), ToEnvVar(optOne)},
 		// Create simple mapping
@@ -139,7 +141,10 @@ func ExampleE() {
 }
 
 func ExampleGetS() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -148,7 +153,10 @@ func ExampleGetS() {
 }
 
 func ExampleGetB() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -157,7 +165,10 @@ func ExampleGetB() {
 }
 
 func ExampleGetI() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -166,7 +177,10 @@ func ExampleGetI() {
 }
 
 func ExampleGetI64() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -175,7 +189,10 @@ func ExampleGetI64() {
 }
 
 func ExampleGetU() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -184,7 +201,10 @@ func ExampleGetU() {
 }
 
 func ExampleGetU64() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -193,7 +213,10 @@ func ExampleGetU64() {
 }
 
 func ExampleGetF() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -202,7 +225,10 @@ func ExampleGetF() {
 }
 
 func ExampleGetM() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -211,7 +237,10 @@ func ExampleGetM() {
 }
 
 func ExampleGetD() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -220,7 +249,10 @@ func ExampleGetD() {
 }
 
 func ExampleGetTD() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -229,7 +261,10 @@ func ExampleGetTD() {
 }
 
 func ExampleGetTS() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -238,7 +273,10 @@ func ExampleGetTS() {
 }
 
 func ExampleGetTZ() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
@@ -247,7 +285,10 @@ func ExampleGetTZ() {
 }
 
 func ExampleGetL() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
 	Combine(
+		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)

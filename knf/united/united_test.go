@@ -40,7 +40,9 @@ const _CONFIG_DATA = `
 
 func Test(t *testing.T) { TestingT(t) }
 
-type UnitedSuite struct{}
+type UnitedSuite struct {
+	config *knf.Config
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -56,31 +58,50 @@ func (s *UnitedSuite) SetUpSuite(c *C) {
 		c.Fatal(err.Error())
 	}
 
-	err = knf.Global(configFile)
+	config, err := knf.Read(configFile)
 
 	if err != nil {
 		c.Fatal(err.Error())
 	}
+
+	s.config = config
 }
 
 func (s *UnitedSuite) TestKNFOnly(c *C) {
+	err := Combine(nil)
+
+	c.Assert(err, Equals, knf.ErrNilConfig)
+
 	global = nil
 
-	c.Assert(GetS("test:string"), Equals, "Test")
-	c.Assert(GetI("test:integer"), Equals, 123)
-	c.Assert(GetI64("test:integer"), Equals, int64(123))
-	c.Assert(GetU("test:integer"), Equals, uint(123))
-	c.Assert(GetU64("test:integer"), Equals, uint64(123))
-	c.Assert(GetF("test:float"), Equals, 234.5)
-	c.Assert(GetB("test:boolean"), Equals, true)
-	c.Assert(GetM("test:file-mode"), Equals, os.FileMode(0644))
-	c.Assert(GetD("test:duration", knf.Minute), Equals, 24*time.Minute)
-	c.Assert(GetTD("test:time-duration"), Equals, 5*time.Minute)
-	c.Assert(GetTS("test:timestamp").Unix(), Equals, int64(1709629048))
-	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Zurich")
-	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1", "Test2"})
+	c.Assert(GetS("test:string"), Equals, "")
+	c.Assert(GetS("test:string", "TEST"), Equals, "TEST")
+	c.Assert(GetI("test:integer"), Equals, 0)
+	c.Assert(GetI("test:integer", 1234), Equals, 1234)
+	c.Assert(GetI64("test:integer"), Equals, int64(0))
+	c.Assert(GetI64("test:integer", 1234), Equals, int64(1234))
+	c.Assert(GetU("test:integer"), Equals, uint(0))
+	c.Assert(GetU("test:integer", 1234), Equals, uint(1234))
+	c.Assert(GetU64("test:integer"), Equals, uint64(0))
+	c.Assert(GetU64("test:integer", 1234), Equals, uint64(1234))
+	c.Assert(GetF("test:float"), Equals, 0.0)
+	c.Assert(GetF("test:float", 1234.5), Equals, 1234.5)
+	c.Assert(GetB("test:boolean"), Equals, false)
+	c.Assert(GetB("test:boolean", true), Equals, true)
+	c.Assert(GetM("test:file-mode"), Equals, os.FileMode(0))
+	c.Assert(GetM("test:file-mode", 0600), Equals, os.FileMode(0600))
+	c.Assert(GetD("test:duration", knf.Minute), Equals, time.Duration(0))
+	c.Assert(GetD("test:duration", knf.Minute, time.Minute), Equals, time.Minute)
+	c.Assert(GetTD("test:time-duration"), Equals, time.Duration(0))
+	c.Assert(GetTD("test:time-duration", time.Minute), Equals, time.Minute)
+	c.Assert(GetTS("test:timestamp").IsZero(), Equals, true)
+	c.Assert(GetTS("test:timestamp", time.Unix(1704067200, 0)).IsZero(), Equals, false)
+	c.Assert(GetTZ("test:timezone"), IsNil)
+	c.Assert(GetTZ("test:timezone", time.Local), NotNil)
+	c.Assert(GetL("test:list"), IsNil)
+	c.Assert(GetL("test:list", []string{"test"}), NotNil)
 
-	Combine(
+	err = Combine(s.config,
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -93,6 +114,7 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
 
+	c.Assert(err, IsNil)
 	c.Assert(GetS("test:string"), Equals, "Test")
 	c.Assert(GetI("test:integer"), Equals, 123)
 	c.Assert(GetI64("test:integer"), Equals, int64(123))
@@ -141,7 +163,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 
 	c.Assert(errs, HasLen, 0)
 
-	Combine(
+	err := Combine(s.config,
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -157,6 +179,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 	optionHasFunc = opts.Has
 	optionGetFunc = opts.GetS
 
+	c.Assert(err, IsNil)
 	c.Assert(GetS("test:string"), Equals, "TestOpt")
 	c.Assert(GetI("test:integer"), Equals, 456)
 	c.Assert(GetI64("test:integer"), Equals, int64(456))
@@ -187,7 +210,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	os.Setenv("TEST_TIMEZONE", "Europe/Berlin")
 	os.Setenv("TEST_LIST", "Test1Env,Test2Env")
 
-	Combine(
+	err := Combine(s.config,
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -200,6 +223,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
 
+	c.Assert(err, IsNil)
 	c.Assert(GetS("test:string"), Equals, "TestEnv")
 	c.Assert(GetI("test:integer"), Equals, 789)
 	c.Assert(GetI64("test:integer"), Equals, int64(789))
@@ -224,7 +248,7 @@ func (s *UnitedSuite) TestValidation(c *C) {
 
 	c.Assert(errs, HasLen, 1)
 
-	Combine(
+	err := Combine(s.config,
 		Mapping{"test:string", "test-string", "TEST_STRING"},
 		Mapping{"test:integer", "test-integer", "TEST_INTEGER"},
 		Mapping{"test:float", "test-float", "TEST_FLOAT"},
@@ -236,6 +260,8 @@ func (s *UnitedSuite) TestValidation(c *C) {
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
 		Mapping{"test:list", "test-list", "TEST_LIST"},
 	)
+
+	c.Assert(err, IsNil)
 
 	errs = Validate([]*knf.Validator{
 		{"test:string", knfv.Empty, nil},
