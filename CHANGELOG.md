@@ -4,6 +4,7 @@
 
 * `[fsutil]` Method `IsNonEmpty` marked as deprecated
 * `[fsutil]` Fixed stubs for Windows
+* `[terminal/window]` Fixed deprication message
 
 ### 12.111.1
 
