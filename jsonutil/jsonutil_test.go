@@ -132,7 +132,7 @@ func (s *JSONSuite) TestCompression(c *C) {
 	err := WriteGz(jsonFile, testStruct)
 
 	c.Assert(err, IsNil)
-	c.Assert(fsutil.IsNonEmpty(jsonFile), Equals, true)
+	c.Assert(fsutil.IsEmpty(jsonFile), Equals, false)
 
 	testStructDec := &TestStruct{}
 

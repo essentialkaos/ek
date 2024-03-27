@@ -205,16 +205,6 @@ func ExampleIsEmpty() {
 	}
 }
 
-func ExampleIsNonEmpty() {
-	target := "/home/john/test.txt"
-
-	if IsNonEmpty(target) {
-		fmt.Printf("%s is NOT an empty file!\n", target)
-	} else {
-		fmt.Printf("%s is an empty file!\n", target)
-	}
-}
-
 func ExampleIsEmptyDir() {
 	target := "/home/john/myfiles"
 

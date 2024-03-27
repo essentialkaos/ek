@@ -522,6 +522,8 @@ func IsEmpty(path string) bool {
 }
 
 // IsNonEmpty returns true if given file is not empty
+//
+// Deprecated: Use method IsEmpty instead
 func IsNonEmpty(path string) bool {
 	if path == "" {
 		return false

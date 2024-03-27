@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.111.2
+
+* `[fsutil]` Method `IsNonEmpty` marked as deprecated
+* `[fsutil]` Fixed stubs for Windows
+* `[terminal/window]` Fixed deprication message
+
 ### 12.111.1
 
 * `[knf/united]` United configuration separated from global KNF configuration

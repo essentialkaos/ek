@@ -19,14 +19,14 @@ import (
 
 // GetSize returns window width and height
 //
-// Deprecated: Use method package tty instead
+// Deprecated: Use package tty instead
 func GetSize() (int, int) {
 	return tty.GetSize()
 }
 
 // GetWidth returns window width
 //
-// Deprecated: Use method package tty instead
+// Deprecated: Use package tty instead
 func GetWidth() int {
 	w, _ := GetSize()
 	return w
@@ -34,7 +34,7 @@ func GetWidth() int {
 
 // GetHeight returns window height
 //
-// Deprecated: Use method package tty instead
+// Deprecated: Use package tty instead
 func GetHeight() int {
 	_, h := GetSize()
 	return h
