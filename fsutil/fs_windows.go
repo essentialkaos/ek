@@ -146,8 +146,8 @@ func IsExecutableByUser(path, userName string) bool {
 	return false
 }
 
-// ❗ IsNonEmpty returns true if given file is not empty
-func IsNonEmpty(path string) bool {
+// ❗ IsEmpty returns true if given file is empty
+func IsEmpty(path string) bool {
 	panic("UNSUPPORTED")
 	return false
 }

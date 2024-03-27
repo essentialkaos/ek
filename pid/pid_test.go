@@ -124,7 +124,7 @@ func (s *PidSuite) TestPidFuncs(c *C) {
 	c.Assert(fsutil.IsExist(Dir+"/test.pid"), Equals, true)
 	c.Assert(fsutil.IsReadable(Dir+"/test.pid"), Equals, true)
 	c.Assert(fsutil.IsReadable(Dir+"/test.pid"), Equals, true)
-	c.Assert(fsutil.IsNonEmpty(Dir+"/test.pid"), Equals, true)
+	c.Assert(fsutil.IsEmpty(Dir+"/test.pid"), Equals, false)
 
 	err = Create("test")
 
