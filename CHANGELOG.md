@@ -6,7 +6,7 @@
 * `[terminal/tty]` Added method `IsSystemd`
 * `[fsutil]` Method `IsNonEmpty` marked as deprecated
 * `[fsutil]` Fixed stubs for Windows
-* `[terminal/window]` Fixed deprication message
+* `[terminal/window]` Fixed deprivation message
 
 ### 12.111.1
 
