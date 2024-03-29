@@ -1,7 +1,8 @@
 ## Changelog
 
-### 12.111.2
+### 12.112.0
 
+* `[terminal/tty]` Added method `IsSystemd`
 * `[fsutil]` Method `IsNonEmpty` marked as deprecated
 * `[fsutil]` Fixed stubs for Windows
 * `[terminal/window]` Fixed deprication message
