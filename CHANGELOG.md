@@ -2,6 +2,7 @@
 
 ### 12.112.0
 
+* `[support]` Added binary name info
 * `[terminal/tty]` Added method `IsSystemd`
 * `[fsutil]` Method `IsNonEmpty` marked as deprecated
 * `[fsutil]` Fixed stubs for Windows

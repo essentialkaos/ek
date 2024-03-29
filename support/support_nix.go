@@ -21,6 +21,7 @@ import (
 	"github.com/essentialkaos/ek/v12/fmtutil"
 	"github.com/essentialkaos/ek/v12/hash"
 	"github.com/essentialkaos/ek/v12/mathutil"
+	"github.com/essentialkaos/ek/v12/path"
 	"github.com/essentialkaos/ek/v12/strutil"
 )
 
@@ -28,9 +29,16 @@ import (
 
 // Collect collects basic info about system
 func Collect(app, ver string) *Info {
+	bin, _ := os.Executable()
+
+	if bin != "" {
+		bin = path.Base(bin)
+	}
+
 	info := &Info{
 		Name:    app,
 		Version: ver,
+		Binary:  bin,
 	}
 
 	info.appendBuildInfo()
@@ -178,7 +186,7 @@ func (i *Info) Print() {
 // appendBuildInfo appends build info
 func (i *Info) appendBuildInfo() {
 	i.Build = &BuildInfo{
-		GoVersion: strings.TrimLeft(runtime.Version(), "go"),
+		GoVersion: strings.TrimPrefix(runtime.Version(), "go"),
 		GoArch:    runtime.GOARCH,
 		GoOS:      runtime.GOOS,
 	}
@@ -193,8 +201,14 @@ func (i *Info) appendBuildInfo() {
 func (i *Info) printAppInfo() {
 	fmtutil.Separator(false, "APPLICATION INFO")
 
+	name := i.Name
+
+	if strings.ToLower(i.Name) != strings.ToLower(i.Binary) {
+		name += fmtc.Sprintf(" {s-}(%s){!}", i.Binary)
+	}
+
 	format(7, true,
-		"Name", i.Name,
+		"Name", name,
 		"Version", i.Version,
 	)
 
