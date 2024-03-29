@@ -1,6 +1,6 @@
 ## Changelog
 
-### 12.112.0
+### 12.112.1
 
 * `[support]` Added binary name info
 * `[terminal/tty]` Added method `IsSystemd`
