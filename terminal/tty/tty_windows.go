@@ -21,7 +21,14 @@ func IsFakeTTY() bool {
 
 // ❗ IsTMUX returns true if we are currently working in tmux
 func IsTMUX() (bool, error) {
+	panic("UNSUPPORTED")
 	return false, nil
+}
+
+// ❗ IsSystemd returns true if process started by systemd
+func IsSystemd() bool {
+	panic("UNSUPPORTED")
+	return false
 }
 
 // ❗ GetSize returns window width and height
