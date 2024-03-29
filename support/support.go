@@ -73,6 +73,7 @@ const (
 type Info struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+	Binary  string `json:"binary"`
 
 	Build   *BuildInfo   `json:"build,omitempty"`
 	OS      *OSInfo      `json:"os,omitempty"`

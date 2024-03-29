@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.112.1
+
+* `[support]` Added binary name info
+* `[terminal/tty]` Added method `IsSystemd`
+* `[fsutil]` Method `IsNonEmpty` marked as deprecated
+* `[fsutil]` Fixed stubs for Windows
+* `[terminal/window]` Fixed deprivation message
+
 ### 12.111.1
 
 * `[knf/united]` United configuration separated from global KNF configuration

@@ -35,6 +35,12 @@ func ExampleIsTMUX() {
 	}
 }
 
+func ExampleIsSystemd() {
+	if IsSystemd() {
+		fmt.Println("This process started by systemd")
+	}
+}
+
 func ExampleGetSize() {
 	width, height := GetSize()
 
