@@ -38,6 +38,9 @@ const (
 	ERROR_CONFLICT
 	ERROR_BOUND_NOT_SET
 	ERROR_UNSUPPORTED_VALUE
+	ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT
+	ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT
+	ERROR_UNSUPPORTED_BOUND_LIST_FORMAT
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -47,9 +50,9 @@ type V struct {
 	Type      uint8   // option type
 	Max       float64 // maximum integer option value
 	Min       float64 // minimum integer option value
-	Alias     string  // list of aliases
-	Conflicts string  // list of conflicts options
-	Bound     string  // list of bound options
+	Alias     any     // string or slice of strings with aliases
+	Conflicts any     // string or slice of strings with conflicts options
+	Bound     any     // string or slice of strings with bound options
 	Mergeble  bool    // option supports options value merging
 	Required  bool    // option is required
 
@@ -137,7 +140,11 @@ func (opts *Options) Add(name string, option *V) error {
 	}
 
 	if option.Alias != "" {
-		aliases := parseOptionsList(option.Alias)
+		aliases, ok := parseOptionsList(option.Alias)
+
+		if !ok {
+			return OptionError{"--" + optName.Long, "", ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT}
+		}
 
 		for _, l := range aliases {
 			opts.full[l.Long] = option
@@ -524,16 +531,7 @@ func ParseOptionName(opt string) (string, string) {
 
 // Format formats option name
 func Format(opt string) string {
-	a := parseName(opt)
-
-	switch {
-	case a.Long == "":
-		return ""
-	case a.Short == "":
-		return "--" + a.Long
-	default:
-		return fmt.Sprintf("-%s/--%s", a.Short, a.Long)
-	}
+	return parseName(opt).String()
 }
 
 // Merge merges several options into string
@@ -607,16 +605,16 @@ func (v *V) String() string {
 		result += fmt.Sprintf("Max:%g ", v.Max)
 	}
 
-	if v.Alias != "" {
-		result += fmt.Sprintf("Alias:%s ", v.Alias)
+	if v.Alias != nil {
+		result += fmt.Sprintf("Alias:%v ", formatOptionsList(v.Alias))
 	}
 
-	if v.Conflicts != "" {
-		result += fmt.Sprintf("Conflicts:%s ", v.Conflicts)
+	if v.Conflicts != nil {
+		result += fmt.Sprintf("Conflicts:%v ", formatOptionsList(v.Conflicts))
 	}
 
-	if v.Bound != "" {
-		result += fmt.Sprintf("Bound:%s ", v.Bound)
+	if v.Bound != nil {
+		result += fmt.Sprintf("Bound:%v ", formatOptionsList(v.Bound))
 	}
 
 	if v.Mergeble {
@@ -628,6 +626,20 @@ func (v *V) String() string {
 	}
 
 	return strings.TrimRight(result, " ") + "}"
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// String returns string representation of optionName
+func (o optionName) String() string {
+	switch {
+	case o.Long == "":
+		return ""
+	case o.Short == "":
+		return "--" + o.Long
+	}
+
+	return fmt.Sprintf("-%s/--%s", o.Short, o.Long)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -813,29 +825,37 @@ func (opts *Options) validate() []error {
 
 	for n, v := range opts.full {
 		if !isSupportedType(v.Value) {
-			errorList = append(errorList, OptionError{n, "", ERROR_UNSUPPORTED_VALUE})
+			errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_VALUE})
 		}
 
 		if v.Required && v.Value == nil {
-			errorList = append(errorList, OptionError{n, "", ERROR_REQUIRED_NOT_SET})
+			errorList = append(errorList, OptionError{F(n), "", ERROR_REQUIRED_NOT_SET})
 		}
 
 		if v.Conflicts != "" {
-			conflicts := parseOptionsList(v.Conflicts)
+			conflicts, ok := parseOptionsList(v.Conflicts)
 
-			for _, c := range conflicts {
-				if opts.Has(c.Long) && opts.Has(n) {
-					errorList = append(errorList, OptionError{n, c.Long, ERROR_CONFLICT})
+			if !ok {
+				errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT})
+			} else {
+				for _, c := range conflicts {
+					if opts.Has(c.Long) && opts.Has(n) {
+						errorList = append(errorList, OptionError{F(n), F(c.Long), ERROR_CONFLICT})
+					}
 				}
 			}
 		}
 
 		if v.Bound != "" {
-			bound := parseOptionsList(v.Bound)
+			bound, ok := parseOptionsList(v.Bound)
 
-			for _, b := range bound {
-				if !opts.Has(b.Long) && opts.Has(n) {
-					errorList = append(errorList, OptionError{n, b.Long, ERROR_BOUND_NOT_SET})
+			if !ok {
+				errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_BOUND_LIST_FORMAT})
+			} else {
+				for _, b := range bound {
+					if !opts.Has(b.Long) && opts.Has(n) {
+						errorList = append(errorList, OptionError{F(n), F(b.Long), ERROR_BOUND_NOT_SET})
+					}
 				}
 			}
 		}
@@ -862,14 +882,45 @@ func parseName(name string) optionName {
 	return optionName{long, short}
 }
 
-func parseOptionsList(list string) []optionName {
+func parseOptionsList(list any) ([]optionName, bool) {
 	var result []optionName
 
-	for _, a := range strings.Split(list, " ") {
-		result = append(result, parseName(a))
+	switch t := list.(type) {
+	case nil:
+		return nil, true
+
+	case string:
+		for _, a := range strings.Split(t, MergeSymbol) {
+			result = append(result, parseName(a))
+		}
+
+	case []string:
+		for _, a := range t {
+			result = append(result, parseName(a))
+		}
+
+	default:
+		return nil, false
 	}
 
-	return result
+	return result, true
+}
+
+func formatOptionsList(list any) string {
+	opts, ok := parseOptionsList(list)
+
+	if !ok {
+		return "{InvalidList}"
+	}
+
+	switch len(opts) {
+	case 0:
+		return "{Empty}"
+	case 1:
+		return opts[0].String()
+	}
+
+	return fmt.Sprintf("%v", opts)
 }
 
 func updateOption(opt *V, name, value string) error {
@@ -887,7 +938,7 @@ func updateOption(opt *V, name, value string) error {
 		return updateIntOption(name, opt, value)
 	}
 
-	return fmt.Errorf("Option %s has unsupported type", Format(name))
+	return fmt.Errorf("Option %q has unsupported type", Format(name))
 }
 
 func updateStringOption(opt *V, value string) error {
@@ -1017,23 +1068,29 @@ func guessType(v any) uint8 {
 func (e OptionError) Error() string {
 	switch e.Type {
 	default:
-		return fmt.Sprintf("Option %s is not supported", e.Option)
+		return fmt.Sprintf("Option %q is not supported", e.Option)
 	case ERROR_EMPTY_VALUE:
-		return fmt.Sprintf("Non-boolean option %s is empty", e.Option)
+		return fmt.Sprintf("Non-boolean option %q is empty", e.Option)
 	case ERROR_REQUIRED_NOT_SET:
-		return fmt.Sprintf("Required option %s is not set", e.Option)
+		return fmt.Sprintf("Required option %q is not set", e.Option)
 	case ERROR_WRONG_FORMAT:
-		return fmt.Sprintf("Option %s has wrong format", e.Option)
+		return fmt.Sprintf("Option %q has wrong format", e.Option)
 	case ERROR_OPTION_IS_NIL:
-		return fmt.Sprintf("Struct for option %s is nil", e.Option)
+		return fmt.Sprintf("Struct for option %q is nil", e.Option)
 	case ERROR_DUPLICATE_LONGNAME, ERROR_DUPLICATE_SHORTNAME:
-		return fmt.Sprintf("Option %s defined 2 or more times", e.Option)
+		return fmt.Sprintf("Option %q defined 2 or more times", e.Option)
 	case ERROR_CONFLICT:
-		return fmt.Sprintf("Option %s conflicts with option %s", e.Option, e.BoundOption)
+		return fmt.Sprintf("Option %q conflicts with option %q", e.Option, e.BoundOption)
 	case ERROR_BOUND_NOT_SET:
-		return fmt.Sprintf("Option %s must be defined with option %s", e.BoundOption, e.Option)
+		return fmt.Sprintf("Option %q must be defined with option %q", e.BoundOption, e.Option)
 	case ERROR_UNSUPPORTED_VALUE:
-		return fmt.Sprintf("Option %s contains unsupported default value", e.Option)
+		return fmt.Sprintf("Option %q contains unsupported default value", e.Option)
+	case ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT:
+		return fmt.Sprintf("Option %q contains unsupported list format of aliases", e.Option)
+	case ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT:
+		return fmt.Sprintf("Option %q contains unsupported list format of conflicting options", e.Option)
+	case ERROR_UNSUPPORTED_BOUND_LIST_FORMAT:
+		return fmt.Sprintf("Option %q contains unsupported list format of bound options", e.Option)
 	}
 }
 

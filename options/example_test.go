@@ -62,17 +62,17 @@ func ExampleParse() {
 	// Key is option in format "short-name:long-name" or "long-name"
 	// We highly recommend defining options names as constants
 	optMap := Map{
-		"s:string":   {},                                     // By default, argument has string type
-		"S:string2":  {Type: STRING, Value: "Default value"}, // You can predefine default values
-		"int":        {Type: INT},                            // Integer without short name
-		"I:int2":     {Type: INT, Min: 1, Max: 10},           // Integer with limits
-		"f:float":    {Type: FLOAT, Value: 10.0},             // Float
-		"b:boolean":  {Type: BOOL},                           // Boolean
-		"r:required": {Type: INT, Required: true},            // Some options can be marked as required
-		"m:merg":     {Type: STRING, Mergeble: true},         // Mergeble options can be defined more than one time
-		"h:help":     {Type: BOOL, Alias: "u:usage about"},   // You can define argument aliases
-		"e:example":  {Conflicts: "s:string S:string2"},      // Option conflicts with string and string2 (options can't be set at same time)
-		"E:example2": {Bound: "int I:int2"},                  // Option bound with int and int2 (options must be set at same time)
+		"s:string":   {},                                             // By default, argument has string type
+		"S:string2":  {Type: STRING, Value: "Default value"},         // You can predefine default values
+		"int":        {Type: INT},                                    // Integer without short name
+		"I:int2":     {Type: INT, Min: 1, Max: 10},                   // Integer with limits
+		"f:float":    {Type: FLOAT, Value: 10.0},                     // Float
+		"b:boolean":  {Type: BOOL},                                   // Boolean
+		"r:required": {Type: INT, Required: true},                    // Some options can be marked as required
+		"m:merg":     {Type: STRING, Mergeble: true},                 // Mergeble options can be defined more than one time
+		"h:help":     {Type: BOOL, Alias: "u:usage about"},           // You can define argument aliases
+		"e:example":  {Conflicts: []string{"s:string", "S:string2"}}, // Option conflicts with string and string2 (options can't be set at same time)
+		"E:example2": {Bound: "int I:int2"},                          // Option bound with int and int2 (options must be set at same time)
 	}
 
 	// args is a slice with command arguments
@@ -231,7 +231,7 @@ func ExampleV_String() {
 	fmt.Println(v.String())
 
 	// Output:
-	// Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}
+	// Int{Value:25 Min:10 Max:1000 Alias:--items Conflicts:-E/--empty Bound:-c/--create}
 }
 
 func ExampleMap_String() {
@@ -239,7 +239,7 @@ func ExampleMap_String() {
 		"s:size": &V{
 			Type:      INT,
 			Value:     25,
-			Alias:     "items",
+			Alias:     []string{"items", "objects"},
 			Conflicts: "E:empty",
 			Bound:     "c:create",
 			Min:       10,
@@ -250,7 +250,7 @@ func ExampleMap_String() {
 	fmt.Println(m.String())
 
 	// Output:
-	// options.Map[size:Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}]
+	// options.Map[size:Int{Value:25 Min:10 Max:1000 Alias:[--items --objects] Conflicts:-E/--empty Bound:-c/--create}]
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

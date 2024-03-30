@@ -216,10 +216,20 @@ func genCommandsFunc(info *usage.Info) string {
 }
 
 // genConflictsExclusion generates list with conflicts exclusions
-func genConflictsExclusion(opts string) string {
+func genConflictsExclusion(opts any) string {
 	var result []string
+	var optSlice []string
 
-	for _, opt := range strings.Split(opts, " ") {
+	switch t := opts.(type) {
+	case string:
+		optSlice = strings.Split(t, options.MergeSymbol)
+	case []string:
+		optSlice = t
+	default:
+		return ""
+	}
+
+	for _, opt := range optSlice {
 		long, short := options.ParseOptionName(opt)
 
 		if short != "" {

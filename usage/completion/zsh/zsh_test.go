@@ -72,7 +72,10 @@ var _ = Suite(&ZSHSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ZSHSuite) TestGenerator(c *C) {
-	data := Generate(genTestUsageInfo(), genTestOptions(), "test", "*.txt")
+	data := Generate(genTestUsageInfo(), genTestOptionsWithString(), "test", "*.txt")
+	c.Assert(data, Equals, _RESULT)
+
+	data = Generate(genTestUsageInfo(), genTestOptionsWithSlice(), "test", "*.txt")
 	c.Assert(data, Equals, _RESULT)
 }
 
@@ -92,12 +95,22 @@ func (s *ZSHSuite) TestAuxi(c *C) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func genTestOptions() options.Map {
+func genTestOptionsWithString() options.Map {
 	return options.Map{
 		"a:option-aaa": {},
 		"b:option-bbb": {Type: options.BOOL},
 		"option-ccc":   {},
 		"e:option-eee": {Conflicts: "d:option-ddd option-ccc"},
+		"d:option-ddd": {Type: options.BOOL},
+	}
+}
+
+func genTestOptionsWithSlice() options.Map {
+	return options.Map{
+		"a:option-aaa": {},
+		"b:option-bbb": {Type: options.BOOL},
+		"option-ccc":   {},
+		"e:option-eee": {Conflicts: []string{"d:option-ddd", "option-ccc"}},
 		"d:option-ddd": {Type: options.BOOL},
 	}
 }
