@@ -560,7 +560,7 @@ func (s *OptUtilSuite) TestVString(c *C) {
 		Required:  true,
 	}
 
-	c.Assert(v.String(), Equals, "String{Value:test Min:10 Max:1000 Alias:[test2 test6] Conflicts:test3 Bound:test4 Mergeble:Yes Required:Yes}")
+	c.Assert(v.String(), Equals, "String{Value:test Min:10 Max:1000 Alias:[--test2 --test6] Conflicts:--test3 Bound:--test4 Mergeble:Yes Required:Yes}")
 
 	v = &V{Type: INT}
 	c.Assert(v.String(), Equals, "Int{}")
@@ -576,6 +576,9 @@ func (s *OptUtilSuite) TestVString(c *C) {
 
 	v = &V{Type: 10}
 	c.Assert(v.String(), Equals, "Unknown{}")
+
+	c.Assert(formatOptionsList(false), Equals, "{InvalidList}")
+	c.Assert(formatOptionsList(nil), Equals, "{Empty}")
 }
 
 func (s *OptUtilSuite) TestMapString(c *C) {

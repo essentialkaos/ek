@@ -531,16 +531,7 @@ func ParseOptionName(opt string) (string, string) {
 
 // Format formats option name
 func Format(opt string) string {
-	a := parseName(opt)
-
-	switch {
-	case a.Long == "":
-		return ""
-	case a.Short == "":
-		return "--" + a.Long
-	default:
-		return fmt.Sprintf("-%s/--%s", a.Short, a.Long)
-	}
+	return parseName(opt).String()
 }
 
 // Merge merges several options into string
@@ -615,15 +606,15 @@ func (v *V) String() string {
 	}
 
 	if v.Alias != nil {
-		result += fmt.Sprintf("Alias:%v ", v.Alias)
+		result += fmt.Sprintf("Alias:%v ", formatOptionsList(v.Alias))
 	}
 
 	if v.Conflicts != nil {
-		result += fmt.Sprintf("Conflicts:%v ", v.Conflicts)
+		result += fmt.Sprintf("Conflicts:%v ", formatOptionsList(v.Conflicts))
 	}
 
 	if v.Bound != nil {
-		result += fmt.Sprintf("Bound:%v ", v.Bound)
+		result += fmt.Sprintf("Bound:%v ", formatOptionsList(v.Bound))
 	}
 
 	if v.Mergeble {
@@ -635,6 +626,20 @@ func (v *V) String() string {
 	}
 
 	return strings.TrimRight(result, " ") + "}"
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// String returns string representation of optionName
+func (o optionName) String() string {
+	switch {
+	case o.Long == "":
+		return ""
+	case o.Short == "":
+		return "--" + o.Long
+	}
+
+	return fmt.Sprintf("-%s/--%s", o.Short, o.Long)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -899,6 +904,23 @@ func parseOptionsList(list any) ([]optionName, bool) {
 	}
 
 	return result, true
+}
+
+func formatOptionsList(list any) string {
+	opts, ok := parseOptionsList(list)
+
+	if !ok {
+		return "{InvalidList}"
+	}
+
+	switch len(opts) {
+	case 0:
+		return "{Empty}"
+	case 1:
+		return opts[0].String()
+	}
+
+	return fmt.Sprintf("%v", opts)
 }
 
 func updateOption(opt *V, name, value string) error {

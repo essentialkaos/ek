@@ -231,7 +231,7 @@ func ExampleV_String() {
 	fmt.Println(v.String())
 
 	// Output:
-	// Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}
+	// Int{Value:25 Min:10 Max:1000 Alias:--items Conflicts:-E/--empty Bound:-c/--create}
 }
 
 func ExampleMap_String() {
@@ -239,7 +239,7 @@ func ExampleMap_String() {
 		"s:size": &V{
 			Type:      INT,
 			Value:     25,
-			Alias:     "items",
+			Alias:     []string{"items", "objects"},
 			Conflicts: "E:empty",
 			Bound:     "c:create",
 			Min:       10,
@@ -250,7 +250,7 @@ func ExampleMap_String() {
 	fmt.Println(m.String())
 
 	// Output:
-	// options.Map[size:Int{Value:25 Min:10 Max:1000 Alias:items Conflicts:E:empty Bound:c:create}]
+	// options.Map[size:Int{Value:25 Min:10 Max:1000 Alias:[--items --objects] Conflicts:-E/--empty Bound:-c/--create}]
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
