@@ -4,6 +4,7 @@
 
 - `[options]` `Alias`, `Conflicts`, and `Bound` now supports string slices
 - `[options]` Improved string representation format of `Map`, `V` and option name
+- `[terminal/tty]` Windows stubs refactoring
 
 ### 12.112.1
 
