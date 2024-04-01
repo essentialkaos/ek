@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.113.1
+
+- `[support/pkgs]` Added compatibility with macOS
+
 ### 12.113.0
 
 - `[options]` `Alias`, `Conflicts`, and `Bound` now supports string slices
