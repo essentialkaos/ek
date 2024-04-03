@@ -25,7 +25,7 @@ type TimeUtilSuite struct{}
 
 var _ = Suite(&TimeUtilSuite{})
 
-func (s *TimeUtilSuite) TestPretyDuration(c *C) {
+func (s *TimeUtilSuite) TestPrettyDuration(c *C) {
 	c.Assert(PrettyDuration(time.Duration(59000000000)), Equals, "59 seconds")
 	c.Assert(PrettyDuration(120), Equals, "2 minutes")
 	c.Assert(PrettyDuration(int16(120)), Equals, "2 minutes")
@@ -61,7 +61,7 @@ func (s *TimeUtilSuite) TestPrettyDurationSimple(c *C) {
 	c.Assert(PrettyDurationSimple(4523412), Equals, "52 days")
 }
 
-func (s *TimeUtilSuite) TestPretyDurationInDays(c *C) {
+func (s *TimeUtilSuite) TestPrettyDurationInDays(c *C) {
 	c.Assert(PrettyDurationInDays("ABC"), Equals, "")
 	c.Assert(PrettyDurationInDays(120), Equals, "1 day")
 	c.Assert(PrettyDurationInDays(7200), Equals, "1 day")
