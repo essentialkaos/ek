@@ -26,7 +26,7 @@ var _ = Suite(&FmtUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *FmtUtilSuite) TestPretyNum(c *C) {
+func (s *FmtUtilSuite) TestPrettyNum(c *C) {
 	c.Assert(PrettyNum(999), Equals, "999")
 	c.Assert(PrettyNum(1000), Equals, "1,000")
 	c.Assert(PrettyNum(1234567890), Equals, "1,234,567,890")
@@ -43,14 +43,14 @@ func (s *FmtUtilSuite) TestPretyNum(c *C) {
 	c.Assert(PrettyNum("abcd"), Equals, "abcd")
 }
 
-func (s *FmtUtilSuite) TestPretyDiff(c *C) {
+func (s *FmtUtilSuite) TestPrettyDiff(c *C) {
 	c.Assert(PrettyDiff(0), Equals, "0")
 	c.Assert(PrettyDiff(100), Equals, "+100")
 	c.Assert(PrettyDiff(15620), Equals, "+15,620")
 	c.Assert(PrettyDiff(-15620), Equals, "-15,620")
 }
 
-func (s *FmtUtilSuite) TestPretyPerc(c *C) {
+func (s *FmtUtilSuite) TestPrettyPerc(c *C) {
 	c.Assert(PrettyPerc(0.12), Equals, "0.12%")
 	c.Assert(PrettyPerc(1), Equals, "1%")
 	c.Assert(PrettyPerc(1.123), Equals, "1.12%")
@@ -59,7 +59,7 @@ func (s *FmtUtilSuite) TestPretyPerc(c *C) {
 	c.Assert(PrettyPerc(0.0002), Equals, "< 0.01%")
 }
 
-func (s *FmtUtilSuite) TestPretySize(c *C) {
+func (s *FmtUtilSuite) TestPrettySize(c *C) {
 	c.Assert(PrettySize(0), Equals, "0B")
 	c.Assert(PrettySize(345), Equals, "345B")
 	c.Assert(PrettySize(1025), Equals, "1KB")
@@ -83,7 +83,7 @@ func (s *FmtUtilSuite) TestPretySize(c *C) {
 	c.Assert(PrettySize(math.NaN()), Equals, "0B")
 }
 
-func (s *FmtUtilSuite) TestPretyBool(c *C) {
+func (s *FmtUtilSuite) TestPrettyBool(c *C) {
 	c.Assert(PrettyBool(true), Equals, "Y")
 	c.Assert(PrettyBool(false), Equals, "N")
 	c.Assert(PrettyBool(true, "Yes"), Equals, "Yes")

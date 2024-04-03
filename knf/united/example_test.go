@@ -41,14 +41,14 @@ func ExampleCombine() {
 		return
 	}
 
-	// Combine combine KNF configuration, options and environment variables
+	// Combine combines KNF configuration, options and environment variables
 	Combine(
 		config,
 		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
 
-	// Also you can set options and environment variables using helpers
+	// Also, you can set options and environment variables using helpers
 	var (
 		optOne = "test:option-one"
 		optTwo = "test:option-two"
@@ -94,6 +94,35 @@ func ExampleCombine() {
 
 	// Read list
 	GetL("section:list")
+}
+
+func ExampleCombineSimple() {
+	// Load KNF config
+	config, err := knf.Read("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	optMap := options.Map{
+		"O:option-one": {},
+		"k:option-two": {},
+	}
+
+	// Parse command-line options
+	_, errs := options.Parse(optMap)
+
+	if len(errs) != 0 {
+		for _, err := range errs {
+			fmt.Printf("Error: %v\n", err)
+		}
+
+		return
+	}
+
+	// Combine simple combines KNF configuration, options and environment variables
+	CombineSimple(config, "test:option-one", "test:option-two")
 }
 
 func ExampleAddOptions() {
