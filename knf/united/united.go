@@ -64,7 +64,7 @@ var optionGetFunc = options.GetS
 
 // Combine applies mappings to combine knf properties, options, and environment
 // variables
-
+//
 // Note that the environment variable will be moved to config after combining (e.g.
 // won't be accessible with os.Getenv)
 func Combine(config *knf.Config, mappings ...Mapping) error {
@@ -85,6 +85,34 @@ func Combine(config *knf.Config, mappings ...Mapping) error {
 			global.env[m.Variable] = os.Getenv(m.Variable)
 			os.Setenv(m.Variable, "")
 		}
+	}
+
+	return nil
+}
+
+// CombineSimple applies mappings to combine knf properties, options, and environment
+// variables. This method creates simple mappings based on properties names.
+//
+// Note that the environment variable will be moved to config after combining (e.g.
+// won't be accessible with os.Getenv)
+func CombineSimple(config *knf.Config, props ...string) error {
+	if config == nil {
+		return knf.ErrNilConfig
+	}
+
+	global = &united{
+		knf:      config,
+		mappings: make(map[string]Mapping),
+		env:      make(map[string]string),
+	}
+
+	for _, p := range props {
+		m := Simple(p)
+
+		global.mappings[m.Property] = m
+		global.env[m.Variable] = os.Getenv(m.Variable)
+
+		os.Setenv(m.Variable, "")
 	}
 
 	return nil

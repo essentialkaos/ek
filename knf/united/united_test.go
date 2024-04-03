@@ -239,6 +239,14 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1Env", "Test2Env"})
 }
 
+func (s *UnitedSuite) TestCombineSimple(c *C) {
+	err := CombineSimple(nil, "test:string")
+	c.Assert(err, NotNil)
+
+	err = CombineSimple(s.config, "test:string")
+	c.Assert(err, IsNil)
+}
+
 func (s *UnitedSuite) TestValidation(c *C) {
 	global = nil
 

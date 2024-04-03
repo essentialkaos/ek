@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.114.0
+
+- `[knf/united]` Added method `CombineSimple`
+
 ### 12.113.1
 
 - `[support/pkgs]` Added compatibility with macOS
