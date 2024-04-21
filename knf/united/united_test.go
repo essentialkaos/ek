@@ -100,6 +100,7 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetTZ("test:timezone", time.Local), NotNil)
 	c.Assert(GetL("test:list"), IsNil)
 	c.Assert(GetL("test:list", []string{"test"}), NotNil)
+	c.Assert(GetMapping("test:string").Property, Equals, "")
 
 	err = Combine(s.config,
 		Mapping{"test:string", "test-string", "TEST_STRING"},
@@ -130,6 +131,11 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1", "Test2"})
 	c.Assert(GetS("test:unknown"), Equals, "")
 	c.Assert(GetS("test:unknown", "TestABCD"), Equals, "TestABCD")
+
+	mapping := GetMapping("test:string")
+
+	c.Assert(mapping.Option, Equals, "test-string")
+	c.Assert(mapping.Variable, Equals, "TEST_STRING")
 }
 
 func (s *UnitedSuite) TestWithOptions(c *C) {

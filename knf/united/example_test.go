@@ -136,6 +136,26 @@ func ExampleAddOptions() {
 	// Map size: 2
 }
 
+func ExampleGetMapping() {
+	// Load KNF config
+	config, err := knf.Read("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	// Combine combines KNF configuration, options and environment variables
+	Combine(
+		config,
+		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
+		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
+	)
+
+	// Print mapping for property test:option-one
+	fmt.Println(GetMapping("test:option-one"))
+}
+
 func ExampleSimple() {
 	m := Simple("test:option-one")
 
