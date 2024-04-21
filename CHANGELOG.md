@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.115.0
+
+- `[knf/united]` Added method `GetMapping`
+
 ### 12.114.0
 
 - `[knf/united]` Added method `CombineSimple`

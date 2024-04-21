@@ -129,6 +129,15 @@ func AddOptions(m options.Map, names ...string) {
 	}
 }
 
+// GetMapping returns mapping info for given property
+func GetMapping(prop string) Mapping {
+	if global == nil || global.mappings == nil {
+		return Mapping{}
+	}
+
+	return global.mappings[prop]
+}
+
 // Simple creates simple mapping for knf property
 // section:property → --section-property + SECTION_PROPERTY
 func Simple(name string) Mapping {
