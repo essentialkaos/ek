@@ -19,6 +19,7 @@ const (
 	DOCKER = "docker" // Docker (Moby)
 	PODMAN = "podman" // Podman
 	LXC    = "lxc"    // LXC
+	YANDEX = "yandex" // Yandex Serverless
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -64,6 +65,8 @@ func IsContainer() bool {
 // guessEngine tries to guess container engine based on information from /proc/1/mounts
 func guessEngine(mountsData string) string {
 	switch {
+	case strings.Contains(mountsData, "overlay-container /function/code/rootfs"):
+		return YANDEX
 	case strings.Contains(mountsData, "lxcfs "):
 		return LXC
 	case strings.Contains(mountsData, "workdir=/var/lib/containers"):

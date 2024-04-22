@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.116.0
+
+- `[support]` Added Yandex Serverless support
+- `[system/container]` Added Yandex Serverless support
+
 ### 12.115.0
 
 - `[knf/united]` Added method `GetMapping`

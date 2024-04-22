@@ -110,6 +110,8 @@ func (s *SupportSuite) TestCollect(c *C) {
 	i.printOSInfo()
 	i.System.ContainerEngine = "lxc"
 	i.printOSInfo()
+	i.System.ContainerEngine = "yandex"
+	i.printOSInfo()
 }
 
 func (s *SupportSuite) TestNil(c *C) {
