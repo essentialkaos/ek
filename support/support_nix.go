@@ -265,6 +265,8 @@ func (i *Info) printOSInfo() {
 			format(12, true, "Container", "Yes (Podman)")
 		case "lxc":
 			format(12, true, "Container", "Yes (LXC)")
+		case "yandex":
+			format(12, true, "Container", "Yes (Yandex Serverless)")
 		}
 	}
 }
