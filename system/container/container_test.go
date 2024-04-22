@@ -36,6 +36,10 @@ proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 devtmpfs /dev devtmpfs rw,nosuid,size=930048k,nr_inodes=232512,mode=755 0 0
 securityfs /sys/kernel/security securityfs rw,nosuid,nodev,noexec,relatime 0 0`), 0644)
 
+	os.WriteFile(s.DataDir+"/yandex", []byte(`overlay-container /function/code/rootfs overlay rw,relatime,lowerdir=/function/code/3c854c8cbf469fda815b8f6183300c07cfa2fbb5703859ca79aff93ae934961b,upperdir=/tmp/.overlay/tmp/diff,workdir=/tmp/.overlay/tmp/work 0 0
+devtmpfs /function/code/rootfs/dev devtmpfs rw,relatime,size=18464k,nr_inodes=4616,mode=755 0 0
+/var/run /function/code/rootfs/etc/resolv.conf tmpfs rw,relatime,size=20400k,nr_inodes=5100 0 0`), 0644)
+
 	os.WriteFile(s.DataDir+"/lxc", []byte(`none /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime 0 0
 lxcfs /proc/cpuinfo fuse.lxcfs rw,nosuid,nodev,relatime,user_id=0,group_id=0,allow_other 0 0`), 0644)
 
@@ -57,6 +61,11 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = s.DataDir + "/default"
 	c.Assert(GetEngine(), Equals, "")
 	c.Assert(IsContainer(), Equals, false)
+
+	engineChecked = false
+
+	mountsFile = s.DataDir + "/yandex"
+	c.Assert(GetEngine(), Equals, YANDEX)
 
 	engineChecked = false
 
