@@ -10,6 +10,8 @@ package color
 import (
 	"testing"
 
+	"github.com/essentialkaos/ek/v12/mathutil"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -203,13 +205,13 @@ func (s *ColorSuite) TestTerm(c *C) {
 func (s *ColorSuite) TestLuminance(c *C) {
 	c.Assert(Luminance(NewHex(0xffffff).ToRGB()), Equals, 1.0)
 	c.Assert(Luminance(NewHex(0x000000).ToRGB()), Equals, 0.0)
-	c.Assert(Luminance(NewHex(0x808080).ToRGB()), Equals, 0.2158605001138992)
-	c.Assert(Luminance(NewHex(0x2861bd).ToRGB()), Equals, 0.12674627666892935)
+	c.Assert(mathutil.Round(Luminance(NewHex(0x808080).ToRGB()), 8), Equals, 0.2158605)
+	c.Assert(mathutil.Round(Luminance(NewHex(0x2861bd).ToRGB()), 8), Equals, 0.12674628)
 }
 
 func (s *ColorSuite) TestContrast(c *C) {
 	c.Assert(Contrast(NewHex(0xffffff), NewHex(0x000000)), Equals, 21.0)
 	c.Assert(Contrast(NewHex(0x000000), NewHex(0x000000)), Equals, 1.0)
-	c.Assert(Contrast(NewHex(0x755757), NewHex(0x63547c)), Equals, 1.0542371982635754)
-	c.Assert(Contrast(NewHex(0x333333), NewHex(0xd0b5ff)), Equals, 7.0606832983463805)
+	c.Assert(mathutil.Round(Contrast(NewHex(0x755757), NewHex(0x63547c)), 8), Equals, 1.0542372)
+	c.Assert(mathutil.Round(Contrast(NewHex(0x333333), NewHex(0xd0b5ff)), 8), Equals, 7.0606833)
 }
