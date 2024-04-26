@@ -11,7 +11,7 @@
 
 > [!IMPORTANT]
 > - `[terminal]` Removed deprecated methods `ReadUI`, `PrintErrorMessage`, and `PrintWarnMessage`
-> - `[terminal/window]` Removed package due to deprecation of all methods
+> - `[terminal/window]` Package removed due to deprecation of all methods
 
 ### 12.116.0
 
