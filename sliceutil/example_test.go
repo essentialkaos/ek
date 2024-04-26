@@ -21,22 +21,6 @@ func ExampleCopy() {
 	// Output: [A B C]
 }
 
-func ExampleCopyInts() {
-	s1 := []int{1, 2, 3}
-	s2 := CopyInts(s1)
-
-	fmt.Printf("%v", s2)
-	// Output: [1 2 3]
-}
-
-func ExampleCopyFloats() {
-	s1 := []float64{1.0, 5.0}
-	s2 := CopyFloats(s1)
-
-	fmt.Printf("%v", s2)
-	// Output: [1 5]
-}
-
 func ExampleStringToInterface() {
 	s := []string{"A", "B"}
 

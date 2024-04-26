@@ -29,16 +29,10 @@ var _ = Suite(&SliceSuite{})
 
 func (s *SliceSuite) TestCopy(c *C) {
 	var ss []string
-	var is []int
-	var fs []float64
 
 	c.Assert(Copy(ss), IsNil)
-	c.Assert(CopyInts(is), IsNil)
-	c.Assert(CopyFloats(fs), IsNil)
 
 	c.Assert(Copy([]string{"A"}), DeepEquals, []string{"A"})
-	c.Assert(CopyInts([]int{1}), DeepEquals, []int{1})
-	c.Assert(CopyFloats([]float64{1.0}), DeepEquals, []float64{1.0})
 }
 
 func (s *SliceSuite) TestStringToInterface(c *C) {

@@ -1,5 +1,24 @@
 ## Changelog
 
+### 12.117.0
+
+- `[terminal/input]` Added new package for working with user input
+- `[options]` Added helper for working with errors
+- `[terminal]` All methods for working with user input moved to separate package
+- `[terminal]` Improved rendering messages with prefix
+- `[color]` Tests refactoring
+- `[options]` Code refactoring
+- `[terminal]` Code refactoring
+
+> [!IMPORTANT]
+> - `[mathutil]` Removed all deprecated methods
+> - `[passwd]` Removed all deprecated methods
+> - `[sliceutil]` Removed all deprecated methods
+> - `[terminal]` Removed all deprecated methods
+> - `[usage]` Removed all deprecated methods
+> - `[uuid]` Removed all deprecated methods
+> - `[terminal/window]` Package removed due to deprecation of all methods
+
 ### 12.116.0
 
 - `[support]` Added Yandex Serverless support

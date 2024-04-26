@@ -307,13 +307,6 @@ func (i *Info) GetOption(name string) *Option {
 	return nil
 }
 
-// Render prints usage info
-//
-// Deprecated: Use method Print instead
-func (i *Info) Render() {
-	i.Print()
-}
-
 // Print prints usage info
 func (i *Info) Print() {
 	if i == nil {
@@ -392,27 +385,6 @@ func (o *Option) String() string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Render prints info about command
-//
-// Deprecated: Use method Print instead
-func (c *Command) Render() {
-	c.Print()
-}
-
-// Render prints info about option
-//
-// Deprecated: Use method Print instead
-func (o *Option) Render() {
-	o.Print()
-}
-
-// Render prints usage example
-//
-// Deprecated: Use method Print instead
-func (e *Example) Render() {
-	e.Print()
-}
 
 // Print prints info about command
 func (c *Command) Print() {
@@ -510,13 +482,6 @@ func (e *Example) Print() {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Render prints version info
-//
-// Deprecated: Use method Print instead
-func (a *About) Render() {
-	a.Print()
-}
 
 // Print prints version info
 func (a *About) Print(infoType ...string) {

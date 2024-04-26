@@ -71,12 +71,7 @@ func (s *PasswdSuite) TestGenPasswordVariations(c *C) {
 }
 
 func (s *PasswdSuite) TestHash(c *C) {
-	hp, err := Encrypt("Test123", "ABCD1234ABCD1234")
-
-	c.Assert(hp, NotNil)
-	c.Assert(err, IsNil)
-
-	hp, err = Hash("Test123", "ABCD1234ABCD1234")
+	hp, err := Hash("Test123", "ABCD1234ABCD1234")
 
 	c.Assert(hp, NotNil)
 	c.Assert(err, IsNil)

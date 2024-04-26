@@ -1,4 +1,4 @@
-package uuid
+package terminal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,6 +8,7 @@ package uuid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -17,32 +18,47 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type UUIDSuite struct{}
+type TerminalSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var _ = Suite(&UUIDSuite{})
+var _ = Suite(&TerminalSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *UUIDSuite) TestUUID4(c *C) {
-	c.Assert(UUID4(), HasLen, 16)
-	c.Assert(UUID4().String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+func (s *TerminalSuite) TestMessage(c *C) {
+	Error("Test %s", "Error")
+	Warn("Test %s", "Warn")
+	Info("Test %s", "Info")
+
+	Error(fmt.Errorf("Error"))
+	Error([]string{"Error"})
 }
 
-func (s *UUIDSuite) TestUUID5(c *C) {
-	c.Assert(UUID5(NsURL, "TEST"), HasLen, 16)
-	c.Assert(UUID5(NsURL, "TEST").String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
+func (s *TerminalSuite) TestMessageWithPrefix(c *C) {
+	ErrorPrefix = "▲ "
+	WarnPrefix = "▲ "
+	InfoPrefix = "▲ "
+
+	Error("Test %s\nMessage\n", "Error")
+	Warn("Test %s\nMessage\n", "Warn")
+	Info("Test %s\nMessage\n", "Info")
+
+	ErrorPrefix = ""
+	WarnPrefix = ""
+	InfoPrefix = ""
 }
 
-func (s *UUIDSuite) BenchmarkUUID4(c *C) {
-	for i := 0; i < c.N; i++ {
-		UUID4()
-	}
-}
+func (s *TerminalSuite) TestAction(c *C) {
+	PrintActionMessage("Testing")
+	PrintActionStatus(0)
 
-func (s *UUIDSuite) BenchmarkUUID5(c *C) {
-	for i := 0; i < c.N; i++ {
-		UUID5(NsURL, "TEST")
-	}
+	PrintActionMessage("Testing")
+	PrintActionStatus(1)
+
+	PrintActionMessage("Testing")
+	PrintActionStatus(2)
+
+	PrintActionMessage("Testing")
+	PrintActionStatus(3)
 }

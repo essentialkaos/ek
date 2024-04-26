@@ -388,13 +388,17 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs := NewOptions().Parse([]string{}, Map{})
 
 	c.Assert(errs, HasLen, 0)
+	c.Assert(errs.IsEmpty(), Equals, true)
+	c.Assert(errs.String(), Equals, "")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test", "100"}, Map{"t:test": {Type: 10}})
 
 	c.Assert(errs, Not(HasLen), 0)
+	c.Assert(errs.IsEmpty(), Equals, false)
 	c.Assert(errs[0], ErrorMatches, `Option "--test" has unsupported type`)
+	c.Assert(errs.String(), Equals, "  - Option \"--test\" has unsupported type\n")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -729,7 +733,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 	var opts *Options
 
 	c.Assert(opts.Add("", &V{}), Equals, ErrNilOptions)
-	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, []error{ErrNilOptions})
+	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, Errors{ErrNilOptions})
 	c.Assert(opts.GetS("test"), Equals, "")
 	c.Assert(opts.GetI("test"), Equals, 0)
 	c.Assert(opts.GetB("test"), Equals, false)
@@ -739,7 +743,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 
 	_, errs := opts.Parse([]string{}, Map{"t:": {}})
 
-	c.Assert(errs, DeepEquals, []error{ErrNilOptions})
+	c.Assert(errs, DeepEquals, Errors{ErrNilOptions})
 }
 
 func (s *OptUtilSuite) TestNilArguments(c *C) {
