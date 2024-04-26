@@ -46,7 +46,7 @@ func (s *UsageSuite) TestAbout(c *C) {
 		DescSeparator:    "—",
 	}
 
-	about.Render()
+	about.Print()
 
 	testChecker := func(app, version, data string) (string, time.Time, bool) {
 		return "1.0.1", time.Now(), true
@@ -65,7 +65,7 @@ func (s *UsageSuite) TestAbout(c *C) {
 		VersionColorTag: "{ABCD}",
 	}
 
-	about.Render()
+	about.Print()
 }
 
 func (s *UsageSuite) TestRawVersion(c *C) {
@@ -129,7 +129,7 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.GetOption("t:test").ColorTag = "{r}"
 	info.GetCommand("read").ColorTag = "{r}"
 
-	info.Render()
+	info.Print()
 
 	info.Breadcrumbs = false
 	info.AppNameColorTag = "{#202}"
@@ -137,7 +137,7 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.OptionsColorTag = "{b}"
 	info.ExampleDescColorTag = "{&}{b}"
 
-	info.Render()
+	info.Print()
 
 	c.Assert(info.GetCommand("read"), NotNil)
 	c.Assert(info.GetCommand("read999"), IsNil)
@@ -180,23 +180,6 @@ func (s *UsageSuite) TestVersionInfo(c *C) {
 	printNewVersionInfo("1.0.0", "2.0.0", d1)
 	printNewVersionInfo("1.0.0", "1.1.0", d2)
 	printNewVersionInfo("1.0.0", "1.0.1", d3)
-}
-
-func (s *UsageSuite) TestDeprecated(c *C) {
-	i := &Info{}
-	i.Render()
-
-	m := &Command{}
-	m.Render()
-
-	o := &Option{}
-	o.Render()
-
-	e := &Example{}
-	e.Render()
-
-	a := &About{}
-	a.Render()
 }
 
 func (s *UsageSuite) TestNils(c *C) {
