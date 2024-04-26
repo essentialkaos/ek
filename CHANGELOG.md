@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.117.0
+
+- `[options]` Added helper for working with errors
+- `[options]` Code refactoring
+
 ### 12.116.0
 
 - `[support]` Added Yandex Serverless support

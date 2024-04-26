@@ -78,6 +78,9 @@ type OptionError struct {
 	Type        int
 }
 
+// Errors is a slice with errors
+type Errors []error
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type optionName struct {
@@ -159,12 +162,12 @@ func (opts *Options) Add(name string, option *V) error {
 }
 
 // AddMap adds map with supported options
-func (opts *Options) AddMap(optMap Map) []error {
+func (opts *Options) AddMap(optMap Map) Errors {
 	if optMap == nil {
-		return []error{ErrNilMap}
+		return Errors{ErrNilMap}
 	}
 
-	var errs []error
+	var errs Errors
 
 	for name, opt := range optMap {
 		err := opts.Add(name, opt)
@@ -370,12 +373,12 @@ func (opts *Options) Has(name string) bool {
 }
 
 // Parse parses slice with raw options
-func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error) {
+func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
 	if opts == nil {
-		return nil, []error{ErrNilOptions}
+		return nil, Errors{ErrNilOptions}
 	}
 
-	var errs []error
+	var errs Errors
 
 	if len(optMap) != 0 {
 		for _, m := range optMap {
@@ -388,6 +391,28 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, []error)
 	}
 
 	return opts.parseOptions(rawOpts)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// String returns string representation of error slice
+func (e Errors) String() string {
+	if e.IsEmpty() {
+		return ""
+	}
+
+	b := &strings.Builder{}
+
+	for _, err := range e {
+		fmt.Fprintf(b, "  - %s\n", err.Error())
+	}
+
+	return b.String()
+}
+
+// IsEmpty returns true if errors slice is empty
+func (e Errors) IsEmpty() bool {
+	return len(e) == 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -443,7 +468,7 @@ func Add(name string, opt *V) error {
 }
 
 // AddMap adds map with supported options
-func AddMap(optMap Map) []error {
+func AddMap(optMap Map) Errors {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -515,7 +540,7 @@ func Is(name string, value any) bool {
 }
 
 // Parse parses slice with raw options
-func Parse(optMap ...Map) (Arguments, []error) {
+func Parse(optMap ...Map) (Arguments, Errors) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -649,7 +674,7 @@ func (o optionName) String() string {
 // without losing code readability
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
-func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
+func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 	opts.prepare()
 
 	if len(rawOpts) == 0 {
@@ -659,7 +684,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 	var optName string
 	var mixedOpt bool
 	var arguments Arguments
-	var errorList []error
+	var errs Errors
 
 	for _, curOpt := range rawOpts {
 		if optName == "" || mixedOpt {
@@ -683,8 +708,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 				curOptName, curOptValue, err = opts.parseShortOption(curOpt[1:curOptLen])
 
 			case mixedOpt:
-				errorList = appendError(
-					errorList,
+				errs = appendError(errs,
 					updateOption(opts.full[optName], optName, curOpt),
 				)
 
@@ -696,7 +720,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 			}
 
 			if err != nil {
-				errorList = append(errorList, err)
+				errs = append(errs, err)
 				continue
 			}
 
@@ -706,8 +730,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 			}
 
 			if curOptName != "" && mixedOpt {
-				errorList = appendError(
-					errorList,
+				errs = appendError(errs,
 					updateOption(opts.full[optName], optName, "true"),
 				)
 
@@ -715,15 +738,13 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 			}
 
 			if curOptValue != "" {
-				errorList = appendError(
-					errorList,
+				errs = appendError(errs,
 					updateOption(opts.full[curOptName], curOptName, curOptValue),
 				)
 			} else {
 				switch {
 				case opts.full[curOptName] != nil && opts.full[curOptName].Type == BOOL:
-					errorList = appendError(
-						errorList,
+					errs = appendError(errs,
 						updateOption(opts.full[curOptName], curOptName, ""),
 					)
 
@@ -736,8 +757,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 				}
 			}
 		} else {
-			errorList = appendError(
-				errorList,
+			errs = appendError(errs,
 				updateOption(opts.full[optName], optName, curOpt),
 			)
 
@@ -745,20 +765,19 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, []error) {
 		}
 	}
 
-	errorList = append(errorList, opts.validate()...)
+	errs = append(errs, opts.validate()...)
 
 	if optName != "" {
 		if opts.full[optName].Type == MIXED {
-			errorList = appendError(
-				errorList,
+			errs = appendError(errs,
 				updateOption(opts.full[optName], optName, "true"),
 			)
 		} else {
-			errorList = append(errorList, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
+			errs = append(errs, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
 		}
 	}
 
-	return arguments, errorList
+	return arguments, errs
 }
 
 // codebeat:enable[LOC,BLOCK_NESTING,CYCLO]
@@ -820,27 +839,27 @@ func (opts *Options) prepare() {
 	}
 }
 
-func (opts *Options) validate() []error {
-	var errorList []error
+func (opts *Options) validate() Errors {
+	var errs Errors
 
 	for n, v := range opts.full {
 		if !isSupportedType(v.Value) {
-			errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_VALUE})
+			errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_VALUE})
 		}
 
 		if v.Required && v.Value == nil {
-			errorList = append(errorList, OptionError{F(n), "", ERROR_REQUIRED_NOT_SET})
+			errs = append(errs, OptionError{F(n), "", ERROR_REQUIRED_NOT_SET})
 		}
 
 		if v.Conflicts != "" {
 			conflicts, ok := parseOptionsList(v.Conflicts)
 
 			if !ok {
-				errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT})
+				errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT})
 			} else {
 				for _, c := range conflicts {
 					if opts.Has(c.Long) && opts.Has(n) {
-						errorList = append(errorList, OptionError{F(n), F(c.Long), ERROR_CONFLICT})
+						errs = append(errs, OptionError{F(n), F(c.Long), ERROR_CONFLICT})
 					}
 				}
 			}
@@ -850,18 +869,18 @@ func (opts *Options) validate() []error {
 			bound, ok := parseOptionsList(v.Bound)
 
 			if !ok {
-				errorList = append(errorList, OptionError{F(n), "", ERROR_UNSUPPORTED_BOUND_LIST_FORMAT})
+				errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_BOUND_LIST_FORMAT})
 			} else {
 				for _, b := range bound {
 					if !opts.Has(b.Long) && opts.Has(n) {
-						errorList = append(errorList, OptionError{F(n), F(b.Long), ERROR_BOUND_NOT_SET})
+						errs = append(errs, OptionError{F(n), F(b.Long), ERROR_BOUND_NOT_SET})
 					}
 				}
 			}
 		}
 	}
 
-	return errorList
+	return errs
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1009,12 +1028,12 @@ func updateIntOption(name string, opt *V, value string) error {
 	return nil
 }
 
-func appendError(errList []error, err error) []error {
+func appendError(errs Errors, err error) Errors {
 	if err == nil {
-		return errList
+		return errs
 	}
 
-	return append(errList, err)
+	return append(errs, err)
 }
 
 func betweenInt(val, min, max int) int {
