@@ -2,8 +2,12 @@
 
 ### 12.117.0
 
+- `[terminal/input]` Added new package for working with user input
 - `[options]` Added helper for working with errors
+- `[terminal]` All methods for working with user input moved to separate package
+- `[terminal]` Improved rendering messages with prefix
 - `[options]` Code refactoring
+- `[terminal]` Code refactoring
 
 ### 12.116.0
 
