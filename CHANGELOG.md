@@ -12,6 +12,8 @@
 
 > [!IMPORTANT]
 > - `[mathutil]` Removed all deprecated methods
+> - `[sliceutil]` Removed all deprecated methods
+> - `[uuid]` Removed all deprecated methods
 > - `[terminal]` Removed deprecated methods `ReadUI`, `PrintErrorMessage`, and `PrintWarnMessage`
 > - `[terminal/window]` Package removed due to deprecation of all methods
 

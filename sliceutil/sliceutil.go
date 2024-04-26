@@ -26,20 +26,6 @@ func Copy[K comparable](slice []K) []K {
 	return s
 }
 
-// CopyInts creates copy of given slice
-//
-// Deprecated: Use method Copy instead
-func CopyInts(slice []int) []int {
-	return Copy(slice)
-}
-
-// CopyFloats creates copy of given slice
-//
-// Deprecated: Use method Copy instead
-func CopyFloats(slice []float64) []float64 {
-	return Copy(slice)
-}
-
 // StringToInterface converts slice with strings to slice with any
 func StringToInterface(data []string) []any {
 	if len(data) == 0 {
