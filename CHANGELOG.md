@@ -6,10 +6,12 @@
 - `[options]` Added helper for working with errors
 - `[terminal]` All methods for working with user input moved to separate package
 - `[terminal]` Improved rendering messages with prefix
+- `[color]` Tests refactoring
 - `[options]` Code refactoring
 - `[terminal]` Code refactoring
 
 > [!IMPORTANT]
+> - `[mathutil]` Removed all deprecated methods
 > - `[terminal]` Removed deprecated methods `ReadUI`, `PrintErrorMessage`, and `PrintWarnMessage`
 > - `[terminal/window]` Package removed due to deprecation of all methods
 
