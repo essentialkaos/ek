@@ -13,7 +13,7 @@ import "fmt"
 
 func ExampleRead() {
 	// User must enter name
-	input, err := ReadUI("Please enter user name", true)
+	input, err := Read("Please enter user name", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
@@ -23,7 +23,7 @@ func ExampleRead() {
 
 	// You can read user input without providing any title
 	fmt.Println("Please enter user name")
-	input, err = ReadUI("", true)
+	input, err = Read("", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
