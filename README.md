@@ -96,7 +96,8 @@ go get -u github.com/essentialkaos/ek/v12
 * [`system/procname`](https://kaos.sh/g/ek.v12/system/procname) — Package provides methods for changing process name in the process tree
 * [`system/sensors`](https://kaos.sh/g/ek.v12/system/sensors) — Package provide methods for collecting sensors information
 * [`system`](https://kaos.sh/g/ek.v12/system) — Package provides methods for working with system data (metrics/users)
-* [`terminal`](https://kaos.sh/g/ek.v12/terminal) — Package provides methods for working with user input
+* [`terminal`](https://kaos.sh/g/ek.v12/terminal) — Package provides methods for printing messages to terminal
+* [`terminal/input`](https://kaos.sh/g/ek.v12/terminal/input) — Package provides methods for working with user input
 * [`terminal/tty`](https://kaos.sh/g/ek.v12/terminal/tty) — Package provides methods for working with TTY
 * [`timeutil`](https://kaos.sh/g/ek.v12/timeutil) — Package provides methods for working with time and date
 * [`tmp`](https://kaos.sh/g/ek.v12/tmp) — Package provides methods for working with temporary data

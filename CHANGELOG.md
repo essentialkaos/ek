@@ -9,6 +9,10 @@
 - `[options]` Code refactoring
 - `[terminal]` Code refactoring
 
+> [!IMPORTANT]
+> - `[terminal]` Removed deprecated methods `ReadUI`, `PrintErrorMessage`, and `PrintWarnMessage`
+> - `[terminal/window]` Removed package due to deprecation of all methods
+
 ### 12.116.0
 
 - `[support]` Added Yandex Serverless support

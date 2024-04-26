@@ -1,4 +1,4 @@
-// Package terminal provides methods for working with user input
+// Package terminal provides methods for printing messages to terminal
 package terminal
 
 // ////////////////////////////////////////////////////////////////////////////////// //

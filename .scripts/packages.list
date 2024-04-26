@@ -60,7 +60,6 @@ L + system/sensors
 * + terminal
 * ! terminal/tty
 * - terminal/input
-* - terminal/window
 * + timeutil
 * + tmp
 * + usage
