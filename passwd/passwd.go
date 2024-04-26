@@ -52,13 +52,6 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encrypt creates hash and encrypts it with salt and pepper
-//
-// Deprecated: Use Hash method instead
-func Encrypt(password, pepper string) (string, error) {
-	return Hash(password, pepper)
-}
-
 // Hash creates hash and encrypts it with salt and pepper
 func Hash(password, pepper string) (string, error) {
 	hash, err := HashBytes([]byte(password), []byte(pepper))
