@@ -35,20 +35,14 @@ func (s *UUIDSuite) TestGenUUID5(c *C) {
 	c.Assert(UUID5(NsURL, "TEST").String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
 }
 
-func (s *UUIDSuite) TestDeprecated(c *C) {
-	c.Assert(GenUUID(), Not(Equals), "00000000-0000-0000-0000-000000000000")
-	c.Assert(GenUUID4(), Not(Equals), "00000000-0000-0000-0000-000000000000")
-	c.Assert(GenUUID5(NsURL, "TEST"), Not(Equals), "00000000-0000-0000-0000-000000000000")
-}
-
 func (s *UUIDSuite) BenchmarkGenUUID4(c *C) {
 	for i := 0; i < c.N; i++ {
-		GenUUID4()
+		UUID4()
 	}
 }
 
 func (s *UUIDSuite) BenchmarkGenUUID5(c *C) {
 	for i := 0; i < c.N; i++ {
-		GenUUID5(NsURL, "TEST")
+		UUID5(NsURL, "TEST")
 	}
 }

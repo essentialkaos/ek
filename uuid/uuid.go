@@ -79,26 +79,3 @@ func (u UUID) String() string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// GenUUID generates v4 UUID (Universally Unique Identifier)
-//
-// Deprecated: Use method UUID4.String() instead
-func GenUUID() string {
-	return UUID4().String()
-}
-
-// GenUUID4 generates random generated UUID
-//
-// Deprecated: Use method UUID4.String() instead
-func GenUUID4() string {
-	return UUID4().String()
-}
-
-// GenUUID5 generates UUID based on SHA-1 hash of namespace UUID and name
-//
-// Deprecated: Use method UUID5.String() instead
-func GenUUID5(ns []byte, name string) string {
-	return UUID5(ns, name).String()
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
