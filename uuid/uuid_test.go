@@ -25,23 +25,23 @@ var _ = Suite(&UUIDSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *UUIDSuite) TestGenUUID4(c *C) {
+func (s *UUIDSuite) TestUUID4(c *C) {
 	c.Assert(UUID4(), HasLen, 16)
 	c.Assert(UUID4().String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
 }
 
-func (s *UUIDSuite) TestGenUUID5(c *C) {
+func (s *UUIDSuite) TestUUID5(c *C) {
 	c.Assert(UUID5(NsURL, "TEST"), HasLen, 16)
 	c.Assert(UUID5(NsURL, "TEST").String(), Not(Equals), "00000000-0000-0000-0000-000000000000")
 }
 
-func (s *UUIDSuite) BenchmarkGenUUID4(c *C) {
+func (s *UUIDSuite) BenchmarkUUID4(c *C) {
 	for i := 0; i < c.N; i++ {
 		UUID4()
 	}
 }
 
-func (s *UUIDSuite) BenchmarkGenUUID5(c *C) {
+func (s *UUIDSuite) BenchmarkUUID5(c *C) {
 	for i := 0; i < c.N; i++ {
 		UUID5(NsURL, "TEST")
 	}
