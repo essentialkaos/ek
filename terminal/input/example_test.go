@@ -119,7 +119,7 @@ func ExampleSetHistoryCapacity() {
 func ExampleSetCompletionHandler() {
 	commands := []string{"add", "delete", "search", "help", "quit"}
 
-	input.SetCompletionHandler(func(input string) []string {
+	SetCompletionHandler(func(input string) []string {
 		var result []string
 
 		for _, c := range commands {
@@ -131,7 +131,7 @@ func ExampleSetCompletionHandler() {
 		return result
 	})
 
-	input.SetHintHandler(func(input string) string {
+	SetHintHandler(func(input string) string {
 		for _, c := range commands {
 			if strings.HasPrefix(c, input) {
 				return c[len(input):]
@@ -141,7 +141,7 @@ func ExampleSetCompletionHandler() {
 		return ""
 	})
 
-	input, err := input.Read("Please enter command", true)
+	input, err := Read("Please enter command", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -154,7 +154,7 @@ func ExampleSetCompletionHandler() {
 func ExampleSetHintHandler() {
 	commands := []string{"add", "delete", "search", "help", "quit"}
 
-	input.SetCompletionHandler(func(input string) []string {
+	SetCompletionHandler(func(input string) []string {
 		var result []string
 
 		for _, c := range commands {
@@ -166,7 +166,7 @@ func ExampleSetHintHandler() {
 		return result
 	})
 
-	input.SetHintHandler(func(input string) string {
+	SetHintHandler(func(input string) string {
 		for _, c := range commands {
 			if strings.HasPrefix(c, input) {
 				return c[len(input):]
@@ -176,7 +176,7 @@ func ExampleSetHintHandler() {
 		return ""
 	})
 
-	input, err := input.Read("Please enter command", true)
+	input, err := Read("Please enter command", true)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
