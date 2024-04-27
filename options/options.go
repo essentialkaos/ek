@@ -403,8 +403,12 @@ func (e Errors) String() string {
 
 	b := &strings.Builder{}
 
-	for _, err := range e {
-		fmt.Fprintf(b, "  - %s\n", err.Error())
+	for i, err := range e {
+		fmt.Fprintf(b, " - %s", err.Error())
+
+		if i != len(e)-1 {
+			b.WriteRune('\n')
+		}
 	}
 
 	return b.String()

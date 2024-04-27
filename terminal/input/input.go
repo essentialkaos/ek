@@ -29,8 +29,18 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CompletionHandler is completion handler
+type CompletionHandler = func(input string) []string
+
+// HintHandler is hint handler
+type HintHandler = func(input string) string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ErrKillSignal is error type when user cancel input
 var ErrKillSignal = linenoise.ErrKillSignal
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Prompt is prompt string
 var Prompt = "> "
@@ -46,13 +56,11 @@ var HideLength = false
 // custom masking symbol, so it always will be an asterisk (*).
 var HidePassword = false
 
-var (
-	// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
-	MaskSymbolColorTag = ""
+// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+var MaskSymbolColorTag = ""
 
-	// TitleColorTag is fmtc color tag used for input titles
-	TitleColorTag = "{s}"
-)
+// TitleColorTag is fmtc color tag used for input titles
+var TitleColorTag = "{s}"
 
 // AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
 // with option for forced actions)
@@ -64,12 +72,12 @@ var tmux int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Read reads user's input
+// Read reads user input
 func Read(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, false)
 }
 
-// ReadAnswer reads user's answer for yes/no question
+// ReadAnswer reads user's answer to yes/no question
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	var defaultAnswer string
 
@@ -109,13 +117,13 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	}
 }
 
-// ReadPassword reads password or some private input which will be hidden
+// ReadPassword reads password or some private input that will be hidden
 // after pressing Enter
 func ReadPassword(title string, nonEmpty bool) (string, error) {
 	return readUserInput(title, nonEmpty, true)
 }
 
-// ReadPasswordSecure reads password or some private input which will be hidden
+// ReadPasswordSecure reads password or some private input that will be hidden
 // after pressing Enter
 func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 	password, err := readUserInput(title, nonEmpty, true)
@@ -132,13 +140,18 @@ func AddHistory(data string) {
 	linenoise.AddHistory(data)
 }
 
-// SetCompletionHandler adds function for autocompletion
-func SetCompletionHandler(h func(input string) []string) {
+// SetHistoryCapacity sets maximum capacity of history
+func SetHistoryCapacity(capacity int) error {
+	return linenoise.SetHistoryCapacity(capacity)
+}
+
+// SetCompletionHandler adds autocompletion function (using Tab key)
+func SetCompletionHandler(h CompletionHandler) {
 	linenoise.SetCompletionHandler(h)
 }
 
 // SetHintHandler adds function for input hints
-func SetHintHandler(h func(input string) string) {
+func SetHintHandler(h HintHandler) {
 	linenoise.SetHintHandler(h)
 }
 

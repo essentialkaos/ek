@@ -8,6 +8,7 @@ package options
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -396,9 +397,7 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs = NewOptions().Parse([]string{"--test", "100"}, Map{"t:test": {Type: 10}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs.IsEmpty(), Equals, false)
 	c.Assert(errs[0], ErrorMatches, `Option "--test" has unsupported type`)
-	c.Assert(errs.String(), Equals, "  - Option \"--test\" has unsupported type\n")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -525,6 +524,16 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 
 	c.Assert(errs, Not(HasLen), 0)
 	c.Assert(errs[0], Equals, ErrEmptyName)
+}
+
+func (s *OptUtilSuite) TestErrors(c *C) {
+	errs := Errors{
+		fmt.Errorf(`Option "--test" has unsupported type`),
+		fmt.Errorf(`Option "--dump" has unsupported type`),
+	}
+
+	c.Assert(errs.IsEmpty(), Equals, false)
+	c.Assert(errs.String(), Equals, " - Option \"--test\" has unsupported type\n - Option \"--dump\" has unsupported type")
 }
 
 func (s *OptUtilSuite) TestFormat(c *C) {

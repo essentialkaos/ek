@@ -1,5 +1,12 @@
 ## Changelog
 
+### 12.118.0
+
+- `[terminal/input]` Added method `SetHistoryCapacity`
+- `[options]` Improved `Errors.String` output formatting
+- `[terminal/input]` Added more usage examples
+- `[terminal/input]` Code refactoring
+
 ### 12.117.0
 
 - `[terminal/input]` Added new package for working with user input
