@@ -53,7 +53,7 @@ func Read(title string, nonEmpty bool) (string, error) {
 }
 
 // ❗ ReadAnswer reads user's answer for yes/no question
-func ReadAnswer(title, defaultAnswer string) (bool, error) {
+func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	panic("UNSUPPORTED")
 }
 
@@ -70,12 +70,12 @@ func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
 }
 
 // ❗ AddHistory adds line to input history
-func AddHistory(ui string) {
+func AddHistory(data string) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ SetCompletionHandler adds function for autocompletion
-func SetCompletionHandler(h func(in string) []string) {
+func SetCompletionHandler(h func(input string) []string) {
 	panic("UNSUPPORTED")
 }
 
