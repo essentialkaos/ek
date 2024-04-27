@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.117.1
+
+- `[options]` Improved `Errors.String` output formatting
+
 ### 12.117.0
 
 - `[terminal/input]` Added new package for working with user input
