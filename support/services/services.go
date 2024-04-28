@@ -1,3 +1,6 @@
+//go:build !windows
+// +build !windows
+
 // Package services provides methods for collecting information about system services
 package services
 
@@ -8,11 +11,36 @@ package services
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import "github.com/essentialkaos/ek/v12/support"
+import (
+	"github.com/essentialkaos/ek/v12/initsystem"
+	"github.com/essentialkaos/ek/v12/support"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Collect collect info about services
 func Collect(services ...string) []support.Service {
-	return nil
+	var result []support.Service
+
+	for _, s := range services {
+		service := support.Service{Name: s, Status: support.STATUS_UNKNOWN}
+
+		if initsystem.IsPresent(s) {
+			service.IsPresent = true
+			service.IsEnabled, _ = initsystem.IsEnabled(s)
+
+			isWorks, err := initsystem.IsWorks(s)
+
+			switch {
+			case err == nil && isWorks:
+				service.Status = support.STATUS_WORKS
+			case err == nil && !isWorks:
+				service.Status = support.STATUS_STOPPED
+			}
+		}
+
+		result = append(result, service)
+	}
+
+	return result
 }
