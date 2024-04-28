@@ -17,7 +17,7 @@
 * + fsutil
 * + hash
 * + httputil
-* ! initsystem
+* - initsystem
 * + jsonutil
 * + knf
 * + knf/united

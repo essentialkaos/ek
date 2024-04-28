@@ -43,7 +43,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SysV returns true if SysV is used on system
+// SysV returns true if SysV is used on the system
 func SysV() bool {
 	if sysvStatus != _STATUS_UNKNOWN {
 		return sysvStatus == _STATUS_PRESENT
@@ -59,7 +59,7 @@ func SysV() bool {
 	return sysvStatus == _STATUS_PRESENT
 }
 
-// Upstart returns true if Upstart is used on system
+// Upstart returns true if Upstart is used on the system
 func Upstart() bool {
 	if upstartStatus != _STATUS_UNKNOWN {
 		return upstartStatus == _STATUS_PRESENT
@@ -75,7 +75,7 @@ func Upstart() bool {
 	return upstartStatus == _STATUS_PRESENT
 }
 
-// Systemd returns true if Systemd is used on system
+// Systemd returns true if Systemd is used on the system
 func Systemd() bool {
 	if systemdStatus != _STATUS_UNKNOWN {
 		return systemdStatus == _STATUS_PRESENT
@@ -89,6 +89,11 @@ func Systemd() bool {
 	}
 
 	return systemdStatus == _STATUS_PRESENT
+}
+
+// Launchd returns true if Launchd is used on the system
+func Launchd() bool {
+	return false
 }
 
 // IsPresent returns true if service is present in any init system
