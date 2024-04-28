@@ -90,6 +90,17 @@ func (i *Info) WithPackages(pkgs []Pkg) *Info {
 	return i
 }
 
+// WithServices adds information about services
+func (i *Info) WithServices(services []Service) *Info {
+	if i == nil {
+		return nil
+	}
+
+	i.Services = append(i.Services, services...)
+
+	return i
+}
+
 // WithPackages adds information about system apps
 func (i *Info) WithApps(apps ...App) *Info {
 	if i == nil {
@@ -174,6 +185,7 @@ func (i *Info) Print() {
 	i.printFSInfo()
 	i.printEnvVars()
 	i.printPackagesInfo()
+	i.printServicesInfo()
 	i.printAppsInfo()
 	i.printChecksInfo()
 	i.printDependencies()
@@ -302,6 +314,34 @@ func (i *Info) printPackagesInfo() {
 		}
 
 		format(size, true, p.Name, p.Version)
+	}
+}
+
+// printServicesInfo prints services info
+func (i *Info) printServicesInfo() {
+	if len(i.Services) == 0 {
+		return
+	}
+
+	fmtutil.Separator(false, "SERVICES")
+
+	size := getMaxServiceNameSize(i.Services)
+
+	for _, s := range i.Services {
+		var status string
+
+		switch s.Status {
+		case STATUS_WORKS:
+			status = "{g}works{!}"
+		case STATUS_STOPPED:
+			status = "{s}stopped{!}"
+		}
+
+		if s.IsEnabled {
+			status += " {s-}(enabled){!}"
+		}
+
+		format(size, true, s.Name, fmtc.Sprint(status))
 	}
 }
 
@@ -500,6 +540,17 @@ func getMaxAppNameSize(apps []App) int {
 
 	for _, p := range apps {
 		size = mathutil.Max(size, len(p.Name))
+	}
+
+	return size
+}
+
+// getMaxServiceNameSize returns max package name size
+func getMaxServiceNameSize(apps []Service) int {
+	var size int
+
+	for _, s := range apps {
+		size = mathutil.Max(size, len(s.Name))
 	}
 
 	return size

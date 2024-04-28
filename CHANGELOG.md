@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.119.0
+
+- `[support/services]` Added package for collecting services info
+
 ### 12.118.0
 
 - `[terminal/input]` Added method `SetHistoryCapacity`
