@@ -29,6 +29,11 @@ func (i *Info) WithPackages(pkgs []Pkg) *Info {
 	panic("UNSUPPORTED")
 }
 
+// WithServices adds information about services
+func (i *Info) WithServices(services []Service) *Info {
+	panic("UNSUPPORTED")
+}
+
 // ❗ WithPackages adds information about system apps
 func (i *Info) WithApps(apps ...App) *Info {
 	panic("UNSUPPORTED")

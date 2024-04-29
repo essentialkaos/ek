@@ -35,6 +35,22 @@ func (s *SliceSuite) TestCopy(c *C) {
 	c.Assert(Copy([]string{"A"}), DeepEquals, []string{"A"})
 }
 
+func (s *SliceSuite) TestIsEqual(c *C) {
+	s1 := []int{1, 2, 3, 4}
+	s2 := []int{1, 2, 3, 4}
+	s3 := []int{1, 3, 2, 4}
+	s4 := []int{1, 2, 3}
+
+	var s5, s6 []int
+
+	c.Assert(IsEqual(s1, nil), Equals, false)
+	c.Assert(IsEqual(nil, s2), Equals, false)
+	c.Assert(IsEqual(s1, s2), Equals, true)
+	c.Assert(IsEqual(s1, s3), Equals, false)
+	c.Assert(IsEqual(s1, s4), Equals, false)
+	c.Assert(IsEqual(s5, s6), Equals, true)
+}
+
 func (s *SliceSuite) TestStringToInterface(c *C) {
 	source := []string{"1", "2", "3"}
 

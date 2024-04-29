@@ -120,6 +120,20 @@ func ExampleReload() {
 	}
 }
 
+func ExampleAlias() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	// Add alias for renamed property "user:username"
+	Alias("user:username", "user:name")
+
+	fmt.Printf("Value from config: %s\n", GetS("user:name"))
+}
+
 func ExampleGetS() {
 	err := Global("/path/to/your/config.knf")
 
@@ -371,6 +385,34 @@ func ExampleConfig_Reload() {
 	for prop, changed := range changes {
 		fmt.Printf("Property %s changed → %t\n", prop, changed)
 	}
+}
+
+func ExampleConfig_Alias() {
+	cfg, err := Parse([]byte(`
+[user]
+	username: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3m
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	// Add alias for renamed property "user:username"
+	cfg.Alias("user:username", "user:name")
+
+	fmt.Printf("Value from config: %s\n", cfg.GetS("user:name"))
+
+	// Output:
+	// Value from config: john
 }
 
 func ExampleConfig_GetS() {

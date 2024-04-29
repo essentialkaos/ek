@@ -1,5 +1,13 @@
 ## Changelog
 
+### 12.120.0
+
+- `[knf]` Added methods `Alias` and `Config.Alias`
+- `[knf]` Added property name validation for all getters
+- `[sliceutil]` Added method `IsEqual`
+- `[knf]` Code refactoring
+- `[knf]` Added more tests
+
 ### 12.119.0
 
 - `[initsystem]` Added [launchd](https://www.launchd.info) support
