@@ -26,6 +26,24 @@ func Copy[K comparable](slice []K) []K {
 	return s
 }
 
+// IsEqual compares two slices and returns true if the slices are equal
+func IsEqual[K comparable](s1, s2 []K) bool {
+	switch {
+	case s1 == nil && s2 == nil:
+		return true
+	case len(s1) != len(s2):
+		return false
+	}
+
+	for i := range s1 {
+		if s1[i] != s2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // StringToInterface converts slice with strings to slice with any
 func StringToInterface(data []string) []any {
 	if len(data) == 0 {
