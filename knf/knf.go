@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v12/knf/value"
+	"github.com/essentialkaos/ek/v12/sliceutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -719,6 +720,8 @@ func (c *Config) Is(name string, value any) bool {
 		return c.GetTS(name).Unix() == t.Unix()
 	case *time.Location:
 		return fmt.Sprint(c.GetTZ(name)) == fmt.Sprint(t)
+	case []string:
+		return sliceutil.IsEqual(c.GetL(name), t)
 	}
 
 	return false

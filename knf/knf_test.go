@@ -535,6 +535,7 @@ func (s *KNFSuite) TestIs(c *check.C) {
 	c.Assert(Is("file-mode:test1", os.FileMode(0644)), check.Equals, true)
 	c.Assert(Is("duration:test2", time.Minute), check.Equals, true)
 	c.Assert(Is("timestamp:test2", time.Unix(1709629048, 0)), check.Equals, true)
+	c.Assert(Is("list:test2", []string{"Test1", "Test2"}), check.Equals, true)
 
 	l, _ := time.LoadLocation("Europe/Zurich")
 	c.Assert(Is("timezone:test1", l), check.Equals, true)
