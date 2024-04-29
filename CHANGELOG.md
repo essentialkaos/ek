@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.120.0
+
+- `[knf]` Added `Alias` method
+- `[knf]` Added property name validation for all getters
+- `[knf]` Code refactoring
+
 ### 12.119.0
 
 - `[initsystem]` Added [launchd](https://www.launchd.info) support

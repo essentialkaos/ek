@@ -11,6 +11,7 @@ package knf
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -66,17 +67,18 @@ type IConfig interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Config is basic config struct
+// Config is basic configuration instance
 type Config struct {
 	sections []string
 	props    []string
 	data     map[string]string
+	aliases  map[string]string
 	file     string
 
 	mx *sync.RWMutex
 }
 
-// Validator is config property validator struct
+// Validator is configuration property validator struct
 type Validator struct {
 	Property string            // Property name
 	Func     PropertyValidator // Validation function
@@ -92,7 +94,7 @@ type DurationMod int64
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrNilConfig  = errors.New("Config is nil")
+	ErrNilConfig  = errors.New("Configuration is nil")
 	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
 	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
 )
@@ -163,6 +165,18 @@ func Reload() (map[string]bool, error) {
 	}
 
 	return global.Reload()
+}
+
+// Alias creates alias for configuration property
+//
+// It's useful for refactoring the configuration or for providing support for
+// renamed properties
+func Alias(old, new string) error {
+	if global == nil {
+		return ErrNilConfig
+	}
+
+	return global.Alias(old, new)
 }
 
 // GetS returns configuration value as string
@@ -464,9 +478,42 @@ func (c *Config) Reload() (map[string]bool, error) {
 	return changes, nil
 }
 
+// Alias creates alias for configuration property
+//
+// It's useful for refactoring the configuration or for providing support for
+// renamed properties
+func (c *Config) Alias(old, new string) error {
+	if c == nil || c.mx == nil {
+		return ErrNilConfig
+	}
+
+	switch {
+	case old == "":
+		return fmt.Errorf("Old property name is empty")
+	case new == "":
+		return fmt.Errorf("New property name is empty")
+	case !isValidPropName(old):
+		return fmt.Errorf("Old property name (%q) is invalid", old)
+	case !isValidPropName(new):
+		return fmt.Errorf("New property name (%q) is invalid", new)
+	}
+
+	c.mx.Lock()
+
+	if c.aliases == nil {
+		c.aliases = make(map[string]string)
+	}
+
+	c.aliases[strings.ToLower(new)] = strings.ToLower(old)
+
+	c.mx.Unlock()
+
+	return nil
+}
+
 // GetS returns configuration value as string
 func (c *Config) GetS(name string, defvals ...string) string {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return ""
 		}
@@ -474,9 +521,7 @@ func (c *Config) GetS(name string, defvals ...string) string {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
+	val := c.getValue(name)
 
 	if val == "" {
 		if len(defvals) == 0 {
@@ -491,7 +536,7 @@ func (c *Config) GetS(name string, defvals ...string) string {
 
 // GetI returns configuration value as int
 func (c *Config) GetI(name string, defvals ...int) int {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -499,16 +544,12 @@ func (c *Config) GetI(name string, defvals ...int) int {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseInt(val, defvals...)
+	return value.ParseInt(c.getValue(name), defvals...)
 }
 
 // GetI64 returns configuration value as int64
 func (c *Config) GetI64(name string, defvals ...int64) int64 {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -516,16 +557,12 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseInt64(val, defvals...)
+	return value.ParseInt64(c.getValue(name), defvals...)
 }
 
 // GetU returns configuration value as uint
 func (c *Config) GetU(name string, defvals ...uint) uint {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -533,16 +570,12 @@ func (c *Config) GetU(name string, defvals ...uint) uint {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseUint(val, defvals...)
+	return value.ParseUint(c.getValue(name), defvals...)
 }
 
 // GetU64 returns configuration value as uint64
 func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -550,16 +583,12 @@ func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseUint64(val, defvals...)
+	return value.ParseUint64(c.getValue(name), defvals...)
 }
 
 // GetF returns configuration value as floating number
 func (c *Config) GetF(name string, defvals ...float64) float64 {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0.0
 		}
@@ -567,16 +596,12 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseFloat(val, defvals...)
+	return value.ParseFloat(c.getValue(name), defvals...)
 }
 
 // GetB returns configuration value as boolean
 func (c *Config) GetB(name string, defvals ...bool) bool {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return false
 		}
@@ -584,16 +609,12 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseBool(val, defvals...)
+	return value.ParseBool(c.getValue(name), defvals...)
 }
 
 // GetM returns configuration value as file mode
 func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return os.FileMode(0)
 		}
@@ -601,16 +622,12 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseMode(val, defvals...)
+	return value.ParseMode(c.getValue(name), defvals...)
 }
 
 // GetD returns configuration value as duration
 func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -618,16 +635,12 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseDuration(val, time.Duration(mod), defvals...)
+	return value.ParseDuration(c.getValue(name), time.Duration(mod), defvals...)
 }
 
 // GetTD returns configuration value as time duration
 func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -635,16 +648,12 @@ func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseTimeDuration(val, defvals...)
+	return value.ParseTimeDuration(c.getValue(name), defvals...)
 }
 
 // GetTS returns configuration timestamp value as time
 func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Time{}
 		}
@@ -652,16 +661,12 @@ func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseTimestamp(val, defvals...)
+	return value.ParseTimestamp(c.getValue(name), defvals...)
 }
 
 // GetTS returns configuration value as timezone
 func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -669,16 +674,12 @@ func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseTimezone(val, defvals...)
+	return value.ParseTimezone(c.getValue(name), defvals...)
 }
 
 // GetL returns configuration value as list
 func (c *Config) GetL(name string, defvals ...[]string) []string {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -686,16 +687,12 @@ func (c *Config) GetL(name string, defvals ...[]string) []string {
 		return defvals[0]
 	}
 
-	c.mx.RLock()
-	val := c.data[strings.ToLower(name)]
-	c.mx.RUnlock()
-
-	return value.ParseList(val, defvals...)
+	return value.ParseList(c.getValue(name), defvals...)
 }
 
 // Is checks if given property contains given value
 func (c *Config) Is(name string, value any) bool {
-	if c == nil || c.mx == nil {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
 		return false
 	}
 
@@ -732,6 +729,9 @@ func (c *Config) HasSection(section string) bool {
 	c.mx.RLock()
 	defer c.mx.RUnlock()
 
+	// The "section" variable contains an invalid name for a property, so the user
+	// can't read the value as a property, but we can store information about
+	// sections.
 	return c.data[strings.ToLower(section)] == "!"
 }
 
@@ -741,10 +741,7 @@ func (c *Config) HasProp(name string) bool {
 		return false
 	}
 
-	c.mx.RLock()
-	defer c.mx.RUnlock()
-
-	return c.data[strings.ToLower(name)] != ""
+	return c.getValue(name) != ""
 }
 
 // Sections returns slice with section names
@@ -761,11 +758,11 @@ func (c *Config) Sections() []string {
 
 // Props returns slice with properties names in some section
 func (c *Config) Props(section string) []string {
-	var result []string
-
 	if c == nil || !c.HasSection(section) {
-		return result
+		return nil
 	}
+
+	var result []string
 
 	// Section name + delimiter
 	snLength := len(section) + 1
@@ -821,3 +818,40 @@ func (c *Config) Validate(validators []*Validator) []error {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// getValue returns property value from the storage
+func (c *Config) getValue(propName string) string {
+	if c == nil || c.mx == nil {
+		return ""
+	}
+
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+
+	propName = strings.ToLower(propName)
+
+	if c.aliases != nil && c.aliases[propName] != "" {
+		if c.data[c.aliases[propName]] != "" {
+			return c.data[c.aliases[propName]]
+		}
+	}
+
+	return c.data[propName]
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// isValidPropName returns true if property name is valid
+func isValidPropName(propName string) bool {
+	section, prop, ok := strings.Cut(propName, _SYMBOL_DELIMITER)
+
+	switch {
+	case !ok,
+		strings.Trim(section, " ") == "",
+		strings.Trim(prop, " ") == "",
+		strings.Count(propName, _SYMBOL_DELIMITER) > 1:
+		return false
+	}
+
+	return true
+}

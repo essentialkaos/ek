@@ -206,47 +206,53 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(err, check.DeepEquals, ErrNilConfig)
 	c.Assert(updated, check.IsNil)
 
-	c.Assert(GetS("test"), check.Equals, "")
-	c.Assert(GetI("test"), check.Equals, 0)
-	c.Assert(GetI("test"), check.Equals, 0)
-	c.Assert(GetU("test"), check.Equals, uint(0))
-	c.Assert(GetI64("test"), check.Equals, int64(0))
-	c.Assert(GetU64("test"), check.Equals, uint64(0))
-	c.Assert(GetF("test"), check.Equals, 0.0)
-	c.Assert(GetB("test"), check.Equals, false)
-	c.Assert(GetM("test"), check.Equals, os.FileMode(0))
-	c.Assert(GetD("test", Second), check.Equals, time.Duration(0))
-	c.Assert(GetTD("test"), check.Equals, time.Duration(0))
-	c.Assert(GetTS("test").IsZero(), check.Equals, true)
-	c.Assert(GetTZ("test"), check.IsNil)
-	c.Assert(GetL("test"), check.IsNil)
-	c.Assert(Is("test", ""), check.Equals, false)
+	c.Assert(GetS("test:test"), check.Equals, "")
+	c.Assert(GetI("test:test"), check.Equals, 0)
+	c.Assert(GetI("test:test"), check.Equals, 0)
+	c.Assert(GetU("test:test"), check.Equals, uint(0))
+	c.Assert(GetI64("test:test"), check.Equals, int64(0))
+	c.Assert(GetU64("test:test"), check.Equals, uint64(0))
+	c.Assert(GetF("test:test"), check.Equals, 0.0)
+	c.Assert(GetB("test:test"), check.Equals, false)
+	c.Assert(GetM("test:test"), check.Equals, os.FileMode(0))
+	c.Assert(GetD("test:test", Second), check.Equals, time.Duration(0))
+	c.Assert(GetTD("test:test"), check.Equals, time.Duration(0))
+	c.Assert(GetTS("test:test").IsZero(), check.Equals, true)
+	c.Assert(GetTZ("test:test"), check.IsNil)
+	c.Assert(GetL("test:test"), check.IsNil)
+	c.Assert(Is("test:test", ""), check.Equals, false)
 	c.Assert(HasSection("test"), check.Equals, false)
-	c.Assert(HasProp("test"), check.Equals, false)
+	c.Assert(HasProp("test:test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
 	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(Alias("test:test", "test:test"), check.NotNil)
 	c.Assert(global.Merge(nil), check.NotNil)
 
 	config := &Config{mx: &sync.RWMutex{}}
 
-	c.Assert(config.GetS("test"), check.Equals, "")
-	c.Assert(config.GetI("test"), check.Equals, 0)
-	c.Assert(config.GetF("test"), check.Equals, 0.0)
-	c.Assert(config.GetB("test"), check.Equals, false)
-	c.Assert(config.GetM("test"), check.Equals, os.FileMode(0))
-	c.Assert(config.GetD("test", Second), check.Equals, time.Duration(0))
-	c.Assert(config.GetTD("test"), check.Equals, time.Duration(0))
-	c.Assert(config.GetTS("test").IsZero(), check.Equals, true)
-	c.Assert(config.GetTZ("test"), check.IsNil)
-	c.Assert(config.GetL("test"), check.IsNil)
-	c.Assert(config.Is("test", ""), check.Equals, true)
+	c.Assert(config.GetS("test:test"), check.Equals, "")
+	c.Assert(config.GetI("test:test"), check.Equals, 0)
+	c.Assert(config.GetF("test:test"), check.Equals, 0.0)
+	c.Assert(config.GetB("test:test"), check.Equals, false)
+	c.Assert(config.GetM("test:test"), check.Equals, os.FileMode(0))
+	c.Assert(config.GetD("test:test", Second), check.Equals, time.Duration(0))
+	c.Assert(config.GetTD("test:test"), check.Equals, time.Duration(0))
+	c.Assert(config.GetTS("test:test").IsZero(), check.Equals, true)
+	c.Assert(config.GetTZ("test:test"), check.IsNil)
+	c.Assert(config.GetL("test:test"), check.IsNil)
+	c.Assert(config.Is("test:test", ""), check.Equals, true)
 	c.Assert(config.HasSection("test"), check.Equals, false)
-	c.Assert(config.HasProp("test"), check.Equals, false)
+	c.Assert(config.HasProp("test:test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
 	c.Assert(config.Props("test"), check.HasLen, 0)
 	c.Assert(config.Validate([]*Validator{}), check.HasLen, 0)
 	c.Assert(config.Merge(nil), check.NotNil)
+
+	c.Assert(config.Alias("", ""), check.NotNil)
+	c.Assert(config.Alias("test", ""), check.NotNil)
+	c.Assert(config.Alias("test", "test"), check.NotNil)
+	c.Assert(config.Alias("test:test", "test"), check.NotNil)
 
 	updated, err = config.Reload()
 
@@ -307,6 +313,17 @@ func (s *KNFSuite) TestMerging(c *check.C) {
 	c.Assert(c1.GetS("string:test1"), check.Equals, "test-new")
 	c.Assert(c1.GetB("boolean:test1"), check.Equals, false)
 	c.Assert(c1.GetS("extra:test1"), check.Equals, "extra-data")
+}
+
+func (s *KNFSuite) TestAlias(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(Alias("string:test1", "string:testX"), check.IsNil)
+
+	c.Assert(GetS("string:testX"), check.Equals, "test")
 }
 
 func (s *KNFSuite) TestSections(c *check.C) {
@@ -517,6 +534,8 @@ func (s *KNFSuite) TestMacro(c *check.C) {
 func (s *KNFSuite) TestNil(c *check.C) {
 	var nilConf *Config
 
+	c.Assert(nilConf.getValue("formatting:test1"), check.Equals, "")
+
 	c.Assert(nilConf.GetS("formatting:test1"), check.Equals, "")
 	c.Assert(nilConf.GetI("formatting:test1"), check.Equals, 0)
 	c.Assert(nilConf.GetI64("formatting:test1"), check.Equals, int64(0))
@@ -536,6 +555,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.Sections(), check.HasLen, 0)
 	c.Assert(nilConf.Props("formatting"), check.HasLen, 0)
 	c.Assert(nilConf.File(), check.Equals, "")
+	c.Assert(nilConf.Alias("test:test", "test:test"), check.NotNil)
 
 	_, err := nilConf.Reload()
 
@@ -652,4 +672,14 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 
 	_, err = readData(r)
 	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *KNFSuite) BenchmarkBasic(c *check.C) {
+	Global(s.ConfigPath)
+
+	for i := 0; i < c.N; i++ {
+		GetS("string:test1")
+	}
 }
