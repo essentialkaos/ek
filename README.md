@@ -113,6 +113,7 @@ go get -u github.com/essentialkaos/ek/v12
 
 * [aligo](https://kaos.sh/aligo) — Utility for checking and viewing Golang struct alignment info
 * [artefactor](https://kaos.sh/artefactor) — Utility for downloading artefacts from GitHub
+* [atlassian-cloud-backuper](https://kaos.sh/atlassian-cloud-backuper) — Tool for backuping Atlassian cloud services (_Jira and Confluence_)
 * [Bastion](https://kaos.sh/bastion) — Utility for temporary disabling access to server
 * [bibop](https://kaos.sh/bibop) — Utility for testing command-line tools
 * [bop](https://kaos.sh/bop) — Utility for generating bibop tests for RPM packages
@@ -129,6 +130,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [path](https://kaos.sh/path) — Dead simple tool for working with paths
 * [perfecto](https://kaos.sh/perfecto) — Tool for checking perfectly written RPM specs
 * [RBInstall](https://kaos.sh/rbinstall) — Utility for installing prebuilt ruby to RBEnv
+* [RDS](https://kaos.sh/rds) — Tool for Redis orchestration
 * [Redis CLI Monitor](https://kaos.sh/redis-cli-monitor) — Tiny redis client for renamed MONITOR commands
 * [Redis Latency Monitor](https://kaos.sh/redis-latency-monitor) — Tiny Redis client for latency measurement
 * [Redis Monitor Top](https://kaos.sh/redis-monitor-top) — Tiny Redis client for aggregating stats from MONITOR flow
