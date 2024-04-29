@@ -485,6 +485,39 @@ func (s *KNFSuite) TestTimeDuration(c *check.C) {
 	c.Assert(GetTD("time-duration:test5"), check.Equals, time.Duration(0))
 }
 
+func (s *KNFSuite) TestTimestamp(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(GetTS("timestamp:test1"), check.DeepEquals, time.Unix(0, 0))
+	c.Assert(GetTS("timestamp:test2"), check.DeepEquals, time.Unix(1709629048, 0))
+	c.Assert(GetTS("timestamp:test3"), check.DeepEquals, time.Time{})
+}
+
+func (s *KNFSuite) TestTimezone(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	l, _ := time.LoadLocation("Europe/Zurich")
+
+	c.Assert(GetTZ("timezone:test1"), check.DeepEquals, l)
+	c.Assert(GetTZ("timezone:test2"), check.IsNil)
+}
+
+func (s *KNFSuite) TestList(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(GetL("list:test1"), check.HasLen, 0)
+	c.Assert(GetL("list:test2"), check.HasLen, 2)
+}
+
 func (s *KNFSuite) TestIs(c *check.C) {
 	err := Global(s.ConfigPath)
 
@@ -501,6 +534,10 @@ func (s *KNFSuite) TestIs(c *check.C) {
 	c.Assert(Is("integer:test1", int64(1)), check.Equals, true)
 	c.Assert(Is("file-mode:test1", os.FileMode(0644)), check.Equals, true)
 	c.Assert(Is("duration:test2", time.Minute), check.Equals, true)
+	c.Assert(Is("timestamp:test2", time.Unix(1709629048, 0)), check.Equals, true)
+
+	l, _ := time.LoadLocation("Europe/Zurich")
+	c.Assert(Is("timezone:test1", l), check.Equals, true)
 
 	c.Assert(Is("integer:test1", nil), check.Equals, false)
 }

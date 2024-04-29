@@ -715,6 +715,10 @@ func (c *Config) Is(name string, value any) bool {
 		return c.GetM(name) == t
 	case time.Duration:
 		return c.GetD(name, Second) == t
+	case time.Time:
+		return c.GetTS(name).Unix() == t.Unix()
+	case *time.Location:
+		return fmt.Sprint(c.GetTZ(name)) == fmt.Sprint(t)
 	}
 
 	return false

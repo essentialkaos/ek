@@ -5,6 +5,7 @@
 - `[knf]` Added `Alias` method
 - `[knf]` Added property name validation for all getters
 - `[knf]` Code refactoring
+- `[knf]` Added more tests
 
 ### 12.119.0
 
