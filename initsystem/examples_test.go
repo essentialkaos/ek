@@ -34,6 +34,12 @@ func ExampleSystemd() {
 	}
 }
 
+func ExampleLaunchd() {
+	if Launchd() {
+		fmt.Println("Launchd init system is used")
+	}
+}
+
 func ExampleIsPresent() {
 	serviceName := "crond"
 

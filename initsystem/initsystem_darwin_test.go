@@ -1,8 +1,4 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+package initsystem
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -12,22 +8,37 @@ package ek
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"testing"
 
-	"github.com/essentialkaos/depsy"
-	"github.com/essentialkaos/go-linenoise/v3"
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.119.0"
+func Test(t *testing.T) { TestingT(t) }
+
+type InitSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	depsy.Extract(nil, false)
-	bcrypt.Cost(nil)
+var _ = Suite(&InitSuite{})
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *InitSuite) TestLaunchdIsPresent(c *C) {
+	c.Assert(IsPresent("com.apple.unknown"), Equals, false)
+	c.Assert(IsPresent("com.apple.homed"), Equals, true)
+	c.Assert(IsPresent("com.apple.cloudphotod"), Equals, true)
+}
+
+func (s *InitSuite) TestLaunchdIsWorks(c *C) {
+	isWorks, err := IsWorks("com.apple.homed")
+
+	c.Assert(err, IsNil)
+	c.Assert(isWorks, Equals, true)
+
+	isWorks, err = IsWorks("com.apple.cloudphotod")
+
+	c.Assert(err, IsNil)
+	c.Assert(isWorks, Equals, false)
 }

@@ -1,8 +1,5 @@
-//go:build !windows
-// +build !windows
-
-// Package ek is a set of auxiliary packages
-package ek
+// Package services provides methods for collecting information about system services
+package services
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,23 +8,11 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/depsy"
-	"github.com/essentialkaos/go-linenoise/v3"
-)
+import "github.com/essentialkaos/ek/v12/support"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "12.119.0"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	depsy.Extract(nil, false)
-	bcrypt.Cost(nil)
+// ❗ Collect collect info about services
+func Collect(services ...string) []support.Service {
+	panic("UNSUPPORTED")
 }

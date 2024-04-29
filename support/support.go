@@ -8,14 +8,12 @@ By default, it collects information about the application and environment:
   - Go version used
   - Binary SHA
   - Git commit SHA
-  - Environment variables
-  - Applications
-  - Custom checks
 
 There are also some sub-packages to collect/parse additional information:
   - apps: Package for extracting apps versions info
   - deps: Package for extracting dependency information from gomod data
   - pkgs: Package for collecting information about installed packages
+  - services: Package for collecting information about services
   - fs: Package for collecting information about the file system
   - network: Package to collect information about the network
 
@@ -26,6 +24,7 @@ Example of collecting maximum information about the application and system:
 	  WithDeps(deps.Extract(gomodData)).
 	  WithApps(apps.Golang(), apps.GCC()).
 	  WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
+	  WithServices(services.Collect("firewalld", "nginx")).
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://domain.com/ip-echo")).
@@ -40,6 +39,7 @@ it to the console.
 	  WithDeps(deps.Extract(gomodData)).
 	  WithApps(apps.Golang(), apps.GCC()).
 	  WithPackages(pkgs.Collect("rpm", "go,golang", "java,jre,jdk", "nano")).
+	  WithServices(services.Collect("firewalld", "nginx")).
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://domain.com/ip-echo")).
@@ -67,6 +67,14 @@ const (
 	CHECK_SKIP  CheckStatus = "skip"
 )
 
+type ServiceStatus string
+
+const (
+	STATUS_WORKS   ServiceStatus = "works"
+	STATUS_STOPPED ServiceStatus = "stopped"
+	STATUS_UNKNOWN ServiceStatus = "unknown"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Info contains all support information (can be encoded in JSON/GOB)
@@ -75,16 +83,17 @@ type Info struct {
 	Version string `json:"version"`
 	Binary  string `json:"binary"`
 
-	Build   *BuildInfo   `json:"build,omitempty"`
-	OS      *OSInfo      `json:"os,omitempty"`
-	System  *SystemInfo  `json:"system,omitempty"`
-	Network *NetworkInfo `json:"network,omitempty"`
-	FS      []FSInfo     `json:"fs,omitempty"`
-	Pkgs    []Pkg        `json:"pkgs,omitempty"`
-	Deps    []Dep        `json:"deps,omitempty"`
-	Apps    []App        `json:"apps,omitempty"`
-	Checks  []Check      `json:"checks,omitempty"`
-	Env     []EnvVar     `json:"env,omitempty"`
+	Build    *BuildInfo   `json:"build,omitempty"`
+	OS       *OSInfo      `json:"os,omitempty"`
+	System   *SystemInfo  `json:"system,omitempty"`
+	Network  *NetworkInfo `json:"network,omitempty"`
+	FS       []FSInfo     `json:"fs,omitempty"`
+	Pkgs     []Pkg        `json:"pkgs,omitempty"`
+	Services []Service    `json:"services,omitempty"`
+	Deps     []Dep        `json:"deps,omitempty"`
+	Apps     []App        `json:"apps,omitempty"`
+	Checks   []Check      `json:"checks,omitempty"`
+	Env      []EnvVar     `json:"env,omitempty"`
 }
 
 // BuildInfo contains information about binary
@@ -137,6 +146,14 @@ type FSInfo struct {
 	Type   string `json:"type,omitempty"`
 	Used   uint64 `json:"used,omitempty"`
 	Free   uint64 `json:"free,omitempty"`
+}
+
+// Service contains basic info about service
+type Service struct {
+	Name      string        `json:"name"`
+	Status    ServiceStatus `json:"status"`
+	IsPresent bool          `json:"is_present"`
+	IsEnabled bool          `json:"is_enabled"`
 }
 
 // App contains basic information about app

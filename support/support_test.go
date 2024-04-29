@@ -73,6 +73,12 @@ func (s *SupportSuite) TestCollect(c *C) {
 		Pkg{},
 	}
 
+	services := []Service{
+		Service{"test1", STATUS_WORKS, true, true},
+		Service{"test2", STATUS_STOPPED, true, false},
+		Service{"test3", STATUS_UNKNOWN, false, false},
+	}
+
 	apps := []App{
 		App{"test", "1.2.3"},
 		App{"test", ""},
@@ -84,6 +90,7 @@ func (s *SupportSuite) TestCollect(c *C) {
 	c.Assert(i.WithRevision(""), NotNil)
 	c.Assert(i.WithRevision("1234567"), NotNil)
 	c.Assert(i.WithPackages(pkgs), NotNil)
+	c.Assert(i.WithServices(services), NotNil)
 	c.Assert(i.WithApps(apps...), NotNil)
 	c.Assert(i.WithChecks(chks...), NotNil)
 	c.Assert(i.WithEnvVars("", "SUPPORT_VAR", "TERM", "CI"), NotNil)
@@ -96,6 +103,7 @@ func (s *SupportSuite) TestCollect(c *C) {
 	i.OS = nil
 	i.Env = nil
 	i.Pkgs = nil
+	i.Services = nil
 	i.Apps = nil
 	i.Checks = nil
 	i.Network = nil
@@ -120,6 +128,7 @@ func (s *SupportSuite) TestNil(c *C) {
 	c.Assert(i.WithDeps(nil), IsNil)
 	c.Assert(i.WithRevision(""), IsNil)
 	c.Assert(i.WithPackages(nil), IsNil)
+	c.Assert(i.WithServices(nil), IsNil)
 	c.Assert(i.WithApps(App{}), IsNil)
 	c.Assert(i.WithChecks(Check{}), IsNil)
 	c.Assert(i.WithEnvVars(""), IsNil)
