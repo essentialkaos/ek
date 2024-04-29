@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.121.0
+
+- `[initsystem/sdnotify]` Added new package for sending messages to systemd
+
 ### 12.120.0
 
 - `[knf]` Added methods `Alias` and `Config.Alias`
