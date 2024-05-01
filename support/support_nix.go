@@ -460,9 +460,16 @@ func (i *Info) printDependencies() {
 	fmtutil.Separator(false, "DEPENDENCIES")
 
 	for _, dep := range i.Deps {
-		if dep.Extra == "" {
+		extra := dep.Extra
+
+		if strutil.HasPrefixAny(extra, ".", "/") {
+			extra = "local-path: " + extra
+		}
+
+		switch dep.Extra {
+		case "":
 			fmtc.Printf(" {s}%8s{!}  %s\n", dep.Version, dep.Path)
-		} else {
+		default:
 			fmtc.Printf(" {s}%8s{!}  %s {s-}(%s){!}\n", dep.Version, dep.Path, dep.Extra)
 		}
 	}
