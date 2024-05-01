@@ -470,7 +470,7 @@ func (i *Info) printDependencies() {
 		case "":
 			fmtc.Printf(" {s}%8s{!}  %s\n", dep.Version, dep.Path)
 		default:
-			fmtc.Printf(" {s}%8s{!}  %s {s-}(%s){!}\n", dep.Version, dep.Path, dep.Extra)
+			fmtc.Printf(" {s}%8s{!}  %s {s-}(%s){!}\n", dep.Version, dep.Path, extra)
 		}
 	}
 }
