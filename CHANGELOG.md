@@ -3,7 +3,6 @@
 ### 12.121.0
 
 - `[initsystem/sdnotify]` Added new package for sending messages to systemd
-- `[support/deps]` Added support for local path replacements
 
 ### 12.120.0
 
