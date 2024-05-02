@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/essentialkaos/check v1.4.0
-	github.com/essentialkaos/depsy v1.1.0
+	github.com/essentialkaos/depsy v1.3.0
 	github.com/essentialkaos/go-linenoise/v3 v3.6.0
 	golang.org/x/crypto v0.22.0
 	golang.org/x/sys v0.19.0

@@ -63,6 +63,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`hash`](https://kaos.sh/g/ek.v12/hash) — Package hash contains different hash algorithms and utilities
 * [`httputil`](https://kaos.sh/g/ek.v12/httputil) — Package provides methods for working with HTTP request/responses
 * [`initsystem`](https://kaos.sh/g/ek.v12/initsystem) — Package provides methods for working with different init systems (sysv, upstart, systemd)
+* [`initsystem`](https://kaos.sh/g/ek.v12/initsystem/sdnotify) — Package provides methods methods for sending [notifications to systemd](https://www.freedesktop.org/software/systemd/man/latest/sd_notify.html#Well-known%20assignments)
 * [`jsonutil`](https://kaos.sh/g/ek.v12/jsonutil) — Package provides methods for working with JSON data
 * [`knf`](https://kaos.sh/g/ek.v12/knf) — Package provides methods for working with configuration files in [KNF format](https://kaos.sh/knf-spec)
 * [`knf/united`](https://kaos.sh/g/ek.v12/knf/united) — Package provides united configuration (_knf + options + environment variables_)

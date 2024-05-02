@@ -48,12 +48,7 @@ func (s *TTYSuite) TestIsTTY(c *C) {
 }
 
 func (s *TTYSuite) TestIsSystemd(c *C) {
-	os.Setenv("INVOCATION_ID", "")
-	os.Setenv("SYSTEMCTL_IGNORE_DEPENDENCIES", "")
-	c.Assert(IsSystemd(), Equals, false)
-	os.Setenv("INVOCATION_ID", "5d0149bfa2c34b79bccb13074001eb20")
-	c.Assert(IsSystemd(), Equals, true)
-	os.Setenv("INVOCATION_ID", "")
+	IsSystemd()
 }
 
 func (s *TTYSuite) TestIsTMUX(c *C) {

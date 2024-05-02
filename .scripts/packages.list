@@ -18,6 +18,7 @@
 * + hash
 * + httputil
 * - initsystem
+* ! initsystem/sdnotify
 * + jsonutil
 * + knf
 * + knf/united

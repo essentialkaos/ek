@@ -46,8 +46,7 @@ func IsFakeTTY() bool {
 
 // IsSystemd returns true if process started by systemd
 func IsSystemd() bool {
-	return os.Getenv("INVOCATION_ID") != "" ||
-		os.Getenv("SYSTEMCTL_IGNORE_DEPENDENCIES") != ""
+	return os.Getppid() == 1
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

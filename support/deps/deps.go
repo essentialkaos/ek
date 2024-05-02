@@ -23,7 +23,7 @@ func Extract(gomod []byte) []support.Dep {
 	for _, dep := range depsy.Extract(gomod, false) {
 		result = append(result, support.Dep{
 			Version: dep.Version,
-			Path:    dep.Path,
+			Path:    dep.PrettyPath(),
 			Extra:   dep.Extra,
 		})
 	}

@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.121.0
+
+- `[initsystem/sdnotify]` Added new package for sending messages to systemd
+- `[support/deps]` Updated for compatibility with the latest version of [depsy](https://kaos.sh/depsy)
+- `[terminal/tty]` Improved check for systemd
+
 ### 12.120.0
 
 - `[knf]` Added methods `Alias` and `Config.Alias`
