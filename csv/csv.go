@@ -178,7 +178,7 @@ func (r Row) GetI(index int) (int, error) {
 
 // GetF returns cell value as float
 func (r Row) GetF(index int) (float64, error) {
-	return strconv.ParseFloat(r.Get(index), 10)
+	return strconv.ParseFloat(r.Get(index), 64)
 }
 
 // GetU returns cell value as uint64
