@@ -236,7 +236,7 @@ func parseAndFill(src string, dst Row, sep string) {
 	l := len(dst)
 
 	if src == "" {
-		clean(dst, 0, l)
+		clean(dst, 0)
 		return
 	}
 
@@ -245,7 +245,7 @@ func parseAndFill(src string, dst Row, sep string) {
 
 	if n == 0 {
 		dst[0] = src
-		clean(dst, 1, l)
+		clean(dst, 1)
 		return
 	}
 
@@ -263,13 +263,13 @@ func parseAndFill(src string, dst Row, sep string) {
 	}
 
 	if i < l-1 {
-		clean(dst, i+1, l)
+		clean(dst, i+1)
 	}
 }
 
 // clean cleans destination slice
-func clean(dst Row, since, to int) {
-	for i := since; i < to; i++ {
+func clean(dst Row, from int) {
+	for i := from; i < len(dst); i++ {
 		dst[i] = ""
 	}
 }
