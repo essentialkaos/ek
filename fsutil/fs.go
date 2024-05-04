@@ -51,7 +51,9 @@ var ErrEmptyPath = errors.New("Path is empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms checks many props at once
+// CheckPerms checks many permissions at once
+//
+// Permissions:
 //
 //   - F: is file
 //   - D: is directory
@@ -62,13 +64,13 @@ var ErrEmptyPath = errors.New("Path is empty")
 //   - B: is block device
 //   - C: is character device
 //   - S: not empty (only for files)
-func CheckPerms(props, path string) bool {
-	if props == "" || path == "" {
+func CheckPerms(perms, path string) bool {
+	if perms == "" || path == "" {
 		return false
 	}
 
 	path = PATH.Clean(path)
-	props = strings.ToUpper(props)
+	perms = strings.ToUpper(perms)
 
 	var stat = &syscall.Stat_t{}
 
@@ -84,7 +86,7 @@ func CheckPerms(props, path string) bool {
 		return false
 	}
 
-	for _, k := range props {
+	for _, k := range perms {
 		switch k {
 
 		case 'F':
@@ -138,16 +140,28 @@ func CheckPerms(props, path string) bool {
 }
 
 // ValidatePerms validates permissions for file or directory
-func ValidatePerms(props, path string) error {
+//
+// Permissions:
+//
+//   - F: is file
+//   - D: is directory
+//   - X: is executable
+//   - L: is link
+//   - W: is writable
+//   - R: is readable
+//   - B: is block device
+//   - C: is character device
+//   - S: not empty (only for files)
+func ValidatePerms(perms, path string) error {
 	switch {
-	case props == "":
+	case perms == "":
 		return errors.New("Props is empty")
 	case path == "":
 		return errors.New("Path is empty")
 	}
 
 	path = PATH.Clean(path)
-	props = strings.ToUpper(props)
+	perms = strings.ToUpper(perms)
 
 	var stat = &syscall.Stat_t{}
 
@@ -155,15 +169,15 @@ func ValidatePerms(props, path string) error {
 
 	if err != nil {
 		switch {
-		case strings.ContainsRune(props, 'F'):
+		case strings.ContainsRune(perms, 'F'):
 			return fmt.Errorf("File %s doesn't exist or not accessible", path)
-		case strings.ContainsRune(props, 'D'):
+		case strings.ContainsRune(perms, 'D'):
 			return fmt.Errorf("Directory %s doesn't exist or not accessible", path)
-		case strings.ContainsRune(props, 'B'):
+		case strings.ContainsRune(perms, 'B'):
 			return fmt.Errorf("Block device %s doesn't exist or not accessible", path)
-		case strings.ContainsRune(props, 'C'):
+		case strings.ContainsRune(perms, 'C'):
 			return fmt.Errorf("Character device %s doesn't exist or not accessible", path)
-		case strings.ContainsRune(props, 'L'):
+		case strings.ContainsRune(perms, 'L'):
 			return fmt.Errorf("Link %s doesn't exist or not accessible", path)
 		}
 
@@ -176,7 +190,7 @@ func ValidatePerms(props, path string) error {
 		return errors.New("Can't get information about the current user")
 	}
 
-	for _, k := range props {
+	for _, k := range perms {
 		switch k {
 
 		case 'F':
@@ -239,7 +253,19 @@ func ValidatePerms(props, path string) error {
 }
 
 // ProperPath returns the first proper path from a given slice
-func ProperPath(props string, paths []string) string {
+//
+// Permissions:
+//
+//   - F: is file
+//   - D: is directory
+//   - X: is executable
+//   - L: is link
+//   - W: is writable
+//   - R: is readable
+//   - B: is block device
+//   - C: is character device
+//   - S: not empty (only for files)
+func ProperPath(perms string, paths []string) string {
 	for _, path := range paths {
 		if strings.Trim(path, " ") == "" {
 			continue
@@ -247,7 +273,7 @@ func ProperPath(props string, paths []string) string {
 
 		path = PATH.Clean(path)
 
-		if CheckPerms(props, path) {
+		if CheckPerms(perms, path) {
 			return path
 		}
 	}

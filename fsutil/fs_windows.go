@@ -50,20 +50,56 @@ var ErrEmptyPath = errors.New("Path is empty")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ CheckPerms check many props at once
+// ❗ CheckPerms checks many permissions at once
+//
+// Permissions:
+//
+//   - F: is file
+//   - D: is directory
+//   - X: is executable
+//   - L: is link
+//   - W: is writable
+//   - R: is readable
+//   - B: is block device
+//   - C: is character device
+//   - S: not empty (only for files)
 func CheckPerms(perms, path string) bool {
 	panic("UNSUPPORTED")
 	return false
 }
 
 // ❗ ValidatePerms validates permissions for file or directory
-func ValidatePerms(props, path string) error {
+//
+// Permissions:
+//
+//   - F: is file
+//   - D: is directory
+//   - X: is executable
+//   - L: is link
+//   - W: is writable
+//   - R: is readable
+//   - B: is block device
+//   - C: is character device
+//   - S: not empty (only for files)
+func ValidatePerms(perms, path string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
 // ❗ ProperPath returns the first proper path from a given slice
-func ProperPath(props string, paths []string) string {
+//
+// Permissions:
+//
+//   - F: is file
+//   - D: is directory
+//   - X: is executable
+//   - L: is link
+//   - W: is writable
+//   - R: is readable
+//   - B: is block device
+//   - C: is character device
+//   - S: not empty (only for files)
+func ProperPath(perms string, paths []string) string {
 	panic("UNSUPPORTED")
 	return ""
 }

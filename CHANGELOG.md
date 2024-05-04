@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.122.0
+
+- `[csv]` Added helpers for working with CSV row
+- `[csv]` Added option to skip header
+- `[option]` Removed `Required` flag from option struct
+
 ### 12.121.0
 
 - `[initsystem/sdnotify]` Added new package for sending messages to systemd
