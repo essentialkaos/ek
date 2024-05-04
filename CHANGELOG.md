@@ -5,6 +5,7 @@
 - `[initsystem/sdnotify]` Added new package for sending messages to systemd
 - `[csv]` Added helpers for working with CSV row
 - `[csv]` Added option to skip header
+- `[option]` Removed `Required` flag from option struct
 - `[support/deps]` Updated for compatibility with the latest version of [depsy](https://kaos.sh/depsy)
 - `[terminal/tty]` Improved check for systemd
 

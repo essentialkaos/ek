@@ -68,7 +68,6 @@ func ExampleParse() {
 		"I:int2":     {Type: INT, Min: 1, Max: 10},                   // Integer with limits
 		"f:float":    {Type: FLOAT, Value: 10.0},                     // Float
 		"b:boolean":  {Type: BOOL},                                   // Boolean
-		"r:required": {Type: INT, Required: true},                    // Some options can be marked as required
 		"m:merg":     {Type: STRING, Mergeble: true},                 // Mergeble options can be defined more than one time
 		"h:help":     {Type: BOOL, Alias: "u:usage about"},           // You can define argument aliases
 		"e:example":  {Conflicts: []string{"s:string", "S:string2"}}, // Option conflicts with string and string2 (options can't be set at same time)

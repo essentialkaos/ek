@@ -218,12 +218,11 @@ func (s *OptUtilSuite) TestBound(c *C) {
 }
 
 func (s *OptUtilSuite) TestGetters(c *C) {
-	argline := "file.mp3 -SAT -s STRING --required TEST -i 320 -b -f 1.098765 -S2 100 -f1 5 -f2 1 -ms ABC --merg-string DEF -mi 6 --merg-int 6 -f3 12 -mf 10.1 -mf 10.1 -i1 5"
+	argline := "file.mp3 -SAT -s STRING -i 320 -b -f 1.098765 -S2 100 -f1 5 -f2 1 -ms ABC --merg-string DEF -mi 6 --merg-int 6 -f3 12 -mf 10.1 -mf 10.1 -i1 5"
 
 	optMap := Map{
-		"s:string":          {Type: STRING, Value: "STRING"},
+		"s:string":          {Type: STRING, Value: "STRING", Alias: []string{"A:alias", "A2:alias2"}},
 		"S:empty-string":    {Type: STRING},
-		"r:required":        {Required: true, Alias: []string{"A:alias", "A2:alias2"}},
 		"i:int":             {Type: INT},
 		"i1:int-between":    {Type: INT, Min: 1, Max: 3},
 		"I:not-set-int":     {Type: INT, Value: 0},
@@ -277,10 +276,8 @@ func (s *OptUtilSuite) TestGetters(c *C) {
 	c.Assert(opts.GetI("S2:string-as-num"), Equals, 100)
 	c.Assert(opts.GetF("S2:string-as-num"), Equals, 100.0)
 
-	c.Assert(opts.GetS("r:required"), Equals, "TEST")
-	c.Assert(opts.GetS("required"), Equals, "TEST")
-	c.Assert(opts.GetS("A:alias"), Equals, "TEST")
-	c.Assert(opts.GetS("alias"), Equals, "TEST")
+	c.Assert(opts.GetS("A:alias"), Equals, "STRING")
+	c.Assert(opts.GetS("alias"), Equals, "STRING")
 
 	c.Assert(opts.GetS("int"), Equals, "320")
 	c.Assert(opts.GetB("int"), Equals, true)
@@ -457,13 +454,6 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Required: true}})
-
-	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Required option "--test" is not set`)
-
-	// //////////////////////////////////////////////////////////////////////////////// //
-
 	_, errs = NewOptions().Parse([]string{"-t"}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
@@ -570,10 +560,9 @@ func (s *OptUtilSuite) TestVString(c *C) {
 		Min:       10,
 		Max:       1000,
 		Mergeble:  true,
-		Required:  true,
 	}
 
-	c.Assert(v.String(), Equals, "String{Value:test Min:10 Max:1000 Alias:[--test2 --test6] Conflicts:--test3 Bound:--test4 Mergeble:Yes Required:Yes}")
+	c.Assert(v.String(), Equals, "String{Value:test Min:10 Max:1000 Alias:[--test2 --test6] Conflicts:--test3 Bound:--test4 Mergeble:Yes}")
 
 	v = &V{Type: INT}
 	c.Assert(v.String(), Equals, "Int{}")

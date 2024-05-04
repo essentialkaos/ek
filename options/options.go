@@ -33,7 +33,6 @@ const (
 	ERROR_DUPLICATE_SHORTNAME
 	ERROR_OPTION_IS_NIL
 	ERROR_EMPTY_VALUE
-	ERROR_REQUIRED_NOT_SET
 	ERROR_WRONG_FORMAT
 	ERROR_CONFLICT
 	ERROR_BOUND_NOT_SET
@@ -54,7 +53,6 @@ type V struct {
 	Conflicts any     // string or slice of strings with conflicts options
 	Bound     any     // string or slice of strings with bound options
 	Mergeble  bool    // option supports options value merging
-	Required  bool    // option is required
 
 	set bool // non-exported field
 
@@ -650,10 +648,6 @@ func (v *V) String() string {
 		result += "Mergeble:Yes "
 	}
 
-	if v.Required {
-		result += "Required:Yes "
-	}
-
 	return strings.TrimRight(result, " ") + "}"
 }
 
@@ -849,10 +843,6 @@ func (opts *Options) validate() Errors {
 	for n, v := range opts.full {
 		if !isSupportedType(v.Value) {
 			errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_VALUE})
-		}
-
-		if v.Required && v.Value == nil {
-			errs = append(errs, OptionError{F(n), "", ERROR_REQUIRED_NOT_SET})
 		}
 
 		if v.Conflicts != "" {
@@ -1094,8 +1084,6 @@ func (e OptionError) Error() string {
 		return fmt.Sprintf("Option %q is not supported", e.Option)
 	case ERROR_EMPTY_VALUE:
 		return fmt.Sprintf("Non-boolean option %q is empty", e.Option)
-	case ERROR_REQUIRED_NOT_SET:
-		return fmt.Sprintf("Required option %q is not set", e.Option)
 	case ERROR_WRONG_FORMAT:
 		return fmt.Sprintf("Option %q has wrong format", e.Option)
 	case ERROR_OPTION_IS_NIL:
