@@ -83,6 +83,8 @@ func (s *CSVSuite) TestRead(c *C) {
 
 		line++
 	}
+
+	c.Assert(reader.Line(), Equals, 5)
 }
 
 func (s *CSVSuite) TestReadTo(c *C) {
@@ -124,6 +126,8 @@ func (s *CSVSuite) TestReadTo(c *C) {
 
 		line++
 	}
+
+	c.Assert(reader.Line(), Equals, 5)
 }
 
 func (s *CSVSuite) TestLineParser(c *C) {
@@ -149,6 +153,7 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
 	c.Assert(r.WithComma('X'), IsNil)
 	c.Assert(r.WithHeaderSkip(false), IsNil)
+	c.Assert(r.Line(), Equals, 0)
 }
 
 func (s *CSVSuite) TestRow(c *C) {

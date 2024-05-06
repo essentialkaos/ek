@@ -25,6 +25,7 @@ type Reader struct {
 	SkipHeader bool
 
 	headerSkipped bool
+	currentLine   int
 
 	br *bufio.Reader
 }
@@ -63,6 +64,7 @@ func (r *Reader) Read() (Row, error) {
 	if r.SkipHeader && !r.headerSkipped {
 		r.br.ReadLine()
 		r.headerSkipped = true
+		r.currentLine++
 	}
 
 	str, _, err := r.br.ReadLine()
@@ -70,6 +72,8 @@ func (r *Reader) Read() (Row, error) {
 	if err != nil || len(str) == 0 {
 		return nil, err
 	}
+
+	r.currentLine++
 
 	return strings.Split(string(str), string(r.Comma)), nil
 }
@@ -87,6 +91,7 @@ func (r *Reader) ReadTo(dst Row) error {
 	if r.SkipHeader && !r.headerSkipped {
 		r.br.ReadLine()
 		r.headerSkipped = true
+		r.currentLine++
 	}
 
 	str, _, err := r.br.ReadLine()
@@ -96,6 +101,7 @@ func (r *Reader) ReadTo(dst Row) error {
 	}
 
 	parseAndFill(string(str), dst, string(r.Comma))
+	r.currentLine++
 
 	return nil
 }
@@ -120,6 +126,15 @@ func (r *Reader) WithHeaderSkip(flag bool) *Reader {
 	r.SkipHeader = flag
 
 	return r
+}
+
+// Line returns number of the last line read
+func (r *Reader) Line() int {
+	if r == nil {
+		return 0
+	}
+
+	return r.currentLine
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

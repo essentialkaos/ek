@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,16 +26,16 @@ func ExampleNew() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
+	r := NewReader(fd)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -48,17 +49,16 @@ func ExampleReader_Read() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
-	reader.Comma = ','
+	r := NewReader(fd)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -72,19 +72,17 @@ func ExampleReader_ReadTo() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
-	reader.Comma = ','
-
-	data := make([]string, 10)
+	r := NewReader(fd)
+	row := make(Row, 10)
 
 	for {
-		err := reader.ReadTo(data)
+		err := r.ReadTo(row)
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -98,16 +96,16 @@ func ExampleReader_WithComma() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd).WithComma(',')
+	r := NewReader(fd).WithComma(',')
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -121,16 +119,42 @@ func ExampleReader_WithHeaderSkip() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd).WithHeaderSkip(true)
+	r := NewReader(fd).WithHeaderSkip(true)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
+	}
+}
+
+func ExampleReader_Line() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	r := NewReader(fd)
+
+	for {
+		row, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if !strings.HasPrefix(row.Get(0), "id-") {
+			fmt.Printf("Invalid value in row %d: value in cell 0 must have \"id-\" prefix", r.Line())
+			return
+		}
 	}
 }
 
