@@ -196,14 +196,119 @@ func (r Row) GetI(index int) (int, error) {
 	return strconv.Atoi(r.Get(index))
 }
 
+// GetI8 returns cell value as int8
+func (r Row) GetI8(index int) (int8, error) {
+	i, err := strconv.ParseInt(r.Get(index), 10, 8)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int8(i), nil
+}
+
+// GetI16 returns cell value as int16
+func (r Row) GetI16(index int) (int16, error) {
+	i, err := strconv.ParseInt(r.Get(index), 10, 16)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int16(i), nil
+}
+
+// GetI32 returns cell value as int32
+func (r Row) GetI32(index int) (int32, error) {
+	i, err := strconv.ParseInt(r.Get(index), 10, 32)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int32(i), nil
+}
+
+// GetI64 returns cell value as int64
+func (r Row) GetI64(index int) (int64, error) {
+	i, err := strconv.ParseInt(r.Get(index), 10, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int64(i), nil
+}
+
 // GetF returns cell value as float
 func (r Row) GetF(index int) (float64, error) {
 	return strconv.ParseFloat(r.Get(index), 64)
 }
 
-// GetU returns cell value as uint64
-func (r Row) GetU(index int) (uint64, error) {
-	return strconv.ParseUint(r.Get(index), 10, 64)
+// GetF32 returns cell value as float32
+func (r Row) GetF32(index int) (float32, error) {
+	f, err := strconv.ParseFloat(r.Get(index), 32)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return float32(f), nil
+}
+
+// GetU returns cell value as uint
+func (r Row) GetU(index int) (uint, error) {
+	u, err := strconv.ParseUint(r.Get(index), 10, 32)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint(u), nil
+}
+
+// GetU8 returns cell value as uint8
+func (r Row) GetU8(index int) (uint8, error) {
+	u, err := strconv.ParseUint(r.Get(index), 10, 8)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint8(u), nil
+}
+
+// GetU16 returns cell value as uint16
+func (r Row) GetU16(index int) (uint16, error) {
+	u, err := strconv.ParseUint(r.Get(index), 10, 16)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint16(u), nil
+}
+
+// GetU32 returns cell value as uint32
+func (r Row) GetU32(index int) (uint32, error) {
+	u, err := strconv.ParseUint(r.Get(index), 10, 32)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint32(u), nil
+}
+
+// GetU64 returns cell value as uint64
+func (r Row) GetU64(index int) (uint64, error) {
+	u, err := strconv.ParseUint(r.Get(index), 10, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(u), nil
 }
 
 // ForEach executes given function for every cell in a row

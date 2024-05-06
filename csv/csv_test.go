@@ -157,7 +157,7 @@ func (s *CSVSuite) TestNil(c *C) {
 }
 
 func (s *CSVSuite) TestRow(c *C) {
-	r := Row{"test", "", "1234", "12.34", "Yes"}
+	r := Row{"test", "", "33", "12.34", "Yes"}
 	c.Assert(r.Size(), Equals, 5)
 	c.Assert(r.Cells(), Equals, 4)
 	c.Assert(r.IsEmpty(), Equals, false)
@@ -166,16 +166,43 @@ func (s *CSVSuite) TestRow(c *C) {
 	c.Assert(r.Get(0), Equals, "test")
 	c.Assert(r.Get(10), Equals, "")
 
-	ci, err := r.GetI(2)
-	c.Assert(ci, Equals, 1234)
+	i, err := r.GetI(2)
+	c.Assert(i, Equals, 33)
+	c.Assert(err, IsNil)
+	i8, err := r.GetI8(2)
+	c.Assert(i8, Equals, int8(33))
+	c.Assert(err, IsNil)
+	i16, err := r.GetI16(2)
+	c.Assert(i16, Equals, int16(33))
+	c.Assert(err, IsNil)
+	i32, err := r.GetI32(2)
+	c.Assert(i32, Equals, int32(33))
+	c.Assert(err, IsNil)
+	i64, err := r.GetI64(2)
+	c.Assert(i64, Equals, int64(33))
 	c.Assert(err, IsNil)
 
-	cf, err := r.GetF(3)
-	c.Assert(cf, Equals, 12.34)
+	f64, err := r.GetF(3)
+	c.Assert(f64, Equals, 12.34)
+	c.Assert(err, IsNil)
+	f32, err := r.GetF32(3)
+	c.Assert(f32, Equals, float32(12.34))
 	c.Assert(err, IsNil)
 
-	cu, err := r.GetU(2)
-	c.Assert(cu, Equals, uint64(1234))
+	u, err := r.GetU(2)
+	c.Assert(u, Equals, uint(33))
+	c.Assert(err, IsNil)
+	u8, err := r.GetU8(2)
+	c.Assert(u8, Equals, uint8(33))
+	c.Assert(err, IsNil)
+	u16, err := r.GetU16(2)
+	c.Assert(u16, Equals, uint16(33))
+	c.Assert(err, IsNil)
+	u32, err := r.GetU32(2)
+	c.Assert(u32, Equals, uint32(33))
+	c.Assert(err, IsNil)
+	u64, err := r.GetU64(2)
+	c.Assert(u64, Equals, uint64(33))
 	c.Assert(err, IsNil)
 
 	c.Assert(r.GetB(1), Equals, false)
@@ -187,8 +214,29 @@ func (s *CSVSuite) TestRow(c *C) {
 	dummyFn = func(i int, v string) error { return errors.New("1") }
 	c.Assert(r.ForEach(dummyFn), NotNil)
 
-	c.Assert(r.ToString(';'), Equals, "test;;1234;12.34;Yes")
-	c.Assert(string(r.ToBytes(';')), Equals, "test;;1234;12.34;Yes")
+	c.Assert(r.ToString(';'), Equals, "test;;33;12.34;Yes")
+	c.Assert(string(r.ToBytes(';')), Equals, "test;;33;12.34;Yes")
+
+	_, err = r.GetI8(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetI16(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetI32(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetI64(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetU(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetU8(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetU16(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetU32(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetU64(0)
+	c.Assert(err, NotNil)
+	_, err = r.GetF32(0)
+	c.Assert(err, NotNil)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
