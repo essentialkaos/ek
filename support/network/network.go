@@ -16,6 +16,8 @@ import (
 
 	"github.com/essentialkaos/ek/v12/netutil"
 	"github.com/essentialkaos/ek/v12/req"
+	"github.com/essentialkaos/ek/v12/sliceutil"
+	"github.com/essentialkaos/ek/v12/sortutil"
 
 	"github.com/essentialkaos/ek/v12/support"
 )
@@ -28,6 +30,12 @@ func Collect(ipResolverURL ...string) *support.NetworkInfo {
 		IPv4: cleanIPList(netutil.GetAllIP()),
 		IPv6: cleanIPList(netutil.GetAllIP6()),
 	}
+
+	sortutil.StringsNatural(info.IPv4)
+	sortutil.StringsNatural(info.IPv6)
+
+	info.IPv4 = sliceutil.Deduplicate(info.IPv4)
+	info.IPv6 = sliceutil.Deduplicate(info.IPv6)
 
 	info.Hostname, _ = os.Hostname()
 
