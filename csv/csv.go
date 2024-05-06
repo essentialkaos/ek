@@ -19,6 +19,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// COMMA is default separator for CSV cells
+const COMMA = ';'
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Reader is CSV reader struct
 type Reader struct {
 	Comma      rune
@@ -46,7 +51,7 @@ var ErrNilReader = errors.New("Reader is nil")
 // NewReader create new CSV reader
 func NewReader(r io.Reader) *Reader {
 	return &Reader{
-		Comma:      ';',
+		Comma:      COMMA,
 		SkipHeader: false,
 
 		br: bufio.NewReader(r),
