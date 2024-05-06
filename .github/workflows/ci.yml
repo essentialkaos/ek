@@ -42,7 +42,8 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
 
-      - uses: actions/cache@v4
+      - name: Use cache for dependencies data
+        uses: actions/cache@v4
         id: cache-deps
         with:
           path: |
@@ -95,7 +96,8 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
 
-      - uses: actions/cache@v4
+      - name: Use cache for dependencies data
+        uses: actions/cache@v4
         id: cache-deps
         with:
           path: |
