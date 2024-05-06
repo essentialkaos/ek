@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.123.0
+
+- `[csv]` Added method `Reader.Line`
+- `[csv]` Added more helpers for working with CSV row data
+
 ### 12.122.0
 
 - `[csv]` Added helpers for working with CSV row

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -25,16 +26,16 @@ func ExampleNew() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
+	r := NewReader(fd)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -48,17 +49,16 @@ func ExampleReader_Read() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
-	reader.Comma = ','
+	r := NewReader(fd)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -72,19 +72,17 @@ func ExampleReader_ReadTo() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd)
-	reader.Comma = ','
-
-	data := make([]string, 10)
+	r := NewReader(fd)
+	row := make(Row, 10)
 
 	for {
-		err := reader.ReadTo(data)
+		err := r.ReadTo(row)
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -98,16 +96,16 @@ func ExampleReader_WithComma() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd).WithComma(',')
+	r := NewReader(fd).WithComma(',')
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
 	}
 }
 
@@ -121,16 +119,42 @@ func ExampleReader_WithHeaderSkip() {
 
 	defer fd.Close()
 
-	reader := NewReader(fd).WithHeaderSkip(true)
+	r := NewReader(fd).WithHeaderSkip(true)
 
 	for {
-		data, err := reader.Read()
+		row, err := r.Read()
 
 		if err == io.EOF {
 			break
 		}
 
-		fmt.Printf("%#v\n", data)
+		fmt.Printf("%#v\n", row)
+	}
+}
+
+func ExampleReader_Line() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	r := NewReader(fd)
+
+	for {
+		row, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if !strings.HasPrefix(row.Get(0), "id-") {
+			fmt.Printf("Invalid value in row %d: value in cell 0 must have \"id-\" prefix", r.Line())
+			return
+		}
 	}
 }
 
@@ -229,6 +253,110 @@ func ExampleRow_GetI() {
 	// Balance: 0.34
 }
 
+func ExampleRow_GetI8() {
+	r := Row{"1", "John", "Doe", "0.34"}
+
+	id, err := r.GetI8(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	balance, err := r.GetF(3)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("First name: %s\n", r.Get(1))
+	fmt.Printf("Last name: %s\n", r.Get(2))
+	fmt.Printf("Balance: %g\n", balance)
+	// Output:
+	// ID: 1
+	// First name: John
+	// Last name: Doe
+	// Balance: 0.34
+}
+
+func ExampleRow_GetI16() {
+	r := Row{"1", "John", "Doe", "0.34"}
+
+	id, err := r.GetI16(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	balance, err := r.GetF(3)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("First name: %s\n", r.Get(1))
+	fmt.Printf("Last name: %s\n", r.Get(2))
+	fmt.Printf("Balance: %g\n", balance)
+	// Output:
+	// ID: 1
+	// First name: John
+	// Last name: Doe
+	// Balance: 0.34
+}
+
+func ExampleRow_GetI32() {
+	r := Row{"1", "John", "Doe", "0.34"}
+
+	id, err := r.GetI32(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	balance, err := r.GetF(3)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("First name: %s\n", r.Get(1))
+	fmt.Printf("Last name: %s\n", r.Get(2))
+	fmt.Printf("Balance: %g\n", balance)
+	// Output:
+	// ID: 1
+	// First name: John
+	// Last name: Doe
+	// Balance: 0.34
+}
+
+func ExampleRow_GetI64() {
+	r := Row{"1", "John", "Doe", "0.34"}
+
+	id, err := r.GetI64(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	balance, err := r.GetF(3)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("First name: %s\n", r.Get(1))
+	fmt.Printf("Last name: %s\n", r.Get(2))
+	fmt.Printf("Balance: %g\n", balance)
+	// Output:
+	// ID: 1
+	// First name: John
+	// Last name: Doe
+	// Balance: 0.34
+}
+
 func ExampleRow_GetF() {
 	r := Row{"1", "John", "Doe", "0.34"}
 
@@ -255,10 +383,108 @@ func ExampleRow_GetF() {
 	// Balance: 0.34
 }
 
+func ExampleRow_GetF32() {
+	r := Row{"1", "John", "Doe", "0.34"}
+
+	id, err := r.GetI(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	balance, err := r.GetF32(3)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("First name: %s\n", r.Get(1))
+	fmt.Printf("Last name: %s\n", r.Get(2))
+	fmt.Printf("Balance: %g\n", balance)
+	// Output:
+	// ID: 1
+	// First name: John
+	// Last name: Doe
+	// Balance: 0.34
+}
+
 func ExampleRow_GetU() {
 	r := Row{"1846915341", "user@domain.com", "Yes"}
 
 	id, err := r.GetU(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("Email: %s\n", r.Get(1))
+	fmt.Printf("Is active: %t\n", r.GetB(2))
+	// Output:
+	// ID: 1846915341
+	// Email: user@domain.com
+	// Is active: true
+}
+
+func ExampleRow_GetU8() {
+	r := Row{"184", "user@domain.com", "Yes"}
+
+	id, err := r.GetU8(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("Email: %s\n", r.Get(1))
+	fmt.Printf("Is active: %t\n", r.GetB(2))
+	// Output:
+	// ID: 184
+	// Email: user@domain.com
+	// Is active: true
+}
+
+func ExampleRow_GetU16() {
+	r := Row{"18469", "user@domain.com", "Yes"}
+
+	id, err := r.GetU16(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("Email: %s\n", r.Get(1))
+	fmt.Printf("Is active: %t\n", r.GetB(2))
+	// Output:
+	// ID: 18469
+	// Email: user@domain.com
+	// Is active: true
+}
+
+func ExampleRow_GetU32() {
+	r := Row{"1846915341", "user@domain.com", "Yes"}
+
+	id, err := r.GetU32(0)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("ID: %d\n", id)
+	fmt.Printf("Email: %s\n", r.Get(1))
+	fmt.Printf("Is active: %t\n", r.GetB(2))
+	// Output:
+	// ID: 1846915341
+	// Email: user@domain.com
+	// Is active: true
+}
+
+func ExampleRow_GetU64() {
+	r := Row{"1846915341", "user@domain.com", "Yes"}
+
+	id, err := r.GetU64(0)
 
 	if err != nil {
 		panic(err.Error())
