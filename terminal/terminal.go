@@ -65,7 +65,7 @@ func PrintActionStatus(status int) {
 // Error prints error message
 func Error(message any, args ...any) {
 	fmtc.Fprintf(
-		os.Stdout, ErrorColorTag+ErrorPrefix+"%s{!}\n",
+		os.Stderr, ErrorColorTag+ErrorPrefix+"%s{!}\n",
 		formatMessage(message, ErrorPrefix, args),
 	)
 }
@@ -73,7 +73,7 @@ func Error(message any, args ...any) {
 // Warn prints warning message
 func Warn(message any, args ...any) {
 	fmtc.Fprintf(
-		os.Stdout, WarnColorTag+WarnPrefix+"%s{!}\n",
+		os.Stderr, WarnColorTag+WarnPrefix+"%s{!}\n",
 		formatMessage(message, WarnPrefix, args),
 	)
 }
