@@ -2,7 +2,7 @@
 
 ### 12.123.2
 
-- `[terminal]` Fixed bug with output messages from `Error` and `Warn` to stdout insted of stderr
+- `[terminal]` Fixed bug with output messages from `Error` and `Warn` to stdout instead of stderr
 
 ### 12.123.1
 
