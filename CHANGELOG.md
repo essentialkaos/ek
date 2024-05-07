@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.123.1
+
+- `[support/network]` Sort and deduplicate IPs
+
 ### 12.123.0
 
 - `[csv]` Added method `Reader.Line`
