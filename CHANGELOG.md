@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.123.2
+
+- `[terminal]` Fixed bug with output messages from `Error` and `Warn` to stdout insted of stderr
+
 ### 12.123.1
 
 - `[support/network]` Sort and deduplicate IPs
