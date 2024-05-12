@@ -6,6 +6,15 @@ If you are using SublimeText 4 (`4075+`), we strongly recommend that you install
 
 ![#colors](../.github/images/fmtc_highlight.png)
 
+#### Environment variables
+
+`fmtc` supports configuration via environment variables.
+
+- `NO_COLOR` — disable all colors and modificators;
+- `FMTC_NO_BOLD` — disable **bold** text;
+- `FMTC_NO_ITALIC` — disable _italic_ text;
+- `FMTC_NO_BLINK` — disable blinking text.
+
 #### Modificators
 
 | Name          | Tag   | Reset Tag | Code |

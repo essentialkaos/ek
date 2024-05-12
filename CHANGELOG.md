@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.124.0
+
+- `[env]` Add `Variable` struct for lazy environment reading
+- `[fmtc]` Add support of `FMTC_NO_BOLD`, `FMTC_NO_ITALIC`, and `FMTC_NO_BLINK` environment variables
+
 ### 12.123.2
 
 - `[terminal]` Fixed bug with output messages from `Error` and `Warn` to stdout instead of stderr

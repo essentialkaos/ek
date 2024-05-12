@@ -13,6 +13,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/essentialkaos/ek/v12/env"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -109,26 +111,38 @@ func (s *FormatSuite) TestIsTag(c *C) {
 }
 
 func (s *FormatSuite) Test256Colors(c *C) {
-	term = "xterm-256color"
-	colorTerm = ""
+	origTerm := os.Getenv("TERM")
+	origColorTerm := os.Getenv("COLORTERM")
 
-	colorsSupportChecked = false
+	os.Setenv("TERM", "xterm-256color")
+	os.Setenv("COLORTERM", "")
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
+
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
 
 	c.Assert(Is256ColorsSupported(), Equals, true)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 
-	colorsSupportChecked = false
-	colors256Supported = false
-	colorsTCSupported = false
-	term = ""
-	colorTerm = ""
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
+
+	os.Setenv("TERM", "")
+	os.Setenv("COLORTERM", "")
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
 
 	c.Assert(Is256ColorsSupported(), Equals, false)
 	c.Assert(Is256ColorsSupported(), Equals, false)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 
-	term = os.Getenv("TERM")
-	colorTerm = os.Getenv("COLORTERM")
+	os.Setenv("TERM", origTerm)
+	os.Setenv("COLORTERM", origColorTerm)
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
 
 	c.Assert(Sprint("{#214}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
 	c.Assert(Sprint("{%214}O{!}"), Equals, "\x1b[48;5;214mO\x1b[0m")
@@ -139,29 +153,41 @@ func (s *FormatSuite) Test256Colors(c *C) {
 }
 
 func (s *FormatSuite) Test24BitColors(c *C) {
-	term = "xterm-256color"
-	colorTerm = "truecolor"
+	origTerm := os.Getenv("TERM")
+	origColorTerm := os.Getenv("COLORTERM")
 
-	colorsSupportChecked = false
+	os.Setenv("TERM", "xterm-256color")
+	os.Setenv("COLORTERM", "truecolor")
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
+
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
 
 	c.Assert(IsTrueColorSupported(), Equals, true)
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 	c.Assert(Is256ColorsSupported(), Equals, true)
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 	c.Assert(IsColorsSupported(), Equals, true)
 	c.Assert(IsColorsSupported(), Equals, true)
 
-	colorsSupportChecked = false
-	colors256Supported = false
-	colorsTCSupported = false
-	term = ""
-	colorTerm = ""
+	os.Setenv("TERM", "")
+	os.Setenv("COLORTERM", "")
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
+
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
 
 	c.Assert(IsTrueColorSupported(), Equals, false)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 
-	term = os.Getenv("TERM")
-	colorTerm = os.Getenv("COLORTERM")
+	os.Setenv("TERM", origTerm)
+	os.Setenv("COLORTERM", origColorTerm)
+	termEnvVar = env.Var("TERM")
+	colorTermEnvVar = env.Var("COLORTERM")
 
 	c.Assert(Sprint("{#f1c1b2}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
 	c.Assert(Sprint("{%1F2E3D}O{!}"), Equals, "\x1b[48;2;31;46;61mO\x1b[0m")
@@ -169,6 +195,22 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	c.Assert(Sprint("{#}o"), Equals, "{#}o")
 	c.Assert(Sprint("{#gggggg}o"), Equals, "{#gggggg}o")
 	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
+}
+
+func (s *FormatSuite) TestModDisable(c *C) {
+	os.Setenv("FMTC_FLAG", "1")
+
+	boldDisableEnvVar = env.Var("FMTC_FLAG")
+	italicDisableEnvVar = env.Var("FMTC_FLAG")
+	blinkDisableEnvVar = env.Var("FMTC_FLAG")
+
+	c.Assert(Sprint("{*}test{!}"), Equals, "test\x1b[0m")
+	c.Assert(Sprint("{&}test{!}"), Equals, "test\x1b[0m")
+	c.Assert(Sprint("{~}test{!}"), Equals, "test\x1b[0m")
+
+	boldDisableEnvVar = env.Var("FMTC_NO_BOLD")
+	italicDisableEnvVar = env.Var("FMTC_NO_ITALIC")
+	blinkDisableEnvVar = env.Var("FMTC_NO_BLINK")
 }
 
 func (s *FormatSuite) TestNamedColors(c *C) {

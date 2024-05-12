@@ -23,7 +23,19 @@ import (
 // Env is map with environment values
 type Env map[string]string
 
+// Variable is environment variable for lazy reading
+type Variable struct {
+	key    string
+	value  string
+	isRead bool
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Var creates new environment variable struct
+func Var(name string) *Variable {
+	return &Variable{key: name}
+}
 
 // Get return key-value map with environment values
 func Get() Env {
@@ -50,6 +62,43 @@ func Which(name string) string {
 	}
 
 	return ""
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Get returns environment variable value
+func (v *Variable) Get() string {
+	if v == nil {
+		return ""
+	}
+
+	if !v.isRead {
+		v.value = os.Getenv(v.key)
+		v.isRead = true
+	}
+
+	return v.value
+}
+
+// Is returns true if environment variable value is equal to given one
+func (v *Variable) Is(value string) bool {
+	return v.Get() == value
+}
+
+// String returns environment variable value as string
+func (v *Variable) String() string {
+	return v.Get()
+}
+
+// Reset resets reading state of variable
+func (v *Variable) Reset() *Variable {
+	if v == nil {
+		return nil
+	}
+
+	v.value, v.isRead = "", false
+
+	return v
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

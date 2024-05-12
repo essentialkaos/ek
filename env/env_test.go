@@ -8,6 +8,7 @@ package env
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"os"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -28,6 +29,10 @@ var _ = Suite(&ENVSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ENVSuite) TestEnv(c *C) {
+	if os.Getenv("EK_TEST_PORT") == "" {
+		os.Setenv("EK_TEST_PORT", "8080")
+	}
+
 	envs := Get()
 
 	c.Assert(envs["EK_TEST_PORT"], Equals, "8080")
@@ -42,4 +47,17 @@ func (s *ENVSuite) TestEnv(c *C) {
 
 	c.Assert(Which("cat"), Not(Equals), "")
 	c.Assert(Which("catABCD1234"), Equals, "")
+
+	var v *Variable
+
+	c.Assert(v.Get(), Equals, "")
+	c.Assert(v.String(), Equals, "")
+	c.Assert(v.Reset(), IsNil)
+
+	v = Var("EK_TEST_PORT")
+
+	c.Assert(v.Get(), Equals, "8080")
+	c.Assert(v.String(), Equals, "8080")
+	c.Assert(v.Is("8080"), Equals, true)
+	c.Assert(v.Reset(), NotNil)
 }

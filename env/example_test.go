@@ -35,3 +35,9 @@ func ExampleWhich() {
 
 	fmt.Printf("Full path to echo binary is %s\n", echoPath)
 }
+
+func ExampleVar() {
+	v := Var("PATH")
+
+	fmt.Println(v.Get())
+}
