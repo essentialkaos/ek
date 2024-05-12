@@ -80,10 +80,14 @@ var isColors256Supported bool // 256 colors support
 var isColorsTCSupported bool  // 24bit (TrueColor) colors support
 var isColorsSupportChecked bool
 
+var isBoldDisabled = os.Getenv("FMTC_NO_BOLD") != ""
+var isItalicDisabled = os.Getenv("FMTC_NO_ITALIC") != ""
+var isBlinkDisabled = os.Getenv("FMTC_NO_BLINK") != ""
+
 var colorsMap *sync.Map
 
-var term string
-var colorTerm string
+var term = os.Getenv("TERM")
+var colorTerm = os.Getenv("COLORTERM")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -394,6 +398,13 @@ func tag2ANSI(tag string, clean bool) string {
 	var chars string
 
 	for _, key := range tag {
+		switch {
+		case key == '*' && isBoldDisabled,
+			key == '&' && isItalicDisabled,
+			key == '~' && isBlinkDisabled:
+			continue
+		}
+
 		code := codes[key]
 
 		switch {
@@ -654,11 +665,6 @@ func isValidNamedTag(tag string) bool {
 }
 
 func checkForColorsSupport() {
-	if term == "" && colorTerm == "" {
-		term = os.Getenv("TERM")
-		colorTerm = os.Getenv("COLORTERM")
-	}
-
 	switch {
 	case strings.Contains(term, "xterm"),
 		strings.Contains(term, "color"),

@@ -112,14 +112,14 @@ func (s *FormatSuite) Test256Colors(c *C) {
 	term = "xterm-256color"
 	colorTerm = ""
 
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 
 	c.Assert(Is256ColorsSupported(), Equals, true)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 
-	colorsSupportChecked = false
-	colors256Supported = false
-	colorsTCSupported = false
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
 	term = ""
 	colorTerm = ""
 
@@ -142,18 +142,18 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	term = "xterm-256color"
 	colorTerm = "truecolor"
 
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 
 	c.Assert(IsTrueColorSupported(), Equals, true)
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 	c.Assert(Is256ColorsSupported(), Equals, true)
-	colorsSupportChecked = false
+	isColorsSupportChecked = false
 	c.Assert(IsColorsSupported(), Equals, true)
 	c.Assert(IsColorsSupported(), Equals, true)
 
-	colorsSupportChecked = false
-	colors256Supported = false
-	colorsTCSupported = false
+	isColorsSupportChecked = false
+	isColors256Supported = false
+	isColorsTCSupported = false
 	term = ""
 	colorTerm = ""
 
@@ -169,6 +169,20 @@ func (s *FormatSuite) Test24BitColors(c *C) {
 	c.Assert(Sprint("{#}o"), Equals, "{#}o")
 	c.Assert(Sprint("{#gggggg}o"), Equals, "{#gggggg}o")
 	c.Assert(Sprint("{#-1}o"), Equals, "{#-1}o")
+}
+
+func (s *FormatSuite) TestModDisable(c *C) {
+	isBoldDisabled = true
+	c.Assert(Sprint("{*}test{!}"), Equals, "test\x1b[0m")
+	isBoldDisabled = false
+
+	isItalicDisabled = true
+	c.Assert(Sprint("{&}test{!}"), Equals, "test\x1b[0m")
+	isItalicDisabled = false
+
+	isBlinkDisabled = true
+	c.Assert(Sprint("{~}test{!}"), Equals, "test\x1b[0m")
+	isBlinkDisabled = false
 }
 
 func (s *FormatSuite) TestNamedColors(c *C) {
