@@ -19,6 +19,7 @@ import (
 	"sync"
 
 	"github.com/essentialkaos/ek/v12/color"
+	"github.com/essentialkaos/ek/v12/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -80,14 +81,14 @@ var isColors256Supported bool // 256 colors support
 var isColorsTCSupported bool  // 24bit (TrueColor) colors support
 var isColorsSupportChecked bool
 
-var isBoldDisabled = os.Getenv("FMTC_NO_BOLD") != ""
-var isItalicDisabled = os.Getenv("FMTC_NO_ITALIC") != ""
-var isBlinkDisabled = os.Getenv("FMTC_NO_BLINK") != ""
+var boldDisableEnvVar = env.Var("FMTC_NO_BOLD")
+var italicDisableEnvVar = env.Var("FMTC_NO_ITALIC")
+var blinkDisableEnvVar = env.Var("FMTC_NO_BLINK")
 
 var colorsMap *sync.Map
 
-var term = os.Getenv("TERM")
-var colorTerm = os.Getenv("COLORTERM")
+var termEnvVar = env.Var("TERM")
+var colorTermEnvVar = env.Var("COLORTERM")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -399,9 +400,9 @@ func tag2ANSI(tag string, clean bool) string {
 
 	for _, key := range tag {
 		switch {
-		case key == '*' && isBoldDisabled,
-			key == '&' && isItalicDisabled,
-			key == '~' && isBlinkDisabled:
+		case key == '*' && !boldDisableEnvVar.Is(""),
+			key == '&' && !italicDisableEnvVar.Is(""),
+			key == '~' && !blinkDisableEnvVar.Is(""):
 			continue
 		}
 
@@ -665,6 +666,9 @@ func isValidNamedTag(tag string) bool {
 }
 
 func checkForColorsSupport() {
+	term := termEnvVar.Get()
+	colorTerm := colorTermEnvVar.Get()
+
 	switch {
 	case strings.Contains(term, "xterm"),
 		strings.Contains(term, "color"),
