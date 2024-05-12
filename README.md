@@ -54,7 +54,7 @@ go get -u github.com/essentialkaos/ek/v12
 * [`errutil`](https://kaos.sh/g/ek.v12/errutil) — Package provides methods for working with errors
 * [`events`](https://kaos.sh/g/ek.v12/events) — Package provides methods and structs for creating event-driven systems
 * [`directio`](https://kaos.sh/g/ek.v12/directio) — Package provides methods for reading/writing files with direct io
-* [`fmtc`](https://kaos.sh/g/ek.v12/fmtc) — Package provides methods similar to fmt for colored output
+* [`fmtc`](https://kaos.sh/g/ek.v12/fmtc) — Package provides methods similar to fmt for colored output ([more info](fmtc/README.md))
 * [`fmtutil`](https://kaos.sh/g/ek.v12/fmtutil) — Package provides methods for output formatting
 * [`fmtutil/barcode`](https://kaos.sh/g/ek.v12/fmtutil/barcode) — Package provides methods to generate colored representation of unique data
 * [`fmtutil/panel`](https://kaos.sh/g/ek.v12/fmtutil/panel) — Package contains methods for rendering panels with text
