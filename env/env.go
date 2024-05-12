@@ -90,6 +90,17 @@ func (v *Variable) String() string {
 	return v.Get()
 }
 
+// Reset resets reading state of variable
+func (v *Variable) Reset() *Variable {
+	if v == nil {
+		return nil
+	}
+
+	v.value, v.isRead = "", false
+
+	return v
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Path return path as string slice

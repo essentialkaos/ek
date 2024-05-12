@@ -52,10 +52,12 @@ func (s *ENVSuite) TestEnv(c *C) {
 
 	c.Assert(v.Get(), Equals, "")
 	c.Assert(v.String(), Equals, "")
+	c.Assert(v.Reset(), IsNil)
 
 	v = Var("EK_TEST_PORT")
 
 	c.Assert(v.Get(), Equals, "8080")
 	c.Assert(v.String(), Equals, "8080")
 	c.Assert(v.Is("8080"), Equals, true)
+	c.Assert(v.Reset(), NotNil)
 }

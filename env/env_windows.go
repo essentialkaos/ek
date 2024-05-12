@@ -52,6 +52,11 @@ func (v *Variable) String() string {
 	panic("UNSUPPORTED")
 }
 
+// ❗ Reset resets reading state of variable
+func (v *Variable) Reset() *Variable {
+	panic("UNSUPPORTED")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ Path return path as string slice
