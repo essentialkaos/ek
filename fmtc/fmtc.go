@@ -75,15 +75,15 @@ var DisableColors = os.Getenv("NO_COLOR") != ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var colorsSupported bool    // 16 colors support
-var colors256Supported bool // 256 colors support
-var colorsTCSupported bool  // 24bit (TrueColor) colors support
-var colorsSupportChecked bool
+var isColorsSupported bool    // 16 colors support
+var isColors256Supported bool // 256 colors support
+var isColorsTCSupported bool  // 24bit (TrueColor) colors support
+var isColorsSupportChecked bool
 
 var colorsMap *sync.Map
 
-var term = os.Getenv("TERM")
-var colorTerm = os.Getenv("COLORTERM")
+var term string
+var colorTerm string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -329,35 +329,35 @@ func Bell() {
 
 // IsColorsSupported returns true if 16 colors is supported by terminal
 func IsColorsSupported() bool {
-	if colorsSupportChecked {
-		return colorsSupported
+	if isColorsSupportChecked {
+		return isColorsSupported
 	}
 
 	checkForColorsSupport()
 
-	return colorsSupported
+	return isColorsSupported
 }
 
 // Is256ColorsSupported returns true if 256 colors is supported by terminal
 func Is256ColorsSupported() bool {
-	if colorsSupportChecked {
-		return colors256Supported
+	if isColorsSupportChecked {
+		return isColors256Supported
 	}
 
 	checkForColorsSupport()
 
-	return colors256Supported
+	return isColors256Supported
 }
 
 // IsTrueColorSupported returns true if TrueColor (24-bit colors) is supported by terminal
 func IsTrueColorSupported() bool {
-	if colorsSupportChecked {
-		return colorsTCSupported
+	if isColorsSupportChecked {
+		return isColorsTCSupported
 	}
 
 	checkForColorsSupport()
 
-	return colorsTCSupported
+	return isColorsTCSupported
 }
 
 // IsTag tests whether the given value is a valid color tag (or sequence
@@ -654,24 +654,29 @@ func isValidNamedTag(tag string) bool {
 }
 
 func checkForColorsSupport() {
+	if term == "" && colorTerm == "" {
+		term = os.Getenv("TERM")
+		colorTerm = os.Getenv("COLORTERM")
+	}
+
 	switch {
 	case strings.Contains(term, "xterm"),
 		strings.Contains(term, "color"),
 		term == "screen":
-		colorsSupported = true
+		isColorsSupported = true
 	}
 
 	if strings.Contains(term, "256color") {
-		colors256Supported = true
+		isColors256Supported = true
 	}
 
 	if term == "iterm" || colorTerm == "truecolor" ||
 		strings.Contains(term, "truecolor") ||
 		strings.HasPrefix(term, "vte") {
-		colors256Supported, colorsTCSupported = true, true
+		isColors256Supported, isColorsTCSupported = true, true
 	}
 
-	colorsSupportChecked = true
+	isColorsSupportChecked = true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
