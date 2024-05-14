@@ -88,6 +88,11 @@ type Field struct {
 	Value any
 }
 
+// Fields is a field collection
+type Fields struct {
+	data []Field
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Global is global logger struct
@@ -462,6 +467,34 @@ func (f Field) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Add adds given fields to collection
+func (f *Fields) Add(fields ...Field) *Fields {
+	if f == nil || len(fields) == 0 {
+		return f
+	}
+
+	for _, ff := range fields {
+		if ff.Key != "" {
+			f.data = append(f.data, ff)
+		}
+	}
+
+	return f
+}
+
+// Reset removes all fields from collection
+func (f *Fields) Reset() *Fields {
+	if f == nil {
+		return f
+	}
+
+	f.data = nil
+
+	return f
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // writeText writes text message into log
 func (l *Logger) writeText(level uint8, f string, a ...any) error {
 	var color string
@@ -789,6 +822,21 @@ func fieldsToText(fields []any) string {
 // splitPayload split mixed payload to format string operands and fields
 func splitPayload(payload []any) ([]any, []any) {
 	firstField := -1
+
+	// Expand Fields
+	for i := 0; i < len(payload); i++ {
+		switch t := payload[i].(type) {
+		case *Fields:
+			for _, ff := range t.data {
+				payload = append(payload, ff)
+			}
+		case Fields:
+			for _, ff := range t.data {
+				payload = append(payload, ff)
+			}
+		}
+	}
+
 	lastField := len(payload)
 
 	// Remove all fields without key
@@ -799,6 +847,9 @@ func splitPayload(payload []any) ([]any, []any) {
 				payload[i], payload[lastField-1] = payload[lastField-1], payload[i]
 				lastField--
 			}
+		case Fields, *Fields:
+			payload[i], payload[lastField-1] = payload[lastField-1], payload[i]
+			lastField--
 		}
 	}
 
