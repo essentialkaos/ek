@@ -53,6 +53,12 @@ func Example() {
 	// Add fields to message
 	logger.Debug("This is %d %s message", 2, "debug", F{"user", "bob"}, F{"id", 200})
 
+	// Or collection of fields. Fields do not require initialization.
+	var logFields Fields
+	logFields.Add(F{"user", "bob"}, F{"id", 200})
+
+	logger.Debug("This is %d %s message", 2, "debug", logFields)
+
 	// AUX message it's unskippable message which will be printed to log file with
 	// any minimum level
 	//

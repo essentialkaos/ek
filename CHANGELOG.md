@@ -1,5 +1,11 @@
 ## Changelog
 
+### 12.125.0
+
+- `[log]` Added field collection support
+- `[log]` Ignore fields without key
+- `[log]` Fixed formatting of JSON output when no message is passed
+
 ### 12.124.0
 
 - `[env]` Add `Variable` struct for lazy environment reading
