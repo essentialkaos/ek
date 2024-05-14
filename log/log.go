@@ -591,7 +591,9 @@ func (l *Logger) writeJSON(level uint8, msg string, a ...any) error {
 	}
 
 	if len(fields) != 0 {
-		l.buf.WriteRune(',')
+		if msg != "" {
+			l.buf.WriteRune(',')
+		}
 		l.writeJSONFields(fields)
 	}
 

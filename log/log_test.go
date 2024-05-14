@@ -829,8 +829,10 @@ func (s *LogSuite) BenchmarkJSONWrite(c *C) {
 
 	l.UseJSON = true
 
+	f1, f2 := F{"test1", 1}, F{"test2", false}
+
 	for i := 0; i < c.N; i++ {
-		l.Info("Test %s %s", "test", F{"test1", 1}, "abcd", F{"test2", false})
+		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }
 
@@ -839,8 +841,10 @@ func (s *LogSuite) BenchmarkTextWrite(c *C) {
 
 	c.Assert(err, IsNil)
 
+	f1, f2 := F{"test1", 1}, F{"test2", false}
+
 	for i := 0; i < c.N; i++ {
-		l.Info("Test %s %s", "test", F{"test1", 1}, "abcd", F{"test2", false})
+		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }
 
