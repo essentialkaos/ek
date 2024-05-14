@@ -495,12 +495,12 @@ func (ls *LogSuite) TestWithFields(c *C) {
 
 	c.Assert(err, IsNil)
 
-	c.Assert(l.Info("Test info %d", 1, F{"name", "john"}, F{"id", 1}), IsNil)
+	c.Assert(l.Info("Test info %d %s", 1, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test"), IsNil)
 
 	l.UseColors = true
 	fmtc.DisableColors = true
 
-	c.Assert(l.Info("Test info %d", 2, F{"name", "john"}, F{"id", 1}), IsNil)
+	c.Assert(l.Info("Test info %d %s", 2, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test"), IsNil)
 
 	fmtc.DisableColors = false
 
@@ -513,8 +513,8 @@ func (ls *LogSuite) TestWithFields(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "Test info 1 {name: john | id: 1}")
-	c.Assert(dataSlice[1][28:], Equals, "Test info 2 {name: john | id: 1}")
+	c.Assert(dataSlice[0][28:], Equals, "Test info 1 test {id: 1 | name: john}")
+	c.Assert(dataSlice[1][28:], Equals, "Test info 2 test {id: 1 | name: john}")
 }
 
 func (ls *LogSuite) TestBufIODaemon(c *C) {
@@ -789,6 +789,15 @@ func (ls *LogSuite) TestFields(c *C) {
 	l.writeJSONField(F{"test", []string{"A"}})
 	c.Assert(l.buf.String(), Equals, "\"test\":\"[A]\"")
 	l.buf.Reset()
+}
+
+func (ls *LogSuite) TestPayloadSplitter(c *C) {
+	p := []any{1, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test"}
+	p1, p2 := splitPayload(p)
+
+	c.Assert(p1, HasLen, 2)
+	c.Assert(p1, DeepEquals, []any{1, "test"})
+	c.Assert(p2, HasLen, 2)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

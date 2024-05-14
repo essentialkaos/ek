@@ -654,7 +654,7 @@ func (l *Logger) writeJSONTimestamp() {
 	l.buf.WriteString(`"ts":`)
 
 	if l.TimeLayout == "" {
-		l.buf.WriteString(strconv.FormatFloat(float64(time.Now().UnixMicro())/1000000, 'f', -1, 64))
+		l.buf.WriteString(strconv.FormatFloat(float64(time.Now().UnixMicro())/1_000_000, 'f', -1, 64))
 	} else {
 		l.buf.WriteRune('"')
 		l.buf.WriteString(l.formatDateTime(time.Now(), true))
@@ -670,7 +670,6 @@ func (l *Logger) writeJSONFields(fields []any) {
 		switch t := f.(type) {
 		case Field:
 			l.writeJSONField(t)
-
 			if i+1 != len(fields) {
 				l.buf.WriteRune(',')
 			}
@@ -767,29 +766,45 @@ func convertMinLevelValue(level any) (uint8, error) {
 
 // fieldsToText converts fields slice to string
 func fieldsToText(fields []any) string {
-	var result string
+	var buf bytes.Buffer
 
-	result += "{"
+	buf.WriteRune('{')
 
 	for i, f := range fields {
-		field := f.(Field)
+		switch t := f.(type) {
+		case Field:
+			fmt.Fprintf(&buf, "%s: %v", t.Key, t.Value)
 
-		result += fmt.Sprintf("%s: %v", field.Key, field.Value)
-
-		if i+1 != len(fields) {
-			result += " | "
+			if i+1 != len(fields) {
+				buf.WriteString(" | ")
+			}
 		}
 	}
 
-	result += "}"
+	buf.WriteRune('}')
 
-	return result
+	return buf.String()
 }
 
 // splitPayload split mixed payload to format string operands and fields
 func splitPayload(payload []any) ([]any, []any) {
 	firstField := -1
+	lastField := len(payload)
 
+	// Remove all fields without key
+	for i := 0; i < lastField; i++ {
+		switch t := payload[i].(type) {
+		case Field:
+			if t.Key == "" {
+				payload[i], payload[lastField-1] = payload[lastField-1], payload[i]
+				lastField--
+			}
+		}
+	}
+
+	payload = payload[:lastField]
+
+	// Move non-field values to the beginning of the slice
 	for i, p := range payload {
 		switch p.(type) {
 		case Field:
