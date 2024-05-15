@@ -75,6 +75,8 @@ func Example() {
 	logger.Flush()
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func ExampleNew() {
 	logger, err := New("/path/to/file.log", 0644)
 
@@ -273,6 +275,8 @@ func ExampleIs() {
 	}
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func ExampleLogger_Reopen() {
 	logger, err := New("/path/to/file.log", 0644)
 
@@ -450,4 +454,27 @@ func ExampleLogger_Is() {
 	if logger.Is(INFO) {
 		logger.Info("Info message")
 	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleFields_Add() {
+	// Fields do not require initialization
+	var f Fields
+
+	f.Add(F{"user", "bob"}, F{"id", 200})
+
+	Debug("This is %d %s message", 2, "debug", f)
+}
+
+func ExampleFields_Reset() {
+	// Fields do not require initialization
+	var f Fields
+
+	f.Add(F{"user", "bob"}, F{"id", 200})
+	Debug("This is %d %s message", 2, "debug", f)
+
+	// With Reset you can reuse Fields instance
+	f.Reset().Add(F{"user", "john"}, F{"id", 201})
+	Debug("This is %d %s message", 3, "debug", f)
 }
