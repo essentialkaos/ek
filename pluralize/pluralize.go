@@ -48,6 +48,7 @@ func PluralizeSpecial[N mathutil.Numeric](p Pluralizer, n N, data ...string) str
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// safeSliceGet returns value from slice with given index
 func safeSliceGet(data []string, index int) string {
 	if len(data) < index {
 		return ""
@@ -88,6 +89,7 @@ func convertNumber(n any) uint64 {
 	return 0
 }
 
+// isNumberFirst returns true if number is first in format string
 func isNumberFirst(format string) bool {
 	return strings.Index(format, "%s") == strings.LastIndex(format, "%")
 }
