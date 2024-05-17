@@ -48,6 +48,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`fsutil`](https://kaos.sh/g/ek.v12/fsutil) — Package provides methods for working with files on POSIX compatible systems (_BSD/Linux/macOS_)
 - [`hash`](https://kaos.sh/g/ek.v12/hash) — Package hash contains different hash algorithms and utilities
 - [`httputil`](https://kaos.sh/g/ek.v12/httputil) — Package provides methods for working with HTTP request/responses
+- [`i18n`](https://kaos.sh/g/ek.v12/i18n) — Package provides methods and structs for internationalization
 - [`initsystem`](https://kaos.sh/g/ek.v12/initsystem) — Package provides methods for working with different init systems (_sysv, upstart, systemd_)
 - [`initsystem/sdnotify`](https://kaos.sh/g/ek.v12/initsystem/sdnotify) — Package provides methods methods for sending [notifications to systemd](https://www.freedesktop.org/software/systemd/man/latest/sd_notify.html#Well-known%20assignments)
 - [`jsonutil`](https://kaos.sh/g/ek.v12/jsonutil) — Package provides methods for working with JSON data

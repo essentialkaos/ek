@@ -2,6 +2,7 @@
 
 ### 12.125.0
 
+- `[i18n]` Added new package for internationalization
 - `[log]` Added field collection support
 - `[log]` Ignore fields without key
 - `[log]` Fixed formatting of JSON output when no message is passed
