@@ -24,7 +24,7 @@ import (
 // String is a simple string
 type String string
 
-// Data can be used for stroing data for templates
+// Data can be used for storing data for templates
 type Data map[string]any
 
 // ////////////////////////////////////////////////////////////////////////////////// //
