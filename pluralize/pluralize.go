@@ -11,6 +11,8 @@ package pluralize
 import (
 	"fmt"
 	"strings"
+
+	"github.com/essentialkaos/ek/v12/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -21,33 +23,27 @@ var DefaultPluralizer = En
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // P pluralizes a word based on the passed number with custom format
-func P(format string, n any, data ...string) string {
+func P[N mathutil.Numeric](format string, n N, data ...string) string {
 	return PS(DefaultPluralizer, format, n, data...)
 }
 
 // PS pluralizes a word based on the passed number with custom pluralizer and format
-func PS(p Pluralizer, format string, n any, data ...string) string {
-	nk, ok := convertNumber(n)
-
-	if !ok {
-		return format
-	}
-
+func PS[N mathutil.Numeric](p Pluralizer, format string, n N, data ...string) string {
 	if isNumberFirst(format) {
-		return fmt.Sprintf(format, n, PluralizeSpecial(p, nk, data...))
+		return fmt.Sprintf(format, n, PluralizeSpecial(p, convertNumber(n), data...))
 	}
 
-	return fmt.Sprintf(format, PluralizeSpecial(p, nk, data...), n)
+	return fmt.Sprintf(format, PluralizeSpecial(p, convertNumber(n), data...), n)
 }
 
 // Pluralize pluralizes a word based on the passed number
-func Pluralize(n int, data ...string) string {
+func Pluralize[N mathutil.Numeric](n N, data ...string) string {
 	return PluralizeSpecial(DefaultPluralizer, n, data...)
 }
 
 // PluralizeSpecial pluralizes a word based on the passed number with custom pluralizer
-func PluralizeSpecial(p Pluralizer, n int, data ...string) string {
-	return safeSliceGet(data, p(n))
+func PluralizeSpecial[N mathutil.Numeric](p Pluralizer, n N, data ...string) string {
+	return safeSliceGet(data, p(convertNumber(n)))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -60,27 +56,36 @@ func safeSliceGet(data []string, index int) string {
 	return data[index]
 }
 
-func convertNumber(n any) (int, bool) {
+// convertNumber converts numeric to uint64
+func convertNumber(n any) uint64 {
 	switch u := n.(type) {
-	case int32:
-		return int(u), true
-	case int64:
-		return int(u), true
-	case uint:
-		return int(u), true
-	case uint32:
-		return int(u), true
-	case uint64:
-		return int(u), true
-	case float32:
-		return int(u), true
-	case float64:
-		return int(u), true
 	case int:
-		return n.(int), true
-	default:
-		return 0, false
+		return uint64(mathutil.Abs(u))
+	case int8:
+		return uint64(mathutil.Abs(u))
+	case int16:
+		return uint64(mathutil.Abs(u))
+	case int32:
+		return uint64(mathutil.Abs(u))
+	case int64:
+		return uint64(mathutil.Abs(u))
+	case uint:
+		return uint64(u)
+	case uint8:
+		return uint64(u)
+	case uint16:
+		return uint64(u)
+	case uint32:
+		return uint64(u)
+	case uint64:
+		return uint64(u)
+	case float32:
+		return uint64(mathutil.Abs(u))
+	case float64:
+		return uint64(mathutil.Abs(u))
 	}
+
+	return 0
 }
 
 func isNumberFirst(format string) bool {

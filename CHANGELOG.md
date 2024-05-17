@@ -5,6 +5,8 @@
 - `[log]` Added field collection support
 - `[log]` Ignore fields without key
 - `[log]` Fixed formatting of JSON output when no message is passed
+- `[pluralize]` Fixed bug with handling negative numbers
+- `[pluralize]` Code refactoring
 
 ### 12.124.0
 
