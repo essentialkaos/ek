@@ -21,14 +21,15 @@ type I18NSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type testBundle struct {
+	GREETING      String
+	EXIT_QUESTION String
+	ERRORS        *testErrors
+}
+
 type testErrors struct {
 	UNKNOWN_USER String
 	UNKNOWN_ID   String
-}
-
-type testBundle struct {
-	GREETING String
-	ERRORS   *testErrors
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -86,6 +87,36 @@ func (s *I18NSuite) TestFallback(c *C) {
 	c.Assert(l.GREETING.String(), Equals, "Сәлеметсіз бе!")
 	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, `Неизвестный пользователь johndoe`)
 	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, `Unknown ID 183`)
+}
+
+func (s *I18NSuite) TestIsComplete(c *C) {
+	en := &testBundle{
+		GREETING:      "Hello!",
+		EXIT_QUESTION: "Do you really want to exit?",
+		ERRORS: &testErrors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	ru := &testBundle{
+		GREETING: "Привет!",
+		ERRORS: &testErrors{
+			UNKNOWN_USER: "Неизвестный пользователь {{.Username}}",
+		},
+	}
+
+	ic, f := IsComplete(nil)
+	c.Assert(ic, Equals, false)
+	c.Assert(f, HasLen, 0)
+
+	ic, f = IsComplete(en)
+	c.Assert(ic, Equals, true)
+	c.Assert(f, HasLen, 0)
+
+	ic, f = IsComplete(ru)
+	c.Assert(ic, Equals, false)
+	c.Assert(f, DeepEquals, []string{"EXIT_QUESTION", "ERRORS.UNKNOWN_ID"})
 }
 
 func (s *I18NSuite) TestWith(c *C) {

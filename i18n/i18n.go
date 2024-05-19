@@ -76,6 +76,18 @@ func Fallback(bundles ...any) (any, error) {
 	return bundles[len(bundles)-1], nil
 }
 
+// IsComplete checks if given bundle is complete and returns slice with
+// empty fields
+func IsComplete(bundle any) (bool, []string) {
+	if bundle == nil {
+		return false, nil
+	}
+
+	b := reflect.Indirect(reflect.ValueOf(bundle))
+
+	return isCompleteBundle(b, "")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // With uses String as a templates and applies payload from given data to it
@@ -222,6 +234,33 @@ func getFields(bundles []reflect.Value, index int) []reflect.Value {
 	}
 
 	return result
+}
+
+// isCompleteBundle checks given object for empty fields
+func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
+	var incompleteFields []string
+
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		typ := f.Type().String()
+
+		if typ == "i18n.String" {
+			if f.IsZero() {
+				incompleteFields = append(
+					incompleteFields,
+					parentName+v.Type().Field(i).Name,
+				)
+			}
+		} else if strings.HasPrefix(typ, "*") {
+			_, fs := isCompleteBundle(f.Elem(), parentName+v.Type().Field(i).Name+".")
+
+			if len(fs) > 0 {
+				incompleteFields = append(incompleteFields, fs...)
+			}
+		}
+	}
+
+	return len(incompleteFields) == 0, incompleteFields
 }
 
 // getPluralizerByLang returns pluralization function by language name

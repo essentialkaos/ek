@@ -7,7 +7,10 @@ package i18n
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -61,6 +64,36 @@ func ExampleFallback() {
 	// Сәлеметсіз бе!
 	// Неизвестный пользователь johndoe
 	// Unknown ID 183
+}
+
+func ExampleIsComplete() {
+	en := &Bundle{
+		GREETING: "Hello!",
+		MESSAGE:  "Hi user!",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	ru := &Bundle{
+		GREETING: "Привет!",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Неизвестный пользователь {{.Username}}",
+		},
+	}
+
+	isComplete, _ := IsComplete(en)
+
+	fmt.Printf("EN is complete: %t\n", isComplete)
+
+	isComplete, fields := IsComplete(ru)
+
+	fmt.Printf("RU is complete: %t (empty: %s)\n", isComplete, strings.Join(fields, ", "))
+
+	// Output:
+	// EN is complete: true
+	// RU is complete: false (empty: MESSAGE, ERRORS.UNKNOWN_ID)
 }
 
 func ExampleString_With() {
