@@ -119,6 +119,11 @@ func (s String) String() string {
 	return string(s)
 }
 
+// S is shortcut for String
+func (s String) S() string {
+	return string(s)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Plural prints plural form of word based on language and value

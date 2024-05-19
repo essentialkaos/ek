@@ -85,6 +85,7 @@ func (s *I18NSuite) TestFallback(c *C) {
 	}
 
 	c.Assert(l.GREETING.String(), Equals, "Сәлеметсіз бе!")
+	c.Assert(l.GREETING.S(), Equals, "Сәлеметсіз бе!")
 	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, `Неизвестный пользователь johndoe`)
 	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, `Unknown ID 183`)
 }
