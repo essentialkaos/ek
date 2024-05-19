@@ -19,6 +19,11 @@ type Bundle struct {
 	MESSAGE  String
 
 	ERRORS *Errors
+
+	// You can also store additional information, which will not be merged by the
+	// fallback method
+	DateFormat string
+	TimeFormat string
 }
 
 type Errors struct {
@@ -30,6 +35,9 @@ type Errors struct {
 
 func ExampleFallback() {
 	en := &Bundle{
+		DateFormat: "%D",
+		TimeFormat: "%l:%M %p",
+
 		GREETING: "Hello!",
 		ERRORS: &Errors{
 			UNKNOWN_USER: "Unknown user {{.Username}}",
@@ -38,6 +46,9 @@ func ExampleFallback() {
 	}
 
 	ru := &Bundle{
+		DateFormat: "%Y/%m/%d",
+		TimeFormat: "%H:%M",
+
 		GREETING: "Привет!",
 		ERRORS: &Errors{
 			UNKNOWN_USER: "Неизвестный пользователь {{.Username}}",
@@ -45,6 +56,9 @@ func ExampleFallback() {
 	}
 
 	kz := &Bundle{
+		DateFormat: "%Y/%m/%d",
+		TimeFormat: "%H:%M",
+
 		GREETING: "Сәлеметсіз бе!",
 	}
 

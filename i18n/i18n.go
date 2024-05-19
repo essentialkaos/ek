@@ -35,7 +35,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Fallback copies values between bundles to use it as fallback
+// Fallback copies values between bundles to use it as a fallback
 func Fallback(bundles ...any) (any, error) {
 	switch len(bundles) {
 	case 0:
