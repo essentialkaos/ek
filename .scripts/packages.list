@@ -17,6 +17,7 @@
 * + fsutil
 * + hash
 * + httputil
+* + i18n
 * - initsystem
 * ! initsystem/sdnotify
 * + jsonutil

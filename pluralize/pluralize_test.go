@@ -28,16 +28,23 @@ func (s *PluralizeSuite) TestBasic(c *C) {
 
 	c.Assert(P("%d %s", 1, data...), Equals, "1 A")
 	c.Assert(P("%s %d", 2, data...), Equals, "B 2")
+	c.Assert(P("%d %s", -1, data...), Equals, "-1 A")
+	c.Assert(P("%s %d", -2, data...), Equals, "B -2")
 	c.Assert(PS(En, "%s %d", 2, data...), Equals, "B 2")
 
+	c.Assert(P("%d %s", int8(1), data...), Equals, "1 A")
+	c.Assert(P("%d %s", int16(1), data...), Equals, "1 A")
 	c.Assert(P("%d %s", int32(1), data...), Equals, "1 A")
 	c.Assert(P("%d %s", int64(1), data...), Equals, "1 A")
 	c.Assert(P("%d %s", uint(1), data...), Equals, "1 A")
+	c.Assert(P("%d %s", uint8(1), data...), Equals, "1 A")
+	c.Assert(P("%d %s", uint16(1), data...), Equals, "1 A")
 	c.Assert(P("%d %s", uint32(1), data...), Equals, "1 A")
 	c.Assert(P("%d %s", uint64(1), data...), Equals, "1 A")
 	c.Assert(P("%g %s", 1.1, data...), Equals, "1.1 A")
 	c.Assert(P("%g %s", float32(1.1), data...), Equals, "1.1 A")
-	c.Assert(P("%g %s", "", data...), Equals, "%g %s")
+
+	c.Assert(convertNumber("abcd"), Equals, uint64(0))
 }
 
 func (s *PluralizeSuite) TestAf(c *C) {

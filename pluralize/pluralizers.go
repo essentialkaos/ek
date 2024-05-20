@@ -3,12 +3,12 @@ package pluralize
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Pluralizer is pluralization rule function
-type Pluralizer func(num int) int
+type Pluralizer func(num uint64) int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Ach is pluralization rule for Acholi language
-var Ach = func(n int) int {
+var Ach = func(n uint64) int {
 	if n > 1 {
 		return 1
 	}
@@ -17,7 +17,7 @@ var Ach = func(n int) int {
 }
 
 // Af is pluralization rule for Afrikaans language
-var Af = func(n int) int {
+var Af = func(n uint64) int {
 	if n != 1 {
 		return 1
 	}
@@ -38,10 +38,14 @@ var An = Af
 var Anp = Af
 
 // Ar is pluralization rule for Arabic language
-var Ar = func(n int) int {
+var Ar = func(n uint64) int {
 	switch n {
-	case 0, 1, 2:
-		return n
+	case 0:
+		return 0
+	case 1:
+		return 1
+	case 2:
+		return 2
 	}
 
 	if n%100 >= 3 && n%100 <= 10 {
@@ -65,13 +69,13 @@ var As = Af
 var Ast = Af
 
 // Ay is pluralization rule for Aymará language
-var Ay = func(n int) int { return 0 }
+var Ay = func(n uint64) int { return 0 }
 
 // Az is pluralization rule for Azerbaijani language
 var Az = Af
 
 // Be is pluralization rule for Belarusian language
-var Be = func(n int) int {
+var Be = func(n uint64) int {
 	if n%10 == 1 && n%100 != 11 {
 		return 0
 	}
@@ -108,7 +112,7 @@ var Ca = Af
 var Cgg = Ay
 
 // Cs is pluralization rule for Czech language
-var Cs = func(n int) int {
+var Cs = func(n uint64) int {
 	if n == 1 {
 		return 0
 	}
@@ -121,7 +125,7 @@ var Cs = func(n int) int {
 }
 
 // Csb is pluralization rule for Kashubian language
-var Csb = func(n int) int {
+var Csb = func(n uint64) int {
 	if n == 1 {
 		return 0
 	}
@@ -134,10 +138,12 @@ var Csb = func(n int) int {
 }
 
 // Cy is pluralization rule for Welsh language
-var Cy = func(n int) int {
+var Cy = func(n uint64) int {
 	switch n {
-	case 1, 2:
-		return n - 1
+	case 1:
+		return 0
+	case 2:
+		return 1
 	}
 
 	if n != 8 && n != 11 {
@@ -205,10 +211,12 @@ var Fur = Af
 var Fy = Af
 
 // Ga is pluralization rule for Irish language
-var Ga = func(n int) int {
+var Ga = func(n uint64) int {
 	switch n {
-	case 1, 2:
-		return n - 1
+	case 1:
+		return 0
+	case 2:
+		return 1
 	}
 
 	if n > 2 && n < 7 {
@@ -223,7 +231,7 @@ var Ga = func(n int) int {
 }
 
 // Gd is pluralization rule for Scottish Gaelic language
-var Gd = func(n int) int {
+var Gd = func(n uint64) int {
 	if n == 1 || n == 11 {
 		return 0
 	}
@@ -276,7 +284,7 @@ var Ia = Af
 var Id = Ay
 
 // Is is pluralization rule for Icelandic language
-var Is = func(n int) int {
+var Is = func(n uint64) int {
 	if n%10 != 1 || n%100 == 11 {
 		return 1
 	}
@@ -318,10 +326,14 @@ var Ko = Ay
 var Ku = Af
 
 // Kw is pluralization rule for Cornish language
-var Kw = func(n int) int {
+var Kw = func(n uint64) int {
 	switch n {
-	case 1, 2, 3:
-		return n - 1
+	case 1:
+		return 0
+	case 2:
+		return 1
+	case 3:
+		return 2
 	}
 
 	return 3
@@ -343,7 +355,7 @@ var Lo = Ay
 var Lt = Be
 
 // Lv is pluralization rule for Latvian language
-var Lv = func(n int) int {
+var Lv = func(n uint64) int {
 	if n%10 == 1 && n%100 != 11 {
 		return 0
 	}
@@ -368,7 +380,7 @@ var Mg = Ach
 var Mi = Ach
 
 // Mk is pluralization rule for Macedonian language
-var Mk = func(n int) int {
+var Mk = func(n uint64) int {
 	if n == 1 || n%10 == 1 {
 		return 0
 	}
@@ -386,10 +398,12 @@ var Mn = Af
 var Mni = Af
 
 // Mnk is pluralization rule for Mandinka language
-var Mnk = func(n int) int {
+var Mnk = func(n uint64) int {
 	switch n {
-	case 0, 1:
-		return n
+	case 0:
+		return 0
+	case 1:
+		return 1
 	}
 
 	return 2
@@ -402,7 +416,7 @@ var Mr = Af
 var Ms = Ay
 
 // Mt is pluralization rule for Maltese language
-var Mt = func(n int) int {
+var Mt = func(n uint64) int {
 	if n == 1 {
 		return 0
 	}
@@ -476,7 +490,7 @@ var PtBR = Ach
 var Rm = Af
 
 // Ro is pluralization rule for Romanian language
-var Ro = func(n int) int {
+var Ro = func(n uint64) int {
 	if n == 1 {
 		return 0
 	}
@@ -513,7 +527,7 @@ var Se = Af
 var Si = Af
 
 // Sk is pluralization rule for Slovak language
-var Sk = func(n int) int {
+var Sk = func(n uint64) int {
 	if n == 1 {
 		return 0
 	}
@@ -526,7 +540,7 @@ var Sk = func(n int) int {
 }
 
 // Sl is pluralization rule for Slovenian language
-var Sl = func(n int) int {
+var Sl = func(n uint64) int {
 	switch n % 100 {
 	case 1:
 		return 1

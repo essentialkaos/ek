@@ -495,12 +495,12 @@ func (ls *LogSuite) TestWithFields(c *C) {
 
 	c.Assert(err, IsNil)
 
-	c.Assert(l.Info("Test info %d", 1, F{"name", "john"}, F{"id", 1}), IsNil)
+	c.Assert(l.Info("Test info %d %s", 1, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test"), IsNil)
 
 	l.UseColors = true
 	fmtc.DisableColors = true
 
-	c.Assert(l.Info("Test info %d", 2, F{"name", "john"}, F{"id", 1}), IsNil)
+	c.Assert(l.Info("Test info %d %s", 2, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test"), IsNil)
 
 	fmtc.DisableColors = false
 
@@ -513,8 +513,8 @@ func (ls *LogSuite) TestWithFields(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "Test info 1 {name: john | id: 1}")
-	c.Assert(dataSlice[1][28:], Equals, "Test info 2 {name: john | id: 1}")
+	c.Assert(dataSlice[0][28:], Equals, "Test info 1 test {id: 1 | name: john}")
+	c.Assert(dataSlice[1][28:], Equals, "Test info 2 test {id: 1 | name: john}")
 }
 
 func (ls *LogSuite) TestBufIODaemon(c *C) {
@@ -709,7 +709,7 @@ func (ls *LogSuite) TestTimeLayout(c *C) {
 	c.Assert(jf != cf, Equals, true)
 }
 
-func (ls *LogSuite) TestFields(c *C) {
+func (ls *LogSuite) TestFieldEncoding(c *C) {
 	f := F{"test", 123}
 	c.Assert(f.String(), Equals, "test:123")
 
@@ -791,6 +791,35 @@ func (ls *LogSuite) TestFields(c *C) {
 	l.buf.Reset()
 }
 
+func (ls *LogSuite) TestFields(c *C) {
+	var fp *Fields
+
+	c.Assert(fp.Add(), IsNil)
+	c.Assert(fp.Reset(), IsNil)
+
+	var fv Fields
+
+	c.Assert(fv.Add(F{}, F{"testF1", 1}, F{"testF2", true}), NotNil)
+	c.Assert(fv.data, HasLen, 2)
+	c.Assert(fv.Reset(), NotNil)
+	c.Assert(fv.data, HasLen, 0)
+}
+
+func (ls *LogSuite) TestPayloadSplitter(c *C) {
+	var fv Fields
+	fv.Add(F{}, F{"testF1", 1})
+
+	fp := &Fields{}
+	fp.Add(F{}, F{"testF2", true})
+
+	p := []any{1, F{"name", "john"}, F{"id", 1}, F{"", 99}, "test", fp, fv}
+	p1, p2 := splitPayload(p)
+
+	c.Assert(p1, HasLen, 2)
+	c.Assert(p1, DeepEquals, []any{1, "test"})
+	c.Assert(p2, HasLen, 4)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *LogSuite) BenchmarkJSONWrite(c *C) {
@@ -800,8 +829,10 @@ func (s *LogSuite) BenchmarkJSONWrite(c *C) {
 
 	l.UseJSON = true
 
+	f1, f2 := F{"test1", 1}, F{"test2", false}
+
 	for i := 0; i < c.N; i++ {
-		l.Info("Test %s %s", "test", F{"test1", 1}, "abcd", F{"test2", false})
+		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }
 
@@ -810,8 +841,10 @@ func (s *LogSuite) BenchmarkTextWrite(c *C) {
 
 	c.Assert(err, IsNil)
 
+	f1, f2 := F{"test1", 1}, F{"test2", false}
+
 	for i := 0; i < c.N; i++ {
-		l.Info("Test %s %s", "test", "abcd")
+		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }
 

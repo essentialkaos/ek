@@ -1,5 +1,14 @@
 ## Changelog
 
+### 12.125.0
+
+- `[i18n]` Added new package for internationalization
+- `[log]` Added field collection support
+- `[log]` Ignore fields without key
+- `[log]` Fixed formatting of JSON output when no message is passed
+- `[pluralize]` Fixed bug with handling negative numbers
+- `[pluralize]` Code refactoring
+
 ### 12.124.0
 
 - `[env]` Add `Variable` struct for lazy environment reading
