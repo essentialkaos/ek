@@ -132,6 +132,36 @@ func ExampleString_With() {
 	// Unknown ID 183
 }
 
+func ExampleString_Add() {
+	en := &Bundle{
+		GREETING: "Hello",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.GREETING.Add("> ", "!"))
+
+	// Output:
+	// > Hello!
+}
+
+func ExampleString_String() {
+	en := &Bundle{
+		GREETING: "Hello!",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.GREETING.String())
+
+	// Output:
+	// Hello!
+}
+
 func ExampleData_Plural() {
 	en := &Bundle{
 		GREETING: "Hello!",

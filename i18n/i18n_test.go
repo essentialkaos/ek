@@ -85,7 +85,6 @@ func (s *I18NSuite) TestFallback(c *C) {
 	}
 
 	c.Assert(l.GREETING.String(), Equals, "Сәлеметсіз бе!")
-	c.Assert(l.GREETING.S(), Equals, "Сәлеметсіз бе!")
 	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, `Неизвестный пользователь johndoe`)
 	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, `Unknown ID 183`)
 }
@@ -172,6 +171,14 @@ func (s *I18NSuite) TestData(c *C) {
 
 	c.Assert(data.PrettyPerc("perc"), Equals, "65.3%")
 	c.Assert(data.PrettyPerc("unknown"), Equals, "???")
+}
+
+func (s *I18NSuite) TestString(c *C) {
+	is := String("Hello")
+
+	c.Assert(is.String(), Equals, "Hello")
+	c.Assert(is.S(), Equals, "Hello")
+	c.Assert(is.Add("[", "]"), Equals, "[Hello]")
 }
 
 func (s *I18NSuite) TestPlurLang(c *C) {

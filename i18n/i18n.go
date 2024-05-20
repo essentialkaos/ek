@@ -114,6 +114,11 @@ func (s String) With(data any) string {
 	return buf.String()
 }
 
+// Add adds prefix and/or suffix to result string
+func (s String) Add(prefix, suffix string) string {
+	return prefix + string(s) + suffix
+}
+
 // String converts String to string type
 func (s String) String() string {
 	return string(s)
