@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.125.1
+
+- `[terminal]` Code refactoring
+
 ### 12.125.0
 
 - `[i18n]` Added new package for internationalization
