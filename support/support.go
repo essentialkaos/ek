@@ -27,7 +27,7 @@ Example of collecting maximum information about the application and system:
 	  WithServices(services.Collect("firewalld", "nginx")).
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
-	  WithNetwork(network.Collect("https://domain.com/ip-echo")).
+	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
 	  Print()
 
@@ -42,7 +42,7 @@ it to the console.
 	  WithServices(services.Collect("firewalld", "nginx")).
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
-	  WithNetwork(network.Collect("https://domain.com/ip-echo")).
+	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect())
 
 	b, _ := json.Marshal(info)

@@ -1,5 +1,9 @@
 ## Changelog
 
+### 12.125.2
+
+- `[support/network]` Added Cloudflare trace support for public IP resolution
+
 ### 12.125.1
 
 - `[terminal]` Code refactoring
