@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.125.1
+
+- `[support/network]` Added Cloudflare trace support for public IP resolution
+- `[terminal]` Code refactoring
+
 ### 12.125.0
 
 - `[i18n]` Added new package for internationalization

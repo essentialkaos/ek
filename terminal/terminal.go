@@ -97,6 +97,8 @@ func formatMessage(message any, prefix string, args []any) string {
 		msg = m
 	case error:
 		msg = m.Error()
+	case fmt.Stringer:
+		msg = m.String()
 	default:
 		msg = fmt.Sprint(message)
 	}
