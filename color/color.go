@@ -439,7 +439,7 @@ func Hex2RGBA(h Hex) RGBA {
 }
 
 // RGB2Term converts RGB color to terminal color code
-// https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
+// https://github.com/essentialkaos/ek/tree/master/fmtc#88256-colors
 func RGB2Term(c RGB) int {
 	R, G, B := int(c.R), int(c.G), int(c.B)
 
@@ -456,7 +456,7 @@ func RGB2Term(c RGB) int {
 }
 
 // Term2RGB converts terminal color code (0-255) to RGB color
-// https://misc.flogisoft.com/bash/tip_colors_and_formatting#colors1
+// https://github.com/essentialkaos/ek/tree/master/fmtc#88256-colors
 func Term2RGB(c uint8) RGB {
 	// Grayscale
 	if c > 231 {

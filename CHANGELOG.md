@@ -4,6 +4,7 @@
 
 - `[support]` Added support of Docker with gVisor runtime
 - `[system/container]` Added support of Docker with gVisor runtime
+- `[color]` Documentation improvements
 
 ### 12.125.1
 
