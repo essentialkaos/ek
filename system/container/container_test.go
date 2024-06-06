@@ -31,6 +31,8 @@ var _ = Suite(&ContainerSuite{})
 func (s *ContainerSuite) SetUpSuite(c *C) {
 	s.DataDir = c.MkDir()
 
+	os.WriteFile(s.DataDir+"/.dockerenv", []byte(``), 0644)
+
 	os.WriteFile(s.DataDir+"/default", []byte(`sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 devtmpfs /dev devtmpfs rw,nosuid,size=930048k,nr_inodes=232512,mode=755 0 0
@@ -50,6 +52,9 @@ tmpfs /dev tmpfs rw,seclabel,nosuid,size=65536k,mode=755 0 0`), 0644)
 	os.WriteFile(s.DataDir+"/podman", []byte(`overlay / overlay rw,context="system_u:object_r:container_file_t:s0:c858,c956",relatime,lowerdir=/var/lib/containers/storage/overlay/l/4WA73D64E37PLK3SAORPPUISJK,upperdir=/var/lib/containers/storage/overlay/5d57db59db9567665efd0e17756445580b53be42396198b35a94f10ff30416be/diff,workdir=/var/lib/containers/storage/overlay/5d57db59db9567665efd0e17756445580b53be42396198b35a94f10ff30416be/work,metacopy=on,volatile 0 0
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 tmpfs /dev tmpfs rw,context="system_u:object_r:container_file_t:s0:c858,c956",nosuid,noexec,size=65536k,mode=755,inode64 0 0`), 0644)
+
+	os.WriteFile(s.DataDir+"/docker-runsc", []byte(`none /etc/hosts 9p rw,trans=fd,rfdno=7,wfdno=7,aname=/,dfltuid=4294967294,dfltgid=4294967294,dcache=1000,cache=remote_revalidating,disable_fifo_open,directfs 0 0
+none /etc/hostname 9p rw,trans=fd,rfdno=6,wfdno=6,aname=/,dfltuid=4294967294,dfltgid=4294967294,dcache=1000,cache=remote_revalidating,disable_fifo_open,directfs 0 0`), 0644)
 }
 
 func (s *ContainerSuite) TestGetEngine(c *C) {
@@ -77,6 +82,13 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = s.DataDir + "/docker"
 	c.Assert(GetEngine(), Equals, DOCKER)
 
+	engineChecked = false
+	dockerEnv = s.DataDir + "/.dockerenv"
+
+	mountsFile = s.DataDir + "/docker-runsc"
+	c.Assert(GetEngine(), Equals, DOCKER_RUNSC)
+
+	dockerEnv = "/.dockerenv"
 	engineChecked = false
 
 	mountsFile = s.DataDir + "/podman"

@@ -1,5 +1,10 @@
 ## Changelog
 
+### 12.126.0
+
+- `[support]` Added support of Docker with gVisor runtime
+- `[system/container]` Added support of Docker with gVisor runtime
+
 ### 12.125.1
 
 - `[support/network]` Added Cloudflare trace support for public IP resolution

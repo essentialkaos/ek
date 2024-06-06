@@ -16,16 +16,20 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DOCKER = "docker" // Docker (Moby)
-	PODMAN = "podman" // Podman
-	LXC    = "lxc"    // LXC
-	YANDEX = "yandex" // Yandex Serverless
+	DOCKER       = "docker"       // Docker (Moby)
+	PODMAN       = "podman"       // Podman
+	LXC          = "lxc"          // LXC
+	YANDEX       = "yandex"       // Yandex Serverless
+	DOCKER_RUNSC = "docker+runsc" // Docker (Moby) + runsc (gVisor)
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // mountsFile is path to mounts file for init process
 var mountsFile = "/proc/1/mounts"
+
+// dockerEnv is path to env file inside a Docker container
+var dockerEnv = "/.dockerenv"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -64,6 +68,8 @@ func IsContainer() bool {
 
 // guessEngine tries to guess container engine based on information from /proc/1/mounts
 func guessEngine(mountsData string) string {
+	_, err := os.Stat(dockerEnv)
+
 	switch {
 	case strings.Contains(mountsData, "overlay-container /function/code/rootfs"):
 		return YANDEX
@@ -71,6 +77,10 @@ func guessEngine(mountsData string) string {
 		return LXC
 	case strings.Contains(mountsData, "workdir=/var/lib/containers"):
 		return PODMAN
+	case err == nil &&
+		strings.Contains(mountsData, "none /etc/hostname 9p") &&
+		strings.Contains(mountsData, "none /etc/hosts 9p"):
+		return DOCKER_RUNSC
 	case strings.Contains(mountsData, "workdir=/var/lib/docker"):
 		return DOCKER
 	}
