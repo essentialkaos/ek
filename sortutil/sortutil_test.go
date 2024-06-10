@@ -53,6 +53,10 @@ func (s *SortSuite) TestStringSorting(c *C) {
 }
 
 func (s *SortSuite) TestNaturalSorting(c *C) {
+	s0 := []string{"1"}
+
+	StringsNatural(s0)
+
 	s1 := []string{"abc5", "abc1", "abc01", "ab", "abc10", "abc2"}
 
 	StringsNatural(s1)
