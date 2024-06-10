@@ -273,6 +273,8 @@ func (i *Info) printOSInfo() {
 		switch i.System.ContainerEngine {
 		case "docker":
 			format(12, true, "Container", "Yes (Docker)")
+		case "docker+runsc":
+			format(12, true, "Container", "Yes (Docker+gVisor)")
 		case "podman":
 			format(12, true, "Container", "Yes (Podman)")
 		case "lxc":

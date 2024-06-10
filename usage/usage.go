@@ -10,6 +10,7 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -30,6 +31,8 @@ const (
 )
 
 const _BREADCRUMBS_MIN_SIZE = 8
+
+const _MAX_LINE_LENGTH = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -414,7 +417,7 @@ func (c *Command) Print() {
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Print(c.Desc)
+	fmtc.Print(wrapText(c.Desc, maxSize+2))
 
 	fmtc.NewLine()
 }
@@ -447,7 +450,7 @@ func (o *Option) Print() {
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Print(o.Desc)
+	fmtc.Print(wrapText(o.Desc, maxSize+5))
 
 	fmtc.NewLine()
 }
@@ -477,7 +480,7 @@ func (e *Example) Print() {
 				e.info.ExampleDescColorTag, "",
 			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
 		)
-		fmtc.Printf("  "+descColor+"%s{!}\n", e.Desc)
+		fmtc.Printf("  "+descColor+"%s{!}\n", wrapText(e.Desc, 2))
 	}
 }
 
@@ -809,4 +812,36 @@ func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
 	default:
 		fmtc.Printf("{s-}(released %d days ago){!}\n", days)
 	}
+}
+
+// wrapText wraps long text
+func wrapText(text string, indent int) string {
+	size := _MAX_LINE_LENGTH - indent
+
+	if strutil.LenVisual(fmtc.Clean(text)) <= size {
+		return text
+	}
+
+	var buf bytes.Buffer
+
+	for {
+		if len(text) < size {
+			buf.WriteString(text)
+			break
+		}
+
+		wi := strings.LastIndex(text[:size], " ")
+
+		if wi == -1 {
+			buf.WriteString(text)
+			break
+		}
+
+		buf.WriteString(text[:wi])
+		buf.WriteRune('\n')
+		buf.WriteString(strings.Repeat(" ", indent))
+		text = text[wi+1:]
+	}
+
+	return buf.String()
 }

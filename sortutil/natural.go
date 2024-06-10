@@ -24,6 +24,10 @@ func (s naturalSlice) Less(i, j int) bool { return NaturalLess(s[i], s[j]) }
 // StringsNatural sorts a slice of strings in natural order
 // Limitation: only ASCII digits (0-9) are considered.
 func StringsNatural(a []string) {
+	if len(a) <= 1 {
+		return
+	}
+
 	sort.Sort(naturalSlice(a))
 }
 

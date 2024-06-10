@@ -114,6 +114,8 @@ func (s *SupportSuite) TestCollect(c *C) {
 
 	i.System.ContainerEngine = "docker"
 	i.printOSInfo()
+	i.System.ContainerEngine = "docker+runsc"
+	i.printOSInfo()
 	i.System.ContainerEngine = "podman"
 	i.printOSInfo()
 	i.System.ContainerEngine = "lxc"
