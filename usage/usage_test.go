@@ -110,18 +110,18 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.AddCommand("read")
 	info.AddCommand("read", "Read command")
 	info.AddCommand("read1", "Read command with arguments", "arg1", "arg2")
-	info.AddCommand("read2", "Read command with optional argument", "?arg")
+	info.AddCommand("read2", "Read command with optional argument and very very very {*b}long{!} and {c}colored{!} description", "?arg")
 
 	info.AddOption("t:test")
 	info.AddOption("t:test", "Test option ")
 	info.AddOption("test1", "Test option with argument", "arg")
-	info.AddOption("test2", "Test option with optional argument", "?arg")
+	info.AddOption("test2", "Test option with optional argument and very very very {*b}long{!} and {c}colored{!} description", "?arg")
 
 	info.BoundOptions("read", "t:test", "test1")
 
 	info.AddExample() // will be ignored
 	info.AddExample("abc")
-	info.AddExample("abc", "Example with description")
+	info.AddExample("abc", "Example with very long description that not fits default 88 symbols limit and link https://domain.com/#EC103814B9CCB1E305CE20D6A25E681D3735D2301D5BB631B8DFA0ABB2394A99631B8DFA0ABB2394A99")
 	info.AddRawExample() // will be ignored
 	info.AddRawExample("echo 123 | myapp")
 	info.AddRawExample("echo 123 | myapp", "Example with description")

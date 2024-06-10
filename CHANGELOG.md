@@ -4,6 +4,7 @@
 
 - `[support]` Added support of Docker with gVisor runtime
 - `[system/container]` Added support of Docker with gVisor runtime
+- `[usage]` Added automatic wrapping for example, command, and option descriptions
 - `[color]` Documentation improvements
 - `[sliceutil]` Code refactoring
 
