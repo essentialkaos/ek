@@ -1,5 +1,9 @@
 ## Changelog
 
+### [12.126.1](https://kaos.sh/ek/12.126.1)
+
+- `[usage]` Added `Info.WrapLen` option for text wrapping configuration
+
 ### [12.126.0](https://kaos.sh/ek/12.126.0)
 
 - `[support]` Added support of Docker with gVisor runtime

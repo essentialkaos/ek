@@ -32,7 +32,7 @@ const (
 
 const _BREADCRUMBS_MIN_SIZE = 8
 
-const _MAX_LINE_LENGTH = 88
+const _DEFAULT_WRAP_LEN = 88
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -99,6 +99,7 @@ type Info struct {
 	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
 
 	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
+	WrapLen     int  // Wrap text if it longer than specified value
 
 	Name    string   // Name is app name
 	Args    []string // Args is slice with app arguments
@@ -398,6 +399,7 @@ func (c *Command) Print() {
 	size := getCommandSize(c)
 	useBreadcrumbs := true
 	maxSize := size
+	wrapLen := _DEFAULT_WRAP_LEN
 
 	colorTag := strutil.Q(
 		strutil.B(c.ColorTag != "" && fmtc.IsTag(c.ColorTag), c.ColorTag, ""),
@@ -408,6 +410,7 @@ func (c *Command) Print() {
 		colorTag = strutil.Q(c.info.CommandsColorTag, colorTag)
 		maxSize = getMaxCommandSize(c.info.Commands, c.Group)
 		useBreadcrumbs = c.info.Breadcrumbs
+		wrapLen = c.info.WrapLen
 	}
 
 	fmtc.Printf("  "+colorTag+"%s{!}", c.Name)
@@ -417,7 +420,7 @@ func (c *Command) Print() {
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Print(wrapText(c.Desc, maxSize+2))
+	fmtc.Print(wrapText(c.Desc, maxSize+2, wrapLen))
 
 	fmtc.NewLine()
 }
@@ -431,6 +434,7 @@ func (o *Option) Print() {
 	size := getOptionSize(o)
 	useBreadcrumbs := true
 	maxSize := size
+	wrapLen := _DEFAULT_WRAP_LEN
 
 	colorTag := strutil.Q(
 		strutil.B(o.ColorTag != "" && fmtc.IsTag(o.ColorTag), o.ColorTag, ""),
@@ -441,6 +445,7 @@ func (o *Option) Print() {
 		colorTag = strutil.Q(o.info.OptionsColorTag, colorTag)
 		maxSize = getMaxOptionSize(o.info.Options)
 		useBreadcrumbs = o.info.Breadcrumbs
+		wrapLen = o.info.WrapLen
 	}
 
 	fmtc.Printf("  " + formatOptionName(o, colorTag))
@@ -450,7 +455,7 @@ func (o *Option) Print() {
 	}
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
-	fmtc.Print(wrapText(o.Desc, maxSize+5))
+	fmtc.Print(wrapText(o.Desc, maxSize+5, wrapLen))
 
 	fmtc.NewLine()
 }
@@ -462,9 +467,11 @@ func (e *Example) Print() {
 	}
 
 	appName := os.Args[0]
+	wrapLen := _DEFAULT_WRAP_LEN
 
 	if e.info != nil {
 		appName = e.info.Name
+		wrapLen = e.info.WrapLen
 	}
 
 	if e.Raw {
@@ -480,7 +487,7 @@ func (e *Example) Print() {
 				e.info.ExampleDescColorTag, "",
 			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
 		)
-		fmtc.Printf("  "+descColor+"%s{!}\n", wrapText(e.Desc, 2))
+		fmtc.Printf("  "+descColor+"%s{!}\n", wrapText(e.Desc, 2, wrapLen))
 	}
 }
 
@@ -815,8 +822,8 @@ func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
 }
 
 // wrapText wraps long text
-func wrapText(text string, indent int) string {
-	size := _MAX_LINE_LENGTH - indent
+func wrapText(text string, indent, maxLen int) string {
+	size := mathutil.Max(_DEFAULT_WRAP_LEN, maxLen) - indent
 
 	if strutil.LenVisual(fmtc.Clean(text)) <= size {
 		return text
