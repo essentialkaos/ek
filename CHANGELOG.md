@@ -1,5 +1,9 @@
 ## Changelog
 
+### [12.127.0](https://kaos.sh/ek/12.127.0)
+
+- `[uuid]` Added [UUID7](https://uuid7.com) generator
+
 ### [12.126.1](https://kaos.sh/ek/12.126.1)
 
 - `[usage]` Added `Info.WrapLen` option for text wrapping configuration

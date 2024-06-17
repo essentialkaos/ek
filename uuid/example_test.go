@@ -20,3 +20,7 @@ func ExampleUUID4() {
 func ExampleUUID5() {
 	fmt.Printf("UUID v5: %s\n", UUID5(NsURL, "http://www.domain.com").String())
 }
+
+func ExampleUUID7() {
+	fmt.Printf("UUID v7: %s\n", UUID7().String())
+}
