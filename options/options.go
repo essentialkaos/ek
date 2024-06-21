@@ -112,13 +112,13 @@ var global *Options
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds a new option
-func (opts *Options) Add(name string, option *V) error {
-	if opts == nil {
+func (o *Options) Add(name string, option *V) error {
+	if o == nil {
 		return ErrNilOptions
 	}
 
-	if !opts.initialized {
-		initOptions(opts)
+	if !o.initialized {
+		initOptions(o)
 	}
 
 	optName := parseName(name)
@@ -128,16 +128,16 @@ func (opts *Options) Add(name string, option *V) error {
 		return ErrEmptyName
 	case option == nil:
 		return OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}
-	case opts.full[optName.Long] != nil:
+	case o.full[optName.Long] != nil:
 		return OptionError{"--" + optName.Long, "", ERROR_DUPLICATE_LONGNAME}
-	case optName.Short != "" && opts.short[optName.Short] != "":
+	case optName.Short != "" && o.short[optName.Short] != "":
 		return OptionError{"-" + optName.Short, "", ERROR_DUPLICATE_SHORTNAME}
 	}
 
-	opts.full[optName.Long] = option
+	o.full[optName.Long] = option
 
 	if optName.Short != "" {
-		opts.short[optName.Short] = optName.Long
+		o.short[optName.Short] = optName.Long
 	}
 
 	if option.Alias != "" {
@@ -148,10 +148,10 @@ func (opts *Options) Add(name string, option *V) error {
 		}
 
 		for _, l := range aliases {
-			opts.full[l.Long] = option
+			o.full[l.Long] = option
 
 			if l.Short != "" {
-				opts.short[l.Short] = optName.Long
+				o.short[l.Short] = optName.Long
 			}
 		}
 	}
@@ -160,7 +160,7 @@ func (opts *Options) Add(name string, option *V) error {
 }
 
 // AddMap adds map with supported options
-func (opts *Options) AddMap(optMap Map) Errors {
+func (o *Options) AddMap(optMap Map) Errors {
 	if optMap == nil {
 		return Errors{ErrNilMap}
 	}
@@ -168,7 +168,7 @@ func (opts *Options) AddMap(optMap Map) Errors {
 	var errs Errors
 
 	for name, opt := range optMap {
-		err := opts.Add(name, opt)
+		err := o.Add(name, opt)
 
 		if err != nil {
 			errs = append(errs, err)
@@ -179,18 +179,18 @@ func (opts *Options) AddMap(optMap Map) Errors {
 }
 
 // GetS returns option value as string
-func (opts *Options) GetS(name string) string {
-	if opts == nil {
+func (o *Options) GetS(name string) string {
+	if o == nil || len(o.full) == 0 {
 		return ""
 	}
 
 	optName := parseName(name)
-	opt, ok := opts.full[optName.Long]
+	opt, ok := o.full[optName.Long]
 
 	switch {
 	case !ok:
 		return ""
-	case opts.full[optName.Long].Value == nil:
+	case o.full[optName.Long].Value == nil:
 		return ""
 	case opt.Type == INT:
 		return strconv.Itoa(opt.Value.(int))
@@ -204,19 +204,19 @@ func (opts *Options) GetS(name string) string {
 }
 
 // GetI returns option value as integer
-func (opts *Options) GetI(name string) int {
-	if opts == nil {
+func (o *Options) GetI(name string) int {
+	if o == nil || len(o.full) == 0 {
 		return 0
 	}
 
 	optName := parseName(name)
-	opt, ok := opts.full[optName.Long]
+	opt, ok := o.full[optName.Long]
 
 	switch {
 	case !ok:
 		return 0
 
-	case opts.full[optName.Long].Value == nil:
+	case o.full[optName.Long].Value == nil:
 		return 0
 
 	case opt.Type == STRING, opt.Type == MIXED:
@@ -241,19 +241,19 @@ func (opts *Options) GetI(name string) int {
 }
 
 // GetB returns option value as boolean
-func (opts *Options) GetB(name string) bool {
-	if opts == nil {
+func (o *Options) GetB(name string) bool {
+	if o == nil || len(o.full) == 0 {
 		return false
 	}
 
 	optName := parseName(name)
-	opt, ok := opts.full[optName.Long]
+	opt, ok := o.full[optName.Long]
 
 	switch {
 	case !ok:
 		return false
 
-	case opts.full[optName.Long].Value == nil:
+	case o.full[optName.Long].Value == nil:
 		return false
 
 	case opt.Type == STRING, opt.Type == MIXED:
@@ -280,19 +280,19 @@ func (opts *Options) GetB(name string) bool {
 }
 
 // GetF returns option value as floating number
-func (opts *Options) GetF(name string) float64 {
-	if opts == nil {
+func (o *Options) GetF(name string) float64 {
+	if o == nil || len(o.full) == 0 {
 		return 0.0
 	}
 
 	optName := parseName(name)
-	opt, ok := opts.full[optName.Long]
+	opt, ok := o.full[optName.Long]
 
 	switch {
 	case !ok:
 		return 0.0
 
-	case opts.full[optName.Long].Value == nil:
+	case o.full[optName.Long].Value == nil:
 		return 0.0
 
 	case opt.Type == STRING, opt.Type == MIXED:
@@ -317,8 +317,8 @@ func (opts *Options) GetF(name string) float64 {
 }
 
 // Split splits mergeble option to it's values
-func (opts *Options) Split(name string) []string {
-	value := opts.GetS(name)
+func (o *Options) Split(name string) []string {
+	value := o.GetS(name)
 
 	if value == "" {
 		return nil
@@ -328,36 +328,36 @@ func (opts *Options) Split(name string) []string {
 }
 
 // Is checks if option with given name has given value
-func (opts *Options) Is(name string, value any) bool {
-	if opts == nil {
+func (o *Options) Is(name string, value any) bool {
+	if o == nil || len(o.full) == 0 {
 		return false
 	}
 
-	if !opts.Has(name) {
+	if !o.Has(name) {
 		return false
 	}
 
 	switch t := value.(type) {
 	case string:
-		return opts.GetS(name) == t
+		return o.GetS(name) == t
 	case int:
-		return opts.GetI(name) == t
+		return o.GetI(name) == t
 	case float64:
-		return opts.GetF(name) == t
+		return o.GetF(name) == t
 	case bool:
-		return opts.GetB(name) == t
+		return o.GetB(name) == t
 	}
 
 	return false
 }
 
 // Has checks if option with given name exists and set
-func (opts *Options) Has(name string) bool {
-	if opts == nil {
+func (o *Options) Has(name string) bool {
+	if o == nil || len(o.full) == 0 {
 		return false
 	}
 
-	opt, ok := opts.full[parseName(name).Long]
+	opt, ok := o.full[parseName(name).Long]
 
 	if !ok {
 		return false
@@ -374,26 +374,26 @@ func (opts *Options) Has(name string) bool {
 //
 // You can use this method to remove options with private data such as passwords,
 // tokens, etc.
-func (opts *Options) Delete(name string) bool {
-	if opts == nil || len(opts.full) == 0 {
+func (o *Options) Delete(name string) bool {
+	if o == nil || len(o.full) == 0 {
 		return false
 	}
 
 	optName := parseName(name)
-	_, ok := opts.full[optName.Long]
+	_, ok := o.full[optName.Long]
 
 	if !ok {
 		return false
 	}
 
-	delete(opts.full, optName.Long)
+	delete(o.full, optName.Long)
 
 	return true
 }
 
 // Parse parses slice with raw options
-func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
-	if opts == nil {
+func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
+	if o == nil {
 		return nil, Errors{ErrNilOptions}
 	}
 
@@ -401,7 +401,7 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) 
 
 	if len(optMap) != 0 {
 		for _, m := range optMap {
-			errs = append(errs, opts.AddMap(m)...)
+			errs = append(errs, o.AddMap(m)...)
 		}
 	}
 
@@ -409,7 +409,7 @@ func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) 
 		return Arguments{}, errs
 	}
 
-	return opts.parseOptions(rawOpts)
+	return o.parseOptions(rawOpts)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -705,11 +705,11 @@ func (o optionName) String() string {
 // without losing code readability
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
-func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
-	opts.prepare()
+func (o *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
+	o.prepare()
 
 	if len(rawOpts) == 0 {
-		return nil, opts.validate()
+		return nil, o.validate()
 	}
 
 	var optName string
@@ -733,14 +733,14 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 				continue
 
 			case curOptLen > 2 && curOpt[:2] == "--":
-				curOptName, curOptValue, err = opts.parseLongOption(curOpt[2:curOptLen])
+				curOptName, curOptValue, err = o.parseLongOption(curOpt[2:curOptLen])
 
 			case curOptLen > 1 && curOpt[:1] == "-":
-				curOptName, curOptValue, err = opts.parseShortOption(curOpt[1:curOptLen])
+				curOptName, curOptValue, err = o.parseShortOption(curOpt[1:curOptLen])
 
 			case mixedOpt:
 				errs = appendError(errs,
-					updateOption(opts.full[optName], optName, curOpt),
+					updateOption(o.full[optName], optName, curOpt),
 				)
 
 				optName, mixedOpt = "", false
@@ -762,7 +762,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 
 			if curOptName != "" && mixedOpt {
 				errs = appendError(errs,
-					updateOption(opts.full[optName], optName, "true"),
+					updateOption(o.full[optName], optName, "true"),
 				)
 
 				mixedOpt = false
@@ -770,16 +770,16 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 
 			if curOptValue != "" {
 				errs = appendError(errs,
-					updateOption(opts.full[curOptName], curOptName, curOptValue),
+					updateOption(o.full[curOptName], curOptName, curOptValue),
 				)
 			} else {
 				switch {
-				case opts.full[curOptName] != nil && opts.full[curOptName].Type == BOOL:
+				case o.full[curOptName] != nil && o.full[curOptName].Type == BOOL:
 					errs = appendError(errs,
-						updateOption(opts.full[curOptName], curOptName, ""),
+						updateOption(o.full[curOptName], curOptName, ""),
 					)
 
-				case opts.full[curOptName] != nil && opts.full[curOptName].Type == MIXED:
+				case o.full[curOptName] != nil && o.full[curOptName].Type == MIXED:
 					optName = curOptName
 					mixedOpt = true
 
@@ -789,19 +789,19 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 			}
 		} else {
 			errs = appendError(errs,
-				updateOption(opts.full[optName], optName, curOpt),
+				updateOption(o.full[optName], optName, curOpt),
 			)
 
 			optName = ""
 		}
 	}
 
-	errs = append(errs, opts.validate()...)
+	errs = append(errs, o.validate()...)
 
 	if optName != "" {
-		if opts.full[optName].Type == MIXED {
+		if o.full[optName].Type == MIXED {
 			errs = appendError(errs,
-				updateOption(opts.full[optName], optName, "true"),
+				updateOption(o.full[optName], optName, "true"),
 			)
 		} else {
 			errs = append(errs, OptionError{"--" + optName, "", ERROR_EMPTY_VALUE})
@@ -813,7 +813,7 @@ func (opts *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 
 // codebeat:enable[LOC,BLOCK_NESTING,CYCLO]
 
-func (opts *Options) parseLongOption(opt string) (string, string, error) {
+func (o *Options) parseLongOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
 		optName, optValue, ok := strings.Cut(opt, "=")
 
@@ -821,21 +821,21 @@ func (opts *Options) parseLongOption(opt string) (string, string, error) {
 			return "", "", OptionError{"--" + optName, "", ERROR_WRONG_FORMAT}
 		}
 
-		if opts.full[optName] == nil {
+		if o.full[optName] == nil {
 			return "", "", OptionError{"--" + optName, "", ERROR_UNSUPPORTED}
 		}
 
 		return optName, optValue, nil
 	}
 
-	if opts.full[opt] != nil {
+	if o.full[opt] != nil {
 		return opt, "", nil
 	}
 
 	return "", "", OptionError{"--" + opt, "", ERROR_UNSUPPORTED}
 }
 
-func (opts *Options) parseShortOption(opt string) (string, string, error) {
+func (o *Options) parseShortOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
 		optName, optValue, ok := strings.Cut(opt, "=")
 
@@ -843,26 +843,26 @@ func (opts *Options) parseShortOption(opt string) (string, string, error) {
 			return "", "", OptionError{"-" + optName, "", ERROR_WRONG_FORMAT}
 		}
 
-		if opts.short[optName] == "" {
+		if o.short[optName] == "" {
 			return "", "", OptionError{"-" + optName, "", ERROR_UNSUPPORTED}
 		}
 
-		return opts.short[optName], optValue, nil
+		return o.short[optName], optValue, nil
 	}
 
 	if len(opt) > 2 {
 		return "", "", nil
 	}
 
-	if opts.short[opt] == "" {
+	if o.short[opt] == "" {
 		return "", "", OptionError{"-" + opt, "", ERROR_UNSUPPORTED}
 	}
 
-	return opts.short[opt], "", nil
+	return o.short[opt], "", nil
 }
 
-func (opts *Options) prepare() {
-	for _, v := range opts.full {
+func (o *Options) prepare() {
+	for _, v := range o.full {
 		// String is default type
 		if v.Type == STRING && v.Value != nil {
 			v.Type = guessType(v.Value)
@@ -870,10 +870,10 @@ func (opts *Options) prepare() {
 	}
 }
 
-func (opts *Options) validate() Errors {
+func (o *Options) validate() Errors {
 	var errs Errors
 
-	for n, v := range opts.full {
+	for n, v := range o.full {
 		if !isSupportedType(v.Value) {
 			errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_VALUE})
 		}
@@ -885,7 +885,7 @@ func (opts *Options) validate() Errors {
 				errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT})
 			} else {
 				for _, c := range conflicts {
-					if opts.Has(c.Long) && opts.Has(n) {
+					if o.Has(c.Long) && o.Has(n) {
 						errs = append(errs, OptionError{F(n), F(c.Long), ERROR_CONFLICT})
 					}
 				}
@@ -899,7 +899,7 @@ func (opts *Options) validate() Errors {
 				errs = append(errs, OptionError{F(n), "", ERROR_UNSUPPORTED_BOUND_LIST_FORMAT})
 			} else {
 				for _, b := range bound {
-					if !opts.Has(b.Long) && opts.Has(n) {
+					if !o.Has(b.Long) && o.Has(n) {
 						errs = append(errs, OptionError{F(n), F(b.Long), ERROR_BOUND_NOT_SET})
 					}
 				}
