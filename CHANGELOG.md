@@ -2,6 +2,7 @@
 
 ### [12.127.0](https://kaos.sh/ek/12.127.0)
 
+- `[options]` Added method `Delete`
 - `[usage]` Added support for optional arguments to usage info
 - `[uuid]` Added [UUID7](https://uuid7.com) generator
 

@@ -206,6 +206,20 @@ func ExampleHas() {
 	fmt.Printf("Has lines option: %t\n", Has("l:lines"))
 }
 
+func ExampleDelete() {
+	args, _ := Parse(Map{
+		"u:user":     {Type: STRING, Value: "john"},
+		"l:lines":    {Type: INT, Min: 1, Max: 100},
+		"p:password": {},
+	})
+
+	// Remove password option after usage
+	Delete("p:password")
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Has password option: %t\n", Has("p:password"))
+}
+
 func ExampleFormat() {
 	o := "t:test"
 
@@ -416,6 +430,32 @@ func ExampleOptions_Has() {
 	// Arguments: [file.txt]
 	// Has user option: true
 	// Has lines option: false
+}
+
+func ExampleOptions_Delete() {
+	opts := NewOptions()
+
+	// Add options
+	opts.AddMap(Map{
+		"u:user":     {Type: STRING, Value: "john"},
+		"l:lines":    {Type: INT, Min: 1, Max: 100},
+		"p:password": {},
+	})
+
+	input := "-u bob -p Test1234 file.txt"
+	args, _ := opts.Parse(strings.Split(input, " "))
+
+	opts.Delete("p:password")
+
+	fmt.Printf("Arguments: %v\n", args)
+	fmt.Printf("Has user option: %t\n", opts.Has("u:user"))
+	fmt.Printf("Has lines option: %t\n", opts.Has("l:lines"))
+	fmt.Printf("Has password option: %t\n", opts.Has("p:password"))
+	// Output:
+	// Arguments: [file.txt]
+	// Has user option: true
+	// Has lines option: false
+	// Has password option: false
 }
 
 func ExampleOptions_Parse() {

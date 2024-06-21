@@ -370,6 +370,27 @@ func (opts *Options) Has(name string) bool {
 	return true
 }
 
+// Delete deletes option with given name
+//
+// You can use this method to remove options with private data such as passwords,
+// tokens, etc.
+func (opts *Options) Delete(name string) bool {
+	if opts == nil || len(opts.full) == 0 {
+		return false
+	}
+
+	optName := parseName(name)
+	_, ok := opts.full[optName.Long]
+
+	if !ok {
+		return false
+	}
+
+	delete(opts.full, optName.Long)
+
+	return true
+}
+
 // Parse parses slice with raw options
 func (opts *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
 	if opts == nil {
@@ -539,6 +560,18 @@ func Is(name string, value any) bool {
 	}
 
 	return global.Is(name, value)
+}
+
+// Delete deletes option with given name
+//
+// You can use this method to remove options with private data such as passwords,
+// tokens, etc.
+func Delete(name string) bool {
+	if global == nil || !global.initialized {
+		return false
+	}
+
+	return global.Delete(name)
 }
 
 // Parse parses slice with raw options
