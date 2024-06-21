@@ -99,6 +99,7 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(Split("s:string"), IsNil)
 	c.Assert(Is("s:string", ""), Equals, false)
 	c.Assert(Has("s:string"), Equals, false)
+	c.Assert(Delete("s:string"), Equals, false)
 
 	c.Assert(Add("t:test", &V{}), IsNil)
 
@@ -134,6 +135,11 @@ func (s *OptUtilSuite) TestGlobal(c *C) {
 	c.Assert(Is("string1", "Test"), Equals, false)
 	c.Assert(Split("s:string"), DeepEquals, []string{"Test"})
 	c.Assert(Split("s:string1"), IsNil)
+
+	c.Assert(Delete("s:string"), Equals, true)
+	c.Assert(Has("s:string"), Equals, false)
+	c.Assert(GetS("s:string"), Equals, "")
+	c.Assert(Delete("s:string"), Equals, false)
 }
 
 func (s *OptUtilSuite) TestLimiters(c *C) {
@@ -738,6 +744,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 	c.Assert(opts.GetF("test"), Equals, 0.0)
 	c.Assert(opts.Is("test", ""), Equals, false)
 	c.Assert(opts.Has("test"), Equals, false)
+	c.Assert(opts.Delete("test"), Equals, false)
 
 	_, errs := opts.Parse([]string{}, Map{"t:": {}})
 

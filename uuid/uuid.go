@@ -12,6 +12,7 @@ import (
 	"crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -59,7 +60,33 @@ func UUID5(ns []byte, name string) UUID {
 	return UUID(uuid)
 }
 
+// UUID7 generates UUID v7 based on timestamp
+func UUID7() UUID {
+	uuid := make(UUID, 16)
+
+	rand.Read(uuid)
+
+	ts := uint64(time.Now().UnixNano() / 1_000_000)
+
+	uuid[0] = byte((ts >> 40) & 0xFF)
+	uuid[1] = byte((ts >> 32) & 0xFF)
+	uuid[2] = byte((ts >> 24) & 0xFF)
+	uuid[3] = byte((ts >> 16) & 0xFF)
+	uuid[4] = byte((ts >> 8) & 0xFF)
+	uuid[5] = byte(ts & 0xFF)
+
+	uuid[6] = (uuid[6] & 0x0F) | 0x70
+	uuid[8] = (uuid[8] & 0x3F) | 0x80
+
+	return uuid
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// IsZero returns true if UUID is empty
+func (u UUID) IsZero() bool {
+	return len(u) == 0
+}
 
 // String returns string representation of UUID
 func (u UUID) String() string {

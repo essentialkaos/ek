@@ -98,7 +98,7 @@ func (s *UsageSuite) TestRawVersion(c *C) {
 }
 
 func (s *UsageSuite) TestUsage(c *C) {
-	info := NewInfo("", "file")
+	info := NewInfo("", "file", "?dir")
 
 	info.AddSpoiler("This is usage of spoiler with {#240}c{#241}o{#242}l{#243}o{#244}r{#245}s {#246}s{#247}u{#248}p{#249}p{#250}o{#251}r{#252}t{!}")
 

@@ -343,7 +343,7 @@ func (i *Info) Print() {
 	}
 
 	if len(i.Args) != 0 {
-		usageMessage += " " + strings.Join(i.Args, " ")
+		usageMessage += " " + printArgs(i.Args...)
 	}
 
 	fmtc.Println(usageMessage)

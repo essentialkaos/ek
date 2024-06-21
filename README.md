@@ -1,14 +1,14 @@
-<p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-ek.svg"/></a></p>
+<p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
 <p align="center">
-  <a href="https://kaos.sh/g/ek.v12"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
+  <a href="https://kaos.sh/g/ek.v12"><img src=".github/images/godoc.svg"/></a>
   <a href="https://kaos.sh/r/ek.v12"><img src="https://kaos.sh/r/ek.v12.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/l/ek"><img src="https://kaos.sh/l/210cafc2de7bf4320649.svg" alt="Code Climate Maintainability" /></a>
   <a href="https://kaos.sh/b/ek"><img src="https://kaos.sh/b/3649d737-e5b9-4465-9765-b9f4ebec60ec.svg" alt="Codebeat badge" /></a>
   <br/>
   <a href="https://kaos.sh/w/ek/ci"><img src="https://kaos.sh/w/ek/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/w/ek/codeql-analysis"><img src="https://kaos.sh/w/ek/codeql-analysis.svg" alt="GitHub Actions CodeQL Status" /></a>
-  <a href="#license"><img src="https://gh.kaos.st/apache2.svg" /></a>
+  <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
 <p align="center"><a href="#platform-support">Platform support</a> • <a href="#sub-packages">Sub-packages</a> • <a href="#projects-with-ek">Projects with EK</a> • <a href="#ci-status">CI Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
