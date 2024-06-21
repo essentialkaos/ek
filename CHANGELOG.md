@@ -2,6 +2,7 @@
 
 ### [12.127.0](https://kaos.sh/ek/12.127.0)
 
+- `[usage]` Added support for optional arguments to usage info
 - `[uuid]` Added [UUID7](https://uuid7.com) generator
 
 ### [12.126.1](https://kaos.sh/ek/12.126.1)
