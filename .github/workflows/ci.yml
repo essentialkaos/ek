@@ -60,7 +60,7 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh
 
-      - name: Send coverage data
+      - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,6 +69,13 @@ jobs:
           profile: coverage.txt
           parallel: true
           flag-name: linux-${{ matrix.go }}
+
+      - name: Send coverage data to Codacy
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --force-coverage-parser go \
+          -r coverage.txt \
+          --partial
 
   macOS:
     name: macOS
@@ -159,12 +166,15 @@ jobs:
     needs: [Linux, macOS]
 
     steps:
-      - name: Finish parallel tests
+      - name: Finish parallel tests (Coveralls)
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           parallel-finished: true
+
+      - name: Finish parallel tests (Codacy)
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
     name: Typos
