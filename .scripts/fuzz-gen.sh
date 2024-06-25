@@ -14,24 +14,30 @@ CYAN=36
 GREY=37
 DARK=90
 
-CL_NORM="\e[0m"
-CL_BOLD="\e[0;${BOLD};49m"
-CL_UNLN="\e[0;${UNLN};49m"
-CL_RED="\e[0;${RED};49m"
-CL_GREEN="\e[0;${GREEN};49m"
-CL_YELLOW="\e[0;${YELLOW};49m"
-CL_BLUE="\e[0;${BLUE};49m"
-CL_MAG="\e[0;${MAG};49m"
-CL_CYAN="\e[0;${CYAN};49m"
-CL_GREY="\e[0;${GREY};49m"
-CL_DARK="\e[0;${DARK};49m"
-CL_BL_RED="\e[1;${RED};49m"
-CL_BL_GREEN="\e[1;${GREEN};49m"
-CL_BL_YELLOW="\e[1;${YELLOW};49m"
-CL_BL_BLUE="\e[1;${BLUE};49m"
-CL_BL_MAG="\e[1;${MAG};49m"
-CL_BL_CYAN="\e[1;${CYAN};49m"
-CL_BL_GREY="\e[1;${GREY};49m"
+# shellcheck disable=SC2034
+CL_NORM="\e[${NORM}m"
+# shellcheck disable=SC2034
+CL_BOLD="\e[${BOLD}m"
+# shellcheck disable=SC2034
+CL_ITLC="\e[${ITLC}m"
+# shellcheck disable=SC2034
+CL_UNLN="\e[${UNLN}m"
+# shellcheck disable=SC2034
+CL_RED="\e[${RED}m"
+# shellcheck disable=SC2034
+CL_GREEN="\e[${GREEN}m"
+# shellcheck disable=SC2034
+CL_YELLOW="\e[${YELLOW}m"
+# shellcheck disable=SC2034
+CL_BLUE="\e[${BLUE}m"
+# shellcheck disable=SC2034
+CL_MAG="\e[${MAG}m"
+# shellcheck disable=SC2034
+CL_CYAN="\e[${CYAN}m"
+# shellcheck disable=SC2034
+CL_GREY="\e[${GREY}m"
+# shellcheck disable=SC2034
+CL_DARK="\e[${DARK}m"
 
 ################################################################################
 
@@ -51,16 +57,16 @@ main() {
 
   show "\nBuilding archives for packages…\n"
 
-  for src in $(find . -name "fuzz.go") ; do
+  while read -r src ; do
     src_package=$(dirname "$src" | sed 's#\.\/##')
     src_path=$(echo "$src" | sed 's#\/fuzz.go##' | sed 's#\.\/##')
-    src_name=$(echo "$src_path" | sed 's#\/#-#g')
+    src_name="${src_path//\//-}"
 
     if [[ -n "$1" && "$1" != "$src_package" ]] ; then
       continue
     fi
 
-    while read src_func ; do
+    while read -r src_func ; do
       src_func=$(echo "$src_func" | cut -f2 -d " " | sed 's/(//')
       
       if [[ "$src_func" == "Fuzz" ]] ; then
@@ -69,20 +75,20 @@ main() {
         go-fuzz-build -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
       else
         showm " ${CL_GREY}∙ ${CL_BOLD}${src_package}${CL_NORM} ${CL_GREY}($src_func)${CL_NORM}… "
-        func_min=$(echo "$src_func" | sed 's/Fuzz//' | tr '[A-Z]' '[a-z]')
+        func_min=$(echo "$src_func" | sed 's/Fuzz//' | tr '[:upper:]' '[:lower:]')
         output="${src_name}-${func_min}-fuzz.zip"
         go-fuzz-build -func "$src_func" -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
       fi
 
+      # shellcheck disable=SC2181
       if [[ $? -eq 0 ]] ; then
         show "${CL_GREEN}✔  ${CL_DARK}($output)${CL_NORM}"
       else
         show "✖ " $RED
       fi
 
-    done < <(grep -Eo '^func Fuzz.*\(' $src)
-
-  done
+    done < <(grep -Eo '^func Fuzz.*\(' "$src")
+  done < <(find . -name "fuzz.go")
 
   show ""
 

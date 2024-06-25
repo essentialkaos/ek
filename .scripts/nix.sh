@@ -7,8 +7,7 @@
 # *: All arguments passed to script
 #
 main() {
-  local version="$1"
-  local dir="${2:-.}"
+  local dir="${1:-.}"
 
   if [[ ! -d $dir ]] ; then
     exit 1
@@ -41,9 +40,9 @@ testPackages() {
   local has_errors os_flag cover_enabled package_dir
   local package_list=".scripts/packages.list"
 
-  while read package ; do
+  while read -r package ; do
 
-    read os_flag cover_enabled package_dir <<< "$package"
+    read -r os_flag cover_enabled package_dir <<< "$package"
 
     if ! isOSFit "$os_flag" ; then
       continue
@@ -54,27 +53,23 @@ testPackages() {
     fi
 
     if [[ "$cover_enabled" == "-" ]] ; then
-      go test $dir/$package_dir -covermode=count -tags=unit
-
-      if [[ $? -ne 0 ]] ; then
+      if ! go test "$dir/$package_dir" -covermode=count -tags=unit ; then
         has_errors=true
       fi
     else
-      go test -covermode=count -tags=unit -coverprofile=coverage.tmp $dir/$package_dir
-
-      if [[ $? -ne 0 ]] ; then
+      if ! go test -covermode=count -tags=unit -coverprofile=coverage.tmp "$dir/$package_dir" ; then
         has_errors=true
       fi
 
       if [[ -f coverage.tmp ]] ; then
-        egrep -v '^mode:' coverage.tmp >> coverage.txt
+        grep -Ev '^mode:' coverage.tmp >> coverage.txt
         rm -f coverage.tmp
       fi
     fi
 
-  done < <(awk 1 $package_list)
+  done < <(awk 1 "$package_list")
 
-  if [[ $has_errors ]] ; then
+  if [[ -n "$has_errors" ]] ; then
     exit 1
   fi
 }

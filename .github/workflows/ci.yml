@@ -58,7 +58,7 @@ jobs:
 
       - name: Run tests
         working-directory: ${{env.SRC_DIR}}
-        run: .scripts/nix.sh 12
+        run: .scripts/nix.sh
 
       - name: Send coverage data
         uses: essentialkaos/goveralls-action@v2
@@ -112,7 +112,7 @@ jobs:
 
       - name: Run tests
         working-directory: ${{env.SRC_DIR}}
-        run: .scripts/nix.sh 12
+        run: .scripts/nix.sh
 
       - name: Send coverage data
         uses: essentialkaos/goveralls-action@v2
