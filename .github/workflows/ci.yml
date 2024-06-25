@@ -18,20 +18,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-  CODACY_ORGANIZATION_PROVIDER: gh
-  CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
-  CODACY_USERNAME: ${{ github.repository_owner }}
+  SRC_DIR: src/github.com/${{ github.repository }}
+  EK_TEST_PORT: 8080
 
 jobs:
   Linux:
     name: Linux
     runs-on: ubuntu-latest
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -56,7 +49,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-${{github.repository_owner}}-${{github.event.repository.name}}-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -69,6 +62,8 @@ jobs:
 
       - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
@@ -76,10 +71,16 @@ jobs:
           flag-name: linux-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
+        working-directory: ${{env.SRC_DIR}}
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: gh
+          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
+          CODACY_USERNAME: ${{ github.repository_owner }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r ${{env.SRC_DIR}}/coverage.txt \
+          -r coverage.txt \
           --partial
 
   macOS:
@@ -87,10 +88,6 @@ jobs:
     runs-on: macos-latest
 
     needs: Linux
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -115,7 +112,7 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-${{github.repository_owner}}-${{github.event.repository.name}}-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -128,6 +125,8 @@ jobs:
 
       - name: Send coverage data
         uses: essentialkaos/goveralls-action@v2
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
@@ -135,19 +134,21 @@ jobs:
           flag-name: macos-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
+        working-directory: ${{env.SRC_DIR}}
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: gh
+          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
+          CODACY_USERNAME: ${{ github.repository_owner }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r ${{env.SRC_DIR}}/coverage.txt \
+          -r coverage.txt \
           --partial
 
   Windows:
     name: Windows (Stubs)
     runs-on: windows-latest
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -178,10 +179,18 @@ jobs:
     steps:
       - name: Finish parallel tests (Coveralls)
         uses: essentialkaos/goveralls-action@v2
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           parallel-finished: true
 
       - name: Finish parallel tests (Codacy)
+        working-directory: ${{env.SRC_DIR}}
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: gh
+          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
+          CODACY_USERNAME: ${{ github.repository_owner }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
