@@ -73,10 +73,7 @@ jobs:
       - name: Send coverage data to Codacy
         working-directory: ${{env.SRC_DIR}}
         env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: gh
-          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
-          CODACY_USERNAME: ${{ github.repository_owner }}
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
@@ -136,10 +133,7 @@ jobs:
       - name: Send coverage data to Codacy
         working-directory: ${{env.SRC_DIR}}
         env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: gh
-          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
-          CODACY_USERNAME: ${{ github.repository_owner }}
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
@@ -187,10 +181,7 @@ jobs:
       - name: Finish parallel tests (Codacy)
         working-directory: ${{env.SRC_DIR}}
         env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: gh
-          CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
-          CODACY_USERNAME: ${{ github.repository_owner }}
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
