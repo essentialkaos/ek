@@ -39,6 +39,10 @@ var (
 	ErrStdinPipe  = errors.New("Can't get pager stdin")
 )
 
+// AllowEnv is a flag that allows to user to define pager binary using PAGER environment
+// variable
+var AllowEnv bool
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Setup set up pager for work. After calling this method, any data sent to Stdout and
@@ -98,7 +102,7 @@ func Complete() {
 
 // getPagerCommand creates command for pager
 func getPagerCommand(pager string) *exec.Cmd {
-	if pager == "" {
+	if pager == "" && AllowEnv {
 		pager = os.Getenv("PAGER")
 	}
 

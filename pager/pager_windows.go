@@ -12,12 +12,15 @@ import "errors"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DEFAULT is default pager command
-const DEFAULT = "more"
+var (
+	ErrAlreadySet = errors.New("Pager already set")
+	ErrNoPager    = errors.New("There is no pager on the system")
+	ErrStdinPipe  = errors.New("Can't get pager stdin")
+)
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var ErrAlreadySet = errors.New("Pager already set")
+// AllowEnv is a flag that allows to user to define pager binary using PAGER environment
+// variable
+var AllowEnv bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 

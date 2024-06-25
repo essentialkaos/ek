@@ -1,5 +1,10 @@
 ## Changelog
 
+### [12.128.0](https://kaos.sh/ek/12.128.0)
+
+- `[pager]` Disable `PAGER` environment variable usage by default
+- `[pager]` Added `AllowEnv` option to allow the use of the `PAGER` environment variable
+
 ### [12.127.0](https://kaos.sh/ek/12.127.0)
 
 - `[options]` Added method `Delete`

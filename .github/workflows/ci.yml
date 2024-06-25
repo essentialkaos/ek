@@ -17,14 +17,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  SRC_DIR: src/github.com/${{ github.repository }}
+  EK_TEST_PORT: 8080
+
 jobs:
   Linux:
     name: Linux
     runs-on: ubuntu-latest
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -49,7 +49,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-${{github.repository_owner}}-${{github.event.repository.name}}-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -58,9 +58,9 @@ jobs:
 
       - name: Run tests
         working-directory: ${{env.SRC_DIR}}
-        run: .scripts/nix.sh 12
+        run: .scripts/nix.sh
 
-      - name: Send coverage data
+      - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,15 +70,20 @@ jobs:
           parallel: true
           flag-name: linux-${{ matrix.go }}
 
+      - name: Send coverage data to Codacy
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --force-coverage-parser go \
+          -r ${{env.SRC_DIR}}/coverage.txt \
+          --partial
+
   macOS:
     name: macOS
     runs-on: macos-latest
 
     needs: Linux
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -103,7 +108,7 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-essentialkaos-ek-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-${{github.repository_owner}}-${{github.event.repository.name}}-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
@@ -112,9 +117,9 @@ jobs:
 
       - name: Run tests
         working-directory: ${{env.SRC_DIR}}
-        run: .scripts/nix.sh 12
+        run: .scripts/nix.sh
 
-      - name: Send coverage data
+      - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,13 +129,18 @@ jobs:
           parallel: true
           flag-name: macos-${{ matrix.go }}
 
+      - name: Send coverage data to Codacy
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --force-coverage-parser go \
+          -r ${{env.SRC_DIR}}/coverage.txt \
+          --partial
+
   Windows:
     name: Windows (Stubs)
     runs-on: windows-latest
-
-    env:
-      SRC_DIR: src/github.com/${{ github.repository }}
-      EK_TEST_PORT: 8080
 
     strategy:
       matrix:
@@ -159,12 +169,17 @@ jobs:
     needs: [Linux, macOS]
 
     steps:
-      - name: Finish parallel tests
+      - name: Finish parallel tests (Coveralls)
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           parallel-finished: true
+
+      - name: Finish parallel tests (Codacy)
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
     name: Typos
