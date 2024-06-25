@@ -17,6 +17,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+  CODACY_ORGANIZATION_PROVIDER: gh
+  CODACY_PROJECT_NAME: ${{ github.event.repository.name }}
+  CODACY_USERNAME: ${{ github.repository_owner }}
+
 jobs:
   Linux:
     name: Linux
@@ -62,8 +69,6 @@ jobs:
 
       - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
@@ -71,11 +76,6 @@ jobs:
           flag-name: linux-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
-        env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
-          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
-          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
@@ -128,8 +128,6 @@ jobs:
 
       - name: Send coverage data
         uses: essentialkaos/goveralls-action@v2
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path: ${{env.SRC_DIR}}
           profile: coverage.txt
@@ -137,11 +135,6 @@ jobs:
           flag-name: macos-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
-        env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
-          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
-          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
@@ -185,17 +178,10 @@ jobs:
     steps:
       - name: Finish parallel tests (Coveralls)
         uses: essentialkaos/goveralls-action@v2
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           parallel-finished: true
 
       - name: Finish parallel tests (Codacy)
-        env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
-          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
-          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
