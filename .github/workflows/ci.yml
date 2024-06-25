@@ -79,7 +79,7 @@ jobs:
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r coverage.txt \
+          -r ${{env.SRC_DIR}}/coverage.txt \
           --partial
 
   macOS:
@@ -145,7 +145,7 @@ jobs:
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r coverage.txt \
+          -r ${{env.SRC_DIR}}/coverage.txt \
           --partial
 
   Windows:
