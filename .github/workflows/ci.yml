@@ -71,6 +71,11 @@ jobs:
           flag-name: linux-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
+          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
+          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
@@ -131,6 +136,18 @@ jobs:
           parallel: true
           flag-name: macos-${{ matrix.go }}
 
+      - name: Send coverage data to Codacy
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
+          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
+          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --force-coverage-parser go \
+          -r coverage.txt \
+          --partial
+
   Windows:
     name: Windows (Stubs)
     runs-on: windows-latest
@@ -174,6 +191,11 @@ jobs:
           parallel-finished: true
 
       - name: Finish parallel tests (Codacy)
+        env:
+          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
+          CODACY_ORGANIZATION_PROVIDER: ${{ secrets.CODACY_ORGANIZATION_PROVIDER }}
+          CODACY_PROJECT_NAME: ${{ secrets.CODACY_PROJECT_NAME }}
+          CODACY_USERNAME: ${{ secrets.CODACY_USERNAME }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
 
   Typos:
