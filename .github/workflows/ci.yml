@@ -71,13 +71,12 @@ jobs:
           flag-name: linux-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
-        working-directory: ${{env.SRC_DIR}}
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r coverage.txt \
+          -r ${{env.SRC_DIR}}/coverage.txt \
           --partial
 
   macOS:
@@ -120,7 +119,7 @@ jobs:
         working-directory: ${{env.SRC_DIR}}
         run: .scripts/nix.sh
 
-      - name: Send coverage data
+      - name: Send coverage data to Coveralls
         uses: essentialkaos/goveralls-action@v2
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -131,13 +130,12 @@ jobs:
           flag-name: macos-${{ matrix.go }}
 
       - name: Send coverage data to Codacy
-        working-directory: ${{env.SRC_DIR}}
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --force-coverage-parser go \
-          -r coverage.txt \
+          -r ${{env.SRC_DIR}}/coverage.txt \
           --partial
 
   Windows:
@@ -179,7 +177,6 @@ jobs:
           parallel-finished: true
 
       - name: Finish parallel tests (Codacy)
-        working-directory: ${{env.SRC_DIR}}
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
