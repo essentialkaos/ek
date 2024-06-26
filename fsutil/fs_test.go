@@ -630,6 +630,18 @@ func (s *FSSuite) TestGetMode(c *check.C) {
 	c.Assert(GetMode(tmpFile), check.Equals, os.FileMode(0764))
 }
 
+func (s *FSSuite) TestGetModeOctal(c *check.C) {
+	tmpDir := c.MkDir()
+	tmpFile := tmpDir + "/test.file"
+
+	c.Assert(os.WriteFile(tmpFile, []byte("TEST\n"), 13631988), check.IsNil)
+
+	os.Chmod(tmpFile, 13631988)
+
+	c.Assert(GetModeOctal(""), check.Equals, "")
+	c.Assert(GetModeOctal(tmpFile), check.Equals, "7764")
+}
+
 func (s *FSSuite) TestCountLines(c *check.C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/test.file"
