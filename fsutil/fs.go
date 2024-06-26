@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -670,12 +671,23 @@ func GetMode(path string) os.FileMode {
 
 	path = PATH.Clean(path)
 
-	return os.FileMode(getMode(path) & 0777)
+	return getMode(path) & 0777
+}
+
+// GetModeOctal returns file mode bits in octal form (like 0644)
+func GetModeOctal(path string) string {
+	if path == "" {
+		return ""
+	}
+
+	path = PATH.Clean(path)
+
+	return getModeOctal(path)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getMode(path string) uint32 {
+func getMode(path string) os.FileMode {
 	var stat = &syscall.Stat_t{}
 
 	err := syscall.Stat(path, stat)
@@ -684,7 +696,34 @@ func getMode(path string) uint32 {
 		return 0
 	}
 
-	return uint32(stat.Mode)
+	return os.FileMode(stat.Mode)
+}
+
+func getModeOctal(path string) string {
+	var stat = &syscall.Stat_t{}
+
+	err := syscall.Stat(path, stat)
+
+	if err != nil {
+		return ""
+	}
+
+	m := strconv.FormatUint(uint64(stat.Mode&0777), 8)
+	s := 0
+
+	if stat.Mode&syscall.S_ISVTX != 0 {
+		s += 1
+	}
+
+	if stat.Mode&syscall.S_ISGID != 0 {
+		s += 2
+	}
+
+	if stat.Mode&syscall.S_ISUID != 0 {
+		s += 4
+	}
+
+	return strconv.Itoa(s) + m
 }
 
 func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {

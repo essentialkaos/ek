@@ -279,6 +279,15 @@ func ExampleGetMode() {
 	}
 }
 
+func ExampleGetModeOctal() {
+	target := "/home/john/test.txt"
+	mode := GetModeOctal(target)
+
+	if mode != "" {
+		fmt.Printf("File mode: %s\n", mode)
+	}
+}
+
 func ExampleCopyFile() {
 	target := "/home/john/test.txt"
 	err := CopyFile(target, "/home/bob/test.txt", 0644)

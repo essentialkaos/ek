@@ -230,6 +230,12 @@ func GetMode(path string) os.FileMode {
 	return 0
 }
 
+// ❗ GetModeOctal returns file mode bits in octal form (like 0644)
+func GetModeOctal(path string) string {
+	panic("UNSUPPORTED")
+	return ""
+}
+
 // ❗ GetTimes returns time of access, modification, and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	panic("UNSUPPORTED")

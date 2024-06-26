@@ -1,5 +1,9 @@
 ## Changelog
 
+### [12.129.0](https://kaos.sh/ek/12.129.0)
+
+- `[fsutil]` Added method `GetModeOctal`
+
 ### [12.128.0](https://kaos.sh/ek/12.128.0)
 
 - `[pager]` Disable `PAGER` environment variable usage by default
