@@ -51,7 +51,6 @@ func (s *ValidatorSuite) TestRegexpValidator(c *check.C) {
 
 	errs := knf.Validate([]*knf.Validator{
 		{"regexp:test1", Regexp, `^[A-Z0-9]{4,5}$`},
-		{"regexp:test2", Regexp, ``},
 		{"regexp:test3", Regexp, `^[A-Z0-9]{4,5}$`},
 	})
 
@@ -60,11 +59,15 @@ func (s *ValidatorSuite) TestRegexpValidator(c *check.C) {
 	errs = knf.Validate([]*knf.Validator{
 		{"regexp:test2", Regexp, `^[A-Z0-9]{4}$`},
 		{"regexp:test2", Regexp, `\`},
+		{"regexp:test2", Regexp, ""},
+		{"regexp:test2", Regexp, 44},
 	})
 
-	c.Assert(errs, check.HasLen, 2)
+	c.Assert(errs, check.HasLen, 4)
 	c.Assert(errs[0].Error(), check.Equals, `Property regexp:test2 must match regexp pattern "^[A-Z0-9]{4}$"`)
-	c.Assert(errs[1].Error(), check.Equals, "Can't use given regexp pattern: error parsing regexp: trailing backslash at end of expression: ``")
+	c.Assert(errs[1].Error(), check.Equals, "Invalid input for regexp.Regexp validator: error parsing regexp: trailing backslash at end of expression: ``")
+	c.Assert(errs[2].Error(), check.Equals, "Validator regexp.Regexp requires non-empty input for checking regexp:test2 property")
+	c.Assert(errs[3].Error(), check.Equals, "Validator regexp.Regexp doesn't support input with type <int> for checking regexp:test2 property")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
