@@ -103,7 +103,7 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	var errs []error
 
 	errs = knf.Validate([]*knf.Validator{
-		{"integer:test1", Empty, nil},
+		{"integer:test1", Set, nil},
 		{"integer:test1", Less, 0},
 		{"integer:test1", Less, 0.5},
 		{"integer:test1", Greater, 10},
@@ -111,36 +111,44 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"integer:test1", Equals, 10},
 		{"integer:test1", Equals, 10.1},
 		{"integer:test1", Equals, "123"},
-		{"string:test3", NotLen, 4},
 		{"string:test3", NotPrefix, "45"},
 		{"string:test3", NotSuffix, "00"},
+		{"string:test1", LenLess, 3},
+		{"string:test1", LenGreater, 10},
+		{"string:test1", LenNotEquals, 4},
 	})
 
 	c.Assert(errs, check.HasLen, 0)
 
 	errs = knf.Validate([]*knf.Validator{
-		{"boolean:test5", Empty, nil},
+		{"boolean:test5", Set, nil},
 		{"integer:test1", Less, 10},
 		{"integer:test1", Greater, 0},
 		{"integer:test1", Equals, 1},
 		{"integer:test1", Greater, "12345"},
-		{"integer:test1", NotContains, []string{"A", "B", "C"}},
-		{"string:test3", NotLen, 8},
+		{"integer:test1", SetToAny, []string{"A", "B", "C"}},
+		{"integer:test1", SetToAnyIgnoreCase, []string{"A", "B", "C"}},
 		{"string:test3", NotPrefix, "AB"},
 		{"string:test3", NotSuffix, "CD"},
+		{"string:test1", LenLess, 10},
+		{"string:test1", LenGreater, 3},
+		{"string:test1", LenNotEquals, 10},
 	})
 
-	c.Assert(errs, check.HasLen, 9)
+	c.Assert(errs, check.HasLen, 12)
 
-	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 can't be empty")
+	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 must be set")
 	c.Assert(errs[1].Error(), check.Equals, "Property integer:test1 can't be less than 10")
 	c.Assert(errs[2].Error(), check.Equals, "Property integer:test1 can't be greater than 0")
 	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
-	c.Assert(errs[4].Error(), check.Equals, "Wrong validator for property integer:test1")
+	c.Assert(errs[4].Error(), check.Equals, "Validator knf.Greater doesn't support input with type <string> for checking integer:test1 property")
 	c.Assert(errs[5].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
-	c.Assert(errs[6].Error(), check.Equals, "Property string:test3 must be 8 symbols long")
-	c.Assert(errs[7].Error(), check.Equals, "Property string:test3 must have prefix \"AB\"")
-	c.Assert(errs[8].Error(), check.Equals, "Property string:test3 must have suffix \"CD\"")
+	c.Assert(errs[6].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
+	c.Assert(errs[7].Error(), check.Equals, `Property string:test3 must have prefix "AB"`)
+	c.Assert(errs[8].Error(), check.Equals, `Property string:test3 must have suffix "CD"`)
+	c.Assert(errs[9].Error(), check.Equals, "Property string:test1 value can't be shorter than 10 symbols")
+	c.Assert(errs[10].Error(), check.Equals, "Property string:test1 value can't be longer than 3 symbols")
+	c.Assert(errs[11].Error(), check.Equals, "Property string:test1 must be 10 symbols long")
 
 	fakeConfigFile := createConfig(c, `
 [test]
@@ -155,20 +163,18 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(fakeConfig, check.NotNil)
 
-	c.Assert(Empty(fakeConfig, "test:empty", nil), check.NotNil)
-	c.Assert(Empty(fakeConfig, "test:string", nil), check.IsNil)
+	c.Assert(Set(fakeConfig, "test:empty", nil), check.NotNil)
+	c.Assert(Set(fakeConfig, "test:string", nil), check.IsNil)
 
 	c.Assert(Less(fakeConfig, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
 	c.Assert(Less(fakeConfig, "test:integer", 5), check.IsNil)
 	c.Assert(Less(fakeConfig, "test:float", 30.0).Error(), check.Equals, "Property test:float can't be less than 30")
 	c.Assert(Less(fakeConfig, "test:float", 5.0), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:string", "30").Error(), check.Equals, "Wrong validator for property test:string")
 
 	c.Assert(Greater(fakeConfig, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
 	c.Assert(Greater(fakeConfig, "test:integer", 30), check.IsNil)
 	c.Assert(Greater(fakeConfig, "test:float", 5.0).Error(), check.Equals, "Property test:float can't be greater than 5")
 	c.Assert(Greater(fakeConfig, "test:float", 30.0), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:string", "30").Error(), check.Equals, "Wrong validator for property test:string")
 
 	c.Assert(Equals(fakeConfig, "test:empty", "").Error(), check.Equals, "Property test:empty can't be equal \"\"")
 	c.Assert(Equals(fakeConfig, "test:string", "test").Error(), check.Equals, "Property test:string can't be equal \"test\"")
@@ -176,16 +182,36 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Equals(fakeConfig, "test:float", 10.0).Error(), check.Equals, "Property test:float can't be equal 10.000000")
 	c.Assert(Equals(fakeConfig, "test:boolean", false).Error(), check.Equals, "Property test:boolean can't be equal false")
 
-	c.Assert(Equals(fakeConfig, "test:empty", []string{}).Error(), check.Equals, "Wrong validator for property test:empty")
 	c.Assert(Equals(fakeConfig, "test:empty", "1"), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:string", "testtest"), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:integer", 15), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:float", 130.0), check.IsNil)
 	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
 
-	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
-	c.Assert(NotContains(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
-	c.Assert(NotContains(fakeConfig, "test:string", 0).Error(), check.Equals, "Wrong validator for property test:string")
+	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
+	c.Assert(Equals(fakeConfig, "test:boolean", true), check.IsNil)
+
+	c.Assert(SetToAny(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
+	c.Assert(SetToAny(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
+
+	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", []string{"A", "B", "TEST"}), check.IsNil)
+	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
+
+	c.Assert(SetToAny(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(Less(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(Greater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(Equals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(NotLen(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(NotPrefix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(NotSuffix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenLess(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenGreater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenNotEquals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+
+	c.Assert(NotPrefix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
+	c.Assert(NotSuffix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
 }
 
 func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
@@ -240,6 +266,26 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
 	c.Assert(TypeFloat(fakeConfig, "float:test3", nil), check.IsNil)
 	c.Assert(TypeFloat(fakeConfig, "float:test4", nil), check.IsNil)
 	c.Assert(TypeFloat(fakeConfig, "float:test5", nil).Error(), check.Equals, "Property float:test5 contains unsupported float value (ABCD)")
+}
+
+func (s *ValidatorSuite) TestDeprecated(c *check.C) {
+	var err error
+
+	configFile := createConfig(c, _CONFIG_DATA)
+
+	err = knf.Global(configFile)
+	c.Assert(err, check.IsNil)
+
+	var errs []error
+
+	errs = knf.Validate([]*knf.Validator{
+		{"boolean:test5", Empty, nil},
+		{"integer:test1", NotContains, []string{"A", "B", "C"}},
+		{"string:test3", NotLen, 8},
+		{"string:test3", NotLen, 4},
+	})
+
+	c.Assert(errs, check.HasLen, 3)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

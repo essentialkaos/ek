@@ -20,45 +20,75 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Empty returns error if config property is empty
-	Empty = validatorEmpty
+	// Empty returns error if property is not set
+	Set = validatorSet
 
-	// NotContains returns error if config property doesn't contains value from given slice
-	NotContains = validatorNotContains
+	// SetToAny returns error if property doesn't contain any value from given slice
+	SetToAny = validatorSetToAny
 
-	// Less returns error if config property is less than given integer
+	// SetToAnyIgnoreCase returns error if property doesn't contain value from given
+	// slice in any letter case
+	SetToAnyIgnoreCase = validatorSetToAnyIgnoreCase
+
+	// Less returns an error if property is less than given number
 	Less = validatorLess
 
-	// Greater returns error if config property is greater than given integer
+	// Greater returns error if property is greater than given number
 	Greater = validatorGreater
 
-	// Equals returns error if config property is equals to given string
+	// Equals returns error if property is equal to given string
 	Equals = validatorEquals
 
-	// NotLen returns error if config property have wrong size
-	NotLen = validatorNotLen
+	// LenLess returns an error if the length of the property value is less than
+	// given number
+	LenLess = validatorLenLess
 
-	// NotPrefix returns error if config property doesn't have given prefix
+	// LenGreater returns an error if the length of the property value is greater than
+	// given number
+	LenGreater = validatorLenGreater
+
+	// LenNotEquals an error if the length of the property value is not equal to the
+	// given number
+	LenNotEquals = validatorLenNotEquals
+
+	// NotPrefix returns error if property doesn't have given prefix
 	NotPrefix = validatorNotPrefix
 
-	// NotPrefix returns error if config property doesn't have given suffix
+	// NotPrefix returns error if property doesn't have given suffix
 	NotSuffix = validatorNotSuffix
 
-	// TypeBool returns error if config property contains non-boolean value
+	// TypeBool returns error if property contains non-boolean value
 	TypeBool = validatorTypeBool
 
-	// TypeNum returns error if config property contains non-numeric (int/uint) value
+	// TypeNum returns error if property contains non-numeric (int/uint) value
 	TypeNum = validatorTypeNum
 
-	// TypeNum returns error if config property contains non-float value
+	// TypeNum returns error if property contains non-float value
 	TypeFloat = validatorTypeFloat
+)
+
+var (
+	// Empty returns error if property is empty
+	//
+	// Deprecated: Use validator Set instead
+	Empty = validatorSet
+
+	// NotContains returns error if property doesn't contains value from given slice
+	//
+	// Deprecated: Use validator SetToAny instead
+	NotContains = validatorSetToAny
+
+	// NotLen returns error if property has wrong size
+	//
+	// Deprecated: Use validator LenNotEquals instead
+	NotLen = validatorNotLen
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func validatorEmpty(config knf.IConfig, prop string, value any) error {
+func validatorSet(config knf.IConfig, prop string, value any) error {
 	if config.GetS(prop) == "" {
-		return fmt.Errorf("Property %s can't be empty", prop)
+		return fmt.Errorf("Property %s must be set", prop)
 	}
 
 	return nil
@@ -116,107 +146,187 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
-func validatorNotContains(config knf.IConfig, prop string, value any) error {
-	switch u := value.(type) {
+func validatorSetToAny(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
 	case []string:
-		currentValue := config.GetS(prop)
-
-		for _, v := range u {
-			if v == currentValue {
-				return nil
-			}
+		if !isSliceContainsValue(t, config.GetS(prop), false) {
+			return fmt.Errorf("Property %s doesn't contains any valid value", prop)
 		}
 
-		return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+		return nil
 	}
 
-	return getWrongValidatorError(prop)
+	return getValidatorInputError("SetToAny", prop, value)
+}
+
+func validatorSetToAnyIgnoreCase(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case []string:
+		if !isSliceContainsValue(t, config.GetS(prop), true) {
+			return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+		}
+
+		return nil
+	}
+
+	return getValidatorInputError("SetToAnyIgnoreCase", prop, value)
 }
 
 func validatorLess(config knf.IConfig, prop string, value any) error {
-	switch value.(type) {
-	case int, int32, int64, uint, uint32, uint64:
-		if config.GetI(prop) < value.(int) {
-			return fmt.Errorf("Property %s can't be less than %d", prop, value.(int))
+	switch t := value.(type) {
+	case int:
+		if config.GetI(prop) < t {
+			return fmt.Errorf("Property %s can't be less than %d", prop, t)
 		}
-	case float32, float64:
-		if config.GetF(prop) < value.(float64) {
-			return fmt.Errorf("Property %s can't be less than %g", prop, value.(float64))
+
+	case float64:
+		if config.GetF(prop) < t {
+			return fmt.Errorf("Property %s can't be less than %g", prop, t)
 		}
+
 	default:
-		return getWrongValidatorError(prop)
+		return getValidatorInputError("Less", prop, value)
 	}
 
 	return nil
 }
 
 func validatorGreater(config knf.IConfig, prop string, value any) error {
-	switch value.(type) {
-	case int, int32, int64, uint, uint32, uint64:
-		if config.GetI(prop) > value.(int) {
-			return fmt.Errorf("Property %s can't be greater than %d", prop, value.(int))
+	switch t := value.(type) {
+	case int:
+		if config.GetI(prop) > t {
+			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
 		}
 
-	case float32, float64:
-		if config.GetF(prop) > value.(float64) {
-			return fmt.Errorf("Property %s can't be greater than %g", prop, value.(float64))
+	case float64:
+		if config.GetF(prop) > t {
+			return fmt.Errorf("Property %s can't be greater than %g", prop, t)
 		}
 
 	default:
-		return getWrongValidatorError(prop)
+		return getValidatorInputError("Greater", prop, value)
 	}
 
 	return nil
 }
 
 func validatorEquals(config knf.IConfig, prop string, value any) error {
-	switch u := value.(type) {
-	case int, int32, int64, uint, uint32, uint64:
-		if config.GetI(prop) == value.(int) {
-			return fmt.Errorf("Property %s can't be equal %d", prop, value.(int))
+	switch t := value.(type) {
+	case int:
+		if config.GetI(prop) == t {
+			return fmt.Errorf("Property %s can't be equal %d", prop, t)
 		}
 
-	case float32, float64:
-		if config.GetF(prop) == value.(float64) {
-			return fmt.Errorf("Property %s can't be equal %f", prop, value.(float64))
+	case float64:
+		if config.GetF(prop) == t {
+			return fmt.Errorf("Property %s can't be equal %f", prop, t)
 		}
 
 	case bool:
-		if config.GetB(prop) == u {
-			return fmt.Errorf("Property %s can't be equal %t", prop, value.(bool))
+		if config.GetB(prop) == t {
+			return fmt.Errorf("Property %s can't be equal %t", prop, t)
 		}
 
 	case string:
-		if config.GetS(prop) == u {
-			return fmt.Errorf("Property %s can't be equal %q", prop, value.(string))
+		if config.GetS(prop) == t {
+			return fmt.Errorf("Property %s can't be equal %q", prop, t)
 		}
 
 	default:
-		return getWrongValidatorError(prop)
+		return getValidatorInputError("Equals", prop, value)
 	}
 
 	return nil
 }
 
-func validatorNotLen(config knf.IConfig, prop string, value any) error {
-	if strutil.Len(config.GetS(prop)) != value.(int) {
-		return fmt.Errorf("Property %s must be %d symbols long", prop, value.(int))
+func validatorLenLess(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) < t {
+			return fmt.Errorf("Property %s value can't be shorter than %d symbols", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("LenLess", prop, value)
+	}
+
+	return nil
+}
+
+func validatorLenGreater(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) > t {
+			return fmt.Errorf("Property %s value can't be longer than %d symbols", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("LenGreater", prop, value)
+	}
+
+	return nil
+}
+
+func validatorLenNotEquals(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) != t {
+			return fmt.Errorf("Property %s must be %d symbols long", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("LenNotEquals", prop, value)
 	}
 
 	return nil
 }
 
 func validatorNotPrefix(config knf.IConfig, prop string, value any) error {
-	if !strings.HasPrefix(config.GetS(prop), value.(string)) {
-		return fmt.Errorf("Property %s must have prefix %q", prop, value.(string))
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("NotPrefix", prop)
+		}
+
+		if !strings.HasPrefix(config.GetS(prop), t) {
+			return fmt.Errorf("Property %s must have prefix %q", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("NotPrefix", prop, value)
 	}
 
 	return nil
 }
 
 func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
-	if !strings.HasSuffix(config.GetS(prop), value.(string)) {
-		return fmt.Errorf("Property %s must have suffix %q", prop, value.(string))
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("NotSuffix", prop)
+		}
+
+		if !strings.HasSuffix(config.GetS(prop), t) {
+			return fmt.Errorf("Property %s must have suffix %q", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("NotSuffix", prop, value)
+	}
+
+	return nil
+}
+
+// Deprecated
+func validatorNotLen(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) != t {
+			return fmt.Errorf("Property %s must be %d symbols long", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("NotLen", prop, value)
 	}
 
 	return nil
@@ -224,6 +334,35 @@ func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getWrongValidatorError(prop string) error {
-	return fmt.Errorf("Wrong validator for property %s", prop)
+func isSliceContainsValue(s []string, value string, ignoreCase bool) bool {
+	value = strings.ToLower(value)
+
+	for _, v := range s {
+		switch ignoreCase {
+		case true:
+			if strings.ToLower(v) == value {
+				return true
+			}
+		default:
+			if v == value {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func getValidatorInputError(validator, prop string, value any) error {
+	return fmt.Errorf(
+		"Validator knf.%s doesn't support input with type <%T> for checking %s property",
+		validator, value, prop,
+	)
+}
+
+func getValidatorEmptyInputError(validator, prop string) error {
+	return fmt.Errorf(
+		"Validator knf.%s requires non-empty input for checking %s property",
+		validator, prop,
+	)
 }

@@ -25,22 +25,47 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateRegexp(config knf.IConfig, prop string, value any) error {
-	pattern := value.(string)
 	confVal := config.GetS(prop)
 
-	if confVal == "" || pattern == "" {
+	if confVal == "" {
 		return nil
 	}
 
-	isMatch, err := regexp.MatchString(pattern, confVal)
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("Regexp", prop)
+		}
 
-	if err != nil {
-		return fmt.Errorf("Can't use given regexp pattern: %v", err)
-	}
+		re, err := regexp.Compile(t)
 
-	if !isMatch {
-		return fmt.Errorf("Property %s must match regexp pattern %q", prop, pattern)
+		if err != nil {
+			return fmt.Errorf("Invalid input for regexp.Regexp validator: %w", err)
+		}
+
+		if !re.MatchString(confVal) {
+			return fmt.Errorf("Property %s must match regexp pattern %q", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("Regexp", prop, value)
 	}
 
 	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func getValidatorInputError(validator, prop string, value any) error {
+	return fmt.Errorf(
+		"Validator regexp.%s doesn't support input with type <%T> for checking %s property",
+		validator, value, prop,
+	)
+}
+
+func getValidatorEmptyInputError(validator, prop string) error {
+	return fmt.Errorf(
+		"Validator regexp.%s requires non-empty input for checking %s property",
+		validator, prop,
+	)
 }
