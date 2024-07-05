@@ -45,11 +45,24 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validatePerms(config knf.IConfig, prop string, value any) error {
-	perms := value.(string)
 	target := config.GetS(prop)
 
 	if target == "" {
 		return nil
+	}
+
+	var perms string
+
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("Perms", prop)
+		}
+
+		perms = t
+
+	default:
+		return getValidatorInputError("Perms", prop, value)
 	}
 
 	if !fsutil.CheckPerms(perms, target) {
@@ -82,10 +95,23 @@ func validatePerms(config knf.IConfig, prop string, value any) error {
 
 func validateOwner(config knf.IConfig, prop string, value any) error {
 	target := config.GetS(prop)
-	owner := value.(string)
 
 	if target == "" {
 		return nil
+	}
+
+	var owner string
+
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("Owner", prop)
+		}
+
+		owner = t
+
+	default:
+		return getValidatorInputError("Owner", prop, value)
 	}
 
 	user, err := system.LookupUser(owner)
@@ -109,10 +135,23 @@ func validateOwner(config knf.IConfig, prop string, value any) error {
 
 func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
 	target := config.GetS(prop)
-	ownerGroup := value.(string)
 
 	if target == "" {
 		return nil
+	}
+
+	var ownerGroup string
+
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("OwnerGroup", prop)
+		}
+
+		ownerGroup = t
+
+	default:
+		return getValidatorInputError("OwnerGroup", prop, value)
 	}
 
 	group, err := system.LookupGroup(ownerGroup)
@@ -135,11 +174,24 @@ func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
 }
 
 func validateFileMode(config knf.IConfig, prop string, value any) error {
-	perms := value.(os.FileMode)
 	target := config.GetS(prop)
 
 	if target == "" {
 		return nil
+	}
+
+	var mode os.FileMode
+
+	switch t := value.(type) {
+	case os.FileMode:
+		if t == 0 {
+			return getValidatorEmptyInputError("FileMode", prop)
+		}
+
+		mode = t
+
+	default:
+		return getValidatorInputError("FileMode", prop, value)
 	}
 
 	targetPerms := fsutil.GetMode(target)
@@ -148,23 +200,36 @@ func validateFileMode(config knf.IConfig, prop string, value any) error {
 		return fmt.Errorf("Can't get mode for %q", target)
 	}
 
-	if perms != targetPerms {
+	if mode != targetPerms {
 		return fmt.Errorf(
-			"%s has different mode (%o != %o)", target, targetPerms, perms)
+			"%s has different mode (%o != %o)", target, targetPerms, mode)
 	}
 
 	return nil
 }
 
 func validateMatchPattern(config knf.IConfig, prop string, value any) error {
-	pattern := value.(string)
-	confPath := config.GetS(prop)
+	target := config.GetS(prop)
 
-	if pattern == "" || confPath == "" {
+	if target == "" {
 		return nil
 	}
 
-	isMatch, err := path.Match(pattern, confPath)
+	var pattern string
+
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("MatchPattern", prop)
+		}
+
+		pattern = t
+
+	default:
+		return getValidatorInputError("MatchPattern", prop, value)
+	}
+
+	isMatch, err := path.Match(pattern, target)
 
 	if err != nil {
 		return fmt.Errorf("Can't parse shell pattern: %v", err)
@@ -175,4 +240,20 @@ func validateMatchPattern(config knf.IConfig, prop string, value any) error {
 	}
 
 	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func getValidatorInputError(validator, prop string, value any) error {
+	return fmt.Errorf(
+		"Validator fs.%s doesn't support input with type <%T> for checking %s property",
+		validator, value, prop,
+	)
+}
+
+func getValidatorEmptyInputError(validator, prop string) error {
+	return fmt.Errorf(
+		"Validator fs.%s requires non-empty input for checking %s property",
+		validator, prop,
+	)
 }

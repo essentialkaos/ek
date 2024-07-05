@@ -72,9 +72,12 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 		{"test:test1", Perms, "DWX"},
 		{"test:test1", Perms, "DRWX"},
 		{"test:test1", Perms, "WX"},
+		{"test:test1", Perms, ""},
+		{"test:test1", Perms, 100},
 	})
 
-	c.Assert(errs, HasLen, 11)
+	c.Assert(errs, HasLen, 13)
+
 	c.Assert(errs[0].Error(), Equals, "Property test:test1 must be path to file")
 	c.Assert(errs[1].Error(), Equals, "Property test:test1 must be path to readable file")
 	c.Assert(errs[2].Error(), Equals, "Property test:test1 must be path to writable file")
@@ -86,6 +89,8 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	c.Assert(errs[8].Error(), Equals, "Property test:test1 must be path to writable directory")
 	c.Assert(errs[9].Error(), Equals, "Property test:test1 must be path to readable/writable directory")
 	c.Assert(errs[10].Error(), Equals, "Property test:test1 must be path to object with given permissions (WX)")
+	c.Assert(errs[11].Error(), Equals, "Validator fs.Perms requires non-empty input for checking test:test1 property")
+	c.Assert(errs[12].Error(), Equals, "Validator fs.Perms doesn't support input with type <int> for checking test:test1 property")
 }
 
 func (s *ValidatorSuite) TestOwnerValidator(c *C) {
@@ -104,11 +109,16 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	errs = knf.Validate([]*knf.Validator{
 		{"test:test1", Owner, "nobody"},
 		{"test:test1", Owner, "somerandomuser"},
+		{"test:test1", Owner, ""},
+		{"test:test1", Owner, 100},
 	})
 
-	c.Assert(errs, HasLen, 2)
+	c.Assert(errs, HasLen, 4)
+
 	c.Assert(errs[0].Error(), Equals, "User nobody must be owner of /etc/passwd")
 	c.Assert(errs[1].Error(), Equals, `Can't find user "somerandomuser" on system`)
+	c.Assert(errs[2].Error(), Equals, "Validator fs.Owner requires non-empty input for checking test:test1 property")
+	c.Assert(errs[3].Error(), Equals, "Validator fs.Owner doesn't support input with type <int> for checking test:test1 property")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -148,11 +158,16 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	errs = knf.Validate([]*knf.Validator{
 		{"test:test1", OwnerGroup, "daemon"},
 		{"test:test1", OwnerGroup, "somerandomgroup"},
+		{"test:test1", OwnerGroup, ""},
+		{"test:test1", OwnerGroup, 100},
 	})
 
-	c.Assert(errs, HasLen, 2)
+	c.Assert(errs, HasLen, 4)
+
 	c.Assert(errs[0].Error(), Equals, "Group daemon must be owner of /etc/passwd")
 	c.Assert(errs[1].Error(), Equals, `Can't find group "somerandomgroup" on system`)
+	c.Assert(errs[2].Error(), Equals, "Validator fs.OwnerGroup requires non-empty input for checking test:test1 property")
+	c.Assert(errs[3].Error(), Equals, "Validator fs.OwnerGroup doesn't support input with type <int> for checking test:test1 property")
 
 	configFile = createConfig(c, "/etc/__unknown__")
 
@@ -194,10 +209,15 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 
 	errs = knf.Validate([]*knf.Validator{
 		{"test:test1", FileMode, os.FileMode(0644)},
+		{"test:test1", FileMode, os.FileMode(0)},
+		{"test:test1", FileMode, 100},
 	})
 
-	c.Assert(errs, HasLen, 1)
+	c.Assert(errs, HasLen, 3)
+
 	c.Assert(errs[0].Error(), Equals, `Can't get mode for "/etc/__unknown__"`)
+	c.Assert(errs[1].Error(), Equals, "Validator fs.FileMode requires non-empty input for checking test:test1 property")
+	c.Assert(errs[2].Error(), Equals, "Validator fs.FileMode doesn't support input with type <int> for checking test:test1 property")
 }
 
 func (s *ValidatorSuite) TestMatchPattern(c *C) {
@@ -216,11 +236,16 @@ func (s *ValidatorSuite) TestMatchPattern(c *C) {
 	errs = knf.Validate([]*knf.Validator{
 		{"test:test1", MatchPattern, "/var/*"},
 		{"test:test1", MatchPattern, "[]a"},
+		{"test:test1", MatchPattern, ""},
+		{"test:test1", MatchPattern, 100},
 	})
 
-	c.Assert(errs, HasLen, 2)
+	c.Assert(errs, HasLen, 4)
+
 	c.Assert(errs[0].Error(), Equals, `Property test:test1 must match shell pattern "/var/*"`)
 	c.Assert(errs[1].Error(), Equals, "Can't parse shell pattern: syntax error in pattern")
+	c.Assert(errs[2].Error(), Equals, "Validator fs.MatchPattern requires non-empty input for checking test:test1 property")
+	c.Assert(errs[3].Error(), Equals, "Validator fs.MatchPattern doesn't support input with type <int> for checking test:test1 property")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
