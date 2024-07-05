@@ -1,5 +1,12 @@
 ## Changelog
 
+### [12.130.0](https://kaos.sh/ek/12.130.0)
+
+- `[knf/validators]` Added validators `Set`, `SetToAny`, and `SetToAnyIgnoreCase`
+- `[knf/validators]` Validators `Empty` and `NotContains` marked as deprectated
+- `[knf/validators]` Improved validators input validation
+- `[knf/validators]` Code refactoring
+
 ### [12.129.0](https://kaos.sh/ek/12.129.0)
 
 - `[fsutil]` Added method `GetModeOctal`
