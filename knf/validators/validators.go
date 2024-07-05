@@ -284,6 +284,10 @@ func validatorLenNotEquals(config knf.IConfig, prop string, value any) error {
 func validatorNotPrefix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("NotPrefix", prop)
+		}
+
 		if !strings.HasPrefix(config.GetS(prop), t) {
 			return fmt.Errorf("Property %s must have prefix %q", prop, t)
 		}
@@ -298,6 +302,10 @@ func validatorNotPrefix(config knf.IConfig, prop string, value any) error {
 func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return getValidatorEmptyInputError("NotSuffix", prop)
+		}
+
 		if !strings.HasSuffix(config.GetS(prop), t) {
 			return fmt.Errorf("Property %s must have suffix %q", prop, t)
 		}
@@ -349,5 +357,12 @@ func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
 		"Validator knf.%s doesn't support input with type <%T> for checking %s property",
 		validator, value, prop,
+	)
+}
+
+func getValidatorEmptyInputError(validator, prop string) error {
+	return fmt.Errorf(
+		"Validator knf.%s requires non-empty input for checking %s property",
+		validator, prop,
 	)
 }

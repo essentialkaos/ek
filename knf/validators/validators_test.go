@@ -209,6 +209,9 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(LenLess(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(LenGreater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(LenNotEquals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+
+	c.Assert(NotPrefix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
+	c.Assert(NotSuffix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
 }
 
 func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
