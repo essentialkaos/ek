@@ -2,10 +2,13 @@
 
 ### [12.130.0](https://kaos.sh/ek/12.130.0)
 
-- `[knf/validators]` Added validators `Set`, `SetToAny`, `SetToAnyIgnoreCase`, `LenLess`, `LenGreater`, and `LenEquals`
+- `[knf/validators]` Added validators `Set`, `SetToAny`, `SetToAnyIgnoreCase`, `LenLess`, `LenGreater`, and `LenNotEquals`
 - `[knf/validators]` Validators `Empty`, `NotContains`, and `NotLen` marked as deprecated
 - `[knf/validators]` Improved validators input validation
+- `[knf/validators/fs]` Improved validators input validation
+- `[knf/validators/regexp]` Improved validators input validation
 - `[knf/validators]` Code refactoring
+- `[knf/validators/system]` Code refactoring
 
 ### [12.129.0](https://kaos.sh/ek/12.129.0)
 
