@@ -111,9 +111,11 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"integer:test1", Equals, 10},
 		{"integer:test1", Equals, 10.1},
 		{"integer:test1", Equals, "123"},
-		{"string:test3", NotLen, 4},
 		{"string:test3", NotPrefix, "45"},
 		{"string:test3", NotSuffix, "00"},
+		{"string:test1", LenLess, 3},
+		{"string:test1", LenGreater, 10},
+		{"string:test1", LenNotEquals, 4},
 	})
 
 	c.Assert(errs, check.HasLen, 0)
@@ -125,13 +127,15 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"integer:test1", Equals, 1},
 		{"integer:test1", Greater, "12345"},
 		{"integer:test1", SetToAny, []string{"A", "B", "C"}},
-		{"string:test3", NotLen, 8},
+		{"integer:test1", SetToAnyIgnoreCase, []string{"A", "B", "C"}},
 		{"string:test3", NotPrefix, "AB"},
 		{"string:test3", NotSuffix, "CD"},
-		{"integer:test1", SetToAnyIgnoreCase, []string{"A", "B", "C"}},
+		{"string:test1", LenLess, 10},
+		{"string:test1", LenGreater, 3},
+		{"string:test1", LenNotEquals, 10},
 	})
 
-	c.Assert(errs, check.HasLen, 10)
+	c.Assert(errs, check.HasLen, 12)
 
 	c.Assert(errs[0].Error(), check.Equals, "Property boolean:test5 must be set")
 	c.Assert(errs[1].Error(), check.Equals, "Property integer:test1 can't be less than 10")
@@ -139,10 +143,12 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(errs[3].Error(), check.Equals, "Property integer:test1 can't be equal 1")
 	c.Assert(errs[4].Error(), check.Equals, "Validator knf.Greater doesn't support input with type <string> for checking integer:test1 property")
 	c.Assert(errs[5].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
-	c.Assert(errs[6].Error(), check.Equals, "Property string:test3 must be 8 symbols long")
+	c.Assert(errs[6].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
 	c.Assert(errs[7].Error(), check.Equals, `Property string:test3 must have prefix "AB"`)
 	c.Assert(errs[8].Error(), check.Equals, `Property string:test3 must have suffix "CD"`)
-	c.Assert(errs[9].Error(), check.Equals, "Property integer:test1 doesn't contains any valid value")
+	c.Assert(errs[9].Error(), check.Equals, "Property string:test1 value can't be shorter than 10 symbols")
+	c.Assert(errs[10].Error(), check.Equals, "Property string:test1 value can't be longer than 3 symbols")
+	c.Assert(errs[11].Error(), check.Equals, "Property string:test1 must be 10 symbols long")
 
 	fakeConfigFile := createConfig(c, `
 [test]
@@ -200,6 +206,9 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(NotLen(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(NotPrefix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(NotSuffix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenLess(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenGreater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenNotEquals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 }
 
 func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
@@ -269,9 +278,11 @@ func (s *ValidatorSuite) TestDeprecated(c *check.C) {
 	errs = knf.Validate([]*knf.Validator{
 		{"boolean:test5", Empty, nil},
 		{"integer:test1", NotContains, []string{"A", "B", "C"}},
+		{"string:test3", NotLen, 8},
+		{"string:test3", NotLen, 4},
 	})
 
-	c.Assert(errs, check.HasLen, 2)
+	c.Assert(errs, check.HasLen, 3)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

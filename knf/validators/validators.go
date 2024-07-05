@@ -36,11 +36,20 @@ var (
 	// Greater returns error if property is greater than given number
 	Greater = validatorGreater
 
-	// Equals returns error if property is equals to given string
+	// Equals returns error if property is equal to given string
 	Equals = validatorEquals
 
-	// NotLen returns error if property has wrong size
-	NotLen = validatorNotLen
+	// LenLess returns an error if the length of the property value is less than
+	// given number
+	LenLess = validatorLenLess
+
+	// LenGreater returns an error if the length of the property value is greater than
+	// given number
+	LenGreater = validatorLenGreater
+
+	// LenNotEquals an error if the length of the property value is not equal to the
+	// given number
+	LenNotEquals = validatorLenNotEquals
 
 	// NotPrefix returns error if property doesn't have given prefix
 	NotPrefix = validatorNotPrefix
@@ -68,6 +77,11 @@ var (
 	//
 	// Deprecated: Use validator SetToAny instead
 	NotContains = validatorSetToAny
+
+	// NotLen returns error if property has wrong size
+	//
+	// Deprecated: Use validator LenNotEquals instead
+	NotLen = validatorNotLen
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -225,7 +239,35 @@ func validatorEquals(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
-func validatorNotLen(config knf.IConfig, prop string, value any) error {
+func validatorLenLess(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) < t {
+			return fmt.Errorf("Property %s value can't be shorter than %d symbols", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("LenLess", prop, value)
+	}
+
+	return nil
+}
+
+func validatorLenGreater(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) > t {
+			return fmt.Errorf("Property %s value can't be longer than %d symbols", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("LenGreater", prop, value)
+	}
+
+	return nil
+}
+
+func validatorLenNotEquals(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if strutil.Len(config.GetS(prop)) != t {
@@ -233,7 +275,7 @@ func validatorNotLen(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("NotLen", prop, value)
+		return getValidatorInputError("LenNotEquals", prop, value)
 	}
 
 	return nil
@@ -262,6 +304,21 @@ func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
 
 	default:
 		return getValidatorInputError("NotSuffix", prop, value)
+	}
+
+	return nil
+}
+
+// Deprecated
+func validatorNotLen(config knf.IConfig, prop string, value any) error {
+	switch t := value.(type) {
+	case int:
+		if strutil.Len(config.GetS(prop)) != t {
+			return fmt.Errorf("Property %s must be %d symbols long", prop, t)
+		}
+
+	default:
+		return getValidatorInputError("NotLen", prop, value)
 	}
 
 	return nil
