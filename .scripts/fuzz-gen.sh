@@ -72,12 +72,12 @@ main() {
       if [[ "$src_func" == "Fuzz" ]] ; then
         showm " ${CL_GREY}∙ ${CL_BOLD}${src_package}${CL_NORM}… "
         output="${src_name}-fuzz.zip"
-        go-fuzz-build -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
+        go-fuzz-build -o "$output" "github.com/essentialkaos/ek/v13/${src_path}" &> /dev/null
       else
         showm " ${CL_GREY}∙ ${CL_BOLD}${src_package}${CL_NORM} ${CL_GREY}($src_func)${CL_NORM}… "
         func_min=$(echo "$src_func" | sed 's/Fuzz//' | tr '[:upper:]' '[:lower:]')
         output="${src_name}-${func_min}-fuzz.zip"
-        go-fuzz-build -func "$src_func" -o "$output" "github.com/essentialkaos/ek/v12/${src_path}" &> /dev/null
+        go-fuzz-build -func "$src_func" -o "$output" "github.com/essentialkaos/ek/v13/${src_path}" &> /dev/null
       fi
 
       # shellcheck disable=SC2181

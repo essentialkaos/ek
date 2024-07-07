@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v13/fmtc"
 
 	. "github.com/essentialkaos/check"
 )
@@ -28,7 +28,7 @@ var _ = Suite(&SupportSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var gomodData = []byte(`module github.com/essentialkaos/ek/v12
+var gomodData = []byte(`module github.com/essentialkaos/ek/v13
 
 go 1.18
 

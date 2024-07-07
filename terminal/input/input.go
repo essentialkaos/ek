@@ -17,12 +17,12 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/essentialkaos/ek/v12/ansi"
-	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/mathutil"
-	"github.com/essentialkaos/ek/v12/secstr"
-	"github.com/essentialkaos/ek/v12/terminal"
-	"github.com/essentialkaos/ek/v12/terminal/tty"
+	"github.com/essentialkaos/ek/v13/ansi"
+	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v13/secstr"
+	"github.com/essentialkaos/ek/v13/terminal"
+	"github.com/essentialkaos/ek/v13/terminal/tty"
 
 	linenoise "github.com/essentialkaos/go-linenoise/v3"
 )

@@ -1,5 +1,19 @@
 ## Changelog
 
+### [13.0.0](https://kaos.sh/ek/13.0.0)
+
+> [!CAUTION]
+> In this release, we have changed the logic behind some knf validators (`Less`, `Greater`, `LenLess`, `LenGreater`) from negative to positive check. This means that if you have any of these validators, you need to swap them (`Less` → `Greater`, `Greater` → `Less`, `LenLess` → `LenGreater`, `LenGreater` → `LenLess`) to keep the logic of the validation.
+
+- `[knf/validators]` Changed logic from negative to positive check for `Less`, `Greater`, `LenLess`, and `LenGreater` validators.
+- `[knf/validators]` Validator `LenNotEquals` renamed to `LenEquals`
+- `[knf/validators]` Validator `NotPrefix` renamed to `NotPrefix`
+- `[knf/validators]` Validator `HasSuffix` renamed to `HasSuffix`
+- `[knf/validators]` Validator `Equals` renamed to `NotEquals`
+- `[log]` Code refactoring
+
+---
+
 ### [12.130.0](https://kaos.sh/ek/12.130.0)
 
 - `[knf/validators]` Added validators `Set`, `SetToAny`, `SetToAnyIgnoreCase`, `LenLess`, `LenGreater`, and `LenNotEquals`

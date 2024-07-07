@@ -16,13 +16,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/essentialkaos/ek/v12/netutil"
-	"github.com/essentialkaos/ek/v12/req"
-	"github.com/essentialkaos/ek/v12/sliceutil"
-	"github.com/essentialkaos/ek/v12/sortutil"
-	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek/v13/netutil"
+	"github.com/essentialkaos/ek/v13/req"
+	"github.com/essentialkaos/ek/v13/sliceutil"
+	"github.com/essentialkaos/ek/v13/sortutil"
+	"github.com/essentialkaos/ek/v13/strutil"
 
-	"github.com/essentialkaos/ek/v12/support"
+	"github.com/essentialkaos/ek/v13/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

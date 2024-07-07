@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/knf"
-	"github.com/essentialkaos/ek/v12/options"
+	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v13/options"
 
-	knfv "github.com/essentialkaos/ek/v12/knf/validators"
+	knfv "github.com/essentialkaos/ek/v13/knf/validators"
 
 	. "github.com/essentialkaos/check"
 )
@@ -257,7 +257,7 @@ func (s *UnitedSuite) TestValidation(c *C) {
 	global = nil
 
 	errs := Validate([]*knf.Validator{
-		{"test:string", knfv.Empty, nil},
+		{"test:string", knfv.Set, nil},
 	})
 
 	c.Assert(errs, HasLen, 1)
@@ -278,8 +278,8 @@ func (s *UnitedSuite) TestValidation(c *C) {
 	c.Assert(err, IsNil)
 
 	errs = Validate([]*knf.Validator{
-		{"test:string", knfv.Empty, nil},
-		{"test:integer", knfv.Greater, 100},
+		{"test:string", knfv.Set, nil},
+		{"test:integer", knfv.Less, 100},
 	})
 
 	c.Assert(errs, HasLen, 1)

@@ -13,7 +13,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/essentialkaos/ek/v12/env"
+	"github.com/essentialkaos/ek/v13/env"
 
 	. "github.com/essentialkaos/check"
 )
