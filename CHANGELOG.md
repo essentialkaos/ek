@@ -10,6 +10,7 @@
 - `[knf/validators]` Validator `NotPrefix` renamed to `NotPrefix`
 - `[knf/validators]` Validator `HasSuffix` renamed to `HasSuffix`
 - `[knf/validators]` Validator `Equals` renamed to `NotEquals`
+- `[log]` Code refactoring
 
 ---
 

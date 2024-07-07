@@ -765,32 +765,32 @@ func (l *Logger) writeJSONField(field Field) {
 // convertMinLevelValue converts any supported format of minimal level to uint8 used
 // for default levels
 func convertMinLevelValue(level any) (uint8, error) {
-	switch u := level.(type) {
+	switch t := level.(type) {
 	case int:
-		return uint8(u), nil
+		return uint8(t), nil
 	case int8:
-		return uint8(u), nil
+		return uint8(t), nil
 	case int16:
-		return uint8(u), nil
+		return uint8(t), nil
 	case int32:
-		return uint8(u), nil
+		return uint8(t), nil
 	case int64:
-		return uint8(u), nil
+		return uint8(t), nil
 	case uint:
-		return uint8(u), nil
+		return uint8(t), nil
 	case uint8:
-		return uint8(u), nil
+		return uint8(t), nil
 	case uint16:
-		return uint8(u), nil
+		return uint8(t), nil
 	case uint32:
-		return uint8(u), nil
+		return uint8(t), nil
 	case uint64:
-		return uint8(u), nil
+		return uint8(t), nil
 	case string:
-		code, ok := logLevelsNames[strings.ToLower(level.(string))]
+		code, ok := logLevelsNames[strings.ToLower(t)]
 
 		if !ok {
-			return 255, errors.New("Unknown level " + level.(string))
+			return 255, errors.New("Unknown level " + t)
 		}
 
 		return code, nil
