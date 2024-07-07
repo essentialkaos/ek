@@ -11,7 +11,7 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

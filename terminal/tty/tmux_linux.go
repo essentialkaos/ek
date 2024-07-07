@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

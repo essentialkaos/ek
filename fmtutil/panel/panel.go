@@ -12,11 +12,11 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/essentialkaos/ek.v13/fmtc"
-	"github.com/essentialkaos/ek.v13/fmtutil"
-	"github.com/essentialkaos/ek.v13/mathutil"
-	"github.com/essentialkaos/ek.v13/sliceutil"
-	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/fmtutil"
+	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v13/sliceutil"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

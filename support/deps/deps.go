@@ -9,7 +9,7 @@ package deps
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek.v13/support"
+	"github.com/essentialkaos/ek/v13/support"
 
 	"github.com/essentialkaos/depsy"
 )

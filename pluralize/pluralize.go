@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/essentialkaos/ek.v13/mathutil"
+	"github.com/essentialkaos/ek/v13/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

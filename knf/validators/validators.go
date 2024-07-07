@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek.v13/knf"
-	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,8 +36,8 @@ var (
 	// Greater returns error if property is greater than given number
 	Greater = validatorGreater
 
-	// Equals returns error if property is equal to given string
-	Equals = validatorEquals
+	// NotEquals returns error if property is equal to given string
+	NotEquals = validatorNotEquals
 
 	// LenLess returns an error if the length of the property value is greater than
 	// given number
@@ -159,12 +159,12 @@ func validatorLess(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if config.GetI(prop) > t {
-			return fmt.Errorf("Property %s can't be less than %d", prop, t)
+			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
 		}
 
 	case float64:
 		if config.GetF(prop) > t {
-			return fmt.Errorf("Property %s can't be less than %g", prop, t)
+			return fmt.Errorf("Property %s can't be greater than %g", prop, t)
 		}
 
 	default:
@@ -178,12 +178,12 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if config.GetI(prop) < t {
-			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
+			return fmt.Errorf("Property %s can't be less than %d", prop, t)
 		}
 
 	case float64:
 		if config.GetF(prop) < t {
-			return fmt.Errorf("Property %s can't be greater than %g", prop, t)
+			return fmt.Errorf("Property %s can't be less than %g", prop, t)
 		}
 
 	default:
@@ -193,7 +193,7 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
-func validatorEquals(config knf.IConfig, prop string, value any) error {
+func validatorNotEquals(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if config.GetI(prop) == t {
@@ -216,7 +216,7 @@ func validatorEquals(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("Equals", prop, value)
+		return getValidatorInputError("NotEquals", prop, value)
 	}
 
 	return nil
@@ -225,8 +225,8 @@ func validatorEquals(config knf.IConfig, prop string, value any) error {
 func validatorLenLess(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
-		if strutil.Len(config.GetS(prop)) < t {
-			return fmt.Errorf("Property %s value can't be shorter than %d symbols", prop, t)
+		if strutil.Len(config.GetS(prop)) > t {
+			return fmt.Errorf("Property %s value can't be longer than %d symbols", prop, t)
 		}
 
 	default:
@@ -239,8 +239,8 @@ func validatorLenLess(config knf.IConfig, prop string, value any) error {
 func validatorLenGreater(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
-		if strutil.Len(config.GetS(prop)) > t {
-			return fmt.Errorf("Property %s value can't be longer than %d symbols", prop, t)
+		if strutil.Len(config.GetS(prop)) < t {
+			return fmt.Errorf("Property %s value can't be shorter than %d symbols", prop, t)
 		}
 
 	default:

@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek.v13/system"
+	"github.com/essentialkaos/ek/v13/system"
 
 	check "github.com/essentialkaos/check"
 )

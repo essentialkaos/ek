@@ -10,8 +10,8 @@ package zsh
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek.v13/options"
-	"github.com/essentialkaos/ek.v13/usage"
+	"github.com/essentialkaos/ek/v13/options"
+	"github.com/essentialkaos/ek/v13/usage"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

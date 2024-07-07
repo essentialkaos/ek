@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/essentialkaos/ek.v13/req"
+	"github.com/essentialkaos/ek/v13/req"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

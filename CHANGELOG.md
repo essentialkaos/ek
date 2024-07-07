@@ -9,6 +9,7 @@
 - `[knf/validators]` Validator `LenNotEquals` renamed to `LenEquals`
 - `[knf/validators]` Validator `NotPrefix` renamed to `NotPrefix`
 - `[knf/validators]` Validator `HasSuffix` renamed to `HasSuffix`
+- `[knf/validators]` Validator `Equals` renamed to `NotEquals`
 
 ---
 

@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"os"
 
-	"github.com/essentialkaos/ek.v13/fmtc"
-	"github.com/essentialkaos/ek.v13/fmtutil/panel"
-	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/fmtutil/panel"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

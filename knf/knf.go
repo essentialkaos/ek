@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek.v13/knf/value"
-	"github.com/essentialkaos/ek.v13/sliceutil"
+	"github.com/essentialkaos/ek/v13/knf/value"
+	"github.com/essentialkaos/ek/v13/sliceutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
