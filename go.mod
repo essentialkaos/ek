@@ -1,4 +1,4 @@
-module github.com/essentialkaos/ek/v12
+module github.com/essentialkaos/ek/v13
 
 go 1.18
 

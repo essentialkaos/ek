@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v12/path"
+	"github.com/essentialkaos/ek.v13/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

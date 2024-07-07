@@ -13,8 +13,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek.v13/fmtc"
+	"github.com/essentialkaos/ek.v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

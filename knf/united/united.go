@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/knf"
-	"github.com/essentialkaos/ek/v12/knf/value"
-	"github.com/essentialkaos/ek/v12/options"
-	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek.v13/knf"
+	"github.com/essentialkaos/ek.v13/knf/value"
+	"github.com/essentialkaos/ek.v13/options"
+	"github.com/essentialkaos/ek.v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -12,8 +12,8 @@ package system
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v12/knf"
-	"github.com/essentialkaos/ek/v12/system"
+	"github.com/essentialkaos/ek.v13/knf"
+	"github.com/essentialkaos/ek.v13/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

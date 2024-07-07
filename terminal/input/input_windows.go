@@ -11,7 +11,7 @@ package input
 import (
 	"errors"
 
-	"github.com/essentialkaos/ek/v12/secstr"
+	"github.com/essentialkaos/ek.v13/secstr"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

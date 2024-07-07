@@ -12,12 +12,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/fmtutil"
-	"github.com/essentialkaos/ek/v12/passthru"
-	"github.com/essentialkaos/ek/v12/path"
-	"github.com/essentialkaos/ek/v12/req"
-	"github.com/essentialkaos/ek/v12/spinner"
-	"github.com/essentialkaos/ek/v12/terminal"
+	"github.com/essentialkaos/ek.v13/fmtutil"
+	"github.com/essentialkaos/ek.v13/passthru"
+	"github.com/essentialkaos/ek.v13/path"
+	"github.com/essentialkaos/ek.v13/req"
+	"github.com/essentialkaos/ek.v13/spinner"
+	"github.com/essentialkaos/ek.v13/terminal"
 )
 
 type DLSpinner struct {

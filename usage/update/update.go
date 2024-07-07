@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/req"
+	"github.com/essentialkaos/ek.v13/req"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -47,7 +47,7 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "GoEK.v12")
+	engine.SetUserAgent(app, version, "GoEK.v13")
 
 	response, err := engine.Get(req.Request{
 		URL:         storage + "/latest.json",

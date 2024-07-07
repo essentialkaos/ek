@@ -22,7 +22,7 @@ body:
   - type: textarea
     attributes:
       label: Related module version info
-      description: Output of `go list -m -u github.com/essentialkaos/ek/v12` command
+      description: Output of `go list -m -u github.com/essentialkaos/ek/v13` command
       render: shell
     validations:
       required: true

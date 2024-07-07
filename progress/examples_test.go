@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/progress"
-	"github.com/essentialkaos/ek/v12/req"
+	"github.com/essentialkaos/ek.v13/progress"
+	"github.com/essentialkaos/ek.v13/req"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

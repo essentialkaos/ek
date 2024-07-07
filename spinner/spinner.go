@@ -15,9 +15,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/strutil"
-	"github.com/essentialkaos/ek/v12/timeutil"
+	"github.com/essentialkaos/ek.v13/fmtc"
+	"github.com/essentialkaos/ek.v13/strutil"
+	"github.com/essentialkaos/ek.v13/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v12/knf"
-	"github.com/essentialkaos/ek/v12/strutil"
+	"github.com/essentialkaos/ek.v13/knf"
+	"github.com/essentialkaos/ek.v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -39,23 +39,23 @@ var (
 	// Equals returns error if property is equal to given string
 	Equals = validatorEquals
 
-	// LenLess returns an error if the length of the property value is less than
+	// LenLess returns an error if the length of the property value is greater than
 	// given number
 	LenLess = validatorLenLess
 
-	// LenGreater returns an error if the length of the property value is greater than
+	// LenGreater returns an error if the length of the property value is less than
 	// given number
 	LenGreater = validatorLenGreater
 
 	// LenNotEquals an error if the length of the property value is not equal to the
 	// given number
-	LenNotEquals = validatorLenNotEquals
+	LenEquals = validatorLenEquals
 
-	// NotPrefix returns error if property doesn't have given prefix
-	NotPrefix = validatorNotPrefix
+	// HasPrefix returns error if property doesn't have given prefix
+	HasPrefix = validatorHasPrefix
 
-	// NotPrefix returns error if property doesn't have given suffix
-	NotSuffix = validatorNotSuffix
+	// HasSuffix returns error if property doesn't have given suffix
+	HasSuffix = validatorHasSuffix
 
 	// TypeBool returns error if property contains non-boolean value
 	TypeBool = validatorTypeBool
@@ -65,23 +65,6 @@ var (
 
 	// TypeNum returns error if property contains non-float value
 	TypeFloat = validatorTypeFloat
-)
-
-var (
-	// Empty returns error if property is empty
-	//
-	// Deprecated: Use validator Set instead
-	Empty = validatorSet
-
-	// NotContains returns error if property doesn't contains value from given slice
-	//
-	// Deprecated: Use validator SetToAny instead
-	NotContains = validatorSetToAny
-
-	// NotLen returns error if property has wrong size
-	//
-	// Deprecated: Use validator LenNotEquals instead
-	NotLen = validatorNotLen
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -175,12 +158,12 @@ func validatorSetToAnyIgnoreCase(config knf.IConfig, prop string, value any) err
 func validatorLess(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
-		if config.GetI(prop) < t {
+		if config.GetI(prop) > t {
 			return fmt.Errorf("Property %s can't be less than %d", prop, t)
 		}
 
 	case float64:
-		if config.GetF(prop) < t {
+		if config.GetF(prop) > t {
 			return fmt.Errorf("Property %s can't be less than %g", prop, t)
 		}
 
@@ -194,12 +177,12 @@ func validatorLess(config knf.IConfig, prop string, value any) error {
 func validatorGreater(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
-		if config.GetI(prop) > t {
+		if config.GetI(prop) < t {
 			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
 		}
 
 	case float64:
-		if config.GetF(prop) > t {
+		if config.GetF(prop) < t {
 			return fmt.Errorf("Property %s can't be greater than %g", prop, t)
 		}
 
@@ -267,7 +250,7 @@ func validatorLenGreater(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
-func validatorLenNotEquals(config knf.IConfig, prop string, value any) error {
+func validatorLenEquals(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if strutil.Len(config.GetS(prop)) != t {
@@ -275,17 +258,17 @@ func validatorLenNotEquals(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("LenNotEquals", prop, value)
+		return getValidatorInputError("LenEquals", prop, value)
 	}
 
 	return nil
 }
 
-func validatorNotPrefix(config knf.IConfig, prop string, value any) error {
+func validatorHasPrefix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
 		if t == "" {
-			return getValidatorEmptyInputError("NotPrefix", prop)
+			return getValidatorEmptyInputError("HasPrefix", prop)
 		}
 
 		if !strings.HasPrefix(config.GetS(prop), t) {
@@ -293,17 +276,17 @@ func validatorNotPrefix(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("NotPrefix", prop, value)
+		return getValidatorInputError("HasPrefix", prop, value)
 	}
 
 	return nil
 }
 
-func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
+func validatorHasSuffix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
 		if t == "" {
-			return getValidatorEmptyInputError("NotSuffix", prop)
+			return getValidatorEmptyInputError("HasSuffix", prop)
 		}
 
 		if !strings.HasSuffix(config.GetS(prop), t) {
@@ -311,22 +294,7 @@ func validatorNotSuffix(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("NotSuffix", prop, value)
-	}
-
-	return nil
-}
-
-// Deprecated
-func validatorNotLen(config knf.IConfig, prop string, value any) error {
-	switch t := value.(type) {
-	case int:
-		if strutil.Len(config.GetS(prop)) != t {
-			return fmt.Errorf("Property %s must be %d symbols long", prop, t)
-		}
-
-	default:
-		return getValidatorInputError("NotLen", prop, value)
+		return getValidatorInputError("HasSuffix", prop, value)
 	}
 
 	return nil

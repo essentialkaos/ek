@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/fsutil"
+	"github.com/essentialkaos/ek.v13/fmtc"
+	"github.com/essentialkaos/ek.v13/fsutil"
 
 	. "github.com/essentialkaos/check"
 )

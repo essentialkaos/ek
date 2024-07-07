@@ -18,8 +18,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/essentialkaos/ek/v12/color"
-	"github.com/essentialkaos/ek/v12/env"
+	"github.com/essentialkaos/ek.v13/color"
+	"github.com/essentialkaos/ek.v13/env"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
