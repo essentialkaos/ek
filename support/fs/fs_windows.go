@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Collect collects info about filesystem
+// Collect collects info about filesystem
 func Collect() []support.FSInfo {
-	panic("UNSUPPORTED")
+	return nil
 }

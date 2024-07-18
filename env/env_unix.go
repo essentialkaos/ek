@@ -1,5 +1,8 @@
-// Package pkgs provides methods for collecting information about installed packages
-package pkgs
+//go:build !windows
+// +build !windows
+
+// Package env provides methods for working with environment variables
+package env
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,13 +11,19 @@ package pkgs
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"github.com/essentialkaos/ek/v13/support"
-)
+import "syscall"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collect info about packages
-func Collect(pkgs ...string) []support.Pkg {
-	return nil
+// Which find full path to some app
+func Which(name string) string {
+	paths := Get().Path()
+
+	for _, path := range paths {
+		if syscall.Access(path+"/"+name, syscall.F_OK) == nil {
+			return path + "/" + name
+		}
+	}
+
+	return ""
 }

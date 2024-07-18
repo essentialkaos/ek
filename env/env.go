@@ -1,6 +1,3 @@
-//go:build !windows
-// +build !windows
-
 // Package env provides methods for working with environment variables
 package env
 
@@ -15,7 +12,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"syscall"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -49,19 +45,6 @@ func Get() Env {
 	}
 
 	return env
-}
-
-// Which find full path to some app
-func Which(name string) string {
-	paths := Get().Path()
-
-	for _, path := range paths {
-		if syscall.Access(path+"/"+name, syscall.F_OK) == nil {
-			return path + "/" + name
-		}
-	}
-
-	return ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -12,15 +12,11 @@ package network
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"net"
 	"os"
-	"strings"
 
 	"github.com/essentialkaos/ek/v13/netutil"
-	"github.com/essentialkaos/ek/v13/req"
 	"github.com/essentialkaos/ek/v13/sliceutil"
 	"github.com/essentialkaos/ek/v13/sortutil"
-	"github.com/essentialkaos/ek/v13/strutil"
 
 	"github.com/essentialkaos/ek/v13/support"
 )
@@ -65,57 +61,4 @@ func cleanIPList(ips []string) []string {
 	}
 
 	return result
-}
-
-// resolvePublicIP resolves public IP using IP resolver
-func resolvePublicIP(resolverURL string) string {
-	resp, err := req.Request{
-		URL:         resolverURL,
-		AutoDiscard: true,
-	}.Get()
-
-	if err != nil {
-		return ""
-	}
-
-	var ip string
-
-	if strings.HasSuffix(resolverURL, "/cdn-cgi/trace") {
-		ip = extractIPFromCloudflareTrace(resp.String())
-	} else {
-		ip = resp.String()
-	}
-
-	if isValidIP(ip) {
-		return ip
-	}
-
-	return ""
-}
-
-// extractIPFromCloudflareTrace extracts public IP from Cloudflare trace
-// response
-func extractIPFromCloudflareTrace(data string) string {
-	for i := 0; i < 16; i++ {
-		f := strutil.ReadField(data, i, false, '\n')
-
-		if f == "" {
-			break
-		}
-
-		n := strutil.ReadField(f, 0, false, '=')
-
-		if n != "ip" {
-			continue
-		}
-
-		return strutil.ReadField(f, 1, false, '=')
-	}
-
-	return ""
-}
-
-// isValidIP returns if given IP is valid
-func isValidIP(ip string) bool {
-	return ip != "" && net.ParseIP(ip) != nil
 }

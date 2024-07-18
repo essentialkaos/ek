@@ -12,7 +12,7 @@ import "github.com/essentialkaos/ek/v13/support"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Collect collect info about services
+// Collect collect info about services
 func Collect(services ...string) []support.Service {
-	panic("UNSUPPORTED")
+	return nil
 }

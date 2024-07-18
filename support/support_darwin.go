@@ -40,8 +40,3 @@ func (i *Info) appendOSInfo() {
 		Build:   osInfo.Build,
 	}
 }
-
-// appendPackagesInfo appends packages info
-func (i *Info) appendPackagesInfo() {
-	return
-}
