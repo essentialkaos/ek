@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.0.1](https://kaos.sh/ek/13.0.1)
+
+- `[env]` Fixed compatibility with Windows
+
 ### [13.0.0](https://kaos.sh/ek/13.0.0)
 
 > [!CAUTION]

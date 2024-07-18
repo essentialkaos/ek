@@ -1,8 +1,8 @@
 //go:build !windows
 // +build !windows
 
-// Package ek is a set of auxiliary packages
-package ek
+// Package env provides methods for working with environment variables
+package env
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -11,23 +11,19 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/essentialkaos/depsy"
-	"github.com/essentialkaos/go-linenoise/v3"
-)
+import "syscall"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "13.0.1"
+// Which find full path to some app
+func Which(name string) string {
+	paths := Get().Path()
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	for _, path := range paths {
+		if syscall.Access(path+"/"+name, syscall.F_OK) == nil {
+			return path + "/" + name
+		}
+	}
 
-// worthless is used as dependency fix
-func worthless() {
-	linenoise.Clear()
-	depsy.Extract(nil, false)
-	bcrypt.Cost(nil)
+	return ""
 }
