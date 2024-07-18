@@ -5,6 +5,7 @@
 - `[env]` Fixed compatibility with Windows
 - `[support]` Add basic support of collecting info on Windows
 - `[support/apps]` Added Windows support
+- `[support/network]` Added Windows support
 
 ### [13.0.0](https://kaos.sh/ek/13.0.0)
 

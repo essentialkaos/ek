@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Collect collect info about packages
+// Collect collect info about packages
 func Collect(pkgs ...string) []support.Pkg {
-	panic("UNSUPPORTED")
+	return nil
 }

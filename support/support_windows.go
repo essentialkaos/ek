@@ -12,6 +12,7 @@ import (
 	"runtime"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
+
 	"golang.org/x/sys/windows"
 )
 

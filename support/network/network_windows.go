@@ -10,11 +10,25 @@ package network
 
 import (
 	"github.com/essentialkaos/ek/v13/support"
+
+	"golang.org/x/sys/windows"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Collect collects network info
+// Collect collects network info
 func Collect(ipResolverURL ...string) *support.NetworkInfo {
-	panic("UNSUPPORTED")
+	info := &support.NetworkInfo{}
+
+	info.Hostname, _ = windows.ComputerName()
+
+	if len(ipResolverURL) != 0 {
+		info.PublicIP = resolvePublicIP(ipResolverURL[0])
+	}
+
+	if info.Hostname == "" && info.PublicIP == "" {
+		return nil
+	}
+
+	return info
 }
