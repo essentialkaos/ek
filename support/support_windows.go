@@ -7,61 +7,89 @@ package support
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Collect collects basic info about system
-func Collect(app, ver string) *Info {
-	panic("UNSUPPORTED")
+import (
+	"fmt"
+	"runtime"
+
+	"github.com/essentialkaos/ek/v13/fmtc"
+	"golang.org/x/sys/windows"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// appendSystemInfo appends system info
+func (i *Info) appendSystemInfo() {
+	i.System = &SystemInfo{
+		Name:   "Windows",
+		Arch:   formatArchName(runtime.GOARCH),
+		Kernel: "Windows NT",
+	}
+}
+
+// appendOSInfo appends OS info
+func (i *Info) appendOSInfo() {
+	major, minor, build := windows.RtlGetNtVersionNumbers()
+	i.OS = &OSInfo{
+		Name:    "Windows",
+		ID:      "win",
+		Version: fmt.Sprintf("%d.%d.%d", major, minor, build),
+	}
+
+	switch build {
+	case 22000, 22621, 22631, 26100:
+		i.OS.Name = "Windows 11"
+	case 10240, 10586, 15063, 16299, 17134, 18362,
+		18363, 19041, 19042, 19043, 19044, 19045:
+		i.OS.Name = "Windows 10"
+	case 20348:
+		i.OS.Name = "Windows Server 2022"
+	case 17763:
+		i.OS.Name = "Windows Server 2019"
+	case 14393:
+		i.OS.Name = "Windows Server 2016"
+	case 9600:
+		i.OS.Name = "Windows 8.1 / Windows Server 2012 R2"
+	case 9200:
+		i.OS.Name = "Windows 8 / Windows Server 2012"
+	}
+
+	switch build {
+	// Win 11
+	case 22000:
+		i.OS.VersionID = "24H2"
+	case 22621:
+		i.OS.VersionID = "23H2"
+	case 22631:
+		i.OS.VersionID = "22H2"
+
+	// Win 10
+	case 19045:
+		i.OS.VersionID = "22H2"
+	case 19044:
+		i.OS.VersionID = "21H2"
+	case 19043:
+		i.OS.VersionID = "21H1"
+	case 19042:
+		i.OS.VersionID = "20H2"
+	}
+
+	if i.OS.VersionID != "" {
+		i.OS.PrettyName = i.OS.Name + " " + i.OS.VersionID
+	} else {
+		i.OS.PrettyName = i.OS.Name
+	}
+
+	i.OS.coloredName = fmtc.Sprintf("{c}%s{!}", i.OS.Name)
+	i.OS.coloredPrettyName = fmtc.Sprintf("{c}%s{!}", i.OS.PrettyName)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ WithDeps adds information about dependencies
-func (i *Info) WithDeps(deps []Dep) *Info {
-	panic("UNSUPPORTED")
-}
+// formatArchName formats arch name
+func formatArchName(goos string) string {
+	if goos == "amd64" {
+		return "x86_64"
+	}
 
-// ❗ WithRevision adds git revision
-func (i *Info) WithRevision(rev string) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithPackages adds information about packages
-func (i *Info) WithPackages(pkgs []Pkg) *Info {
-	panic("UNSUPPORTED")
-}
-
-// WithServices adds information about services
-func (i *Info) WithServices(services []Service) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithPackages adds information about system apps
-func (i *Info) WithApps(apps ...App) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithChecks adds information custom checks
-func (i *Info) WithChecks(check ...Check) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithEnvVars adds information with environment variables
-func (i *Info) WithEnvVars(vars ...string) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithNetwork adds information about the network
-func (i *Info) WithNetwork(info *NetworkInfo) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ❗ WithFS adds file system information
-func (i *Info) WithFS(info []FSInfo) *Info {
-	panic("UNSUPPORTED")
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Print prints support info
-func (i *Info) Print() {
-	panic("UNSUPPORTED")
+	return goos
 }
