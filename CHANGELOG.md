@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.2.0](https://kaos.sh/ek/13.2.0)
+
+- `[errutil]` Added method `Wrap`
+
 ### [13.1.0](https://kaos.sh/ek/13.1.0)
 
 - `[env]` Fixed compatibility with Windows

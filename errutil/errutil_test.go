@@ -174,3 +174,13 @@ func (s *ErrSuite) TestChain(c *C) {
 	c.Assert(Chain(f1, f2, f3), NotNil)
 	c.Assert(Chain(f1, f3), IsNil)
 }
+
+func (s *ErrSuite) TestWrap(c *C) {
+	errs := Wrap([]error{
+		errors.New("Error 1"),
+		errors.New("Error 2"),
+	})
+
+	c.Assert(errs.Num(), Equals, 2)
+	c.Assert(errs.Last(), DeepEquals, errors.New("Error 2"))
+}
