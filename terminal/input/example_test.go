@@ -41,6 +41,7 @@ func ExampleReadPassword() {
 	Prompt = "› "
 	MaskSymbol = "•"
 	MaskSymbolColorTag = "{s}"
+	NewLine = true
 
 	// User must enter the password
 	password, err := ReadPassword("Please enter password", true)
