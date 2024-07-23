@@ -48,6 +48,8 @@ func Example() {
 		return
 	}
 
+	defer resp.Body.Close()
+
 	r := passthru.NewReader(resp.Body, resp.ContentLength)
 	s := &DLSpinner{file: filename, reader: r}
 	s.reader.Update = s.Update
@@ -60,7 +62,6 @@ func Example() {
 	)
 
 	spinner.Done(err == nil)
-	s.reader.Close()
 
 	if err != nil {
 		terminal.Error(err)

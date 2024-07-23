@@ -3,6 +3,8 @@
 ### [13.2.0](https://kaos.sh/ek/13.2.0)
 
 - `[errutil]` Added method `Wrap`
+- `[passthru]` `Reader` now implements only `io.Reader` interface, not `io.ReadCloser`
+- `[passthru]` `Writer` now implements only `io.Writer` interface, not `io.WriteCloser`
 
 ### [13.1.0](https://kaos.sh/ek/13.1.0)
 

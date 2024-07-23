@@ -311,7 +311,7 @@ func (b *Bar) IsStarted() bool {
 }
 
 // Reader creates and returns pass thru-proxy reader
-func (b *Bar) Reader(r io.ReadCloser) io.ReadCloser {
+func (b *Bar) Reader(r io.Reader) io.Reader {
 	if b == nil {
 		return nil
 	}
@@ -324,7 +324,7 @@ func (b *Bar) Reader(r io.ReadCloser) io.ReadCloser {
 }
 
 // Writer creates and returns pass-thru proxy reader
-func (b *Bar) Writer(w io.WriteCloser) io.WriteCloser {
+func (b *Bar) Writer(w io.Writer) io.Writer {
 	if b == nil {
 		return nil
 	}

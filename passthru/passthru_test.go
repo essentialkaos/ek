@@ -53,8 +53,6 @@ func (s *PassthruSuite) TestNil(c *C) {
 	c.Assert(rs, Equals, 0.0)
 	c.Assert(rr, Equals, time.Duration(0))
 
-	c.Assert(r.Close(), Equals, ErrNilReader)
-	c.Assert(r.IsClosed(), Equals, true)
 	c.Assert(func() { r.SetTotal(1) }, NotPanics)
 
 	var w *Writer
@@ -69,8 +67,6 @@ func (s *PassthruSuite) TestNil(c *C) {
 	c.Assert(ws, Equals, 0.0)
 	c.Assert(wr, Equals, time.Duration(0))
 
-	c.Assert(w.Close(), Equals, ErrNilWriter)
-	c.Assert(w.IsClosed(), Equals, true)
 	c.Assert(func() { w.SetTotal(1) }, NotPanics)
 
 	var cl *Calculator
@@ -99,15 +95,10 @@ func (s *PassthruSuite) TestReader(c *C) {
 
 	r.SetTotal(2000)
 	c.Assert(r.Total(), Equals, int64(2000))
-	c.Assert(r.IsClosed(), Equals, false)
 
 	rs, _ := r.Speed()
 
 	c.Assert(rs, Not(Equals), 0.0)
-
-	c.Assert(r.Close(), IsNil)
-	c.Assert(r.Current(), Equals, int64(0))
-	c.Assert(r.IsClosed(), Equals, true)
 
 	r = NewReader(&DummyReader{setError: true}, 1000)
 
@@ -132,15 +123,10 @@ func (s *PassthruSuite) TestWriter(c *C) {
 
 	w.SetTotal(2000)
 	c.Assert(w.Total(), Equals, int64(2000))
-	c.Assert(w.IsClosed(), Equals, false)
 
 	ws, _ := w.Speed()
 
 	c.Assert(ws, Not(Equals), 0.0)
-
-	c.Assert(w.Close(), IsNil)
-	c.Assert(w.Current(), Equals, int64(0))
-	c.Assert(w.IsClosed(), Equals, true)
 
 	w = NewWriter(&DummyWriter{setError: true}, 1000)
 
