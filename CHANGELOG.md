@@ -3,6 +3,8 @@
 ### [13.2.1](https://kaos.sh/ek/13.2.1)
 
 - `[sliceutil]` Methods `Copy`, `IsEqual`, `Index`, `Contains`, and `Deduplicate` marked as deprecated
+- `[terminal/input]` Improved TMUX support
+
 
 ### [13.2.0](https://kaos.sh/ek/13.2.0)
 

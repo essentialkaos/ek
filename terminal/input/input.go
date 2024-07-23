@@ -68,7 +68,7 @@ var AlwaysYes = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var tmux int8
+var oldTMUXFlag int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -167,7 +167,8 @@ func getMask(message string) string {
 	length := utf8.RuneCountInString(message)
 
 	if !HideLength {
-		if isTmuxSession() {
+		// Check for old versions of TMUX with rendering problems
+		if isOldTMUXSession() {
 			masking = strings.Repeat("*", length)
 		} else {
 			masking = strings.Repeat(MaskSymbol, length)
@@ -248,15 +249,21 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	return input, err
 }
 
-// isTmuxSession returns true if we work in tmux session
-func isTmuxSession() bool {
-	if tmux == 0 {
+// isOldTMUXSession returns true if we work in tmux session and version is older than 3.x
+func isOldTMUXSession() bool {
+	if oldTMUXFlag == 0 {
 		if os.Getenv("TMUX") == "" {
-			tmux = -1
+			oldTMUXFlag = -1
 		} else {
-			tmux = 1
+			version := os.Getenv("TERM_PROGRAM_VERSION")
+
+			if len(version) > 0 && (version[0] == '1' || version[0] == '2') {
+				oldTMUXFlag = 1
+			} else {
+				oldTMUXFlag = -1
+			}
 		}
 	}
 
-	return tmux == 1
+	return oldTMUXFlag == 1
 }
