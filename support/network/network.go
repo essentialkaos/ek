@@ -13,9 +13,9 @@ package network
 
 import (
 	"os"
+	"slices"
 
 	"github.com/essentialkaos/ek/v13/netutil"
-	"github.com/essentialkaos/ek/v13/sliceutil"
 	"github.com/essentialkaos/ek/v13/sortutil"
 
 	"github.com/essentialkaos/ek/v13/support"
@@ -33,8 +33,8 @@ func Collect(ipResolverURL ...string) *support.NetworkInfo {
 	sortutil.StringsNatural(info.IPv4)
 	sortutil.StringsNatural(info.IPv6)
 
-	info.IPv4 = sliceutil.Deduplicate(info.IPv4)
-	info.IPv6 = sliceutil.Deduplicate(info.IPv6)
+	info.IPv4 = slices.Compact(info.IPv4)
+	info.IPv6 = slices.Compact(info.IPv6)
 
 	info.Hostname, _ = os.Hostname()
 
