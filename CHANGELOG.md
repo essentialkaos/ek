@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.2.1](https://kaos.sh/ek/13.2.1)
+
+- `[sliceutil]` Methods `Copy`, `IsEqual`, `Index`, `Contains`, and `Deduplicate` marked as deprecated
+
 ### [13.2.0](https://kaos.sh/ek/13.2.0)
 
 - `[errutil]` Added method `Wrap`
