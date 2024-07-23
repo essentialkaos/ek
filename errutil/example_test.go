@@ -13,20 +13,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleChain() {
-	f1 := func() error { return nil }
-	f2 := func() error { return nil }
-	f3 := func() error { return fmt.Errorf("Error 3") }
-	f4 := func() error { return fmt.Errorf("Error 4") }
-
-	err := Chain(f1, f2, f3, f4)
-
-	fmt.Println(err.Error())
-
-	// Output:
-	// Error 3
-}
-
 func ExampleErrors() {
 	f1 := func() error { return nil }
 	f2 := func() error { return nil }
@@ -55,6 +41,39 @@ func ExampleErrors() {
 	// Last error text: Error 4
 	// Number of errors: 2
 	// Capacity: 10
+	// Has errors: true
+}
+
+func ExampleChain() {
+	f1 := func() error { return nil }
+	f2 := func() error { return nil }
+	f3 := func() error { return fmt.Errorf("Error 3") }
+	f4 := func() error { return fmt.Errorf("Error 4") }
+
+	err := Chain(f1, f2, f3, f4)
+
+	fmt.Println(err.Error())
+
+	// Output:
+	// Error 3
+}
+
+func ExampleWrap() {
+	e := []error{
+		fmt.Errorf("Error 1"),
+		fmt.Errorf("Error 2"),
+		fmt.Errorf("Error 3"),
+	}
+
+	errs := Wrap(e)
+
+	fmt.Printf("Last error text: %v\n", errs.Last().Error())
+	fmt.Printf("Number of errors: %d\n", errs.Num())
+	fmt.Printf("Has errors: %t\n", errs.HasErrors())
+
+	// Output:
+	// Last error text: Error 3
+	// Number of errors: 3
 	// Has errors: true
 }
 

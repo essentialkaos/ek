@@ -37,6 +37,11 @@ func NewErrors(capacity ...int) *Errors {
 	return &Errors{capacity: size}
 }
 
+// Wrap wraps slice of errors into Errors struct
+func Wrap(errs []error) *Errors {
+	return &Errors{errors: errs}
+}
+
 // Chain executes functions in chain and if one of them return error
 // this function stop chain execution and return this error
 func Chain(funcs ...func() error) error {

@@ -25,10 +25,9 @@ type Reader struct {
 	Calculator *Calculator
 	Update     func(n int)
 
-	r        io.ReadCloser
-	current  int64
-	total    int64
-	isClosed *atomic.Bool
+	r       io.Reader
+	current int64
+	total   int64
 }
 
 // Writer is pass-thru Writer
@@ -36,10 +35,9 @@ type Writer struct {
 	Calculator *Calculator
 	Update     func(n int)
 
-	w        io.WriteCloser
-	current  int64
-	total    int64
-	isClosed *atomic.Bool
+	w       io.Writer
+	current int64
+	total   int64
 }
 
 // Calculator calculates pass-thru speed and remaining time
@@ -64,21 +62,13 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewReader creates new passthru reader
-func NewReader(reader io.ReadCloser, total int64) *Reader {
-	return &Reader{
-		r:        reader,
-		total:    total,
-		isClosed: &atomic.Bool{},
-	}
+func NewReader(reader io.Reader, total int64) *Reader {
+	return &Reader{r: reader, total: total}
 }
 
 // NewWriter creates new passthru writer
-func NewWriter(writer io.WriteCloser, total int64) *Writer {
-	return &Writer{
-		w:        writer,
-		total:    total,
-		isClosed: &atomic.Bool{},
-	}
+func NewWriter(writer io.Writer, total int64) *Writer {
+	return &Writer{w: writer, total: total}
 }
 
 // NewCalculator creates new Calculator struct
@@ -160,27 +150,6 @@ func (r *Reader) Speed() (float64, time.Duration) {
 	return r.Calculator.Calculate(atomic.LoadInt64(&r.current))
 }
 
-// Close closes the reader
-func (r *Reader) Close() error {
-	if r == nil {
-		return ErrNilReader
-	}
-
-	atomic.StoreInt64(&r.current, 0)
-	r.isClosed.Store(true)
-
-	return r.r.Close()
-}
-
-// IsClosed returns true if reader is closed
-func (r *Reader) IsClosed() bool {
-	if r == nil {
-		return true
-	}
-
-	return r.isClosed.Load()
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Write implements the standard Write interface
@@ -249,27 +218,6 @@ func (w *Writer) Speed() (float64, time.Duration) {
 	}
 
 	return w.Calculator.Calculate(atomic.LoadInt64(&w.current))
-}
-
-// Close closes the writer
-func (w *Writer) Close() error {
-	if w == nil {
-		return ErrNilWriter
-	}
-
-	atomic.StoreInt64(&w.current, 0)
-	w.isClosed.Store(true)
-
-	return w.w.Close()
-}
-
-// IsClosed returns true if writer is closed
-func (w *Writer) IsClosed() bool {
-	if w == nil {
-		return true
-	}
-
-	return w.isClosed.Load()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

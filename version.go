@@ -7,13 +7,5 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"golang.org/x/crypto/bcrypt"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// worthless is used as dependency fix
-func worthless() {
-	bcrypt.Cost(nil)
-}
+// VERSION is current ek package version
+const VERSION = "13.2.0"
