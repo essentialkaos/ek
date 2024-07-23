@@ -43,6 +43,9 @@ var HidePassword = false
 // with option for forced actions)
 var AlwaysYes = false
 
+// ❗ NewLine is a flag for extra new line after inputs
+var NewLine = false
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ Read reads user input
