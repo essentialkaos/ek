@@ -1,5 +1,8 @@
-// Package exec provides methods for executing commands
-package exec
+//go:build !linux || !darwin || !freebsd
+// +build !linux !darwin !freebsd
+
+// Package env provides methods for working with environment variables
+package env
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,22 +11,9 @@ package exec
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Sudo executes command with sudo
-func Sudo(user string, args ...string) error {
+// ❗ Which find full path to some app
+func Which(name string) string {
 	panic("UNSUPPORTED")
-	return nil
-}
-
-// ❗ Run executes command
-func Run(command string, args ...string) error {
-	panic("UNSUPPORTED")
-	return nil
-}
-
-// ❗ RunAsUser runs command as a given user
-func RunAsUser(user, logFile string, command string, args ...string) error {
-	panic("UNSUPPORTED")
-	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

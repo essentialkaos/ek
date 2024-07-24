@@ -1,5 +1,8 @@
-// Package pager provides methods for pager setup (more/less)
-package pager
+//go:build !linux
+// +build !linux
+
+// Package secstr provides methods and structs for working with protected (secure) strings
+package secstr
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,29 +11,29 @@ package pager
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import "errors"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	ErrAlreadySet = errors.New("Pager already set")
-	ErrNoPager    = errors.New("There is no pager on the system")
-	ErrStdinPipe  = errors.New("Can't get pager stdin")
-)
-
-// AllowEnv is a flag that allows to user to define pager binary using PAGER environment
-// variable
-var AllowEnv bool
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Setup set up pager for work. After calling this method, any data sent to Stdout and
-// Stderr (using fmt, fmtc, or terminal packages) will go to the pager.
-func Setup(pager ...string) error {
-	return nil
+// ❗ String contains protected data
+type String struct {
+	Data []byte
 }
 
-// ❗ Complete finishes output redirect to pager
-func Complete() {
-	return
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ NewSecureString creates new secure string
+func NewSecureString(data any) (*String, error) {
+	panic("UNSUPPORTED")
+	return nil, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ IsEmpty returns false if string is empty
+func (s *String) IsEmpty() bool {
+	panic("UNSUPPORTED")
+	return false
+}
+
+// ❗ Destroy destroys data
+func (s *String) Destroy() error {
+	panic("UNSUPPORTED")
+	return nil
 }

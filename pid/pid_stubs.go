@@ -1,5 +1,8 @@
-// Package netutil provides methods for working with network
-package netutil
+//go:build !linux || !darwin || !freebsd
+// +build !linux !darwin !freebsd
+
+// Package pid provides methods for working with PID files
+package pid
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,26 +11,14 @@ package netutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetIP returns main IPv4 address
-func GetIP() string {
+// ❗ IsWorks returns true if process with PID from PID file is works
+func IsWorks(name string) bool {
 	panic("UNSUPPORTED")
-	return ""
+	return false
 }
 
-// ❗ GetIP6 returns main IPv6 address
-func GetIP6() string {
+// ❗ IsProcessWorks returns true if process with given PID is works
+func IsProcessWorks(pid int) bool {
 	panic("UNSUPPORTED")
-	return ""
-}
-
-// ❗ GetAllIP returns all IPv4 addresses
-func GetAllIP() []string {
-	panic("UNSUPPORTED")
-	return nil
-}
-
-// ❗ GetAllIP6 returns all IPv6 addresses
-func GetAllIP6() []string {
-	panic("UNSUPPORTED")
-	return nil
+	return false
 }

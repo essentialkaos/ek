@@ -1,5 +1,7 @@
-// Package secstr provides methods and structs for working with protected (secure) strings
-package secstr
+//go:build !linux || !darwin
+// +build !linux !darwin
+
+package procname
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,29 +10,34 @@ package secstr
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ String contains protected data
-type String struct {
-	Data []byte
-}
+import (
+	"errors"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ NewSecureString creates new secure string
-func NewSecureString(data any) (*String, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
-}
+var (
+	// ❗ ErrWrongSize is returned if given slice have the wrong size
+	ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
+
+	// ❗ ErrWrongArguments is returned if one of given arguments is empty
+	ErrWrongArguments = errors.New("Arguments can't be empty")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ IsEmpty returns false if string is empty
-func (s *String) IsEmpty() bool {
+// ❗ Set changes current process command in process tree
+func Set(args []string) error {
 	panic("UNSUPPORTED")
-	return false
+	return nil
 }
 
-// ❗ Destroy destroys data
-func (s *String) Destroy() error {
+// ❗ Replace replaces one argument in process command
+//
+// WARNING: Be careful with using os.Args or options.Parse result
+// as 'from' argument. After using this method given variable content
+// will be replaced. Use strutil.Copy method in this case.
+func Replace(from, to string) error {
 	panic("UNSUPPORTED")
 	return nil
 }

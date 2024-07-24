@@ -1,4 +1,8 @@
-package fsutil
+//go:build !linux || !darwin
+// +build !linux !darwin
+
+// Package lock provides methods for working with lock files
+package lock
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,38 +12,38 @@ package fsutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"os"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ CopyFile copies file using bufio
-func CopyFile(from, to string, perms ...os.FileMode) error {
+// Dir is a path to directory with lock files
+var Dir = ""
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ Create creates new lock file
+func Create(name string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// ❗ CopyAttr copies attributes (mode, ownership, timestamps) from one object
-// (file or directory) to another
-func CopyAttr(from, to string) error {
+// ❗ Remove deletes lock file
+func Remove(name string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// ❗ MoveFile moves file
-func MoveFile(from, to string, perms ...os.FileMode) error {
+// ❗ Has returns true if lock file exists
+func Has(name string) bool {
 	panic("UNSUPPORTED")
-	return nil
+	return false
 }
 
-// ❗ CopyDir copies directory content recursively to target directory
-func CopyDir(from, to string) error {
+// ❗ Expired returns true if lock file reached TTL
+func Expired(name string, ttl time.Duration) bool {
 	panic("UNSUPPORTED")
-	return nil
+	return false
 }
 
-// ❗ TouchFile creates empty file
-func TouchFile(path string, perm os.FileMode) error {
-	panic("UNSUPPORTED")
-	return nil
-}
+// ////////////////////////////////////////////////////////////////////////////////// //

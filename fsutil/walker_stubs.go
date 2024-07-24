@@ -1,5 +1,7 @@
-// Package pid provides methods for working with PID files
-package pid
+//go:build !linux || !darwin
+// +build !linux !darwin
+
+package fsutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,14 +10,14 @@ package pid
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ IsWorks returns true if process with PID from PID file is works
-func IsWorks(name string) bool {
+// ❗ Push changes current working directory and add previous working directory to stack
+func Push(dir string) string {
 	panic("UNSUPPORTED")
-	return false
+	return ""
 }
 
-// ❗ IsProcessWorks returns true if process with given PID is works
-func IsProcessWorks(pid int) bool {
+// ❗ Pop changes current working directory to previous in stack
+func Pop() string {
 	panic("UNSUPPORTED")
-	return false
+	return ""
 }

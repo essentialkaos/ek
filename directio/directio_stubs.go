@@ -1,4 +1,8 @@
-package process
+//go:build !linux || !darwin
+// +build !linux !darwin
+
+// Package directio provides methods for reading/writing files with direct io
+package directio
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,26 +11,27 @@ package process
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ ProcessInfo contains basic info about process
-type ProcessInfo struct {
-	Command  string         // ❗ Full command
-	User     string         // ❗ Username
-	PID      int            // ❗ PID
-	IsThread bool           // ❗ True if process is thread
-	Parent   int            // ❗ Parent process PID
-	Children []*ProcessInfo // ❗ Slice with child processes
-}
+import (
+	"os"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetTree returns root process with all subprocesses on the system
-func GetTree(pid ...int) (*ProcessInfo, error) {
+const (
+	BLOCK_SIZE = 0 // ❗ Minimal block size
+	ALIGN_SIZE = 0 // ❗ Align size
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ ReadFile read file with Direct IO without buffering data in page cache
+func ReadFile(file string) ([]byte, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// ❗ GetList returns slice with all active processes on the system
-func GetList() ([]*ProcessInfo, error) {
+// ❗ WriteFile write file with Direct IO without buffering data in page cache
+func WriteFile(file string, data []byte, perms os.FileMode) error {
 	panic("UNSUPPORTED")
-	return nil, nil
+	return nil
 }

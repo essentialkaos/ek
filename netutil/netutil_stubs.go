@@ -1,4 +1,8 @@
-package fsutil
+//go:build !linux || !darwin
+// +build !linux !darwin
+
+// Package netutil provides methods for working with network
+package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,14 +11,26 @@ package fsutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Push changes current working directory and add previous working directory to stack
-func Push(dir string) string {
+// ❗ GetIP returns main IPv4 address
+func GetIP() string {
 	panic("UNSUPPORTED")
 	return ""
 }
 
-// ❗ Pop changes current working directory to previous in stack
-func Pop() string {
+// ❗ GetIP6 returns main IPv6 address
+func GetIP6() string {
 	panic("UNSUPPORTED")
 	return ""
+}
+
+// ❗ GetAllIP returns all IPv4 addresses
+func GetAllIP() []string {
+	panic("UNSUPPORTED")
+	return nil
+}
+
+// ❗ GetAllIP6 returns all IPv6 addresses
+func GetAllIP6() []string {
+	panic("UNSUPPORTED")
+	return nil
 }

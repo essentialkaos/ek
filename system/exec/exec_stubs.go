@@ -1,5 +1,8 @@
-// Package lock provides methods for working with lock files
-package lock
+//go:build !linux || !darwin || !freebsd
+// +build !linux !darwin !freebsd
+
+// Package exec provides methods for executing commands
+package exec
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,39 +11,22 @@ package lock
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"time"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Dir is a path to directory with lock files
-var Dir = ""
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Create creates new lock file
-func Create(name string) error {
+// ❗ Sudo executes command with sudo
+func Sudo(user string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// ❗ Remove deletes lock file
-func Remove(name string) error {
+// ❗ Run executes command
+func Run(command string, args ...string) error {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// ❗ Has returns true if lock file exists
-func Has(name string) bool {
+// ❗ RunAsUser runs command as a given user
+func RunAsUser(user, logFile string, command string, args ...string) error {
 	panic("UNSUPPORTED")
-	return false
-}
-
-// ❗ Expired returns true if lock file reached TTL
-func Expired(name string, ttl time.Duration) bool {
-	panic("UNSUPPORTED")
-	return false
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

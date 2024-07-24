@@ -1,5 +1,5 @@
-//go:build !windows
-// +build !windows
+//go:build linux || darwin || freebsd
+// +build linux darwin freebsd
 
 package fsutil
 
