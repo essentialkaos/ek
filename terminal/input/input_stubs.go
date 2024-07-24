@@ -1,5 +1,5 @@
-//go:build !linux || !darwin
-// +build !linux !darwin
+//go:build !linux && !darwin
+// +build !linux,!darwin
 
 // Package input provides methods for reading user input
 package input

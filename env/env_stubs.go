@@ -1,5 +1,5 @@
-//go:build !linux || !darwin || !freebsd
-// +build !linux !darwin !freebsd
+//go:build !linux && !darwin && !freebsd
+// +build !linux,!darwin,!freebsd
 
 // Package env provides methods for working with environment variables
 package env
