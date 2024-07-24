@@ -45,7 +45,7 @@ var ErrKillSignal = linenoise.ErrKillSignal
 // Prompt is a prompt string
 var Prompt = "> "
 
-// MaskSymbol is a symbol used to maks passwords
+// MaskSymbol is a symbol used to mask passwords
 var MaskSymbol = "*"
 
 // HideLength is a flag to hide the password length
