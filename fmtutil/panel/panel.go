@@ -10,12 +10,12 @@ package panel
 
 import (
 	"bytes"
+	"slices"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/fmtutil"
 	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/sliceutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
@@ -119,7 +119,7 @@ func (o Options) Has(option Option) bool {
 		return false
 	}
 
-	return sliceutil.Contains(o, option)
+	return slices.Contains(o, option)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

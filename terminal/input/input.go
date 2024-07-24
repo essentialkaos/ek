@@ -42,33 +42,36 @@ var ErrKillSignal = linenoise.ErrKillSignal
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Prompt is prompt string
+// Prompt is a prompt string
 var Prompt = "> "
 
-// MaskSymbol is symbol used for masking passwords
+// MaskSymbol is a symbol used to mask passwords
 var MaskSymbol = "*"
 
-// HideLength is flag for hiding password length
+// HideLength is a flag to hide the password length
 var HideLength = false
 
-// HidePassword is flag for hiding password while typing
-// Because of using the low-level linenoise method for this feature, we can not use a
-// custom masking symbol, so it always will be an asterisk (*).
+// HidePassword is a flag to hide the password while typing.
+// Because we are using the low-level linenoise method for this feature, we cannot
+// use a custom masking symbol, so it will always be an asterisk (*).
 var HidePassword = false
 
-// MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
+// MaskSymbolColorTag is an fmtc color tag used for MaskSymbol output
 var MaskSymbolColorTag = ""
 
-// TitleColorTag is fmtc color tag used for input titles
+// TitleColorTag is an fmtc color tag used for input titles
 var TitleColorTag = "{s}"
 
 // AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
 // with option for forced actions)
 var AlwaysYes = false
 
+// NewLine is a flag for extra new line after inputs
+var NewLine = false
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var tmux int8
+var oldTMUXFlag int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -89,7 +92,13 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 		if title != "" {
 			fmtc.Println(TitleColorTag + getAnswerTitle(title, defaultAnswer) + "{!}")
 		}
+
 		fmtc.Println(Prompt + "y")
+
+		if NewLine {
+			fmtc.NewLine()
+		}
+
 		return true, nil
 	}
 
@@ -112,7 +121,8 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 		case "N":
 			return false, nil
 		default:
-			terminal.Warn("\nPlease enter Y or N\n")
+			terminal.Warn("Please enter Y or N")
+			fmtc.NewLine()
 		}
 	}
 }
@@ -167,7 +177,8 @@ func getMask(message string) string {
 	length := utf8.RuneCountInString(message)
 
 	if !HideLength {
-		if isTmuxSession() {
+		// Check for old versions of TMUX with rendering problems
+		if isOldTMUXSession() {
 			masking = strings.Repeat("*", length)
 		} else {
 			masking = strings.Repeat(MaskSymbol, length)
@@ -245,18 +256,28 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 		break
 	}
 
+	if NewLine {
+		fmtc.NewLine()
+	}
+
 	return input, err
 }
 
-// isTmuxSession returns true if we work in tmux session
-func isTmuxSession() bool {
-	if tmux == 0 {
+// isOldTMUXSession returns true if we work in tmux session and version is older than 3.x
+func isOldTMUXSession() bool {
+	if oldTMUXFlag == 0 {
 		if os.Getenv("TMUX") == "" {
-			tmux = -1
+			oldTMUXFlag = -1
 		} else {
-			tmux = 1
+			version := os.Getenv("TERM_PROGRAM_VERSION")
+
+			if len(version) > 0 && (version[0] == '1' || version[0] == '2') {
+				oldTMUXFlag = 1
+			} else {
+				oldTMUXFlag = -1
+			}
 		}
 	}
 
-	return tmux == 1
+	return oldTMUXFlag == 1
 }

@@ -15,6 +15,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Copy creates copy of given slice
+//
+// Deprecated: Use method slices.Clone instead
 func Copy[K comparable](slice []K) []K {
 	if len(slice) == 0 {
 		return nil
@@ -27,6 +29,8 @@ func Copy[K comparable](slice []K) []K {
 }
 
 // IsEqual compares two slices and returns true if the slices are equal
+//
+// Deprecated: Use method slices.Equal instead
 func IsEqual[K comparable](s1, s2 []K) bool {
 	switch {
 	case s1 == nil && s2 == nil:
@@ -105,6 +109,8 @@ func ErrorToString(data []error) []string {
 }
 
 // Index returns index of given item in a slice or -1 otherwise
+//
+// Deprecated: Use method slices.Index instead
 func Index[K comparable](slice []K, item K) int {
 	if len(slice) == 0 {
 		return -1
@@ -120,6 +126,8 @@ func Index[K comparable](slice []K, item K) int {
 }
 
 // Contains checks if string slice contains some value
+//
+// Deprecated: Use method slices.Contains instead
 func Contains[K comparable](slice []K, value K) bool {
 	return Index(slice, value) != -1
 }
@@ -151,6 +159,8 @@ LOOP:
 
 // Deduplicate removes duplicates from slice.
 // Slice must be sorted before deduplication.
+//
+// Deprecated: Use method slices.Compact instead
 func Deduplicate[K comparable](slice []K) []K {
 	var n int
 
