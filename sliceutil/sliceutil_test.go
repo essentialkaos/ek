@@ -125,6 +125,12 @@ func (s *SliceSuite) TestDeduplicate(c *C) {
 	c.Assert(Deduplicate([]string{"1"}), DeepEquals, []string{"1"})
 }
 
+func (s *SliceSuite) TestJoin(c *C) {
+	c.Assert(Join([]int{1, 2, 3, 4, 5}, ";"), Equals, "1;2;3;4;5")
+	c.Assert(Join([]string{"test1", "test2", "test3"}, "--"), Equals, "test1--test2--test3")
+	c.Assert(Join([]any{"test", 34, 12.50}, ","), Equals, "test,34,12.5")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SliceSuite) BenchmarkStringToInterface(c *C) {

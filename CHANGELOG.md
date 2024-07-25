@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.3.0](https://kaos.sh/ek/13.3.0)
+
+- `[sliceutil]` Added method `Join`
+
 ### [13.2.1](https://kaos.sh/ek/13.2.1)
 
 - `[terminal/input]` Added `NewLine` flag
