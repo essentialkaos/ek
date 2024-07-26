@@ -1,4 +1,4 @@
-// Package cache provides in-memory cache
+// Package memory provides cache with in-memory storage
 package memory
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -9,237 +9,306 @@ package memory
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"sync"
 	"time"
+
+	"github.com/essentialkaos/ek/v13/cache"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// MIN_EXPIRATION is minimal expiration duration
+const MIN_EXPIRATION = time.Millisecond
+
+// MIN_CLEANUP_INTERVAL is minimal cleanup interval
+const MIN_CLEANUP_INTERVAL = time.Millisecond
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// validate storage interface
+var _ cache.Cache = (*Cache)(nil)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Cache is in-memory cache instance
 type Cache struct {
-	expiration     time.Duration
 	data           map[string]any
 	expiry         map[string]int64
 	mu             *sync.RWMutex
+	expiration     time.Duration
 	isJanitorWorks bool
+}
+
+// Config is cache configuration
+type Config struct {
+	DefaultExpiration time.Duration
+	CleanupInterval   time.Duration
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // New creates new cache instance
-func New(defaultExpiration, cleanupInterval time.Duration) *Cache {
-	s := &Cache{
-		expiration: defaultExpiration,
+func New(config Config) (*Cache, error) {
+	err := config.Validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+	c := &Cache{
+		expiration: config.DefaultExpiration,
 		data:       make(map[string]any),
 		expiry:     make(map[string]int64),
 		mu:         &sync.RWMutex{},
 	}
 
-	if cleanupInterval != 0 {
-		s.isJanitorWorks = true
-		go s.janitor(cleanupInterval)
+	if config.CleanupInterval != 0 {
+		c.isJanitorWorks = true
+		go c.janitor(config.CleanupInterval)
 	}
 
-	return s
+	return c, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Has returns true if cache contains data for given key
-func (s *Cache) Has(key string) bool {
-	if s == nil {
+func (c *Cache) Has(key string) bool {
+	if c == nil {
 		return false
 	}
 
-	s.mu.RLock()
+	c.mu.RLock()
 
-	expiration, ok := s.expiry[key]
+	expiration, ok := c.expiry[key]
 
 	if !ok {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 		return false
 	}
 
 	if time.Now().UnixNano() > expiration {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 
-		if !s.isJanitorWorks {
-			s.Delete(key)
+		if !c.isJanitorWorks {
+			c.Delete(key)
 		}
 
 		return false
 	}
 
-	s.mu.RUnlock()
+	c.mu.RUnlock()
 
 	return ok
 }
 
 // Size returns number of items in cache
-func (s *Cache) Size() int {
-	if s == nil {
+func (c *Cache) Size() int {
+	if c == nil {
 		return 0
 	}
 
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
-	return len(s.data)
+	return len(c.data)
 }
 
 // Expired returns number of expired items in cache
-func (s *Cache) Expired() int {
-	if s == nil {
+func (c *Cache) Expired() int {
+	if c == nil {
 		return 0
 	}
 
 	items := 0
 	now := time.Now().UnixNano()
 
-	s.mu.Lock()
+	c.mu.Lock()
 
-	for _, expiration := range s.expiry {
+	for _, expiration := range c.expiry {
 		if now > expiration {
 			items++
 		}
 	}
 
-	s.mu.Unlock()
+	c.mu.Unlock()
 
 	return items
 }
 
 // Set adds or updates item in cache
-func (s *Cache) Set(key string, data any) bool {
-	if s == nil {
+func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
+	if c == nil {
 		return false
 	}
 
-	s.mu.Lock()
+	c.mu.Lock()
 
-	s.expiry[key] = time.Now().Add(s.expiration).UnixNano()
-	s.data[key] = data
+	if len(expiration) > 0 && expiration[0] > MIN_EXPIRATION {
+		c.expiry[key] = time.Now().Add(expiration[0]).UnixNano()
+	} else {
+		c.expiry[key] = time.Now().Add(c.expiration).UnixNano()
+	}
 
-	s.mu.Unlock()
+	c.data[key] = data
+
+	c.mu.Unlock()
 
 	return true
 }
 
 // Get returns item from cache or nil
-func (s *Cache) Get(key string) any {
-	if s == nil {
+func (c *Cache) Get(key string) any {
+	if c == nil {
 		return nil
 	}
 
-	s.mu.RLock()
+	c.mu.RLock()
 
-	expiration, ok := s.expiry[key]
+	expiration, ok := c.expiry[key]
 
 	if !ok {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 		return nil
 	}
 
 	if time.Now().UnixNano() > expiration {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 
-		if !s.isJanitorWorks {
-			s.Delete(key)
+		if !c.isJanitorWorks {
+			c.Delete(key)
 		}
 
 		return nil
 	}
 
-	item := s.data[key]
+	item := c.data[key]
 
-	s.mu.RUnlock()
+	c.mu.RUnlock()
 
 	return item
 }
 
+// GetWithExpiration returns item expiration date
+func (c *Cache) GetExpiration(key string) time.Time {
+	if c == nil {
+		return time.Time{}
+	}
+
+	c.mu.RLock()
+
+	expiration, ok := c.expiry[key]
+
+	if !ok {
+		c.mu.RUnlock()
+		return time.Time{}
+	}
+
+	c.mu.RUnlock()
+
+	return time.Unix(0, expiration)
+}
+
 // GetWithExpiration returns item from cache and expiration date or nil
-func (s *Cache) GetWithExpiration(key string) (any, time.Time) {
-	if s == nil {
+func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
+	if c == nil {
 		return nil, time.Time{}
 	}
 
-	s.mu.RLock()
+	c.mu.RLock()
 
-	expiration, ok := s.expiry[key]
+	expiration, ok := c.expiry[key]
 
 	if !ok {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 		return nil, time.Time{}
 	}
 
 	if time.Now().UnixNano() > expiration {
-		s.mu.RUnlock()
+		c.mu.RUnlock()
 
-		if !s.isJanitorWorks {
-			s.Delete(key)
+		if !c.isJanitorWorks {
+			c.Delete(key)
 		}
 
 		return nil, time.Time{}
 	}
 
-	item := s.data[key]
+	item := c.data[key]
 
-	s.mu.RUnlock()
+	c.mu.RUnlock()
 
 	return item, time.Unix(0, expiration)
 }
 
 // Delete removes item from cache
-func (s *Cache) Delete(key string) bool {
-	if s == nil {
+func (c *Cache) Delete(key string) bool {
+	if c == nil {
 		return false
 	}
 
-	s.mu.Lock()
+	c.mu.Lock()
 
-	delete(s.data, key)
-	delete(s.expiry, key)
+	delete(c.data, key)
+	delete(c.expiry, key)
 
-	s.mu.Unlock()
+	c.mu.Unlock()
 
 	return true
 }
 
 // Flush removes all data from cache
-func (s *Cache) Flush() bool {
-	if s == nil {
+func (c *Cache) Flush() bool {
+	if c == nil {
 		return false
 	}
 
-	s.mu.Lock()
+	c.mu.Lock()
 
-	s.data = make(map[string]any)
-	s.expiry = make(map[string]int64)
+	c.data = make(map[string]any)
+	c.expiry = make(map[string]int64)
 
-	s.mu.Unlock()
+	c.mu.Unlock()
 
 	return true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *Cache) janitor(interval time.Duration) {
+// Validate validates cache configuration
+func (c Config) Validate() error {
+	if c.DefaultExpiration < MIN_EXPIRATION {
+		return errors.New("Expiration is too short (< 1ms)")
+	}
+
+	if c.CleanupInterval != 0 && c.CleanupInterval < MIN_CLEANUP_INTERVAL {
+		return errors.New("Cleanup interval is too short (< 1ms)")
+	}
+
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// janitor is cache cleanup job
+func (c *Cache) janitor(interval time.Duration) {
 	for range time.NewTicker(interval).C {
-		if len(s.data) == 0 {
+		if len(c.data) == 0 {
 			continue
 		}
 
 		now := time.Now().UnixNano()
 
-		s.mu.Lock()
+		c.mu.Lock()
 
-		for key, expiration := range s.expiry {
+		for key, expiration := range c.expiry {
 			if now > expiration {
-				delete(s.data, key)
-				delete(s.expiry, key)
+				delete(c.data, key)
+				delete(c.expiry, key)
 			}
 		}
 
-		s.mu.Unlock()
+		c.mu.Unlock()
 	}
 }

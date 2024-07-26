@@ -15,7 +15,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleNew() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -24,16 +27,23 @@ func ExampleNew() {
 }
 
 func ExampleCache_Set() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
+	cache.Set("test", "ABCD", 15*time.Minute)
 
 	fmt.Println(cache.Get("test"))
 	// Output: ABCD
 }
 
 func ExampleCache_Has() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -42,7 +52,10 @@ func ExampleCache_Has() {
 }
 
 func ExampleCache_Get() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -51,7 +64,10 @@ func ExampleCache_Get() {
 }
 
 func ExampleCache_Size() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -60,7 +76,10 @@ func ExampleCache_Size() {
 }
 
 func ExampleCache_Expired() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -69,7 +88,10 @@ func ExampleCache_Expired() {
 }
 
 func ExampleCache_GetWithExpiration() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 
@@ -79,7 +101,10 @@ func ExampleCache_GetWithExpiration() {
 }
 
 func ExampleCache_Delete() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 	cache.Delete("test")
@@ -89,7 +114,10 @@ func ExampleCache_Delete() {
 }
 
 func ExampleCache_Flush() {
-	cache := New(time.Second, time.Minute)
+	cache, _ := New(Config{
+		DefaultExpiration: time.Second,
+		CleanupInterval:   time.Minute,
+	})
 
 	cache.Set("test", "ABCD")
 	cache.Flush()

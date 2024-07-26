@@ -24,7 +24,13 @@ type Cache interface {
 	Expired() int
 
 	// Set adds or updates item in cache
-	Set(key string, data any) bool
+	Set(key string, data any, expiration ...time.Duration) bool
+
+	// GetWithExpiration returns item from cache
+	Get(key string) any
+
+	// GetWithExpiration returns item expiration date
+	GetExpiration(key string) time.Time
 
 	// GetWithExpiration returns item from cache and expiration date or nil
 	GetWithExpiration(key string) (any, time.Time)
