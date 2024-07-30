@@ -1,4 +1,8 @@
-package fsutil
+//go:build !linux && !darwin
+// +build !linux,!darwin
+
+// Package secstr provides methods and structs for working with protected (secure) strings
+package secstr
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,39 +11,29 @@ package fsutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"os"
-)
+// ❗ String contains protected data
+type String struct {
+	Data []byte
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ CopyFile copies file using bufio
-func CopyFile(from, to string, perms ...os.FileMode) error {
+// ❗ NewSecureString creates new secure string
+func NewSecureString(data any) (*String, error) {
 	panic("UNSUPPORTED")
-	return nil
+	return nil, nil
 }
 
-// ❗ CopyAttr copies attributes (mode, ownership, timestamps) from one object
-// (file or directory) to another
-func CopyAttr(from, to string) error {
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ❗ IsEmpty returns false if string is empty
+func (s *String) IsEmpty() bool {
 	panic("UNSUPPORTED")
-	return nil
+	return false
 }
 
-// ❗ MoveFile moves file
-func MoveFile(from, to string, perms ...os.FileMode) error {
-	panic("UNSUPPORTED")
-	return nil
-}
-
-// ❗ CopyDir copies directory content recursively to target directory
-func CopyDir(from, to string) error {
-	panic("UNSUPPORTED")
-	return nil
-}
-
-// ❗ TouchFile creates empty file
-func TouchFile(path string, perm os.FileMode) error {
+// ❗ Destroy destroys data
+func (s *String) Destroy() error {
 	panic("UNSUPPORTED")
 	return nil
 }

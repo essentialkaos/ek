@@ -29,7 +29,8 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 ### Sub-packages
 
 - [`ansi`](https://kaos.sh/g/ek.v13/ansi) — Package provides methods for working with ANSI/VT100 control sequences
-- [`cache`](https://kaos.sh/g/ek.v13/cache) — Package provides a simple in-memory key/value cache
+- [`cache`](https://kaos.sh/g/ek.v13/cache/fs) — Package provides a cache with file system storage
+- [`cache`](https://kaos.sh/g/ek.v13/cache/memory) — Package provides a cache with memory storage
 - [`color`](https://kaos.sh/g/ek.v13/color) — Package provides methods for working with colors
 - [`cron`](https://kaos.sh/g/ek.v13/cron) — Package provides methods for working with cron expressions
 - [`csv`](https://kaos.sh/g/ek.v13/csv) — Package with simple CSV parser compatible with default Go parser

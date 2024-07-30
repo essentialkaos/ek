@@ -1,4 +1,8 @@
-package tty
+//go:build !linux && !darwin
+// +build !linux,!darwin
+
+// Package netutil provides methods for working with network
+package netutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,37 +11,26 @@ package tty
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ IsTTY returns true if current output device is TTY
-func IsTTY() bool {
+// ❗ GetIP returns main IPv4 address
+func GetIP() string {
 	panic("UNSUPPORTED")
+	return ""
 }
 
-// ❗ IsFakeTTY returns true is fake TTY is used
-func IsFakeTTY() bool {
+// ❗ GetIP6 returns main IPv6 address
+func GetIP6() string {
 	panic("UNSUPPORTED")
+	return ""
 }
 
-// ❗ IsTMUX returns true if we are currently working in tmux
-func IsTMUX() (bool, error) {
+// ❗ GetAllIP returns all IPv4 addresses
+func GetAllIP() []string {
 	panic("UNSUPPORTED")
+	return nil
 }
 
-// ❗ IsSystemd returns true if process started by systemd
-func IsSystemd() bool {
+// ❗ GetAllIP6 returns all IPv6 addresses
+func GetAllIP6() []string {
 	panic("UNSUPPORTED")
-}
-
-// ❗ GetSize returns window width and height
-func GetSize() (int, int) {
-	panic("UNSUPPORTED")
-}
-
-// ❗ GetWidth returns window width
-func GetWidth() int {
-	panic("UNSUPPORTED")
-}
-
-// ❗ GetHeight returns window height
-func GetHeight() int {
-	panic("UNSUPPORTED")
+	return nil
 }

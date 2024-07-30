@@ -1,14 +1,15 @@
 * + ansi
-* + cache
+* + cache/fs
+* + cache/memory
 * + color
 * + cron
 * + csv
+* + directio
 * + easing
 * + emoji
 * + env
 * + errutil
 * + events
-* + directio
 * + fmtc
 * + fmtutil
 * + fmtutil/barcode

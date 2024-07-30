@@ -1,3 +1,6 @@
+//go:build !linux && !darwin && !freebsd
+// +build !linux,!darwin,!freebsd
+
 // Package path provides methods for working with paths (fully compatible with base path package)
 package path
 

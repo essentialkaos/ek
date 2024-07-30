@@ -1,3 +1,6 @@
+//go:build !linux && !darwin
+// +build !linux,!darwin
+
 // Package system provides methods for working with system data (metrics/users)
 package system
 

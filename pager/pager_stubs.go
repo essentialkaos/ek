@@ -1,3 +1,6 @@
+//go:build !linux && !darwin && !freebsd
+// +build !linux,!darwin,!freebsd
+
 // Package pager provides methods for pager setup (more/less)
 package pager
 

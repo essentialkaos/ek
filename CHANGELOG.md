@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.3.0](https://kaos.sh/ek/13.3.0)
+
+- `[cache/fs]` Added cache with file system storage
+- `[cache]` In-memory cache moved to `cache/memory`
+- `[sliceutil]` Added method `Join`
+
 ### [13.2.1](https://kaos.sh/ek/13.2.1)
 
 - `[terminal/input]` Added `NewLine` flag

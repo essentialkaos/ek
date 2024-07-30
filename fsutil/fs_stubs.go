@@ -1,3 +1,6 @@
+//go:build !linux && !darwin && !freebsd
+// +build !linux,!darwin,!freebsd
+
 // Package fsutil provides methods for working with files on POSIX compatible systems
 package fsutil
 

@@ -1,5 +1,8 @@
-// Package secstr provides methods and structs for working with protected (secure) strings
-package secstr
+//go:build !linux && !darwin && !freebsd
+// +build !linux,!darwin,!freebsd
+
+// Package env provides methods for working with environment variables
+package env
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,29 +11,9 @@ package secstr
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ String contains protected data
-type String struct {
-	Data []byte
+// ❗ Which find full path to some app
+func Which(name string) string {
+	panic("UNSUPPORTED")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ NewSecureString creates new secure string
-func NewSecureString(data any) (*String, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ IsEmpty returns false if string is empty
-func (s *String) IsEmpty() bool {
-	panic("UNSUPPORTED")
-	return false
-}
-
-// ❗ Destroy destroys data
-func (s *String) Destroy() error {
-	panic("UNSUPPORTED")
-	return nil
-}

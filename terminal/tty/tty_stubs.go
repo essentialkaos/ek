@@ -1,5 +1,7 @@
-// Package initsystem provides methods for working with different init systems
-package initsystem
+//go:build !linux && !darwin
+// +build !linux,!darwin
+
+package tty
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,37 +10,37 @@ package initsystem
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ SysV returns true if SysV is used on system
-func SysV() bool {
+// ❗ IsTTY returns true if current output device is TTY
+func IsTTY() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ Upstart returns true if Upstart is used on system
-func Upstart() bool {
+// ❗ IsFakeTTY returns true is fake TTY is used
+func IsFakeTTY() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ Systemd returns true if Systemd is used on system
-func Systemd() bool {
+// ❗ IsTMUX returns true if we are currently working in tmux
+func IsTMUX() (bool, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ Launchd returns true if Launchd is used on the system
-func Launchd() bool {
+// ❗ IsSystemd returns true if process started by systemd
+func IsSystemd() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsPresent returns true if service is present in any init system
-func IsPresent(name string) bool {
+// ❗ GetSize returns window width and height
+func GetSize() (int, int) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsWorks returns service state
-func IsWorks(name string) (bool, error) {
+// ❗ GetWidth returns window width
+func GetWidth() int {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsEnabled returns true if auto start enabled for given service
-func IsEnabled(name string) (bool, error) {
+// ❗ GetHeight returns window height
+func GetHeight() int {
 	panic("UNSUPPORTED")
 }

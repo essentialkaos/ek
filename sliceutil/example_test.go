@@ -76,3 +76,18 @@ func ExampleDeduplicate() {
 	fmt.Println(Deduplicate(s))
 	// Output: [A B C D]
 }
+
+func ExampleJoin() {
+	s1 := []string{"A", "B", "C", "D"}
+	s2 := []int{1, 2, 3, 4, 5}
+	s3 := []any{"John", 183, 98.123, false}
+
+	fmt.Println(Join(s1, ":"))
+	fmt.Println(Join(s2, ","))
+	fmt.Println(Join(s3, ";"))
+
+	// Output:
+	// A:B:C:D
+	// 1,2,3,4,5
+	// John;183;98.123;false
+}

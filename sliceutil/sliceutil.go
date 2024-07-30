@@ -9,44 +9,12 @@ package sliceutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Copy creates copy of given slice
-//
-// Deprecated: Use method slices.Clone instead
-func Copy[K comparable](slice []K) []K {
-	if len(slice) == 0 {
-		return nil
-	}
-
-	s := make([]K, len(slice))
-	copy(s, slice)
-
-	return s
-}
-
-// IsEqual compares two slices and returns true if the slices are equal
-//
-// Deprecated: Use method slices.Equal instead
-func IsEqual[K comparable](s1, s2 []K) bool {
-	switch {
-	case s1 == nil && s2 == nil:
-		return true
-	case len(s1) != len(s2):
-		return false
-	}
-
-	for i := range s1 {
-		if s1[i] != s2[i] {
-			return false
-		}
-	}
-
-	return true
-}
 
 // StringToInterface converts slice with strings to slice with any
 func StringToInterface(data []string) []any {
@@ -125,13 +93,6 @@ func Index[K comparable](slice []K, item K) int {
 	return -1
 }
 
-// Contains checks if string slice contains some value
-//
-// Deprecated: Use method slices.Contains instead
-func Contains[K comparable](slice []K, value K) bool {
-	return Index(slice, value) != -1
-}
-
 // Exclude removes items from slice
 func Exclude[K comparable](slice []K, items ...K) []K {
 	var n int
@@ -155,6 +116,65 @@ LOOP:
 	}
 
 	return s[:n]
+}
+
+// Join concatenates the elements of its first argument to create a single string.
+// Unlike strings.Join, this method supports slices of any type.
+func Join[K any](slice []K, sep string) string {
+	var buf bytes.Buffer
+
+	for i, v := range slice {
+		fmt.Fprintf(&buf, "%v", v)
+
+		if i+1 != len(slice) {
+			buf.WriteString(sep)
+		}
+	}
+
+	return buf.String()
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Copy creates copy of given slice
+//
+// Deprecated: Use method slices.Clone instead
+func Copy[K comparable](slice []K) []K {
+	if len(slice) == 0 {
+		return nil
+	}
+
+	s := make([]K, len(slice))
+	copy(s, slice)
+
+	return s
+}
+
+// IsEqual compares two slices and returns true if the slices are equal
+//
+// Deprecated: Use method slices.Equal instead
+func IsEqual[K comparable](s1, s2 []K) bool {
+	switch {
+	case s1 == nil && s2 == nil:
+		return true
+	case len(s1) != len(s2):
+		return false
+	}
+
+	for i := range s1 {
+		if s1[i] != s2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Contains checks if string slice contains some value
+//
+// Deprecated: Use method slices.Contains instead
+func Contains[K comparable](slice []K, value K) bool {
+	return Index(slice, value) != -1
 }
 
 // Deduplicate removes duplicates from slice.
