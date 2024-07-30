@@ -139,7 +139,7 @@ func (c *Cache) Expired() int {
 
 // Set adds or updates item in cache
 func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
-	if c == nil {
+	if c == nil || data == nil {
 		return false
 	}
 
@@ -279,11 +279,11 @@ func (c *Cache) Flush() bool {
 // Validate validates cache configuration
 func (c Config) Validate() error {
 	if c.DefaultExpiration < MIN_EXPIRATION {
-		return errors.New("Expiration is too short (< 1ms)")
+		return errors.New("Invalid configuration: Expiration is too short (< 1ms)")
 	}
 
 	if c.CleanupInterval != 0 && c.CleanupInterval < MIN_CLEANUP_INTERVAL {
-		return errors.New("Cleanup interval is too short (< 1ms)")
+		return errors.New("Invalid configuration: Cleanup interval is too short (< 1ms)")
 	}
 
 	return nil

@@ -66,7 +66,7 @@ func (s *CacheSuite) TestCache(c *C) {
 	c.Assert(cache.Get("2"), Equals, nil)
 	c.Assert(item, Equals, nil)
 
-	cache.Flush()
+	c.Assert(cache.Flush(), Equals, true)
 }
 
 func (s *CacheSuite) TestCacheWithoutJanitor(c *C) {
@@ -135,9 +135,9 @@ func (s *CacheSuite) TestNil(c *C) {
 func (s *CacheSuite) TestConfig(c *C) {
 	_, err := New(Config{DefaultExpiration: 1})
 
-	c.Assert(err.Error(), Equals, "Expiration is too short (< 1ms)")
+	c.Assert(err.Error(), Equals, "Invalid configuration: Expiration is too short (< 1ms)")
 
 	_, err = New(Config{DefaultExpiration: time.Minute, CleanupInterval: 1})
 
-	c.Assert(err.Error(), Equals, "Cleanup interval is too short (< 1ms)")
+	c.Assert(err.Error(), Equals, "Invalid configuration: Cleanup interval is too short (< 1ms)")
 }
