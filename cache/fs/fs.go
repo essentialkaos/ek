@@ -12,7 +12,7 @@ package fs
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
 	"hash"
@@ -74,7 +74,7 @@ func New(config Config) (*Cache, error) {
 	c := &Cache{
 		dir:        config.Dir,
 		expiration: config.DefaultExpiration,
-		hasher:     sha1.New(),
+		hasher:     sha256.New(),
 	}
 
 	if config.CleanupInterval != 0 {
