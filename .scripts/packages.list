@@ -1,5 +1,6 @@
 * + ansi
 * + cache/memory
+* + cache/fs
 * + color
 * + cron
 * + csv
