@@ -87,15 +87,6 @@ func New(config Config) (*Cache, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Has returns true if cache contains data for given key
-func (c *Cache) Has(key string) bool {
-	if c == nil || key == "" {
-		return false
-	}
-
-	return fsutil.IsExist(c.getItemPath(key, false))
-}
-
 // Size returns number of items in cache
 func (c *Cache) Size() int {
 	if c == nil {
@@ -128,6 +119,15 @@ func (c *Cache) Expired() int {
 	return expired
 }
 
+// Has returns true if cache contains data for given key
+func (c *Cache) Has(key string) bool {
+	if c == nil || key == "" {
+		return false
+	}
+
+	return fsutil.IsExist(c.getItemPath(key, false))
+}
+
 // Set adds or updates item in cache
 func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 	if c == nil || data == nil || key == "" {
@@ -152,16 +152,14 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 
 	itemFile := c.getItemPath(key, false)
 
-	err = os.Rename(tmpFile, itemFile)
-
-	if err != nil {
+	if os.Rename(tmpFile, itemFile) != nil {
 		os.Remove(tmpFile)
 		return false
 	}
 
 	expr := c.expiration
 
-	if len(expiration) > 0 {
+	if len(expiration) > 0 && expiration[0] >= MIN_EXPIRATION {
 		expr = expiration[0]
 	}
 
@@ -170,7 +168,14 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 
 // GetWithExpiration returns item from cache
 func (c *Cache) Get(key string) any {
-	if c == nil || key == "" {
+	if c == nil || key == "" || !c.Has(key) {
+		return nil
+	}
+
+	expr := c.GetExpiration(key)
+
+	if !expr.IsZero() && expr.Before(time.Now()) {
+		c.Delete(key)
 		return nil
 	}
 
@@ -183,6 +188,8 @@ func (c *Cache) Get(key string) any {
 	item := &cacheItem{}
 	err = gob.NewDecoder(fd).Decode(item)
 
+	fd.Close()
+
 	if err != nil {
 		return nil
 	}
@@ -192,7 +199,7 @@ func (c *Cache) Get(key string) any {
 
 // GetWithExpiration returns item expiration date
 func (c *Cache) GetExpiration(key string) time.Time {
-	if c == nil || key == "" {
+	if c == nil || key == "" || !c.Has(key) {
 		return time.Time{}
 	}
 
@@ -203,11 +210,17 @@ func (c *Cache) GetExpiration(key string) time.Time {
 
 // GetWithExpiration returns item from cache and expiration date or nil
 func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
-	if c == nil || key == "" {
+	if c == nil || key == "" || !c.Has(key) {
 		return nil, time.Time{}
 	}
 
-	return c.Get(key), c.GetExpiration(key)
+	data := c.Get(key)
+
+	if data != nil {
+		return data, c.GetExpiration(key)
+	}
+
+	return nil, time.Time{}
 }
 
 // Delete removes item from cache
