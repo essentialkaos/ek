@@ -27,10 +27,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // MIN_EXPIRATION is minimal expiration duration
-const MIN_EXPIRATION = time.Second
+const MIN_EXPIRATION = cache.SECOND
 
 // MIN_CLEANUP_INTERVAL is minimal cleanup interval
-const MIN_CLEANUP_INTERVAL = time.Second
+const MIN_CLEANUP_INTERVAL = cache.SECOND
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -38,15 +38,15 @@ const MIN_CLEANUP_INTERVAL = time.Second
 type Cache struct {
 	dir            string
 	hasher         hash.Hash
-	expiration     time.Duration
+	expiration     cache.Duration
 	isJanitorWorks bool
 }
 
 // Config is cache configuration
 type Config struct {
 	Dir               string
-	DefaultExpiration time.Duration
-	CleanupInterval   time.Duration
+	DefaultExpiration cache.Duration
+	CleanupInterval   cache.Duration
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -129,7 +129,7 @@ func (c *Cache) Expired() int {
 }
 
 // Set adds or updates item in cache
-func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
+func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 	if c == nil || data == nil || key == "" {
 		return false
 	}

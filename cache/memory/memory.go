@@ -19,10 +19,10 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // MIN_EXPIRATION is minimal expiration duration
-const MIN_EXPIRATION = time.Millisecond
+const MIN_EXPIRATION = cache.MILLISECOND
 
 // MIN_CLEANUP_INTERVAL is minimal cleanup interval
-const MIN_CLEANUP_INTERVAL = time.Millisecond
+const MIN_CLEANUP_INTERVAL = cache.MILLISECOND
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -36,14 +36,14 @@ type Cache struct {
 	data           map[string]any
 	expiry         map[string]int64
 	mu             *sync.RWMutex
-	expiration     time.Duration
+	expiration     cache.Duration
 	isJanitorWorks bool
 }
 
 // Config is cache configuration
 type Config struct {
-	DefaultExpiration time.Duration
-	CleanupInterval   time.Duration
+	DefaultExpiration cache.Duration
+	CleanupInterval   cache.Duration
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -9,120 +9,121 @@ package fs
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/essentialkaos/ek/v13/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleNew() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	fmt.Println(cache.Get("test"))
+	fmt.Println(c.Get("test"))
 }
 
 func ExampleCache_Set() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
-	cache.Set("test", "ABCD", 15*time.Minute)
+	c.Set("test", "ABCD")
+	c.Set("test", "ABCD", 15*cache.MINUTE)
 
-	fmt.Println(cache.Get("test"))
+	fmt.Println(c.Get("test"))
 }
 
 func ExampleCache_Has() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	fmt.Println(cache.Has("test"))
+	fmt.Println(c.Has("test"))
 }
 
 func ExampleCache_Get() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	fmt.Println(cache.Get("test"))
+	fmt.Println(c.Get("test"))
 }
 
 func ExampleCache_Size() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	fmt.Println(cache.Size())
+	fmt.Println(c.Size())
 }
 
 func ExampleCache_Expired() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	fmt.Println(cache.Expired())
+	fmt.Println(c.Expired())
 }
 
 func ExampleCache_GetWithExpiration() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
+	c.Set("test", "ABCD")
 
-	item, exp := cache.GetWithExpiration("test")
+	item, exp := c.GetWithExpiration("test")
 
 	fmt.Println(item, exp.String())
 }
 
 func ExampleCache_Delete() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
-	cache.Delete("test")
+	c.Set("test", "ABCD")
+	c.Delete("test")
 
-	fmt.Println(cache.Get("test"))
+	fmt.Println(c.Get("test"))
 }
 
 func ExampleCache_Flush() {
-	cache, _ := New(Config{
+	c, _ := New(Config{
 		Dir:               "/path/to/cache",
-		DefaultExpiration: time.Minute,
-		CleanupInterval:   time.Minute,
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
 	})
 
-	cache.Set("test", "ABCD")
-	cache.Flush()
+	c.Set("test", "ABCD")
+	c.Flush()
 
-	fmt.Println(cache.Get("test"))
+	fmt.Println(c.Get("test"))
 }
