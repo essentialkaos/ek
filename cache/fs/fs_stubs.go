@@ -13,15 +13,17 @@ package fs
 
 import (
 	"time"
+
+	"github.com/essentialkaos/ek/v13/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ MIN_EXPIRATION is minimal expiration duration
-const MIN_EXPIRATION = time.Second
+const MIN_EXPIRATION = cache.SECOND
 
 // ❗ MIN_CLEANUP_INTERVAL is minimal cleanup interval
-const MIN_CLEANUP_INTERVAL = time.Second
+const MIN_CLEANUP_INTERVAL = cache.SECOND
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -31,8 +33,8 @@ type Cache struct{}
 // ❗ Config is cache configuration
 type Config struct {
 	Dir               string
-	DefaultExpiration time.Duration
-	CleanupInterval   time.Duration
+	DefaultExpiration cache.Duration
+	CleanupInterval   cache.Duration
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -60,7 +62,7 @@ func (c *Cache) Expired() int {
 }
 
 // ❗ Set adds or updates item in cache
-func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
+func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 	panic("UNSUPPORTED")
 }
 

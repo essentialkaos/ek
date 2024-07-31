@@ -30,7 +30,7 @@ var _ = Suite(&CacheSuite{})
 
 func (s *CacheSuite) TestCache(c *C) {
 	cache, err := New(Config{
-		DefaultExpiration: time.Second,
+		DefaultExpiration: 2 * time.Second,
 		CleanupInterval:   time.Second,
 		Dir:               c.MkDir(),
 	})
@@ -66,9 +66,10 @@ func (s *CacheSuite) TestCache(c *C) {
 	})
 
 	cache2.Set("1", "TEST")
-	cache2.Set("2", "TEST", time.Minute)
+	cache2.Set("2", "TEST")
+	cache2.Set("3", "TEST", time.Minute)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	item, _ = cache.GetWithExpiration("2")
 
@@ -76,7 +77,12 @@ func (s *CacheSuite) TestCache(c *C) {
 	c.Assert(item, Equals, nil)
 
 	c.Assert(cache.Expired(), Equals, 0)
+	c.Assert(cache2.Expired(), Equals, 2)
+	c.Assert(cache2.Get("1"), Equals, nil)
 	c.Assert(cache2.Expired(), Equals, 1)
+	item, expr := cache2.GetWithExpiration("2")
+	c.Assert(item, IsNil)
+	c.Assert(expr.IsZero(), Equals, true)
 
 	c.Assert(cache.Flush(), Equals, true)
 

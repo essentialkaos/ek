@@ -1,5 +1,15 @@
 ## Changelog
 
+### [13.3.1](https://kaos.sh/ek/13.3.1)
+
+- `[cache]` Added constants with duration
+- `[cache/fs]` Using `cache.Duration` instead of `time.Duration`
+- `[cache/memory]` Using `cache.Duration` instead of `time.Duration`
+- `[cache/fs]` Added check for passed expiration duration in `Set`
+- `[cache/fs]` Code refactoring
+- `[cache/fs]` Fixed bug with closing item file after reading data
+- `[cache/fs]` Fixed bug with removing expired items in `Get`
+
 ### [13.3.0](https://kaos.sh/ek/13.3.0)
 
 - `[cache/fs]` Added cache with file system storage

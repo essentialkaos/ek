@@ -12,6 +12,11 @@ import "time"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Duration is time.Duration alias
+type Duration = time.Duration
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Cache is cache backend interface
 type Cache interface {
 	// Has returns true if cache contains data for given key
@@ -41,3 +46,16 @@ type Cache interface {
 	// Flush removes all data from cache
 	Flush() bool
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const (
+	MILLISECOND = time.Millisecond // 1 ms
+	SECOND      = time.Second      // 1 sec
+	MINUTE      = time.Minute      // 1 min
+	HOUR        = time.Hour        // 1 hr
+	DAY         = 24 * HOUR        // 24 hr
+	WEEK        = 7 * DAY          // 7 d
+	MONTH       = 30 * DAY         // 30 d
+	YEAR        = 365 * DAY        // 365 d
+)
