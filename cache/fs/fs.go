@@ -271,6 +271,14 @@ func (c Config) Validate() error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// func encodeItem(item any) ([]byte, error) {
+// 	return nil, nil
+// }
+
+// func decodeItem() ([]byte, error) {
+// 	return nil, nil
+// }
+
 // getItemPath returns path to cache item
 func (c *Cache) getItemPath(key string, temporary bool) string {
 	if temporary {

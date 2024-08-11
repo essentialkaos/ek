@@ -116,6 +116,24 @@ func SVN() support.App {
 	return support.App{"svn", ver}
 }
 
+// Docker extracts version info from Docker command output
+func Docker() support.App {
+	ver := extractField(execVersionCmd("docker", "--version"), 0, 2)
+	return support.App{"docker", ver}
+}
+
+// Podman extracts version info from Podman command output
+func Podman() support.App {
+	ver := extractField(execVersionCmd("podman", "--version"), 0, 2)
+	return support.App{"podman", ver}
+}
+
+// LXC extracts version info from LXC command output
+func LXC() support.App {
+	ver := extractField(execVersionCmd("lxc", "--version"), 0, 0)
+	return support.App{"lxc", ver}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // execVersionCmd execs command and returns output as a string
