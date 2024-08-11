@@ -25,22 +25,15 @@ func String(length int) string {
 		return ""
 	}
 
+	rnd := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
 	symbolsLength := len(symbols)
 	result := make([]byte, length)
 
-	rand.Seed(time.Now().UTC().UnixNano())
-
 	for i := 0; i < length; i++ {
-		result[i] = symbols[rand.Intn(symbolsLength)]
+		result[i] = symbols[rnd.Intn(symbolsLength)]
 	}
 
 	return string(result)
-}
-
-// Int returns random int
-func Int(n int) int {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(n)
 }
 
 // Slice returns slice with random chars
@@ -49,11 +42,12 @@ func Slice(length int) []string {
 		return []string{}
 	}
 
+	rnd := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
 	symbolsLength := len(symbols)
 	result := make([]string, length)
 
 	for i := 0; i < length; i++ {
-		result[i] = string(symbols[rand.Intn(symbolsLength)])
+		result[i] = string(symbols[rnd.Intn(symbolsLength)])
 	}
 
 	return result

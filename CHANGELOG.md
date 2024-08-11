@@ -3,6 +3,8 @@
 ### [13.3.2](https://kaos.sh/ek/13.3.2)
 
 - `[support/apps]` Added support for Docker, Podman, and LXC
+- `[rand]` Removed method `Int`
+- `[rand]` Code refactoring
 
 ### [13.3.1](https://kaos.sh/ek/13.3.1)
 

@@ -33,17 +33,6 @@ func (s *RandSuite) TestString(c *C) {
 	c.Assert(len(String(-100)), Equals, 0)
 }
 
-func (s *RandSuite) TestInt(c *C) {
-	n := 1000
-	k := 0
-
-	for i := 0; i < 1000; i++ {
-		k += Int(n)
-	}
-
-	c.Assert(k/n, Not(Equals), n)
-}
-
 func (s *RandSuite) TestSlice(c *C) {
 	t1 := strings.Join(Slice(256), "")
 	t2 := strings.Join(Slice(256), "")
