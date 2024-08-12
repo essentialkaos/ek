@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.3.2](https://kaos.sh/ek/13.3.3)
+
+- `[support/apps]` Fixed Docker version extraction
+
 ### [13.3.2](https://kaos.sh/ek/13.3.2)
 
 - `[support/apps]` Added support for Docker, Podman, and LXC
