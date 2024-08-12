@@ -119,7 +119,7 @@ func SVN() support.App {
 // Docker extracts version info from Docker command output
 func Docker() support.App {
 	ver := extractField(execVersionCmd("docker", "--version"), 0, 2)
-	return support.App{"docker", ver}
+	return support.App{"docker", strings.TrimRight(ver, ",")}
 }
 
 // Podman extracts version info from Podman command output

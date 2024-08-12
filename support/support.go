@@ -601,8 +601,14 @@ func (i *Info) printNetworkInfo() {
 	format(0, false,
 		"Hostname", i.Network.Hostname,
 		"Public IP", i.Network.PublicIP,
-		"IP v4", strings.Join(i.Network.IPv4, " "),
-		"IP v6", strings.Join(i.Network.IPv6, " "),
+		"IP v4", strings.TrimLeft(fmtutil.Wrap(
+			strings.Join(i.Network.IPv4, " "),
+			strings.Repeat(" ", 13), 80,
+		), " "),
+		"IP v6", strings.TrimLeft(fmtutil.Wrap(
+			strings.Join(i.Network.IPv6, " "),
+			strings.Repeat(" ", 13), 80,
+		), " "),
 	)
 }
 
