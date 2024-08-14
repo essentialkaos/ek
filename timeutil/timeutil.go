@@ -41,7 +41,7 @@ func PrettyDuration(d any) string {
 	}
 
 	if dur != 0 && dur < time.Second {
-		return getPrettyShortDuration(dur)
+		return getPrettyShortDuration(dur, " ")
 	}
 
 	return getPrettyLongDuration(dur)
@@ -94,9 +94,15 @@ func ShortDuration(d any, highPrecision ...bool) string {
 	return getShortDuration(dur, false)
 }
 
-// MiniDuration returns formatted value for short durations (e.g. s/ms/us/ns)
-func MiniDuration(d time.Duration) string {
-	return getPrettyShortDuration(d)
+// MiniDuration returns formatted value of duration (d/hr/m/s/ms/us/ns)
+func MiniDuration(d time.Duration, separator ...string) string {
+	sep := " "
+
+	if len(separator) != 0 {
+		sep = separator[0]
+	}
+
+	return getPrettyShortDuration(d, sep)
 }
 
 // Format returns formatted date as a string
@@ -763,28 +769,46 @@ func getPrettySimpleDuration(dur time.Duration) string {
 
 // codebeat:enable[BLOCK_NESTING]
 
-func getPrettyShortDuration(d time.Duration) string {
+func getPrettyShortDuration(d time.Duration, separator string) string {
 	switch {
+	case d >= 24*time.Hour:
+		return fmt.Sprintf(
+			"%.0g"+separator+"d",
+			formatFloat(float64(d)/float64(24*time.Hour)),
+		)
+
+	case d >= time.Hour:
+		return fmt.Sprintf(
+			"%.2g"+separator+"h",
+			formatFloat(float64(d)/float64(time.Hour)),
+		)
+
+	case d >= time.Minute:
+		return fmt.Sprintf(
+			"%.2g"+separator+"m",
+			formatFloat(float64(d)/float64(time.Minute)),
+		)
+
 	case d >= time.Second:
 		return fmt.Sprintf(
-			"%g s",
+			"%g"+separator+"s",
 			formatFloat(float64(d)/float64(time.Second)),
 		)
 
 	case d >= time.Millisecond:
 		return fmt.Sprintf(
-			"%g ms",
+			"%g"+separator+"ms",
 			formatFloat(float64(d)/float64(time.Millisecond)),
 		)
 
 	case d >= time.Microsecond:
 		return fmt.Sprintf(
-			"%g μs",
+			"%g"+separator+"μs",
 			formatFloat(float64(d)/float64(time.Microsecond)),
 		)
 
 	default:
-		return fmt.Sprintf("%d ns", d.Nanoseconds())
+		return fmt.Sprintf("%d"+separator+"ns", d.Nanoseconds())
 	}
 }
 

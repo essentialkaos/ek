@@ -74,6 +74,21 @@ func ExampleShortDuration() {
 	// 0:03.215
 }
 
+func ExampleMiniDuration() {
+	fmt.Println(MiniDuration(36 * time.Hour))
+	fmt.Println(MiniDuration(18 * time.Second))
+	fmt.Println(MiniDuration(time.Second / 125))
+
+	// You can remove or change separator
+	fmt.Println(MiniDuration(time.Second/2000, ""))
+
+	// Output:
+	// 2 d
+	// 18 s
+	// 8 ms
+	// 500μs
+}
+
 func ExampleDurationToSeconds() {
 	fmt.Println(DurationToSeconds(2500 * time.Millisecond))
 
