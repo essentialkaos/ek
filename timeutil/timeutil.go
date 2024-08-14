@@ -773,7 +773,7 @@ func getPrettyShortDuration(d time.Duration, separator string) string {
 	switch {
 	case d >= 24*time.Hour:
 		return fmt.Sprintf(
-			"%.0g"+separator+"d",
+			"%.0f"+separator+"d",
 			formatFloat(float64(d)/float64(24*time.Hour)),
 		)
 
@@ -791,7 +791,7 @@ func getPrettyShortDuration(d time.Duration, separator string) string {
 
 	case d >= time.Second:
 		return fmt.Sprintf(
-			"%g"+separator+"s",
+			"%.2g"+separator+"s",
 			formatFloat(float64(d)/float64(time.Second)),
 		)
 

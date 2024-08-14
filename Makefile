@@ -1,6 +1,7 @@
 ################################################################################
 
 export EK_TEST_PORT=8080
+export CGO_ENABLED=1
 
 ifdef VERBOSE ## Print verbose information (Flag)
 VERBOSE_FLAG = -v
