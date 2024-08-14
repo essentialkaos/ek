@@ -4,6 +4,7 @@
 
 - `[timeutil]` Added support of minutes, hours and days to `MiniDuration`
 - `[timeutil]` Added separator customization to `MiniDuration`
+- `[timeutil]` Added usage examples for `MiniDuration`
 
 ### [13.3.3](https://kaos.sh/ek/13.3.3)
 
