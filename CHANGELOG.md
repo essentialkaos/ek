@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.3.5](https://kaos.sh/ek/13.3.5)
+
+- `[timeutil]` Improved formatting of days and seconds in `MiniDuration`
+
 ### [13.3.4](https://kaos.sh/ek/13.3.4)
 
 - `[timeutil]` Added support of minutes, hours and days to `MiniDuration`
