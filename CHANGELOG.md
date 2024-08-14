@@ -1,6 +1,12 @@
 ## Changelog
 
-### [13.3.2](https://kaos.sh/ek/13.3.3)
+### [13.3.4](https://kaos.sh/ek/13.3.4)
+
+- `[timeutil]` Added support of minutes, hours and days to `MiniDuration`
+- `[timeutil]` Added separator customization to `MiniDuration`
+- `[timeutil]` Added usage examples for `MiniDuration`
+
+### [13.3.3](https://kaos.sh/ek/13.3.3)
 
 - `[support/apps]` Fixed Docker version extraction
 - `[support]` Improved output of large list of IPv4 and IPv6 addresses

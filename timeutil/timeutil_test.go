@@ -91,7 +91,11 @@ func (s *TimeUtilSuite) TestShortDuration(c *C) {
 }
 
 func (s *TimeUtilSuite) TestMiniDuration(c *C) {
+	c.Assert(MiniDuration(89*time.Hour, ""), Equals, "4d")
 	c.Assert(MiniDuration(time.Duration(0)), Equals, "0 ns")
+	c.Assert(MiniDuration(89*time.Hour), Equals, "4 d")
+	c.Assert(MiniDuration(15*time.Hour), Equals, "15 h")
+	c.Assert(MiniDuration(80*time.Second), Equals, "1.3 m")
 	c.Assert(MiniDuration(3*time.Second), Equals, "3 s")
 	c.Assert(MiniDuration(3*time.Millisecond), Equals, "3 ms")
 	c.Assert(MiniDuration(3*time.Microsecond), Equals, "3 μs")
