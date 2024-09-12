@@ -14,7 +14,7 @@
 
 <br/>
 
-Auxiliary packages for Go.
+Auxiliary packages for Go 1.22+.
 
 ### Platform support
 
