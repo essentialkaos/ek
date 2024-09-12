@@ -210,3 +210,11 @@ func ExampleIndexByteSkip() {
 	// 10
 	// 10
 }
+
+func ExampleSqueezeRepeats() {
+	s := `"john""   "bob"  """mary""`
+	fmt.Println(SqueezeRepeats(s, `" `))
+
+	// Output:
+	// "john" "bob" "mary"
+}

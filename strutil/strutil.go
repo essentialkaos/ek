@@ -482,6 +482,30 @@ func IndexByteSkip(s string, c byte, skip int) int {
 	return -1
 }
 
+// SqueezeRepeats replaces each sequence of a repeated character that is listed in
+// the specified set
+func SqueezeRepeats(s string, set string) string {
+	if s == "" || set == "" {
+		return s
+	}
+
+	for _, r := range set {
+		l, rs := len(s), string(r)
+
+		for {
+			s = strings.ReplaceAll(s, rs+rs, rs)
+
+			if len(s) == l {
+				break
+			}
+
+			l = len(s)
+		}
+	}
+
+	return s
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func appendField(data []string, item string) []string {
