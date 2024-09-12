@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.4.0](https://kaos.sh/ek/13.4.0)
+
+- `[system/sysctl]` Added new package for reading kernel parameters
+- `[strutil]` Added method `SqueezeRepeats`
+
 ### [13.3.5](https://kaos.sh/ek/13.3.5)
 
 - `[timeutil]` Improved formatting of days and seconds in `MiniDuration`

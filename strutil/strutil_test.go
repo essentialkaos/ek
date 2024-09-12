@@ -208,6 +208,12 @@ func (s *StrUtilSuite) TestIndexByteSkip(c *C) {
 	c.Assert(IndexByteSkip("/home/john/projects/test.log", '/', -1), Equals, 10)
 }
 
+func (s *StrUtilSuite) TestSqueezeRepeats(c *C) {
+	c.Assert(SqueezeRepeats("", ""), Equals, "")
+	c.Assert(SqueezeRepeats("test", ""), Equals, "test")
+	c.Assert(SqueezeRepeats("1  ----  2 - 3 --     4", " -"), Equals, "1 - 2 - 3 - 4")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {

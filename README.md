@@ -14,7 +14,7 @@
 
 <br/>
 
-Auxiliary packages for Go.
+Auxiliary packages for Go 1.22+.
 
 ### Platform support
 
@@ -78,12 +78,13 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`spinner`](https://kaos.sh/g/ek.v13/spinner) — Package provides methods for creating spinner animation for long-running tasks
 - [`strutil`](https://kaos.sh/g/ek.v13/strutil) — Package provides methods for working with strings
 - [`support`](https://kaos.sh/g/ek.v13/support) — Package provides methods for collecting and printing support information about system
+- [`system`](https://kaos.sh/g/ek.v13/system) — Package provides methods for working with system data (_system metrics/users_)
 - [`system/container`](https://kaos.sh/g/ek.v13/system/container) — Package provides methods for checking container engine info
 - [`system/exec`](https://kaos.sh/g/ek.v13/system/exec) — Package provides methods for executing commands
 - [`system/process`](https://kaos.sh/g/ek.v13/system/process) — Package provides methods for gathering information about active processes
 - [`system/procname`](https://kaos.sh/g/ek.v13/system/procname) — Package provides methods for changing process name in the process tree
 - [`system/sensors`](https://kaos.sh/g/ek.v13/system/sensors) — Package provide methods for collecting sensors information
-- [`system`](https://kaos.sh/g/ek.v13/system) — Package provides methods for working with system data (_system metrics/users_)
+- [`system/sysctl`](https://kaos.sh/g/ek.v13/system/sysctl) — Package provide methods for reading kernel parameters
 - [`terminal`](https://kaos.sh/g/ek.v13/terminal) — Package provides methods for printing messages to terminal
 - [`terminal/input`](https://kaos.sh/g/ek.v13/terminal/input) — Package provides methods for working with user input
 - [`terminal/tty`](https://kaos.sh/g/ek.v13/terminal/tty) — Package provides methods for working with TTY

@@ -60,6 +60,7 @@ L + netutil
 L - system/process
 * - system/procname
 L + system/sensors
+* + system/sysctl
 * + terminal
 * ! terminal/tty
 * - terminal/input
