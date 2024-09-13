@@ -58,7 +58,7 @@ type CPUUsage struct {
 
 // CPUInfo contains info about CPU
 type CPUInfo struct {
-	Vendor    string    `json:"vendor"`     // Processor vandor name
+	Vendor    string    `json:"vendor"`     // Processor vendor name
 	Model     string    `json:"model"`      // Common name of the processor
 	Cores     int       `json:"cores"`      // Number of cores
 	Siblings  int       `json:"siblings"`   // Total number of sibling CPUs on the same physical CPU

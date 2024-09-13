@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collect info about services
+// Collect collects info about services
 func Collect(services ...string) []support.Service {
 	var result []support.Service
 

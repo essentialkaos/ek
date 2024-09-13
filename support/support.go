@@ -100,17 +100,18 @@ type Info struct {
 	Version string `json:"version"`
 	Binary  string `json:"binary"`
 
-	Build    *BuildInfo   `json:"build,omitempty"`
-	OS       *OSInfo      `json:"os,omitempty"`
-	System   *SystemInfo  `json:"system,omitempty"`
-	Network  *NetworkInfo `json:"network,omitempty"`
-	FS       []FSInfo     `json:"fs,omitempty"`
-	Pkgs     []Pkg        `json:"pkgs,omitempty"`
-	Services []Service    `json:"services,omitempty"`
-	Deps     []Dep        `json:"deps,omitempty"`
-	Apps     []App        `json:"apps,omitempty"`
-	Checks   []Check      `json:"checks,omitempty"`
-	Env      []EnvVar     `json:"env,omitempty"`
+	Build     *BuildInfo     `json:"build,omitempty"`
+	OS        *OSInfo        `json:"os,omitempty"`
+	System    *SystemInfo    `json:"system,omitempty"`
+	Network   *NetworkInfo   `json:"network,omitempty"`
+	Resources *ResourcesInfo `json:"resources,omitempty"`
+	FS        []FSInfo       `json:"fs,omitempty"`
+	Pkgs      []Pkg          `json:"pkgs,omitempty"`
+	Services  []Service      `json:"services,omitempty"`
+	Deps      []Dep          `json:"deps,omitempty"`
+	Apps      []App          `json:"apps,omitempty"`
+	Checks    []Check        `json:"checks,omitempty"`
+	Env       []EnvVar       `json:"env,omitempty"`
 }
 
 // BuildInfo contains information about binary
@@ -163,6 +164,24 @@ type FSInfo struct {
 	Type   string `json:"type,omitempty"`
 	Used   uint64 `json:"used,omitempty"`
 	Free   uint64 `json:"free,omitempty"`
+}
+
+// ResourcesInfo contains information about system resources
+type ResourcesInfo struct {
+	CPU       []CPUInfo `json:"cpu"`
+	MemTotal  uint64    `json:"mem_total,omitempty"`
+	MemFree   uint64    `json:"mem_free,omitempty"`
+	MemUsed   uint64    `json:"mem_used,omitempty"`
+	SwapTotal uint64    `json:"swap_total,omitempty"`
+	SwapFree  uint64    `json:"swap_free,omitempty"`
+	SwapUsed  uint64    `json:"swap_used,omitempty"`
+}
+
+// CPUInfo contains info about CPU
+type CPUInfo struct {
+	Model   string `json:"model"`
+	Threads int    `json:"threads"`
+	Cores   int    `json:"cores"`
 }
 
 // Service contains basic info about service
@@ -343,6 +362,17 @@ func (i *Info) WithFS(info []FSInfo) *Info {
 	return i
 }
 
+// WithResources adds system resources information
+func (i *Info) WithResources(info *ResourcesInfo) *Info {
+	if i == nil {
+		return nil
+	}
+
+	i.Resources = info
+
+	return i
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Print prints support info
@@ -358,6 +388,7 @@ func (i *Info) Print() {
 
 	i.printAppInfo()
 	i.printOSInfo()
+	i.printResourcesInfo()
 	i.printNetworkInfo()
 	i.printFSInfo()
 	i.printEnvVars()
@@ -459,6 +490,61 @@ func (i *Info) printOSInfo() {
 		case "yandex":
 			format(12, true, "Container", "Yes (Yandex Serverless)")
 		}
+	}
+}
+
+// printResourcesInfo prints resources info
+func (i *Info) printResourcesInfo() {
+	if i.Resources == nil {
+		return
+	}
+
+	fmtutil.Separator(false, "RESOURCES")
+
+	if len(i.Resources.CPU) > 0 {
+		var procs, cores int
+
+		for i, p := range i.Resources.CPU {
+			fmtc.Printf(
+				"  {s-}%d.{!} %s {s}[ %dC × %dT → %d ]{!}\n",
+				i+1, p.Model, p.Cores, p.Threads, p.Cores*p.Threads,
+			)
+			procs++
+			cores += p.Cores * p.Threads
+		}
+
+		fmtc.NewLine()
+
+		format(10, true,
+			"Processors", fmtutil.PrettyNum(procs),
+			"Cores", fmtutil.PrettyNum(cores),
+		)
+
+		fmtc.NewLine()
+	}
+
+	if i.Resources.MemTotal > 0 {
+		perc := (float64(i.Resources.MemUsed) / float64(i.Resources.MemTotal)) * 100.0
+
+		format(6, true, "Memory", fmtc.Sprintf(
+			"%s {s}/{!} %s {s-}(%s){!}",
+			fmtutil.PrettySize(i.Resources.MemUsed, " "),
+			fmtutil.PrettySize(i.Resources.MemTotal, " "),
+			fmtutil.PrettyPerc(perc),
+		))
+	}
+
+	if i.Resources.SwapTotal > 0 {
+		perc := (float64(i.Resources.SwapUsed) / float64(i.Resources.SwapTotal)) * 100.0
+
+		format(6, true, "Swap", fmtc.Sprintf(
+			"%s {s}/{!} %s {s-}(%s){!}",
+			fmtutil.PrettySize(i.Resources.SwapUsed, " "),
+			fmtutil.PrettySize(i.Resources.SwapTotal, " "),
+			fmtutil.PrettyPerc(perc),
+		))
+	} else {
+		format(6, true, "Swap", "")
 	}
 }
 
