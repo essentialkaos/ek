@@ -28,7 +28,7 @@ var _ = Suite(&SysctlSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *SysctlSuite) TestBasic(c *C) {
+func (s *SysctlSuite) TestOne(c *C) {
 	if runtime.GOOS == "darwin" {
 		vs, err := Get("kern.job_control")
 		c.Assert(err, IsNil)
@@ -40,19 +40,19 @@ func (s *SysctlSuite) TestBasic(c *C) {
 		c.Assert(err, IsNil)
 		c.Assert(vi64, Equals, int64(1))
 	} else {
-		vs, err := Get("net.ipv4.conf.all.forwarding")
+		vs, err := Get("vm.swappiness")
 		c.Assert(err, IsNil)
-		c.Assert(vs, Equals, "1")
-		vi, err := GetI("net.ipv4.conf.all.forwarding")
+		c.Assert(vs, Not(Equals), "0")
+		vi, err := GetI("vm.swappiness")
 		c.Assert(err, IsNil)
-		c.Assert(vi, Equals, int(1))
-		vi64, err := GetI64("net.ipv4.conf.all.forwarding")
+		c.Assert(vi, Not(Equals), int(0))
+		vi64, err := GetI64("vm.swappiness")
 		c.Assert(err, IsNil)
-		c.Assert(vi64, Equals, int64(1))
+		c.Assert(vi64, Not(Equals), int64(0))
 	}
 }
 
-func (s *SysctlSuite) TestBasicErrors(c *C) {
+func (s *SysctlSuite) TestOneErrors(c *C) {
 	_, err := Get("")
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `Kernel parameter name cannot be empty`)
@@ -86,9 +86,7 @@ func (s *SysctlSuite) TestBasicErrors(c *C) {
 		_, err = GetI64("kernel.random.boot_id")
 		c.Assert(err, NotNil)
 	}
-}
 
-func (s *SysctlSuite) TestOSErrors(c *C) {
 	if runtime.GOOS == "darwin" {
 		binary = "_unknown_"
 		_, err := Get("kern.bootuuid")
@@ -100,4 +98,57 @@ func (s *SysctlSuite) TestOSErrors(c *C) {
 		c.Assert(err, NotNil)
 		procFS = "/proc/sys"
 	}
+}
+
+func (s *SysctlSuite) TestAll(c *C) {
+	p, err := All()
+
+	c.Assert(err, IsNil)
+	c.Assert(p, Not(HasLen), 0)
+
+	if runtime.GOOS == "darwin" {
+		c.Assert(p.Get("kern.job_control"), Equals, "1")
+		vi, err := p.GetI("kern.job_control")
+		c.Assert(err, IsNil)
+		c.Assert(vi, Equals, int(1))
+		vi64, err := p.GetI64("kern.job_control")
+		c.Assert(err, IsNil)
+		c.Assert(vi64, Equals, int64(1))
+	} else {
+		c.Assert(p.Get("vm.swappiness"), Not(Equals), "")
+		vi, err := p.GetI("vm.swappiness")
+		c.Assert(err, IsNil)
+		c.Assert(vi, Not(Equals), int(0))
+		vi64, err := p.GetI64("vm.swappiness")
+		c.Assert(err, IsNil)
+		c.Assert(vi64, Not(Equals), int64(0))
+	}
+}
+
+func (s *SysctlSuite) TestAllErrors(c *C) {
+	var p Params
+
+	c.Assert(p.Get("test"), Equals, "")
+
+	p, err := All()
+
+	c.Assert(err, IsNil)
+	c.Assert(p, Not(HasLen), 0)
+
+	if runtime.GOOS == "darwin" {
+		_, err = p.GetI("kern.bootuuid")
+		c.Assert(err, NotNil)
+		_, err = p.GetI64("kern.bootuuid")
+		c.Assert(err, NotNil)
+	} else {
+		_, err = p.GetI("kernel.random.boot_id")
+		c.Assert(err, NotNil)
+		_, err = p.GetI64("kernel.random.boot_id")
+		c.Assert(err, NotNil)
+	}
+
+	binary = "_unknown_"
+	_, err = All()
+	c.Assert(err, NotNil)
+	binary = "sysctl"
 }

@@ -27,6 +27,16 @@ var procFS = "/proc/sys"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Params contains all kernel parameters
+type Params map[string]string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// All returns all kernel parameters
+func All() (Params, error) {
+	return getParams()
+}
+
 // Get returns kernel parameter value as a string
 func Get(param string) (string, error) {
 	switch {
@@ -36,7 +46,7 @@ func Get(param string) (string, error) {
 		return "", fmt.Errorf("Invalid parameter name %q", param)
 	}
 
-	return getKernelParam(param)
+	return getParam(param)
 }
 
 // GetI returns kernel parameter value as an int
@@ -74,3 +84,34 @@ func GetI64(param string) (int64, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Get returns kernel parameter value as a string
+func (p Params) Get(name string) string {
+	if len(p) == 0 {
+		return ""
+	}
+
+	return p[name]
+}
+
+// GetI returns kernel parameter value as an int
+func (p Params) GetI(param string) (int, error) {
+	i, err := strconv.Atoi(p.Get(param))
+
+	if err != nil {
+		return 0, fmt.Errorf("Can't parse %q parameter as int: %w", param, err)
+	}
+
+	return i, nil
+}
+
+// GetI64 returns kernel parameter value as an int64
+func (p Params) GetI64(param string) (int64, error) {
+	i, err := strconv.ParseInt(p.Get(param), 10, 64)
+
+	if err != nil {
+		return 0, fmt.Errorf("Can't parse %q parameter as int64: %w", param, err)
+	}
+
+	return i, nil
+}

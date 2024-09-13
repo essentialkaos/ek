@@ -8,8 +8,10 @@ package sysctl
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/path"
@@ -17,8 +19,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getKernelParam reads kernel parameter from procfs
-func getKernelParam(param string) (string, error) {
+// getParam reads kernel parameter from procfs
+func getParam(param string) (string, error) {
 	p, err := os.ReadFile(path.Clean(path.Join(
 		procFS, strings.ReplaceAll(param, ".", "/"),
 	)))
@@ -28,4 +30,32 @@ func getKernelParam(param string) (string, error) {
 	}
 
 	return strings.Trim(string(p), "\n\r"), nil
+}
+
+// getParams reads all kernel parameters
+func getParams() (Params, error) {
+	output, err := exec.Command(binary, "-a").Output()
+
+	if err != nil {
+		return nil, fmt.Errorf("Can't get kernel parameters from sysctl")
+	}
+
+	params := make(Params)
+	buf := bytes.NewBuffer(output)
+
+	for {
+		line, err := buf.ReadString('\n')
+
+		if err != nil {
+			break
+		}
+
+		name, value, ok := strings.Cut(strings.Trim(line, "\n\r"), " = ")
+
+		if ok {
+			params[name] = value
+		}
+	}
+
+	return params, nil
 }
