@@ -7,7 +7,7 @@ updates:
     schedule:
       interval: "daily"
       timezone: "Etc/UTC"
-      time: "07:00"
+      time: "03:00"
     labels:
       - "PR • MAINTENANCE"
     assignees:
@@ -27,7 +27,7 @@ updates:
     schedule:
       interval: "daily"
       timezone: "Etc/UTC"
-      time: "08:00"
+      time: "03:00"
     labels:
       - "PR • MAINTENANCE"
     assignees:
