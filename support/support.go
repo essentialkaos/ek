@@ -15,7 +15,8 @@ There are also some sub-packages to collect/parse additional information:
   - pkgs: Package for collecting information about installed packages
   - services: Package for collecting information about services
   - fs: Package for collecting information about the file system
-  - network: Package to collect information about the network
+  - network: Package for collecting information about the network
+  - resources: Package for collecting information about CPU and memory
 
 Example of collecting maximum information about the application and system:
 
@@ -29,6 +30,7 @@ Example of collecting maximum information about the application and system:
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
+	  WithResources(resources.Collect()).
 	  Print()
 
 Also, you can't encode data to JSON/GOB and send it to your server instead of printing
@@ -44,6 +46,7 @@ it to the console.
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect())
+	  WithResources(resources.Collect())
 
 	b, _ := json.Marshal(info)
 
