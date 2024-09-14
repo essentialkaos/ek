@@ -476,6 +476,8 @@ func (i *Info) printOSInfo() {
 		)
 	}
 
+	format(12, true, "Locale", os.Getenv("LANG"))
+
 	if i.System.ContainerEngine != "" {
 		fmtc.NewLine()
 		switch i.System.ContainerEngine {
