@@ -9,6 +9,9 @@ package system
 
 import (
 	"time"
+
+	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v13/system/sysctl"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -31,8 +34,29 @@ func GetCPUStats() (*CPUStats, error) {
 	return nil, nil
 }
 
-// ❗ GetCPUInfo returns slice with info about CPUs
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetCPUInfo returns slice with info about CPUs
 func GetCPUInfo() ([]*CPUInfo, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
+	params, err := sysctl.All()
+
+	if err != nil {
+		return nil, err
+	}
+
+	p0cache, _ := params.GetI("hw.perflevel0.l2cachesize")
+	p1cache, _ := params.GetI("hw.perflevel1.l2cachesize")
+
+	cores, _ := params.GetI("machdep.cpu.core_count")
+	threads, _ := params.GetI("machdep.cpu.thread_count")
+
+	return []*CPUInfo{
+		{
+			Vendor:    strutil.Q(params.Get("machdep.cpu.vendor"), "Apple"),
+			Model:     params.Get("machdep.cpu.brand_string"),
+			Cores:     cores,
+			Siblings:  threads,
+			CacheSize: uint64(p0cache + p1cache),
+		},
+	}, nil
 }
