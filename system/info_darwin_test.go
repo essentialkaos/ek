@@ -68,3 +68,17 @@ func (s *SystemSuite) TestSystemInfo(c *C) {
 	c.Assert(osInfo.Version, Not(Equals), "")
 	c.Assert(osInfo.Build, Not(Equals), "")
 }
+
+func (s *SystemSuite) TestCPUInfo(c *C) {
+	info, err := GetCPUInfo()
+
+	c.Assert(err, IsNil)
+	c.Assert(info, NotNil)
+}
+
+func (s *SystemSuite) TestMemUsage(c *C) {
+	mem, err := GetMemUsage()
+
+	c.Assert(err, IsNil)
+	c.Assert(mem, NotNil)
+}
