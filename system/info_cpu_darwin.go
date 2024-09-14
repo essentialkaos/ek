@@ -8,6 +8,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/strutil"
@@ -41,7 +42,7 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 	params, err := sysctl.All()
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Can't get kernel parameters: %w", err)
 	}
 
 	p0cache, _ := params.GetI("hw.perflevel0.l2cachesize")

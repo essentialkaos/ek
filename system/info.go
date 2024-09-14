@@ -28,21 +28,21 @@ type LoadAvg struct {
 
 // MemUsage contains info about system memory usage
 type MemUsage struct {
-	MemTotal     uint64 `json:"total"`        // Total usable ram (i.e. physical ram minus a few reserved bits and the kernel binary code)
-	MemFree      uint64 `json:"free"`         // The sum of MemFree - (Buffers + Cached)
-	MemUsed      uint64 `json:"used"`         // MemTotal - MemFree
-	Buffers      uint64 `json:"buffers"`      // Relatively temporary storage for raw disk blocks shouldn't get tremendously large (20MB or so)
-	Cached       uint64 `json:"cached"`       // In-memory cache for files read from the disk (the pagecache).  Doesn't include SwapCached
-	Active       uint64 `json:"active"`       // Memory that has been used more recently and usually not reclaimed unless absolutely necessary
-	Inactive     uint64 `json:"inactive"`     // Memory which has been less recently used.  It is more eligible to be reclaimed for other purposes
-	SwapTotal    uint64 `json:"swap_total"`   // Total amount of swap space available
-	SwapFree     uint64 `json:"swap_free"`    // Memory which has been evicted from RAM, and is temporarily on the disk still also is in the swapfile
-	SwapUsed     uint64 `json:"swap_used"`    // SwapTotal - SwapFree
-	SwapCached   uint64 `json:"swap_cached"`  // Memory that once was swapped out, is swapped back in but
-	Dirty        uint64 `json:"dirty"`        // Memory which is waiting to get written back to the disk
-	Shmem        uint64 `json:"shmem"`        // Total used shared memory
-	Slab         uint64 `json:"slab"`         // In-kernel data structures cache
-	SReclaimable uint64 `json:"sreclaimable"` // The part of the Slab that might be reclaimed (such as caches)
+	MemTotal     uint64 `json:"total"`                  // Total usable ram (i.e. physical ram minus a few reserved bits and the kernel binary code)
+	MemFree      uint64 `json:"free"`                   // The sum of MemFree - (Buffers + Cached)
+	MemUsed      uint64 `json:"used"`                   // MemTotal - MemFree
+	SwapTotal    uint64 `json:"swap_total"`             // Total amount of swap space available
+	SwapFree     uint64 `json:"swap_free"`              // Memory which has been evicted from RAM, and is temporarily on the disk still also is in the swapfile
+	SwapUsed     uint64 `json:"swap_used"`              // SwapTotal - SwapFree
+	Active       uint64 `json:"active"`                 // Memory that has been used more recently and usually not reclaimed unless absolutely necessary
+	Inactive     uint64 `json:"inactive"`               // Memory which has been less recently used.  It is more eligible to be reclaimed for other purposes
+	Buffers      uint64 `json:"buffers,omitempty"`      // Relatively temporary storage for raw disk blocks shouldn't get tremendously large (20MB or so)
+	Cached       uint64 `json:"cached,omitempty"`       // In-memory cache for files read from the disk (the pagecache).  Doesn't include SwapCached
+	SwapCached   uint64 `json:"swap_cached,omitempty"`  // Memory that once was swapped out, is swapped back in but
+	Dirty        uint64 `json:"dirty,omitempty"`        // Memory which is waiting to get written back to the disk
+	Shmem        uint64 `json:"shmem,omitempty"`        // Total used shared memory
+	Slab         uint64 `json:"slab,omitempty"`         // In-kernel data structures cache
+	SReclaimable uint64 `json:"sreclaimable,omitempty"` // The part of the Slab that might be reclaimed (such as caches)
 }
 
 // CPUUsage contains info about CPU usage
@@ -58,12 +58,12 @@ type CPUUsage struct {
 
 // CPUInfo contains info about CPU
 type CPUInfo struct {
-	Vendor    string    `json:"vendor"`     // Processor vendor name
-	Model     string    `json:"model"`      // Common name of the processor
-	Cores     int       `json:"cores"`      // Number of cores
-	Siblings  int       `json:"siblings"`   // Total number of sibling CPUs on the same physical CPU
-	CacheSize uint64    `json:"cache_size"` // Amount of level 2 memory cache available to the processor
-	Speed     []float64 `json:"speed"`      // Speed in megahertz for the processor
+	Vendor    string    `json:"vendor"`          // Processor vendor name
+	Model     string    `json:"model"`           // Common name of the processor
+	Cores     int       `json:"cores"`           // Number of cores
+	Siblings  int       `json:"siblings"`        // Total number of sibling CPUs on the same physical CPU
+	CacheSize uint64    `json:"cache_size"`      // Amount of level 2 memory cache available to the processor
+	Speed     []float64 `json:"speed,omitempty"` // Speed in megahertz for the processor
 }
 
 // CPUStats contains basic CPU stats
