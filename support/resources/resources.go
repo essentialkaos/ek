@@ -20,7 +20,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Collect collects info about CPU and memory
-func Collect(extMemInfo bool) *support.ResourcesInfo {
+func Collect() *support.ResourcesInfo {
 	result := &support.ResourcesInfo{}
 
 	cpuInfo, err1 := system.GetCPUInfo()
