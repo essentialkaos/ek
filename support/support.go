@@ -235,6 +235,10 @@ type Check struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var buildInfoProvider = debug.ReadBuildInfo
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Collect collects basic info about system
 func Collect(app, ver string) *Info {
 	bin, _ := os.Executable()
@@ -435,7 +439,7 @@ func (i *Info) appendBuildInfo() {
 
 	bin, _ := os.Executable()
 	binSHA := hash.FileHash(bin)
-	info, ok := debug.ReadBuildInfo()
+	info, ok := buildInfoProvider()
 
 	if ok {
 		for _, s := range info.Settings {
