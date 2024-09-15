@@ -1,4 +1,5 @@
-package ek
+// Package kernel provides methods for collecting information from OS kernel
+package kernel
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,5 +8,11 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "13.5.0"
+import "github.com/essentialkaos/ek/v13/support"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Collect collects info from OS kernel
+func Collect(params ...string) []support.KernelParam {
+	return nil
+}

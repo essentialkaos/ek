@@ -1,5 +1,16 @@
 ## Changelog
 
+### [13.5.0](https://kaos.sh/ek/13.5.0)
+
+- `[support/resources]` Added package for collecting info about CPU and memory
+- `[support/kernel]` Added package for collecting OS kernel parameters
+- `[system/sysctl]` Added method `All` to get all kernel parameters
+- `[system]` Added macOS support for `GetCPUInfo`
+- `[system]` Added macOS support for `GetMemUsage`
+- `[support]` Added locale to default OS info output
+- `[mathutil]` Added methods `IsInt`, `IsFloat`, and `IsNumber`
+- `[support]` Added info if CGO is used for build
+
 ### [13.4.0](https://kaos.sh/ek/13.4.0)
 
 - `[system/sysctl]` Added new package for reading kernel parameters

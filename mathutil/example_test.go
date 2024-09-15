@@ -13,6 +13,36 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleIsNumber() {
+	fmt.Println(IsNumber("test"))
+	fmt.Println(IsNumber("746131"))
+	fmt.Println(IsNumber("-10.431"))
+	// Output:
+	// false
+	// true
+	// true
+}
+
+func ExampleIsInt() {
+	fmt.Println(IsInt("test"))
+	fmt.Println(IsInt("746131"))
+	fmt.Println(IsInt("-194"))
+	// Output:
+	// false
+	// true
+	// true
+}
+
+func ExampleIsFloat() {
+	fmt.Println(IsFloat("test"))
+	fmt.Println(IsFloat("74.6131"))
+	fmt.Println(IsFloat("-10.4"))
+	// Output:
+	// false
+	// true
+	// true
+}
+
 func ExampleBetween() {
 	fmt.Println(Between(10, 1, 5))
 	fmt.Println(Between(-3, 1, 5))

@@ -3,19 +3,21 @@ Package support provides methods for collecting and printing support information
 about system.
 
 By default, it collects information about the application and environment:
-  - Name
-  - Version
-  - Go version used
-  - Binary SHA
-  - Git commit SHA
+  - App name
+  - App version
+  - Go version used for build
+  - Binary SHA checksum
+  - Git commit SHA checksum
 
 There are also some sub-packages to collect/parse additional information:
-  - apps: Package for extracting apps versions info
-  - deps: Package for extracting dependency information from gomod data
-  - pkgs: Package for collecting information about installed packages
-  - services: Package for collecting information about services
-  - fs: Package for collecting information about the file system
-  - network: Package to collect information about the network
+  - apps: Extracting apps versions info
+  - deps: Extracting dependency information from gomod data
+  - pkgs: Collecting information about installed packages
+  - services: Collecting information about services
+  - fs: Collecting information about the file system
+  - network: Collecting information about the network
+  - resources: Collecting information about CPU and memory
+  - kernel: Collecting information from OS kernel
 
 Example of collecting maximum information about the application and system:
 
@@ -29,6 +31,8 @@ Example of collecting maximum information about the application and system:
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
+	  WithResources(resources.Collect()).
+	  WithKernel(kernel.Collect()).
 	  Print()
 
 Also, you can't encode data to JSON/GOB and send it to your server instead of printing
@@ -43,7 +47,9 @@ it to the console.
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
-	  WithFS(fs.Collect())
+	  WithFS(fs.Collect()).
+	  WithResources(resources.Collect()).
+	  WithKernel(kernel.Collect())
 
 	b, _ := json.Marshal(info)
 
@@ -64,6 +70,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
@@ -100,17 +107,19 @@ type Info struct {
 	Version string `json:"version"`
 	Binary  string `json:"binary"`
 
-	Build    *BuildInfo   `json:"build,omitempty"`
-	OS       *OSInfo      `json:"os,omitempty"`
-	System   *SystemInfo  `json:"system,omitempty"`
-	Network  *NetworkInfo `json:"network,omitempty"`
-	FS       []FSInfo     `json:"fs,omitempty"`
-	Pkgs     []Pkg        `json:"pkgs,omitempty"`
-	Services []Service    `json:"services,omitempty"`
-	Deps     []Dep        `json:"deps,omitempty"`
-	Apps     []App        `json:"apps,omitempty"`
-	Checks   []Check      `json:"checks,omitempty"`
-	Env      []EnvVar     `json:"env,omitempty"`
+	Build     *BuildInfo     `json:"build,omitempty"`
+	OS        *OSInfo        `json:"os,omitempty"`
+	System    *SystemInfo    `json:"system,omitempty"`
+	Network   *NetworkInfo   `json:"network,omitempty"`
+	Resources *ResourcesInfo `json:"resources,omitempty"`
+	Kernel    []KernelParam  `json:"kernel,omitempty"`
+	FS        []FSInfo       `json:"fs,omitempty"`
+	Pkgs      []Pkg          `json:"pkgs,omitempty"`
+	Services  []Service      `json:"services,omitempty"`
+	Deps      []Dep          `json:"deps,omitempty"`
+	Apps      []App          `json:"apps,omitempty"`
+	Checks    []Check        `json:"checks,omitempty"`
+	Env       []EnvVar       `json:"env,omitempty"`
 }
 
 // BuildInfo contains information about binary
@@ -118,6 +127,7 @@ type BuildInfo struct {
 	GoVersion string `json:"go_version"`
 	GoArch    string `json:"go_arch"`
 	GoOS      string `json:"go_os"`
+	CGO       bool   `json:"cgo"`
 
 	GitSHA string `json:"git_sha,omitempty"`
 	BinSHA string `json:"bin_sha,omitempty"`
@@ -165,6 +175,24 @@ type FSInfo struct {
 	Free   uint64 `json:"free,omitempty"`
 }
 
+// ResourcesInfo contains information about system resources
+type ResourcesInfo struct {
+	CPU       []CPUInfo `json:"cpu"`
+	MemTotal  uint64    `json:"mem_total,omitempty"`
+	MemFree   uint64    `json:"mem_free,omitempty"`
+	MemUsed   uint64    `json:"mem_used,omitempty"`
+	SwapTotal uint64    `json:"swap_total,omitempty"`
+	SwapFree  uint64    `json:"swap_free,omitempty"`
+	SwapUsed  uint64    `json:"swap_used,omitempty"`
+}
+
+// CPUInfo contains info about CPU
+type CPUInfo struct {
+	Model   string `json:"model"`
+	Threads int    `json:"threads"`
+	Cores   int    `json:"cores"`
+}
+
 // Service contains basic info about service
 type Service struct {
 	Name      string        `json:"name"`
@@ -195,12 +223,19 @@ type EnvVar struct {
 	Value string `json:"value"`
 }
 
+// KernelParam contains info about kernel parameter
+type KernelParam = EnvVar
+
 // Check contains info about custom check
 type Check struct {
 	Status  CheckStatus `json:"status"`
 	Title   string      `json:"title"`
 	Message string      `json:"message,omitempty"`
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var buildInfoProvider = debug.ReadBuildInfo
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -250,8 +285,6 @@ func (i *Info) WithRevision(rev string) *Info {
 		i.Build.GitSHA = rev
 		return i
 	}
-
-	i.Build.GitSHA = extractGitRevFromBuildInfo()
 
 	return i
 }
@@ -343,6 +376,28 @@ func (i *Info) WithFS(info []FSInfo) *Info {
 	return i
 }
 
+// WithResources adds system resources information
+func (i *Info) WithResources(info *ResourcesInfo) *Info {
+	if i == nil {
+		return nil
+	}
+
+	i.Resources = info
+
+	return i
+}
+
+// WithKernel adds kernel parameters info
+func (i *Info) WithKernel(info []KernelParam) *Info {
+	if i == nil {
+		return nil
+	}
+
+	i.Kernel = info
+
+	return i
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Print prints support info
@@ -358,6 +413,8 @@ func (i *Info) Print() {
 
 	i.printAppInfo()
 	i.printOSInfo()
+	i.printResourcesInfo()
+	i.printKernelInfo()
 	i.printNetworkInfo()
 	i.printFSInfo()
 	i.printEnvVars()
@@ -382,13 +439,29 @@ func (i *Info) appendBuildInfo() {
 
 	bin, _ := os.Executable()
 	binSHA := hash.FileHash(bin)
+	info, ok := buildInfoProvider()
+
+	if ok {
+		for _, s := range info.Settings {
+			switch s.Key {
+			case "CGO_ENABLED":
+				if s.Value == "1" {
+					i.Build.CGO = true
+				}
+			case "vcs.revision":
+				if len(s.Value) > 7 {
+					i.Build.GitSHA = s.Value[:7]
+				}
+			}
+		}
+	}
 
 	i.Build.BinSHA = strutil.Head(binSHA, 7)
 }
 
 // printAppInfo prints info about app
 func (i *Info) printAppInfo() {
-	fmtutil.Separator(false, "APPLICATION INFO")
+	fmtutil.Separator(false, "APPLICATION")
 
 	name := i.Name
 
@@ -405,8 +478,14 @@ func (i *Info) printAppInfo() {
 		return
 	}
 
+	goInfo := fmtc.Sprintf("%s {s}(%s/%s){!}", i.Build.GoVersion, i.Build.GoOS, i.Build.GoArch)
+
+	if i.Build.CGO {
+		goInfo += fmtc.Sprint(" {s}+CGO{!}")
+	}
+
 	format(7, false,
-		"Go", fmtc.Sprintf("%s {s}(%s/%s){!}", i.Build.GoVersion, i.Build.GoOS, i.Build.GoArch),
+		"Go", goInfo,
 		"Git SHA", i.Build.GitSHA+getHashColorBullet(i.Build.GitSHA),
 		"Bin SHA", i.Build.BinSHA+getHashColorBullet(i.Build.BinSHA),
 	)
@@ -415,7 +494,7 @@ func (i *Info) printAppInfo() {
 // printOSInfo prints info about OS and system
 func (i *Info) printOSInfo() {
 	if i.OS != nil {
-		fmtutil.Separator(false, "OS INFO")
+		fmtutil.Separator(false, "OS")
 
 		format(12, true,
 			"Name", strutil.Q(i.OS.coloredName, i.OS.Name),
@@ -445,6 +524,8 @@ func (i *Info) printOSInfo() {
 		)
 	}
 
+	format(12, true, "Locale", os.Getenv("LANG"))
+
 	if i.System.ContainerEngine != "" {
 		fmtc.NewLine()
 		switch i.System.ContainerEngine {
@@ -458,6 +539,81 @@ func (i *Info) printOSInfo() {
 			format(12, true, "Container", "Yes (LXC)")
 		case "yandex":
 			format(12, true, "Container", "Yes (Yandex Serverless)")
+		}
+	}
+}
+
+// printResourcesInfo prints resources info
+func (i *Info) printResourcesInfo() {
+	if i.Resources == nil {
+		return
+	}
+
+	fmtutil.Separator(false, "RESOURCES")
+
+	if len(i.Resources.CPU) > 0 {
+		var procs, cores int
+
+		for i, p := range i.Resources.CPU {
+			fmtc.Printf(
+				"  {s-}%d.{!} %s {s}[ %dC × %dT → %d ]{!}\n",
+				i+1, p.Model, p.Cores, p.Threads, p.Cores*p.Threads,
+			)
+			procs++
+			cores += p.Cores * p.Threads
+		}
+
+		fmtc.NewLine()
+
+		format(10, true,
+			"Processors", fmtutil.PrettyNum(procs),
+			"Cores", fmtutil.PrettyNum(cores),
+		)
+
+		fmtc.NewLine()
+	}
+
+	if i.Resources.MemTotal > 0 {
+		perc := (float64(i.Resources.MemUsed) / float64(i.Resources.MemTotal)) * 100.0
+
+		format(6, true, "Memory", fmtc.Sprintf(
+			"%s {s}/{!} %s {s-}(%s){!}",
+			fmtutil.PrettySize(i.Resources.MemUsed, " "),
+			fmtutil.PrettySize(i.Resources.MemTotal, " "),
+			fmtutil.PrettyPerc(perc),
+		))
+	}
+
+	if i.Resources.SwapTotal > 0 {
+		perc := (float64(i.Resources.SwapUsed) / float64(i.Resources.SwapTotal)) * 100.0
+
+		format(6, true, "Swap", fmtc.Sprintf(
+			"%s {s}/{!} %s {s-}(%s){!}",
+			fmtutil.PrettySize(i.Resources.SwapUsed, " "),
+			fmtutil.PrettySize(i.Resources.SwapTotal, " "),
+			fmtutil.PrettyPerc(perc),
+		))
+	} else {
+		format(6, true, "Swap", "")
+	}
+}
+
+// printKernelInfo prints kernel parameters
+func (i *Info) printKernelInfo() {
+	if i.Kernel == nil {
+		return
+	}
+
+	fmtutil.Separator(false, "KERNEL")
+
+	keySize := getMaxKeySize(i.Kernel)
+
+	for _, p := range i.Kernel {
+		if mathutil.IsInt(p.Value) {
+			vi, _ := strconv.Atoi(p.Value)
+			format(keySize, true, p.Key, fmtutil.PrettyNum(vi))
+		} else {
+			format(keySize, true, p.Key, p.Value)
 		}
 	}
 }
@@ -681,23 +837,6 @@ func format(size int, printEmpty bool, records ...string) {
 			fmtc.Printf(fm, name, value)
 		}
 	}
-}
-
-// extractGitRevFromBuildInfo extracts git SHA from embedded build info
-func extractGitRevFromBuildInfo() string {
-	info, ok := debug.ReadBuildInfo()
-
-	if !ok {
-		return ""
-	}
-
-	for _, s := range info.Settings {
-		if s.Key == "vcs.revision" && len(s.Value) > 7 {
-			return s.Value[:7]
-		}
-	}
-
-	return ""
 }
 
 // getHashColorBullet return bullet with color from hash

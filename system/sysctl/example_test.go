@@ -42,3 +42,57 @@ func ExampleGetI64() {
 
 	fmt.Printf("File max: %d\n", paramValue)
 }
+
+func ExampleAll() {
+	params, err := All()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for n, v := range params {
+		fmt.Printf("%s → %s\n", n, v)
+	}
+}
+
+func ExampleParams_Get() {
+	params, err := All()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Boot ID: %s\n", params.Get("kernel.random.boot_id"))
+}
+
+func ExampleParams_GetI() {
+	params, err := All()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	paramValue, err := params.GetI("kernel.pty.max")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("PTY Max: %d\n", paramValue)
+}
+
+func ExampleParams_GetI64() {
+	params, err := All()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	paramValue, err := params.GetI64("fs.file-max")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("File max: %d\n", paramValue)
+}
