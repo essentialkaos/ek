@@ -3,20 +3,21 @@ Package support provides methods for collecting and printing support information
 about system.
 
 By default, it collects information about the application and environment:
-  - Name
-  - Version
-  - Go version used
-  - Binary SHA
-  - Git commit SHA
+  - App name
+  - App version
+  - Go version used for build
+  - Binary SHA checksum
+  - Git commit SHA checksum
 
 There are also some sub-packages to collect/parse additional information:
-  - apps: Package for extracting apps versions info
-  - deps: Package for extracting dependency information from gomod data
-  - pkgs: Package for collecting information about installed packages
-  - services: Package for collecting information about services
-  - fs: Package for collecting information about the file system
-  - network: Package for collecting information about the network
-  - resources: Package for collecting information about CPU and memory
+  - apps: Extracting apps versions info
+  - deps: Extracting dependency information from gomod data
+  - pkgs: Collecting information about installed packages
+  - services: Collecting information about services
+  - fs: Collecting information about the file system
+  - network: Collecting information about the network
+  - resources: Collecting information about CPU and memory
+  - kernel: Collecting information from OS kernel
 
 Example of collecting maximum information about the application and system:
 
@@ -31,6 +32,7 @@ Example of collecting maximum information about the application and system:
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
 	  WithResources(resources.Collect()).
+	  WithKernel(kernel.Collect()).
 	  Print()
 
 Also, you can't encode data to JSON/GOB and send it to your server instead of printing
@@ -45,8 +47,9 @@ it to the console.
 	  WithChecks(myAppAvailabilityCheck()).
 	  WithEnvVars("LANG", "PAGER", "SSH_CLIENT").
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
-	  WithFS(fs.Collect())
-	  WithResources(resources.Collect())
+	  WithFS(fs.Collect()).
+	  WithResources(resources.Collect()).
+	  WithKernel(kernel.Collect())
 
 	b, _ := json.Marshal(info)
 
@@ -67,6 +70,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
@@ -108,6 +112,7 @@ type Info struct {
 	System    *SystemInfo    `json:"system,omitempty"`
 	Network   *NetworkInfo   `json:"network,omitempty"`
 	Resources *ResourcesInfo `json:"resources,omitempty"`
+	Kernel    []KernelParam  `json:"kernel,omitempty"`
 	FS        []FSInfo       `json:"fs,omitempty"`
 	Pkgs      []Pkg          `json:"pkgs,omitempty"`
 	Services  []Service      `json:"services,omitempty"`
@@ -216,6 +221,9 @@ type EnvVar struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
+
+// KernelParam contains info about kernel parameter
+type KernelParam = EnvVar
 
 // Check contains info about custom check
 type Check struct {
@@ -376,6 +384,17 @@ func (i *Info) WithResources(info *ResourcesInfo) *Info {
 	return i
 }
 
+// WithKernel adds kernel parameters info
+func (i *Info) WithKernel(info []KernelParam) *Info {
+	if i == nil {
+		return nil
+	}
+
+	i.Kernel = info
+
+	return i
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Print prints support info
@@ -392,6 +411,7 @@ func (i *Info) Print() {
 	i.printAppInfo()
 	i.printOSInfo()
 	i.printResourcesInfo()
+	i.printKernelInfo()
 	i.printNetworkInfo()
 	i.printFSInfo()
 	i.printEnvVars()
@@ -422,7 +442,7 @@ func (i *Info) appendBuildInfo() {
 
 // printAppInfo prints info about app
 func (i *Info) printAppInfo() {
-	fmtutil.Separator(false, "APPLICATION INFO")
+	fmtutil.Separator(false, "APPLICATION")
 
 	name := i.Name
 
@@ -449,7 +469,7 @@ func (i *Info) printAppInfo() {
 // printOSInfo prints info about OS and system
 func (i *Info) printOSInfo() {
 	if i.OS != nil {
-		fmtutil.Separator(false, "OS INFO")
+		fmtutil.Separator(false, "OS")
 
 		format(12, true,
 			"Name", strutil.Q(i.OS.coloredName, i.OS.Name),
@@ -550,6 +570,26 @@ func (i *Info) printResourcesInfo() {
 		))
 	} else {
 		format(6, true, "Swap", "")
+	}
+}
+
+// printKernelInfo prints kernel parameters
+func (i *Info) printKernelInfo() {
+	if i.Kernel == nil {
+		return
+	}
+
+	fmtutil.Separator(false, "KERNEL")
+
+	keySize := getMaxKeySize(i.Kernel)
+
+	for _, p := range i.Kernel {
+		if mathutil.IsInt(p.Value) {
+			vi, _ := strconv.Atoi(p.Value)
+			format(keySize, true, p.Key, fmtutil.PrettyNum(vi))
+		} else {
+			format(keySize, true, p.Key, p.Value)
+		}
 	}
 }
 

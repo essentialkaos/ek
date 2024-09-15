@@ -3,6 +3,7 @@
 ### [13.5.0](https://kaos.sh/ek/13.5.0)
 
 - `[support/resources]` Added package for collecting info about CPU and memory
+- `[support/kernel]` Added package for collecting OS kernel parameters
 - `[system/sysctl]` Added method `All` to get all kernel parameters
 - `[system]` Added macOS support for `GetCPUInfo`
 - `[system]` Added macOS support for `GetMemUsage`
