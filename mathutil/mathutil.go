@@ -31,6 +31,57 @@ type NumericNeg interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// IsInt returns true if given string contains int symbols.
+//
+// Note that this method does not validate the given value.
+func IsInt(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	for _, r := range s {
+		switch r {
+		//   - , 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9
+		case 45, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57:
+			// continue
+		default:
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsFloat returns true if given string contains float symbols.
+//
+// Note that this method does not validate the given value.
+func IsFloat(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	for _, r := range s {
+		switch r {
+		//   - , . , 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9
+		case 45, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57:
+			// continue
+		default:
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsNumber returns true if given string contains number symbols (int or float).
+//
+// Note that this method does not validate the given value.
+func IsNumber(s string) bool {
+	return IsInt(s) || IsFloat(s)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Between returns value between min and max values
 func Between[N Numeric](val, min, max N) N {
 	switch {

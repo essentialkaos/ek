@@ -25,6 +25,15 @@ var _ = Suite(&MathUtilSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *MathUtilSuite) TestChecks(c *C) {
+	c.Assert(IsNumber("1234567890.1"), Equals, true)
+	c.Assert(IsNumber("1234567890"), Equals, true)
+	c.Assert(IsInt(""), Equals, false)
+	c.Assert(IsFloat(""), Equals, false)
+	c.Assert(IsInt("1234567890a"), Equals, false)
+	c.Assert(IsFloat("1234567890.1a"), Equals, false)
+}
+
 func (s *MathUtilSuite) TestBetween(c *C) {
 	c.Assert(Between(5, 0, 100), Equals, 5)
 	c.Assert(Between(10, 0, 5), Equals, 5)
