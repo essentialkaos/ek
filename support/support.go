@@ -127,6 +127,7 @@ type BuildInfo struct {
 	GoVersion string `json:"go_version"`
 	GoArch    string `json:"go_arch"`
 	GoOS      string `json:"go_os"`
+	CGO       bool   `json:"cgo"`
 
 	GitSHA string `json:"git_sha,omitempty"`
 	BinSHA string `json:"bin_sha,omitempty"`
@@ -281,8 +282,6 @@ func (i *Info) WithRevision(rev string) *Info {
 		return i
 	}
 
-	i.Build.GitSHA = extractGitRevFromBuildInfo()
-
 	return i
 }
 
@@ -436,6 +435,22 @@ func (i *Info) appendBuildInfo() {
 
 	bin, _ := os.Executable()
 	binSHA := hash.FileHash(bin)
+	info, ok := debug.ReadBuildInfo()
+
+	if ok {
+		for _, s := range info.Settings {
+			switch s.Key {
+			case "CGO_ENABLED":
+				if s.Value == "1" {
+					i.Build.CGO = true
+				}
+			case "vcs.revision":
+				if len(s.Value) > 7 {
+					i.Build.GitSHA = s.Value[:7]
+				}
+			}
+		}
+	}
 
 	i.Build.BinSHA = strutil.Head(binSHA, 7)
 }
@@ -459,8 +474,14 @@ func (i *Info) printAppInfo() {
 		return
 	}
 
+	goInfo := fmtc.Sprintf("%s {s}(%s/%s){!}", i.Build.GoVersion, i.Build.GoOS, i.Build.GoArch)
+
+	if i.Build.CGO {
+		goInfo += fmtc.Sprint(" {s}+CGO{!}")
+	}
+
 	format(7, false,
-		"Go", fmtc.Sprintf("%s {s}(%s/%s){!}", i.Build.GoVersion, i.Build.GoOS, i.Build.GoArch),
+		"Go", goInfo,
 		"Git SHA", i.Build.GitSHA+getHashColorBullet(i.Build.GitSHA),
 		"Bin SHA", i.Build.BinSHA+getHashColorBullet(i.Build.BinSHA),
 	)
@@ -812,23 +833,6 @@ func format(size int, printEmpty bool, records ...string) {
 			fmtc.Printf(fm, name, value)
 		}
 	}
-}
-
-// extractGitRevFromBuildInfo extracts git SHA from embedded build info
-func extractGitRevFromBuildInfo() string {
-	info, ok := debug.ReadBuildInfo()
-
-	if !ok {
-		return ""
-	}
-
-	for _, s := range info.Settings {
-		if s.Key == "vcs.revision" && len(s.Value) > 7 {
-			return s.Value[:7]
-		}
-	}
-
-	return ""
 }
 
 // getHashColorBullet return bullet with color from hash

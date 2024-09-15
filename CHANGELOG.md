@@ -9,6 +9,7 @@
 - `[system]` Added macOS support for `GetMemUsage`
 - `[support]` Added locale to default OS info output
 - `[mathutil]` Added methods `IsInt`, `IsFloat`, and `IsNumber`
+- `[support]` Added info if CGO is used for build
 
 ### [13.4.0](https://kaos.sh/ek/13.4.0)
 
