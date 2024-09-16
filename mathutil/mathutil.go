@@ -122,12 +122,12 @@ func Abs[N NumericNeg](val N) N {
 }
 
 // Perc calculates percentage
-func Perc[N Numeric](val1, val2 N) float64 {
-	if val2 == 0 {
+func Perc[N Numeric](current, total N) float64 {
+	if current == 0 || total == 0 {
 		return 0
 	}
 
-	return float64(val1) / float64(val2) * 100.0
+	return (float64(current) / float64(total)) * 100.0
 }
 
 // Round returns rounded value

@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.5.1](https://kaos.sh/ek/13.5.1)
+
+- `[mathutil]` Code refactoring
+
 ### [13.5.0](https://kaos.sh/ek/13.5.0)
 
 - `[support/resources]` Added package for collecting info about CPU and memory
