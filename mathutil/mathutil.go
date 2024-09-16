@@ -130,6 +130,15 @@ func Perc[N Numeric](current, total N) float64 {
 	return (float64(current) / float64(total)) * 100.0
 }
 
+// FromPerc calculates value from percentage
+func FromPerc(perc float64, total float64) float64 {
+	if perc <= 0 || total == 0 {
+		return 0
+	}
+
+	return (total / 100.0) * perc
+}
+
 // Round returns rounded value
 func Round(v float64, p int) float64 {
 	pow := math.Pow(10, float64(p))

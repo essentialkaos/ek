@@ -83,6 +83,12 @@ func ExamplePerc() {
 	// 30%
 }
 
+func ExampleFromPerc() {
+	fmt.Printf("%g\n", FromPerc(15.0, 2860))
+	// Output:
+	// 429
+}
+
 func ExampleRound() {
 	fmt.Println(Round(3.14159, 2))
 	// Output:
