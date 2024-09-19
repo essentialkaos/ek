@@ -177,7 +177,7 @@ const (
 )
 
 // USER_AGENT is default user agent
-const USER_AGENT = "EK-GO"
+const USER_AGENT = "GO-EK"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -284,6 +284,51 @@ func SetRequestTimeout(timeout float64) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Init initializes engine
+func (e *Engine) Init() *Engine {
+	if e.initialized {
+		return e
+	}
+
+	if e.Dialer == nil {
+		e.Dialer = &net.Dialer{}
+	}
+
+	if e.Transport == nil {
+		e.Transport = &http.Transport{
+			DialContext: e.Dialer.DialContext,
+			Proxy:       http.ProxyFromEnvironment,
+		}
+	} else {
+		e.Transport.DialContext = e.Dialer.DialContext
+	}
+
+	if e.Client == nil {
+		e.Client = &http.Client{
+			Transport: e.Transport,
+		}
+	}
+
+	if e.dialTimeout > 0 {
+		e.SetDialTimeout(e.dialTimeout)
+	}
+
+	if e.requestTimeout > 0 {
+		e.SetRequestTimeout(e.requestTimeout)
+	}
+
+	if e.UserAgent == "" {
+		e.SetUserAgent(USER_AGENT, "13")
+	}
+
+	e.dialTimeout = 0
+	e.requestTimeout = 0
+
+	e.initialized = true
+
+	return e
+}
 
 // Do sends request and process response
 func (e *Engine) Do(r Request) (*Response, error) {
@@ -511,48 +556,6 @@ func (q Query) Encode() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// init is engine lazy initialization
-func (e *Engine) init() {
-	if e == nil || e.initialized {
-		return
-	}
-
-	if e.Dialer == nil {
-		e.Dialer = &net.Dialer{}
-	}
-
-	if e.Transport == nil {
-		e.Transport = &http.Transport{
-			DialContext: e.Dialer.DialContext,
-			Proxy:       http.ProxyFromEnvironment,
-		}
-	} else {
-		e.Transport.DialContext = e.Dialer.DialContext
-	}
-
-	if e.Client == nil {
-		e.Client = &http.Client{
-			Transport: e.Transport,
-		}
-	}
-
-	if e.dialTimeout > 0 {
-		e.SetDialTimeout(e.dialTimeout)
-	}
-
-	if e.requestTimeout > 0 {
-		e.SetRequestTimeout(e.requestTimeout)
-	}
-
-	if e.UserAgent == "" {
-		e.SetUserAgent(USER_AGENT, "13")
-	}
-
-	e.dialTimeout = 0
-	e.requestTimeout = 0
-	e.initialized = true
-}
-
 // This method has a lot of actions to prepare request for executing, so it is ok to
 // have so many conditions
 // codebeat:disable[CYCLO,ABC]
@@ -560,7 +563,7 @@ func (e *Engine) init() {
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	// Lazy engine initialization
 	if e != nil && !e.initialized {
-		e.init()
+		e.Init()
 	}
 
 	err := checkEngine(e)
