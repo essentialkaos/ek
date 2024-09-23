@@ -177,7 +177,7 @@ const (
 )
 
 // USER_AGENT is default user agent
-const USER_AGENT = "GO-EK"
+const USER_AGENT = "ek.go"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
