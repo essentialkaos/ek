@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.6.0](https://kaos.sh/ek/13.6.0)
+
+- `[setup]` Added package to install/uninstall application as a service
+
 ### [13.5.1](https://kaos.sh/ek/13.5.1)
 
 - `[mathutil]` Added method `FromPerc`
