@@ -1,6 +1,6 @@
 module github.com/essentialkaos/ek/v13
 
-go 1.21
+go 1.21.13
 
 require (
 	github.com/essentialkaos/check v1.4.0
