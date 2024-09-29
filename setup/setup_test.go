@@ -8,6 +8,7 @@ package setup
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -17,10 +18,7 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type SetupSuite struct {
-	App App
-	Bin binaryInfo
-}
+type SetupSuite struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -28,8 +26,131 @@ var _ = Suite(&SetupSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *SetupSuite) SetUpSuite(c *C) {
-	s.App = App{
+func (s *SetupSuite) TestInstall(c *C) {
+	serviceDir = c.MkDir()
+	binaryDir = c.MkDir()
+	logDir = c.MkDir()
+	configDir = c.MkDir()
+
+	app, bin := s.generateApp(), s.generateBin()
+
+	err := installFiles(app, bin)
+	c.Assert(err, IsNil)
+
+	isGen, _ := isGeneratedUnit(bin.ServiceUnitPath())
+	c.Assert(isGen, Equals, true)
+	_, err = isGeneratedUnit("/_unknown_")
+	c.Assert(err, NotNil)
+
+	app = s.generateApp()
+	app.Options = nil
+
+	err = installFiles(app, bin)
+	c.Assert(err, IsNil)
+
+	c.Assert(bin.IsBinInstalled(), Equals, true)
+	c.Assert(bin.IsServiceInstalled(), Equals, true)
+}
+
+func (s *SetupSuite) TestInstallErrors(c *C) {
+	serviceDir = c.MkDir()
+	binaryDir = c.MkDir()
+
+	app, bin := s.generateApp(), s.generateBin()
+
+	logDir = "/_unknown_"
+	err := installFiles(app, bin)
+	c.Assert(err, NotNil)
+
+	serviceDir = "/_unknown_"
+	err = installFiles(app, bin)
+	c.Assert(err, NotNil)
+
+	binaryDir = "/_unknown_"
+	err = installFiles(app, bin)
+	c.Assert(err, NotNil)
+
+	app.Configs = []Config{
+		{"abcd/test1.knf", []byte("[main]\n  test: 1\n\n"), 0},
+	}
+
+	err = installFiles(app, bin)
+	c.Assert(err, NotNil)
+}
+
+func (s *SetupSuite) TestUninstall(c *C) {
+	serviceDir = c.MkDir()
+	binaryDir = c.MkDir()
+	logDir = c.MkDir()
+	configDir = c.MkDir()
+
+	app, bin := s.generateApp(), s.generateBin()
+
+	err := installFiles(app, bin)
+	c.Assert(err, IsNil)
+
+	app.Configs = append(app.Configs, Config{Name: "testX.knf"})
+
+	err = uninstallFiles(app, bin, true)
+	c.Assert(err, IsNil)
+
+	app.Configs = nil
+
+	err = installFiles(app, bin)
+	c.Assert(err, IsNil)
+
+	err = uninstallFiles(app, bin, true)
+	c.Assert(err, IsNil)
+
+	c.Assert(uninstallConfigurationFiles(app), IsNil)
+}
+
+func (s *SetupSuite) TestUninstallErrors(c *C) {
+	serviceDir = c.MkDir()
+	binaryDir = c.MkDir()
+	logDir = c.MkDir()
+
+	app, bin := s.generateApp(), s.generateBin()
+
+	err := installFiles(app, bin)
+	c.Assert(err, IsNil)
+
+	binaryDir = "/_unknown_"
+	err = uninstallFiles(app, bin, true)
+	c.Assert(err, NotNil)
+
+	serviceDir = "/_unknown_"
+	err = uninstallFiles(app, bin, true)
+	c.Assert(err, NotNil)
+}
+
+func (s *SetupSuite) TestAux(c *C) {
+	bin := getBinaryInfo()
+
+	app, bin := s.generateApp(), s.generateBin()
+
+	app.Install()
+	app.Uninstall(false)
+
+	c.Assert(bin.File, Not(Equals), "")
+	c.Assert(bin.Name, Not(Equals), "")
+
+	c.Assert(checkForInstall(app, bin), NotNil)
+	c.Assert(checkForUninstall(app, bin), NotNil)
+
+	app = s.generateApp()
+	app.Configs = []Config{
+		{"abcd/test1.knf", []byte("[main]\n  test: 1\n\n"), 0},
+	}
+
+	c.Assert(checkForInstall(app, bin), DeepEquals, errors.New("Configuration file name \"abcd/test1.knf\" is invalid"))
+	c.Assert(checkForUninstall(app, bin), DeepEquals, errors.New("Configuration file name \"abcd/test1.knf\" is invalid"))
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *SetupSuite) generateApp() App {
+	return App{
 		Name:               "Test",
 		Options:            []string{"--config", "/etc/test.knf"},
 		DocsURL:            "https://domain.com",
@@ -40,86 +161,13 @@ func (s *SetupSuite) SetUpSuite(c *C) {
 		ReloadSignal:       "HUP",
 		WithLog:            true,
 		WithoutPrivateTemp: false,
+		Configs: []Config{
+			{"test1.knf", []byte("[main]\n  test: 1\n\n"), 0},
+			{"test2.knf", []byte("[main]\n  test: 2\n\n"), 0644},
+		},
 	}
-
-	s.Bin = binaryInfo{File: "/usr/bin/echo", Name: "test1"}
 }
 
-func (s *SetupSuite) TestInstall(c *C) {
-	serviceDir = c.MkDir()
-	binaryDir = c.MkDir()
-	logDir = c.MkDir()
-
-	err := installFiles(s.App, s.Bin)
-	c.Assert(err, IsNil)
-
-	isGen, _ := isGeneratedUnit(s.Bin.ServiceUnitPath())
-	c.Assert(isGen, Equals, true)
-	_, err = isGeneratedUnit("/_unknown_")
-	c.Assert(err, NotNil)
-
-	app := s.App
-	app.Options = nil
-
-	err = installFiles(app, s.Bin)
-	c.Assert(err, IsNil)
-
-	c.Assert(s.Bin.IsBinInstalled(), Equals, true)
-	c.Assert(s.Bin.IsServiceInstalled(), Equals, true)
-}
-
-func (s *SetupSuite) TestInstallErrors(c *C) {
-	serviceDir = c.MkDir()
-	binaryDir = c.MkDir()
-
-	logDir = "/_unknown_"
-	err := installFiles(s.App, s.Bin)
-	c.Assert(err, NotNil)
-
-	serviceDir = "/_unknown_"
-	err = installFiles(s.App, s.Bin)
-	c.Assert(err, NotNil)
-
-	binaryDir = "/_unknown_"
-	err = installFiles(s.App, s.Bin)
-	c.Assert(err, NotNil)
-}
-
-func (s *SetupSuite) TestUninstall(c *C) {
-	serviceDir = c.MkDir()
-	binaryDir = c.MkDir()
-	logDir = c.MkDir()
-
-	err := installFiles(s.App, s.Bin)
-	c.Assert(err, IsNil)
-
-	err = uninstallFiles(s.App, s.Bin, true)
-	c.Assert(err, IsNil)
-}
-
-func (s *SetupSuite) TestUninstallErrors(c *C) {
-	serviceDir = c.MkDir()
-	binaryDir = c.MkDir()
-	logDir = c.MkDir()
-
-	err := installFiles(s.App, s.Bin)
-	c.Assert(err, IsNil)
-
-	binaryDir = "/_unknown_"
-	err = uninstallFiles(s.App, s.Bin, true)
-	c.Assert(err, NotNil)
-
-	serviceDir = "/_unknown_"
-	err = uninstallFiles(s.App, s.Bin, true)
-	c.Assert(err, NotNil)
-}
-
-func (s *SetupSuite) TestAux(c *C) {
-	bin := getBinaryInfo()
-
-	c.Assert(bin.File, Not(Equals), "")
-	c.Assert(bin.Name, Not(Equals), "")
-
-	c.Assert(s.Bin.checkForInstall(), NotNil)
-	c.Assert(s.Bin.checkForUninstall(), NotNil)
+func (s *SetupSuite) generateBin() binaryInfo {
+	return binaryInfo{File: "/usr/bin/echo", Name: "test1"}
 }

@@ -12,6 +12,10 @@ package setup
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import "os"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ App contains basic application configuration
 type App struct {
 	Name       string   // Application name
@@ -26,6 +30,15 @@ type App struct {
 
 	WithLog            bool // Create directory for logs
 	WithoutPrivateTemp bool // Disable private temp
+}
+
+// ❗ Config contains configuration file data
+//
+// Note that all configurations are stored in /etc
+type Config struct {
+	Name string      // File name
+	Data []byte      // Data
+	Mode os.FileMode // File mode
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
