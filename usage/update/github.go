@@ -50,7 +50,6 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "GoEK.v13")
 
 	response, err := engine.Get(req.Request{
 		URL:         githubAPI + "/repos/" + repository + "/releases/latest",

@@ -39,8 +39,6 @@ func (s *UpdateSuite) SetUpSuite(c *C) {
 	s.url = "http://127.0.0.1:" + s.port
 
 	go runHTTPServer(s, c)
-
-	time.Sleep(time.Second)
 }
 
 func (s *UpdateSuite) TearDownSuite(c *C) {

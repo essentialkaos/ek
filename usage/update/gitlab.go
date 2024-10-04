@@ -50,7 +50,6 @@ func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "GoEK.v13")
 
 	if strings.Contains(repository, "/") {
 		repository = strings.ReplaceAll(repository, "/", "%2F")
