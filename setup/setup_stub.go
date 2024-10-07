@@ -30,6 +30,8 @@ type App struct {
 
 	WithLog            bool // Create directory for logs
 	WithoutPrivateTemp bool // Disable private temp
+
+	Configs []Config // Configuration files
 }
 
 // ❗ Config contains configuration file data
