@@ -154,7 +154,8 @@ func (b *binaryInfo) IsServiceInstalled() bool {
 
 // getBinary returns basic info about current binary
 func getBinaryInfo() binaryInfo {
-	binFile := path.Clean(os.Args[0])
+	bin, _ := os.Executable()
+	binFile := path.Clean(bin)
 	binName := path.Base(binFile)
 
 	return binaryInfo{File: binFile, Name: binName}
@@ -205,8 +206,8 @@ func checkForUninstall(app App, bin binaryInfo) error {
 		}
 	}
 
-	if bin.IsBinInstalled() {
-		return fmt.Errorf("Binary is not installed")
+	if !bin.IsBinInstalled() {
+		return fmt.Errorf("Binary is not installed (new binary?)")
 	}
 
 	if bin.File != bin.BinInstallPath() {
@@ -385,10 +386,10 @@ func generateServiceUnit(app App, bin binaryInfo) []byte {
 
 	if len(app.Options) > 0 {
 		buf.WriteString(fmt.Sprintf(
-			"ExecStart=%s %s\n", bin.Name, strings.Join(app.Options, " "),
+			"ExecStart=%s %s\n", path.Join(binaryDir, bin.Name), strings.Join(app.Options, " "),
 		))
 	} else {
-		buf.WriteString(fmt.Sprintf("ExecStart=%s\n", bin.Name))
+		buf.WriteString(fmt.Sprintf("ExecStart=%s\n", path.Join(binaryDir, bin.Name)))
 	}
 
 	if app.ReloadSignal != "" {
