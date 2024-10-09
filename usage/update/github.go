@@ -50,24 +50,23 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "GoEK.v13")
 
-	response, err := engine.Get(req.Request{
+	resp, err := engine.Get(req.Request{
 		URL:         githubAPI + "/repos/" + repository + "/releases/latest",
 		Headers:     req.Headers{"X-GitHub-Api-Version": "2022-11-28"},
 		AutoDiscard: true,
 	})
 
-	if err != nil || response.StatusCode != 200 {
+	if err != nil || resp.StatusCode != 200 {
 		return nil
 	}
 
-	if response.Header.Get("X-RateLimit-Remaining") == "0" {
+	if resp.Header.Get("X-RateLimit-Remaining") == "0" {
 		return nil
 	}
 
 	release := &githubRelease{}
-	err = response.JSON(release)
+	err = resp.JSON(release)
 
 	if err != nil {
 		return nil

@@ -14,7 +14,7 @@
 
 <br/>
 
-Auxiliary packages for Go 1.22+.
+Auxiliary packages for [Go 1.22+](https://github.com/essentialkaos/.github/blob/master/GO-VERSION-SUPPORT.md).
 
 ### Platform support
 

@@ -50,27 +50,26 @@ func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
-	engine.SetUserAgent(app, version, "GoEK.v13")
 
 	if strings.Contains(repository, "/") {
 		repository = strings.ReplaceAll(repository, "/", "%2F")
 	}
 
-	response, err := engine.Get(req.Request{
+	resp, err := engine.Get(req.Request{
 		URL:         gitlabAPI + "/projects/" + repository + "/releases/permalink/latest",
 		AutoDiscard: true,
 	})
 
-	if err != nil || response.StatusCode != 200 {
+	if err != nil || resp.StatusCode != 200 {
 		return nil
 	}
 
-	if response.Header.Get("RateLimit-Remaining") == "0" {
+	if resp.Header.Get("RateLimit-Remaining") == "0" {
 		return nil
 	}
 
 	release := &gitlabRelease{}
-	err = response.JSON(release)
+	err = resp.JSON(release)
 
 	if err != nil {
 		return nil

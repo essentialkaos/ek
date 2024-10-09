@@ -47,6 +47,7 @@ L + netutil
 * + rand
 * + req
 * + secstr
+L - setup
 * - signal
 * + sliceutil
 * + sortutil

@@ -32,9 +32,18 @@ func Collect(params ...string) []support.KernelParam {
 	var result []support.KernelParam
 
 	for _, param := range params {
+		isGlob := strings.HasSuffix(param, "*")
+		param = strings.TrimRight(param, "*")
+
 		for k, v := range kernelParams {
-			if !strings.HasPrefix(k, param) {
-				continue
+			if isGlob {
+				if !strings.HasPrefix(k, param) {
+					continue
+				}
+			} else {
+				if k != param {
+					continue
+				}
 			}
 
 			value := strings.ReplaceAll(v, "\t", " ")

@@ -177,7 +177,7 @@ const (
 )
 
 // USER_AGENT is default user agent
-const USER_AGENT = "go-ek-req"
+const USER_AGENT = "ek.go"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -319,7 +319,7 @@ func (e *Engine) Init() *Engine {
 	}
 
 	if e.UserAgent == "" {
-		e.SetUserAgent(USER_AGENT, "10")
+		e.SetUserAgent(USER_AGENT, "13")
 	}
 
 	e.dialTimeout = 0

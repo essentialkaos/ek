@@ -32,7 +32,7 @@ Example of collecting maximum information about the application and system:
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
 	  WithResources(resources.Collect()).
-	  WithKernel(kernel.Collect()).
+	  WithKernel(kernel.Collect("vm.nr_hugepages*", "vm.swappiness")).
 	  Print()
 
 Also, you can't encode data to JSON/GOB and send it to your server instead of printing
@@ -49,7 +49,7 @@ it to the console.
 	  WithNetwork(network.Collect("https://cloudflare.com/cdn-cgi/trace")).
 	  WithFS(fs.Collect()).
 	  WithResources(resources.Collect()).
-	  WithKernel(kernel.Collect())
+	  WithKernel(kernel.Collect("vm.nr_hugepages*", "vm.swappiness"))
 
 	b, _ := json.Marshal(info)
 

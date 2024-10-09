@@ -39,8 +39,6 @@ func (s *UpdateSuite) SetUpSuite(c *C) {
 	s.url = "http://127.0.0.1:" + s.port
 
 	go runHTTPServer(s, c)
-
-	time.Sleep(time.Second)
 }
 
 func (s *UpdateSuite) TearDownSuite(c *C) {
@@ -166,7 +164,7 @@ func runHTTPServer(s *UpdateSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/limited/releases/latest", githubLimitedHandler)
 	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/garbage/releases/latest", githubWrongFormatHandler)
 
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/project/releases/permalink/latest", gitlabInfoHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Fproject/releases/permalink/latest", gitlabInfoHandler)
 	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/unknown/releases/permalink/latest", gitlabNotFoundHandler)
 	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/limited/releases/permalink/latest", gitlabLimitedHandler)
 	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/garbage/releases/permalink/latest", gitlabWrongFormatHandler)
