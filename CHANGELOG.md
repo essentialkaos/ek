@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.6.1](https://kaos.sh/ek/13.6.1)
+
+- `[req]` Guess the value of the `Content-Type` header based on the request body type
+
 ### [13.6.0](https://kaos.sh/ek/13.6.0)
 
 - `[setup]` Added package to install/uninstall application as a service

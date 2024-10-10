@@ -590,10 +590,14 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		r.URL += "?" + r.Query.Encode()
 	}
 
-	bodyReader, err := getBodyReader(r.Body)
+	bodyReader, contentType, err := getBodyReader(r.Body)
 
 	if err != nil {
 		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
+	}
+
+	if r.ContentType == "" {
+		r.ContentType = contentType
 	}
 
 	req, err := createRequest(e, r, bodyReader)
@@ -736,25 +740,25 @@ func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, err
 	return w.CreateFormFile(fieldName, filepath.Base(file))
 }
 
-func getBodyReader(body any) (io.Reader, error) {
+func getBodyReader(body any) (io.Reader, string, error) {
 	switch u := body.(type) {
 	case nil:
-		return nil, nil
+		return nil, "", nil
 	case string:
-		return strings.NewReader(u), nil
+		return strings.NewReader(u), CONTENT_TYPE_PLAIN, nil
 	case io.Reader:
-		return u, nil
+		return u, CONTENT_TYPE_OCTET_STREAM, nil
 	case []byte:
-		return bytes.NewReader(u), nil
-	default:
-		jsonBody, err := json.MarshalIndent(body, "", "  ")
-
-		if err == nil {
-			return bytes.NewReader(jsonBody), nil
-		}
-
-		return nil, err
+		return bytes.NewReader(u), CONTENT_TYPE_OCTET_STREAM, nil
 	}
+
+	jsonBody, err := json.MarshalIndent(body, "", "  ")
+
+	if err == nil {
+		return bytes.NewReader(jsonBody), CONTENT_TYPE_JSON, nil
+	}
+
+	return nil, "", err
 }
 
 func isURL(url string) bool {
