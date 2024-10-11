@@ -71,6 +71,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`rand`](https://kaos.sh/g/ek.v13/rand) — Package for generating random data
 - [`req`](https://kaos.sh/g/ek.v13/req) — Package simplify working with an HTTP requests
 - [`secstr`](https://kaos.sh/g/ek.v13/secstr) — Package provides methods and structs for working with protected (_secure_) strings
+- [`setup`](https://kaos.sh/g/ek.v13/setup) — provides methods to install/unistall application as a service on the system
 - [`signal`](https://kaos.sh/g/ek.v13/signal) — Package provides methods for handling POSIX signals
 - [`sliceutil`](https://kaos.sh/g/ek.v13/sliceutil) — Package provides methods for working with slices
 - [`sortutil`](https://kaos.sh/g/ek.v13/sortutil) — Package provides methods for sorting slices
