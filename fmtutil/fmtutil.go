@@ -159,9 +159,9 @@ func PrettyBool(b bool, vals ...string) string {
 // ParseSize parses size and return it in bytes (e.g 1.34 Mb -> 1478182)
 func ParseSize(size string) uint64 {
 	ns := strings.ToLower(strings.ReplaceAll(size, " ", ""))
-	mlt, sfx := extractSizeInfo(ns)
+	mod, suf := extractSizeInfo(ns)
 
-	if sfx == "" {
+	if suf == "" {
 		num, err := strconv.ParseUint(size, 10, 64)
 
 		if err != nil {
@@ -171,14 +171,14 @@ func ParseSize(size string) uint64 {
 		return num
 	}
 
-	ns = strings.TrimRight(ns, sfx)
+	ns = strings.TrimRight(ns, suf)
 	numFlt, err := strconv.ParseFloat(ns, 64)
 
 	if err != nil {
 		return 0
 	}
 
-	return uint64(numFlt * float64(mlt))
+	return uint64(numFlt * mod)
 }
 
 // Float formats float numbers more nicely
@@ -340,47 +340,36 @@ func appendPrettySymbol(str, sep string) string {
 	return b.String()
 }
 
-func extractSizeInfo(s string) (uint64, string) {
-	var mlt uint64
-	var sfx string
+// extractSizeInfo extracts size info
+func extractSizeInfo(s string) (float64, string) {
+	var mod float64
 
-	switch {
-	case strings.HasSuffix(s, "tb"):
-		mlt = 1024 * 1024 * 1024 * 1024
-		sfx = "tb"
-	case strings.HasSuffix(s, "t"):
-		mlt = 1000 * 1000 * 1000 * 1000
-		sfx = "t"
-	case strings.HasSuffix(s, "gb"):
-		mlt = 1024 * 1024 * 1024
-		sfx = "gb"
-	case strings.HasSuffix(s, "g"):
-		mlt = 1000 * 1000 * 1000
-		sfx = "g"
-	case strings.HasSuffix(s, "kkk"):
-		mlt = 1000 * 1000 * 1000
-		sfx = "kkk"
-	case strings.HasSuffix(s, "mb"):
-		mlt = 1024 * 1024
-		sfx = "mb"
-	case strings.HasSuffix(s, "m"):
-		mlt = 1000 * 1000
-		sfx = "m"
-	case strings.HasSuffix(s, "kk"):
-		mlt = 1000 * 1000
-		sfx = "kk"
-	case strings.HasSuffix(s, "kb"):
-		mlt = 1024
-		sfx = "kb"
-	case strings.HasSuffix(s, "k"):
-		mlt = 1000
-		sfx = "k"
-	case strings.HasSuffix(s, "b"):
-		mlt = 1
-		sfx = "b"
+	suf := strings.TrimLeft(s, "0123456789. ")
+
+	switch suf {
+	case "tb", "tib":
+		mod = 1024 * 1024 * 1024 * 1024
+	case "t":
+		mod = 1000 * 1000 * 1000 * 1000
+	case "gb", "gib":
+		mod = 1024 * 1024 * 1024
+	case "g", "kkk":
+		mod = 1000 * 1000 * 1000
+	case "mb", "mib":
+		mod = 1024 * 1024
+	case "m", "kk":
+		mod = 1000 * 1000
+	case "kb":
+		mod = 1024
+	case "k":
+		mod = 1000
+	case "b":
+		mod = 1
+	default:
+		suf = ""
 	}
 
-	return mlt, sfx
+	return mod, suf
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
