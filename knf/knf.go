@@ -100,7 +100,7 @@ type Validator struct {
 // PropertyValidator is default type of property validation function
 type PropertyValidator func(config IConfig, prop string, value any) error
 
-// DurationMod is type for duration modificator
+// DurationMod is type for duration modifier
 type DurationMod int64
 
 // ////////////////////////////////////////////////////////////////////////////////// //

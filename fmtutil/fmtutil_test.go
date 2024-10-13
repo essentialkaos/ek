@@ -100,6 +100,8 @@ func (s *FmtUtilSuite) TestParseSize(c *C) {
 	c.Assert(ParseSize("5g"), Equals, uint64(5*1000*1000*1000))
 	c.Assert(ParseSize("13kb"), Equals, uint64(13*1024))
 	c.Assert(ParseSize("13k"), Equals, uint64(13*1000))
+	c.Assert(ParseSize("13kk"), Equals, uint64(13*1000*1000))
+	c.Assert(ParseSize("13kkk"), Equals, uint64(13*1000*1000*1000))
 	c.Assert(ParseSize("512"), Equals, uint64(512))
 	c.Assert(ParseSize("kb"), Equals, uint64(0))
 	c.Assert(ParseSize("123!"), Equals, uint64(0))
