@@ -158,8 +158,8 @@ func PrettyBool(b bool, vals ...string) string {
 
 // ParseSize parses size and return it in bytes (e.g 1.34 Mb -> 1478182)
 func ParseSize(size string) uint64 {
-	ns := strings.ToLower(strings.ReplaceAll(size, " ", ""))
-	mod, suf := extractSizeInfo(ns)
+	v := strings.ToLower(strings.ReplaceAll(size, " ", ""))
+	mod, suf := extractSizeInfo(v)
 
 	if suf == "" {
 		num, err := strconv.ParseUint(size, 10, 64)
@@ -171,8 +171,8 @@ func ParseSize(size string) uint64 {
 		return num
 	}
 
-	ns = strings.TrimRight(ns, suf)
-	numFlt, err := strconv.ParseFloat(ns, 64)
+	v = strings.TrimRight(v, suf)
+	numFlt, err := strconv.ParseFloat(v, 64)
 
 	if err != nil {
 		return 0
