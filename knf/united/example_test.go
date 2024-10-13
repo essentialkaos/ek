@@ -78,10 +78,10 @@ func ExampleCombine() {
 	GetM("section:file-mode")
 
 	// Read duration as seconds
-	GetD("section:duration", Second)
+	GetD("section:duration", SECOND)
 
 	// Read duration as minutes
-	GetD("section:duration", Minute)
+	GetD("section:duration", MINUTE)
 
 	// Read time duration
 	GetTD("section:time-duration")
@@ -294,7 +294,7 @@ func ExampleGetD() {
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
 
-	fmt.Printf("Value from config: %v\n", GetD("user:timeout", Minute))
+	fmt.Printf("Value from config: %v\n", GetD("user:timeout", MINUTE))
 }
 
 func ExampleGetTD() {

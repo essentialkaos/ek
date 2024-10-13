@@ -38,10 +38,10 @@ func ExampleGlobal() {
 	GetM("section:file-mode")
 
 	// Read duration as seconds
-	GetD("section:duration", Second)
+	GetD("section:duration", SECOND)
 
 	// Read duration as minutes
-	GetD("section:duration", Minute)
+	GetD("section:duration", MINUTE)
 
 	// Read time duration
 	GetTD("section:time-duration")
@@ -230,7 +230,7 @@ func ExampleGetD() {
 		return
 	}
 
-	fmt.Printf("Value from config: %v\n", GetD("user:timeout", Minute))
+	fmt.Printf("Value from config: %v\n", GetD("user:timeout", MINUTE))
 }
 
 func ExampleGetTD() {
@@ -634,7 +634,7 @@ func ExampleConfig_GetD() {
 		return
 	}
 
-	fmt.Printf("Value from config: %v\n", cfg.GetD("user:timeout", Minute))
+	fmt.Printf("Value from config: %v\n", cfg.GetD("user:timeout", MINUTE))
 
 	// Output:
 	// Value from config: 3m0s

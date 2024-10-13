@@ -24,6 +24,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	MILLISECOND = DurationMod(time.Millisecond)
+	SECOND      = 1000 * MILLISECOND
+	MINUTE      = 60 * SECOND
+	HOUR        = 60 * MINUTE
+	DAY         = 24 * HOUR
+	WEEK        = 7 * DAY
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // IConfig is knf like configuration
 type IConfig interface {
 	// GetS returns configuration value as string
@@ -98,17 +109,6 @@ var (
 	ErrNilConfig  = errors.New("Configuration is nil")
 	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
 	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	Millisecond = DurationMod(time.Millisecond)
-	Second      = 1000 * Millisecond
-	Minute      = 60 * Second
-	Hour        = 60 * Minute
-	Day         = 24 * Hour
-	Week        = 7 * Day
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -715,7 +715,7 @@ func (c *Config) Is(name string, value any) bool {
 	case os.FileMode:
 		return c.GetM(name) == t
 	case time.Duration:
-		return c.GetD(name, Second) == t
+		return c.GetD(name, SECOND) == t
 	case time.Time:
 		return c.GetTS(name).Unix() == t.Unix()
 	case *time.Location:

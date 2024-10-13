@@ -21,6 +21,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	MILLISECOND = knf.MILLISECOND
+	SECOND      = knf.SECOND
+	MINUTE      = knf.MINUTE
+	HOUR        = knf.HOUR
+	DAY         = knf.DAY
+	WEEK        = knf.WEEK
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Mapping contains mapping [knf property] → [option] → [envvar]
 type Mapping struct {
 	Property string // Property from KNF configuration file
@@ -41,17 +52,6 @@ type united struct {
 	mappings map[string]Mapping
 	env      map[string]string
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	Millisecond = knf.Millisecond
-	Second      = knf.Second
-	Minute      = knf.Minute
-	Hour        = knf.Hour
-	Day         = knf.Day
-	Week        = knf.Week
-)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
