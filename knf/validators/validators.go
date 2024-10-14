@@ -197,6 +197,21 @@ func validatorLess(config knf.IConfig, prop string, value any) error {
 			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
 		}
 
+	case int64:
+		if config.GetI64(prop) > t {
+			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
+		}
+
+	case uint:
+		if config.GetU(prop) > t {
+			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
+		}
+
+	case uint64:
+		if config.GetU64(prop) > t {
+			return fmt.Errorf("Property %s can't be greater than %d", prop, t)
+		}
+
 	case float64:
 		if config.GetF(prop) > t {
 			return fmt.Errorf("Property %s can't be greater than %g", prop, t)
@@ -213,6 +228,21 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if config.GetI(prop) < t {
+			return fmt.Errorf("Property %s can't be less than %d", prop, t)
+		}
+
+	case int64:
+		if config.GetI64(prop) < t {
+			return fmt.Errorf("Property %s can't be less than %d", prop, t)
+		}
+
+	case uint:
+		if config.GetU(prop) < t {
+			return fmt.Errorf("Property %s can't be less than %d", prop, t)
+		}
+
+	case uint64:
+		if config.GetU64(prop) < t {
 			return fmt.Errorf("Property %s can't be less than %d", prop, t)
 		}
 

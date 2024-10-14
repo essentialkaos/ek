@@ -167,11 +167,17 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Set(cfg, "test:string", nil), check.IsNil)
 
 	c.Assert(Less(cfg, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", int64(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", uint(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", uint64(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
 	c.Assert(Less(cfg, "test:integer", 30), check.IsNil)
 	c.Assert(Less(cfg, "test:float", 5.1).Error(), check.Equals, "Property test:float can't be greater than 5.1")
 	c.Assert(Less(cfg, "test:float", 30.1), check.IsNil)
 
 	c.Assert(Greater(cfg, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", int64(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", uint(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", uint64(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
 	c.Assert(Greater(cfg, "test:integer", 5), check.IsNil)
 	c.Assert(Greater(cfg, "test:float", 30.1).Error(), check.Equals, "Property test:float can't be less than 30.1")
 	c.Assert(Greater(cfg, "test:float", 5.1), check.IsNil)

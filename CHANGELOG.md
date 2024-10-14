@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.7.1](https://kaos.sh/ek/13.7.1)
+
+- `[knf/validators]` Added support of `int64`, `uint`, and `uint64` to `Less` vaildator
+- `[knf/validators]` Added support of `int64`, `uint`, and `uint64` to `Greater` vaildator
+
 ### [13.7.0](https://kaos.sh/ek/13.7.0)
 
 - `[fmtutil]` Added support of `kk`, `kkk`, `kib`, `mib`, `gib`, and `tib` in `ParseSize`
