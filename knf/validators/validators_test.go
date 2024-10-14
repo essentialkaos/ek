@@ -176,6 +176,15 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Greater(cfg, "test:float", 30.1).Error(), check.Equals, "Property test:float can't be less than 30.1")
 	c.Assert(Greater(cfg, "test:float", 5.1), check.IsNil)
 
+	c.Assert(InRange(cfg, "test:integer", Range{50, 100}).Error(), check.Equals, "Property test:integer must be in range 50-100")
+	c.Assert(InRange(cfg, "test:integer", Range{1, 100}), check.IsNil)
+	c.Assert(InRange(cfg, "test:integer", Range{uint(1), uint(100)}), check.IsNil)
+	c.Assert(InRange(cfg, "test:integer", Range{50.5, 100.0}).Error(), check.Equals, "Property test:integer must be in range 50.5-100")
+	c.Assert(InRange(cfg, "test:integer", Range{1.0, 100.0}), check.IsNil)
+	c.Assert(InRange(cfg, "test:integer", false).Error(), check.Equals, "Validator knf.InRange doesn't support input with type <bool> for checking test:integer property")
+	c.Assert(InRange(cfg, "test:integer", Range{true, 100.0}).Error(), check.Equals, "Validator knf.InRange doesn't support type <bool> for 'Range.From' value")
+	c.Assert(InRange(cfg, "test:integer", Range{1.0, true}).Error(), check.Equals, "Validator knf.InRange doesn't support type <bool> for 'Range.To' value")
+
 	c.Assert(NotEquals(cfg, "test:empty", "").Error(), check.Equals, "Property test:empty can't be equal \"\"")
 	c.Assert(NotEquals(cfg, "test:string", "test").Error(), check.Equals, "Property test:string can't be equal \"test\"")
 	c.Assert(NotEquals(cfg, "test:integer", 10).Error(), check.Equals, "Property test:integer can't be equal 10")

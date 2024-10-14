@@ -6,6 +6,7 @@
 - `[knf]` Added getter `GetSZ` for reading value as the size
 - `[knf/united]` Added getter `GetSZ` for reading value as the size
 - `[knf/validators]` Added validator `TypeSize`
+- `[knf/validators]` Added validator `InRange`
 - `[fmtutil]` Code refactoring
 - `[knf/united]` Improved usage examples
 
