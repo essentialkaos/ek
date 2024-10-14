@@ -65,6 +65,9 @@ var (
 
 	// TypeNum returns error if property contains non-float value
 	TypeFloat = validatorTypeFloat
+
+	// TypeSize returns error if property contains non-size value
+	TypeSize = validatorTypeSize
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -122,6 +125,27 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 	if err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported float value (%s)",
+			prop, propValue,
+		)
+	}
+
+	return nil
+}
+
+func validatorTypeSize(config knf.IConfig, prop string, value any) error {
+	propValue := config.GetS(prop)
+
+	if propValue == "" {
+		return nil
+	}
+
+	size := config.GetSZ(prop)
+	propValueNorm := strings.TrimRight(propValue, " bB")
+	_, err := strconv.ParseFloat(propValueNorm, 64)
+
+	if size == 0 && err != nil {
+		return fmt.Errorf(
+			"Property %s contains unsupported size value (%s)",
 			prop, propValue,
 		)
 	}

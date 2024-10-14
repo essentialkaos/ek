@@ -150,7 +150,7 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(errs[10].Error(), check.Equals, "Property string:test1 value can't be shorter than 10 symbols")
 	c.Assert(errs[11].Error(), check.Equals, "Property string:test1 must be 10 symbols long")
 
-	fakeConfigFile := createConfig(c, `
+	cfgFile := createConfig(c, `
 [test]
   empty:
   string: test
@@ -158,63 +158,63 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
   float: 10.0
   boolean: false`)
 
-	fakeConfig, err := knf.Read(fakeConfigFile)
+	cfg, err := knf.Read(cfgFile)
 
 	c.Assert(err, check.IsNil)
-	c.Assert(fakeConfig, check.NotNil)
+	c.Assert(cfg, check.NotNil)
 
-	c.Assert(Set(fakeConfig, "test:empty", nil), check.NotNil)
-	c.Assert(Set(fakeConfig, "test:string", nil), check.IsNil)
+	c.Assert(Set(cfg, "test:empty", nil), check.NotNil)
+	c.Assert(Set(cfg, "test:string", nil), check.IsNil)
 
-	c.Assert(Less(fakeConfig, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
-	c.Assert(Less(fakeConfig, "test:integer", 30), check.IsNil)
-	c.Assert(Less(fakeConfig, "test:float", 5.1).Error(), check.Equals, "Property test:float can't be greater than 5.1")
-	c.Assert(Less(fakeConfig, "test:float", 30.1), check.IsNil)
+	c.Assert(Less(cfg, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", 30), check.IsNil)
+	c.Assert(Less(cfg, "test:float", 5.1).Error(), check.Equals, "Property test:float can't be greater than 5.1")
+	c.Assert(Less(cfg, "test:float", 30.1), check.IsNil)
 
-	c.Assert(Greater(fakeConfig, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
-	c.Assert(Greater(fakeConfig, "test:integer", 5), check.IsNil)
-	c.Assert(Greater(fakeConfig, "test:float", 30.1).Error(), check.Equals, "Property test:float can't be less than 30.1")
-	c.Assert(Greater(fakeConfig, "test:float", 5.1), check.IsNil)
+	c.Assert(Greater(cfg, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", 5), check.IsNil)
+	c.Assert(Greater(cfg, "test:float", 30.1).Error(), check.Equals, "Property test:float can't be less than 30.1")
+	c.Assert(Greater(cfg, "test:float", 5.1), check.IsNil)
 
-	c.Assert(NotEquals(fakeConfig, "test:empty", "").Error(), check.Equals, "Property test:empty can't be equal \"\"")
-	c.Assert(NotEquals(fakeConfig, "test:string", "test").Error(), check.Equals, "Property test:string can't be equal \"test\"")
-	c.Assert(NotEquals(fakeConfig, "test:integer", 10).Error(), check.Equals, "Property test:integer can't be equal 10")
-	c.Assert(NotEquals(fakeConfig, "test:float", 10.0).Error(), check.Equals, "Property test:float can't be equal 10.000000")
-	c.Assert(NotEquals(fakeConfig, "test:boolean", false).Error(), check.Equals, "Property test:boolean can't be equal false")
+	c.Assert(NotEquals(cfg, "test:empty", "").Error(), check.Equals, "Property test:empty can't be equal \"\"")
+	c.Assert(NotEquals(cfg, "test:string", "test").Error(), check.Equals, "Property test:string can't be equal \"test\"")
+	c.Assert(NotEquals(cfg, "test:integer", 10).Error(), check.Equals, "Property test:integer can't be equal 10")
+	c.Assert(NotEquals(cfg, "test:float", 10.0).Error(), check.Equals, "Property test:float can't be equal 10.000000")
+	c.Assert(NotEquals(cfg, "test:boolean", false).Error(), check.Equals, "Property test:boolean can't be equal false")
 
-	c.Assert(NotEquals(fakeConfig, "test:empty", "1"), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:string", "testtest"), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:integer", 15), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:float", 130.0), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:boolean", true), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:empty", "1"), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:string", "testtest"), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:integer", 15), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:float", 130.0), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:boolean", true), check.IsNil)
 
-	c.Assert(NotEquals(fakeConfig, "test:boolean", true), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:boolean", true), check.IsNil)
-	c.Assert(NotEquals(fakeConfig, "test:boolean", true), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:boolean", true), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:boolean", true), check.IsNil)
+	c.Assert(NotEquals(cfg, "test:boolean", true), check.IsNil)
 
-	c.Assert(SetToAny(fakeConfig, "test:string", []string{"A", "B", "test"}), check.IsNil)
-	c.Assert(SetToAny(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
+	c.Assert(SetToAny(cfg, "test:string", []string{"A", "B", "test"}), check.IsNil)
+	c.Assert(SetToAny(cfg, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
 
-	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", []string{"A", "B", "TEST"}), check.IsNil)
-	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
+	c.Assert(SetToAnyIgnoreCase(cfg, "test:string", []string{"A", "B", "TEST"}), check.IsNil)
+	c.Assert(SetToAnyIgnoreCase(cfg, "test:string", []string{"A", "B"}).Error(), check.Equals, "Property test:string doesn't contains any valid value")
 
-	c.Assert(SetToAny(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(SetToAnyIgnoreCase(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(Less(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(Greater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(NotEquals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(HasPrefix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(HasSuffix(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(LenLess(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(LenGreater(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(LenEquals(fakeConfig, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(SetToAny(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(SetToAnyIgnoreCase(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(Less(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(Greater(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(NotEquals(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(HasPrefix(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(HasSuffix(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenLess(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenGreater(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenEquals(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 
-	c.Assert(HasPrefix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
-	c.Assert(HasSuffix(fakeConfig, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
+	c.Assert(HasPrefix(cfg, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
+	c.Assert(HasSuffix(cfg, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")
 }
 
 func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
-	fakeConfigFile := createConfig(c, `
+	cfgFile := createConfig(c, `
 [boolean]
   test1: 
   test2: 0
@@ -237,34 +237,43 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
   test2: 0
   test3: 0.6
   test4: -0.45
-  test5: ABCD`)
+  test5: ABCD
 
-	fakeConfig, err := knf.Read(fakeConfigFile)
+[size]
+	test1:
+	test2: 3mb
+	test3: 12.33km`)
+
+	cfg, err := knf.Read(cfgFile)
 
 	c.Assert(err, check.IsNil)
-	c.Assert(fakeConfig, check.NotNil)
+	c.Assert(cfg, check.NotNil)
 
-	c.Assert(TypeBool(fakeConfig, "boolean:test1", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test2", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test3", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test4", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test5", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test6", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test7", nil), check.IsNil)
-	c.Assert(TypeBool(fakeConfig, "boolean:test8", nil).Error(), check.Equals, "Property boolean:test8 contains unsupported boolean value (disabled)")
+	c.Assert(TypeBool(cfg, "boolean:test1", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test2", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test3", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test4", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test5", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test6", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test7", nil), check.IsNil)
+	c.Assert(TypeBool(cfg, "boolean:test8", nil).Error(), check.Equals, "Property boolean:test8 contains unsupported boolean value (disabled)")
 
-	c.Assert(TypeNum(fakeConfig, "num:test1", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test2", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test3", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test4", nil), check.IsNil)
-	c.Assert(TypeNum(fakeConfig, "num:test5", nil), check.NotNil)
-	c.Assert(TypeNum(fakeConfig, "float:test3", nil).Error(), check.Equals, "Property float:test3 contains unsupported numeric value (0.6)")
+	c.Assert(TypeNum(cfg, "num:test1", nil), check.IsNil)
+	c.Assert(TypeNum(cfg, "num:test2", nil), check.IsNil)
+	c.Assert(TypeNum(cfg, "num:test3", nil), check.IsNil)
+	c.Assert(TypeNum(cfg, "num:test4", nil), check.IsNil)
+	c.Assert(TypeNum(cfg, "num:test5", nil), check.NotNil)
+	c.Assert(TypeNum(cfg, "float:test3", nil).Error(), check.Equals, "Property float:test3 contains unsupported numeric value (0.6)")
 
-	c.Assert(TypeFloat(fakeConfig, "float:test1", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test2", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test3", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test4", nil), check.IsNil)
-	c.Assert(TypeFloat(fakeConfig, "float:test5", nil).Error(), check.Equals, "Property float:test5 contains unsupported float value (ABCD)")
+	c.Assert(TypeFloat(cfg, "float:test1", nil), check.IsNil)
+	c.Assert(TypeFloat(cfg, "float:test2", nil), check.IsNil)
+	c.Assert(TypeFloat(cfg, "float:test3", nil), check.IsNil)
+	c.Assert(TypeFloat(cfg, "float:test4", nil), check.IsNil)
+	c.Assert(TypeFloat(cfg, "float:test5", nil).Error(), check.Equals, "Property float:test5 contains unsupported float value (ABCD)")
+
+	c.Assert(TypeSize(cfg, "size:test1", nil), check.IsNil)
+	c.Assert(TypeSize(cfg, "size:test2", nil), check.IsNil)
+	c.Assert(TypeSize(cfg, "size:test3", nil).Error(), check.Equals, "Property size:test3 contains unsupported size value (12.33km)")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -5,6 +5,7 @@
 - `[fmtutil]` Added support of `kk`, `kkk`, `kib`, `mib`, `gib`, and `tib` in `ParseSize`
 - `[knf]` Added getter `GetSZ` for reading value as the size
 - `[knf/united]` Added getter `GetSZ` for reading value as the size
+- `[knf/validators]` Added validator `TypeSize`
 - `[fmtutil]` Code refactoring
 - `[knf/united]` Improved usage examples
 
