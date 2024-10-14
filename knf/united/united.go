@@ -211,6 +211,11 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 	return global.GetD(name, mod, defvals...)
 }
 
+// GetSZ returns configuration value as a size in bytes
+func GetSZ(name string, defvals ...uint64) uint64 {
+	return global.GetSZ(name, defvals...)
+}
+
 // GetTD returns configuration value as time duration
 func GetTD(name string, defvals ...time.Duration) time.Duration {
 	return global.GetTD(name, defvals...)
@@ -371,6 +376,19 @@ func (c *united) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	}
 
 	return value.ParseDuration(c.getProp(name), time.Duration(mod), defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func (c *united) GetSZ(name string, defvals ...uint64) uint64 {
+	if c == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return value.ParseSize(c.getProp(name), defvals...)
 }
 
 // GetTD returns configuration value as time duration

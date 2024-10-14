@@ -23,37 +23,40 @@ func ExampleGlobal() {
 	}
 
 	// Read string value
-	GetS("section:string")
+	GetS("main:string")
 
 	// Read integer value
-	GetI("section:int")
+	GetI("main:int")
 
 	// Read float value
-	GetF("section:float")
+	GetF("main:float")
 
 	// Read boolean value
-	GetB("section:boolean")
+	GetB("main:boolean")
 
 	// Read file mode value
-	GetM("section:file-mode")
+	GetM("main:file-mode")
 
 	// Read duration as seconds
-	GetD("section:duration", SECOND)
+	GetD("main:duration", SECOND)
 
 	// Read duration as minutes
-	GetD("section:duration", MINUTE)
+	GetD("main:duration", MINUTE)
+
+	// Read size
+	GetSZ("main:size")
 
 	// Read time duration
-	GetTD("section:time-duration")
+	GetTD("main:time-duration")
 
 	// Read timestamp
-	GetTS("section:timestamp")
+	GetTS("main:timestamp")
 
 	// Read timezone
-	GetTZ("section:timezone")
+	GetTZ("main:timezone")
 
 	// Read list
-	GetL("section:list")
+	GetL("main:list")
 
 	// Check section
 	if HasSection("section") {
@@ -61,7 +64,7 @@ func ExampleGlobal() {
 	}
 
 	// Check property
-	if HasProp("section:string") {
+	if HasProp("main:string") {
 		// Property exist
 	}
 
@@ -233,6 +236,17 @@ func ExampleGetD() {
 	fmt.Printf("Value from config: %v\n", GetD("user:timeout", MINUTE))
 }
 
+func ExampleGetSZ() {
+	err := Global("/path/to/your/config.knf")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", GetSZ("user:max-size"))
+}
+
 func ExampleGetTD() {
 	err := Global("/path/to/your/config.knf")
 
@@ -396,6 +410,7 @@ func ExampleConfig_Alias() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -424,6 +439,7 @@ func ExampleConfig_GetS() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -449,6 +465,7 @@ func ExampleConfig_GetB() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -474,6 +491,7 @@ func ExampleConfig_GetI() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -499,6 +517,7 @@ func ExampleConfig_GetI64() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -524,6 +543,7 @@ func ExampleConfig_GetU() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -549,6 +569,7 @@ func ExampleConfig_GetU64() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -574,6 +595,7 @@ func ExampleConfig_GetF() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -599,6 +621,7 @@ func ExampleConfig_GetM() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -624,6 +647,7 @@ func ExampleConfig_GetD() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -640,6 +664,32 @@ func ExampleConfig_GetD() {
 	// Value from config: 3m0s
 }
 
+func ExampleConfig_GetSZ() {
+	cfg, err := Parse([]byte(`
+[user]
+	name: john
+	uid: 512
+	is-admin: true
+	priority: 3.7
+	default-mode: 0644
+	timeout: 3
+	max-size: 5mb
+	created: 1654424130
+	timezone: Europe/Madrid
+	labels: system admin
+`))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Value from config: %v\n", cfg.GetSZ("user:max-size"))
+
+	// Output:
+	// Value from config: 5242880
+}
+
 func ExampleConfig_GetTD() {
 	cfg, err := Parse([]byte(`
 [user]
@@ -649,6 +699,7 @@ func ExampleConfig_GetTD() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -674,6 +725,7 @@ func ExampleConfig_GetTS() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -696,6 +748,7 @@ func ExampleConfig_GetTZ() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -721,6 +774,7 @@ func ExampleConfig_GetL() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -746,6 +800,7 @@ func ExampleConfig_Is() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -773,6 +828,7 @@ func ExampleConfig_HasSection() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -800,6 +856,7 @@ func ExampleConfig_HasProp() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -827,6 +884,7 @@ func ExampleConfig_Sections() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -858,6 +916,7 @@ func ExampleConfig_Props() {
 	priority: 3.7
 	default-mode: 0644
 	timeout: 3m
+	max-size: 5mb
 	created: 1654424130
 	timezone: Europe/Madrid
 	labels: system admin
@@ -879,9 +938,10 @@ func ExampleConfig_Props() {
 	// 4: priority
 	// 5: default-mode
 	// 6: timeout
-	// 7: created
-	// 8: timezone
-	// 9: labels
+	// 7: max-size
+	// 8: created
+	// 9: timezone
+	// 10: labels
 }
 
 func ExampleConfig_File() {

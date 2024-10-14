@@ -30,6 +30,7 @@ const _CONFIG_DATA = `
   boolean: true
   file-mode: 0644
   duration: 24
+  size: 3mb
   time-duration: 5m
   timestamp: 1709629048
   timezone: Europe/Zurich
@@ -92,6 +93,8 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetM("test:file-mode", 0600), Equals, os.FileMode(0600))
 	c.Assert(GetD("test:duration", MINUTE), Equals, time.Duration(0))
 	c.Assert(GetD("test:duration", MINUTE, time.Minute), Equals, time.Minute)
+	c.Assert(GetSZ("test:size"), Equals, uint64(0))
+	c.Assert(GetSZ("test:size", 1024), Equals, uint64(1024))
 	c.Assert(GetTD("test:time-duration"), Equals, time.Duration(0))
 	c.Assert(GetTD("test:time-duration", time.Minute), Equals, time.Minute)
 	c.Assert(GetTS("test:timestamp").IsZero(), Equals, true)
@@ -109,6 +112,7 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 		Mapping{"test:boolean", "test-boolean", "TEST_BOOLEAN"},
 		Mapping{"test:file-mode", "test-file-mode", "TEST_FILE_MODE"},
 		Mapping{"test:duration", "test-duration", "TEST_DURATION"},
+		Mapping{"test:size", "test-size", "TEST_SIZE"},
 		Mapping{"test:time-duration", "test-time-duration", "TEST_TIME_DURATION"},
 		Mapping{"test:timestamp", "test-timestamp", "TEST_TIMESTAMP"},
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
@@ -125,6 +129,7 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetB("test:boolean"), Equals, true)
 	c.Assert(GetM("test:file-mode"), Equals, os.FileMode(0644))
 	c.Assert(GetD("test:duration", MINUTE), Equals, 24*time.Minute)
+	c.Assert(GetSZ("test:size"), Equals, uint64(3*1024*1024))
 	c.Assert(GetTD("test:time-duration"), Equals, 5*time.Minute)
 	c.Assert(GetTS("test:timestamp").Unix(), Equals, int64(1709629048))
 	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Zurich")
@@ -149,6 +154,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 			"--test-boolean", "false",
 			"--test-file-mode", "0640",
 			"--test-duration", "35",
+			"--test-size", "5MB",
 			"--test-time-duration", "3h",
 			"--test-timestamp", "1704067200",
 			"--test-timezone", "Europe/Prague",
@@ -160,6 +166,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 			"test-boolean":       {Type: options.MIXED},
 			"test-file-mode":     {},
 			"test-duration":      {Type: options.INT},
+			"test-size":          {},
 			"test-time-duration": {},
 			"test-timestamp":     {},
 			"test-timezone":      {},
@@ -176,6 +183,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 		Mapping{"test:boolean", "test-boolean", "TEST_BOOLEAN"},
 		Mapping{"test:file-mode", "test-file-mode", "TEST_FILE_MODE"},
 		Mapping{"test:duration", "test-duration", "TEST_DURATION"},
+		Mapping{"test:size", "test-size", "TEST_SIZE"},
 		Mapping{"test:time-duration", "test-time-duration", "TEST_TIME_DURATION"},
 		Mapping{"test:timestamp", "test-timestamp", "TEST_TIMESTAMP"},
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
@@ -195,6 +203,7 @@ func (s *UnitedSuite) TestWithOptions(c *C) {
 	c.Assert(GetB("test:boolean"), Equals, false)
 	c.Assert(GetM("test:file-mode"), Equals, os.FileMode(0640))
 	c.Assert(GetD("test:duration", HOUR), Equals, 35*time.Hour)
+	c.Assert(GetSZ("test:size"), Equals, uint64(5*1024*1024))
 	c.Assert(GetTD("test:time-duration"), Equals, 3*time.Hour)
 	c.Assert(GetTS("test:timestamp").Unix(), Equals, int64(1704067200))
 	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Prague")
@@ -211,6 +220,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	os.Setenv("TEST_BOOLEAN", "no")
 	os.Setenv("TEST_FILE_MODE", "0600")
 	os.Setenv("TEST_DURATION", "17")
+	os.Setenv("TEST_SIZE", "30kB")
 	os.Setenv("TEST_TIME_DURATION", "19m")
 	os.Setenv("TEST_TIMESTAMP", "1591014600")
 	os.Setenv("TEST_TIMEZONE", "Europe/Berlin")
@@ -223,6 +233,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 		Mapping{"test:boolean", "test-boolean", "TEST_BOOLEAN"},
 		Mapping{"test:file-mode", "test-file-mode", "TEST_FILE_MODE"},
 		Mapping{"test:duration", "test-duration", "TEST_DURATION"},
+		Mapping{"test:size", "test-size", "TEST_SIZE"},
 		Mapping{"test:time-duration", "test-time-duration", "TEST_TIME_DURATION"},
 		Mapping{"test:timestamp", "test-timestamp", "TEST_TIMESTAMP"},
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},
@@ -239,6 +250,7 @@ func (s *UnitedSuite) TestWithEnv(c *C) {
 	c.Assert(GetB("test:boolean"), Equals, false)
 	c.Assert(GetM("test:file-mode"), Equals, os.FileMode(0600))
 	c.Assert(GetD("test:duration", HOUR), Equals, 17*time.Hour)
+	c.Assert(GetSZ("test:size"), Equals, uint64(30*1024))
 	c.Assert(GetTD("test:time-duration"), Equals, 19*time.Minute)
 	c.Assert(GetTS("test:timestamp").Unix(), Equals, int64(1591014600))
 	c.Assert(GetTZ("test:timezone").String(), Equals, "Europe/Berlin")
@@ -269,6 +281,7 @@ func (s *UnitedSuite) TestValidation(c *C) {
 		Mapping{"test:boolean", "test-boolean", "TEST_BOOLEAN"},
 		Mapping{"test:file-mode", "test-file-mode", "TEST_FILE_MODE"},
 		Mapping{"test:duration", "test-duration", "TEST_DURATION"},
+		Mapping{"test:size", "test-size", "TEST_SIZE"},
 		Mapping{"test:time-duration", "test-time-duration", "TEST_TIME_DURATION"},
 		Mapping{"test:timestamp", "test-timestamp", "TEST_TIMESTAMP"},
 		Mapping{"test:timezone", "test-timezone", "TEST_TIMEZONE"},

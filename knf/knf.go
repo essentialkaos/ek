@@ -61,8 +61,11 @@ type IConfig interface {
 	// GetM returns configuration value as file mode
 	GetM(name string, defvals ...os.FileMode) os.FileMode
 
-	// GetD returns configuration values as duration
+	// GetD returns configuration value as duration
 	GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration
+
+	// GetSZ returns configuration value as a size in bytes
+	GetSZ(name string, defvals ...uint64) uint64
 
 	// GetTD returns configuration value as time duration
 	GetTD(name string, defvals ...time.Duration) time.Duration
@@ -295,6 +298,19 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 	}
 
 	return global.GetD(name, mod, defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func GetSZ(name string, defvals ...uint64) uint64 {
+	if global == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetSZ(name, defvals...)
 }
 
 // GetTD returns configuration value as time duration
@@ -637,6 +653,19 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	}
 
 	return value.ParseDuration(c.getValue(name), time.Duration(mod), defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func (c *Config) GetSZ(name string, defvals ...uint64) uint64 {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return value.ParseSize(c.getValue(name), defvals...)
 }
 
 // GetTD returns configuration value as time duration
