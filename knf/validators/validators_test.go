@@ -60,6 +60,9 @@ test1:      1
   test4: ABC
   test5: true
 
+[size]
+	test1: 3mb
+
 [comment]
   test1: 100
   # test2: 100
@@ -156,6 +159,7 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
   string: test
   integer: 10
   float: 10.0
+  size: 3mb
   boolean: false`)
 
 	cfg, err := knf.Read(cfgFile)
@@ -167,14 +171,36 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(Set(cfg, "test:string", nil), check.IsNil)
 
 	c.Assert(Less(cfg, "test:integer", 5).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", int64(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", uint(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
+	c.Assert(Less(cfg, "test:integer", uint64(5)).Error(), check.Equals, "Property test:integer can't be greater than 5")
 	c.Assert(Less(cfg, "test:integer", 30), check.IsNil)
 	c.Assert(Less(cfg, "test:float", 5.1).Error(), check.Equals, "Property test:float can't be greater than 5.1")
 	c.Assert(Less(cfg, "test:float", 30.1), check.IsNil)
 
 	c.Assert(Greater(cfg, "test:integer", 30).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", int64(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", uint(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
+	c.Assert(Greater(cfg, "test:integer", uint64(30)).Error(), check.Equals, "Property test:integer can't be less than 30")
 	c.Assert(Greater(cfg, "test:integer", 5), check.IsNil)
 	c.Assert(Greater(cfg, "test:float", 30.1).Error(), check.Equals, "Property test:float can't be less than 30.1")
 	c.Assert(Greater(cfg, "test:float", 5.1), check.IsNil)
+
+	c.Assert(SizeGreater(cfg, "test:size", 10*1024*1024).Error(), check.Equals, "Property test:size can't be less than 10485760 bytes")
+	c.Assert(SizeGreater(cfg, "test:size", int64(10*1024*1024)).Error(), check.Equals, "Property test:size can't be less than 10485760 bytes")
+	c.Assert(SizeGreater(cfg, "test:size", uint(10*1024*1024)).Error(), check.Equals, "Property test:size can't be less than 10485760 bytes")
+	c.Assert(SizeGreater(cfg, "test:size", uint64(10*1024*1024)).Error(), check.Equals, "Property test:size can't be less than 10485760 bytes")
+	c.Assert(SizeGreater(cfg, "test:size", float64(10*1024*1024)).Error(), check.Equals, "Property test:size can't be less than 10485760 bytes")
+	c.Assert(SizeGreater(cfg, "test:size", false).Error(), check.Equals, "Validator knf.SizeGreater doesn't support input with type <bool> for checking test:size property")
+	c.Assert(SizeGreater(cfg, "test:size", uint64(1*1024*1024)), check.IsNil)
+
+	c.Assert(SizeLess(cfg, "test:size", 1*1024*1024).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
+	c.Assert(SizeLess(cfg, "test:size", int64(1*1024*1024)).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
+	c.Assert(SizeLess(cfg, "test:size", uint(1*1024*1024)).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
+	c.Assert(SizeLess(cfg, "test:size", uint64(1*1024*1024)).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
+	c.Assert(SizeLess(cfg, "test:size", float64(1*1024*1024)).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
+	c.Assert(SizeLess(cfg, "test:size", false).Error(), check.Equals, "Validator knf.SizeLess doesn't support input with type <bool> for checking test:size property")
+	c.Assert(SizeLess(cfg, "test:size", uint64(10*1024*1024)), check.IsNil)
 
 	c.Assert(InRange(cfg, "test:integer", Range{50, 100}).Error(), check.Equals, "Property test:integer must be in range 50-100")
 	c.Assert(InRange(cfg, "test:integer", Range{1, 100}), check.IsNil)
