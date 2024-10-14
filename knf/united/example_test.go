@@ -44,56 +44,86 @@ func ExampleCombine() {
 	// Combine combines KNF configuration, options and environment variables
 	Combine(
 		config,
-		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
-		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
+		Mapping{"main:string", "S:main-string", "MAIN_STRING"},
+		Mapping{"main:int", "I:main-int", "MAIN_INT"},
+		Mapping{"main:float", "F:main-float", "MAIN_FLOAT"},
+		Mapping{"main:boolean", "B:main-boolean", "MAIN_BOOLEAN"},
+		Mapping{"main:file-mode", "FM:main-string", "MAIN_FILE_MODE"},
+		Mapping{"main:duration", "D:main-string", "MAIN_DURATION"},
+		Mapping{"main:size", "s:main-string", "MAIN_SIZE"},
+		Mapping{"main:time-duration", "td:main-string", "MAIN_TIME_DURATION"},
+		Mapping{"main:timestamp", "T:main-string", "MAIN_TIMESTAMP"},
+		Mapping{"main:timezone", "tz:main-string", "MAIN_TIMEZONE"},
+		Mapping{"main:list", "L:main-string", "MAIN_LIST"},
 	)
 
 	// Also, you can set options and environment variables using helpers
 	var (
-		optOne = "test:option-one"
-		optTwo = "test:option-two"
+		mainString       = "main:string"
+		mainInt          = "main:int"
+		mainFloat        = "main:float"
+		mainBoolean      = "main:boolean"
+		mainFileMode     = "main:file-mode"
+		mainDuration     = "main:duration"
+		mainSize         = "main:size"
+		mainTimeDuration = "main:time-duration"
+		mainTimestamp    = "main:timestamp"
+		mainTimezone     = "main:timezone"
+		mainList         = "main:list"
 	)
 
 	Combine(
 		config,
 		// Create mapping manually
-		Mapping{optOne, ToOption(optOne), ToEnvVar(optOne)},
+		Mapping{mainString, ToOption(mainString), ToEnvVar(mainString)},
 		// Create simple mapping
-		Simple(optTwo),
+		Simple(mainInt),
+		Simple(mainFloat),
+		Simple(mainBoolean),
+		Simple(mainFileMode),
+		Simple(mainDuration),
+		Simple(mainSize),
+		Simple(mainTimeDuration),
+		Simple(mainTimestamp),
+		Simple(mainTimezone),
+		Simple(mainList),
 	)
 
 	// Read string value
-	GetS("section:string")
+	GetS("main:string")
 
 	// Read integer value
-	GetI("section:int")
+	GetI("main:int")
 
 	// Read float value
-	GetF("section:float")
+	GetF("main:float")
 
 	// Read boolean value
-	GetB("section:boolean")
+	GetB("main:boolean")
 
 	// Read file mode value
-	GetM("section:file-mode")
+	GetM("main:file-mode")
 
 	// Read duration as seconds
-	GetD("section:duration", Second)
+	GetD("main:duration", SECOND)
 
 	// Read duration as minutes
-	GetD("section:duration", Minute)
+	GetD("main:duration", MINUTE)
+
+	// Read size
+	GetSZ("main:size")
 
 	// Read time duration
-	GetTD("section:time-duration")
+	GetTD("main:time-duration")
 
 	// Read timestamp
-	GetTS("section:timestamp")
+	GetTS("main:timestamp")
 
 	// Read timezone
-	GetTZ("section:timezone")
+	GetTZ("main:timezone")
 
 	// Read list
-	GetL("section:list")
+	GetL("main:list")
 }
 
 func ExampleCombineSimple() {
@@ -166,27 +196,27 @@ func ExampleSimple() {
 }
 
 func ExampleToOption() {
-	fmt.Println(ToOption("section:time-duration"))
+	fmt.Println(ToOption("main:time-duration"))
 
-	// Output: section-time-duration
+	// Output: main-time-duration
 }
 
 func ExampleToEnvVar() {
-	fmt.Println(ToEnvVar("section:time-duration"))
+	fmt.Println(ToEnvVar("main:time-duration"))
 
-	// Output: SECTION_TIME_DURATION
+	// Output: MAIN_TIME_DURATION
 }
 
 func ExampleO() {
-	fmt.Println(ToOption("section:time-duration"))
+	fmt.Println(ToOption("main:time-duration"))
 
-	// Output: section-time-duration
+	// Output: main-time-duration
 }
 
 func ExampleE() {
-	fmt.Println(ToEnvVar("section:time-duration"))
+	fmt.Println(ToEnvVar("main:time-duration"))
 
-	// Output: SECTION_TIME_DURATION
+	// Output: MAIN_TIME_DURATION
 }
 
 func ExampleGetS() {
@@ -294,7 +324,19 @@ func ExampleGetD() {
 		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
 	)
 
-	fmt.Printf("Value from config: %v\n", GetD("user:timeout", Minute))
+	fmt.Printf("Value from config: %v\n", GetD("user:timeout", MINUTE))
+}
+
+func ExampleGetSZ() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
+	Combine(
+		config,
+		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
+		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
+	)
+
+	fmt.Printf("Value from config: %v\n", GetSZ("user:max-size"))
 }
 
 func ExampleGetTD() {

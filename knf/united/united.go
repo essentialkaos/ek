@@ -21,6 +21,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	MILLISECOND = knf.MILLISECOND
+	SECOND      = knf.SECOND
+	MINUTE      = knf.MINUTE
+	HOUR        = knf.HOUR
+	DAY         = knf.DAY
+	WEEK        = knf.WEEK
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Mapping contains mapping [knf property] → [option] → [envvar]
 type Mapping struct {
 	Property string // Property from KNF configuration file
@@ -41,17 +52,6 @@ type united struct {
 	mappings map[string]Mapping
 	env      map[string]string
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	Millisecond = knf.Millisecond
-	Second      = knf.Second
-	Minute      = knf.Minute
-	Hour        = knf.Hour
-	Day         = knf.Day
-	Week        = knf.Week
-)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -209,6 +209,11 @@ func GetM(name string, defvals ...os.FileMode) os.FileMode {
 // GetD returns configuration values as duration
 func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
 	return global.GetD(name, mod, defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func GetSZ(name string, defvals ...uint64) uint64 {
+	return global.GetSZ(name, defvals...)
 }
 
 // GetTD returns configuration value as time duration
@@ -371,6 +376,19 @@ func (c *united) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	}
 
 	return value.ParseDuration(c.getProp(name), time.Duration(mod), defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func (c *united) GetSZ(name string, defvals ...uint64) uint64 {
+	if c == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return value.ParseSize(c.getProp(name), defvals...)
 }
 
 // GetTD returns configuration value as time duration

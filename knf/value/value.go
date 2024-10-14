@@ -266,8 +266,74 @@ func ParseList(v string, defvals ...[]string) []string {
 	return strutil.Fields(v)
 }
 
+// ParseSize parses value as size
+func ParseSize(v string, defvals ...uint64) uint64 {
+	if v == "" {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	v = strings.ToLower(strings.ReplaceAll(v, " ", ""))
+	mod, suf := extractSizeInfo(v)
+
+	if suf == "" {
+		u, err := strconv.ParseUint(v, 10, 64)
+
+		if err != nil {
+			return 0
+		}
+
+		return u
+	}
+
+	v = strings.TrimRight(v, suf)
+	vf, err := strconv.ParseFloat(v, 64)
+
+	if err != nil {
+		return 0
+	}
+
+	return uint64(vf * mod)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isHex returns true if given value has hex prefix
 func isHex(v string) bool {
 	return len(v) >= 3 && v[0:2] == "0x"
+}
+
+// extractSizeInfo extracts size info
+func extractSizeInfo(s string) (float64, string) {
+	var mod float64
+
+	suf := strings.TrimLeft(s, "0123456789. ")
+
+	switch suf {
+	case "tb", "tib":
+		mod = 1024 * 1024 * 1024 * 1024
+	case "t":
+		mod = 1000 * 1000 * 1000 * 1000
+	case "gb", "gib":
+		mod = 1024 * 1024 * 1024
+	case "g", "kkk":
+		mod = 1000 * 1000 * 1000
+	case "mb", "mib":
+		mod = 1024 * 1024
+	case "m", "kk":
+		mod = 1000 * 1000
+	case "kb":
+		mod = 1024
+	case "k":
+		mod = 1000
+	case "b":
+		mod = 1
+	default:
+		suf = ""
+	}
+
+	return mod, suf
 }

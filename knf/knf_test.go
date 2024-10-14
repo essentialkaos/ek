@@ -89,6 +89,11 @@ test1:      1
 	test1:
 	test2: Test1, Test2
 
+[size]
+	test1: 100
+	test2: 1mb
+	test3: 2.3 gb
+
 [comment]
   test1: 100
   # test2: 100
@@ -215,7 +220,8 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetF("test:test"), check.Equals, 0.0)
 	c.Assert(GetB("test:test"), check.Equals, false)
 	c.Assert(GetM("test:test"), check.Equals, os.FileMode(0))
-	c.Assert(GetD("test:test", Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("test:test", SECOND), check.Equals, time.Duration(0))
+	c.Assert(GetSZ("test:test"), check.Equals, uint64(0))
 	c.Assert(GetTD("test:test"), check.Equals, time.Duration(0))
 	c.Assert(GetTS("test:test").IsZero(), check.Equals, true)
 	c.Assert(GetTZ("test:test"), check.IsNil)
@@ -236,7 +242,8 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetF("test:test"), check.Equals, 0.0)
 	c.Assert(config.GetB("test:test"), check.Equals, false)
 	c.Assert(config.GetM("test:test"), check.Equals, os.FileMode(0))
-	c.Assert(config.GetD("test:test", Second), check.Equals, time.Duration(0))
+	c.Assert(config.GetD("test:test", SECOND), check.Equals, time.Duration(0))
+	c.Assert(config.GetSZ("test:test"), check.Equals, uint64(0))
 	c.Assert(config.GetTD("test:test"), check.Equals, time.Duration(0))
 	c.Assert(config.GetTS("test:test").IsZero(), check.Equals, true)
 	c.Assert(config.GetTZ("test:test"), check.IsNil)
@@ -334,7 +341,7 @@ func (s *KNFSuite) TestSections(c *check.C) {
 
 	sections := Sections()
 
-	c.Assert(sections, check.HasLen, 13)
+	c.Assert(sections, check.HasLen, 14)
 	c.Assert(
 		sections,
 		check.DeepEquals,
@@ -349,6 +356,7 @@ func (s *KNFSuite) TestSections(c *check.C) {
 			"timestamp",
 			"timezone",
 			"list",
+			"size",
 			"comment",
 			"macro",
 			"k",
@@ -466,10 +474,10 @@ func (s *KNFSuite) TestDuration(c *check.C) {
 	c.Assert(global, check.NotNil)
 	c.Assert(err, check.IsNil)
 
-	c.Assert(GetD("duration:test1", Second), check.Equals, time.Duration(0))
-	c.Assert(GetD("duration:test2", Second), check.Equals, time.Minute)
-	c.Assert(GetD("duration:test3", Second), check.Equals, time.Duration(0))
-	c.Assert(GetD("duration:test4", Second), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test1", SECOND), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test2", SECOND), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test3", SECOND), check.Equals, time.Duration(0))
+	c.Assert(GetD("duration:test4", SECOND), check.Equals, time.Duration(0))
 }
 
 func (s *KNFSuite) TestTimeDuration(c *check.C) {
@@ -516,6 +524,17 @@ func (s *KNFSuite) TestList(c *check.C) {
 
 	c.Assert(GetL("list:test1"), check.HasLen, 0)
 	c.Assert(GetL("list:test2"), check.HasLen, 2)
+}
+
+func (s *KNFSuite) TestSize(c *check.C) {
+	err := Global(s.ConfigPath)
+
+	c.Assert(global, check.NotNil)
+	c.Assert(err, check.IsNil)
+
+	c.Assert(GetSZ("size:test1"), check.Equals, uint64(100))
+	c.Assert(GetSZ("size:test2"), check.Equals, uint64(1024*1024))
+	c.Assert(GetSZ("size:test3"), check.Equals, uint64(2469606195))
 }
 
 func (s *KNFSuite) TestIs(c *check.C) {
@@ -582,7 +601,8 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.GetF("formatting:test1"), check.Equals, 0.0)
 	c.Assert(nilConf.GetB("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.GetM("formatting:test1"), check.Equals, os.FileMode(0))
-	c.Assert(nilConf.GetD("formatting:test1", Second), check.Equals, time.Duration(0))
+	c.Assert(nilConf.GetD("formatting:test1", SECOND), check.Equals, time.Duration(0))
+	c.Assert(nilConf.GetSZ("size:test100"), check.Equals, uint64(0))
 	c.Assert(nilConf.GetTD("formatting:test1"), check.Equals, time.Duration(0))
 	c.Assert(nilConf.GetTS("formatting:test1").IsZero(), check.Equals, true)
 	c.Assert(nilConf.GetTZ("formatting:test1"), check.IsNil)
@@ -619,7 +639,8 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test100", SECOND, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetSZ("size:test100", 1024), check.Equals, uint64(1024))
 	c.Assert(GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
 	c.Assert(GetTZ("duration:test100", l), check.Equals, l)
@@ -639,7 +660,8 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetD("duration:test100", SECOND, time.Minute), check.Equals, time.Minute)
+	c.Assert(GetSZ("size:test100", 1024), check.Equals, uint64(1024))
 	c.Assert(GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
 	c.Assert(GetTZ("duration:test100", l), check.Equals, l)
@@ -656,7 +678,8 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 	c.Assert(nc.GetU64("integer:test100", 9999), check.Equals, uint64(9999))
 	c.Assert(nc.GetF("integer:test100", 123.45), check.Equals, 123.45)
 	c.Assert(nc.GetM("file-mode:test100", 0755), check.Equals, os.FileMode(0755))
-	c.Assert(nc.GetD("duration:test100", Second, time.Minute), check.Equals, time.Minute)
+	c.Assert(nc.GetD("duration:test100", SECOND, time.Minute), check.Equals, time.Minute)
+	c.Assert(nc.GetSZ("size:test100", 1024), check.Equals, uint64(1024))
 	c.Assert(nc.GetTD("duration:test100", time.Minute), check.Equals, time.Minute)
 	c.Assert(nc.GetTS("duration:test100", time.Now()).IsZero(), check.Equals, false)
 	c.Assert(nc.GetTZ("duration:test100", l), check.Equals, l)

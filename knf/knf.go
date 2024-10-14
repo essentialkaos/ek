@@ -24,6 +24,17 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	MILLISECOND = DurationMod(time.Millisecond)
+	SECOND      = 1000 * MILLISECOND
+	MINUTE      = 60 * SECOND
+	HOUR        = 60 * MINUTE
+	DAY         = 24 * HOUR
+	WEEK        = 7 * DAY
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // IConfig is knf like configuration
 type IConfig interface {
 	// GetS returns configuration value as string
@@ -50,8 +61,11 @@ type IConfig interface {
 	// GetM returns configuration value as file mode
 	GetM(name string, defvals ...os.FileMode) os.FileMode
 
-	// GetD returns configuration values as duration
+	// GetD returns configuration value as duration
 	GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration
+
+	// GetSZ returns configuration value as a size in bytes
+	GetSZ(name string, defvals ...uint64) uint64
 
 	// GetTD returns configuration value as time duration
 	GetTD(name string, defvals ...time.Duration) time.Duration
@@ -89,7 +103,7 @@ type Validator struct {
 // PropertyValidator is default type of property validation function
 type PropertyValidator func(config IConfig, prop string, value any) error
 
-// DurationMod is type for duration modificator
+// DurationMod is type for duration modifier
 type DurationMod int64
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -98,17 +112,6 @@ var (
 	ErrNilConfig  = errors.New("Configuration is nil")
 	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
 	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var (
-	Millisecond = DurationMod(time.Millisecond)
-	Second      = 1000 * Millisecond
-	Minute      = 60 * Second
-	Hour        = 60 * Minute
-	Day         = 24 * Hour
-	Week        = 7 * Day
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -295,6 +298,19 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 	}
 
 	return global.GetD(name, mod, defvals...)
+}
+
+// GetSZ returns configuration value as a size in bytes
+func GetSZ(name string, defvals ...uint64) uint64 {
+	if global == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return global.GetSZ(name, defvals...)
 }
 
 // GetTD returns configuration value as time duration
@@ -639,6 +655,19 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 	return value.ParseDuration(c.getValue(name), time.Duration(mod), defvals...)
 }
 
+// GetSZ returns configuration value as a size in bytes
+func (c *Config) GetSZ(name string, defvals ...uint64) uint64 {
+	if c == nil || c.mx == nil || !isValidPropName(name) {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return value.ParseSize(c.getValue(name), defvals...)
+}
+
 // GetTD returns configuration value as time duration
 func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
 	if c == nil || c.mx == nil || !isValidPropName(name) {
@@ -715,7 +744,7 @@ func (c *Config) Is(name string, value any) bool {
 	case os.FileMode:
 		return c.GetM(name) == t
 	case time.Duration:
-		return c.GetD(name, Second) == t
+		return c.GetD(name, SECOND) == t
 	case time.Time:
 		return c.GetTS(name).Unix() == t.Unix()
 	case *time.Location:

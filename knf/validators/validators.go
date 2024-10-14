@@ -30,13 +30,16 @@ var (
 	// slice in any letter case
 	SetToAnyIgnoreCase = validatorSetToAnyIgnoreCase
 
-	// Less returns an error if property is less than given number
+	// Less returns an error if the property value is smaller than the given number
 	Less = validatorLess
 
-	// Greater returns error if property is greater than given number
+	// Greater returns an error if the property value is greater than the given number
 	Greater = validatorGreater
 
-	// NotEquals returns error if property is equal to given string
+	// InRange returns an error if the property value is not in the given range
+	InRange = validatorInRange
+
+	// NotEquals returns an error if the property value is equal to the given string
 	NotEquals = validatorNotEquals
 
 	// LenLess returns an error if the length of the property value is greater than
@@ -65,7 +68,18 @@ var (
 
 	// TypeNum returns error if property contains non-float value
 	TypeFloat = validatorTypeFloat
+
+	// TypeSize returns error if property contains non-size value
+	TypeSize = validatorTypeSize
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Range is numeric range
+type Range struct {
+	From any
+	To   any
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -122,6 +136,27 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 	if err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported float value (%s)",
+			prop, propValue,
+		)
+	}
+
+	return nil
+}
+
+func validatorTypeSize(config knf.IConfig, prop string, value any) error {
+	propValue := config.GetS(prop)
+
+	if propValue == "" {
+		return nil
+	}
+
+	size := config.GetSZ(prop)
+	propValueNorm := strings.TrimRight(propValue, " bB")
+	_, err := strconv.ParseFloat(propValueNorm, 64)
+
+	if size == 0 && err != nil {
+		return fmt.Errorf(
+			"Property %s contains unsupported size value (%s)",
 			prop, propValue,
 		)
 	}
@@ -188,6 +223,46 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 
 	default:
 		return getValidatorInputError("Greater", prop, value)
+	}
+
+	return nil
+}
+
+func validatorInRange(config knf.IConfig, prop string, value any) error {
+	rng, ok := value.(Range)
+
+	if !ok {
+		return getValidatorInputError("InRange", prop, value)
+	}
+
+	var from, to float64
+
+	switch u := rng.From.(type) {
+	case int:
+		from = float64(u)
+	case uint:
+		from = float64(u)
+	case float64:
+		from = u
+	default:
+		return getValidatorRangeError("From", rng.From)
+	}
+
+	switch u := rng.To.(type) {
+	case int:
+		to = float64(u)
+	case uint:
+		to = float64(u)
+	case float64:
+		to = u
+	default:
+		return getValidatorRangeError("To", rng.To)
+	}
+
+	v := config.GetF(prop)
+
+	if v < from || v > to {
+		return fmt.Errorf("Property %s must be in range %g-%g", prop, from, to)
 	}
 
 	return nil
@@ -332,5 +407,12 @@ func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
 		"Validator knf.%s requires non-empty input for checking %s property",
 		validator, prop,
+	)
+}
+
+func getValidatorRangeError(prop string, value any) error {
+	return fmt.Errorf(
+		"Validator knf.InRange doesn't support type <%T> for 'Range.%s' value",
+		value, prop,
 	)
 }

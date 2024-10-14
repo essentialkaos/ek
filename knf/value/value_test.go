@@ -158,3 +158,25 @@ func (s *ValuesSuite) TestParseList(c *C) {
 
 	c.Assert(ParseList("A, B"), DeepEquals, []string{"A", "B"})
 }
+
+func (s *ValuesSuite) TestParseSize(c *C) {
+	c.Assert(ParseSize(""), Equals, uint64(0))
+	c.Assert(ParseSize("0_"), Equals, uint64(0))
+	c.Assert(ParseSize("1R"), Equals, uint64(0))
+	c.Assert(ParseSize("kb"), Equals, uint64(0))
+
+	c.Assert(ParseSize("100"), Equals, uint64(100))
+	c.Assert(ParseSize("", 100), Equals, uint64(100))
+
+	c.Assert(ParseSize("1 b"), Equals, uint64(1))
+	c.Assert(ParseSize("1 MB"), Equals, uint64(1024*1024))
+	c.Assert(ParseSize("1 M"), Equals, uint64(1000*1000))
+	c.Assert(ParseSize("2tb"), Equals, uint64(2*1024*1024*1024*1024))
+	c.Assert(ParseSize("2t"), Equals, uint64(2*1000*1000*1000*1000))
+	c.Assert(ParseSize("5gB"), Equals, uint64(5*1024*1024*1024))
+	c.Assert(ParseSize("5g"), Equals, uint64(5*1000*1000*1000))
+	c.Assert(ParseSize("13kb"), Equals, uint64(13*1024))
+	c.Assert(ParseSize("13k"), Equals, uint64(13*1000))
+	c.Assert(ParseSize("13kk"), Equals, uint64(13*1000*1000))
+	c.Assert(ParseSize("13kkk"), Equals, uint64(13*1000*1000*1000))
+}

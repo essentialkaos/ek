@@ -1,5 +1,15 @@
 ## Changelog
 
+### [13.7.0](https://kaos.sh/ek/13.7.0)
+
+- `[fmtutil]` Added support of `kk`, `kkk`, `kib`, `mib`, `gib`, and `tib` in `ParseSize`
+- `[knf]` Added getter `GetSZ` for reading value as the size
+- `[knf/united]` Added getter `GetSZ` for reading value as the size
+- `[knf/validators]` Added validator `TypeSize`
+- `[knf/validators]` Added validator `InRange`
+- `[fmtutil]` Code refactoring
+- `[knf/united]` Improved usage examples
+
 ### [13.6.1](https://kaos.sh/ek/13.6.1)
 
 - `[req]` Guess the value of the `Content-Type` header based on the request body type
