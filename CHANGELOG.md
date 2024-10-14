@@ -1,9 +1,11 @@
 ## Changelog
 
-### [13.7.1](https://kaos.sh/ek/13.7.1)
+### [13.8.0](https://kaos.sh/ek/13.8.0)
 
 - `[knf/validators]` Added support of `int64`, `uint`, and `uint64` to `Less` vaildator
 - `[knf/validators]` Added support of `int64`, `uint`, and `uint64` to `Greater` vaildator
+- `[knf/validators]` Added validator `SizeGreater`
+- `[knf/validators]` Added validator `SizeLess`
 
 ### [13.7.0](https://kaos.sh/ek/13.7.0)
 

@@ -60,6 +60,12 @@ var (
 	// HasSuffix returns error if property doesn't have given suffix
 	HasSuffix = validatorHasSuffix
 
+	// SizeLess returns an error if the property value is smaller than the given number
+	SizeLess = validatorSizeLess
+
+	// SizeGreater returns an error if the property value is greater than the given number
+	SizeGreater = validatorSizeGreater
+
 	// TypeBool returns error if property contains non-boolean value
 	TypeBool = validatorTypeBool
 
@@ -253,6 +259,56 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 
 	default:
 		return getValidatorInputError("Greater", prop, value)
+	}
+
+	return nil
+}
+
+func validatorSizeLess(config knf.IConfig, prop string, value any) error {
+	var v uint64
+
+	switch t := value.(type) {
+	case int:
+		v = uint64(t)
+	case int64:
+		v = uint64(t)
+	case uint:
+		v = uint64(t)
+	case uint64:
+		v = uint64(t)
+	case float64:
+		v = uint64(t)
+	default:
+		return getValidatorInputError("SizeLess", prop, value)
+	}
+
+	if config.GetSZ(prop) > v {
+		return fmt.Errorf("Property %s can't be greater than %d bytes", prop, v)
+	}
+
+	return nil
+}
+
+func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
+	var v uint64
+
+	switch t := value.(type) {
+	case int:
+		v = uint64(t)
+	case int64:
+		v = uint64(t)
+	case uint:
+		v = uint64(t)
+	case uint64:
+		v = uint64(t)
+	case float64:
+		v = uint64(t)
+	default:
+		return getValidatorInputError("SizeGreater", prop, value)
+	}
+
+	if config.GetSZ(prop) < v {
+		return fmt.Errorf("Property %s can't be less than %d bytes", prop, v)
 	}
 
 	return nil
