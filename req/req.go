@@ -199,7 +199,7 @@ type Request struct {
 	BasicAuthUsername string  // Basic auth username
 	BasicAuthPassword string  // Basic auth password
 	BearerAuth        string  // Bearer auth token
-	AutoDiscard       bool    // Automatically discard all responses with status code != 200
+	AutoDiscard       bool    // Automatically discard all responses with status code > 299
 	FollowRedirect    bool    // Follow redirect
 	Close             bool    // Close indicates whether to close the connection after sending request
 }
@@ -614,7 +614,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	result := &Response{resp, r.URL}
 
-	if resp.StatusCode != STATUS_OK && r.AutoDiscard {
+	if resp.StatusCode > 299 && r.AutoDiscard {
 		result.Discard()
 	}
 
