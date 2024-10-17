@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.8.1](https://kaos.sh/ek/13.8.1)
+
+- `[req]` `AutoDiscard` now doesn't affect responses with successful response status codes (`200`-`299`)
+
 ### [13.8.0](https://kaos.sh/ek/13.8.0)
 
 - `[knf/validators]` Added support of `int64`, `uint`, and `uint64` to `Less` vaildator
