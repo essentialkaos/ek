@@ -4,6 +4,7 @@
 
 - `[errors]` Added new package of utilities for working with errors
 - `[knf]` Added type `Validators` for `Validator` slice
+- `[knf]` Code refactoring
 - `[options]` Code refactoring
 - `[errutil]` Package deprecated
 

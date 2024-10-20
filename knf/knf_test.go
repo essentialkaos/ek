@@ -16,6 +16,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/essentialkaos/ek/v13/errors"
+
 	check "github.com/essentialkaos/check"
 )
 
@@ -231,7 +233,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(HasProp("test:test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
-	c.Assert(Validate(Validators{}), check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(Validate(Validators{}), check.DeepEquals, errors.Errors{ErrNilConfig})
 	c.Assert(Alias("test:test", "test:test"), check.NotNil)
 	c.Assert(global.Merge(nil), check.NotNil)
 
@@ -623,7 +625,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	errs := nilConf.Validate(Validators{})
 
 	c.Assert(errs, check.Not(check.HasLen), 0)
-	c.Assert(errs, check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(errs, check.DeepEquals, errors.Errors{ErrNilConfig})
 }
 
 func (s *KNFSuite) TestDefault(c *check.C) {
