@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.8.2](https://kaos.sh/ek/13.8.2)
+
+- `[knf]` Added type `Validators` for `Validator` slice
+
 ### [13.8.1](https://kaos.sh/ek/13.8.1)
 
 - `[req]` `AutoDiscard` now doesn't affect responses with successful response status codes (`200`-`299`)

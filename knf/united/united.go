@@ -238,7 +238,7 @@ func GetL(name string, defvals ...[]string) []string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func Validate(validators []*knf.Validator) []error {
+func Validate(validators knf.Validators) []error {
 	if global == nil {
 		return []error{knf.ErrNilConfig}
 	}
@@ -464,7 +464,7 @@ func (c *united) getProp(name string) string {
 }
 
 // validate runs validators over configuration
-func validate(validators []*knf.Validator) []error {
+func validate(validators knf.Validators) []error {
 	var result []error
 
 	for _, v := range validators {

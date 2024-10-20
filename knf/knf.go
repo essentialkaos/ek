@@ -100,6 +100,9 @@ type Validator struct {
 	Value    any               // Expected value
 }
 
+// Validators is a slice with validators
+type Validators []*Validator
+
 // PropertyValidator is default type of property validation function
 type PropertyValidator func(config IConfig, prop string, value any) error
 
@@ -412,12 +415,19 @@ func Props(section string) []string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func Validate(validators []*Validator) []error {
+func Validate(validators Validators) []error {
 	if global == nil {
 		return []error{ErrNilConfig}
 	}
 
 	return global.Validate(validators)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Add adds given validators and returns new slice
+func (v Validators) Add(validators Validators) Validators {
+	return append(v, validators...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -831,7 +841,7 @@ func (c *Config) File() string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func (c *Config) Validate(validators []*Validator) []error {
+func (c *Config) Validate(validators Validators) []error {
 	if c == nil || c.mx == nil {
 		return []error{ErrNilConfig}
 	}

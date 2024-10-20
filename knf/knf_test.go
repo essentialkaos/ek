@@ -231,7 +231,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(HasProp("test:test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
-	c.Assert(Validate([]*Validator{}), check.DeepEquals, []error{ErrNilConfig})
+	c.Assert(Validate(Validators{}), check.DeepEquals, []error{ErrNilConfig})
 	c.Assert(Alias("test:test", "test:test"), check.NotNil)
 	c.Assert(global.Merge(nil), check.NotNil)
 
@@ -253,7 +253,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.HasProp("test:test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
 	c.Assert(config.Props("test"), check.HasLen, 0)
-	c.Assert(config.Validate([]*Validator{}), check.HasLen, 0)
+	c.Assert(config.Validate(Validators{}), check.HasLen, 0)
 	c.Assert(config.Merge(nil), check.NotNil)
 
 	c.Assert(config.Alias("", ""), check.NotNil)
@@ -620,7 +620,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(err, check.NotNil)
 	c.Assert(err, check.DeepEquals, ErrNilConfig)
 
-	errs := nilConf.Validate([]*Validator{})
+	errs := nilConf.Validate(Validators{})
 
 	c.Assert(errs, check.Not(check.HasLen), 0)
 	c.Assert(errs, check.DeepEquals, []error{ErrNilConfig})
@@ -701,11 +701,17 @@ func (s *KNFSuite) TestSimpleValidator(c *check.C) {
 		return nil
 	}
 
-	errs := Validate([]*Validator{
+	validators := Validators{
+		{"string:test2", simpleValidator, nil},
+	}
+
+	validators = validators.Add(Validators{
 		{"string:test2", simpleValidator, nil},
 	})
 
-	c.Assert(errs, check.HasLen, 1)
+	errs := Validate(validators)
+
+	c.Assert(errs, check.HasLen, 2)
 }
 
 func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
