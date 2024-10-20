@@ -13,6 +13,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/essentialkaos/ek/v13/errors"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -75,9 +77,6 @@ type OptionError struct {
 	BoundOption string
 	Type        int
 }
-
-// Errors is a slice with errors
-type Errors []error
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -160,12 +159,12 @@ func (o *Options) Add(name string, option *V) error {
 }
 
 // AddMap adds map with supported options
-func (o *Options) AddMap(optMap Map) Errors {
+func (o *Options) AddMap(optMap Map) errors.Errors {
 	if optMap == nil {
-		return Errors{ErrNilMap}
+		return errors.Errors{ErrNilMap}
 	}
 
-	var errs Errors
+	var errs errors.Errors
 
 	for name, opt := range optMap {
 		err := o.Add(name, opt)
@@ -392,12 +391,12 @@ func (o *Options) Delete(name string) bool {
 }
 
 // Parse parses slice with raw options
-func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
+func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, errors.Errors) {
 	if o == nil {
-		return nil, Errors{ErrNilOptions}
+		return nil, errors.Errors{ErrNilOptions}
 	}
 
-	var errs Errors
+	var errs errors.Errors
 
 	if len(optMap) != 0 {
 		for _, m := range optMap {
@@ -410,32 +409,6 @@ func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, Errors) {
 	}
 
 	return o.parseOptions(rawOpts)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// String returns string representation of error slice
-func (e Errors) String() string {
-	if e.IsEmpty() {
-		return ""
-	}
-
-	b := &strings.Builder{}
-
-	for i, err := range e {
-		fmt.Fprintf(b, " - %s", err.Error())
-
-		if i != len(e)-1 {
-			b.WriteRune('\n')
-		}
-	}
-
-	return b.String()
-}
-
-// IsEmpty returns true if errors slice is empty
-func (e Errors) IsEmpty() bool {
-	return len(e) == 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -491,7 +464,7 @@ func Add(name string, opt *V) error {
 }
 
 // AddMap adds map with supported options
-func AddMap(optMap Map) Errors {
+func AddMap(optMap Map) errors.Errors {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -575,7 +548,7 @@ func Delete(name string) bool {
 }
 
 // Parse parses slice with raw options
-func Parse(optMap ...Map) (Arguments, Errors) {
+func Parse(optMap ...Map) (Arguments, errors.Errors) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -705,7 +678,7 @@ func (o optionName) String() string {
 // without losing code readability
 // codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
 
-func (o *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
+func (o *Options) parseOptions(rawOpts []string) (Arguments, errors.Errors) {
 	o.prepare()
 
 	if len(rawOpts) == 0 {
@@ -715,7 +688,7 @@ func (o *Options) parseOptions(rawOpts []string) (Arguments, Errors) {
 	var optName string
 	var mixedOpt bool
 	var arguments Arguments
-	var errs Errors
+	var errs errors.Errors
 
 	for _, curOpt := range rawOpts {
 		if optName == "" || mixedOpt {
@@ -870,8 +843,8 @@ func (o *Options) prepare() {
 	}
 }
 
-func (o *Options) validate() Errors {
-	var errs Errors
+func (o *Options) validate() errors.Errors {
+	var errs errors.Errors
 
 	for n, v := range o.full {
 		if !isSupportedType(v.Value) {
@@ -1055,7 +1028,7 @@ func updateIntOption(name string, opt *V, value string) error {
 	return nil
 }
 
-func appendError(errs Errors, err error) Errors {
+func appendError(errs errors.Errors, err error) errors.Errors {
 	if err == nil {
 		return errs
 	}

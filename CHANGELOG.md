@@ -4,6 +4,7 @@
 
 - `[errors]` Added new package of utilities for working with errors
 - `[knf]` Added type `Validators` for `Validator` slice
+- `[options]` Code refactoring
 - `[errutil]` Package deprecated
 
 ### [13.8.1](https://kaos.sh/ek/13.8.1)
