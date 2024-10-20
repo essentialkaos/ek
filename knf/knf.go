@@ -430,6 +430,15 @@ func (v Validators) Add(validators Validators) Validators {
 	return append(v, validators...)
 }
 
+// AddIf adds given validators if conditional is true
+func (v Validators) AddIf(cond bool, validators Validators) Validators {
+	if !cond {
+		return v
+	}
+
+	return v.Add(validators)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Merge merges two configurations

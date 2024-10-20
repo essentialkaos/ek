@@ -705,7 +705,11 @@ func (s *KNFSuite) TestSimpleValidator(c *check.C) {
 		{"string:test2", simpleValidator, nil},
 	}
 
-	validators = validators.Add(Validators{
+	validators = validators.AddIf(false, Validators{
+		{"string:test2", simpleValidator, nil},
+	})
+
+	validators = validators.AddIf(true, Validators{
 		{"string:test2", simpleValidator, nil},
 	})
 
