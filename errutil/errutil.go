@@ -1,4 +1,6 @@
 // Package errutil provides methods for working with errors
+//
+// Deprecated: Use package errors instead
 package errutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -23,6 +25,8 @@ type Errors struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewErrors creates new struct
+//
+// Deprecated: Use package errors instead
 func NewErrors(capacity ...int) *Errors {
 	if len(capacity) == 0 {
 		return &Errors{}
@@ -38,12 +42,16 @@ func NewErrors(capacity ...int) *Errors {
 }
 
 // Wrap wraps slice of errors into Errors struct
+//
+// Deprecated: Use package errors instead
 func Wrap(errs []error) *Errors {
 	return &Errors{errors: errs}
 }
 
 // Chain executes functions in chain and if one of them return error
 // this function stop chain execution and return this error
+//
+// Deprecated: Use package errors instead
 func Chain(funcs ...func() error) error {
 	var err error
 
@@ -61,6 +69,8 @@ func Chain(funcs ...func() error) error {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds new error to slice
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Add(errs ...any) *Errors {
 	if errs == nil {
 		return e
@@ -95,6 +105,8 @@ func (e *Errors) Add(errs ...any) *Errors {
 }
 
 // First returns the first error
+//
+// Deprecated: Use package errors instead
 func (e *Errors) First() error {
 	if e == nil || len(e.errors) == 0 {
 		return nil
@@ -104,6 +116,8 @@ func (e *Errors) First() error {
 }
 
 // Last returns the last error
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Last() error {
 	if e == nil || len(e.errors) == 0 {
 		return nil
@@ -113,6 +127,8 @@ func (e *Errors) Last() error {
 }
 
 // Get returns error by it index
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Get(index int) error {
 	if e == nil || len(e.errors) == 0 ||
 		index < 0 || index >= len(e.errors) {
@@ -123,6 +139,8 @@ func (e *Errors) Get(index int) error {
 }
 
 // All returns all errors in slice
+//
+// Deprecated: Use package errors instead
 func (e *Errors) All() []error {
 	if e == nil || e.errors == nil {
 		return nil
@@ -132,6 +150,8 @@ func (e *Errors) All() []error {
 }
 
 // HasErrors checks if slice contains errors
+//
+// Deprecated: Use package errors instead
 func (e *Errors) HasErrors() bool {
 	if e == nil || e.errors == nil {
 		return false
@@ -141,6 +161,8 @@ func (e *Errors) HasErrors() bool {
 }
 
 // Num returns number of errors
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Num() int {
 	if e == nil {
 		return 0
@@ -150,6 +172,8 @@ func (e *Errors) Num() int {
 }
 
 // Cap returns max capacity
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Cap() int {
 	if e == nil {
 		return 0
@@ -159,6 +183,8 @@ func (e *Errors) Cap() int {
 }
 
 // Error returns text of all errors
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Error() string {
 	if e == nil || len(e.errors) == 0 {
 		return ""
@@ -174,6 +200,8 @@ func (e *Errors) Error() string {
 }
 
 // Reset resets Errors instance to be empty
+//
+// Deprecated: Use package errors instead
 func (e *Errors) Reset() {
 	e.errors = nil
 }

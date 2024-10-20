@@ -1,8 +1,10 @@
 ## Changelog
 
-### [13.8.2](https://kaos.sh/ek/13.8.2)
+### [13.9.0](https://kaos.sh/ek/13.9.0)
 
+- `[errors]` Added new package of utilities for working with errors
 - `[knf]` Added type `Validators` for `Validator` slice
+- `[errutil]` Package deprecated
 
 ### [13.8.1](https://kaos.sh/ek/13.8.1)
 

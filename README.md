@@ -37,7 +37,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`easing`](https://kaos.sh/g/ek.v13/easing) — Package with easing functions (_Back, Bounce, Circ, Cubic, Elastic, Expo, Linear, Quad, Quint, Sine_)
 - [`emoji`](https://kaos.sh/g/ek.v13/emoji) — Package provides methods for working with emojis
 - [`env`](https://kaos.sh/g/ek.v13/env) — Package provides methods for working with environment variables
-- [`errutil`](https://kaos.sh/g/ek.v13/errutil) — Package provides methods for working with errors
+- [`errors`](https://kaos.sh/g/ek.v13/errors) — Package provides methods for working with errors
 - [`events`](https://kaos.sh/g/ek.v13/events) — Package provides methods and structs for creating event-driven systems
 - [`directio`](https://kaos.sh/g/ek.v13/directio) — Package provides methods for reading/writing files with direct io
 - [`fmtc`](https://kaos.sh/g/ek.v13/fmtc) — Package provides methods similar to fmt for colored output ([_more info and examples_](fmtc/README.md))
