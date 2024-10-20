@@ -9,6 +9,7 @@
 * + emoji
 * + env
 * + errutil
+* + errors
 * + events
 * + fmtc
 * + fmtutil

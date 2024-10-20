@@ -105,7 +105,7 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 
 	var errs []error
 
-	errs = knf.Validate([]*knf.Validator{
+	validators := knf.Validators{
 		{"integer:test1", Set, nil},
 		{"integer:test1", Greater, 0},
 		{"integer:test1", Greater, 0.5},
@@ -114,6 +114,9 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"integer:test1", NotEquals, 10},
 		{"integer:test1", NotEquals, 10.1},
 		{"integer:test1", NotEquals, "123"},
+	}
+
+	validators = validators.Add(knf.Validators{
 		{"string:test3", HasPrefix, "45"},
 		{"string:test3", HasSuffix, "00"},
 		{"string:test1", LenGreater, 3},
@@ -121,9 +124,11 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"string:test1", LenEquals, 4},
 	})
 
+	errs = knf.Validate(validators)
+
 	c.Assert(errs, check.HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"boolean:test5", Set, nil},
 		{"integer:test1", Greater, 10},
 		{"integer:test1", Less, 3},

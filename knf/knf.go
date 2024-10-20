@@ -10,7 +10,6 @@ package knf
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -18,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/essentialkaos/ek/v13/errors"
 	"github.com/essentialkaos/ek/v13/knf/value"
 	"github.com/essentialkaos/ek/v13/sliceutil"
 )
@@ -99,6 +99,9 @@ type Validator struct {
 	Func     PropertyValidator // Validation function
 	Value    any               // Expected value
 }
+
+// Validators is a slice with validators
+type Validators []*Validator
 
 // PropertyValidator is default type of property validation function
 type PropertyValidator func(config IConfig, prop string, value any) error
@@ -412,12 +415,28 @@ func Props(section string) []string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func Validate(validators []*Validator) []error {
+func Validate(validators Validators) errors.Errors {
 	if global == nil {
-		return []error{ErrNilConfig}
+		return errors.Errors{ErrNilConfig}
 	}
 
 	return global.Validate(validators)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Add adds given validators and returns new slice
+func (v Validators) Add(validators Validators) Validators {
+	return append(v, validators...)
+}
+
+// AddIf adds given validators if conditional is true
+func (v Validators) AddIf(cond bool, validators Validators) Validators {
+	if !cond {
+		return v
+	}
+
+	return v.Add(validators)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -831,12 +850,12 @@ func (c *Config) File() string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func (c *Config) Validate(validators []*Validator) []error {
+func (c *Config) Validate(validators Validators) errors.Errors {
 	if c == nil || c.mx == nil {
-		return []error{ErrNilConfig}
+		return errors.Errors{ErrNilConfig}
 	}
 
-	var result []error
+	var errs errors.Errors
 
 	c.mx.RLock()
 
@@ -844,13 +863,13 @@ func (c *Config) Validate(validators []*Validator) []error {
 		err := v.Func(c, v.Property, v.Value)
 
 		if err != nil {
-			result = append(result, err)
+			errs = append(errs, err)
 		}
 	}
 
 	defer c.mx.RUnlock()
 
-	return result
+	return errs
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

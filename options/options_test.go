@@ -8,11 +8,12 @@ package options
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
 	. "github.com/essentialkaos/check"
+
+	"github.com/essentialkaos/ek/v13/errors"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -392,50 +393,48 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs := NewOptions().Parse([]string{}, Map{})
 
 	c.Assert(errs, HasLen, 0)
-	c.Assert(errs.IsEmpty(), Equals, true)
-	c.Assert(errs.String(), Equals, "")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test", "100"}, Map{"t:test": {Type: 10}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" has unsupported type`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" has unsupported type`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"s:string": {}, "s:trace": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "-s" defined 2 or more times`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "-s" defined 2 or more times`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "-t" is not supported`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "-t" is not supported`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t=100"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "-t" is not supported`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "-t" is not supported`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" is not supported`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" is not supported`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test=abcd"}, Map{"s:string": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" is not supported`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" is not supported`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -449,87 +448,77 @@ func (s *OptUtilSuite) TestParsing(c *C) {
 	_, errs = NewOptions().Parse([]string{"--asd="}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--asd" has wrong format`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--asd" has wrong format`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-j="}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "-j" has wrong format`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "-j" has wrong format`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t"}, Map{"t:test": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Non-boolean option "--test" is empty`)
+	c.Assert(errs.Last(), ErrorMatches, `Non-boolean option "--test" is empty`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test=!"}, Map{"t:test": {Type: FLOAT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" has wrong format`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" has wrong format`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"-t=!"}, Map{"t:test": {Type: INT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" has wrong format`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" has wrong format`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{"--test", "!"}, Map{"t:test": {Type: INT}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" has wrong format`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" has wrong format`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": nil})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Struct for option "--test" is nil`)
+	c.Assert(errs.Last(), ErrorMatches, `Struct for option "--test" is nil`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Value: []string{}}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" contains unsupported default value`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" contains unsupported default value`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Conflicts: false}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" contains unsupported list format of conflicting options`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" contains unsupported list format of conflicting options`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"t:test": {Bound: false}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], ErrorMatches, `Option "--test" contains unsupported list format of bound options`)
+	c.Assert(errs.Last(), ErrorMatches, `Option "--test" contains unsupported list format of bound options`)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	_, errs = NewOptions().Parse([]string{}, Map{"": {}})
 
 	c.Assert(errs, Not(HasLen), 0)
-	c.Assert(errs[0], Equals, ErrEmptyName)
-}
-
-func (s *OptUtilSuite) TestErrors(c *C) {
-	errs := Errors{
-		fmt.Errorf(`Option "--test" has unsupported type`),
-		fmt.Errorf(`Option "--dump" has unsupported type`),
-	}
-
-	c.Assert(errs.IsEmpty(), Equals, false)
-	c.Assert(errs.String(), Equals, " - Option \"--test\" has unsupported type\n - Option \"--dump\" has unsupported type")
+	c.Assert(errs.Last(), Equals, ErrEmptyName)
 }
 
 func (s *OptUtilSuite) TestFormat(c *C) {
@@ -737,7 +726,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 	var opts *Options
 
 	c.Assert(opts.Add("", &V{}), Equals, ErrNilOptions)
-	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, Errors{ErrNilOptions})
+	c.Assert(opts.AddMap(Map{"t:": {}}), DeepEquals, errors.Errors{ErrNilOptions})
 	c.Assert(opts.GetS("test"), Equals, "")
 	c.Assert(opts.GetI("test"), Equals, 0)
 	c.Assert(opts.GetB("test"), Equals, false)
@@ -748,7 +737,7 @@ func (s *OptUtilSuite) TestNilOptions(c *C) {
 
 	_, errs := opts.Parse([]string{}, Map{"t:": {}})
 
-	c.Assert(errs, DeepEquals, Errors{ErrNilOptions})
+	c.Assert(errs, DeepEquals, errors.Errors{ErrNilOptions})
 }
 
 func (s *OptUtilSuite) TestNilArguments(c *C) {

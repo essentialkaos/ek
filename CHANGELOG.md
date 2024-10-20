@@ -1,5 +1,13 @@
 ## Changelog
 
+### [13.9.0](https://kaos.sh/ek/13.9.0)
+
+- `[errors]` Added new package of utilities for working with errors
+- `[knf]` Added type `Validators` for `Validator` slice
+- `[knf]` Code refactoring
+- `[options]` Code refactoring
+- `[errutil]` Package deprecated
+
 ### [13.8.1](https://kaos.sh/ek/13.8.1)
 
 - `[req]` `AutoDiscard` now doesn't affect responses with successful response status codes (`200`-`299`)
