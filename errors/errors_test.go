@@ -70,7 +70,7 @@ func (s *ErrorsSuite) TestPositive(c *C) {
 		},
 	)
 	c.Assert(errs.Add(nil), NotNil)
-	c.Assert(errs.Error("  "), Equals, "  1\n  2\n  3\n  4\n  5\n")
+	c.Assert(errs.Error("  "), Equals, "  1\n  2\n  3\n  4\n  5")
 
 	errs.Reset()
 

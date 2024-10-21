@@ -135,10 +135,13 @@ func (e Errors) Num() int {
 func (e Errors) Error(prefix string) string {
 	var buf strings.Builder
 
-	for _, err := range e {
+	for i, err := range e {
 		buf.WriteString(prefix)
 		buf.WriteString(err.Error())
-		buf.WriteRune('\n')
+
+		if i+1 < len(e) {
+			buf.WriteRune('\n')
+		}
 	}
 
 	return buf.String()
