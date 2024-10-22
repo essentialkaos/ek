@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.9.1](https://kaos.sh/ek/13.9.1)
+
+- `[errors]` Fixed bug with extra newline character at the end of `Error` output
+
 ### [13.9.0](https://kaos.sh/ek/13.9.0)
 
 - `[errors]` Added new package of utilities for working with errors
