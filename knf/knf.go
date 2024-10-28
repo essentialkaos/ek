@@ -423,6 +423,12 @@ func Validate(validators Validators) errors.Errors {
 	return global.Validate(validators)
 }
 
+// Q is a helper to create a valid full property name (section + delimiter
+// + property name)
+func Q(section, prop string) string {
+	return section + _SYMBOL_DELIMITER + prop
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds given validators and returns new slice

@@ -747,6 +747,10 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
 }
 
+func (s *KNFSuite) TestHelpers(c *check.C) {
+	c.Assert(Q("section", "prop"), check.Equals, "section:prop")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *KNFSuite) BenchmarkBasic(c *check.C) {
