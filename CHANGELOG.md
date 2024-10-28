@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.9.2](https://kaos.sh/ek/13.9.2)
+
+- `[knf]` Added helper `Q`
+- `[fmtc]` Code refactoring
+- `[usage]` Code refactoring
+
 ### [13.9.1](https://kaos.sh/ek/13.9.1)
 
 - `[errors]` Fixed bug with extra newline character at the end of `Error` output

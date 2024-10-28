@@ -25,6 +25,9 @@ func ExampleGlobal() {
 	// Read string value
 	GetS("main:string")
 
+	// Use helper Q to create full property name
+	GetS(Q("main", "string"))
+
 	// Read integer value
 	GetI("main:int")
 
