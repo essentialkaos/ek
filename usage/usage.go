@@ -178,16 +178,16 @@ func NewInfo(args ...string) *Info {
 
 // AddGroup adds new command group
 func (i *Info) AddGroup(group string) {
-	if i == nil {
+	if i == nil || group == "" {
 		return
 	}
 
 	i.curGroup = group
 }
 
-// AddCommand adds command (name, description, args)
-func (i *Info) AddCommand(a ...string) *Command {
-	if i == nil || len(a) < 2 {
+// AddCommand adds command
+func (i *Info) AddCommand(name, desc string, args ...string) *Command {
+	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
@@ -198,9 +198,9 @@ func (i *Info) AddCommand(a ...string) *Command {
 	}
 
 	cmd := &Command{
-		Name:  a[0],
-		Desc:  a[1],
-		Args:  a[2:],
+		Name:  name,
+		Desc:  desc,
+		Args:  args,
 		Group: group,
 		info:  i,
 	}
@@ -211,17 +211,17 @@ func (i *Info) AddCommand(a ...string) *Command {
 }
 
 // AddOption adds option (name, description, args)
-func (i *Info) AddOption(a ...string) *Option {
-	if i == nil || len(a) < 2 {
+func (i *Info) AddOption(name, desc string, args ...string) *Option {
+	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
-	long, short := parseOptionName(a[0])
+	long, short := parseOptionName(name)
 	opt := &Option{
 		Long:  long,
 		Short: short,
-		Desc:  a[1],
-		Arg:   strings.Join(a[2:], " "),
+		Desc:  desc,
+		Arg:   strings.Join(args, " "),
 		info:  i,
 	}
 
@@ -231,25 +231,33 @@ func (i *Info) AddOption(a ...string) *Option {
 }
 
 // AddExample adds example of application usage
-func (i *Info) AddExample(a ...string) {
-	if i == nil || len(a) == 0 {
+func (i *Info) AddExample(cmd string, desc ...string) {
+	if i == nil || cmd == "" {
 		return
 	}
 
-	a = append(a, "")
+	var cmdDesc string
 
-	i.Examples = append(i.Examples, &Example{a[0], a[1], false, i})
+	if len(desc) != 0 {
+		cmdDesc = desc[0]
+	}
+
+	i.Examples = append(i.Examples, &Example{cmd, cmdDesc, false, i})
 }
 
 // AddRawExample adds example of application usage without command prefix
-func (i *Info) AddRawExample(a ...string) {
-	if i == nil || len(a) == 0 {
+func (i *Info) AddRawExample(cmd string, desc ...string) {
+	if i == nil || cmd == "" {
 		return
 	}
 
-	a = append(a, "")
+	var cmdDesc string
 
-	i.Examples = append(i.Examples, &Example{a[0], a[1], true, i})
+	if len(desc) != 0 {
+		cmdDesc = desc[0]
+	}
+
+	i.Examples = append(i.Examples, &Example{cmd, cmdDesc, true, i})
 }
 
 // AddSpoiler adds spoiler

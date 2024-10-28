@@ -4,6 +4,7 @@
 
 - `[knf]` Added helper `Q`
 - `[fmtc]` Code refactoring
+- `[usage]` Code refactoring
 
 ### [13.9.1](https://kaos.sh/ek/13.9.1)
 

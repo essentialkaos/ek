@@ -102,27 +102,28 @@ func (s *UsageSuite) TestUsage(c *C) {
 
 	info.AddSpoiler("This is usage of spoiler with {#240}c{#241}o{#242}l{#243}o{#244}r{#245}s {#246}s{#247}u{#248}p{#249}p{#250}o{#251}r{#252}t{!}")
 
-	info.AddCommand() // will be ignored
+	info.AddCommand("", "")     // will be ignored
+	info.AddCommand("test", "") // will be ignored
 	info.AddCommand("print", "Print command")
 
 	info.AddGroup("Command group")
 
-	info.AddCommand("read")
 	info.AddCommand("read", "Read command")
 	info.AddCommand("read1", "Read command with arguments", "arg1", "arg2")
 	info.AddCommand("read2", "Read command with optional argument and very very very {*b}long{!} and {c}colored{!} description", "?arg")
 
-	info.AddOption("t:test")
+	info.AddOption("", "")     // will be ignored
+	info.AddOption("test", "") // will be ignored
 	info.AddOption("t:test", "Test option ")
 	info.AddOption("test1", "Test option with argument", "arg")
 	info.AddOption("test2", "Test option with optional argument and very very very {*b}long{!} and {c}colored{!} description", "?arg")
 
 	info.BoundOptions("read", "t:test", "test1")
 
-	info.AddExample() // will be ignored
+	info.AddExample("") // will be ignored
 	info.AddExample("abc")
 	info.AddExample("abc", "Example with very long description that not fits default 88 symbols limit and link https://domain.com/#EC103814B9CCB1E305CE20D6A25E681D3735D2301D5BB631B8DFA0ABB2394A99631B8DFA0ABB2394A99")
-	info.AddRawExample() // will be ignored
+	info.AddRawExample("") // will be ignored
 	info.AddRawExample("echo 123 | myapp")
 	info.AddRawExample("echo 123 | myapp", "Example with description")
 
@@ -184,9 +185,10 @@ func (s *UsageSuite) TestVersionInfo(c *C) {
 
 func (s *UsageSuite) TestNils(c *C) {
 	var i *Info
+
 	c.Assert(func() { i.AddGroup("test") }, NotPanics)
-	c.Assert(func() { i.AddCommand("test") }, NotPanics)
-	c.Assert(func() { i.AddOption("test") }, NotPanics)
+	c.Assert(func() { i.AddCommand("test", "test") }, NotPanics)
+	c.Assert(func() { i.AddOption("test", "test") }, NotPanics)
 	c.Assert(func() { i.AddExample("test") }, NotPanics)
 	c.Assert(func() { i.AddRawExample("test") }, NotPanics)
 	c.Assert(func() { i.AddSpoiler("test") }, NotPanics)
