@@ -11,15 +11,13 @@ import "io"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type CondWrapper struct {
-	match bool
-}
+type CondWrapper bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // If returns wrapper for printing messages if condition is true
 func If(cond bool) CondWrapper {
-	return CondWrapper{cond}
+	return CondWrapper(cond)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -27,7 +25,7 @@ func If(cond bool) CondWrapper {
 // Print formats using the default formats for its operands and writes to standard
 // output.
 func (cw CondWrapper) Print(a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -38,7 +36,7 @@ func (cw CondWrapper) Print(a ...any) (int, error) {
 // output. Spaces are always added between operands and a newline is appended. It
 // returns the number of bytes written and any write error encountered.
 func (cw CondWrapper) Println(a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -48,7 +46,7 @@ func (cw CondWrapper) Println(a ...any) (int, error) {
 // Printf formats according to a format specifier and writes to standard output. It
 // returns the number of bytes written and any write error encountered.
 func (cw CondWrapper) Printf(f string, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -59,7 +57,7 @@ func (cw CondWrapper) Printf(f string, a ...any) (int, error) {
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
 func (cw CondWrapper) Fprint(w io.Writer, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -70,7 +68,7 @@ func (cw CondWrapper) Fprint(w io.Writer, a ...any) (int, error) {
 // Spaces are always added between operands and a newline is appended. It returns
 // the number of bytes written and any write error encountered.
 func (cw CondWrapper) Fprintln(w io.Writer, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -80,7 +78,7 @@ func (cw CondWrapper) Fprintln(w io.Writer, a ...any) (int, error) {
 // Fprintf formats according to a format specifier and writes to w. It returns
 // the number of bytes written and any write error encountered.
 func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -90,7 +88,7 @@ func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...any) (int, error) {
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
 func (cw CondWrapper) Sprint(a ...any) string {
-	if !cw.match {
+	if !cw {
 		return ""
 	}
 
@@ -100,7 +98,7 @@ func (cw CondWrapper) Sprint(a ...any) string {
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
 func (cw CondWrapper) Sprintf(f string, a ...any) string {
-	if !cw.match {
+	if !cw {
 		return ""
 	}
 
@@ -111,7 +109,7 @@ func (cw CondWrapper) Sprintf(f string, a ...any) string {
 // resulting string. Spaces are always added between operands and a newline is
 // appended.
 func (cw CondWrapper) Sprintln(a ...any) string {
-	if !cw.match {
+	if !cw {
 		return ""
 	}
 
@@ -120,7 +118,7 @@ func (cw CondWrapper) Sprintln(a ...any) string {
 
 // TPrint removes all content on the current line and prints the new message
 func (cw CondWrapper) TPrint(a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -129,7 +127,7 @@ func (cw CondWrapper) TPrint(a ...any) (int, error) {
 
 // TPrintf removes all content on the current line and prints the new message
 func (cw CondWrapper) TPrintf(f string, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -139,7 +137,7 @@ func (cw CondWrapper) TPrintf(f string, a ...any) (int, error) {
 // TPrintln removes all content on the current line and prints the new message
 // with a new line symbol at the end
 func (cw CondWrapper) TPrintln(a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -149,7 +147,7 @@ func (cw CondWrapper) TPrintln(a ...any) (int, error) {
 // LPrint formats using the default formats for its operands and writes to standard
 // output limited by the text size
 func (cw CondWrapper) LPrint(maxSize int, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -159,7 +157,7 @@ func (cw CondWrapper) LPrint(maxSize int, a ...any) (int, error) {
 // LPrintf formats according to a format specifier and writes to standard output
 // limited by the text size
 func (cw CondWrapper) LPrintf(maxSize int, f string, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -169,7 +167,7 @@ func (cw CondWrapper) LPrintf(maxSize int, f string, a ...any) (int, error) {
 // LPrintln formats using the default formats for its operands and writes to standard
 // output limited by the text size
 func (cw CondWrapper) LPrintln(maxSize int, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -179,7 +177,7 @@ func (cw CondWrapper) LPrintln(maxSize int, a ...any) (int, error) {
 // TLPrint removes all content on the current line and prints the new message
 // limited by the text size
 func (cw CondWrapper) TLPrint(maxSize int, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -189,7 +187,7 @@ func (cw CondWrapper) TLPrint(maxSize int, a ...any) (int, error) {
 // TLPrintf removes all content on the current line and prints the new message
 // limited by the text size
 func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -199,7 +197,7 @@ func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...any) (int, error) {
 // TPrintln removes all content on the current line and prints the new message
 // limited by the text size with a new line symbol at the end
 func (cw CondWrapper) TLPrintln(maxSize int, a ...any) (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -208,7 +206,7 @@ func (cw CondWrapper) TLPrintln(maxSize int, a ...any) (int, error) {
 
 // NewLine prints a newline to standard output
 func (cw CondWrapper) NewLine() (int, error) {
-	if !cw.match {
+	if !cw {
 		return 0, nil
 	}
 
@@ -217,7 +215,7 @@ func (cw CondWrapper) NewLine() (int, error) {
 
 // Bell prints alert (bell) symbol
 func (cw CondWrapper) Bell() {
-	if !cw.match {
+	if !cw {
 		return
 	}
 
