@@ -109,6 +109,7 @@ func (s *TableSuite) TestRender(c *C) {
 	t.BorderColorTag = "{b}"
 	t.SeparatorColorTag = "{g}"
 	t.HeaderCapitalize = true
+	t.Breaks = 2
 
 	c.Assert(t.Render(), NotNil)
 
