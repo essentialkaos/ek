@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.9.3](https://kaos.sh/ek/13.9.3)
+
+- `[fmtutil/table]` Added automatic breaks feature
+
 ### [13.9.2](https://kaos.sh/ek/13.9.2)
 
 - `[knf]` Added helper `Q`
