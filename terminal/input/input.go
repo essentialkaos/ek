@@ -93,7 +93,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 			fmtc.Println(TitleColorTag + getAnswerTitle(title, defaultAnswer) + "{!}")
 		}
 
-		fmtc.Println(Prompt + "y")
+		fmtc.Println(Prompt + "{s}Y{!}")
 
 		if NewLine {
 			fmtc.NewLine()
