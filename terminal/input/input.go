@@ -37,13 +37,6 @@ type HintHandler = func(input string) string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Validator is input validator type
-type Validator interface {
-	Validate(input string) (string, error)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // ErrKillSignal is error type when user cancel input
 var ErrKillSignal = linenoise.ErrKillSignal
 
