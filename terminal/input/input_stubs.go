@@ -19,8 +19,18 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CompletionHandler is completion handler
+type CompletionHandler = func(input string) []string
+
+// HintHandler is hint handler
+type HintHandler = func(input string) string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ ErrKillSignal is error type when user cancel input
 var ErrKillSignal = errors.New("")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // ❗ Prompt is prompt string
 var Prompt = "> "
@@ -51,8 +61,13 @@ var NewLine = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrInvalidAnswer is error for wrong answer for Y/N question
+var ErrInvalidAnswer = errors.New("")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ Read reads user input
-func Read(title string, nonEmpty bool) (string, error) {
+func Read(title string, validators ...Validator) (string, error) {
 	panic("UNSUPPORTED")
 }
 
@@ -63,13 +78,13 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 
 // ❗ ReadPassword reads password or some private input that will be hidden
 // after pressing Enter
-func ReadPassword(title string, nonEmpty bool) (string, error) {
+func ReadPassword(title string, validators ...Validator) (string, error) {
 	panic("UNSUPPORTED")
 }
 
 // ❗ ReadPasswordSecure reads password or some private input that will be hidden
 // after pressing Enter
-func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
+func ReadPasswordSecure(title string, validators ...Validator) (*secstr.String, error) {
 	panic("UNSUPPORTED")
 }
 

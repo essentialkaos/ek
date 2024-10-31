@@ -47,6 +47,9 @@ type Table struct {
 	// Width is table maximum width
 	Width int
 
+	// Breaks is an interval for separators between given number of rows
+	Breaks int
+
 	// SeparatorSymbol is symbol used for borders rendering
 	BorderSymbol string
 
@@ -91,6 +94,9 @@ type Table struct {
 
 	// Slice with auto calculated sizes
 	columnSizes []int
+
+	// Cursor is number of the latest record
+	cursor int
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -116,6 +122,9 @@ var SeparatorColorTag = "{s}"
 // ColumnSeparatorSymbol is default column separator symbol
 var ColumnSeparatorSymbol = "|"
 
+// Breaks is an interval for separators between given number of rows
+var Breaks = -1
+
 // FullScreen is a flag for full-screen table by default
 var FullScreen = true
 
@@ -126,6 +135,7 @@ func NewTable(headers ...string) *Table {
 	return &Table{
 		HeaderCapitalize: HeaderCapitalize,
 		FullScreen:       FullScreen,
+		Breaks:           Breaks,
 		Headers:          headers,
 		Processor:        convertSlice,
 	}
@@ -354,6 +364,10 @@ func renderData(t *Table) {
 
 // renderRowData render data in row
 func renderRowData(t *Table, data []string, totalColumns int) {
+	if t.Breaks > 0 && t.cursor > 0 && t.cursor%t.Breaks == 0 {
+		renderSeparator(t)
+	}
+
 	for columnIndex, columnData := range data {
 		if columnIndex == totalColumns {
 			break
@@ -376,6 +390,8 @@ func renderRowData(t *Table, data []string, totalColumns int) {
 			)
 		}
 	}
+
+	t.cursor++
 
 	fmtc.NewLine()
 }

@@ -16,25 +16,35 @@ import (
 
 func ExampleRead() {
 	// User must enter name
-	input, err := Read("Please enter user name", true)
+	userName, err := Read("Please enter user name", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("User name: %s\n", input)
+	fmt.Printf("User name: %s\n", userName)
 
 	// You can read user input without providing any title
 	fmt.Println("Please enter user name")
-	input, err = Read("", true)
+	userName, err = Read("")
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("User name: %s\n", input)
+	fmt.Printf("User name: %s\n", userName)
+
+	// You can define many validators at once
+	userEmail, err := Read("Please enter user email", NotEmpty, IsEmail)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("User email: %s\n", userEmail)
 }
 
 func ExampleReadPassword() {
@@ -44,7 +54,7 @@ func ExampleReadPassword() {
 	NewLine = true
 
 	// User must enter the password
-	password, err := ReadPassword("Please enter password", true)
+	password, err := ReadPassword("Please enter password", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -60,7 +70,7 @@ func ExampleReadPasswordSecure() {
 	MaskSymbolColorTag = "{s}"
 
 	// User must enter the password
-	password, err := ReadPasswordSecure("Please enter password", true)
+	password, err := ReadPasswordSecure("Please enter password", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -87,7 +97,7 @@ func ExampleReadAnswer() {
 }
 
 func ExampleAddHistory() {
-	input, err := Read("Please enter user name", true)
+	input, err := Read("Please enter user name", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -101,7 +111,7 @@ func ExampleAddHistory() {
 }
 
 func ExampleSetHistoryCapacity() {
-	input, err := Read("Please enter user name", true)
+	input, err := Read("Please enter user name", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -142,7 +152,7 @@ func ExampleSetCompletionHandler() {
 		return ""
 	})
 
-	input, err := Read("Please enter command", true)
+	input, err := Read("Please enter command", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -177,7 +187,7 @@ func ExampleSetHintHandler() {
 		return ""
 	})
 
-	input, err := Read("Please enter command", true)
+	input, err := Read("Please enter command", NotEmpty)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)

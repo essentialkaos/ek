@@ -1,5 +1,15 @@
 ## Changelog
 
+### [13.10.0](https://kaos.sh/ek/13.10.0)
+
+> [!IMPORTANT]
+> This release contains breaking changes to the `input.Read`, `input.ReadPassword`, and `input.ReadPasswordSecure` methods. Prior to this release, all of these methods took a boolean argument to disallow empty input. Since we are adding input validators, you will need to use the `NotEmpty` validator for the same behaviour.
+
+- `[fmtutil/table]` Added automatic breaks feature
+- `[terminal/input]` Added input validation feature
+- `[terminal/input]` Fixed bug with hiding the password when `HidePassword` is set to true and an empty input error is displayed
+- `[terminal/input]` Fixed bug with printing new line after input field on error
+
 ### [13.9.2](https://kaos.sh/ek/13.9.2)
 
 - `[knf]` Added helper `Q`

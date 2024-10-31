@@ -71,13 +71,18 @@ var NewLine = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrInvalidAnswer is error for wrong answer for Y/N question
+var ErrInvalidAnswer = fmt.Errorf("Please enter Y or N")
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var oldTMUXFlag int8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Read reads user input
-func Read(title string, nonEmpty bool) (string, error) {
-	return readUserInput(title, nonEmpty, false)
+func Read(title string, validators ...Validator) (string, error) {
+	return readUserInput(title, false, validators)
 }
 
 // ReadAnswer reads user's answer to yes/no question
@@ -93,7 +98,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 			fmtc.Println(TitleColorTag + getAnswerTitle(title, defaultAnswer) + "{!}")
 		}
 
-		fmtc.Println(Prompt + "y")
+		fmtc.Println(Prompt + "{s}Y{!}")
 
 		if NewLine {
 			fmtc.NewLine()
@@ -104,7 +109,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 
 	for {
 		answer, err := readUserInput(
-			getAnswerTitle(title, defaultAnswer), false, false,
+			getAnswerTitle(title, defaultAnswer), false, nil,
 		)
 
 		if err != nil {
@@ -121,7 +126,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 		case "N":
 			return false, nil
 		default:
-			terminal.Warn("Please enter Y or N")
+			terminal.Warn(ErrInvalidAnswer)
 			fmtc.NewLine()
 		}
 	}
@@ -129,14 +134,14 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 
 // ReadPassword reads password or some private input that will be hidden
 // after pressing Enter
-func ReadPassword(title string, nonEmpty bool) (string, error) {
-	return readUserInput(title, nonEmpty, true)
+func ReadPassword(title string, validators ...Validator) (string, error) {
+	return readUserInput(title, true, validators)
 }
 
 // ReadPasswordSecure reads password or some private input that will be hidden
 // after pressing Enter
-func ReadPasswordSecure(title string, nonEmpty bool) (*secstr.String, error) {
-	password, err := readUserInput(title, nonEmpty, true)
+func ReadPasswordSecure(title string, validators ...Validator) (*secstr.String, error) {
+	password, err := readUserInput(title, true, validators)
 
 	if err != nil {
 		return nil, err
@@ -202,16 +207,16 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf(TitleColorTag+"%s ({*}Y{!*}/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (Y/n){!}", title)
 	case "N":
-		return fmt.Sprintf(TitleColorTag+"%s (y/{*}N{!*}){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (y/N){!}", title)
 	default:
 		return fmt.Sprintf(TitleColorTag+"%s (y/n){!}", title)
 	}
 }
 
 // readUserInput reads user input
-func readUserInput(title string, nonEmpty, private bool) (string, error) {
+func readUserInput(title string, private bool, validators []Validator) (string, error) {
 	if title != "" {
 		fmtc.Println(TitleColorTag + title + "{!}")
 	}
@@ -219,24 +224,34 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 	var input string
 	var err error
 
-	if private && HidePassword {
-		linenoise.SetMaskMode(true)
+	if NewLine {
+		defer fmtc.NewLine()
 	}
 
+	if private && HidePassword {
+		linenoise.SetMaskMode(true)
+		defer linenoise.SetMaskMode(false)
+	}
+
+INPUT_LOOP:
 	for {
 		input, err = linenoise.Line(fmtc.Sprintf(Prompt))
-
-		if private && HidePassword {
-			linenoise.SetMaskMode(false)
-		}
 
 		if err != nil {
 			return "", err
 		}
 
-		if nonEmpty && strings.TrimSpace(input) == "" {
-			terminal.Warn("\nYou must enter non-empty value\n")
-			continue
+		if len(validators) != 0 {
+			for _, validator := range validators {
+				input, err = validator.Validate(input)
+
+				if err != nil {
+					fmtc.NewLine()
+					terminal.Warn(err.Error())
+					fmtc.NewLine()
+					continue INPUT_LOOP
+				}
+			}
 		}
 
 		if private && input != "" {
@@ -254,10 +269,6 @@ func readUserInput(title string, nonEmpty, private bool) (string, error) {
 		}
 
 		break
-	}
-
-	if NewLine {
-		fmtc.NewLine()
 	}
 
 	return input, err
