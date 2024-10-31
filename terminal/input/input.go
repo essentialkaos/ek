@@ -207,9 +207,9 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf(TitleColorTag+"%s ({*}Y{!*}/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (Y/n){!}", title)
 	case "N":
-		return fmt.Sprintf(TitleColorTag+"%s (y/{*}N{!*}){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s (y/N){!}", title)
 	default:
 		return fmt.Sprintf(TitleColorTag+"%s (y/n){!}", title)
 	}
