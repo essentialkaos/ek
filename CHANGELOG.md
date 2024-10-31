@@ -2,7 +2,7 @@
 
 ### [13.10.0](https://kaos.sh/ek/13.10.0)
 
-> [!CAUTION]
+> [!IMPORTANT]
 > This release contains breaking changes to the `input.Read`, `input.ReadPassword`, and `input.ReadPasswordSecure` methods. Prior to this release, all of these methods took a boolean argument to disallow empty input. Since we are adding input validators, you will need to use the `NotEmpty` validator for the same behaviour.
 
 - `[fmtutil/table]` Added automatic breaks feature
