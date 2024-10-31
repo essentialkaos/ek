@@ -7,6 +7,8 @@
 
 - `[fmtutil/table]` Added automatic breaks feature
 - `[terminal/input]` Added input validation feature
+- `[terminal/input]` Fixed bug with hiding the password when HidePassword is set to true and an empty input error is displayed
+- `[terminal/input]` Fixed bug with printing new line after input field on error
 
 ### [13.9.2](https://kaos.sh/ek/13.9.2)
 

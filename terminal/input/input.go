@@ -224,17 +224,18 @@ func readUserInput(title string, private bool, validators []Validator) (string, 
 	var input string
 	var err error
 
+	if NewLine {
+		defer fmtc.NewLine()
+	}
+
 	if private && HidePassword {
 		linenoise.SetMaskMode(true)
+		defer linenoise.SetMaskMode(false)
 	}
 
 INPUT_LOOP:
 	for {
 		input, err = linenoise.Line(fmtc.Sprintf(Prompt))
-
-		if private && HidePassword {
-			linenoise.SetMaskMode(false)
-		}
 
 		if err != nil {
 			return "", err
@@ -268,10 +269,6 @@ INPUT_LOOP:
 		}
 
 		break
-	}
-
-	if NewLine {
-		fmtc.NewLine()
 	}
 
 	return input, err
