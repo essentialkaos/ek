@@ -76,3 +76,8 @@ func (s *MathUtilSuite) TestFromPerc(c *C) {
 	c.Assert(FromPerc(250, 100), Equals, 250.0)
 	c.Assert(FromPerc(25.55, -100), Equals, -25.55)
 }
+
+func (s *MathUtilSuite) TestB(c *C) {
+	c.Assert(B(true, 2.3, 3.7), Equals, 2.3)
+	c.Assert(B(false, 2.3, 3.7), Equals, 3.7)
+}

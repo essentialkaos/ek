@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.10.1](https://kaos.sh/ek/13.10.1)
+
+* `[mathutil]` Added shorthand helper `B`
+
 ### [13.10.0](https://kaos.sh/ek/13.10.0)
 
 > [!IMPORTANT]

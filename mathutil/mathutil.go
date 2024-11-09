@@ -31,6 +31,17 @@ type NumericNeg interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// B is shorthand for choosing value by condition
+func B[N Numeric](cond bool, positive, negative N) N {
+	if cond {
+		return positive
+	}
+
+	return negative
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // IsInt returns true if given string contains int symbols.
 //
 // Note that this method does not validate the given value.
