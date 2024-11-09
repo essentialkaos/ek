@@ -13,6 +13,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleB() {
+	isRoot := true
+
+	fmt.Println(B(isRoot, 0, 1000))
+	fmt.Println(B(!isRoot, 0, 1000))
+	// Output:
+	// 0
+	// 1000
+}
+
 func ExampleIsNumber() {
 	fmt.Println(IsNumber("test"))
 	fmt.Println(IsNumber("746131"))
