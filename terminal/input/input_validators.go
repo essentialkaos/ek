@@ -82,7 +82,7 @@ func (v isNumberValidator) Validate(input string) (string, error) {
 	input = strings.TrimSpace(input)
 
 	if input == "" {
-		return input, nil // Empty imput is okay
+		return input, nil // Empty input is okay
 	}
 
 	_, err := strconv.ParseInt(input, 10, 64)
@@ -99,7 +99,7 @@ func (v isFloatValidator) Validate(input string) (string, error) {
 	input = strings.TrimSpace(input)
 
 	if input == "" {
-		return input, nil // Empty imput is okay
+		return input, nil // Empty input is okay
 	}
 
 	_, err := strconv.ParseFloat(input, 64)
@@ -116,7 +116,7 @@ func (v isEmailValidator) Validate(input string) (string, error) {
 	input = strings.TrimSpace(input)
 
 	if input == "" {
-		return input, nil // Empty imput is okay
+		return input, nil // Empty input is okay
 	}
 
 	name, domain, ok := strings.Cut(input, "@")
@@ -134,7 +134,7 @@ func (v isURLValidator) Validate(input string) (string, error) {
 	input = strings.TrimSpace(input)
 
 	if input == "" {
-		return input, nil // Empty imput is okay
+		return input, nil // Empty input is okay
 	}
 
 	switch {
