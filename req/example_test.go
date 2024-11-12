@@ -24,6 +24,7 @@ func ExampleRequest_Do() {
 	SetUserAgent("my-supper-app", "1.0")
 	SetDialTimeout(30.0)
 	SetRequestTimeout(30.0)
+	SetLimit(15.0)
 
 	resp, err := Request{
 		Method: GET,
