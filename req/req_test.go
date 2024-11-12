@@ -81,6 +81,7 @@ func (s *ReqSuite) SetUpSuite(c *C) {
 
 	SetDialTimeout(60.0)
 	SetRequestTimeout(60.0)
+	SetLimit(1000.0)
 	SetUserAgent("req-test", "5", "Test/5.1.1", "Magic/4.2.1")
 
 	go runHTTPServer(s, c)
@@ -580,6 +581,14 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 	c.Assert(qrs, Equals, "a=1&b=abcd&c&d")
 }
 
+func (s *ReqSuite) TestLimiter(c *C) {
+	var l *limiter
+
+	c.Assert(createLimiter(0.0), IsNil)
+
+	l.Wait()
+}
+
 func (s *ReqSuite) TestNil(c *C) {
 	var e *Engine
 
@@ -589,6 +598,7 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(func() { e.SetUserAgent("APP", "1") }, NotPanics)
 	c.Assert(func() { e.SetDialTimeout(1) }, NotPanics)
 	c.Assert(func() { e.SetRequestTimeout(1) }, NotPanics)
+	c.Assert(func() { e.SetLimit(1.0) }, NotPanics)
 
 	var r *Response
 

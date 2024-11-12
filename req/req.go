@@ -224,8 +224,9 @@ type Engine struct {
 	Transport *http.Transport // Transport is default transport struct
 	Client    *http.Client    // Client is default client struct
 
-	dialTimeout    float64 // dialTimeout is dial timeout in seconds
-	requestTimeout float64 // requestTimeout is request timeout in seconds
+	limiter        *limiter // Request limiter
+	dialTimeout    float64  // dialTimeout is dial timeout in seconds
+	requestTimeout float64  // requestTimeout is request timeout in seconds
 
 	initialized bool
 }
@@ -281,6 +282,12 @@ func SetDialTimeout(timeout float64) {
 // SetRequestTimeout sets request timeout for global engine
 func SetRequestTimeout(timeout float64) {
 	Global.SetRequestTimeout(timeout)
+}
+
+// SetLimit sets a hard limit on the number of requests per second (useful for
+// working with APIs)
+func SetLimit(rps float64) {
+	Global.SetLimit(rps)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -421,6 +428,16 @@ func (e *Engine) SetRequestTimeout(timeout float64) {
 			e.Client.Timeout = time.Duration(timeout * float64(time.Second))
 		}
 	}
+}
+
+// SetLimit sets a hard limit on the number of requests per second (useful for
+// working with APIs)
+func (e *Engine) SetLimit(rps float64) {
+	if e == nil {
+		return
+	}
+
+	e.limiter = createLimiter(rps)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -604,6 +621,10 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if e.limiter != nil {
+		e.limiter.Wait()
 	}
 
 	resp, err := e.Client.Do(req)
