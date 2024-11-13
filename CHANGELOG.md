@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.11.1](https://kaos.sh/ek/13.11.1)
+
+* `[req]` Make `Limiter` public
+
 ### [13.11.0](https://kaos.sh/ek/13.11.0)
 
 * `[req]` Added request limiter

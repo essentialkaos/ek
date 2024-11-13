@@ -224,7 +224,7 @@ type Engine struct {
 	Transport *http.Transport // Transport is default transport struct
 	Client    *http.Client    // Client is default client struct
 
-	limiter        *limiter // Request limiter
+	limiter        *Limiter // Request limiter
 	dialTimeout    float64  // dialTimeout is dial timeout in seconds
 	requestTimeout float64  // requestTimeout is request timeout in seconds
 
@@ -437,7 +437,7 @@ func (e *Engine) SetLimit(rps float64) {
 		return
 	}
 
-	e.limiter = createLimiter(rps)
+	e.limiter = NewLimiter(rps)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

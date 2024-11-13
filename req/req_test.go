@@ -582,9 +582,9 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 }
 
 func (s *ReqSuite) TestLimiter(c *C) {
-	var l *limiter
+	var l *Limiter
 
-	c.Assert(createLimiter(0.0), IsNil)
+	c.Assert(NewLimiter(0.0), IsNil)
 
 	l.Wait()
 }
