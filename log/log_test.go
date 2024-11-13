@@ -10,6 +10,7 @@ package log
 import (
 	"encoding/json"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -485,8 +486,12 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:470) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:475) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:471) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:476) Test info 2")
+
+	frm := runtime.Frame{File: "/path/to/my/app/code/test.go", Line: 10}
+	c.Assert(extractCallerFromFrame(frm, true), Equals, "/path/to/my/app/code/test.go:10")
+	c.Assert(extractCallerFromFrame(frm, false), Equals, "code/test.go:10")
 }
 
 func (ls *LogSuite) TestWithFields(c *C) {
