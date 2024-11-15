@@ -365,37 +365,47 @@ MAINLOOP:
 // consecutive white space or comma characters
 func Fields(data string) []string {
 	var result []string
-	var item strings.Builder
+	var buf bytes.Buffer
 	var waitChar rune
+	var escaped bool
 
 	for _, char := range data {
 		switch char {
+		case '\\':
+			buf.WriteRune(char)
+			escaped = true
 		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»', '„':
-			if waitChar == 0 {
+			if waitChar == 0 && !escaped {
 				waitChar = getClosingChar(char)
-			} else if waitChar != 0 && waitChar == char {
-				result = appendField(result, item.String())
-				item.Reset()
+			} else if waitChar != 0 && waitChar == char && !escaped {
+				result = appendField(result, buf.String())
+				buf.Reset()
 				waitChar = 0
 			} else {
-				item.WriteRune(char)
+				if escaped {
+					buf.Truncate(buf.Len() - 1)
+				}
+				buf.WriteRune(char)
+				escaped = false
 			}
 
 		case ',', ';', ' ':
 			if waitChar != 0 {
-				item.WriteRune(char)
+				buf.WriteRune(char)
+				escaped = false
 			} else {
-				result = appendField(result, item.String())
-				item.Reset()
+				result = appendField(result, buf.String())
+				buf.Reset()
 			}
 
 		default:
-			item.WriteRune(char)
+			buf.WriteRune(char)
+			escaped = false
 		}
 	}
 
-	if item.Len() != 0 {
-		result = appendField(result, item.String())
+	if buf.Len() != 0 {
+		result = appendField(result, buf.String())
 	}
 
 	return result

@@ -140,13 +140,13 @@ func (s *StrUtilSuite) TestFields(c *C) {
 	c.Assert(Fields("1,2,3,4,5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1;2;3;4;5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
 	c.Assert(Fields("1,  2, 3,   4, 5"), DeepEquals, []string{"1", "2", "3", "4", "5"})
-	c.Assert(Fields("\"1 2\" 3 \"4 5\""), DeepEquals, []string{"1 2", "3", "4 5"})
+	c.Assert(Fields(`"1 2" 3 "4 5"`), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("'1 2' 3 '4 5'"), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("‘1 2’ 3 ‘4 5’"), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("“1 2” 3 “4 5”"), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("„1 2“ 3 «4 5»"), DeepEquals, []string{"1 2", "3", "4 5"})
 	c.Assert(Fields("«1 '2'» 3 «4 “5”»"), DeepEquals, []string{"1 '2'", "3", "4 “5”"})
-	c.Assert(Fields("Bob  Alice, 'Mary Key', \"John 'Dow'\""), DeepEquals, []string{"Bob", "Alice", "Mary Key", "John 'Dow'"})
+	c.Assert(Fields(`Bob  Alice, 'Mary Key', "John \"Big John\" 'Dow'"`), DeepEquals, []string{"Bob", "Alice", "Mary Key", "John \"Big John\" 'Dow'"})
 }
 
 func (s *StrUtilSuite) TestReadField(c *C) {
@@ -260,7 +260,7 @@ func (s *StrUtilSuite) BenchmarkSize(c *C) {
 
 func (s *StrUtilSuite) BenchmarkFields(c *C) {
 	for i := 0; i < c.N; i++ {
-		Fields("\"1 2\" 3 \"4 5\"")
+		Fields(`"123" 59 "31" '2'`)
 	}
 }
 

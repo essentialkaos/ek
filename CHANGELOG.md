@@ -6,6 +6,7 @@
 * `[req]` Added `Retrier`
 * `[req]` Make `Limiter` public
 * `[log]` Added `WithFullCallerPath` option to enable the output of the full caller path
+* `[strutil]` Added support of escaped strings to `Fields`
 
 ### [13.11.0](https://kaos.sh/ek/13.11.0)
 
