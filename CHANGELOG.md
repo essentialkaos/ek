@@ -1,7 +1,8 @@
 ## Changelog
 
-### [13.11.1](https://kaos.sh/ek/13.11.1)
+### [13.12.0](https://kaos.sh/ek/13.12.0)
 
+* `[req]` Added custom timeout per request
 * `[req]` Make `Limiter` public
 * `[log]` Added `WithFullCallerPath` option to enable the output of the full caller path
 

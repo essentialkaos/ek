@@ -42,6 +42,7 @@ const (
 	_URL_STRING_RESP  = "/string-response"
 	_URL_JSON_RESP    = "/json-response"
 	_URL_DISCARD      = "/discard"
+	_URL_TIMEOUT      = "/timeout"
 )
 
 const (
@@ -421,6 +422,15 @@ func (s *ReqSuite) TestDiscard(c *C) {
 	c.Assert(resp.StatusCode, Equals, 500)
 }
 
+func (s *ReqSuite) TestTimeout(c *C) {
+	_, err := Request{
+		URL:     s.url + _URL_TIMEOUT,
+		Timeout: 10 * time.Millisecond,
+	}.Do()
+
+	c.Assert(err, NotNil)
+}
+
 func (s *ReqSuite) TestEncoding(c *C) {
 	resp, err := Request{
 		URL:  s.url + "/404",
@@ -669,6 +679,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_STRING_RESP, stringRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_TIMEOUT, timeoutRequestHandler)
 
 	err = server.Serve(listener)
 
@@ -948,4 +959,10 @@ func discardRequestHandler(w http.ResponseWriter, r *http.Request) {
   "integer": 912,
   "boolean": true }`,
 	))
+}
+
+func timeoutRequestHandler(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(100 * time.Millisecond)
+	w.WriteHeader(200)
+	w.Write([]byte(`{}`))
 }
