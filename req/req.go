@@ -369,6 +369,11 @@ func (e *Engine) Patch(r Request) (*Response, error) {
 	return e.doRequest(r, PATCH)
 }
 
+// Delete sends DELETE request and process response
+func (e *Engine) Delete(r Request) (*Response, error) {
+	return e.doRequest(r, DELETE)
+}
+
 // PostFile sends multipart POST request with file data
 func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
 	err := configureMultipartRequest(&r, file, fieldName, extraFields)
@@ -378,11 +383,6 @@ func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[str
 	}
 
 	return e.doRequest(r, POST)
-}
-
-// Delete sends DELETE request and process response
-func (e *Engine) Delete(r Request) (*Response, error) {
-	return e.doRequest(r, DELETE)
 }
 
 // SetUserAgent sets user agent based on app name and version

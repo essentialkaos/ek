@@ -9,6 +9,7 @@ package req
 
 import (
 	"fmt"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -152,4 +153,21 @@ func ExampleRequest_PostFile() {
 	}
 
 	fmt.Println("File successfully uploaded!")
+}
+
+func ExampleNewRetrier() {
+	r := NewRetrier()
+
+	resp, err := r.Get(
+		Request{URL: "https://my.domain.com"},
+		Retry{Num: 5, Status: STATUS_OK, Pause: time.Second},
+	)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	// print status code
+	fmt.Printf("Status code: %d\n", resp.StatusCode)
 }

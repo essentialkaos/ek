@@ -599,6 +599,69 @@ func (s *ReqSuite) TestLimiter(c *C) {
 	l.Wait()
 }
 
+func (s *ReqSuite) TestRetrier(c *C) {
+	r := NewRetrier(Global)
+
+	resp, err := r.Get(
+		Request{URL: s.url + _URL_GET},
+		Retry{Num: 3},
+	)
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: "http://127.0.0.1:1"},
+		Retry{Num: 3},
+	)
+
+	c.Assert(err, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: s.url + "/unknown"},
+		Retry{Num: 3, Status: STATUS_OK, Pause: time.Millisecond},
+	)
+
+	c.Assert(err, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: s.url + "/unknown"},
+		Retry{Num: 3, MinStatus: 299},
+	)
+
+	c.Assert(err, NotNil)
+}
+
+func (s *ReqSuite) TestRetrierErrors(c *C) {
+	var r *Retrier
+
+	_, err := r.Do(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Get(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Post(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Put(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Head(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Patch(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Delete(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+
+	r = &Retrier{}
+	_, err = r.Do(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilEngine)
+
+	c.Assert(Retry{Num: 3}.Validate(), IsNil)
+	c.Assert(Retry{Num: -1}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, Status: 20}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, Status: 2000}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, MinStatus: 20}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, MinStatus: 2000}.Validate(), NotNil)
+}
+
 func (s *ReqSuite) TestNil(c *C) {
 	var e *Engine
 
