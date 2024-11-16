@@ -17,7 +17,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Fuzz(data []byte) int {
-	_, err := readKNFData(bytes.NewReader(data))
+	_, err := readData(bytes.NewReader(data))
 
 	if err != nil {
 		return 0
