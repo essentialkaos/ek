@@ -382,7 +382,7 @@ func Fields(data string) []string {
 				buf.Reset()
 				waitChar = 0
 			} else {
-				if escaped {
+				if escaped && buf.Len() > 0 {
 					buf.Truncate(buf.Len() - 1)
 				}
 				buf.WriteRune(char)
