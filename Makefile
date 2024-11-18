@@ -7,7 +7,6 @@ ifdef VERBOSE ## Print verbose information (Flag)
 VERBOSE_FLAG = -v
 endif
 
-COMPAT ?= 1.19
 MAKEDIR = $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 GITREV ?= $(shell test -s $(MAKEDIR)/.git && git rev-parse --short HEAD)
 

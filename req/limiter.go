@@ -11,21 +11,21 @@ import "time"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// limiter is request limiter
-type limiter struct {
+// Limiter is request limiter
+type Limiter struct {
 	lastCall time.Time
 	delay    time.Duration
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// createLimiter creates new limiter
-func createLimiter(rps float64) *limiter {
+// NewLimiter creates a new limiter. If rps is less than or equal to 0, it returns nil.
+func NewLimiter(rps float64) *Limiter {
 	if rps <= 0 {
 		return nil
 	}
 
-	return &limiter{
+	return &Limiter{
 		delay: time.Duration(float64(time.Second) / rps),
 	}
 }
@@ -33,7 +33,7 @@ func createLimiter(rps float64) *limiter {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Wait blocks current goroutine execution until next time slot become available
-func (l *limiter) Wait() {
+func (l *Limiter) Wait() {
 	if l == nil {
 		return
 	}

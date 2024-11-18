@@ -145,10 +145,10 @@ func ExampleReplaceIgnoreCase() {
 }
 
 func ExampleFields() {
-	fmt.Printf("%#v\n", Fields("Bob  Alice, 'Mary Key', \"John Dow\""))
+	fmt.Printf("%#v\n", Fields(`Bob  Alice, 'Mary Key', "John \"Big John\" Dow"`))
 
 	// Output:
-	// []string{"Bob", "Alice", "Mary Key", "John Dow"}
+	// []string{"Bob", "Alice", "Mary Key", "John \"Big John\" Dow"}
 }
 
 func ExampleReadField() {

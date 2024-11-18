@@ -42,6 +42,7 @@ const (
 	_URL_STRING_RESP  = "/string-response"
 	_URL_JSON_RESP    = "/json-response"
 	_URL_DISCARD      = "/discard"
+	_URL_TIMEOUT      = "/timeout"
 )
 
 const (
@@ -421,6 +422,15 @@ func (s *ReqSuite) TestDiscard(c *C) {
 	c.Assert(resp.StatusCode, Equals, 500)
 }
 
+func (s *ReqSuite) TestTimeout(c *C) {
+	_, err := Request{
+		URL:     s.url + _URL_TIMEOUT,
+		Timeout: 10 * time.Millisecond,
+	}.Do()
+
+	c.Assert(err, NotNil)
+}
+
 func (s *ReqSuite) TestEncoding(c *C) {
 	resp, err := Request{
 		URL:  s.url + "/404",
@@ -582,11 +592,74 @@ func (s *ReqSuite) TestQueryEncoding(c *C) {
 }
 
 func (s *ReqSuite) TestLimiter(c *C) {
-	var l *limiter
+	var l *Limiter
 
-	c.Assert(createLimiter(0.0), IsNil)
+	c.Assert(NewLimiter(0.0), IsNil)
 
 	l.Wait()
+}
+
+func (s *ReqSuite) TestRetrier(c *C) {
+	r := NewRetrier(Global)
+
+	resp, err := r.Get(
+		Request{URL: s.url + _URL_GET},
+		Retry{Num: 3},
+	)
+
+	c.Assert(err, IsNil)
+	c.Assert(resp, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: "http://127.0.0.1:1"},
+		Retry{Num: 3},
+	)
+
+	c.Assert(err, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: s.url + "/unknown"},
+		Retry{Num: 3, Status: STATUS_OK, Pause: time.Millisecond},
+	)
+
+	c.Assert(err, NotNil)
+
+	resp, err = r.Get(
+		Request{URL: s.url + "/unknown"},
+		Retry{Num: 3, MinStatus: 299},
+	)
+
+	c.Assert(err, NotNil)
+}
+
+func (s *ReqSuite) TestRetrierErrors(c *C) {
+	var r *Retrier
+
+	_, err := r.Do(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Get(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Post(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Put(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Head(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Patch(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+	_, err = r.Delete(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilRetrier)
+
+	r = &Retrier{}
+	_, err = r.Do(Request{}, Retry{Num: 10})
+	c.Assert(err, Equals, ErrNilEngine)
+
+	c.Assert(Retry{Num: 3}.Validate(), IsNil)
+	c.Assert(Retry{Num: -1}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, Status: 20}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, Status: 2000}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, MinStatus: 20}.Validate(), NotNil)
+	c.Assert(Retry{Num: 3, MinStatus: 2000}.Validate(), NotNil)
 }
 
 func (s *ReqSuite) TestNil(c *C) {
@@ -669,6 +742,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_STRING_RESP, stringRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_TIMEOUT, timeoutRequestHandler)
 
 	err = server.Serve(listener)
 
@@ -948,4 +1022,10 @@ func discardRequestHandler(w http.ResponseWriter, r *http.Request) {
   "integer": 912,
   "boolean": true }`,
 	))
+}
+
+func timeoutRequestHandler(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(100 * time.Millisecond)
+	w.WriteHeader(200)
+	w.Write([]byte(`{}`))
 }

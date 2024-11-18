@@ -64,10 +64,11 @@ type Logger struct {
 	PrefixError bool // Show prefix for error messages
 	PrefixCrit  bool // Show prefix for critical/fatal messages
 
-	TimeLayout string // Date and time layout used for rendering dates
-	UseColors  bool   // Enable ANSI escape codes for colors in output
-	UseJSON    bool   // Encode messages to JSON
-	WithCaller bool   // Show caller info
+	TimeLayout         string // Date and time layout used for rendering dates
+	UseColors          bool   // Enable ANSI escape codes for colors in output
+	UseJSON            bool   // Encode messages to JSON
+	WithCaller         bool   // Show caller info
+	WithFullCallerPath bool   // Show full path of caller
 
 	file     string
 	buf      bytes.Buffer
@@ -517,9 +518,9 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 
 	if l.WithCaller {
 		if l.UseColors {
-			fmtc.Fprintf(&l.buf, "{s-}(%s){!} ", getCallerFromStack())
+			fmtc.Fprintf(&l.buf, "{s-}(%s){!} ", getCallerFromStack(l.WithFullCallerPath))
 		} else {
-			l.buf.WriteString("(" + getCallerFromStack() + ") ")
+			l.buf.WriteString("(" + getCallerFromStack(l.WithFullCallerPath) + ") ")
 		}
 	}
 
@@ -577,7 +578,7 @@ func (l *Logger) writeJSON(level uint8, msg string, a ...any) error {
 	l.writeJSONTimestamp()
 
 	if l.WithCaller {
-		l.buf.WriteString(`"caller":"` + getCallerFromStack() + `",`)
+		l.buf.WriteString(`"caller":"` + getCallerFromStack(l.WithFullCallerPath) + `",`)
 	}
 
 	operands, fields := splitPayload(a)
@@ -880,7 +881,7 @@ func splitPayload(payload []any) ([]any, []any) {
 }
 
 // getCallerFromStack returns caller function and line from stack
-func getCallerFromStack() string {
+func getCallerFromStack(full bool) string {
 	pcs := make([]uintptr, 64)
 	n := runtime.Callers(2, pcs)
 
@@ -902,14 +903,18 @@ func getCallerFromStack() string {
 			continue
 		}
 
-		return extractCallerFromFrame(frame)
+		return extractCallerFromFrame(frame, full)
 	}
 
 	return "unknown"
 }
 
 // extractCallerFromFrame extracts caller info from frame
-func extractCallerFromFrame(f runtime.Frame) string {
+func extractCallerFromFrame(f runtime.Frame, full bool) string {
+	if full {
+		return f.File + ":" + strconv.Itoa(f.Line)
+	}
+
 	index := strutil.IndexByteSkip(f.File, '/', -1)
 	return f.File[index+1:] + ":" + strconv.Itoa(f.Line)
 }

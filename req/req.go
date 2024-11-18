@@ -10,6 +10,7 @@ package req
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -189,19 +190,20 @@ type Headers map[string]string
 
 // Request is basic struct
 type Request struct {
-	Method            string  // Request method
-	URL               string  // Request URL
-	Query             Query   // Map with query params
-	Body              any     // Request body
-	Headers           Headers // Map with headers
-	ContentType       string  // Content type header
-	Accept            string  // Accept header
-	BasicAuthUsername string  // Basic auth username
-	BasicAuthPassword string  // Basic auth password
-	BearerAuth        string  // Bearer auth token
-	AutoDiscard       bool    // Automatically discard all responses with status code > 299
-	FollowRedirect    bool    // Follow redirect
-	Close             bool    // Close indicates whether to close the connection after sending request
+	Method            string        // Request method
+	URL               string        // Request URL
+	Query             Query         // Map with query params
+	Body              any           // Request body
+	Headers           Headers       // Map with headers
+	ContentType       string        // Content type header
+	Accept            string        // Accept header
+	BasicAuthUsername string        // Basic auth username
+	BasicAuthPassword string        // Basic auth password
+	BearerAuth        string        // Bearer auth token
+	Timeout           time.Duration // Request timeout
+	AutoDiscard       bool          // Automatically discard all responses with status code > 299
+	FollowRedirect    bool          // Follow redirect
+	Close             bool          // Close indicates whether to close the connection after sending request
 }
 
 // Response is struct contains response data and properties
@@ -224,7 +226,7 @@ type Engine struct {
 	Transport *http.Transport // Transport is default transport struct
 	Client    *http.Client    // Client is default client struct
 
-	limiter        *limiter // Request limiter
+	limiter        *Limiter // Request limiter
 	dialTimeout    float64  // dialTimeout is dial timeout in seconds
 	requestTimeout float64  // requestTimeout is request timeout in seconds
 
@@ -367,6 +369,11 @@ func (e *Engine) Patch(r Request) (*Response, error) {
 	return e.doRequest(r, PATCH)
 }
 
+// Delete sends DELETE request and process response
+func (e *Engine) Delete(r Request) (*Response, error) {
+	return e.doRequest(r, DELETE)
+}
+
 // PostFile sends multipart POST request with file data
 func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
 	err := configureMultipartRequest(&r, file, fieldName, extraFields)
@@ -376,11 +383,6 @@ func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[str
 	}
 
 	return e.doRequest(r, POST)
-}
-
-// Delete sends DELETE request and process response
-func (e *Engine) Delete(r Request) (*Response, error) {
-	return e.doRequest(r, DELETE)
 }
 
 // SetUserAgent sets user agent based on app name and version
@@ -437,7 +439,7 @@ func (e *Engine) SetLimit(rps float64) {
 		return
 	}
 
-	e.limiter = createLimiter(rps)
+	e.limiter = NewLimiter(rps)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -617,7 +619,11 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		r.ContentType = contentType
 	}
 
-	req, err := createRequest(e, r, bodyReader)
+	req, cancel, err := createRequest(e, r, bodyReader)
+
+	if cancel != nil {
+		defer cancel()
+	}
 
 	if err != nil {
 		return nil, err
@@ -678,11 +684,21 @@ func checkEngine(e *Engine) error {
 	return nil
 }
 
-func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, error) {
-	req, err := http.NewRequest(r.Method, r.URL, bodyReader)
+func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, context.CancelFunc, error) {
+	var err error
+	var req *http.Request
+	var cancel context.CancelFunc
+
+	if r.Timeout != 0 {
+		var ctx context.Context
+		ctx, cancel = context.WithTimeout(context.TODO(), r.Timeout)
+		req, err = http.NewRequestWithContext(ctx, r.Method, r.URL, bodyReader)
+	} else {
+		req, err = http.NewRequest(r.Method, r.URL, bodyReader)
+	}
 
 	if err != nil {
-		return nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
+		return nil, nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
 	}
 
 	if r.Headers != nil && len(r.Headers) != 0 {
@@ -715,7 +731,7 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, e
 		req.Close = true
 	}
 
-	return req, nil
+	return req, cancel, nil
 }
 
 func configureMultipartRequest(r *Request, file, fieldName string, extraFields map[string]string) error {

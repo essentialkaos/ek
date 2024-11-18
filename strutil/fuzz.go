@@ -1,7 +1,7 @@
 //go:build gofuzz
 // +build gofuzz
 
-package knf
+package strutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -10,18 +10,7 @@ package knf
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"bytes"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 func Fuzz(data []byte) int {
-	_, err := readData(bytes.NewReader(data))
-
-	if err != nil {
-		return 0
-	}
-
-	return 1
+	Fields(string(data))
+	return 0
 }
