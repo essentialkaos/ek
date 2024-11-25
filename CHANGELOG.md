@@ -1,5 +1,12 @@
 ## Changelog
 
+### [13.13.0](https://kaos.sh/ek/13.13.0)
+
+* `[req]` Added support for different types of slices to `Query`
+* `[req]` Added support for `fmt.Stringer` interface to `Query`
+* `[req]` Added interface for custom struct encoding for `Query`
+* `[req]` Improved `Query`encoding
+
 ### [13.12.0](https://kaos.sh/ek/13.12.0)
 
 * `[req]` Added custom timeout per request

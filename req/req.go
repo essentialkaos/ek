@@ -17,7 +17,6 @@ import (
 	"mime/multipart"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -181,9 +180,6 @@ const (
 const USER_AGENT = "ek.go"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Query is a map[string]any used for query
-type Query map[string]any
 
 // Headers is a map[string]string used for headers
 type Headers map[string]string
@@ -541,44 +537,6 @@ func (e RequestError) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encode converts query struct to URL-encoded string
-func (q Query) Encode() string {
-	var result strings.Builder
-
-	for k, v := range q {
-		switch u := v.(type) {
-		case string:
-			if v == "" {
-				result.WriteString(k)
-			} else {
-				result.WriteString(k)
-				result.WriteRune('=')
-				result.WriteString(url.QueryEscape(u))
-			}
-		case nil:
-			result.WriteString(k)
-		default:
-			result.WriteString(k)
-			result.WriteRune('=')
-			result.WriteString(url.QueryEscape(fmt.Sprintf("%v", v)))
-		}
-
-		result.WriteRune('&')
-	}
-
-	if result.Len() == 0 {
-		return ""
-	}
-
-	return result.String()[:result.Len()-1]
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// This method has a lot of actions to prepare request for executing, so it is ok to
-// have so many conditions
-// codebeat:disable[CYCLO,ABC]
-
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	// Lazy engine initialization
 	if e != nil && !e.initialized {
@@ -605,7 +563,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 		r.Method = GET
 	}
 
-	if r.Query != nil && len(r.Query) != 0 {
+	if len(r.Query) != 0 {
 		r.URL += "?" + r.Query.Encode()
 	}
 
@@ -647,8 +605,6 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	return result, nil
 }
-
-// codebeat:enable[CYCLO,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
