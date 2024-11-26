@@ -1,29 +1,33 @@
 ## Changelog
 
+### [13.13.1](https://kaos.sh/ek/13.13.1)
+
+- `[spellcheck]` Distance calculation method now public
+
 ### [13.13.0](https://kaos.sh/ek/13.13.0)
 
-* `[req]` Added support for different types of slices to `Query`
-* `[req]` Added support for `fmt.Stringer` interface to `Query`
-* `[req]` Added interface for custom struct encoding for `Query`
-* `[req]` Improved `Query`encoding
+- `[req]` Added support for different types of slices to `Query`
+- `[req]` Added support for `fmt.Stringer` interface to `Query`
+- `[req]` Added interface for custom struct encoding for `Query`
+- `[req]` Improved `Query`encoding
 
 ### [13.12.0](https://kaos.sh/ek/13.12.0)
 
-* `[req]` Added custom timeout per request
-* `[req]` Added `Retrier`
-* `[req]` Make `Limiter` public
-* `[log]` Added `WithFullCallerPath` option to enable the output of the full caller path
-* `[strutil]` Added support of escaped strings to `Fields`
-* `[strutil]` Added fuzz tests for `Fields` method
-* `[knf]` Fixed build of fuzz tests
+- `[req]` Added custom timeout per request
+- `[req]` Added `Retrier`
+- `[req]` Make `Limiter` public
+- `[log]` Added `WithFullCallerPath` option to enable the output of the full caller path
+- `[strutil]` Added support of escaped strings to `Fields`
+- `[strutil]` Added fuzz tests for `Fields` method
+- `[knf]` Fixed build of fuzz tests
 
 ### [13.11.0](https://kaos.sh/ek/13.11.0)
 
-* `[req]` Added request limiter
+- `[req]` Added request limiter
 
 ### [13.10.1](https://kaos.sh/ek/13.10.1)
 
-* `[mathutil]` Added shorthand helper `B`
+- `[mathutil]` Added shorthand helper `B`
 
 ### [13.10.0](https://kaos.sh/ek/13.10.0)
 

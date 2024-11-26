@@ -33,17 +33,9 @@ type suggestItem struct {
 
 type suggestItems []*suggestItem
 
-func (s suggestItems) Len() int {
-	return len(s)
-}
-
-func (s suggestItems) Less(i, j int) bool {
-	return s[i].score < s[j].score
-}
-
-func (s suggestItems) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
+func (s suggestItems) Len() int           { return len(s) }
+func (s suggestItems) Less(i, j int) bool { return s[i].score < s[j].score }
+func (s suggestItems) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -68,62 +60,8 @@ func Train(words []string) *Model {
 	return model
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Correct corrects given value
-func (m *Model) Correct(word string) string {
-	if m == nil || len(m.terms) == 0 {
-		return word
-	}
-
-	var result *suggestItem
-
-	for _, si := range getSuggestSlice(m.terms, word) {
-		if result == nil {
-			result = si
-			continue
-		}
-
-		if si.score < result.score {
-			result = si
-			continue
-		}
-	}
-
-	if result.score > mathutil.Between(m.Threshold, 1, 1000) {
-		return word
-	}
-
-	return result.term
-}
-
-// Suggest suggests words for given word or word part
-func (m *Model) Suggest(word string, max int) []string {
-	if m == nil || len(m.terms) == 0 {
-		return []string{word}
-	}
-
-	if max == 1 {
-		return []string{m.Correct(word)}
-	}
-
-	sis := getSuggestSlice(m.terms, word)
-
-	sort.Sort(sis)
-
-	var result []string
-
-	for i := 0; i < mathutil.Between(max, 1, len(sis)); i++ {
-		result = append(result, sis[i].term)
-	}
-
-	return result
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Damerau–Levenshtein distance algorithm and code
-func getDLDistance(source, target string) int {
+// Distance calculates distance using Damerau–Levenshtein algorithm
+func Distance(source, target string) int {
 	sl, tl := len(source), len(target)
 
 	if sl == 0 {
@@ -184,11 +122,65 @@ func getDLDistance(source, target string) int {
 	return h[sl+1][tl+1]
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Correct corrects given value
+func (m *Model) Correct(word string) string {
+	if m == nil || len(m.terms) == 0 {
+		return word
+	}
+
+	var result *suggestItem
+
+	for _, si := range getSuggestSlice(m.terms, word) {
+		if result == nil {
+			result = si
+			continue
+		}
+
+		if si.score < result.score {
+			result = si
+			continue
+		}
+	}
+
+	if result.score > mathutil.Between(m.Threshold, 1, 1000) {
+		return word
+	}
+
+	return result.term
+}
+
+// Suggest suggests words for given word or word part
+func (m *Model) Suggest(word string, max int) []string {
+	if m == nil || len(m.terms) == 0 {
+		return []string{word}
+	}
+
+	if max == 1 {
+		return []string{m.Correct(word)}
+	}
+
+	sis := getSuggestSlice(m.terms, word)
+
+	sort.Sort(sis)
+
+	var result []string
+
+	for i := 0; i < mathutil.Between(max, 1, len(sis)); i++ {
+		result = append(result, sis[i].term)
+	}
+
+	return result
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func getSuggestSlice(terms []string, word string) suggestItems {
 	var result suggestItems
 
 	for _, t := range terms {
-		result = append(result, &suggestItem{t, getDLDistance(strings.ToLower(t), strings.ToLower(word))})
+		result = append(result, &suggestItem{t, Distance(strings.ToLower(t), strings.ToLower(word))})
 	}
 
 	return result
