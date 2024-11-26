@@ -101,6 +101,8 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 
 ### Projects with `EK`
 
+_It's hard to show all the possibilities of all the subpackages. But you can take a look at these open source projects that use almost all the features of this package in real-world tasks._
+
 - [aligo](https://kaos.sh/aligo) — Utility for checking and viewing Golang struct alignment info
 - [artefactor](https://kaos.sh/artefactor) — Utility for downloading artefacts from GitHub
 - [atlassian-cloud-backuper](https://kaos.sh/atlassian-cloud-backuper) — Tool for backuping Atlassian cloud services (_Jira and Confluence_)
