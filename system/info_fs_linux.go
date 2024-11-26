@@ -105,8 +105,6 @@ func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[s
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC,CYCLO]
-
 // parseIOStats parses IO stats data
 func parseIOStats(s *bufio.Scanner) (map[string]*IOStats, error) {
 	var err error
@@ -248,8 +246,6 @@ func parseFSInfo(s *bufio.Scanner, calculateStats bool) (map[string]*FSUsage, er
 
 	return info, nil
 }
-
-// enable:disable[LOC,ABC,CYCLO]
 
 // getHZ returns number of processor clock ticks per second
 func getHZ() float64 {

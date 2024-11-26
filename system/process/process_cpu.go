@@ -88,8 +88,6 @@ func GetInfo(pid int) (*ProcInfo, error) {
 	return parseStatData(text)
 }
 
-// codebeat:disable[LOC,ABC]
-
 // GetSample returns ProcSample for CPU usage calculation
 func GetSample(pid int) (ProcSample, error) {
 	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
@@ -110,8 +108,6 @@ func GetSample(pid int) (ProcSample, error) {
 	return parseSampleData(text)
 }
 
-// codebeat:enable[LOC,ABC]
-
 // CalculateCPUUsage calculates CPU usage
 func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	total := float64(s2 - s1)
@@ -121,8 +117,6 @@ func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// codebeat:disable[LOC,ABC]
 
 // parseStatData parses CPU stats data
 func parseStatData(text string) (*ProcInfo, error) {
@@ -196,8 +190,6 @@ func parseSampleData(text string) (ProcSample, error) {
 
 	return ProcSample(utime + stime + cutime + cstime), nil
 }
-
-// codebeat:enable[LOC,ABC]
 
 // parseIntField parses int value of field
 func parseIntField(s string, field int) (int, error) {

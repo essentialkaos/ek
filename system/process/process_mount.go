@@ -40,8 +40,6 @@ type MountInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // GetMountInfo returns info about process mounts
 func GetMountInfo(pid int) ([]*MountInfo, error) {
 	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/mountinfo", os.O_RDONLY, 0)
@@ -126,8 +124,6 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 
 	return info, nil
 }
-
-// codebeat:enable[LOC,ABC]
 
 // parseStDevValue parses st_dev major and minor values
 func parseStDevValue(data string) (uint16, uint16, error) {

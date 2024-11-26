@@ -113,8 +113,6 @@ func (h Handlers) TrackAsync() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // GetByName returns signal with given name
 func GetByName(name string) (syscall.Signal, error) {
 	switch strings.ToUpper(name) {
@@ -244,7 +242,5 @@ func GetByCode(code int) (syscall.Signal, error) {
 
 	return syscall.Signal(-1), fmt.Errorf("Unknown signal code %d", code)
 }
-
-// codebeat:enable[LOC,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -55,9 +55,6 @@ func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	return CalculateCPUUsage(c1, c2), nil
 }
 
-// It's ok to have so complex method for calculation
-// codebeat:disable[CYCLO]
-
 // CalculateCPUUsage calculates CPU usage based on CPUStats
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	prevIdle := c1.Idle + c1.Wait
@@ -83,8 +80,6 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 		Count:   c2.Count,
 	}
 }
-
-// codebeat:enable[CYCLO]
 
 // GetCPUStats returns basic CPU stats
 func GetCPUStats() (*CPUStats, error) {
@@ -147,8 +142,6 @@ func GetCPUCount() (CPUCount, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// codebeat:disable[LOC,ABC,CYCLO]
 
 // parseCPUStats parses cpu stats data
 func parseCPUStats(s *bufio.Scanner) (*CPUStats, error) {
@@ -287,8 +280,6 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 
 	return info, nil
 }
-
-// codebeat:enable[LOC,ABC,CYCLO]
 
 // parseCPUCountInfo parses CPU count data
 func parseCPUCountInfo(data string) uint32 {

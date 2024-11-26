@@ -266,9 +266,6 @@ func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter)
 	return result
 }
 
-// It's ok to have long function with many conditions to filter some entities
-// codebeat:disable[LOC,ABC,CYCLO]
-
 func isMatch(name, fullPath string, filter ListingFilter) bool {
 	var (
 		hasNotMatchPatterns = filter.hasNotMatchPatterns()
@@ -378,8 +375,6 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 
 	return match
 }
-
-// codebeat:enable[LOC,ABC,CYCLO]
 
 func filterList(names []string, dir string, filter ListingFilter) []string {
 	var filteredNames []string

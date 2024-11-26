@@ -397,9 +397,6 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// It's ok to have so long method here
-// codebeat:disable[LOC,ABC]
-
 func convertDuration(d any) (time.Duration, bool) {
 	switch u := d.(type) {
 	case time.Duration:
@@ -530,8 +527,6 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 		output.WriteRune(r)
 	}
 }
-
-// codebeat:enable[LOC,ABC]
 
 func getShortWeekday(d time.Weekday) string {
 	long := getLongWeekday(d)
@@ -706,9 +701,6 @@ func getShortDuration(dur time.Duration, highPrecision bool) string {
 	return fmt.Sprintf("%d:%02d", m, d)
 }
 
-// It's ok to have so nested blocks in this method
-// codebeat:disable[BLOCK_NESTING]
-
 func getPrettyLongDuration(dur time.Duration) string {
 	d := int64(dur.Seconds())
 
@@ -766,8 +758,6 @@ func getPrettySimpleDuration(dur time.Duration) string {
 
 	return "< 1 second"
 }
-
-// codebeat:enable[BLOCK_NESTING]
 
 func getPrettyShortDuration(d time.Duration, separator string) string {
 	switch {

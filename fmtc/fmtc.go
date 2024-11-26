@@ -381,8 +381,6 @@ func IsTag(tag string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,BLOCK_NESTING]
-
 func tag2ANSI(tag string, clean bool) string {
 	switch {
 	case clean:
@@ -448,8 +446,6 @@ func tag2ANSI(tag string, clean bool) string {
 
 	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
 }
-
-// codebeat:enable[LOC,BLOCK_NESTING]
 
 func parseExtendedColor(tag string) string {
 	if len(tag) == 7 {
