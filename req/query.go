@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/essentialkaos/ek/v13/mathutil"
 )
@@ -187,7 +188,7 @@ func queryFormatNumber(v any) string {
 }
 
 func queryFormatFloat(v any) string {
-	return fmt.Sprintf("%f", v)
+	return strings.TrimRight(strings.TrimRight(fmt.Sprintf("%f", v), "0"), ".")
 }
 
 func queryFormatStringSlice(buf *bytes.Buffer, v []string) {

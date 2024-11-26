@@ -716,8 +716,8 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 		"test29": []uint16{0, 1, 2},
 		"test30": []uint32{0, 1, 2},
 		"test31": []uint64{0, 1, 2},
-		"test32": []float32{0, 1, 2},
-		"test33": []float64{0, 1, 2},
+		"test32": []float32{0.01, 1.0, 2.231213},
+		"test33": []float64{0.01, 1.0, 2.231213},
 	}
 
 	nq, err := url.ParseQuery(q.Encode())
@@ -740,8 +740,8 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	c.Assert(nq.Get("test12"), Equals, "8")
 	c.Assert(nq.Get("test13"), Equals, "9")
 	c.Assert(nq.Get("test14"), Equals, "10")
-	c.Assert(nq.Get("test15"), Equals, "12.350000")
-	c.Assert(nq.Get("test16"), Equals, "56.789500")
+	c.Assert(nq.Get("test15"), Equals, "12.35")
+	c.Assert(nq.Get("test16"), Equals, "56.7895")
 	c.Assert(nq.Has("test17"), Equals, true)
 	c.Assert(nq.Get("test17"), Equals, "")
 	c.Assert(nq.Get("test18"), Equals, "test")
@@ -758,8 +758,8 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	c.Assert(nq.Get("test29"), Equals, "0,1,2")
 	c.Assert(nq.Get("test30"), Equals, "0,1,2")
 	c.Assert(nq.Get("test31"), Equals, "0,1,2")
-	c.Assert(nq.Get("test32"), Equals, "0.000000,1.000000,2.000000")
-	c.Assert(nq.Get("test33"), Equals, "0.000000,1.000000,2.000000")
+	c.Assert(nq.Get("test32"), Equals, "0.01,1,2.231213")
+	c.Assert(nq.Get("test33"), Equals, "0.01,1,2.231213")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
