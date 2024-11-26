@@ -122,9 +122,6 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// I don't have an idea how we could separate this method
-// codebeat:disable[LOC,ABC,CYCLO]
-
 // Damerau–Levenshtein distance algorithm and code
 func getDLDistance(source, target string) int {
 	sl, tl := len(source), len(target)
@@ -186,8 +183,6 @@ func getDLDistance(source, target string) int {
 
 	return h[sl+1][tl+1]
 }
-
-// codebeat:enable[LOC,ABC,CYCLO]
 
 func getSuggestSlice(terms []string, word string) suggestItems {
 	var result suggestItems

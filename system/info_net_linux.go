@@ -80,8 +80,6 @@ func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Du
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // parseInterfacesStats parses interfaces stats data
 func parseInterfacesStats(s *bufio.Scanner) (map[string]*InterfaceStats, error) {
 	var err error
@@ -132,8 +130,6 @@ func parseInterfacesStats(s *bufio.Scanner) (map[string]*InterfaceStats, error) 
 
 	return stats, nil
 }
-
-// codebeat:enable[LOC,ABC]
 
 // getActiveInterfacesBytes calculate received and transmitted bytes on all interfaces
 func getActiveInterfacesBytes(is map[string]*InterfaceStats) (uint64, uint64) {

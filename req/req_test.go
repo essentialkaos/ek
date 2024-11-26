@@ -10,9 +10,11 @@ package req
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -53,6 +55,11 @@ const (
 	_TEST_BEARER_TOKEN    = "XUWjA4EnRqUNyqmz"
 	_TEST_STRING_RESP     = "Test String Response"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type TestStringer struct{}
+type TestPayload struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -261,35 +268,6 @@ func (s *ReqSuite) TestMethodDelete(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(deleteResp.StatusCode, Equals, 200)
-}
-
-func (s *ReqSuite) TestQuery(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_QUERY,
-		Query: Query{
-			"test01": "john",
-			"test02": 1398,
-			"test03": true,
-			"test04": false,
-			"test05": int(1),
-			"test06": int8(2),
-			"test07": int16(3),
-			"test08": int32(4),
-			"test09": int64(5),
-			"test10": uint(6),
-			"test11": uint8(7),
-			"test12": uint16(8),
-			"test13": uint32(9),
-			"test14": uint64(10),
-			"test15": float32(12.35),
-			"test16": float64(56.7895),
-			"test17": "",
-			"test18": nil,
-		},
-	}.Do()
-
-	c.Assert(err, IsNil)
-	c.Assert(resp.StatusCode, Equals, 200)
 }
 
 func (s *ReqSuite) TestHeaders(c *C) {
@@ -682,6 +660,108 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(r.String(), Equals, "")
 }
 
+func (s *ReqSuite) TestQuery(c *C) {
+	resp, err := Request{
+		URL: s.url + _URL_QUERY,
+		Query: Query{
+			"user": "john",
+			"id":   1000,
+		},
+	}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+}
+
+func (s *ReqSuite) TestQueryParsing(c *C) {
+	var q Query
+	c.Assert(q.Encode(), Equals, "")
+
+	q = nil
+	c.Assert(q.Encode(), Equals, "")
+
+	ts := &TestStringer{}
+	tp := &TestPayload{}
+
+	q = Query{
+		"":       "test",
+		"test01": nil,
+		"test02": "Test 1234",
+		"test03": true,
+		"test04": false,
+		"test05": int(1),
+		"test06": int8(2),
+		"test07": int16(3),
+		"test08": int32(4),
+		"test09": int64(5),
+		"test10": uint(6),
+		"test11": uint8(7),
+		"test12": uint16(8),
+		"test13": uint32(9),
+		"test14": uint64(10),
+		"test15": float32(12.35),
+		"test16": float64(56.7895),
+		"test17": "",
+		"test18": ts,
+		"test19": tp,
+		"test20": []string{"abcd", "1234"},
+		"test21": []fmt.Stringer{ts, ts},
+		"test22": []int{0, 1, 2},
+		"test23": []int8{0, 1, 2},
+		"test24": []int16{0, 1, 2},
+		"test25": []int32{0, 1, 2},
+		"test26": []int64{0, 1, 2},
+		"test27": []uint{0, 1, 2},
+		"test28": []uint8{0, 1, 2},
+		"test29": []uint16{0, 1, 2},
+		"test30": []uint32{0, 1, 2},
+		"test31": []uint64{0, 1, 2},
+		"test32": []float32{0.01, 1.0, 2.231213},
+		"test33": []float64{0.01, 1.0, 2.231213},
+	}
+
+	nq, err := url.ParseQuery(q.Encode())
+	c.Assert(err, IsNil)
+	c.Assert(nq, NotNil)
+
+	c.Assert(nq.Get(""), Equals, "")
+	c.Assert(nq.Has("test01"), Equals, true)
+	c.Assert(nq.Get("test01"), Equals, "")
+	c.Assert(nq.Get("test02"), Equals, "Test 1234")
+	c.Assert(nq.Get("test03"), Equals, "true")
+	c.Assert(nq.Get("test04"), Equals, "false")
+	c.Assert(nq.Get("test05"), Equals, "1")
+	c.Assert(nq.Get("test06"), Equals, "2")
+	c.Assert(nq.Get("test07"), Equals, "3")
+	c.Assert(nq.Get("test08"), Equals, "4")
+	c.Assert(nq.Get("test09"), Equals, "5")
+	c.Assert(nq.Get("test10"), Equals, "6")
+	c.Assert(nq.Get("test11"), Equals, "7")
+	c.Assert(nq.Get("test12"), Equals, "8")
+	c.Assert(nq.Get("test13"), Equals, "9")
+	c.Assert(nq.Get("test14"), Equals, "10")
+	c.Assert(nq.Get("test15"), Equals, "12.35")
+	c.Assert(nq.Get("test16"), Equals, "56.7895")
+	c.Assert(nq.Has("test17"), Equals, true)
+	c.Assert(nq.Get("test17"), Equals, "")
+	c.Assert(nq.Get("test18"), Equals, "test")
+	c.Assert(nq.Get("test19"), Equals, "test")
+	c.Assert(nq.Get("test20"), Equals, "abcd,1234")
+	c.Assert(nq.Get("test21"), Equals, "test,test")
+	c.Assert(nq.Get("test22"), Equals, "0,1,2")
+	c.Assert(nq.Get("test23"), Equals, "0,1,2")
+	c.Assert(nq.Get("test24"), Equals, "0,1,2")
+	c.Assert(nq.Get("test25"), Equals, "0,1,2")
+	c.Assert(nq.Get("test26"), Equals, "0,1,2")
+	c.Assert(nq.Get("test27"), Equals, "0,1,2")
+	c.Assert(nq.Get("test28"), Equals, "0,1,2")
+	c.Assert(nq.Get("test29"), Equals, "0,1,2")
+	c.Assert(nq.Get("test30"), Equals, "0,1,2")
+	c.Assert(nq.Get("test31"), Equals, "0,1,2")
+	c.Assert(nq.Get("test32"), Equals, "0.01,1,2.231213")
+	c.Assert(nq.Get("test33"), Equals, "0.01,1,2.231213")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ReqSuite) BenchmarkQueryEncoding(c *C) {
@@ -834,67 +914,11 @@ func queryRequestHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	switch {
-	case query.Get("test01") != "john":
+	case query.Get("user") != "john":
 		w.WriteHeader(901)
 		return
-	case query.Get("test02") != "1398":
+	case query.Get("id") != "1000":
 		w.WriteHeader(902)
-		return
-	case query.Get("test03") != "true":
-		w.WriteHeader(903)
-		return
-	case query.Get("test04") != "false":
-		w.WriteHeader(904)
-		return
-	case query.Get("test05") != "1":
-		w.WriteHeader(905)
-		return
-	case query.Get("test06") != "2":
-		w.WriteHeader(906)
-		return
-	case query.Get("test07") != "3":
-		w.WriteHeader(907)
-		return
-	case query.Get("test08") != "4":
-		w.WriteHeader(908)
-		return
-	case query.Get("test09") != "5":
-		w.WriteHeader(909)
-		return
-	case query.Get("test10") != "6":
-		w.WriteHeader(910)
-		return
-	case query.Get("test11") != "7":
-		w.WriteHeader(911)
-		return
-	case query.Get("test12") != "8":
-		w.WriteHeader(912)
-		return
-	case query.Get("test13") != "9":
-		w.WriteHeader(913)
-		return
-	case query.Get("test14") != "10":
-		w.WriteHeader(914)
-		return
-	case query.Get("test15") != "12.35":
-		w.WriteHeader(915)
-		return
-	case query.Get("test16") != "56.7895":
-		w.WriteHeader(916)
-		return
-	}
-
-	_, test17 := query["test17"]
-
-	if !test17 {
-		w.WriteHeader(917)
-		return
-	}
-
-	_, test18 := query["test18"]
-
-	if !test18 {
-		w.WriteHeader(918)
 		return
 	}
 
@@ -1028,4 +1052,14 @@ func timeoutRequestHandler(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(100 * time.Millisecond)
 	w.WriteHeader(200)
 	w.Write([]byte(`{}`))
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (t *TestStringer) String() string {
+	return "test"
+}
+
+func (t *TestPayload) ToQuery(name string) string {
+	return "test"
 }

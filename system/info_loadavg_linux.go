@@ -46,8 +46,6 @@ func GetLA() (*LoadAvg, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // parseLAInfo parses loadavg data
 func parseLAInfo(text string) (*LoadAvg, error) {
 	var err error
@@ -97,5 +95,3 @@ func parseLAInfo(text string) (*LoadAvg, error) {
 
 	return la, nil
 }
-
-// codebeat:enable[LOC,ABC]

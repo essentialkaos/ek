@@ -673,11 +673,6 @@ func (o optionName) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// I think it is okay to have such a long and complicated method for parsing data
-// because it has a lot of logic which can't be separated into different methods
-// without losing code readability
-// codebeat:disable[LOC,BLOCK_NESTING,CYCLO]
-
 func (o *Options) parseOptions(rawOpts []string) (Arguments, errors.Errors) {
 	o.prepare()
 
@@ -783,8 +778,6 @@ func (o *Options) parseOptions(rawOpts []string) (Arguments, errors.Errors) {
 
 	return arguments, errs
 }
-
-// codebeat:enable[LOC,BLOCK_NESTING,CYCLO]
 
 func (o *Options) parseLongOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {

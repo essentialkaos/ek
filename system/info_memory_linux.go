@@ -36,8 +36,6 @@ func GetMemUsage() (*MemUsage, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // parseMemUsage parses memory usage info
 func parseMemUsage(s *bufio.Scanner) (*MemUsage, error) {
 	var err error
@@ -91,5 +89,3 @@ func parseMemUsage(s *bufio.Scanner) (*MemUsage, error) {
 
 	return mem, nil
 }
-
-// codebeat:enable[LOC,ABC]

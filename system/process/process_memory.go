@@ -39,8 +39,6 @@ type MemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[LOC,ABC]
-
 // GetMemInfo returns info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
 	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/status", os.O_RDONLY, 0)
@@ -101,8 +99,6 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 
 	return info, nil
 }
-
-// codebeat:enable[LOC,ABC]
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
