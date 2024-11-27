@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.13.2](https://kaos.sh/ek/13.13.2)
+
+- `[fmtutil/table]` Improved support of data with ANSI escape sequences
+
 ### [13.13.1](https://kaos.sh/ek/13.13.1)
 
 - `[spellcheck]` Distance calculation method now public
