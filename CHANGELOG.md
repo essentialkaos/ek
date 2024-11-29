@@ -1,7 +1,8 @@
 ## Changelog
 
-### [13.13.2](https://kaos.sh/ek/13.13.2)
+### [13.14.0](https://kaos.sh/ek/13.14.0)
 
+- `[fmtc]` Added methods `Printfn`, `Fprintfn`, `Sprintfn`, and `LPrintfn`
 - `[fmtutil/table]` Improved support of data with ANSI escape sequences
 
 ### [13.13.1](https://kaos.sh/ek/13.13.1)

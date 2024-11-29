@@ -192,6 +192,13 @@ func Printf(f string, a ...any) (int, error) {
 	return fmt.Printf(searchColors(f, -1, DisableColors, true), a...)
 }
 
+// Printfn formats according to a format specifier and writes to standard output with
+// the new line at the end. It returns the number of bytes written and any write
+// error encountered.
+func Printfn(f string, a ...any) (int, error) {
+	return fmt.Printf(searchColors(f, -1, DisableColors, true)+"\n", a...)
+}
+
 // Fprint formats using the default formats for its operands and writes to w.
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
@@ -214,6 +221,12 @@ func Fprintf(w io.Writer, f string, a ...any) (int, error) {
 	return fmt.Fprintf(w, searchColors(f, -1, DisableColors, true), a...)
 }
 
+// Fprintfn formats according to a format specifier and writes to w with the newline
+// at the end. It returns the number of bytes written and any write error encountered.
+func Fprintfn(w io.Writer, f string, a ...any) (int, error) {
+	return fmt.Fprintf(w, searchColors(f, -1, DisableColors, true)+"\n", a...)
+}
+
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
 func Sprint(a ...any) string {
@@ -225,6 +238,12 @@ func Sprint(a ...any) string {
 // string.
 func Sprintf(f string, a ...any) string {
 	return fmt.Sprintf(searchColors(f, -1, DisableColors, true), a...)
+}
+
+// Sprintfn formats according to a format specifier and returns the resulting
+// string with the newline at the end.
+func Sprintfn(f string, a ...any) string {
+	return fmt.Sprintf(searchColors(f, -1, DisableColors, true)+"\n", a...)
 }
 
 // Sprintln formats using the default formats for its operands and returns the
@@ -272,6 +291,13 @@ func LPrint(maxSize int, a ...any) (int, error) {
 func LPrintf(maxSize int, f string, a ...any) (int, error) {
 	s := fmt.Sprintf(f, a...)
 	return fmt.Print(searchColors(s, maxSize, DisableColors, true))
+}
+
+// LPrintfn formats according to a format specifier and writes to standard output
+// limited by the text size and with the newline at the end
+func LPrintfn(maxSize int, f string, a ...any) (int, error) {
+	s := fmt.Sprintf(f, a...)
+	return fmt.Print(searchColors(s, maxSize, DisableColors, true) + "\n")
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard

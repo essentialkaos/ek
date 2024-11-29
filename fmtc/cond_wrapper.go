@@ -53,6 +53,17 @@ func (cw CondWrapper) Printf(f string, a ...any) (int, error) {
 	return Printf(f, a...)
 }
 
+// Printfn formats according to a format specifier and writes to standard output with
+// the new line at the end. It returns the number of bytes written and any write
+// error encountered.
+func (cw CondWrapper) Printfn(f string, a ...any) (int, error) {
+	if !cw {
+		return 0, nil
+	}
+
+	return Printfn(f, a...)
+}
+
 // Fprint formats using the default formats for its operands and writes to w.
 // Spaces are added between operands when neither is a string. It returns the
 // number of bytes written and any write error encountered.
@@ -85,6 +96,16 @@ func (cw CondWrapper) Fprintf(w io.Writer, f string, a ...any) (int, error) {
 	return Fprintf(w, f, a...)
 }
 
+// Fprintfn formats according to a format specifier and writes to w with the newline
+// at the end. It returns the number of bytes written and any write error encountered.
+func (cw CondWrapper) Fprintfn(w io.Writer, f string, a ...any) (int, error) {
+	if !cw {
+		return 0, nil
+	}
+
+	return Fprintfn(w, f, a...)
+}
+
 // Sprint formats using the default formats for its operands and returns the
 // resulting string. Spaces are added between operands when neither is a string.
 func (cw CondWrapper) Sprint(a ...any) string {
@@ -103,6 +124,16 @@ func (cw CondWrapper) Sprintf(f string, a ...any) string {
 	}
 
 	return Sprintf(f, a...)
+}
+
+// Sprintfn formats according to a format specifier and returns the resulting
+// string with the newline at the end.
+func (cw CondWrapper) Sprintfn(f string, a ...any) string {
+	if !cw {
+		return ""
+	}
+
+	return Sprintfn(f, a...)
 }
 
 // Sprintln formats using the default formats for its operands and returns the
@@ -162,6 +193,16 @@ func (cw CondWrapper) LPrintf(maxSize int, f string, a ...any) (int, error) {
 	}
 
 	return LPrintf(maxSize, f, a...)
+}
+
+// LPrintfn formats according to a format specifier and writes to standard output
+// limited by the text size and with the newline at the end
+func (cw CondWrapper) LPrintfn(maxSize int, f string, a ...any) (int, error) {
+	if !cw {
+		return 0, nil
+	}
+
+	return LPrintfn(maxSize, f, a...)
 }
 
 // LPrintln formats using the default formats for its operands and writes to standard
