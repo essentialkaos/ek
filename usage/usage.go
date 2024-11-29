@@ -483,9 +483,9 @@ func (e *Example) Print() {
 	}
 
 	if e.Raw {
-		fmtc.Printf("  %s\n", e.Cmd)
+		fmtc.Printfn("  %s", e.Cmd)
 	} else {
-		fmtc.Printf("  %s %s\n", appName, e.Cmd)
+		fmtc.Printfn("  %s %s", appName, e.Cmd)
 	}
 
 	if e.Desc != "" {
@@ -495,7 +495,7 @@ func (e *Example) Print() {
 				e.info.ExampleDescColorTag, "",
 			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
 		)
-		fmtc.Printf("  "+descColor+"%s{!}\n", wrapText(e.Desc, 2, wrapLen))
+		fmtc.Printfn("  "+descColor+"%s\n", wrapText(e.Desc, 2, wrapLen))
 	}
 }
 
@@ -544,16 +544,16 @@ func (a *About) Print(infoType ...string) {
 	fmtc.If(a.Release != "").Printf(releaseColor+relSeparator+"%s{!}", a.Release)
 	fmtc.If(a.Build != "").Printf(buildColor+" (%s){!}", a.Build)
 
-	fmtc.Printf(" "+descSeparator+" %s\n", a.Desc)
+	fmtc.Printfn(" "+descSeparator+" %s", a.Desc)
 
 	if len(a.Environment) > 0 {
-		fmtc.Printf("{s-}│{!}\n")
+		fmtc.Printfn("{s-}│{!}")
 
 		for i, env := range a.Environment {
 			if len(a.Environment) != i+1 {
-				fmtc.Printf("{s-}├ %s: %s{!}\n", env.Name, strutil.Q(env.Version, "—"))
+				fmtc.Printfn("{s-}├ %s: %s{!}", env.Name, strutil.Q(env.Version, "—"))
 			} else {
-				fmtc.Printf("{s-}└ %s: %s{!}\n", env.Name, strutil.Q(env.Version, "—"))
+				fmtc.Printfn("{s-}└ %s: %s{!}", env.Name, strutil.Q(env.Version, "—"))
 			}
 		}
 	}
@@ -572,7 +572,7 @@ func (a *About) Print(infoType ...string) {
 		)
 	}
 
-	fmtc.If(a.License != "").Printf("{s-}%s{!}\n", a.License)
+	fmtc.If(a.License != "").Printfn("{s-}%s{!}", a.License)
 
 	if a.UpdateChecker.CheckFunc != nil && a.UpdateChecker.Payload != "" {
 		newVersion, releaseDate, hasUpdate := a.UpdateChecker.CheckFunc(
@@ -771,7 +771,7 @@ func getOptionSize(opt *Option) int {
 
 // printGroupHeader print category header
 func printGroupHeader(name string) {
-	fmtc.Printf("\n{*}%s{!}\n\n", name)
+	fmtc.Printfn("\n{*}%s{!}\n", name)
 }
 
 // isNewerVersion return true if latest version is greater than current
@@ -825,7 +825,7 @@ func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
 	case 1:
 		fmtc.Println("{s-}(released 1 day ago){!}")
 	default:
-		fmtc.Printf("{s-}(released %d days ago){!}\n", days)
+		fmtc.Printfn("{s-}(released %d days ago){!}", days)
 	}
 }
 

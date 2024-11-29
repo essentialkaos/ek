@@ -737,11 +737,11 @@ func (i *Info) printChecksInfo() {
 
 		switch c.Status {
 		case CHECK_OK, CHECK_SKIP:
-			fmtc.Printf(" {s}— {&}%s{!}\n", c.Message)
+			fmtc.Printfn(" {s}— {&}%s{!}", c.Message)
 		case CHECK_WARN:
-			fmtc.Printf(" {s}— {y}{&}%s{!}\n", c.Message)
+			fmtc.Printfn(" {s}— {y}{&}%s{!}", c.Message)
 		case CHECK_ERROR:
-			fmtc.Printf(" {s}— {r}{&}%s{!}\n", c.Message)
+			fmtc.Printfn(" {s}— {r}{&}%s{!}", c.Message)
 		}
 	}
 }
@@ -803,9 +803,9 @@ func (i *Info) printDependencies() {
 	for _, dep := range i.Deps {
 		switch dep.Extra {
 		case "":
-			fmtc.Printf(" {s}%8s{!}  %s\n", dep.Version, dep.Path)
+			fmtc.Printfn(" {s}%8s{!}  %s", dep.Version, dep.Path)
 		default:
-			fmtc.Printf(" {s}%8s{!}  %s {s-}(%s){!}\n", dep.Version, dep.Path, dep.Extra)
+			fmtc.Printfn(" {s}%8s{!}  %s {s-}(%s){!}", dep.Version, dep.Path, dep.Extra)
 		}
 	}
 }

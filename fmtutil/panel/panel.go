@@ -157,7 +157,7 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 		}
 
 		if lineSize > 0 {
-			fmtc.Printf(colorTag+" %s{!}\n", strings.Repeat("─", lineSize))
+			fmtc.Printfn(colorTag+" %s{!}", strings.Repeat("─", lineSize))
 		} else {
 			fmtc.NewLine()
 		}
