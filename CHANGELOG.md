@@ -4,6 +4,7 @@
 
 - `[fmtc]` Added methods `Printfn`, `Fprintfn`, `Sprintfn`, and `LPrintfn`
 - `[fmtutil/table]` Improved support of data with ANSI escape sequences
+- `[fmtc]` `NameColor` marked as deprecated (_use method `AddColor` instead_)
 
 ### [13.13.1](https://kaos.sh/ek/13.13.1)
 

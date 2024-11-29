@@ -93,7 +93,14 @@ var colorTermEnvVar = env.Var("COLORTERM")
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NameColor defines or redifines named color
+//
+// Deprecated: Use method AddColor instead
 func NameColor(name, tag string) error {
+	return AddColor(name, tag)
+}
+
+// AddColor defines or redifines named color
+func AddColor(name, tag string) error {
 	if colorsMap == nil {
 		colorsMap = &sync.Map{}
 	}
