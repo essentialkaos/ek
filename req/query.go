@@ -78,14 +78,24 @@ func (q Query) Encode() string {
 
 		case []string:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatStringSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatStringSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatStringSlice(&buf, u)
+				}
 			}
 
 		case []fmt.Stringer:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatStringerSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatStringerSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatStringerSlice(&buf, u)
+				}
 			}
 
 		case []int:
@@ -206,6 +216,17 @@ func queryFormatStringSlice(buf *bytes.Buffer, v []string) {
 	}
 }
 
+func queryFormatStringSliceSplit(buf *bytes.Buffer, k string, v []string) {
+	buf.WriteString(v[0])
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatString(vv))
+	}
+}
+
 func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 	l := buf.Len()
 
@@ -220,6 +241,17 @@ func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 
 	if l != buf.Len() {
 		buf.Truncate(buf.Len() - 1)
+	}
+}
+
+func queryFormatStringerSliceSplit(buf *bytes.Buffer, k string, v []fmt.Stringer) {
+	buf.WriteString(v[0].String())
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatString(vv.String()))
 	}
 }
 

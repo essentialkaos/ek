@@ -760,6 +760,18 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	c.Assert(nq.Get("test31"), Equals, "0,1,2")
 	c.Assert(nq.Get("test32"), Equals, "0.01,1,2.231213")
 	c.Assert(nq.Get("test33"), Equals, "0.01,1,2.231213")
+
+	q = Query{
+		"test[]": []string{"abc", "def", "123"},
+	}
+
+	c.Assert(q.Encode(), Equals, `test%5B%5D=abc&test%5B%5D=def&test%5B%5D=123`)
+
+	q = Query{
+		"test[]": []fmt.Stringer{ts, ts},
+	}
+
+	c.Assert(q.Encode(), Equals, `test%5B%5D=test&test%5B%5D=test`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
