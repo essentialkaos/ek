@@ -761,17 +761,75 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	c.Assert(nq.Get("test32"), Equals, "0.01,1,2.231213")
 	c.Assert(nq.Get("test33"), Equals, "0.01,1,2.231213")
 
-	q = Query{
-		"test[]": []string{"abc", "def", "123"},
-	}
+	c.Assert(
+		Query{"test[]": []string{"abc", "def", "123"}}.Encode(),
+		Equals, `test%5B%5D=abc&test%5B%5D=def&test%5B%5D=123`,
+	)
 
-	c.Assert(q.Encode(), Equals, `test%5B%5D=abc&test%5B%5D=def&test%5B%5D=123`)
+	c.Assert(
+		Query{"test[]": []fmt.Stringer{ts, ts}}.Encode(),
+		Equals, `test%5B%5D=test&test%5B%5D=test`,
+	)
 
-	q = Query{
-		"test[]": []fmt.Stringer{ts, ts},
-	}
+	c.Assert(
+		Query{"test[]": []int{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
 
-	c.Assert(q.Encode(), Equals, `test%5B%5D=test&test%5B%5D=test`)
+	c.Assert(
+		Query{"test[]": []int8{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []int16{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []int32{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []int64{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []uint{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []uint8{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []uint16{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []uint32{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []uint64{1, 2, 3}}.Encode(),
+		Equals, `test%5B%5D=1&test%5B%5D=2&test%5B%5D=3`,
+	)
+
+	c.Assert(
+		Query{"test[]": []float32{1.2, 2.5, 3.75}}.Encode(),
+		Equals, `test%5B%5D=1.2&test%5B%5D=2.5&test%5B%5D=3.75`,
+	)
+
+	c.Assert(
+		Query{"test[]": []float64{1.2, 2.5, 3.75}}.Encode(),
+		Equals, `test%5B%5D=1.2&test%5B%5D=2.5&test%5B%5D=3.75`,
+	)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
