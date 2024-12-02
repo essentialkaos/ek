@@ -1,5 +1,13 @@
 ## Changelog
 
+### [13.14.0](https://kaos.sh/ek/13.14.0)
+
+- `[fmtutil/filetree]` Added experimental package for printing file tree
+- `[fmtc]` Added methods `Printfn`, `Fprintfn`, `Sprintfn`, and `LPrintfn`
+- `[req]` Added custom encoder for arrays in `Query`
+- `[fmtutil/table]` Improved support of data with ANSI escape sequences
+- `[fmtc]` `NameColor` marked as deprecated (_use method `AddColor` instead_)
+
 ### [13.13.1](https://kaos.sh/ek/13.13.1)
 
 - `[spellcheck]` Distance calculation method now public

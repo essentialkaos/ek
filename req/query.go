@@ -78,86 +78,156 @@ func (q Query) Encode() string {
 
 		case []string:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatStringSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatStringSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatStringSlice(&buf, u)
+				}
 			}
 
 		case []fmt.Stringer:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatStringerSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatStringerSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatStringerSlice(&buf, u)
+				}
 			}
 
 		case []int:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []int8:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []int16:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []int32:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []int64:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []uint:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []uint8:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []uint16:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []uint32:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []uint64:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatNumSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatNumSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatNumSlice(&buf, u)
+				}
 			}
 
 		case []float32:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatFloatSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatFloatSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatFloatSlice(&buf, u)
+				}
 			}
 
 		case []float64:
 			if len(u) > 0 {
-				buf.WriteRune('=')
-				queryFormatFloatSlice(&buf, u)
+				if strings.HasSuffix(k, "[]") {
+					buf.WriteRune('=')
+					queryFormatFloatSliceSplit(&buf, k, u)
+				} else {
+					buf.WriteRune('=')
+					queryFormatFloatSlice(&buf, u)
+				}
 			}
 
 		default:
@@ -206,6 +276,17 @@ func queryFormatStringSlice(buf *bytes.Buffer, v []string) {
 	}
 }
 
+func queryFormatStringSliceSplit(buf *bytes.Buffer, k string, v []string) {
+	buf.WriteString(v[0])
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatString(vv))
+	}
+}
+
 func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 	l := buf.Len()
 
@@ -223,6 +304,17 @@ func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 	}
 }
 
+func queryFormatStringerSliceSplit(buf *bytes.Buffer, k string, v []fmt.Stringer) {
+	buf.WriteString(v[0].String())
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatString(vv.String()))
+	}
+}
+
 func queryFormatNumSlice[T mathutil.Integer](buf *bytes.Buffer, v []T) {
 	for _, vv := range v {
 		buf.WriteString(queryFormatNumber(vv))
@@ -232,6 +324,17 @@ func queryFormatNumSlice[T mathutil.Integer](buf *bytes.Buffer, v []T) {
 	buf.Truncate(buf.Len() - 1)
 }
 
+func queryFormatNumSliceSplit[T mathutil.Integer](buf *bytes.Buffer, k string, v []T) {
+	buf.WriteString(queryFormatNumber(v[0]))
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatNumber(vv))
+	}
+}
+
 func queryFormatFloatSlice[T mathutil.Float](buf *bytes.Buffer, v []T) {
 	for _, vv := range v {
 		buf.WriteString(queryFormatFloat(vv))
@@ -239,4 +342,15 @@ func queryFormatFloatSlice[T mathutil.Float](buf *bytes.Buffer, v []T) {
 	}
 
 	buf.Truncate(buf.Len() - 1)
+}
+
+func queryFormatFloatSliceSplit[T mathutil.Float](buf *bytes.Buffer, k string, v []T) {
+	buf.WriteString(queryFormatFloat(v[0]))
+
+	for _, vv := range v[1:] {
+		buf.WriteRune('&')
+		buf.WriteString(queryFormatString(k))
+		buf.WriteRune('=')
+		buf.WriteString(queryFormatFloat(vv))
+	}
 }

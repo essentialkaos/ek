@@ -31,9 +31,15 @@ func ExampleRequest_Do() {
 		Method: GET,
 		URL:    "https://my.domain.com",
 		Query: Query{
+			// will be encoded as element without value
+			"custom":   nil,
 			"name":     "Bob",
 			"id":       120,
 			"progress": 12.34,
+			// will be encoded as "groups=admins,regular"
+			"groups": []string{"admins", "regular"},
+			// will be encoded as "zones[]=a&zones[]=b"
+			"zones[]": []string{"a", "b"},
 		},
 		Headers: Headers{
 			"My-Suppa-Header": "Test",

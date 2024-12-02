@@ -162,6 +162,70 @@ func ExamplePrintf() {
 	Printf("{%6a5acd}%s{!}\n", "slateblue background")
 }
 
+func ExamplePrintfn() {
+	// print colored text
+	// {!} is tag for style reset
+	Printfn("{d}%s{!}", "black")
+	Printfn("{r}%s{!}", "red")
+	Printfn("{y}%s{!}", "yellow")
+	Printfn("{b}%s{!}", "blue")
+	Printfn("{c}%s{!}", "cyan")
+	Printfn("{m}%s{!}", "magenta")
+	Printfn("{g}%s{!}", "green")
+	Printfn("{s}%s{!}", "light grey")
+
+	// use text modificators
+
+	// light colors
+	Printfn("{r-}%s{!}", "light red")
+	Printfn("{r-}%s{!}", "dark grey")
+
+	// bold + color
+	Printfn("{r*}%s{!}", "red")
+	Printfn("{g*}%s{!}", "green")
+
+	// dim
+	Printfn("{r^}%s{!}", "red")
+	Printfn("{g^}%s{!}", "green")
+
+	// underline
+	Printfn("{r_}%s{!}", "red")
+	Printfn("{g_}%s{!}", "green")
+
+	// blink
+	Printfn("{r~}%s{!}", "red")
+	Printfn("{g~}%s{!}", "green")
+
+	// reverse
+	Printfn("{r@}%s{!}", "red")
+	Printfn("{g@}%s{!}", "green")
+
+	// background color
+	Printfn("{D}%s{!}", "black")
+	Printfn("{R}%s{!}", "red")
+	Printfn("{Y}%s{!}", "yellow")
+	Printfn("{B}%s{!}", "blue")
+	Printfn("{C}%s{!}", "cyan")
+	Printfn("{M}%s{!}", "magenta")
+	Printfn("{G}%s{!}", "green")
+	Printfn("{S}%s{!}", "light grey")
+
+	// many tags at once
+	// underline, cyan text with the red background
+	Printfn("{cR_}%s{!}", "text")
+
+	// many tags in once
+	Printfn("{r}{*}%s{!}", "red and bold")
+
+	// 256 colors (# for foreground, % for background)
+	Printfn("{#201}%s{!}", "pink text")
+	Printfn("{%201}%s{!}", "pink background")
+
+	// 24-bit colors (# for foreground, % for background)
+	Printfn("{#7cfc00}%s{!}", "lawngreen text")
+	Printfn("{%6a5acd}%s{!}", "slateblue background")
+}
+
 func ExamplePrintln() {
 	// print colored text
 	// {!} is tag for style reset
@@ -239,6 +303,11 @@ func ExampleFprintf() {
 	Fprintf(os.Stdout, "{g}%s{!}\n", "This is normal message")
 }
 
+func ExampleFprintfn() {
+	Fprintfn(os.Stderr, "{r}%s{!}", "This is error message")
+	Fprintfn(os.Stdout, "{g}%s{!}", "This is normal message")
+}
+
 func ExampleFprintln() {
 	Fprintln(os.Stderr, "{r}This is error message{!}")
 	Fprintln(os.Stdout, "{g}This is normal message{!}")
@@ -251,6 +320,11 @@ func ExampleSprint() {
 
 func ExampleSprintf() {
 	msg := Sprintf("{r}%s{!}\n", "This is error message")
+	fmt.Print(msg)
+}
+
+func ExampleSprintfn() {
+	msg := Sprintfn("{r}%s{!}", "This is error message")
 	fmt.Print(msg)
 }
 
@@ -289,7 +363,12 @@ func ExampleLPrint() {
 
 func ExampleLPrintf() {
 	// Only "This is text" will be shown
-	LPrintf(12, "{r}This is %s {g} with colors{!}", "text")
+	LPrintf(12, "{r}This is %s {g} with colors{!}\n", "text")
+}
+
+func ExampleLPrintfn() {
+	// Only "This is text" will be shown
+	LPrintfn(12, "{r}This is %s {g} with colors{!}", "text")
 }
 
 func ExampleLPrintln() {

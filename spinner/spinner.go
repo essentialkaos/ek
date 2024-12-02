@@ -195,7 +195,7 @@ func stopSpinner(action uint8) {
 	}
 
 	fmtc.Print(desc + " ")
-	fmtc.Printf(timeColorTag+"(%s){!}\n", timeutil.ShortDuration(time.Since(start), true))
+	fmtc.Printfn(timeColorTag+"(%s){!}", timeutil.ShortDuration(time.Since(start), true))
 
 	mu.RUnlock()
 

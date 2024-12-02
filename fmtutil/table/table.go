@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/essentialkaos/ek/v13/ansi"
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
@@ -373,7 +374,9 @@ func renderRowData(t *Table, data []string, totalColumns int) {
 			break
 		}
 
-		if strutil.LenVisual(fmtc.Clean(columnData)) > t.columnSizes[columnIndex] {
+		dataLen := getDataLen(columnData)
+
+		if dataLen > t.columnSizes[columnIndex] {
 			fmtc.Print(" " + strutil.Ellipsis(columnData, t.columnSizes[columnIndex]) + " ")
 		} else {
 			if columnIndex+1 == totalColumns && getAlignment(t, columnIndex) == ALIGN_LEFT {
@@ -443,10 +446,10 @@ func calculateColumnSizes(t *Table) {
 					continue
 				}
 
-				itemSizes := strutil.LenVisual(fmtc.Clean(item))
+				itemLen := getDataLen(item)
 
-				if itemSizes > t.columnSizes[index] {
-					t.columnSizes[index] = itemSizes
+				if itemLen > t.columnSizes[index] {
+					t.columnSizes[index] = itemLen
 				}
 			}
 		}
@@ -491,7 +494,6 @@ func setColumnsSizes(t *Table, columns int) {
 
 		if index+1 == columns {
 			if totalSize+(columns*3) < tableWidth {
-				fmt.Println(1001)
 				t.columnSizes[index]++
 			}
 
@@ -527,29 +529,23 @@ func getColumnsNum(t *Table) int {
 
 // formatText align text with color tags
 func formatText(data string, size int, align uint8) string {
-	var dataSize int
+	dataLen := getDataLen(data)
 
-	if strings.Contains(data, "{") {
-		dataSize = strutil.LenVisual(fmtc.Clean(data))
-	} else {
-		dataSize = strutil.LenVisual(data)
-	}
-
-	if dataSize >= size {
+	if dataLen >= size {
 		return data
 	}
 
 	switch align {
 	case ALIGN_RIGHT:
-		return strings.Repeat(" ", size-dataSize) + data
+		return strings.Repeat(" ", size-dataLen) + data
 
 	case ALIGN_CENTER:
-		prefixSize := (size - dataSize) / 2
-		suffixSize := size - (prefixSize + dataSize)
+		prefixSize := (size - dataLen) / 2
+		suffixSize := size - (prefixSize + dataLen)
 		return strings.Repeat(" ", prefixSize) + data + strings.Repeat(" ", suffixSize)
 	}
 
-	return data + strings.Repeat(" ", size-dataSize)
+	return data + strings.Repeat(" ", size-dataLen)
 }
 
 // getAlignment return align for given column
@@ -591,4 +587,9 @@ func getTableWidth(t *Table) int {
 	}
 
 	return 0
+}
+
+// getDataLen returns len of data excludinf ANSI escape codes and fmtc tags
+func getDataLen(data string) int {
+	return strutil.LenVisual(ansi.RemoveCodes(fmtc.Clean(data)))
 }
