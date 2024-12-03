@@ -3,6 +3,7 @@
 ### [13.14.1](https://kaos.sh/ek/13.14.1)
 
 - `[usage]` Fixed bug with rendering examples (_introduced in `13.14.0`_)
+- `[path]` Added Windows support
 
 ### [13.14.0](https://kaos.sh/ek/13.14.0)
 
