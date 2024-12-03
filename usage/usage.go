@@ -495,7 +495,7 @@ func (e *Example) Print() {
 				e.info.ExampleDescColorTag, "",
 			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
 		)
-		fmtc.Printfn("  "+descColor+"%s\n", wrapText(e.Desc, 2, wrapLen))
+		fmtc.Printfn("  "+descColor+"%s{!}", wrapText(e.Desc, 2, wrapLen))
 	}
 }
 
