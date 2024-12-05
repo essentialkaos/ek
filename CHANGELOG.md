@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.14.2](https://kaos.sh/ek/13.14.2)
+
+- `[log]` Added variable `LogLevels` with all supported log level names
+
 ### [13.14.1](https://kaos.sh/ek/13.14.1)
 
 - `[usage]` Fixed bug with rendering examples (_introduced in `13.14.0`_)
