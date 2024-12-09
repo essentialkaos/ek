@@ -336,49 +336,80 @@ func (c Hex) ToWeb(useCaps, allowShorthand bool) string {
 	return "#" + k
 }
 
+// String returns string representation of hex color
+func (c Hex) String() string {
+	return c.ToWeb(true, false)
+}
+
 // String returns string representation of RGB color
 func (c RGB) String() string {
-	return fmt.Sprintf(
-		"RGB{R:%d G:%d B:%d}",
-		c.R, c.G, c.B,
-	)
+	return fmt.Sprintf("%d,%d,%d", c.R, c.G, c.B)
+}
+
+// GoString returns Go representation of RGB color
+func (c RGB) GoString() string {
+	return fmt.Sprintf("RGB{R:%d, G:%d, B:%d}", c.R, c.G, c.B)
 }
 
 // String returns string representation of RGBA color
 func (c RGBA) String() string {
-	return fmt.Sprintf(
-		"RGBA{R:%d G:%d B:%d A:%.2f}",
-		c.R, c.G, c.B, float64(c.A)/255.0,
-	)
+	return fmt.Sprintf("%d,%d,%d,%.2f", c.R, c.G, c.B, float64(c.A)/255.0)
 }
 
-// String returns string representation of hex color
-func (c Hex) String() string {
-	return fmt.Sprintf("Hex{%s}", c.ToWeb(true, false))
+// GoString returns Go representation of RGBA color
+func (c RGBA) GoString() string {
+	if c.A == 0 {
+		return fmt.Sprintf("RGBA{R:%d, G:%d, B:%d}", c.R, c.G, c.B)
+	}
+
+	return fmt.Sprintf("RGBA{R:%d, G:%d, B:%d, A:%d}", c.R, c.G, c.B, c.A)
 }
 
 // String returns string representation of CMYK color
 func (c CMYK) String() string {
 	return fmt.Sprintf(
-		"CMYK{C:%.0f%% M:%.0f%% Y:%.0f%% K:%.0f%%}",
+		"%.0f%%,%.0f%%,%.0f%%,%.0f%%",
 		c.C*100.0, c.M*100.0, c.Y*100.0, c.K*100.0,
 	)
+}
+
+// GoString returns Go representation of CMYK color
+func (c CMYK) GoString() string {
+	return fmt.Sprintf("CMYK{C:%g, M:%g, Y:%g, K:%g}", c.C, c.M, c.Y, c.K)
 }
 
 // String returns string representation of HSV color
 func (c HSV) String() string {
 	return fmt.Sprintf(
-		"HSV{H:%.0f° S:%.0f%% V:%.0f%% A:%.0f%%}",
+		"%.0f°,%.0f%%,%.0f%%,%.0f%%",
 		c.H*360, c.S*100, c.V*100, c.A*100,
 	)
+}
+
+// GoString returns Go representation of HSV color
+func (c HSV) GoString() string {
+	if c.A == 0 {
+		return fmt.Sprintf("HSV{H:%g, S:%g, V:%g}", c.H, c.S, c.V)
+	}
+
+	return fmt.Sprintf("HSV{H:%g, S:%g, V:%g, A:%g}", c.H, c.S, c.V, c.A)
 }
 
 // String returns string representation of HSL color
 func (c HSL) String() string {
 	return fmt.Sprintf(
-		"HSL{H:%.0f° S:%.0f%% L:%.0f%% A:%.0f%%}",
+		"%.0f°,%.0f%%,%.0f%%,%.0f%%",
 		c.H*360, c.S*100, c.L*100, c.A*100,
 	)
+}
+
+// GoString returns Go representation of HSL color
+func (c HSL) GoString() string {
+	if c.A == 0 {
+		return fmt.Sprintf("HSL{H:%g, S:%g, L:%g}", c.H, c.S, c.L)
+	}
+
+	return fmt.Sprintf("HSL{H:%g, S:%g, L:%g, A:%g}", c.H, c.S, c.L, c.A)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
