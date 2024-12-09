@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.14.3](https://kaos.sh/ek/13.14.3)
+
+- `[color]` Added `fmt.GoStringer` support for structs
+- `[color]` Code refactoring
+
 ### [13.14.2](https://kaos.sh/ek/13.14.2)
 
 - `[log]` Added variable `LogLevels` with all supported log level names
