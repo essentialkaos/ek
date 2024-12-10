@@ -186,20 +186,19 @@ type Headers map[string]string
 
 // Request is basic struct
 type Request struct {
-	Method            string        // Request method
-	URL               string        // Request URL
-	Query             Query         // Map with query params
-	Body              any           // Request body
-	Headers           Headers       // Map with headers
-	ContentType       string        // Content type header
-	Accept            string        // Accept header
-	BasicAuthUsername string        // Basic auth username
-	BasicAuthPassword string        // Basic auth password
-	BearerAuth        string        // Bearer auth token
-	Timeout           time.Duration // Request timeout
-	AutoDiscard       bool          // Automatically discard all responses with status code > 299
-	FollowRedirect    bool          // Follow redirect
-	Close             bool          // Close indicates whether to close the connection after sending request
+	Method         string        // Request method
+	URL            string        // Request URL
+	Query          Query         // Map with query params
+	Auth           Auth          // Authentication data
+	ProxyAuth      Auth          // Proxy authentication data
+	Body           any           // Request body
+	Headers        Headers       // Map with headers
+	ContentType    string        // Content type header
+	Accept         string        // Accept header
+	Timeout        time.Duration // Request timeout
+	AutoDiscard    bool          // Automatically discard all responses with status code > 299
+	FollowRedirect bool          // Follow redirect
+	Close          bool          // Close indicates whether to close the connection after sending request
 }
 
 // Response is struct contains response data and properties
@@ -675,12 +674,12 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 		req.Header.Add("User-Agent", e.UserAgent)
 	}
 
-	if r.BasicAuthUsername != "" && r.BasicAuthPassword != "" {
-		req.SetBasicAuth(r.BasicAuthUsername, r.BasicAuthPassword)
+	if r.Auth != nil {
+		r.Auth.Apply(req, "Authorization")
 	}
 
-	if r.BearerAuth != "" {
-		req.Header.Add("Authorization", "Bearer "+r.BearerAuth)
+	if r.ProxyAuth != nil {
+		r.ProxyAuth.Apply(req, "Proxy-Authorization")
 	}
 
 	if r.Close {

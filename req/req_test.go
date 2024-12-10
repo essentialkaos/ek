@@ -40,7 +40,6 @@ const (
 	_URL_ACCEPT       = "/accept"
 	_URL_USER_AGENT   = "/user-agent"
 	_URL_BASIC_AUTH   = "/basic-auth"
-	_URL_BEARER       = "/bearer"
 	_URL_STRING_RESP  = "/string-response"
 	_URL_JSON_RESP    = "/json-response"
 	_URL_DISCARD      = "/discard"
@@ -52,7 +51,6 @@ const (
 	_TEST_ACCEPT          = "application/vnd.example.api+json;version=2"
 	_TEST_BASIC_AUTH_USER = "admin"
 	_TEST_BASIC_AUTH_PASS = "password"
-	_TEST_BEARER_TOKEN    = "XUWjA4EnRqUNyqmz"
 	_TEST_STRING_RESP     = "Test String Response"
 )
 
@@ -324,19 +322,9 @@ func (s *ReqSuite) TestUserAgent(c *C) {
 
 func (s *ReqSuite) TestBasicAuth(c *C) {
 	resp, err := Request{
-		URL:               s.url + _URL_BASIC_AUTH,
-		BasicAuthUsername: _TEST_BASIC_AUTH_USER,
-		BasicAuthPassword: _TEST_BASIC_AUTH_PASS,
-	}.Do()
-
-	c.Assert(err, IsNil)
-	c.Assert(resp.StatusCode, Equals, 200)
-}
-
-func (s *ReqSuite) TestBearerAuth(c *C) {
-	resp, err := Request{
-		URL:        s.url + _URL_BEARER,
-		BearerAuth: _TEST_BEARER_TOKEN,
+		URL:       s.url + _URL_BASIC_AUTH,
+		Auth:      AuthBasic{_TEST_BASIC_AUTH_USER, _TEST_BASIC_AUTH_PASS},
+		ProxyAuth: AuthBasic{_TEST_BASIC_AUTH_USER, _TEST_BASIC_AUTH_PASS},
 	}.Do()
 
 	c.Assert(err, IsNil)
@@ -660,6 +648,63 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(r.String(), Equals, "")
 }
 
+func (s *ReqSuite) TestAuth(c *C) {
+	var a Auth
+
+	r, _ := http.NewRequest("GET", "http://127.0.0.1", nil)
+
+	a = AuthBasic{"John", "Test1234"}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("Authorization"), Equals, "Basic Sm9objpUZXN0MTIzNA==")
+
+	a = AuthBearer{"acbd1234"}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("Authorization"), Equals, "Bearer acbd1234")
+
+	a = AuthOAuth{
+		Realm:           "Example",
+		ConsumerKey:     "0685bd9184jfhq22",
+		Token:           "ad180jjd733klru7",
+		SignatureMethod: "HMAC-SHA1",
+		Signature:       "wOJIO9A2W5mFwDgiDvZbTSMK",
+		Timestamp:       137131200,
+		Nonce:           "4572616e48616d6d65724c61686176",
+		Version:         "1.0",
+	}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("Authorization"), Equals, `OAuth realm="Example", oauth_consumer_key="0685bd9184jfhq22", oauth_token="ad180jjd733klru7", oauth_signature_method="HMAC-SHA1", oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK", oauth_timestamp="137131200", oauth_nonce="4572616e48616d6d65724c61686176", oauth_version="1.0"`)
+
+	a = AuthDigest{
+		Username:  "Mufasa",
+		Realm:     "http-auth@example.org",
+		URI:       "/dir/index.html",
+		Algorithm: "SHA-256",
+		Nonce:     "7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v",
+		CNonce:    "f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ",
+		NC:        1,
+		QOP:       "auth",
+		Response:  "8ca523f5e9506fed4657c9700eebdbec",
+		Opaque:    "FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS",
+		UserHash:  true,
+	}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("Authorization"), Equals, `Digest username="Mufasa", realm="http-auth@example.org", uri="/dir/index.html", algorithm=SHA-256, nonce="7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v", cnonce="f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ", nc=00000001, qop=auth, response="8ca523f5e9506fed4657c9700eebdbec", opaque="FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS", userhash=true`)
+
+	a = AuthAWS4{
+		Credential:    "AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request",
+		SignedHeaders: "host;range;x-amz-date",
+		Signature:     "fe5f80f77d5fa3beca038a248ff027d0445342fe2855ddc963176630326f1024",
+	}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("Authorization"), Equals, `AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=host;range;x-amz-date,Signature=fe5f80f77d5fa3beca038a248ff027d0445342fe2855ddc963176630326f1024`)
+
+	r, _ = http.NewRequest("GET", "http://127.0.0.1", nil)
+	a = AuthAPIKey{Key: "fe5f80f77d5fa3beca038a248ff027d0"}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("X-API-Key"), Equals, `fe5f80f77d5fa3beca038a248ff027d0`)
+	c.Assert(r.Header.Get("API-Key"), Equals, `fe5f80f77d5fa3beca038a248ff027d0`)
+}
+
 func (s *ReqSuite) TestQuery(c *C) {
 	resp, err := Request{
 		URL: s.url + _URL_QUERY,
@@ -888,7 +933,6 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_ACCEPT, acceptRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_USER_AGENT, uaRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_BASIC_AUTH, basicAuthRequestHandler)
-	server.Handler.(*http.ServeMux).HandleFunc(_URL_BEARER, bearerRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_STRING_RESP, stringRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
@@ -1079,17 +1123,6 @@ func basicAuthRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	if pass != _TEST_BASIC_AUTH_PASS {
 		w.WriteHeader(952)
-		return
-	}
-
-	w.WriteHeader(200)
-}
-
-func bearerRequestHandler(w http.ResponseWriter, r *http.Request) {
-	header := r.Header.Get("Authorization")
-
-	if header != "Bearer "+_TEST_BEARER_TOKEN {
-		w.WriteHeader(960)
 		return
 	}
 

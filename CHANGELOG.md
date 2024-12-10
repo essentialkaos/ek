@@ -1,8 +1,10 @@
 ## Changelog
 
-### [13.14.3](https://kaos.sh/ek/13.14.3)
+### [13.15.0](https://kaos.sh/ek/13.15.0)
 
 - `[color]` Added `fmt.GoStringer` support for structs
+- `[req]` Added more authentication methods (`OAuth`, `Digest`, `VAPID`, `AWS4`, `API Key`)
+- `[req]` Added support of custom authentication methods
 - `[color]` Code refactoring
 
 ### [13.14.2](https://kaos.sh/ek/13.14.2)
