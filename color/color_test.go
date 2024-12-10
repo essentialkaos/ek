@@ -70,7 +70,8 @@ func (s *ColorSuite) TestRGB(c *C) {
 	c.Assert(RGB{255, 255, 255}.ToHex().v, DeepEquals, uint32(0xFFFFFF))
 	c.Assert(RGB{127, 127, 127}.ToHex().v, DeepEquals, uint32(0x7F7F7F))
 
-	c.Assert(RGB{23, 182, 89}.String(), Equals, "RGB{R:23 G:182 B:89}")
+	c.Assert(RGB{23, 182, 89}.String(), Equals, "23,182,89")
+	c.Assert(RGB{23, 182, 89}.GoString(), Equals, "RGB{R:23, G:182, B:89}")
 }
 
 func (s *ColorSuite) TestHex(c *C) {
@@ -78,8 +79,8 @@ func (s *ColorSuite) TestHex(c *C) {
 	c.Assert(NewHex(0xFFFFFF).ToRGB(), DeepEquals, RGB{0xFF, 0xFF, 0xFF})
 	c.Assert(NewHex(0x49d62d).ToRGB(), DeepEquals, RGB{0x49, 0xd6, 0x2d})
 
-	c.Assert(NewHex(0x49d62d).String(), Equals, "Hex{#49D62D}")
-	c.Assert(NewHex(0x49d62df7).String(), Equals, "Hex{#49D62DF7}")
+	c.Assert(NewHex(0x49d62d).String(), Equals, "#49D62D")
+	c.Assert(NewHex(0x49d62df7).String(), Equals, "#49D62DF7")
 	c.Assert(NewHex(0x49d62d).ToWeb(false, false), Equals, "#49d62d")
 	c.Assert(NewHex(0x49d62df7).ToWeb(true, false), Equals, "#49D62DF7")
 	c.Assert(NewHex(0x49d62df7).ToWeb(false, false), Equals, "#49d62df7")
@@ -104,11 +105,13 @@ func (s *ColorSuite) TestRGBA(c *C) {
 	c.Assert(NewHex(0xFFAABB).IsRGBA(), Equals, false)
 	c.Assert(NewHex(0xFFAABB01).IsRGBA(), Equals, true)
 
-	c.Assert(RGBA{23, 182, 89, 130}.String(), Equals, "RGBA{R:23 G:182 B:89 A:0.51}")
+	c.Assert(RGBA{23, 182, 89, 130}.String(), Equals, "23,182,89,0.51")
 
 	clr := RGBA{23, 182, 89, 0}
-	c.Assert(clr.String(), Equals, "RGBA{R:23 G:182 B:89 A:0.00}")
-	c.Assert(clr.WithAlpha(0.23).String(), Equals, "RGBA{R:23 G:182 B:89 A:0.23}")
+	c.Assert(clr.String(), Equals, "23,182,89,0.00")
+	c.Assert(clr.GoString(), Equals, "RGBA{R:23, G:182, B:89}")
+	c.Assert(clr.WithAlpha(0.23).String(), Equals, "23,182,89,0.23")
+	c.Assert(clr.WithAlpha(0.23).GoString(), Equals, "RGBA{R:23, G:182, B:89, A:58}")
 }
 
 func (s *ColorSuite) TestCMYK(c *C) {
@@ -121,7 +124,8 @@ func (s *ColorSuite) TestCMYK(c *C) {
 	c.Assert(CMYK{0.0, 0.0, 0.0, 1.0}.ToRGB(), DeepEquals, RGB{0, 0, 0})
 	c.Assert(CMYK{0.64, 0.77, 0, 0.17}.ToRGB(), DeepEquals, RGB{76, 48, 211})
 
-	c.Assert(CMYK{0.64, 0.77, 0, 0.17}.String(), Equals, "CMYK{C:64% M:77% Y:0% K:17%}")
+	c.Assert(CMYK{0.64, 0.77, 0, 0.17}.String(), Equals, "64%,77%,0%,17%")
+	c.Assert(CMYK{0.64, 0.77, 0, 0.17}.GoString(), Equals, "CMYK{C:0.64, M:0.77, Y:0, K:0.17}")
 }
 
 func (s *ColorSuite) TestHSV(c *C) {
@@ -143,8 +147,10 @@ func (s *ColorSuite) TestHSV(c *C) {
 
 	c.Assert(HSV{0.32, 0.12, 0.76, 0.5}.ToRGBA(), DeepEquals, RGBA{172, 193, 170, 127})
 
-	c.Assert(RGB{73, 158, 105}.ToHSV().String(), Equals, "HSV{H:143° S:54% V:62% A:0%}")
-	c.Assert(RGBA{73, 158, 105, 127}.ToHSV().String(), Equals, "HSV{H:143° S:54% V:62% A:50%}")
+	c.Assert(RGB{73, 158, 105}.ToHSV().String(), Equals, "143°,54%,62%,0%")
+	c.Assert(RGB{73, 158, 105}.ToHSV().GoString(), Equals, "HSV{H:0.396078431372549, S:0.5379746835443039, V:0.6196078431372549}")
+	c.Assert(RGBA{73, 158, 105, 127}.ToHSV().String(), Equals, "143°,54%,62%,50%")
+	c.Assert(RGBA{73, 158, 105, 127}.ToHSV().GoString(), Equals, "HSV{H:0.396078431372549, S:0.5379746835443039, V:0.6196078431372549, A:0.4980392156862745}")
 }
 
 func (s *ColorSuite) TestHSL(c *C) {
@@ -160,8 +166,10 @@ func (s *ColorSuite) TestHSL(c *C) {
 	c.Assert(HSL{0.6833333333333332, 0.7079646017699115, 0.5568627450980392, 0.0}.ToRGB(), DeepEquals, RGB{77, 62, 222})
 	c.Assert(HSL{0.6833333333333332, 0.7079646017699115, 0.5568627450980392, 0.50}.ToRGBA(), DeepEquals, RGBA{77, 62, 222, 127})
 
-	c.Assert(RGB{146, 93, 176}.ToHSL().String(), Equals, "HSL{H:278° S:34% L:53% A:0%}")
-	c.Assert(RGBA{146, 93, 176, 80}.ToHSL().String(), Equals, "HSL{H:278° S:34% L:53% A:31%}")
+	c.Assert(RGB{146, 93, 176}.ToHSL().String(), Equals, "278°,34%,53%,0%")
+	c.Assert(RGB{146, 93, 176}.ToHSL().GoString(), Equals, "HSL{H:0.7730923694779116, S:0.34439834024896265, L:0.5274509803921569}")
+	c.Assert(RGBA{146, 93, 176, 80}.ToHSL().String(), Equals, "278°,34%,53%,31%")
+	c.Assert(RGBA{146, 93, 176, 80}.ToHSL().GoString(), Equals, "HSL{H:0.7730923694779116, S:0.34439834024896265, L:0.5274509803921569, A:0.3137254901960784}")
 }
 
 func (s *ColorSuite) TestHUE(c *C) {

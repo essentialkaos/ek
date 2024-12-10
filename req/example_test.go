@@ -110,13 +110,12 @@ func ExampleRequest_Post() {
 
 	// send post request with basic auth
 	resp, err := Request{
-		URL:               "https://my.domain.com",
-		Body:              request,
-		Accept:            CONTENT_TYPE_JSON,
-		ContentType:       CONTENT_TYPE_JSON,
-		BasicAuthUsername: "someuser",
-		BasicAuthPassword: "somepass",
-		AutoDiscard:       true,
+		URL:         "https://my.domain.com",
+		Body:        request,
+		Accept:      CONTENT_TYPE_JSON,
+		ContentType: CONTENT_TYPE_JSON,
+		Auth:        AuthBasic{"john", "test1234"},
+		AutoDiscard: true,
 	}.Post()
 
 	if err != nil {
