@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.15.0](https://kaos.sh/ek/13.15.1)
+
+- `[options]` Added method `Argument.Uint64`
+- `[options]` Return type of method `Argument.Uint` set from `uint64` to `uint`
+
 ### [13.15.0](https://kaos.sh/ek/13.15.0)
 
 - `[color]` Added `fmt.GoStringer` support for structs
