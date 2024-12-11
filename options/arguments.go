@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/path"
 )
 
@@ -195,12 +196,7 @@ func (a Argument) Int64() (int64, error) {
 // Uint converts argument to uint
 func (a Argument) Uint() (uint, error) {
 	u, err := strconv.ParseUint(string(a), 10, 64)
-
-	if u > math.MaxUint {
-		return math.MaxUint, fmt.Errorf("Argument value exceeds maximum uint size")
-	}
-
-	return uint(u), err
+	return uint(mathutil.Min(u, math.MaxUint)), err
 }
 
 // Uint converts argument to uint64
