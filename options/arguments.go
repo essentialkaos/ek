@@ -9,6 +9,7 @@ package options
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -194,6 +195,11 @@ func (a Argument) Int64() (int64, error) {
 // Uint converts argument to uint
 func (a Argument) Uint() (uint, error) {
 	u, err := strconv.ParseUint(string(a), 10, 64)
+
+	if u > math.MaxUint {
+		return math.MaxUint, fmt.Errorf("Argument value exceeds maximum uint size")
+	}
+
 	return uint(u), err
 }
 
