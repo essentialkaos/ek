@@ -9,9 +9,11 @@ package options
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/path"
 )
 
@@ -164,8 +166,11 @@ func (a Argument) Is(value any) bool {
 	case int64:
 		v, err := a.Int64()
 		return v == t && err == nil
-	case uint64:
+	case uint:
 		v, err := a.Uint()
+		return v == t && err == nil
+	case uint64:
+		v, err := a.Uint64()
 		return v == t && err == nil
 	case float64:
 		v, err := a.Float()
@@ -189,7 +194,13 @@ func (a Argument) Int64() (int64, error) {
 }
 
 // Uint converts argument to uint
-func (a Argument) Uint() (uint64, error) {
+func (a Argument) Uint() (uint, error) {
+	u, err := strconv.ParseUint(string(a), 10, 64)
+	return uint(mathutil.Min(u, math.MaxUint)), err
+}
+
+// Uint converts argument to uint64
+func (a Argument) Uint64() (uint64, error) {
 	return strconv.ParseUint(string(a), 10, 64)
 }
 
