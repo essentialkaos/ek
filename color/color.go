@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/essentialkaos/ek/v13/mathutil"
 )
@@ -59,8 +60,8 @@ type HSL struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// colors is colors keywords
-var colors = map[string]uint32{
+// named is a map of named colors
+var named = map[string]uint32{
 	"aliceblue":            0xf0f8ff,
 	"antiquewhite":         0xfaebd7,
 	"aqua":                 0x00ffff,
@@ -416,8 +417,8 @@ func (c HSL) GoString() string {
 
 // Parse parses color
 func Parse(c string) (Hex, error) {
-	if colors[c] != 0 {
-		return Hex{v: colors[c]}, nil
+	if named[strings.ToLower(c)] != 0 {
+		return Hex{v: named[strings.ToLower(c)]}, nil
 	}
 
 	if c != "" && c[0] == '#' {
