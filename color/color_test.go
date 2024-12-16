@@ -28,7 +28,7 @@ var _ = Suite(&ColorSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ColorSuite) TestParse(c *C) {
-	color, err := Parse("violet")
+	color, err := Parse("vIOlEt")
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xEE82EE))
 

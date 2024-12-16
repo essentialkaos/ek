@@ -1,6 +1,10 @@
 ## Changelog
 
-### [13.15.0](https://kaos.sh/ek/13.15.1)
+### [13.15.2](https://kaos.sh/ek/13.15.2)
+
+- `[color]` Improved named colors support
+
+### [13.15.1](https://kaos.sh/ek/13.15.1)
 
 - `[options]` Added method `Argument.Uint64`
 - `[options]` Return type of method `Argument.Uint` set from `uint64` to `uint`
