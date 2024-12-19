@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.3](https://kaos.sh/ek/13.15.3)
+
+- `[knf/united]` Return `errors.Errors` instead of `[]error` from `Validate`
+
 ### [13.15.2](https://kaos.sh/ek/13.15.2)
 
 - `[color]` Improved named colors support

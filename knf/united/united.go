@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/essentialkaos/ek/v13/errors"
 	"github.com/essentialkaos/ek/v13/knf"
 	"github.com/essentialkaos/ek/v13/knf/value"
 	"github.com/essentialkaos/ek/v13/options"
@@ -238,9 +239,9 @@ func GetL(name string, defvals ...[]string) []string {
 
 // Validate executes all given validators and
 // returns slice with validation errors
-func Validate(validators knf.Validators) []error {
+func Validate(validators knf.Validators) errors.Errors {
 	if global == nil {
-		return []error{knf.ErrNilConfig}
+		return errors.Errors{knf.ErrNilConfig}
 	}
 
 	return validate(validators)
@@ -464,8 +465,8 @@ func (c *united) getProp(name string) string {
 }
 
 // validate runs validators over configuration
-func validate(validators knf.Validators) []error {
-	var result []error
+func validate(validators knf.Validators) errors.Errors {
+	var result errors.Errors
 
 	for _, v := range validators {
 		err := v.Func(global, v.Property, v.Value)
