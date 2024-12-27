@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.15.4](https://kaos.sh/ek/13.15.4)
+
+- `[log]` Added `Levels` method which returns all supported log levels
+- `[log]` `LogLevels` variable marked as deprecated
+
 ### [13.15.3](https://kaos.sh/ek/13.15.3)
 
 - `[knf/united]` Return `errors.Errors` instead of `[]error` from `Validate`
