@@ -127,6 +127,8 @@ var Colors = map[uint8]string{
 }
 
 // LogLevels is a slice with supported log level names
+//
+// Deprecated: Use method Levels instead
 var LogLevels = []string{
 	"",
 	"debug",
@@ -165,6 +167,15 @@ var logLevelsNames = map[string]uint8{
 	"crit":     4,
 	"critical": 4,
 	"fatal":    4,
+}
+
+var logLevels = []string{
+	"",
+	"debug",
+	"info",
+	"warn", "warning",
+	"error",
+	"crit", "critical", "fatal",
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -259,6 +270,11 @@ func Divider() error {
 // given
 func Is(level uint8) bool {
 	return Global.Is(level)
+}
+
+// Levels returns slice with all supported log levels
+func Levels() []string {
+	return logLevels
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

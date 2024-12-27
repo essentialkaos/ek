@@ -139,6 +139,8 @@ func (ls *LogSuite) TestErrors(c *C) {
 }
 
 func (ls *LogSuite) TestLevel(c *C) {
+	c.Assert(Levels(), HasLen, 9)
+
 	l := &Logger{minLevel: WARN, mu: &sync.Mutex{}}
 
 	c.Assert(l.Is(DEBUG), Equals, false)
@@ -486,8 +488,8 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:471) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:476) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:473) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:478) Test info 2")
 
 	frm := runtime.Frame{File: "/path/to/my/app/code/test.go", Line: 10}
 	c.Assert(extractCallerFromFrame(frm, true), Equals, "/path/to/my/app/code/test.go:10")
