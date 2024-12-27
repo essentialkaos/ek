@@ -142,9 +142,13 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 	}
 
 	if options.Has(LABEL_POWERLINE) && !fmtc.DisableColors {
-		fmtc.Printf(colorTag+indent+labelFormat+colorTag+"{!} "+colorTag+"%s{!}", label, title)
+		fmtc.Printf(colorTag+indent+labelFormat+colorTag+"{!}", label)
 	} else {
-		fmtc.Printf(colorTag+indent+labelFormat+colorTag+" %s{!}", label, title)
+		fmtc.Printf(colorTag+indent+labelFormat+"{!}", label)
+	}
+
+	if title != "" {
+		fmtc.Printf(" "+colorTag+"%s{!}", title)
 	}
 
 	if !options.Has(TOP_LINE) {
@@ -163,7 +167,7 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 		}
 	}
 
-	if options.Has(INDENT_INNER) || options.Has(BOTTOM_LINE) {
+	if options.Has(INDENT_INNER) {
 		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 

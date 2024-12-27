@@ -4,6 +4,7 @@
 
 - `[log]` Added `Levels` method which returns all supported log levels
 - `[log]` `LogLevels` variable marked as deprecated
+- `[fmtutil/panel]` Code refactoring
 
 ### [13.15.3](https://kaos.sh/ek/13.15.3)
 
