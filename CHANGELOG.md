@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.5](https://kaos.sh/ek/13.15.5)
+
+- `[log]` Added method `NewFields`
+
 ### [13.15.4](https://kaos.sh/ek/13.15.4)
 
 - `[log]` Added `Levels` method which returns all supported log levels

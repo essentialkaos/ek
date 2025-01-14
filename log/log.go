@@ -498,6 +498,13 @@ func (f Field) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// NewFields creates new fields collection
+func NewFields(fields ...Field) *Fields {
+	result := &Fields{}
+	result.Add(fields...)
+	return result
+}
+
 // Add adds given fields to collection
 func (f *Fields) Add(fields ...Field) *Fields {
 	if f == nil || len(fields) == 0 {

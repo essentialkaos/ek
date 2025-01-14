@@ -458,6 +458,12 @@ func ExampleLogger_Is() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func ExampleNewFields() {
+	f := NewFields(F{"user", "bob"}, F{"id", 200})
+
+	Debug("This is %d %s message", 2, "debug", f)
+}
+
 func ExampleFields_Add() {
 	// Fields do not require initialization
 	var f Fields
