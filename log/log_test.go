@@ -810,6 +810,9 @@ func (ls *LogSuite) TestFields(c *C) {
 	c.Assert(fv.data, HasLen, 2)
 	c.Assert(fv.Reset(), NotNil)
 	c.Assert(fv.data, HasLen, 0)
+
+	fp = NewFields(F{}, F{"testF1", 1}, F{"testF2", true})
+	c.Assert(fp.data, HasLen, 2)
 }
 
 func (ls *LogSuite) TestPayloadSplitter(c *C) {
