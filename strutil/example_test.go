@@ -218,3 +218,11 @@ func ExampleSqueezeRepeats() {
 	// Output:
 	// "john" "bob" "mary"
 }
+
+func ExampleMask() {
+	token := "fake-2558918525-7114213753218-123400000000000000001234"
+	fmt.Println(Mask(token, 30, 50, '*'))
+
+	// Output:
+	// fake-2558918525-7114213753218-********************1234
+}

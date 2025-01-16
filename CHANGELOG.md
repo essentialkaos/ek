@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.6](https://kaos.sh/ek/13.15.6)
+
+- `[strutil]` Added method `Mask`
+
 ### [13.15.5](https://kaos.sh/ek/13.15.5)
 
 - `[log]` Added method `NewFields`
