@@ -214,6 +214,11 @@ func (s *StrUtilSuite) TestSqueezeRepeats(c *C) {
 	c.Assert(SqueezeRepeats("1  ----  2 - 3 --     4", " -"), Equals, "1 - 2 - 3 - 4")
 }
 
+func (s *StrUtilSuite) TestMask(c *C) {
+	c.Assert(Mask("", 0, 1000, '*'), Equals, "")
+	c.Assert(Mask("Test1234test", 4, 8, '*'), Equals, "Test****test")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {

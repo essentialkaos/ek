@@ -516,6 +516,24 @@ func SqueezeRepeats(s string, set string) string {
 	return s
 }
 
+// Mask masks part of the given string using given symbol
+//
+// start - the first masked symbol
+// end - the first non-masked symbol
+func Mask(s string, start, end int, maskingRune rune) string {
+	var buffer bytes.Buffer
+
+	for i, r := range s {
+		if i >= start && i < end {
+			buffer.WriteRune(maskingRune)
+		} else {
+			buffer.WriteRune(r)
+		}
+	}
+
+	return buffer.String()
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func appendField(data []string, item string) []string {
