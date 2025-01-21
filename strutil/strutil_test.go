@@ -2,7 +2,7 @@ package strutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -217,6 +217,7 @@ func (s *StrUtilSuite) TestSqueezeRepeats(c *C) {
 func (s *StrUtilSuite) TestMask(c *C) {
 	c.Assert(Mask("", 0, 1000, '*'), Equals, "")
 	c.Assert(Mask("Test1234test", 4, 8, '*'), Equals, "Test****test")
+	c.Assert(Mask("Test1234test", 0, -4, '*'), Equals, "********test")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

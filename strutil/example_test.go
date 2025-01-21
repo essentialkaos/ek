@@ -2,7 +2,7 @@ package strutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -222,7 +222,9 @@ func ExampleSqueezeRepeats() {
 func ExampleMask() {
 	token := "fake-2558918525-7114213753218-123400000000000000001234"
 	fmt.Println(Mask(token, 30, 50, '*'))
+	fmt.Println(Mask(token, 16, -4, '#'))
 
 	// Output:
 	// fake-2558918525-7114213753218-********************1234
+	// fake-2558918525-##################################1234
 }
