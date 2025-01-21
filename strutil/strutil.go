@@ -523,6 +523,10 @@ func SqueezeRepeats(s string, set string) string {
 func Mask(s string, start, end int, maskingRune rune) string {
 	var buffer bytes.Buffer
 
+	if end < 0 {
+		end = len(s) + end
+	}
+
 	for i, r := range s {
 		if i >= start && i < end {
 			buffer.WriteRune(maskingRune)
