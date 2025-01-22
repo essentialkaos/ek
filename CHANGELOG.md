@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.8](https://kaos.sh/ek/13.15.8)
+
+- `[terminal/input]` Improved support for custom title formatting with `fmtc` tags
+
 ### [13.15.7](https://kaos.sh/ek/13.15.7)
 
 - `[strutil]` Improved method `Mask`
