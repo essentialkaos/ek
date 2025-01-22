@@ -21,6 +21,7 @@ import (
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/secstr"
+	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/terminal"
 	"github.com/essentialkaos/ek/v13/terminal/tty"
 
@@ -207,18 +208,18 @@ func getAnswerTitle(title, defaultAnswer string) string {
 
 	switch strings.ToUpper(defaultAnswer) {
 	case "Y":
-		return fmt.Sprintf(TitleColorTag+"%s (Y/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s{!} {s}(Y/n){!}", title)
 	case "N":
-		return fmt.Sprintf(TitleColorTag+"%s (y/N){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s{!} {s}(y/N){!}", title)
 	default:
-		return fmt.Sprintf(TitleColorTag+"%s (y/n){!}", title)
+		return fmt.Sprintf(TitleColorTag+"%s{!} {s}(y/n){!}", title)
 	}
 }
 
 // readUserInput reads user input
 func readUserInput(title string, private bool, validators []Validator) (string, error) {
 	if title != "" {
-		fmtc.Println(TitleColorTag + title + "{!}")
+		fmtc.Println(strutil.B(TitleColorTag == "", title, TitleColorTag+title+"{!}"))
 	}
 
 	var input string
