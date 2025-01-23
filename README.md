@@ -113,6 +113,7 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 - [fz](https://kaos.sh/fz) — Simple tool for formatting `go-fuzz` output
 - [GoHeft](https://kaos.sh/goheft) — Utility for listing sizes of all used static libraries compiled into golang binary
 - [GoMakeGen](https://kaos.sh/gomakegen) — Utility for generating makefiles for golang applications
+- [htmlcov](https://kaos.sh/htmlcov) — Utility for converting Go coverage profiles into HTML pages
 - [icecli](https://kaos.sh/icecli) — Command-line tools for Icecast
 - [IMC](https://kaos.sh/imc) — Simple terminal dashboard for Icecast
 - [init-exporter](https://github.com/funbox/init-exporter) — Utility for exporting services described by Procfile to init system
@@ -130,10 +131,12 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 - [rsz](https://kaos.sh/rsz) — Simple utility for image resizing
 - [scratch](https://kaos.sh/scratch) — Simple utility for generating blank files for Go apps, utilities and packages
 - [SHDoc](https://kaos.sh/shdoc) — Tool for viewing and exporting docs for shell scripts
+- [siocrypt](https://kaos.sh/siocrypt) — Tool for encrypting/decrypting arbitrary data streams
 - [Sonar](https://kaos.sh/sonar) — Utility for showing user Slack status in Atlassian Jira
 - [SourceIndex](https://kaos.sh/source-index) — Utility for generating an index for source archives
 - [SSLScan Client](https://kaos.sh/sslcli) — Pretty awesome command-line client for public SSLLabs API
 - [subdy](https://kaos.sh/subdy) — CLI for subdomain.center API
+- [Swap Reaper](https://kaos.sh/swap-reaper) — Service to periodically clean swap memory
 - [swptop](https://kaos.sh/swptop) — Simple utility for viewing swap consumption of processes
 - [uc](https://kaos.sh/uc) — Simple utility for counting unique lines
 - [updown-badge-server](https://kaos.sh/updown-badge-server) — Service for generating badges for updown.io checks
