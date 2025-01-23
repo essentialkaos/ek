@@ -102,7 +102,8 @@ func getPackageInfo(names string) support.Pkg {
 
 // getRPMPackageInfo returns info about package from rpm
 func getRPMPackageInfo(name string) support.Pkg {
-	out := getCommandOutput("rpm", "-q", "--qf", "%{version}-%{release}.%{arch}", name)
+	out := getCommandOutput("rpm", "-q", "--qf", "%{version}-%{release}.%{arch} ", name)
+	out = strings.TrimSpace(out)
 
 	if len(out) == 0 {
 		return support.Pkg{name, ""}
