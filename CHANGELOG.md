@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.9](https://kaos.sh/ek/13.15.9)
+
+- `[support/pkgs]` Fixed bug with collecting info about multilib versions of RPM packages
+
 ### [13.15.8](https://kaos.sh/ek/13.15.8)
 
 - `[terminal/input]` Improved support for custom title formatting with `fmtc` tags
