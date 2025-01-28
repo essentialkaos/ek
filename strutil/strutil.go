@@ -538,6 +538,25 @@ func Mask(s string, start, end int, maskingRune rune) string {
 	return buffer.String()
 }
 
+// JoinFunc concatenates the elements of its first argument into a single string,
+// and modifies each element using the given function
+func JoinFunc(elems []string, sep string, f func(s string) string) string {
+	if len(elems) == 0 {
+		return ""
+	}
+
+	var buf bytes.Buffer
+
+	buf.WriteString(f(elems[0]))
+
+	for _, s := range elems[1:] {
+		buf.WriteString(sep)
+		buf.WriteString(f(s))
+	}
+
+	return buf.String()
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func appendField(data []string, item string) []string {

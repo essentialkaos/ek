@@ -9,6 +9,7 @@ package strutil
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -227,4 +228,16 @@ func ExampleMask() {
 	// Output:
 	// fake-2558918525-7114213753218-********************1234
 	// fake-2558918525-##################################1234
+}
+
+func ExampleJoinFunc() {
+	e := []string{"John", "Bob Smith", "Fiona", "Elen Vire", "Joe Doe"}
+	s := JoinFunc(e, ", ", func(s string) string {
+		return strconv.Quote(s)
+	})
+
+	fmt.Println(s)
+
+	// Output:
+	// "John", "Bob Smith", "Fiona", "Elen Vire", "Joe Doe"
 }

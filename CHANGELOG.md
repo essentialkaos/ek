@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.11](https://kaos.sh/ek/13.15.11)
+
+- `[strutil]` Added method `JoinFunc`
+
 ### [13.15.10](https://kaos.sh/ek/13.15.10)
 
 - `[terminal/input]` Fixed bug with hiding password when using custom validator
