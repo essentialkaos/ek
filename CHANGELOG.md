@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.10](https://kaos.sh/ek/13.15.10)
+
+- `[terminal/input]` Fixed bug with hiding password when using custom validator
+
 ### [13.15.9](https://kaos.sh/ek/13.15.9)
 
 - `[support/pkgs]` Fixed bug with collecting info about multilib versions of RPM packages

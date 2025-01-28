@@ -242,19 +242,6 @@ INPUT_LOOP:
 			return "", err
 		}
 
-		if len(validators) != 0 {
-			for _, validator := range validators {
-				input, err = validator.Validate(input)
-
-				if err != nil {
-					fmtc.NewLine()
-					terminal.Warn(err.Error())
-					fmtc.NewLine()
-					continue INPUT_LOOP
-				}
-			}
-		}
-
 		if private && input != "" {
 			if !HidePassword {
 				if MaskSymbolColorTag == "" {
@@ -266,6 +253,19 @@ INPUT_LOOP:
 		} else {
 			if !tty.IsTTY() {
 				fmt.Println(fmtc.Sprintf(Prompt) + input)
+			}
+		}
+
+		if len(validators) != 0 {
+			for _, validator := range validators {
+				input, err = validator.Validate(input)
+
+				if err != nil {
+					fmtc.NewLine()
+					terminal.Warn(err.Error())
+					fmtc.NewLine()
+					continue INPUT_LOOP
+				}
 			}
 		}
 
