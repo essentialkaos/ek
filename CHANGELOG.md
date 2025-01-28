@@ -3,6 +3,7 @@
 ### [13.15.10](https://kaos.sh/ek/13.15.10)
 
 - `[terminal/input]` Fixed bug with hiding password when using custom validator
+- `[terminal/input]` Improved handling of input data passed through stdin
 
 ### [13.15.9](https://kaos.sh/ek/13.15.9)
 

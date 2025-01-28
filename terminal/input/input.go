@@ -79,6 +79,8 @@ var ErrInvalidAnswer = fmt.Errorf("Please enter Y or N")
 
 var oldTMUXFlag int8
 
+var isStdinSet = hasStdinData()
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Read reads user input
@@ -242,6 +244,11 @@ INPUT_LOOP:
 			return "", err
 		}
 
+		if isStdinSet {
+			fmtc.Println(fmtc.Sprintf(Prompt))
+			isStdinSet = false
+		}
+
 		if private && input != "" {
 			if !HidePassword {
 				if MaskSymbolColorTag == "" {
@@ -292,4 +299,19 @@ func isOldTMUXSession() bool {
 	}
 
 	return oldTMUXFlag == 1
+}
+
+// hasStdinData returns true if there is some data in stdin
+func hasStdinData() bool {
+	stdin, err := os.Stdin.Stat()
+
+	if err != nil {
+		return false
+	}
+
+	if stdin.Mode()&os.ModeCharDevice != 0 {
+		return false
+	}
+
+	return true
 }
