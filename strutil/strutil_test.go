@@ -220,6 +220,23 @@ func (s *StrUtilSuite) TestMask(c *C) {
 	c.Assert(Mask("Test1234test", 0, -4, '*'), Equals, "********test")
 }
 
+func (s *StrUtilSuite) TestJoinFunc(c *C) {
+	c.Assert(
+		JoinFunc([]string{}, " ", func(s string) string { return "" }),
+		Equals, "",
+	)
+
+	c.Assert(
+		JoinFunc([]string{"1"}, " ", func(s string) string { return "'" + s + "'" }),
+		Equals, "'1'",
+	)
+
+	c.Assert(
+		JoinFunc([]string{"1", "2", "3", "4"}, ", ", func(s string) string { return "'" + s + "'" }),
+		Equals, "'1', '2', '3', '4'",
+	)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
