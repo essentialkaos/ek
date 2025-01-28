@@ -3,8 +3,8 @@ github.com/essentialkaos/check v1.4.1 h1:SuxXzrbokPGTPWxGRnzy0hXvtb44mtVrdNxgPa1
 github.com/essentialkaos/check v1.4.1/go.mod h1:xQOYwFvnxfVZyt5Qvjoa1SxcRqu5VyP77pgALr3iu+M=
 github.com/essentialkaos/depsy v1.3.1 h1:00k9QcMsdPM4IzDaEFHsTHBD/zoM0oxtB5+dMUwbQa8=
 github.com/essentialkaos/depsy v1.3.1/go.mod h1:B5+7Jhv2a2RacOAxIKU2OeJp9QfZjwIpEEPI5X7auWM=
-github.com/essentialkaos/go-linenoise/v3 v3.6.1 h1:VzjakaWNAPfattl/HSIJveWYpfrxAYHzUl8u6DdOjtY=
-github.com/essentialkaos/go-linenoise/v3 v3.6.1/go.mod h1:hpxke5G2eXvFhVnDAiGU9ArH3MTDGGc13afObIbuaJQ=
+github.com/essentialkaos/go-linenoise/v3 v3.7.0 h1:a/DzU6GFBmrKJxNAzaYbLGN6yFnIMIFaWxvSWmeCEp0=
+github.com/essentialkaos/go-linenoise/v3 v3.7.0/go.mod h1:IhOWE0rvvu3aPmGko/C4SoZdhbko9eTuwe5yyw7/uQ8=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
