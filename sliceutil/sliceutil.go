@@ -134,6 +134,43 @@ func Join[K any](slice []K, sep string) string {
 	return buf.String()
 }
 
+// Diff returns the difference (added, removed) between two slices.
+// Note that slices MUST be sorted.
+func Diff[K comparable](before, after []K) ([]K, []K) {
+	switch {
+	case len(before) == 0:
+		return after, nil
+	case len(after) == 0:
+		return nil, before
+	}
+
+	var added, deleted []K
+
+L1:
+	for _, b := range before {
+		for _, a := range after {
+			if b == a {
+				continue L1
+			}
+		}
+
+		deleted = append(deleted, b)
+	}
+
+L2:
+	for _, a := range after {
+		for _, b := range before {
+			if b == a {
+				continue L2
+			}
+		}
+
+		added = append(added, a)
+	}
+
+	return added, deleted
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Copy creates copy of given slice

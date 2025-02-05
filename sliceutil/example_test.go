@@ -91,3 +91,17 @@ func ExampleJoin() {
 	// 1,2,3,4,5
 	// John;183;98.123;false
 }
+
+func ExampleDiff() {
+	s1 := []int{1, 2, 3, 5, 7, 8}
+	s2 := []int{2, 3, 5, 6, 7}
+
+	added, deleted := Diff(s1, s2)
+
+	fmt.Printf("Added: %v\n", Join(added, ", "))
+	fmt.Printf("Deleted: %v\n", Join(deleted, ", "))
+
+	// Output:
+	// Added: 6
+	// Deleted: 1, 8
+}
