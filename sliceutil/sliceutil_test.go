@@ -131,6 +131,23 @@ func (s *SliceSuite) TestJoin(c *C) {
 	c.Assert(Join([]any{"test", 34, 12.50}, ","), Equals, "test,34,12.5")
 }
 
+func (s *SliceSuite) TestDiff(c *C) {
+	s1 := []int{1, 2, 3}
+	s2 := []int{2, 3, 4}
+
+	a, d := Diff([]int{}, s2)
+	c.Assert(a, DeepEquals, s2)
+	c.Assert(d, HasLen, 0)
+
+	a, d = Diff(s1, []int{})
+	c.Assert(d, DeepEquals, s1)
+	c.Assert(a, HasLen, 0)
+
+	a, d = Diff(s1, s2)
+	c.Assert(a, DeepEquals, []int{4})
+	c.Assert(d, DeepEquals, []int{1})
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SliceSuite) BenchmarkStringToInterface(c *C) {
