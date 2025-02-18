@@ -319,6 +319,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(StartOfWeek(d, time.Monday).IsZero(), Equals, true)
 	c.Assert(StartOfMonth(d).IsZero(), Equals, true)
 	c.Assert(StartOfYear(d).IsZero(), Equals, true)
+	c.Assert(EndOfHour(d).IsZero(), Equals, true)
+	c.Assert(EndOfDay(d).IsZero(), Equals, true)
+	c.Assert(EndOfWeek(d, time.Monday).IsZero(), Equals, true)
+	c.Assert(EndOfMonth(d).IsZero(), Equals, true)
+	c.Assert(EndOfYear(d).IsZero(), Equals, true)
 
 	d = time.Date(2021, 8, 13, 12, 30, 15, 0, time.Local)
 	c.Assert(StartOfHour(d), DeepEquals, time.Date(2021, 8, 13, 12, 0, 0, 0, time.Local))
@@ -326,6 +331,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(StartOfWeek(d, time.Monday), DeepEquals, time.Date(2021, 8, 9, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfMonth(d), DeepEquals, time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfYear(d), DeepEquals, time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local))
+	c.Assert(EndOfHour(d), DeepEquals, time.Date(2021, 8, 13, 12, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfDay(d), DeepEquals, time.Date(2021, 8, 13, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfWeek(d, time.Monday), DeepEquals, time.Date(2021, 8, 15, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfMonth(d), DeepEquals, time.Date(2021, 8, 31, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfYear(d), DeepEquals, time.Date(2021, 12, 31, 23, 59, 59, 999999999, time.Local))
 
 	y := time.Now().In(time.Local).Year()
 	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))

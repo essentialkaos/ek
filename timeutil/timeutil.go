@@ -265,6 +265,15 @@ func StartOfHour(t time.Time) time.Time {
 	)
 }
 
+// EndOfHour returns end of the hour
+func EndOfHour(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	return StartOfHour(t).Add(time.Hour).Add(-1 * time.Nanosecond)
+}
+
 // StartOfDay returns start of the day
 func StartOfDay(t time.Time) time.Time {
 	if t.IsZero() {
@@ -275,6 +284,15 @@ func StartOfDay(t time.Time) time.Time {
 		t.Year(), t.Month(), t.Day(),
 		0, 0, 0, 0, t.Location(),
 	)
+}
+
+// EndOfDay returns end of the day
+func EndOfDay(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	return StartOfDay(t).Add(24 * time.Hour).Add(-1 * time.Nanosecond)
 }
 
 // StartOfWeek returns the first day of the week
@@ -295,6 +313,15 @@ func StartOfWeek(t time.Time, firstDay time.Weekday) time.Time {
 	}
 }
 
+// EndOfWeek returns the last day of the week
+func EndOfWeek(t time.Time, firstDay time.Weekday) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	return StartOfWeek(t, firstDay).AddDate(0, 0, 7).Add(-1 * time.Nanosecond)
+}
+
 // StartOfMonth returns the first day of the month
 func StartOfMonth(t time.Time) time.Time {
 	if t.IsZero() {
@@ -307,6 +334,15 @@ func StartOfMonth(t time.Time) time.Time {
 	)
 }
 
+// EndOfMonth returns the last day of the month
+func EndOfMonth(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	return StartOfMonth(t).AddDate(0, 1, 0).Add(-1 * time.Nanosecond)
+}
+
 // StartOfYear returns the first day of the year
 func StartOfYear(t time.Time) time.Time {
 	if t.IsZero() {
@@ -317,6 +353,15 @@ func StartOfYear(t time.Time) time.Time {
 		t.Year(), time.January, 1,
 		0, 0, 0, 0, t.Location(),
 	)
+}
+
+// EndOfYear returns the last day of the year
+func EndOfYear(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
+	return StartOfYear(t).AddDate(1, 0, 0).Add(-1 * time.Nanosecond)
 }
 
 // PrevDay returns previous day date

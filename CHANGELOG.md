@@ -3,6 +3,11 @@
 ### [13.15.13](https://kaos.sh/ek/13.15.13)
 
 - `[timeutil]` Added helper `IsWeekend`
+- `[timeutil]` Added helper `EndOfHour`
+- `[timeutil]` Added helper `EndOfDay`
+- `[timeutil]` Added helper `EndOfWeek`
+- `[timeutil]` Added helper `EndOfMonth`
+- `[timeutil]` Added helper `EndOfYear`
 
 ### [13.15.12](https://kaos.sh/ek/13.15.12)
 

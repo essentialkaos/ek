@@ -126,6 +126,15 @@ func ExampleStartOfHour() {
 	// 2021-06-15 12:00:00 +0000 UTC
 }
 
+func ExampleEndOfHour() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfHour(d))
+
+	// Output:
+	// 2021-06-15 12:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfDay() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -133,6 +142,15 @@ func ExampleStartOfDay() {
 
 	// Output:
 	// 2021-06-15 00:00:00 +0000 UTC
+}
+
+func ExampleEndOfDay() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfDay(d))
+
+	// Output:
+	// 2021-06-15 23:59:59.999999999 +0000 UTC
 }
 
 func ExampleStartOfWeek() {
@@ -144,6 +162,15 @@ func ExampleStartOfWeek() {
 	// 2021-06-14 00:00:00 +0000 UTC
 }
 
+func ExampleEndOfWeek() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfWeek(d, time.Monday))
+
+	// Output:
+	// 2021-06-20 23:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfMonth() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -153,6 +180,15 @@ func ExampleStartOfMonth() {
 	// 2021-06-01 00:00:00 +0000 UTC
 }
 
+func ExampleEndOfMonth() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfMonth(d))
+
+	// Output:
+	// 2021-06-30 23:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfYear() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -160,6 +196,15 @@ func ExampleStartOfYear() {
 
 	// Output:
 	// 2021-01-01 00:00:00 +0000 UTC
+}
+
+func ExampleEndOfYear() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfYear(d))
+
+	// Output:
+	// 2021-12-31 23:59:59.999999999 +0000 UTC
 }
 
 func ExamplePrevDay() {
