@@ -255,6 +255,10 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 
 // StartOfHour returns start of the hour
 func StartOfHour(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
 	return time.Date(
 		t.Year(), t.Month(), t.Day(),
 		t.Hour(), 0, 0, 0, t.Location(),
@@ -263,6 +267,10 @@ func StartOfHour(t time.Time) time.Time {
 
 // StartOfDay returns start of the day
 func StartOfDay(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
 	return time.Date(
 		t.Year(), t.Month(), t.Day(),
 		0, 0, 0, 0, t.Location(),
@@ -289,6 +297,10 @@ func StartOfWeek(t time.Time, firstDay time.Weekday) time.Time {
 
 // StartOfMonth returns the first day of the month
 func StartOfMonth(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
 	return time.Date(
 		t.Year(), t.Month(), 1,
 		0, 0, 0, 0, t.Location(),
@@ -297,6 +309,10 @@ func StartOfMonth(t time.Time) time.Time {
 
 // StartOfYear returns the first day of the year
 func StartOfYear(t time.Time) time.Time {
+	if t.IsZero() {
+		return t
+	}
+
 	return time.Date(
 		t.Year(), time.January, 1,
 		0, 0, 0, 0, t.Location(),

@@ -312,11 +312,18 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(NextWorkday(d), DeepEquals, time.Date(2021, 8, 2, 12, 30, 15, 0, time.Local))
 	c.Assert(NextWeekend(d), DeepEquals, time.Date(2021, 8, 7, 12, 30, 15, 0, time.Local))
 
+	d = time.Time{}
+
+	c.Assert(StartOfHour(d).IsZero(), Equals, true)
+	c.Assert(StartOfDay(d).IsZero(), Equals, true)
+	c.Assert(StartOfWeek(d, time.Monday).IsZero(), Equals, true)
+	c.Assert(StartOfMonth(d).IsZero(), Equals, true)
+	c.Assert(StartOfYear(d).IsZero(), Equals, true)
+
 	d = time.Date(2021, 8, 13, 12, 30, 15, 0, time.Local)
 	c.Assert(StartOfHour(d), DeepEquals, time.Date(2021, 8, 13, 12, 0, 0, 0, time.Local))
 	c.Assert(StartOfDay(d), DeepEquals, time.Date(2021, 8, 13, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfWeek(d, time.Monday), DeepEquals, time.Date(2021, 8, 9, 0, 0, 0, 0, time.Local))
-	c.Assert(StartOfWeek(time.Time{}, time.Monday), DeepEquals, time.Time{})
 	c.Assert(StartOfMonth(d), DeepEquals, time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfYear(d), DeepEquals, time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local))
 
