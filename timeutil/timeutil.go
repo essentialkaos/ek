@@ -384,6 +384,11 @@ func NextWeekend(t time.Time) time.Time {
 	}
 }
 
+// IsWeekend returns true if given day is weekend (saturday or sunday)
+func IsWeekend(t time.Time) bool {
+	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday
+}
+
 // FromISOWeek returns date for given week number in given year
 func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	week = mathutil.Between(week, 1, 53)

@@ -324,6 +324,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2021, 12, 31, 0, 0, 0, 0, time.Local))
 	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 4, 0, 0, 0, 0, time.Local))
+
+	d = time.Date(2021, 8, 1, 12, 30, 15, 0, time.Local)
+	c.Assert(IsWeekend(d), Equals, true)
+	d = d.AddDate(0, 0, 3)
+	c.Assert(IsWeekend(d), Equals, false)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

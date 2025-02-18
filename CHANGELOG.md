@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.15.13](https://kaos.sh/ek/13.15.13)
+
+- `[timeutil]` Added helper `IsWeekend`
+
 ### [13.15.12](https://kaos.sh/ek/13.15.12)
 
 - `[sliceutil]` Added method `Diff`

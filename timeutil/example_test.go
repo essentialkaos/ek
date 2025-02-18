@@ -252,6 +252,15 @@ func ExampleNextWeekend() {
 	// 2021-06-12 12:30:15 +0000 UTC
 }
 
+func ExampleIsWeekend() {
+	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(IsWeekend(d))
+
+	// Output:
+	// true
+}
+
 func ExampleFromISOWeek() {
 	t := FromISOWeek(25, 2021, time.UTC)
 
