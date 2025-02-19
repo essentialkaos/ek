@@ -27,8 +27,9 @@ const (
 	US     = time.Microsecond
 	MS     = time.Millisecond
 	SECOND = time.Second
+	MINUTE = time.Minute
 	HOUR   = time.Hour
-	DAY    = 24 * time.Hour
+	DAY    = 24 * HOUR
 	WEEK   = 7 * DAY
 	YEAR   = 365 * DAY
 )
@@ -79,8 +80,8 @@ func PrettyDurationInDays(d any) string {
 		return ""
 	}
 
-	if dur < 24*time.Hour {
-		dur = 24 * time.Hour
+	if dur < 24*HOUR {
+		dur = 24 * HOUR
 	}
 
 	days := int(dur.Hours()) / 24
@@ -284,7 +285,7 @@ func EndOfHour(t time.Time) time.Time {
 		return t
 	}
 
-	return StartOfHour(t).Add(time.Hour).Add(-1 * time.Nanosecond)
+	return StartOfHour(t).Add(HOUR).Add(-1 * time.Nanosecond)
 }
 
 // StartOfDay returns start of the day
@@ -305,7 +306,7 @@ func EndOfDay(t time.Time) time.Time {
 		return t
 	}
 
-	return StartOfDay(t).Add(24 * time.Hour).Add(-1 * time.Nanosecond)
+	return StartOfDay(t).Add(24 * HOUR).Add(-1 * time.Nanosecond)
 }
 
 // StartOfWeek returns the first day of the week
@@ -846,40 +847,40 @@ func getPrettySimpleDuration(dur time.Duration) string {
 
 func getPrettyShortDuration(d time.Duration, separator string) string {
 	switch {
-	case d >= 24*time.Hour:
+	case d >= DAY:
 		return fmt.Sprintf(
 			"%.0f"+separator+"d",
-			formatFloat(float64(d)/float64(24*time.Hour)),
+			formatFloat(float64(d)/float64(DAY)),
 		)
 
-	case d >= time.Hour:
+	case d >= HOUR:
 		return fmt.Sprintf(
 			"%.2g"+separator+"h",
-			formatFloat(float64(d)/float64(time.Hour)),
+			formatFloat(float64(d)/float64(HOUR)),
 		)
 
-	case d >= time.Minute:
+	case d >= MINUTE:
 		return fmt.Sprintf(
 			"%.2g"+separator+"m",
-			formatFloat(float64(d)/float64(time.Minute)),
+			formatFloat(float64(d)/float64(MINUTE)),
 		)
 
-	case d >= time.Second:
+	case d >= SECOND:
 		return fmt.Sprintf(
 			"%.2g"+separator+"s",
-			formatFloat(float64(d)/float64(time.Second)),
+			formatFloat(float64(d)/float64(SECOND)),
 		)
 
-	case d >= time.Millisecond:
+	case d >= MS:
 		return fmt.Sprintf(
 			"%g"+separator+"ms",
-			formatFloat(float64(d)/float64(time.Millisecond)),
+			formatFloat(float64(d)/float64(MS)),
 		)
 
-	case d >= time.Microsecond:
+	case d >= US:
 		return fmt.Sprintf(
 			"%g"+separator+"μs",
-			formatFloat(float64(d)/float64(time.Microsecond)),
+			formatFloat(float64(d)/float64(US)),
 		)
 
 	default:
