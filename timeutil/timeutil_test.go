@@ -346,6 +346,9 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(IsWeekend(d), Equals, true)
 	d = d.AddDate(0, 0, 3)
 	c.Assert(IsWeekend(d), Equals, false)
+
+	d = time.Date(2030, 1, 1, 12, 0, 0, 0, time.Local)
+	c.Assert(Until(d, DAY), Not(Equals), 0)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

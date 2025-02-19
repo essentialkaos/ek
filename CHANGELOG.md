@@ -8,6 +8,7 @@
 - `[timeutil]` Added helper `EndOfWeek`
 - `[timeutil]` Added helper `EndOfMonth`
 - `[timeutil]` Added helper `EndOfYear`
+- `[timeutil]` Added helper `Until`
 
 ### [13.15.12](https://kaos.sh/ek/13.15.12)
 

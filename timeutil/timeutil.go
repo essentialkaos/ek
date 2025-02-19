@@ -23,6 +23,19 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
+	NS     = time.Nanosecond
+	US     = time.Microsecond
+	MS     = time.Millisecond
+	SECOND = time.Second
+	HOUR   = time.Hour
+	DAY    = 24 * time.Hour
+	WEEK   = 7 * DAY
+	YEAR   = 365 * DAY
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const (
 	_SECOND int64 = 1
 	_MINUTE int64 = 60
 	_HOUR   int64 = 3600
@@ -448,6 +461,12 @@ func NextWeekend(t time.Time) time.Time {
 // IsWeekend returns true if given day is weekend (saturday or sunday)
 func IsWeekend(t time.Time) bool {
 	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday
+}
+
+// Until returns time until given moment
+func Until(t time.Time, mod time.Duration) int {
+	now := time.Now().In(t.Location())
+	return int(t.Sub(now) / mod)
 }
 
 // FromISOWeek returns date for given week number in given year

@@ -40,7 +40,7 @@ func ExamplePrettyDurationSimple() {
 
 func ExamplePrettyDurationInDays() {
 	fmt.Println(PrettyDurationInDays(2 * time.Hour))
-	fmt.Println(PrettyDurationInDays(168 * time.Hour))
+	fmt.Println(PrettyDurationInDays(168 * HOUR))
 
 	// Output:
 	// 1 day
@@ -75,7 +75,7 @@ func ExampleShortDuration() {
 }
 
 func ExampleMiniDuration() {
-	fmt.Println(MiniDuration(36 * time.Hour))
+	fmt.Println(MiniDuration(36 * HOUR))
 	fmt.Println(MiniDuration(18 * time.Second))
 	fmt.Println(MiniDuration(time.Second / 125))
 
@@ -304,6 +304,12 @@ func ExampleIsWeekend() {
 
 	// Output:
 	// true
+}
+
+func ExampleUntil() {
+	d := time.Date(2030, 6, 6, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(Until(d, DAY))
 }
 
 func ExampleFromISOWeek() {
