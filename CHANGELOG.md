@@ -1,7 +1,8 @@
 ## Changelog
 
-### [13.15.13](https://kaos.sh/ek/13.15.13)
+### [13.16.0](https://kaos.sh/ek/13.16.0)
 
+- `[i18n]` Added method for bundle validation `ValidateBundle`
 - `[timeutil]` Added helper `IsWeekend`
 - `[timeutil]` Added helper `EndOfHour`
 - `[timeutil]` Added helper `EndOfDay`
@@ -9,6 +10,8 @@
 - `[timeutil]` Added helper `EndOfMonth`
 - `[timeutil]` Added helper `EndOfYear`
 - `[timeutil]` Added helper `Until`
+- `[i18n]` Code refactoring
+- `[timeutil]` Code refactoring
 
 ### [13.15.12](https://kaos.sh/ek/13.15.12)
 
