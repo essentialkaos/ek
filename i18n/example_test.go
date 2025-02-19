@@ -62,8 +62,21 @@ func ExampleFallback() {
 		GREETING: "Сәлеметсіз бе!",
 	}
 
-	loc, _ := Fallback(en, ru, kz)
+	loc, err := Fallback(en, ru, kz)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
 	l := loc.(*Bundle)
+
+	err = ValidateBundle(l)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
 	data := Data{
 		"Username": "johndoe",

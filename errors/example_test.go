@@ -58,7 +58,7 @@ func ExampleChain() {
 	// Error 3
 }
 
-func ExampleWrap() {
+func ExampleToBundle() {
 	e := []error{
 		fmt.Errorf("Error 1"),
 		fmt.Errorf("Error 2"),

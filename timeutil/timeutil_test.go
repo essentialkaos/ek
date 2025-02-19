@@ -312,18 +312,43 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(NextWorkday(d), DeepEquals, time.Date(2021, 8, 2, 12, 30, 15, 0, time.Local))
 	c.Assert(NextWeekend(d), DeepEquals, time.Date(2021, 8, 7, 12, 30, 15, 0, time.Local))
 
+	d = time.Time{}
+
+	c.Assert(StartOfHour(d).IsZero(), Equals, true)
+	c.Assert(StartOfDay(d).IsZero(), Equals, true)
+	c.Assert(StartOfWeek(d, time.Monday).IsZero(), Equals, true)
+	c.Assert(StartOfMonth(d).IsZero(), Equals, true)
+	c.Assert(StartOfYear(d).IsZero(), Equals, true)
+	c.Assert(EndOfHour(d).IsZero(), Equals, true)
+	c.Assert(EndOfDay(d).IsZero(), Equals, true)
+	c.Assert(EndOfWeek(d, time.Monday).IsZero(), Equals, true)
+	c.Assert(EndOfMonth(d).IsZero(), Equals, true)
+	c.Assert(EndOfYear(d).IsZero(), Equals, true)
+
 	d = time.Date(2021, 8, 13, 12, 30, 15, 0, time.Local)
 	c.Assert(StartOfHour(d), DeepEquals, time.Date(2021, 8, 13, 12, 0, 0, 0, time.Local))
 	c.Assert(StartOfDay(d), DeepEquals, time.Date(2021, 8, 13, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfWeek(d, time.Monday), DeepEquals, time.Date(2021, 8, 9, 0, 0, 0, 0, time.Local))
-	c.Assert(StartOfWeek(time.Time{}, time.Monday), DeepEquals, time.Time{})
 	c.Assert(StartOfMonth(d), DeepEquals, time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(StartOfYear(d), DeepEquals, time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local))
+	c.Assert(EndOfHour(d), DeepEquals, time.Date(2021, 8, 13, 12, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfDay(d), DeepEquals, time.Date(2021, 8, 13, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfWeek(d, time.Monday), DeepEquals, time.Date(2021, 8, 15, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfMonth(d), DeepEquals, time.Date(2021, 8, 31, 23, 59, 59, 999999999, time.Local))
+	c.Assert(EndOfYear(d), DeepEquals, time.Date(2021, 12, 31, 23, 59, 59, 999999999, time.Local))
 
 	y := time.Now().In(time.Local).Year()
 	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2021, 12, 31, 0, 0, 0, 0, time.Local))
 	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 4, 0, 0, 0, 0, time.Local))
+
+	d = time.Date(2021, 8, 1, 12, 30, 15, 0, time.Local)
+	c.Assert(IsWeekend(d), Equals, true)
+	d = d.AddDate(0, 0, 3)
+	c.Assert(IsWeekend(d), Equals, false)
+
+	d = time.Date(2030, 1, 1, 12, 0, 0, 0, time.Local)
+	c.Assert(Until(d, DAY), Not(Equals), 0)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

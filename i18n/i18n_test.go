@@ -117,6 +117,48 @@ func (s *I18NSuite) TestIsComplete(c *C) {
 	ic, f = IsComplete(ru)
 	c.Assert(ic, Equals, false)
 	c.Assert(f, DeepEquals, []string{"EXIT_QUESTION", "ERRORS.UNKNOWN_ID"})
+
+	en = &testBundle{
+		GREETING:      "Hello!",
+		EXIT_QUESTION: "Do you really want to exit?",
+	}
+
+	ic, f = IsComplete(en)
+	c.Assert(ic, Equals, false)
+	c.Assert(f, DeepEquals, []string{"ERRORS"})
+}
+
+func (s *I18NSuite) TestValidateBundle(c *C) {
+	en := &testBundle{
+		GREETING:      "Hello!",
+		EXIT_QUESTION: "Do you really want to exit?",
+		ERRORS: &testErrors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	ru := &testBundle{
+		GREETING: "Привет!",
+		ERRORS: &testErrors{
+			UNKNOWN_USER: "Неизвестный пользователь {{.Username}}",
+		},
+	}
+
+	c.Assert(ValidateBundle(en), IsNil)
+
+	en = &testBundle{
+		GREETING:      "Hello!",
+		EXIT_QUESTION: "Do you really want to exit?",
+	}
+
+	c.Assert(ValidateBundle(en), ErrorMatches, `Bundle struct ERRORS is nil`)
+
+	_, err := Fallback(en)
+	c.Assert(err, ErrorMatches, `Bundle struct ERRORS is nil`)
+
+	b, err := Fallback(en, ru)
+	c.Assert(b.(*testBundle).ERRORS, NotNil)
 }
 
 func (s *I18NSuite) TestWith(c *C) {

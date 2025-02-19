@@ -40,7 +40,7 @@ func ExamplePrettyDurationSimple() {
 
 func ExamplePrettyDurationInDays() {
 	fmt.Println(PrettyDurationInDays(2 * time.Hour))
-	fmt.Println(PrettyDurationInDays(168 * time.Hour))
+	fmt.Println(PrettyDurationInDays(168 * HOUR))
 
 	// Output:
 	// 1 day
@@ -75,7 +75,7 @@ func ExampleShortDuration() {
 }
 
 func ExampleMiniDuration() {
-	fmt.Println(MiniDuration(36 * time.Hour))
+	fmt.Println(MiniDuration(36 * HOUR))
 	fmt.Println(MiniDuration(18 * time.Second))
 	fmt.Println(MiniDuration(time.Second / 125))
 
@@ -126,6 +126,15 @@ func ExampleStartOfHour() {
 	// 2021-06-15 12:00:00 +0000 UTC
 }
 
+func ExampleEndOfHour() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfHour(d))
+
+	// Output:
+	// 2021-06-15 12:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfDay() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -133,6 +142,15 @@ func ExampleStartOfDay() {
 
 	// Output:
 	// 2021-06-15 00:00:00 +0000 UTC
+}
+
+func ExampleEndOfDay() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfDay(d))
+
+	// Output:
+	// 2021-06-15 23:59:59.999999999 +0000 UTC
 }
 
 func ExampleStartOfWeek() {
@@ -144,6 +162,15 @@ func ExampleStartOfWeek() {
 	// 2021-06-14 00:00:00 +0000 UTC
 }
 
+func ExampleEndOfWeek() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfWeek(d, time.Monday))
+
+	// Output:
+	// 2021-06-20 23:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfMonth() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -153,6 +180,15 @@ func ExampleStartOfMonth() {
 	// 2021-06-01 00:00:00 +0000 UTC
 }
 
+func ExampleEndOfMonth() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfMonth(d))
+
+	// Output:
+	// 2021-06-30 23:59:59.999999999 +0000 UTC
+}
+
 func ExampleStartOfYear() {
 	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
 
@@ -160,6 +196,15 @@ func ExampleStartOfYear() {
 
 	// Output:
 	// 2021-01-01 00:00:00 +0000 UTC
+}
+
+func ExampleEndOfYear() {
+	d := time.Date(2021, 6, 15, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(EndOfYear(d))
+
+	// Output:
+	// 2021-12-31 23:59:59.999999999 +0000 UTC
 }
 
 func ExamplePrevDay() {
@@ -250,6 +295,21 @@ func ExampleNextWeekend() {
 
 	// Output:
 	// 2021-06-12 12:30:15 +0000 UTC
+}
+
+func ExampleIsWeekend() {
+	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(IsWeekend(d))
+
+	// Output:
+	// true
+}
+
+func ExampleUntil() {
+	d := time.Date(2030, 6, 6, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(Until(d, DAY))
 }
 
 func ExampleFromISOWeek() {

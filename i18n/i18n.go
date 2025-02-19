@@ -37,15 +37,18 @@ var (
 
 // Fallback copies values between bundles to use it as a fallback
 func Fallback(bundles ...any) (any, error) {
-	switch len(bundles) {
-	case 0:
+	switch {
+	case len(bundles) == 0,
+		len(bundles) == 1 && bundles[0] == nil:
 		return nil, ErrNilBundle
-	case 1:
-		if bundles[0] == nil {
-			return nil, ErrNilBundle
-		} else {
-			return bundles[0], nil
+	case len(bundles) == 1:
+		err := ValidateBundle(bundles[0])
+
+		if err != nil {
+			return nil, err
 		}
+
+		return bundles[0], nil
 	}
 
 	var bundleType string
@@ -76,6 +79,11 @@ func Fallback(bundles ...any) (any, error) {
 	return bundles[len(bundles)-1], nil
 }
 
+// ValidateBundle validates bundle for problems
+func ValidateBundle(bundle any) error {
+	return checkBundle(reflect.Indirect(reflect.ValueOf(bundle)), "")
+}
+
 // IsComplete checks if given bundle is complete and returns slice with
 // empty fields
 func IsComplete(bundle any) (bool, []string) {
@@ -83,9 +91,7 @@ func IsComplete(bundle any) (bool, []string) {
 		return false, nil
 	}
 
-	b := reflect.Indirect(reflect.ValueOf(bundle))
-
-	return isCompleteBundle(b, "")
+	return isCompleteBundle(reflect.Indirect(reflect.ValueOf(bundle)), "")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -246,8 +252,34 @@ func getFields(bundles []reflect.Value, index int) []reflect.Value {
 	return result
 }
 
+// checkBundle checks bundle for nil structs
+func checkBundle(v reflect.Value, parentName string) error {
+	if !v.IsValid() {
+		return fmt.Errorf("Bundle struct %s is nil", strings.TrimRight(parentName, "."))
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		typ := f.Type().String()
+
+		if strings.HasPrefix(typ, "*") {
+			err := checkBundle(f.Elem(), parentName+v.Type().Field(i).Name+".")
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 // isCompleteBundle checks given object for empty fields
 func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
+	if !v.IsValid() {
+		return false, []string{strings.TrimRight(parentName, ".")}
+	}
+
 	var incompleteFields []string
 
 	for i := 0; i < v.NumField(); i++ {

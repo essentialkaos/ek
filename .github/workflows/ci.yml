@@ -28,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        go: [ '1.22.x', '1.23.x' ]
+        go: [ '1.23.x', '1.24.x' ]
 
     steps:
       - name: Set up Go
@@ -87,7 +87,7 @@ jobs:
 
     strategy:
       matrix:
-        go: [ '1.22.x', '1.23.x' ]
+        go: [ '1.23.x', '1.24.x' ]
 
     steps:
       - name: Set up Go
@@ -144,7 +144,7 @@ jobs:
 
     strategy:
       matrix:
-        go: [ '1.22.x', '1.23.x' ]
+        go: [ '1.23.x', '1.24.x' ]
 
     steps:
       - name: Set up Go
