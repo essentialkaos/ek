@@ -66,7 +66,7 @@ func (s *ValidatorSuite) TestCronValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 1)
 
-	c.Assert(errs[0].Error(), check.Equals, `Invalid cron expression: Can't parse token "0,456": strconv.ParseUint: parsing "456": value out of range`)
+	c.Assert(errs[0].Error(), check.Equals, `Property cron:test5 contains ivalid cron expression: Can't parse token "0,456": strconv.ParseUint: parsing "456": value out of range`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
