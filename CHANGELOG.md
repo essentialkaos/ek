@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.17.0](https://kaos.sh/ek/13.17.0)
+
+- `[knf/validators/cron]` Added new sub-package with KNF validator for cron expressions
+- `[knf/validators/time]` Added new sub-package with KNF validator for time format
+
 ### [13.16.0](https://kaos.sh/ek/13.16.0)
 
 - `[i18n]` Added method for bundle validation `ValidateBundle`
