@@ -31,6 +31,7 @@
 * + knf/validators/network
 * + knf/validators/regexp
 * + knf/validators/system
+* + knf/validators/time
 * + knf/value
 * + lock
 * + log
