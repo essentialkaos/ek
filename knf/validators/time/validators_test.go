@@ -64,7 +64,7 @@ func (s *ValidatorSuite) TestFormatValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 1)
 
-	c.Assert(errs[0].Error(), check.Equals, `Property time:test4 contains invalid time format`)
+	c.Assert(errs[0].Error(), check.Equals, `Property time:test4 contains invalid time format: Invalid control sequence "%i"`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

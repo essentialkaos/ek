@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/timeutil"
 )
 
@@ -34,9 +35,16 @@ func validateFormat(config knf.IConfig, prop string, value any) error {
 		return nil
 	}
 
-	if !strings.ContainsRune(timeutil.Format(time.Now(), confVal), '%') {
+	str := timeutil.Format(time.Now(), confVal)
+
+	if !strings.ContainsRune(str, '%') {
 		return nil
 	}
 
-	return fmt.Errorf("Property %s contains invalid time format", prop)
+	seq := strutil.Substr(str, strings.IndexRune(str, '%'), 2)
+
+	return fmt.Errorf(
+		"Property %s contains invalid time format: Invalid control sequence %q",
+		prop, seq,
+	)
 }
