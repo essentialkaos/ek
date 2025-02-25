@@ -1,5 +1,12 @@
 ## Changelog
 
+### [13.18.0](https://kaos.sh/ek/13.18.0)
+
+- `[log]` Added helper `Field.Mask`
+- `[log]` Added helper `Field.Compact`
+- `[log]` Added helper `Field.Head`
+- `[log]` Added helper `Field.Tail`
+
 ### [13.17.0](https://kaos.sh/ek/13.17.0)
 
 - `[knf/validators/cron]` Added new sub-package with KNF validator for cron expressions

@@ -484,3 +484,29 @@ func ExampleFields_Reset() {
 	f.Reset().Add(F{"user", "john"}, F{"id", 201})
 	Debug("This is %d %s message", 3, "debug", f)
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleField_Mask() {
+	fmt.Println(Field{"password", "Test12345!"}.Mask())
+	// Output:
+	// password:Tes*******
+}
+
+func ExampleField_Head() {
+	fmt.Println(Field{"commit", "6e529200de9e49160de87e4fb25a9b4cf6e87a6f"}.Head(7))
+	// Output:
+	// commit:6e52920
+}
+
+func ExampleField_Compact() {
+	fmt.Println(Field{"commit", "6e529200de9e49160de87e4fb25a9b4cf6e87a6f"}.Compact(9))
+	// Output:
+	// commit:6e52…7a6f
+}
+
+func ExampleField_Tail() {
+	fmt.Println(Field{"file-ext", "file.jpg"}.Tail(3))
+	// Output:
+	// file-ext:jpg
+}
