@@ -26,10 +26,12 @@
 * + knf
 * + knf/united
 * + knf/validators
+* + knf/validators/cron
 * + knf/validators/fs
 * + knf/validators/network
 * + knf/validators/regexp
 * + knf/validators/system
+* + knf/validators/time
 * + knf/value
 * + lock
 * + log

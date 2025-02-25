@@ -1,12 +1,12 @@
 module github.com/essentialkaos/ek/v13
 
-go 1.22.8
+go 1.23.6
 
 require (
 	github.com/essentialkaos/check v1.4.1
 	github.com/essentialkaos/depsy v1.3.1
 	github.com/essentialkaos/go-linenoise/v3 v3.7.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/sys v0.30.0
 )
 
