@@ -496,6 +496,47 @@ func (f Field) String() string {
 	return fmt.Sprintf("%s:%v", f.Key, f.Value)
 }
 
+// Mask masks part of the field value
+func (f Field) Mask() Field {
+	v := fmt.Sprintf("%v", f.Value)
+	f.Value = strutil.Mask(v, len(v)/3, 999999, '*')
+	return f
+}
+
+// Head trims the last part of field value
+func (f Field) Head(size int) Field {
+	v := fmt.Sprintf("%v", f.Value)
+	f.Value = strutil.Head(v, size)
+	return f
+}
+
+// Tail trims the first part of field value
+func (f Field) Tail(size int) Field {
+	v := fmt.Sprintf("%v", f.Value)
+	f.Value = strutil.Tail(v, size)
+	return f
+}
+
+// Compact shrinks field value to given size
+func (f Field) Compact(size int) Field {
+	v := fmt.Sprintf("%v", f.Value)
+
+	if len(v) < size {
+		return f
+	}
+
+	if size < 3 {
+		f.Value = strutil.Head(v, size)
+		return f
+	}
+
+	size--
+
+	f.Value = strutil.Head(v, size/2) + "…" + strutil.Tail(v, size/2)
+
+	return f
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewFields creates new fields collection

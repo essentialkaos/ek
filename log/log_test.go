@@ -522,6 +522,22 @@ func (ls *LogSuite) TestWithFields(c *C) {
 
 	c.Assert(dataSlice[0][28:], Equals, "Test info 1 test {id: 1 | name: john}")
 	c.Assert(dataSlice[1][28:], Equals, "Test info 2 test {id: 1 | name: john}")
+
+	f := F{"password", "Test1234!"}
+	c.Assert(f.Mask().String(), Equals, "password:Tes******")
+
+	f = F{"password", "Test1234!"}
+	c.Assert(f.Head(4).String(), Equals, "password:Test")
+
+	f = F{"password", "Test1234!"}
+	c.Assert(f.Tail(5).String(), Equals, "password:1234!")
+
+	f = F{"token", "dRcmkpmXxXM3HqCnURbcdMi7xAagdvRWj4Vfr4CtNtAeFpbP"}
+	c.Assert(f.Compact(16).String(), Equals, "token:dRcmkpm…tAeFpbP")
+	f = F{"token", "test"}
+	c.Assert(f.Compact(10).String(), Equals, "token:test")
+	f = F{"token", "test"}
+	c.Assert(f.Compact(2).String(), Equals, "token:te")
 }
 
 func (ls *LogSuite) TestBufIODaemon(c *C) {
