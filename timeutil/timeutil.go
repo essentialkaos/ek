@@ -380,32 +380,32 @@ func EndOfYear(t time.Time) time.Time {
 
 // PrevDay returns previous day date
 func PrevDay(t time.Time) time.Time {
-	return t.AddDate(0, 0, -1)
+	return StartOfDay(t.AddDate(0, 0, -1))
 }
 
 // PrevMonth returns previous month date
 func PrevMonth(t time.Time) time.Time {
-	return t.AddDate(0, -1, 0)
+	return StartOfMonth(t.AddDate(0, -1, 0))
 }
 
 // PrevYear returns previous year date
 func PrevYear(t time.Time) time.Time {
-	return t.AddDate(-1, 0, 0)
+	return StartOfYear(t.AddDate(-1, 0, 0))
 }
 
 // NextDay returns next day date
 func NextDay(t time.Time) time.Time {
-	return t.AddDate(0, 0, 1)
+	return StartOfDay(t.AddDate(0, 0, 1))
 }
 
 // NextMonth returns next month date
 func NextMonth(t time.Time) time.Time {
-	return t.AddDate(0, 1, 0)
+	return StartOfMonth(t.AddDate(0, 1, 0))
 }
 
 // NextYear returns next year date
 func NextYear(t time.Time) time.Time {
-	return t.AddDate(1, 0, 0)
+	return StartOfYear(t.AddDate(1, 0, 0))
 }
 
 // NextWorkday returns previous workday
@@ -418,7 +418,7 @@ func PrevWorkday(t time.Time) time.Time {
 			continue
 		}
 
-		return t
+		return StartOfDay(t)
 	}
 }
 
@@ -429,7 +429,7 @@ func PrevWeekend(t time.Time) time.Time {
 
 		switch t.Weekday() {
 		case time.Saturday, time.Sunday:
-			return t
+			return StartOfDay(t)
 		}
 	}
 }
@@ -442,7 +442,7 @@ func NextWorkday(t time.Time) time.Time {
 		switch t.Weekday() {
 		case time.Monday, time.Tuesday, time.Wednesday,
 			time.Thursday, time.Friday:
-			return t
+			return StartOfDay(t)
 		}
 	}
 }
@@ -454,7 +454,7 @@ func NextWeekend(t time.Time) time.Time {
 
 		switch t.Weekday() {
 		case time.Saturday, time.Sunday:
-			return t
+			return StartOfDay(t)
 		}
 	}
 }

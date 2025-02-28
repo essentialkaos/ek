@@ -213,7 +213,7 @@ func ExamplePrevDay() {
 	fmt.Println(PrevDay(d))
 
 	// Output:
-	// 2021-05-31 12:30:15 +0000 UTC
+	// 2021-05-31 00:00:00 +0000 UTC
 }
 
 func ExamplePrevMonth() {
@@ -222,7 +222,7 @@ func ExamplePrevMonth() {
 	fmt.Println(PrevMonth(d))
 
 	// Output:
-	// 2021-05-01 12:30:15 +0000 UTC
+	// 2021-05-01 00:00:00 +0000 UTC
 }
 
 func ExamplePrevYear() {
@@ -231,7 +231,7 @@ func ExamplePrevYear() {
 	fmt.Println(PrevYear(d))
 
 	// Output:
-	// 2020-06-01 12:30:15 +0000 UTC
+	// 2020-01-01 00:00:00 +0000 UTC
 }
 
 func ExampleNextDay() {
@@ -240,7 +240,7 @@ func ExampleNextDay() {
 	fmt.Println(NextDay(d))
 
 	// Output:
-	// 2021-06-02 12:30:15 +0000 UTC
+	// 2021-06-02 00:00:00 +0000 UTC
 }
 
 func ExampleNextMonth() {
@@ -249,7 +249,7 @@ func ExampleNextMonth() {
 	fmt.Println(NextMonth(d))
 
 	// Output:
-	// 2021-07-01 12:30:15 +0000 UTC
+	// 2021-07-01 00:00:00 +0000 UTC
 }
 
 func ExampleNextYear() {
@@ -258,7 +258,7 @@ func ExampleNextYear() {
 	fmt.Println(NextYear(d))
 
 	// Output:
-	// 2022-06-01 12:30:15 +0000 UTC
+	// 2022-01-01 00:00:00 +0000 UTC
 }
 
 func ExamplePrevWorkday() {
@@ -267,7 +267,7 @@ func ExamplePrevWorkday() {
 	fmt.Println(PrevWorkday(d))
 
 	// Output:
-	// 2021-06-04 12:30:15 +0000 UTC
+	// 2021-06-04 00:00:00 +0000 UTC
 }
 
 func ExamplePrevWeekend() {
@@ -276,7 +276,7 @@ func ExamplePrevWeekend() {
 	fmt.Println(PrevWeekend(d))
 
 	// Output:
-	// 2021-06-05 12:30:15 +0000 UTC
+	// 2021-06-05 00:00:00 +0000 UTC
 }
 
 func ExampleNextWorkday() {
@@ -285,7 +285,7 @@ func ExampleNextWorkday() {
 	fmt.Println(NextWorkday(d))
 
 	// Output:
-	// 2021-06-07 12:30:15 +0000 UTC
+	// 2021-06-07 00:00:00 +0000 UTC
 }
 
 func ExampleNextWeekend() {
@@ -294,7 +294,7 @@ func ExampleNextWeekend() {
 	fmt.Println(NextWeekend(d))
 
 	// Output:
-	// 2021-06-12 12:30:15 +0000 UTC
+	// 2021-06-12 00:00:00 +0000 UTC
 }
 
 func ExampleIsWeekend() {
