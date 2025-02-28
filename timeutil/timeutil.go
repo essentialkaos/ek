@@ -383,6 +383,11 @@ func PrevDay(t time.Time) time.Time {
 	return StartOfDay(t.AddDate(0, 0, -1))
 }
 
+// PrevWeek returns previous week date
+func PrevWeek(t time.Time, firstDay time.Weekday) time.Time {
+	return StartOfWeek(t.AddDate(0, 0, -7), firstDay)
+}
+
 // PrevMonth returns previous month date
 func PrevMonth(t time.Time) time.Time {
 	return StartOfMonth(t.AddDate(0, -1, 0))
@@ -396,6 +401,11 @@ func PrevYear(t time.Time) time.Time {
 // NextDay returns next day date
 func NextDay(t time.Time) time.Time {
 	return StartOfDay(t.AddDate(0, 0, 1))
+}
+
+// NextWeek returns next week date
+func NextWeek(t time.Time, firstDay time.Weekday) time.Time {
+	return StartOfWeek(t.AddDate(0, 0, 7), firstDay)
 }
 
 // NextMonth returns next month date

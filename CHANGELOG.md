@@ -3,6 +3,8 @@
 ### [13.19.0](https://kaos.sh/ek/13.19.0)
 
 - `[timeutil]` Methods `PrevDay`, `PrevMonth`, `PrevYear`, `NextDay`, `NextMonth`, `NextYear`, `PrevWorkday`, `PrevWeekend`, `NextWorkday`, and `NextWeekend` returns dates rounded to the start of the date
+- `[timeutil]` Added helper `PrevWeek`
+- `[timeutil]` Added helper `NextWeek`
 
 ### [13.18.0](https://kaos.sh/ek/13.18.0)
 

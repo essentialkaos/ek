@@ -300,9 +300,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	d := time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local)
 
 	c.Assert(PrevDay(d), DeepEquals, time.Date(2020, 12, 31, 0, 0, 0, 0, time.Local))
+	c.Assert(PrevWeek(d, time.Monday), DeepEquals, time.Date(2020, 12, 21, 0, 0, 0, 0, time.Local))
 	c.Assert(PrevMonth(d), DeepEquals, time.Date(2020, 12, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(PrevYear(d), DeepEquals, time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(NextDay(d), DeepEquals, time.Date(2021, 1, 2, 0, 0, 0, 0, time.Local))
+	c.Assert(NextWeek(d, time.Monday), DeepEquals, time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local))
 	c.Assert(NextMonth(d), DeepEquals, time.Date(2021, 2, 1, 0, 0, 0, 0, time.Local))
 	c.Assert(NextYear(d), DeepEquals, time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local))
 
