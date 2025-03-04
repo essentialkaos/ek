@@ -592,7 +592,7 @@ func (b *Bar) renderPlaceholder(size int) string {
 
 	disableColors := fmtc.DisableColors || b.settings.BarFgColorTag == ""
 
-	for i := 0; i < size; i++ {
+	for i := range size {
 		if disableColors {
 			if i%3 == b.phCounter {
 				result += PROGRESS_BAR_SYMBOL
