@@ -109,7 +109,7 @@ func Compact(path string) string {
 
 	pathSlice := strings.Split(path, pathSeparator)
 
-	for i := 0; i < len(pathSlice)-1; i++ {
+	for i := range len(pathSlice) - 1 {
 		if len(pathSlice[i]) > 1 && !strings.HasSuffix(pathSlice[i], ":") {
 			pathSlice[i] = pathSlice[i][0:1]
 		}
