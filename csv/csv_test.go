@@ -244,7 +244,7 @@ func (s *CSVSuite) TestRow(c *C) {
 func (s *CSVSuite) BenchmarkRead(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		reader := NewReader(fd)
 		reader.Comma = ','
 
@@ -263,7 +263,7 @@ func (s *CSVSuite) BenchmarkRead(c *C) {
 func (s *CSVSuite) BenchmarkReadTo(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		reader := NewReader(fd)
 		reader.Comma = ','
 
