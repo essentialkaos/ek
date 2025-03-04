@@ -105,7 +105,7 @@ func appendSwapUsage(info *MemUsage, params sysctl.Params) {
 	swap = strings.ReplaceAll(swap, " = ", "=")
 	swap = strings.ReplaceAll(swap, "M", "")
 
-	for range 3 {
+	for i := range 3 {
 		l := strutil.ReadField(swap, i, false, ' ')
 		n, v, _ := strings.Cut(l, "=")
 		fv, _ := strconv.ParseFloat(v, 10)
