@@ -857,7 +857,7 @@ func (s *LogSuite) BenchmarkJSONWrite(c *C) {
 
 	f1, f2 := F{"test1", 1}, F{"test2", false}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }
@@ -869,7 +869,7 @@ func (s *LogSuite) BenchmarkTextWrite(c *C) {
 
 	f1, f2 := F{"test1", 1}, F{"test2", false}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		l.Info("Test %s %s", "test", f1, "abcd", f2)
 	}
 }

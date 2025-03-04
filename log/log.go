@@ -905,7 +905,7 @@ func splitPayload(payload []any) ([]any, []any) {
 	firstField := -1
 
 	// Expand Fields
-	for i := 0; i < len(payload); i++ {
+	for i := range len(payload) {
 		switch t := payload[i].(type) {
 		case *Fields:
 			for _, ff := range t.data {
