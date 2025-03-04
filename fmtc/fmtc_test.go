@@ -403,19 +403,19 @@ func (s *FormatSuite) TestFuzzFixes(c *C) {
 }
 
 func (s *FormatSuite) BenchmarkSimple(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Sprint("Test {r}1{!}!")
 	}
 }
 
 func (s *FormatSuite) Benchmark256(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Sprint("Test {#123}1{!}!")
 	}
 }
 
 func (s *FormatSuite) Benchmark24bit(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Sprint("Test {#fac1bd}1{!}!")
 	}
 }
@@ -423,7 +423,7 @@ func (s *FormatSuite) Benchmark24bit(c *C) {
 func (s *FormatSuite) BenchmarkNamed(c *C) {
 	NameColor("myTest_1", "{r}")
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Sprint("Test {?myTest_1}1{!}!")
 	}
 
@@ -433,7 +433,7 @@ func (s *FormatSuite) BenchmarkNamed(c *C) {
 func (s *FormatSuite) BenchmarkAll(c *C) {
 	NameColor("myTest_1", "{r}")
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Sprint("Test {r}1{!} {#123}2{!} {#fac1bd}3{!} {?myTest_1}4{!}!")
 	}
 
