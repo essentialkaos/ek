@@ -226,7 +226,7 @@ func PrefixSize(str string, prefix rune) int {
 
 	var result int
 
-	for i := 0; i < len(str); i++ {
+	for i := range len(str) {
 		if rune(str[i]) != prefix {
 			return result
 		}
@@ -466,7 +466,7 @@ func IndexByteSkip(s string, c byte, skip int) int {
 	counter := 0
 
 	if skip > 0 {
-		for i := 0; i < len(s); i++ {
+		for i := range len(s) {
 			if s[i] == c {
 				counter++
 			}
