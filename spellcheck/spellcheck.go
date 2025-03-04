@@ -167,7 +167,7 @@ func (m *Model) Suggest(word string, max int) []string {
 
 	var result []string
 
-	for i := 0; i < mathutil.Between(max, 1, len(sis)); i++ {
+	for i := range mathutil.Between(max, 1, len(sis)) {
 		result = append(result, sis[i].term)
 	}
 
