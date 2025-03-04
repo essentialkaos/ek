@@ -44,13 +44,13 @@ func (s *UUIDSuite) TestUUID7(c *C) {
 }
 
 func (s *UUIDSuite) BenchmarkUUID4(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		UUID4()
 	}
 }
 
 func (s *UUIDSuite) BenchmarkUUID5(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		UUID5(NsURL, "TEST")
 	}
 }
