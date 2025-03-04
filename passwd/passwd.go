@@ -316,7 +316,7 @@ func getRandomPasswordBytes(length int, strength Strength) []byte {
 	for {
 		rand.Seed(time.Now().UTC().UnixNano())
 
-		for i := 0; i < length; i++ {
+		for i := range length {
 			buf[i] = symbols[rand.Intn(ls)]
 		}
 
@@ -338,7 +338,7 @@ func isValidPepper(pepper []byte) bool {
 func genVariantFlipAll(password []byte) []byte {
 	result := make([]byte, len(password))
 
-	for i := 0; i < len(password); i++ {
+	for i := range len(password) {
 		result[i] = flipCase(password[i])
 	}
 
