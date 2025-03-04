@@ -60,7 +60,7 @@ func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
 	blockSize := len(block)
 	chunks := (int(info.Size()) / blockSize) + 1
 
-	for i := 0; i < chunks; i++ {
+	for i := range chunks {
 		n, err := fd.ReadAt(block, int64(i*blockSize))
 
 		if err != nil && err != io.EOF {
