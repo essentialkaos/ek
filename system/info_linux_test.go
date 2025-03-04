@@ -481,7 +481,7 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 	origProcDiskStatsFile := procDiskStatsFile
 
-	for i := 0; i < 11; i++ {
+	for i := range 11 {
 		data := "   8       0 sda X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10"
 		data = strings.Replace(data, "X"+strconv.Itoa(i), "A", -1)
 		data = strings.Replace(data, "X", "", -1)

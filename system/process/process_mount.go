@@ -79,7 +79,7 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 	optFieldsNum := 0
 	optFieldParsed := false
 
-	for i := 0; i < 128; i++ {
+	for i := range 128 {
 		pseudoIndex := i - optFieldsNum
 		value := strutil.ReadField(data, i, false, ' ')
 

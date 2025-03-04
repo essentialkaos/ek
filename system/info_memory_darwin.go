@@ -61,7 +61,7 @@ func calculateMemUsage(pageSize, totalMem uint64) (*MemUsage, error) {
 
 	var free, active, inactive, speculative uint64
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		line, err := buf.ReadString('\n')
 
 		if err != nil {
@@ -105,7 +105,7 @@ func appendSwapUsage(info *MemUsage, params sysctl.Params) {
 	swap = strings.ReplaceAll(swap, " = ", "=")
 	swap = strings.ReplaceAll(swap, "M", "")
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		l := strutil.ReadField(swap, i, false, ' ')
 		n, v, _ := strings.Cut(l, "=")
 		fv, _ := strconv.ParseFloat(v, 10)

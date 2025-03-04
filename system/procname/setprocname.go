@@ -37,7 +37,7 @@ func Set(args []string) error {
 		return ErrWrongSize
 	}
 
-	for i := 0; i < len(args); i++ {
+	for i := range len(args) {
 		if args[i] == os.Args[i] {
 			continue
 		}
