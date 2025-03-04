@@ -29,7 +29,7 @@ func String(length int) string {
 	symbolsLength := len(symbols)
 	result := make([]byte, length)
 
-	for i := 0; i < length; i++ {
+	for i := range length {
 		result[i] = symbols[rnd.Intn(symbolsLength)]
 	}
 
@@ -46,7 +46,7 @@ func Slice(length int) []string {
 	symbolsLength := len(symbols)
 	result := make([]string, length)
 
-	for i := 0; i < length; i++ {
+	for i := range length {
 		result[i] = string(symbols[rnd.Intn(symbolsLength)])
 	}
 
