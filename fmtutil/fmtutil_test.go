@@ -232,26 +232,26 @@ func (s *FmtUtilSuite) TestColorizePassword(c *C) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *FmtUtilSuite) BenchmarkPrettyNum(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		PrettyNum(-123456)
 	}
 }
 
 func (s *FmtUtilSuite) BenchmarkPrettyNumFloat(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		PrettyNum(-123456.15)
 	}
 }
 
 func (s *FmtUtilSuite) BenchmarkWrap(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Wrap("0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", "  ", 10)
 	}
 }
 
 func (s *FmtUtilSuite) BenchmarkAlign(c *C) {
 	text := "\033[1;33;4;44mYellow Underlined Text on Blue Background\033[0m"
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Align(text, CENTER, 63)
 	}
 }
