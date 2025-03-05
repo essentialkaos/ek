@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.19.2](https://kaos.sh/ek/13.19.2)
+
+- **`[spellcheck]`** Code refactoring
+- **`[system]`** Code refactoring
+
 ### [13.19.1](https://kaos.sh/ek/13.19.1)
 
 - **`[ansi]`** Code refactoring
