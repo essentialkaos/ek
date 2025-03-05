@@ -1,5 +1,29 @@
 ## Changelog
 
+### [13.19.1](https://kaos.sh/ek/13.19.1)
+
+- **`[ansi]`** Code refactoring
+- **`[cron]`** Code refactoring
+- **`[csv]`** Code refactoring
+- **`[directio]`** Code refactoring
+- **`[fmtc]`** Code refactoring
+- **`[fmtutil]`** Code refactoring
+- **`[i18n]`** Code refactoring
+- **`[knf]`** Code refactoring
+- **`[log]`** Code refactoring
+- **`[passwd]`** Code refactoring
+- **`[path]`** Code refactoring
+- **`[progress]`** Code refactoring
+- **`[rand]`** Code refactoring
+- **`[req]`** Code refactoring
+- **`[sliceutil]`** Code refactoring
+- **`[spellcheck]`** Code refactoring
+- **`[strutil]`** Code refactoring
+- **`[support/network]`** Code refactoring
+- **`[system]`** Code refactoring
+- **`[timeutil]`** Code refactoring
+- **`[uuid]`** Code refactoring
+
 ### [13.19.0](https://kaos.sh/ek/13.19.0)
 
 - **`[timeutil]`** Methods `PrevDay`, `PrevMonth`, `PrevYear`, `NextDay`, `NextMonth`, `NextYear`, `PrevWorkday`, `PrevWeekend`, `NextWorkday`, and `NextWeekend` returns dates rounded to the start of the date
