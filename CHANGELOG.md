@@ -2,6 +2,7 @@
 
 ### [13.19.2](https://kaos.sh/ek/13.19.2)
 
+- **`[timeutil]`** Added helper `Since`
 - **`[spellcheck]`** Code refactoring
 - **`[system]`** Code refactoring
 
