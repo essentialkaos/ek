@@ -756,7 +756,7 @@ func (s *KNFSuite) TestHelpers(c *check.C) {
 func (s *KNFSuite) BenchmarkBasic(c *check.C) {
 	Global(s.ConfigPath)
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		GetS("string:test1")
 	}
 }

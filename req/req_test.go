@@ -882,13 +882,13 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 func (s *ReqSuite) BenchmarkQueryEncoding(c *C) {
 	q := Query{"a": 1, "b": "abcd", "c": "", "d": nil}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		q.Encode()
 	}
 }
 
 func (s *ReqSuite) BenchmarkGetOk(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		getResp, err := Request{URL: s.url + _URL_GET, Method: GET}.Do()
 
 		c.Assert(err, IsNil)
@@ -897,7 +897,7 @@ func (s *ReqSuite) BenchmarkGetOk(c *C) {
 }
 
 func (s *ReqSuite) BenchmarkGetErr(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Request{URL: "--", Method: GET}.Do()
 	}
 }

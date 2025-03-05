@@ -153,7 +153,7 @@ func (s *SliceSuite) TestDiff(c *C) {
 func (s *SliceSuite) BenchmarkStringToInterface(c *C) {
 	source := []string{"1", "2", "3"}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		StringToInterface(source)
 	}
 }
@@ -161,7 +161,7 @@ func (s *SliceSuite) BenchmarkStringToInterface(c *C) {
 func (s *SliceSuite) BenchmarkIntToInterface(c *C) {
 	source := []int{1, 2, 3}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		IntToInterface(source)
 	}
 }
@@ -169,7 +169,7 @@ func (s *SliceSuite) BenchmarkIntToInterface(c *C) {
 func (s *SliceSuite) BenchmarkStringToError(c *C) {
 	source := []string{"A", "B", "C"}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		StringToError(source)
 	}
 }
@@ -181,7 +181,7 @@ func (s *SliceSuite) BenchmarkErrorToString(c *C) {
 		errors.New("C"),
 	}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		ErrorToString(source)
 	}
 }
@@ -189,7 +189,7 @@ func (s *SliceSuite) BenchmarkErrorToString(c *C) {
 func (s *SliceSuite) BenchmarkDeduplicate(c *C) {
 	source := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Deduplicate(source)
 	}
 }
@@ -197,7 +197,7 @@ func (s *SliceSuite) BenchmarkDeduplicate(c *C) {
 func (s *SliceSuite) BenchmarkExclude(c *C) {
 	source := []string{"1", "2", "3", "4", "5", "6"}
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Exclude(source, "1", "3", "6")
 	}
 }

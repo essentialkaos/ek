@@ -211,7 +211,7 @@ func getRootDir(paths []string) string {
 	rootDir := getLongestPath(paths)
 
 	for _, p := range paths {
-		for i := 0; i < len(rootDir); i++ {
+		for i := range len(rootDir) {
 			if i == len(p) || rootDir[i] != p[i] {
 				rootDir = rootDir[:i]
 				break

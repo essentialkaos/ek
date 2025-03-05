@@ -124,7 +124,7 @@ func parseStatData(text string) (*ProcInfo, error) {
 
 	info := &ProcInfo{}
 
-	for i := 0; i < 20; i++ {
+	for i := range 20 {
 		switch i {
 		case 0:
 			info.PID, err = parseIntField(strutil.ReadField(text, i, true), i)

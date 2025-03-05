@@ -356,7 +356,7 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *TimeUtilSuite) BenchmarkParseDuration(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		ParseDuration("1w2d3h10m12s")
 	}
 }
@@ -364,7 +364,7 @@ func (s *TimeUtilSuite) BenchmarkParseDuration(c *C) {
 func (s *TimeUtilSuite) BenchmarkFormat(c *C) {
 	ts := time.Now()
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Format(ts, "%Y/%m/%d %H:%M:%S")
 	}
 }

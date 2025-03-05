@@ -47,7 +47,7 @@ func resolvePublicIP(resolverURL string) string {
 // extractIPFromCloudflareTrace extracts public IP from Cloudflare trace
 // response
 func extractIPFromCloudflareTrace(data string) string {
-	for i := 0; i < 16; i++ {
+	for i := range 16 {
 		f := strutil.ReadField(data, i, false, '\n')
 
 		if f == "" {

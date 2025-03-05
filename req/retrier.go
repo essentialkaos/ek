@@ -112,7 +112,7 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 
 	var lastErr error
 
-	for i := 0; i < rr.Num; i++ {
+	for range rr.Num {
 		resp, err := rt.e.doRequest(r, method)
 
 		if err != nil {

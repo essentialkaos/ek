@@ -510,7 +510,7 @@ func str2uint(t string) (uint8, error) {
 }
 
 func getNearNextIndex(items []uint8, item uint8) int {
-	for i := 0; i < len(items); i++ {
+	for i := range len(items) {
 		if items[i] >= item {
 			return i
 		}

@@ -803,7 +803,7 @@ func getPrettyLongDuration(dur time.Duration) string {
 	var result []string
 
 MAINLOOP:
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		switch {
 		case d >= _WEEK:
 			weeks := d / _WEEK

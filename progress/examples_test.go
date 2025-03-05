@@ -33,7 +33,7 @@ func ExampleNew_simple() {
 
 	pb.Start() // Start async progress handling
 
-	for i := 0; i < 1000; i++ {
+	for range 1000 {
 		time.Sleep(time.Second / 100)
 		pb.Add(1)
 	}

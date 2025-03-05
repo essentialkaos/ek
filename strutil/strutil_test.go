@@ -240,73 +240,73 @@ func (s *StrUtilSuite) TestJoinFunc(c *C) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Substr("test1234TEST", 4, 8)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkEllipsis(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Ellipsis("Test1234test", 8)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkHead(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Head("ABCD1234ABCD1234", 4)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkTail(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Tail("ABCD1234ABCD1234", 4)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkExclude(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Exclude("ABCD1234abcd1234ABCD", "1234")
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkExtract(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Extract("test1234TEST", 4, 8)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkSize(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		PrefixSize("    abcd", ' ')
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkFields(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Fields(`"123" 59 "31" '2'`)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkReadField(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		ReadField("abc 1234 DEF", 2, false)
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkLen(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		Len("✶✈12AB例例子예")
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkReplaceAll(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		ReplaceAll("ABCDABCD12341234", "AB12", "?")
 	}
 }
 
 func (s *StrUtilSuite) BenchmarkReplaceIgnoreCase(c *C) {
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		ReplaceIgnoreCase("ABCD1234abcd1234AbCd11ABcd", "abcd", "????")
 	}
 }

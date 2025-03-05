@@ -208,7 +208,7 @@ func (d Data) PrettyPerc(prop string) string {
 
 // copyFieldsData copy fields data between bundles
 func copyFieldsData(bundles []reflect.Value) {
-	for i := 0; i < bundles[0].NumField(); i++ {
+	for i := range bundles[0].NumField() {
 		f := bundles[0].Field(i)
 		s := f.Type().String()
 
@@ -258,7 +258,7 @@ func checkBundle(v reflect.Value, parentName string) error {
 		return fmt.Errorf("Bundle struct %s is nil", strings.TrimRight(parentName, "."))
 	}
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		f := v.Field(i)
 		typ := f.Type().String()
 
@@ -282,7 +282,7 @@ func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
 
 	var incompleteFields []string
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		f := v.Field(i)
 		typ := f.Type().String()
 

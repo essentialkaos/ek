@@ -59,7 +59,7 @@ func (s *ANSISuite) TestRemoveCodesBytes(c *C) {
 func (s *ANSISuite) BenchmarkRemoveCodes(c *C) {
 	data := "\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m"
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		RemoveCodes(data)
 	}
 }
@@ -67,7 +67,7 @@ func (s *ANSISuite) BenchmarkRemoveCodes(c *C) {
 func (s *ANSISuite) BenchmarkRemoveCodesBytes(c *C) {
 	data := []byte("\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m")
 
-	for i := 0; i < c.N; i++ {
+	for range c.N {
 		RemoveCodesBytes(data)
 	}
 }
