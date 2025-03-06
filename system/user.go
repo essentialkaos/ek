@@ -53,23 +53,6 @@ type SessionInfo struct {
 	LastActivityTime time.Time `json:"last_activity_time"`
 }
 
-// sessionsInfo is slice with SessionInfo
-type sessionsInfo []*SessionInfo
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-func (s sessionsInfo) Len() int {
-	return len(s)
-}
-
-func (s sessionsInfo) Less(i, j int) bool {
-	return s[i].LoginTime.Unix() < s[j].LoginTime.Unix()
-}
-
-func (s sessionsInfo) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Errors
@@ -131,7 +114,9 @@ func Who() ([]*SessionInfo, error) {
 	}
 
 	if len(result) != 0 {
-		sort.Sort(sessionsInfo(result))
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].LoginTime.Unix() < result[j].LoginTime.Unix()
+		})
 	}
 
 	return result, nil

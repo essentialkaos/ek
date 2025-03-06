@@ -330,6 +330,12 @@ func ExampleUntil() {
 	fmt.Println(Until(d, DAY))
 }
 
+func ExampleSince() {
+	d := time.Date(2012, 6, 6, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(Since(d, DAY))
+}
+
 func ExampleFromISOWeek() {
 	t := FromISOWeek(25, 2021, time.UTC)
 

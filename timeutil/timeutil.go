@@ -480,6 +480,12 @@ func Until(t time.Time, mod time.Duration) int {
 	return int(t.Sub(now) / mod)
 }
 
+// Since returns time since given moment
+func Since(t time.Time, mod time.Duration) int {
+	now := time.Now().In(t.Location())
+	return int(now.Sub(t) / mod)
+}
+
 // FromISOWeek returns date for given week number in given year
 func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	week = mathutil.Between(week, 1, 53)

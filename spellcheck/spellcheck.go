@@ -31,12 +31,6 @@ type suggestItem struct {
 	score int
 }
 
-type suggestItems []*suggestItem
-
-func (s suggestItems) Len() int           { return len(s) }
-func (s suggestItems) Less(i, j int) bool { return s[i].score < s[j].score }
-func (s suggestItems) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Train trains words by given string slice
@@ -130,14 +124,9 @@ func (m *Model) Correct(word string) string {
 		return word
 	}
 
-	var result *suggestItem
+	result := suggestItem{score: 99999999999}
 
 	for _, si := range getSuggestSlice(m.terms, word) {
-		if result == nil {
-			result = si
-			continue
-		}
-
 		if si.score < result.score {
 			result = si
 			continue
@@ -163,7 +152,9 @@ func (m *Model) Suggest(word string, max int) []string {
 
 	sis := getSuggestSlice(m.terms, word)
 
-	sort.Sort(sis)
+	sort.Slice(sis, func(i, j int) bool {
+		return sis[i].score < sis[j].score
+	})
 
 	var result []string
 
@@ -176,11 +167,11 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getSuggestSlice(terms []string, word string) suggestItems {
-	var result suggestItems
+func getSuggestSlice(terms []string, word string) []suggestItem {
+	var result []suggestItem
 
 	for _, t := range terms {
-		result = append(result, &suggestItem{t, Distance(strings.ToLower(t), strings.ToLower(word))})
+		result = append(result, suggestItem{t, Distance(strings.ToLower(t), strings.ToLower(word))})
 	}
 
 	return result

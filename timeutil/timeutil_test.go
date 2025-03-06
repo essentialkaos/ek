@@ -351,6 +351,9 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 
 	d = time.Date(2030, 1, 1, 12, 0, 0, 0, time.Local)
 	c.Assert(Until(d, DAY), Not(Equals), 0)
+
+	d = time.Date(2012, 1, 1, 12, 0, 0, 0, time.Local)
+	c.Assert(Since(d, DAY), Not(Equals), 0)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
