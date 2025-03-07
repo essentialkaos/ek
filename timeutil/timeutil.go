@@ -474,13 +474,13 @@ func IsWeekend(t time.Time) bool {
 	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday
 }
 
-// Until returns time until given moment
+// Until returns time until given moment in given units
 func Until(t time.Time, mod time.Duration) int {
 	now := time.Now().In(t.Location())
 	return int(t.Sub(now) / mod)
 }
 
-// Since returns time since given moment
+// Since returns time since given moment in given units
 func Since(t time.Time, mod time.Duration) int {
 	now := time.Now().In(t.Location())
 	return int(now.Sub(t) / mod)

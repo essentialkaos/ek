@@ -296,6 +296,26 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	c.Assert(err, NotNil)
 }
 
+func (s *TimeUtilSuite) TestPeriod(c *C) {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2023, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
+	c.Assert(p.Contains(time.Date(2021, 1, 1, 9, 30, 15, 0, time.Local)), Equals, false)
+	c.Assert(p.Contains(time.Date(2023, 6, 15, 18, 50, 30, 0, time.Local)), Equals, false)
+	c.Assert(p.Contains(time.Date(2021, 1, 1, 12, 30, 16, 0, time.Local)), Equals, true)
+	c.Assert(p.Contains(time.Date(2023, 6, 15, 18, 45, 29, 0, time.Local)), Equals, true)
+
+	c.Assert(p.Duration().String(), Equals, "21486h15m15s")
+	c.Assert(p.Seconds(), Equals, 77350515)
+	c.Assert(p.Minutes(), Equals, 1289175)
+	c.Assert(p.Hours(), Equals, 21486)
+	c.Assert(p.Days(), Equals, 895)
+	c.Assert(p.Weeks(), Equals, 127)
+	c.Assert(p.Years(), Equals, 2)
+}
+
 func (s *TimeUtilSuite) TestHelpers(c *C) {
 	d := time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local)
 
