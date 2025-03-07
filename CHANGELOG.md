@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.20.0](https://kaos.sh/ek/13.20.0)
+
+- **`[timeutil]`** Added new struct for period with the start and end date
+
 ### [13.19.2](https://kaos.sh/ek/13.19.2)
 
 - **`[timeutil]`** Added helper `Since`
