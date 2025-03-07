@@ -7,7 +7,10 @@ package timeutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -66,5 +69,10 @@ func (p Period) Years() int {
 
 // String returns string representation of period
 func (p Period) String() string {
-	return MiniDuration(p.Duration(), "")
+	return p.Stringf("%Y/%m/%d %H:%M:%S")
+}
+
+// Stringf returns string representation of period using given format
+func (p Period) Stringf(f string) string {
+	return fmt.Sprintf("%s → %s", Format(p.Start, f), Format(p.End, f))
 }
