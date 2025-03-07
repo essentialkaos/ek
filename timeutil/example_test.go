@@ -345,6 +345,8 @@ func ExampleFromISOWeek() {
 	// 2021-06-18 00:00:00 +0000 UTC
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func ExampleDate_Unix() {
 	StartDate = 1577836800
 
@@ -365,4 +367,120 @@ func ExampleDate_Time() {
 
 	// Output:
 	// 2020-03-01 00:00:00 +0000 UTC
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExamplePeriod_Contains() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2023, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
+	d := time.Date(2021, 1, 1, 12, 30, 16, 0, time.Local)
+
+	fmt.Printf("Period contains date: %t\n", p.Contains(d))
+
+	// Output:
+	// Period contains date: true
+}
+
+func ExamplePeriod_Duration() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 1, 1, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %s\n", p.Duration())
+
+	// Output:
+	// Period duration: 1h45m30s
+}
+
+func ExamplePeriod_DurationIn() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration (hours): %d\n", p.DurationIn(HOUR))
+	fmt.Printf("Period duration (days): %d\n", p.DurationIn(DAY))
+	fmt.Printf("Period duration (weeks): %d\n", p.DurationIn(WEEK))
+
+	// Output:
+	// Period duration (hours): 3961
+	// Period duration (days): 165
+	// Period duration (weeks): 23
+}
+
+func ExamplePeriod_Seconds() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Seconds())
+
+	// Output:
+	// Period duration: 14262330
+}
+
+func ExamplePeriod_Minutes() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Minutes())
+
+	// Output:
+	// Period duration: 237705
+}
+
+func ExamplePeriod_Hours() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Hours())
+
+	// Output:
+	// Period duration: 3961
+}
+
+func ExamplePeriod_Days() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Days())
+
+	// Output:
+	// Period duration: 165
+}
+
+func ExamplePeriod_Weeks() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Weeks())
+
+	// Output:
+	// Period duration: 23
+}
+
+func ExamplePeriod_Years() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2024, 6, 15, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Printf("Period duration: %d\n", p.Years())
+
+	// Output:
+	// Period duration: 3
 }
