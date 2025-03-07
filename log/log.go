@@ -621,7 +621,7 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 	if len(fields) > 0 {
 		l.buf.WriteRune(' ')
 		if l.UseColors {
-			fmtc.Fprint(&l.buf, "{b}"+fieldsToText(fields)+"{!}")
+			fmtc.Fprint(&l.buf, strutil.B(level == DEBUG, Colors[DEBUG], "{b}")+fieldsToText(fields)+"{!}")
 		} else {
 			l.buf.WriteString(fieldsToText(fields))
 		}
