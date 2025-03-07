@@ -314,6 +314,9 @@ func (s *TimeUtilSuite) TestPeriod(c *C) {
 	c.Assert(p.Days(), Equals, 895)
 	c.Assert(p.Weeks(), Equals, 127)
 	c.Assert(p.Years(), Equals, 2)
+
+	c.Assert(Period{}.String(), Equals, "0ns")
+	c.Assert(p.String(), Equals, "895d")
 }
 
 func (s *TimeUtilSuite) TestHelpers(c *C) {

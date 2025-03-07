@@ -484,3 +484,15 @@ func ExamplePeriod_Years() {
 	// Output:
 	// Period duration: 3
 }
+
+func ExamplePeriod_String() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 1, 1, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Println(p)
+
+	// Output:
+	// 1.8h
+}

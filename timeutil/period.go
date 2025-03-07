@@ -63,3 +63,8 @@ func (p Period) Weeks() int {
 func (p Period) Years() int {
 	return p.DurationIn(YEAR)
 }
+
+// String returns string representation of period
+func (p Period) String() string {
+	return MiniDuration(p.Duration(), "")
+}
