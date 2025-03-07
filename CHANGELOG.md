@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.20.1](https://kaos.sh/ek/13.20.1)
+
+- **`[timeutil]`** Added method `Period.Stringf`
+- **`[timeutil]`** `Period.String` returns period range instead of duration
+- **`[log]`** Fixed bug with fields color for debug messages
+
 ### [13.20.0](https://kaos.sh/ek/13.20.0)
 
 - **`[timeutil]`** Added new struct for period with the start and end date

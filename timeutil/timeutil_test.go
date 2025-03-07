@@ -315,8 +315,8 @@ func (s *TimeUtilSuite) TestPeriod(c *C) {
 	c.Assert(p.Weeks(), Equals, 127)
 	c.Assert(p.Years(), Equals, 2)
 
-	c.Assert(Period{}.String(), Equals, "0ns")
-	c.Assert(p.String(), Equals, "895d")
+	c.Assert(Period{}.String(), Equals, "1/01/01 00:00:00 → 1/01/01 00:00:00")
+	c.Assert(p.String(), Equals, "2021/01/01 12:30:15 → 2023/06/15 18:45:30")
 }
 
 func (s *TimeUtilSuite) TestHelpers(c *C) {

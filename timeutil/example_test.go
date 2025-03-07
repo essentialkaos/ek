@@ -494,5 +494,17 @@ func ExamplePeriod_String() {
 	fmt.Println(p)
 
 	// Output:
-	// 1.8h
+	// 2021/01/01 12:30:15 → 2021/01/01 14:15:45
+}
+
+func ExamplePeriod_Stringf() {
+	p := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2021, 1, 1, 14, 15, 45, 0, time.Local),
+	}
+
+	fmt.Println(p.Stringf(`%H:%M`))
+
+	// Output:
+	// 12:30 → 14:15
 }
