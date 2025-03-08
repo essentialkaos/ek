@@ -3,9 +3,10 @@
 ### [13.20.2](https://kaos.sh/ek/13.20.2)
 
 - **`[knf/validators/time]`** Added timezone validator
+- **`[timeutil]`** Added method `DurationAs`
+- **`[timeutil]`** Method `Period.DurationIn` renamed to `Period.DurationAs`
 - **`[knf/validators]`** Code refactoring
 - **`[timeutil]`** Code refactoring
-- **`[timeutil]`** Added method `DurationAs`
 
 ### [13.20.1](https://kaos.sh/ek/13.20.1)
 
