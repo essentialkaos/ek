@@ -48,7 +48,7 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"test:test0", Perms, "FR"},
 		{"test:test1", Perms, "FR"},
 	})
@@ -60,7 +60,7 @@ func (s *ValidatorSuite) TestPermsValidator(c *C) {
 	err = knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", Perms, "F"},
 		{"test:test1", Perms, "FR"},
 		{"test:test1", Perms, "FW"},
@@ -99,14 +99,14 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"test:test0", Owner, "root"},
 		{"test:test1", Owner, "root"},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", Owner, "nobody"},
 		{"test:test1", Owner, "somerandomuser"},
 		{"test:test1", Owner, ""},
@@ -125,7 +125,7 @@ func (s *ValidatorSuite) TestOwnerValidator(c *C) {
 	err = knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", Owner, "root"},
 	})
 
@@ -142,12 +142,12 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	var errs []error
 
 	if runtime.GOOS == "darwin" {
-		errs = knf.Validate([]*knf.Validator{
+		errs = knf.Validate(knf.Validators{
 			{"test:test0", OwnerGroup, "wheel"},
 			{"test:test1", OwnerGroup, "wheel"},
 		})
 	} else {
-		errs = knf.Validate([]*knf.Validator{
+		errs = knf.Validate(knf.Validators{
 			{"test:test0", OwnerGroup, "root"},
 			{"test:test1", OwnerGroup, "root"},
 		})
@@ -155,7 +155,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", OwnerGroup, "daemon"},
 		{"test:test1", OwnerGroup, "somerandomgroup"},
 		{"test:test1", OwnerGroup, ""},
@@ -174,7 +174,7 @@ func (s *ValidatorSuite) TestOwnerGroupValidator(c *C) {
 	err = knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", OwnerGroup, "daemon"},
 	})
 
@@ -188,14 +188,14 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"test:test0", FileMode, os.FileMode(0644)},
 		{"test:test1", FileMode, os.FileMode(0644)},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", FileMode, os.FileMode(0777)},
 	})
 
@@ -207,7 +207,7 @@ func (s *ValidatorSuite) TestFileModeValidator(c *C) {
 	err = knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", FileMode, os.FileMode(0644)},
 		{"test:test1", FileMode, os.FileMode(0)},
 		{"test:test1", FileMode, 100},
@@ -226,14 +226,14 @@ func (s *ValidatorSuite) TestMatchPattern(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"test:test0", MatchPattern, "/etc/*"},
 		{"test:test1", MatchPattern, "/etc/*"},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"test:test1", MatchPattern, "/var/*"},
 		{"test:test1", MatchPattern, "[]a"},
 		{"test:test1", MatchPattern, ""},

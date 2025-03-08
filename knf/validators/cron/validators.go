@@ -25,13 +25,13 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateCronExpression(config knf.IConfig, prop string, value any) error {
-	confVal := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if confVal == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, err := cron.Parse(confVal)
+	_, err := cron.Parse(v)
 
 	if err != nil {
 		return fmt.Errorf("Property %s contains invalid cron expression: %w", prop, err)

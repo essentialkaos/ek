@@ -57,14 +57,14 @@ func (s *ValidatorSuite) TestUserValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"user:test0", User, nil},
 		{"user:test1", User, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"user:test2", User, nil},
 	})
 
@@ -77,14 +77,14 @@ func (s *ValidatorSuite) TestGroupValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"group:test0", Group, nil},
 		{"group:test1", Group, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"group:test2", Group, nil},
 	})
 

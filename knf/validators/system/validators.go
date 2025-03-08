@@ -31,20 +31,20 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateUser(config knf.IConfig, prop string, value any) error {
-	userNameOrID := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if userNameOrID != "" && !system.IsUserExist(userNameOrID) {
-		return fmt.Errorf("User %q is not present on the system", userNameOrID)
+	if v != "" && !system.IsUserExist(v) {
+		return fmt.Errorf("User %q is not present on the system", v)
 	}
 
 	return nil
 }
 
 func validateGroup(config knf.IConfig, prop string, value any) error {
-	groupNameOrID := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if groupNameOrID != "" && !system.IsGroupExist(groupNameOrID) {
-		return fmt.Errorf("Group %q is not present on the system", groupNameOrID)
+	if v != "" && !system.IsGroupExist(v) {
+		return fmt.Errorf("Group %q is not present on the system", v)
 	}
 
 	return nil

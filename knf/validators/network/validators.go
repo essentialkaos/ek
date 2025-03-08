@@ -45,103 +45,103 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateIP(config knf.IConfig, prop string, value any) error {
-	ipStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if ipStr == "" {
+	if v == "" {
 		return nil
 	}
 
-	ip := net.ParseIP(ipStr)
+	ip := net.ParseIP(v)
 
 	if ip == nil {
-		return fmt.Errorf("%q is not a valid IP address", ipStr)
+		return fmt.Errorf("%q is not a valid IP address", v)
 	}
 
 	return nil
 }
 
 func validatePort(config knf.IConfig, prop string, value any) error {
-	portStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if portStr == "" {
+	if v == "" {
 		return nil
 	}
 
 	portInt := config.GetI(prop)
 
 	if portInt == 0 || portInt > 65535 {
-		return fmt.Errorf("%q is not a valid port number", portStr)
+		return fmt.Errorf("%q is not a valid port number", v)
 	}
 
 	return nil
 }
 
 func validateMAC(config knf.IConfig, prop string, value any) error {
-	macStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if macStr == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, err := net.ParseMAC(macStr)
+	_, err := net.ParseMAC(v)
 
 	if err != nil {
-		return fmt.Errorf("%q is not a valid MAC address: %v", macStr, err)
+		return fmt.Errorf("%q is not a valid MAC address: %v", v, err)
 	}
 
 	return nil
 }
 
 func validateCIDR(config knf.IConfig, prop string, value any) error {
-	cidrStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if cidrStr == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, _, err := net.ParseCIDR(cidrStr)
+	_, _, err := net.ParseCIDR(v)
 
 	if err != nil {
-		return fmt.Errorf("%q is not a valid CIDR address: %v", cidrStr, err)
+		return fmt.Errorf("%q is not a valid CIDR address: %v", v, err)
 	}
 
 	return nil
 }
 
 func validateURL(config knf.IConfig, prop string, value any) error {
-	urlStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if urlStr == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, err := url.ParseRequestURI(urlStr)
+	_, err := url.ParseRequestURI(v)
 
 	if err != nil {
-		return fmt.Errorf("%q is not a valid URL address: %v", urlStr, err)
+		return fmt.Errorf("%q is not a valid URL address: %v", v, err)
 	}
 
 	return nil
 }
 
 func validateMail(config knf.IConfig, prop string, value any) error {
-	mailStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if mailStr == "" {
+	if v == "" {
 		return nil
 	}
 
-	if !strings.ContainsRune(mailStr, '@') || !strings.ContainsRune(mailStr, '.') {
-		return fmt.Errorf("%q is not a valid email address", mailStr)
+	if !strings.ContainsRune(v, '@') || !strings.ContainsRune(v, '.') {
+		return fmt.Errorf("%q is not a valid email address", v)
 	}
 
 	return nil
 }
 
 func validateHasIP(config knf.IConfig, prop string, value any) error {
-	ipStr := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if ipStr == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -159,11 +159,11 @@ func validateHasIP(config knf.IConfig, prop string, value any) error {
 		}
 
 		for _, a := range addr {
-			if ipStr == a.(*net.IPNet).IP.String() {
+			if v == a.(*net.IPNet).IP.String() {
 				return nil
 			}
 		}
 	}
 
-	return fmt.Errorf("The system does not have an interface with the address %q", ipStr)
+	return fmt.Errorf("The system does not have an interface with the address %q", v)
 }
