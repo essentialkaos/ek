@@ -54,7 +54,7 @@ func PrettyDuration(d any) string {
 		return ""
 	}
 
-	if dur != 0 && dur < time.Second {
+	if dur != 0 && dur < SECOND {
 		return getPrettyShortDuration(dur, " ")
 	}
 
@@ -264,7 +264,7 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 		}
 	}
 
-	return time.Second * time.Duration(result), nil
+	return SECOND * time.Duration(result), nil
 }
 
 // StartOfHour returns start of the hour
@@ -504,25 +504,25 @@ func convertDuration(d any) (time.Duration, bool) {
 	case time.Duration:
 		return u, true
 	case int:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case int16:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case int32:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case uint:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case uint16:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case uint32:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case uint64:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case float32:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case float64:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	case int64:
-		return time.Duration(u) * time.Second, true
+		return time.Duration(u) * SECOND, true
 	}
 
 	return 0, false
