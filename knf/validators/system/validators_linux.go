@@ -19,17 +19,17 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Interface returns error if config property contains name of network interface
-	// which not present on the system
+	// Interface returns error if configuration property contains name of network
+	// interface which not present on the system
 	Interface = validateInterface
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateInterface(config knf.IConfig, prop string, value any) error {
-	interfaceName := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if interfaceName == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -39,10 +39,10 @@ func validateInterface(config knf.IConfig, prop string, value any) error {
 		return fmt.Errorf("Can't get interfaces info: %v", err)
 	}
 
-	_, isPresent := stats[interfaceName]
+	_, isPresent := stats[v]
 
 	if !isPresent {
-		return fmt.Errorf("Interface %q is not present on the system", interfaceName)
+		return fmt.Errorf("Interface %q is not present on the system", v)
 	}
 
 	return nil

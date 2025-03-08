@@ -21,21 +21,25 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Format returns an error if the config property contains an invalid time conversion
-	// format
+	// Format returns an error if the configuration property contains an invalid time
+	// conversion format
 	Format = validateFormat
+
+	// Timezone returns an error if the configuration property contains an invalid time
+	// zone name
+	Timezone = validateTimezone
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateFormat(config knf.IConfig, prop string, value any) error {
-	confVal := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if confVal == "" {
+	if v == "" {
 		return nil
 	}
 
-	str := timeutil.Format(time.Now(), confVal)
+	str := timeutil.Format(time.Now(), v)
 
 	if !strings.ContainsRune(str, '%') {
 		return nil
@@ -47,4 +51,20 @@ func validateFormat(config knf.IConfig, prop string, value any) error {
 		"Property %s contains invalid time format: Invalid control sequence %q",
 		prop, seq,
 	)
+}
+
+func validateTimezone(config knf.IConfig, prop string, value any) error {
+	v := config.GetS(prop)
+
+	if v == "" {
+		return nil
+	}
+
+	_, err := time.LoadLocation(v)
+
+	if err == nil {
+		return nil
+	}
+
+	return fmt.Errorf("Property %s contains invalid time zone name: %v", prop, err)
 }

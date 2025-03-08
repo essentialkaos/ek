@@ -98,32 +98,32 @@ func validatorSet(config knf.IConfig, prop string, value any) error {
 }
 
 func validatorTypeBool(config knf.IConfig, prop string, value any) error {
-	propValue := config.GetS(prop)
+	v := config.GetS(prop)
 
-	switch strings.ToLower(propValue) {
+	switch strings.ToLower(v) {
 	case "", "0", "1", "true", "false", "yes", "no":
 		return nil
 	default:
 		return fmt.Errorf(
 			"Property %s contains unsupported boolean value (%s)",
-			prop, propValue,
+			prop, v,
 		)
 	}
 }
 
 func validatorTypeNum(config knf.IConfig, prop string, value any) error {
-	propValue := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if propValue == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, err := strconv.Atoi(propValue)
+	_, err := strconv.Atoi(v)
 
 	if err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported numeric value (%s)",
-			prop, propValue,
+			prop, v,
 		)
 	}
 
@@ -131,18 +131,18 @@ func validatorTypeNum(config knf.IConfig, prop string, value any) error {
 }
 
 func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
-	propValue := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if propValue == "" {
+	if v == "" {
 		return nil
 	}
 
-	_, err := strconv.ParseFloat(propValue, 64)
+	_, err := strconv.ParseFloat(v, 64)
 
 	if err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported float value (%s)",
-			prop, propValue,
+			prop, v,
 		)
 	}
 
@@ -150,20 +150,20 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 }
 
 func validatorTypeSize(config knf.IConfig, prop string, value any) error {
-	propValue := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if propValue == "" {
+	if v == "" {
 		return nil
 	}
 
 	size := config.GetSZ(prop)
-	propValueNorm := strings.TrimRight(propValue, " bB")
+	propValueNorm := strings.TrimRight(v, " bB")
 	_, err := strconv.ParseFloat(propValueNorm, 64)
 
 	if size == 0 && err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported size value (%s)",
-			prop, propValue,
+			prop, v,
 		)
 	}
 

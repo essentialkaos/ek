@@ -75,14 +75,14 @@ func (s *ValidatorSuite) TestIPValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"ip:test0", IP, nil},
 		{"ip:test1", IP, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"ip:test2", IP, nil},
 	})
 
@@ -96,14 +96,14 @@ func (s *ValidatorSuite) TestHasIPValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"ip:test0", HasIP, nil},
 		{"ip:test1", HasIP, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"ip:test3", HasIP, nil},
 	})
 
@@ -117,14 +117,14 @@ func (s *ValidatorSuite) TestPortValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"port:test0", Port, nil},
 		{"port:test1", Port, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"port:test2", Port, nil},
 		{"port:test3", Port, nil},
 	})
@@ -140,14 +140,14 @@ func (s *ValidatorSuite) TestMACValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"mac:test0", MAC, nil},
 		{"mac:test1", MAC, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"mac:test2", MAC, nil},
 	})
 
@@ -161,14 +161,14 @@ func (s *ValidatorSuite) TestCIDRValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"cidr:test0", CIDR, nil},
 		{"cidr:test1", CIDR, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"cidr:test2", CIDR, nil},
 	})
 
@@ -182,14 +182,14 @@ func (s *ValidatorSuite) TestURLValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"url:test0", URL, nil},
 		{"url:test1", URL, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"url:test2", URL, nil},
 	})
 
@@ -203,7 +203,7 @@ func (s *ValidatorSuite) TestMailValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"mail:test0", Mail, nil},
 		{"mail:test1", Mail, nil},
 		{"mail:test2", Mail, nil},

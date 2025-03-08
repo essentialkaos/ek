@@ -49,14 +49,14 @@ func (s *ValidatorSuite) TestRegexpValidator(c *check.C) {
 	err = knf.Global(configFile)
 	c.Assert(err, check.IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"regexp:test1", Regexp, `^[A-Z0-9]{4,5}$`},
 		{"regexp:test3", Regexp, `^[A-Z0-9]{4,5}$`},
 	})
 
 	c.Assert(errs, check.HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"regexp:test2", Regexp, `^[A-Z0-9]{4}$`},
 		{"regexp:test2", Regexp, `\`},
 		{"regexp:test2", Regexp, ""},

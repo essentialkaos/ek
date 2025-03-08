@@ -32,39 +32,39 @@ func (p Period) Duration() time.Duration {
 	return p.End.Sub(p.Start)
 }
 
-// DurationIn returns duration of period in given units
-func (p Period) DurationIn(mod time.Duration) int {
-	return int(p.Duration() / mod)
+// DurationAs returns duration of period in given units
+func (p Period) DurationAs(unit time.Duration) int {
+	return DurationAs(p.Duration(), unit)
 }
 
 // Seconds returns duration in seconds
 func (p Period) Seconds() int {
-	return p.DurationIn(SECOND)
+	return p.DurationAs(SECOND)
 }
 
 // Minutes returns duration in minutes
 func (p Period) Minutes() int {
-	return p.DurationIn(MINUTE)
+	return p.DurationAs(MINUTE)
 }
 
 // Hours returns duration in hours
 func (p Period) Hours() int {
-	return p.DurationIn(HOUR)
+	return p.DurationAs(HOUR)
 }
 
 // Days returns duration in days
 func (p Period) Days() int {
-	return p.DurationIn(DAY)
+	return p.DurationAs(DAY)
 }
 
 // Weeks returns duration in weeks
 func (p Period) Weeks() int {
-	return p.DurationIn(WEEK)
+	return p.DurationAs(WEEK)
 }
 
 // Years returns duration in years
 func (p Period) Years() int {
-	return p.DurationIn(YEAR)
+	return p.DurationAs(YEAR)
 }
 
 // String returns string representation of period

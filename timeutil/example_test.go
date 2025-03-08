@@ -336,6 +336,17 @@ func ExampleSince() {
 	fmt.Println(Since(d, DAY))
 }
 
+func ExampleDurationAs() {
+	d1 := time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local)
+	d2 := time.Date(2024, 6, 15, 14, 15, 45, 0, time.Local)
+
+	d := d2.Sub(d1)
+
+	fmt.Printf("Days: %d\n", DurationAs(d, DAY))
+	// Output:
+	// Days: 1261
+}
+
 func ExampleFromISOWeek() {
 	t := FromISOWeek(25, 2021, time.UTC)
 
@@ -397,15 +408,15 @@ func ExamplePeriod_Duration() {
 	// Period duration: 1h45m30s
 }
 
-func ExamplePeriod_DurationIn() {
+func ExamplePeriod_DurationAs() {
 	p := Period{
 		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
 		time.Date(2021, 6, 15, 14, 15, 45, 0, time.Local),
 	}
 
-	fmt.Printf("Period duration (hours): %d\n", p.DurationIn(HOUR))
-	fmt.Printf("Period duration (days): %d\n", p.DurationIn(DAY))
-	fmt.Printf("Period duration (weeks): %d\n", p.DurationIn(WEEK))
+	fmt.Printf("Period duration (hours): %d\n", p.DurationAs(HOUR))
+	fmt.Printf("Period duration (days): %d\n", p.DurationAs(DAY))
+	fmt.Printf("Period duration (weeks): %d\n", p.DurationAs(WEEK))
 
 	// Output:
 	// Period duration (hours): 3961

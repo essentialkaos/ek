@@ -18,16 +18,16 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Regexp returns an error if config property does not match given regexp
+	// Regexp returns an error if configuration property does not match given regexp
 	Regexp = validateRegexp
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validateRegexp(config knf.IConfig, prop string, value any) error {
-	confVal := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if confVal == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -43,7 +43,7 @@ func validateRegexp(config knf.IConfig, prop string, value any) error {
 			return fmt.Errorf("Invalid input for regexp.Regexp validator: %w", err)
 		}
 
-		if !re.MatchString(confVal) {
+		if !re.MatchString(v) {
 			return fmt.Errorf("Property %s must match regexp pattern %q", prop, t)
 		}
 

@@ -51,7 +51,7 @@ func (s *ValidatorSuite) TestCronValidator(c *check.C) {
 	err = knf.Global(configFile)
 	c.Assert(err, check.IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"cron:test1", Expression, nil},
 		{"cron:test2", Expression, nil},
 		{"cron:test3", Expression, nil},
@@ -60,7 +60,7 @@ func (s *ValidatorSuite) TestCronValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"cron:test5", Expression, nil},
 	})
 

@@ -21,14 +21,14 @@ func (s *ValidatorSuite) TestInterfaceValidator(c *C) {
 	err := knf.Global(configFile)
 	c.Assert(err, IsNil)
 
-	errs := knf.Validate([]*knf.Validator{
+	errs := knf.Validate(knf.Validators{
 		{"interface:test0", Interface, nil},
 		{"interface:test1", Interface, nil},
 	})
 
 	c.Assert(errs, HasLen, 0)
 
-	errs = knf.Validate([]*knf.Validator{
+	errs = knf.Validate(knf.Validators{
 		{"interface:test2", Interface, nil},
 	})
 

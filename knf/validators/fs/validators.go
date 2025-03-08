@@ -21,33 +21,33 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Perms returns error if config property contains path to object with given
+	// Perms returns error if configuration property contains path to object with given
 	// permissions
 	Perms = validatePerms
 
-	// Owner returns error if config property contains path to object with other
+	// Owner returns error if configuration property contains path to object with other
 	// owner
 	Owner = validateOwner
 
-	// OwnerGroup returns error if config property contains path to object with other
-	// owner group
+	// OwnerGroup returns error if configuration property contains path to object with
+	// other owner group
 	OwnerGroup = validateOwnerGroup
 
-	// FileMode returns error if config property contains path to object with other
-	// file mode
+	// FileMode returns error if configuration property contains path to object with
+	// other file mode
 	FileMode = validateFileMode
 
-	// MatchPattern returns error if config property contains path which doesn't match
-	// given shell pattern
+	// MatchPattern returns error if configuration property contains path which doesn't
+	// match given shell pattern
 	MatchPattern = validateMatchPattern
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func validatePerms(config knf.IConfig, prop string, value any) error {
-	target := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if target == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -65,7 +65,7 @@ func validatePerms(config knf.IConfig, prop string, value any) error {
 		return getValidatorInputError("Perms", prop, value)
 	}
 
-	if !fsutil.CheckPerms(perms, target) {
+	if !fsutil.CheckPerms(perms, v) {
 		switch perms {
 		case "F":
 			return fmt.Errorf("Property %s must be path to file", prop)
@@ -94,9 +94,9 @@ func validatePerms(config knf.IConfig, prop string, value any) error {
 }
 
 func validateOwner(config knf.IConfig, prop string, value any) error {
-	target := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if target == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -120,23 +120,23 @@ func validateOwner(config knf.IConfig, prop string, value any) error {
 		return fmt.Errorf("Can't find user %q on system", owner)
 	}
 
-	uid, _, err := fsutil.GetOwner(target)
+	uid, _, err := fsutil.GetOwner(v)
 
 	if err != nil {
-		return fmt.Errorf("Can't get owner for %q", target)
+		return fmt.Errorf("Can't get owner for %q", v)
 	}
 
 	if user.UID != uid {
-		return fmt.Errorf("User %s must be owner of %s", owner, target)
+		return fmt.Errorf("User %s must be owner of %s", owner, v)
 	}
 
 	return nil
 }
 
 func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
-	target := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if target == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -160,23 +160,23 @@ func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
 		return fmt.Errorf("Can't find group %q on system", ownerGroup)
 	}
 
-	_, gid, err := fsutil.GetOwner(target)
+	_, gid, err := fsutil.GetOwner(v)
 
 	if err != nil {
-		return fmt.Errorf("Can't get owner group for %q", target)
+		return fmt.Errorf("Can't get owner group for %q", v)
 	}
 
 	if group.GID != gid {
-		return fmt.Errorf("Group %s must be owner of %s", ownerGroup, target)
+		return fmt.Errorf("Group %s must be owner of %s", ownerGroup, v)
 	}
 
 	return nil
 }
 
 func validateFileMode(config knf.IConfig, prop string, value any) error {
-	target := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if target == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -194,24 +194,24 @@ func validateFileMode(config knf.IConfig, prop string, value any) error {
 		return getValidatorInputError("FileMode", prop, value)
 	}
 
-	targetPerms := fsutil.GetMode(target)
+	targetPerms := fsutil.GetMode(v)
 
 	if targetPerms == 0 {
-		return fmt.Errorf("Can't get mode for %q", target)
+		return fmt.Errorf("Can't get mode for %q", v)
 	}
 
 	if mode != targetPerms {
 		return fmt.Errorf(
-			"%s has different mode (%o != %o)", target, targetPerms, mode)
+			"%s has different mode (%o != %o)", v, targetPerms, mode)
 	}
 
 	return nil
 }
 
 func validateMatchPattern(config knf.IConfig, prop string, value any) error {
-	target := config.GetS(prop)
+	v := config.GetS(prop)
 
-	if target == "" {
+	if v == "" {
 		return nil
 	}
 
@@ -229,7 +229,7 @@ func validateMatchPattern(config knf.IConfig, prop string, value any) error {
 		return getValidatorInputError("MatchPattern", prop, value)
 	}
 
-	isMatch, err := path.Match(pattern, target)
+	isMatch, err := path.Match(pattern, v)
 
 	if err != nil {
 		return fmt.Errorf("Can't parse shell pattern: %v", err)
