@@ -34,7 +34,7 @@ func (p Period) Duration() time.Duration {
 
 // DurationAs returns duration of period in given units
 func (p Period) DurationAs(unit time.Duration) int {
-	return int(p.Duration() / unit)
+	return DurationAs(p.Duration(), unit)
 }
 
 // Seconds returns duration in seconds
