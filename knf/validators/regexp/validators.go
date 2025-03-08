@@ -18,7 +18,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Regexp returns an error if config property does not match given regexp
+	// Regexp returns an error if configuration property does not match given regexp
 	Regexp = validateRegexp
 )
 

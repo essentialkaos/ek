@@ -19,12 +19,12 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// User returns error if config property contains name of user or UID which not
+	// User returns error if configuration property contains name of user or UID which not
 	// present on the system
 	User = validateUser
 
-	// Group returns error if config property contains name of group or GID which not
-	// present on the system
+	// Group returns error if configuration property contains name of group or GID which
+	// not present on the system
 	Group = validateGroup
 )
 

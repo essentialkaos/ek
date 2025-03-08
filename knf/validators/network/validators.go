@@ -20,25 +20,26 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// IP returns error if config property isn't a valid IP address
+	// IP returns error if configuration property isn't a valid IP address
 	IP = validateIP
 
-	// Port returns error if config property isn't a valid port number
+	// Port returns error if configuration property isn't a valid port number
 	Port = validatePort
 
-	// MAC returns error if config property isn't a valid MAC address
+	// MAC returns error if configuration property isn't a valid MAC address
 	MAC = validateMAC
 
-	// CIDR returns error if config property isn't a valid CIDR address
+	// CIDR returns error if configuration property isn't a valid CIDR address
 	CIDR = validateCIDR
 
-	// URL returns error if config property isn't a valid URL
+	// URL returns error if configuration property isn't a valid URL
 	URL = validateURL
 
-	// Mail returns error if config property isn't a valid email address
+	// Mail returns error if configuration property isn't a valid email address
 	Mail = validateMail
 
-	// HasIP returns error if system doesn't have interface with IP from config property
+	// HasIP returns error if system doesn't have interface with IP from configuration
+	// property
 	HasIP = validateHasIP
 )
 

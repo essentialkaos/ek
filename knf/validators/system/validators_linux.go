@@ -19,8 +19,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Interface returns error if config property contains name of network interface
-	// which not present on the system
+	// Interface returns error if configuration property contains name of network
+	// interface which not present on the system
 	Interface = validateInterface
 )
 

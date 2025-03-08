@@ -18,7 +18,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Expression returns an error if config property contains invalid cron expression
+	// Expression returns an error if configuration property contains invalid cron
+	// expression
 	Expression = validateCronExpression
 )
 

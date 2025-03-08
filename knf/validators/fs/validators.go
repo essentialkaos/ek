@@ -21,24 +21,24 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// Perms returns error if config property contains path to object with given
+	// Perms returns error if configuration property contains path to object with given
 	// permissions
 	Perms = validatePerms
 
-	// Owner returns error if config property contains path to object with other
+	// Owner returns error if configuration property contains path to object with other
 	// owner
 	Owner = validateOwner
 
-	// OwnerGroup returns error if config property contains path to object with other
-	// owner group
+	// OwnerGroup returns error if configuration property contains path to object with
+	// other owner group
 	OwnerGroup = validateOwnerGroup
 
-	// FileMode returns error if config property contains path to object with other
-	// file mode
+	// FileMode returns error if configuration property contains path to object with
+	// other file mode
 	FileMode = validateFileMode
 
-	// MatchPattern returns error if config property contains path which doesn't match
-	// given shell pattern
+	// MatchPattern returns error if configuration property contains path which doesn't
+	// match given shell pattern
 	MatchPattern = validateMatchPattern
 )
 
