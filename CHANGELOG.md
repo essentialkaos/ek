@@ -5,6 +5,7 @@
 - **`[knf/validators/time]`** Added timezone validator
 - **`[knf/validators]`** Code refactoring
 - **`[timeutil]`** Code refactoring
+- **`[timeutil]`** Added method `DurationAs`
 
 ### [13.20.1](https://kaos.sh/ek/13.20.1)
 

@@ -475,15 +475,20 @@ func IsWeekend(t time.Time) bool {
 }
 
 // Until returns time until given moment in given units
-func Until(t time.Time, mod time.Duration) int {
+func Until(t time.Time, unit time.Duration) int {
 	now := time.Now().In(t.Location())
-	return int(t.Sub(now) / mod)
+	return int(t.Sub(now) / unit)
 }
 
 // Since returns time since given moment in given units
-func Since(t time.Time, mod time.Duration) int {
+func Since(t time.Time, unit time.Duration) int {
 	now := time.Now().In(t.Location())
-	return int(now.Sub(t) / mod)
+	return int(now.Sub(t) / unit)
+}
+
+// DurationAs returns duration in given units
+func DurationAs(t, unit time.Duration) int {
+	return int(t / unit)
 }
 
 // FromISOWeek returns date for given week number in given year

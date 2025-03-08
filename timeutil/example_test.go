@@ -336,6 +336,17 @@ func ExampleSince() {
 	fmt.Println(Since(d, DAY))
 }
 
+func ExampleDurationAs() {
+	d1 := time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local)
+	d2 := time.Date(2024, 6, 15, 14, 15, 45, 0, time.Local)
+
+	d := d2.Sub(d1)
+
+	fmt.Printf("Days: %d\n", DurationAs(d, DAY))
+	// Output:
+	// Days: 1261
+}
+
 func ExampleFromISOWeek() {
 	t := FromISOWeek(25, 2021, time.UTC)
 
