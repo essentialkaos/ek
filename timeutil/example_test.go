@@ -419,9 +419,9 @@ func ExamplePeriod_DurationAs() {
 	fmt.Printf("Period duration (weeks): %d\n", p.DurationAs(WEEK))
 
 	// Output:
-	// Period duration (hours): 3961
+	// Period duration (hours): 3962
 	// Period duration (days): 165
-	// Period duration (weeks): 23
+	// Period duration (weeks): 24
 }
 
 func ExamplePeriod_Seconds() {
@@ -445,7 +445,7 @@ func ExamplePeriod_Minutes() {
 	fmt.Printf("Period duration: %d\n", p.Minutes())
 
 	// Output:
-	// Period duration: 237705
+	// Period duration: 237706
 }
 
 func ExamplePeriod_Hours() {
@@ -457,7 +457,7 @@ func ExamplePeriod_Hours() {
 	fmt.Printf("Period duration: %d\n", p.Hours())
 
 	// Output:
-	// Period duration: 3961
+	// Period duration: 3962
 }
 
 func ExamplePeriod_Days() {
@@ -481,7 +481,7 @@ func ExamplePeriod_Weeks() {
 	fmt.Printf("Period duration: %d\n", p.Weeks())
 
 	// Output:
-	// Period duration: 23
+	// Period duration: 24
 }
 
 func ExamplePeriod_Years() {

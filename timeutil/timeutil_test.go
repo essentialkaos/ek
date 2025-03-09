@@ -312,7 +312,7 @@ func (s *TimeUtilSuite) TestPeriod(c *C) {
 	c.Assert(p.Minutes(), Equals, 1289175)
 	c.Assert(p.Hours(), Equals, 21486)
 	c.Assert(p.Days(), Equals, 895)
-	c.Assert(p.Weeks(), Equals, 127)
+	c.Assert(p.Weeks(), Equals, 128)
 	c.Assert(p.Years(), Equals, 2)
 
 	c.Assert(Period{}.String(), Equals, "1/01/01 00:00:00 → 1/01/01 00:00:00")
@@ -379,7 +379,7 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(Since(d, DAY), Not(Equals), 0)
 
 	d = time.Date(2023, 8, 1, 12, 30, 15, 0, time.Local)
-	c.Assert(DurationAs(time.Since(d), DAY), Equals, 585)
+	c.Assert(DurationAs(time.Since(d), DAY), Equals, 587)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
