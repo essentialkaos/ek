@@ -378,7 +378,7 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	d = time.Date(2012, 1, 1, 12, 0, 0, 0, time.Local)
 	c.Assert(Since(d, DAY), Not(Equals), 0)
 
-	d = time.Date(2023, 8, 1, 12, 30, 15, 0, time.Local)
+	d = time.Date(2023, 8, 1, 6, 30, 15, 0, time.Local)
 	c.Assert(DurationAs(time.Since(d), DAY), Equals, 587)
 }
 
