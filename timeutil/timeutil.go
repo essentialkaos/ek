@@ -488,7 +488,7 @@ func Since(t time.Time, unit time.Duration) int {
 
 // DurationAs returns duration in given units
 func DurationAs(t, unit time.Duration) int {
-	return int(t / unit)
+	return int(math.Round(float64(t) / float64(unit)))
 }
 
 // FromISOWeek returns date for given week number in given year
