@@ -887,7 +887,8 @@ func fieldsToText(fields []any) string {
 	for i, f := range fields {
 		switch t := f.(type) {
 		case Field:
-			fmt.Fprintf(&buf, "%s: %v", t.Key, t.Value)
+			v := fmt.Sprintf("%v", t.Value)
+			fmt.Fprintf(&buf, "%s: %s", t.Key, strutil.Q(v, `—`))
 
 			if i+1 != len(fields) {
 				buf.WriteString(" | ")
