@@ -4,6 +4,7 @@
 
 - **`[timeutil]`** Better duration calculation for `DurationAs` and `Period.DurationAs`
 - **`[log]`** Improved output of empty fields in text format
+- **`[req]`** Added new auth provider `AuthHeader`
 
 ### [13.20.2](https://kaos.sh/ek/13.20.2)
 
