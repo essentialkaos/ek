@@ -93,6 +93,12 @@ type AuthAPIKey struct {
 	Key string
 }
 
+// AuthHeader is auth using custom HTTP header
+type AuthHeader struct {
+	Key   string
+	Value string
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Apply sets authentication data for given request
@@ -217,4 +223,9 @@ func (a AuthAWS4) Apply(r *http.Request, header string) {
 func (a AuthAPIKey) Apply(r *http.Request, header string) {
 	r.Header.Set("X-API-Key", a.Key)
 	r.Header.Set("API-Key", a.Key)
+}
+
+// Apply sets authentication data for given request
+func (a AuthHeader) Apply(r *http.Request, header string) {
+	r.Header.Set(a.Key, a.Value)
 }

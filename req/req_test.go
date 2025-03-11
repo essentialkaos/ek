@@ -703,6 +703,11 @@ func (s *ReqSuite) TestAuth(c *C) {
 	a.Apply(r, "Authorization")
 	c.Assert(r.Header.Get("X-API-Key"), Equals, `fe5f80f77d5fa3beca038a248ff027d0`)
 	c.Assert(r.Header.Get("API-Key"), Equals, `fe5f80f77d5fa3beca038a248ff027d0`)
+
+	r, _ = http.NewRequest("GET", "http://127.0.0.1", nil)
+	a = AuthHeader{"X-Auth-Token", "fe5f80f77d5fa3beca038a248ff027d0"}
+	a.Apply(r, "Authorization")
+	c.Assert(r.Header.Get("X-Auth-Token"), Equals, `fe5f80f77d5fa3beca038a248ff027d0`)
 }
 
 func (s *ReqSuite) TestQuery(c *C) {
