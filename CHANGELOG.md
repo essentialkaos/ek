@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.20.4](https://kaos.sh/ek/13.20.4)
+
+- **`[req]`** Added new helpers for working with `Query`
+
 ### [13.20.3](https://kaos.sh/ek/13.20.3)
 
 - **`[timeutil]`** Better duration calculation for `DurationAs` and `Period.DurationAs`

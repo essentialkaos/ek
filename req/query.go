@@ -31,6 +31,61 @@ type QueryPayload interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Set sets query parameter
+func (q Query) Set(name string, value any) bool {
+	if q == nil || name == "" || value == nil {
+		return false
+	}
+
+	q[name] = value
+
+	return true
+}
+
+// SetIf sets query parameter if given condition is true
+func (q Query) SetIf(cond bool, name string, value any) bool {
+	if q == nil || name == "" || !cond {
+		return false
+	}
+
+	q[name] = value
+
+	return true
+}
+
+// Get returns parameter with given name
+func (q Query) Get(name string) any {
+	if q == nil || name == "" {
+		return nil
+	}
+
+	return q[name]
+}
+
+// Delete deletes parameter with given name
+func (q Query) Delete(name string) bool {
+	if q == nil || name == "" {
+		return false
+	}
+
+	delete(q, name)
+
+	return true
+}
+
+// DeleteIf deletes parameter with given name if condition is true
+func (q Query) DeleteIf(cond bool, name string) bool {
+	if q == nil || name == "" || !cond {
+		return false
+	}
+
+	if q[name] != nil {
+		delete(q, name)
+	}
+
+	return true
+}
+
 // Encode converts query struct to URL-encoded string
 func (q Query) Encode() string {
 	var buf bytes.Buffer

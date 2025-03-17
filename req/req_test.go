@@ -727,6 +727,12 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	var q Query
 	c.Assert(q.Encode(), Equals, "")
 
+	c.Assert(q.Set("test", true), Equals, false)
+	c.Assert(q.SetIf(true, "test", true), Equals, false)
+	c.Assert(q.Get("test"), IsNil)
+	c.Assert(q.Delete("test"), Equals, false)
+	c.Assert(q.DeleteIf(true, "test"), Equals, false)
+
 	q = nil
 	c.Assert(q.Encode(), Equals, "")
 
@@ -770,6 +776,10 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 		"test33": []float64{0.01, 1.0, 2.231213},
 	}
 
+	q.Set("test40", true)
+	q.SetIf(true, "test41", "TEST")
+	q.SetIf(false, "test41", "ABDC")
+
 	nq, err := url.ParseQuery(q.Encode())
 	c.Assert(err, IsNil)
 	c.Assert(nq, NotNil)
@@ -810,6 +820,13 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	c.Assert(nq.Get("test31"), Equals, "0,1,2")
 	c.Assert(nq.Get("test32"), Equals, "0.01,1,2.231213")
 	c.Assert(nq.Get("test33"), Equals, "0.01,1,2.231213")
+
+	c.Assert(q.Get("test40"), Equals, true)
+	c.Assert(q.Get("test41"), Equals, "TEST")
+	c.Assert(q.DeleteIf(false, "test41"), Equals, false)
+	c.Assert(q.DeleteIf(true, "test41"), Equals, true)
+	c.Assert(q.Get("test41"), Equals, nil)
+	c.Assert(q.Delete("test40"), Equals, true)
 
 	c.Assert(
 		Query{"test[]": []string{"abc", "def", "123"}}.Encode(),
