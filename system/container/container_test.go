@@ -55,6 +55,10 @@ tmpfs /dev tmpfs rw,context="system_u:object_r:container_file_t:s0:c858,c956",no
 
 	os.WriteFile(s.DataDir+"/docker-runsc", []byte(`none /etc/hosts 9p rw,trans=fd,rfdno=7,wfdno=7,aname=/,dfltuid=4294967294,dfltgid=4294967294,dcache=1000,cache=remote_revalidating,disable_fifo_open,directfs 0 0
 none /etc/hostname 9p rw,trans=fd,rfdno=6,wfdno=6,aname=/,dfltuid=4294967294,dfltgid=4294967294,dcache=1000,cache=remote_revalidating,disable_fifo_open,directfs 0 0`), 0644)
+
+	os.WriteFile(s.DataDir+"/containerd", []byte(`overlay / overlay rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/111/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/work,xino=off 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0`), 0644)
 }
 
 func (s *ContainerSuite) TestGetEngine(c *C) {
@@ -76,6 +80,11 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 
 	mountsFile = s.DataDir + "/lxc"
 	c.Assert(GetEngine(), Equals, LXC)
+
+	engineChecked = false
+
+	mountsFile = s.DataDir + "/containerd"
+	c.Assert(GetEngine(), Equals, CONTAINERD)
 
 	engineChecked = false
 
