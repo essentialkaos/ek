@@ -19,6 +19,7 @@ const (
 	DOCKER       = "docker"       // Docker (Moby)
 	PODMAN       = "podman"       // Podman
 	LXC          = "lxc"          // LXC
+	CONTAINERD   = "containerd"   // containerd
 	YANDEX       = "yandex"       // Yandex Serverless
 	DOCKER_RUNSC = "docker+runsc" // Docker (Moby) + runsc (gVisor)
 )
@@ -38,6 +39,9 @@ var engineChecked bool
 
 // engineCache cached engine info
 var engineCache string
+
+// isK8s is set to true if we inside K8s pod container
+var isK8s bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -64,15 +68,24 @@ func IsContainer() bool {
 	return GetEngine() != ""
 }
 
+// IsK8s returns true if we are inside K8s pod container
+func IsK8s() bool {
+	return GetEngine() != "" && isK8s
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // guessEngine tries to guess container engine based on information from /proc/1/mounts
 func guessEngine(mountsData string) string {
 	_, err := os.Stat(dockerEnv)
 
+	isK8s = strings.Contains(mountsData, "kubernetes.io")
+
 	switch {
 	case strings.Contains(mountsData, "overlay-container /function/code/rootfs"):
 		return YANDEX
+	case strings.Contains(mountsData, "io.containerd"):
+		return CONTAINERD
 	case strings.Contains(mountsData, "lxcfs "):
 		return LXC
 	case strings.Contains(mountsData, "workdir=/var/lib/containers"):
