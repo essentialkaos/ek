@@ -58,7 +58,8 @@ none /etc/hostname 9p rw,trans=fd,rfdno=6,wfdno=6,aname=/,dfltuid=4294967294,dfl
 
 	os.WriteFile(s.DataDir+"/containerd", []byte(`overlay / overlay rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/111/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/work,xino=off 0 0
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
-tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0`), 0644)
+tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /run/secrets/kubernetes.io/serviceaccount tmpfs ro,relatime,size=2760104k 0 0`), 0644)
 }
 
 func (s *ContainerSuite) TestGetEngine(c *C) {
@@ -75,6 +76,7 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 
 	mountsFile = s.DataDir + "/yandex"
 	c.Assert(GetEngine(), Equals, YANDEX)
+	c.Assert(IsK8s(), Equals, false)
 
 	engineChecked = false
 
@@ -85,7 +87,9 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 
 	mountsFile = s.DataDir + "/containerd"
 	c.Assert(GetEngine(), Equals, CONTAINERD)
+	c.Assert(IsK8s(), Equals, true)
 
+	isK8s = false
 	engineChecked = false
 
 	mountsFile = s.DataDir + "/docker"

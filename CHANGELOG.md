@@ -3,6 +3,7 @@
 ### [13.20.5](https://kaos.sh/ek/13.20.5)
 
 - **`[system/container]`** Added [`containerd`](https://containerd.io) support
+- **`[system/container]`** Added [`K8s`](https://kubernetes.io) support
 
 ### [13.20.4](https://kaos.sh/ek/13.20.4)
 
