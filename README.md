@@ -2,9 +2,7 @@
 
 <p align="center">
   <a href="https://kaos.sh/g/ek.v13"><img src=".github/images/godoc.svg"/></a>
-  <a href="https://kaos.sh/l/ek"><img src="https://kaos.sh/l/210cafc2de7bf4320649.svg" alt="Code Climate Maintainability" /></a>
   <a href="https://kaos.sh/y/ek"><img src="https://kaos.sh/y/e5f84d40af0e4a9ab3ff94852f93007c.svg" alt="Codacy badge" /></a>
-  <br/>
   <a href="https://kaos.sh/w/ek/ci"><img src="https://kaos.sh/w/ek/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/w/ek/codeql-analysis"><img src="https://kaos.sh/w/ek/codeql-analysis.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src=".github/images/license.svg"/></a>
