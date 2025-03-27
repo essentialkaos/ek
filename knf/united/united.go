@@ -9,7 +9,9 @@ package united
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -237,6 +239,16 @@ func GetL(name string, defvals ...[]string) []string {
 	return global.GetL(name, defvals...)
 }
 
+// Is checks if given property contains given value
+func Is(name string, value any) bool {
+	return global.Is(name, value)
+}
+
+// Has checks if the property is defined and set
+func Has(name string) bool {
+	return global.Has(name)
+}
+
 // Validate executes all given validators and
 // returns slice with validation errors
 func Validate(validators knf.Validators) errors.Errors {
@@ -442,6 +454,51 @@ func (c *united) GetL(name string, defvals ...[]string) []string {
 	}
 
 	return value.ParseList(c.getProp(name), defvals...)
+}
+
+// Is checks if given property contains given value
+func (c *united) Is(name string, value any) bool {
+	if c == nil {
+		return false
+	}
+
+	switch t := value.(type) {
+	case string:
+		return c.GetS(name) == t
+	case int:
+		return c.GetI(name) == t
+	case int64:
+		return c.GetI64(name) == t
+	case uint:
+		return c.GetU(name) == t
+	case uint64:
+		return c.GetU64(name) == t
+	case float64:
+		return c.GetF(name) == t
+	case bool:
+		return c.GetB(name) == t
+	case os.FileMode:
+		return c.GetM(name) == t
+	case time.Duration:
+		return c.GetD(name, SECOND) == t
+	case time.Time:
+		return c.GetTS(name).Unix() == t.Unix()
+	case *time.Location:
+		return fmt.Sprint(c.GetTZ(name)) == fmt.Sprint(t)
+	case []string:
+		return slices.Equal(c.GetL(name), t)
+	}
+
+	return false
+}
+
+// Has checks if property is defined and set
+func (c *united) Has(name string) bool {
+	if c == nil {
+		return false
+	}
+
+	return c.getProp(name) != ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

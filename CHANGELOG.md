@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.21.0](https://kaos.sh/ek/13.21.0)
+
+- **`[knf/united]`** Added methods `Is` and `Has`
+
 ### [13.20.5](https://kaos.sh/ek/13.20.5)
 
 - **`[system/container]`** Added [`containerd`](https://containerd.io) support

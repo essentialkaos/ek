@@ -103,6 +103,8 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetTZ("test:timezone", time.Local), NotNil)
 	c.Assert(GetL("test:list"), IsNil)
 	c.Assert(GetL("test:list", []string{"test"}), NotNil)
+	c.Assert(Is("test:string", ""), Equals, false)
+	c.Assert(Has("test:string"), Equals, false)
 	c.Assert(GetMapping("test:string").Property, Equals, "")
 
 	err = Combine(s.config,
@@ -136,6 +138,25 @@ func (s *UnitedSuite) TestKNFOnly(c *C) {
 	c.Assert(GetL("test:list"), DeepEquals, []string{"Test1", "Test2"})
 	c.Assert(GetS("test:unknown"), Equals, "")
 	c.Assert(GetS("test:unknown", "TestABCD"), Equals, "TestABCD")
+
+	c.Assert(Has("test:string"), Equals, true)
+	c.Assert(Has("test:abcd"), Equals, false)
+
+	c.Assert(Is("test:string", nil), Equals, false)
+	c.Assert(Is("test:string", "Test"), Equals, true)
+	c.Assert(Is("test:integer", 123), Equals, true)
+	c.Assert(Is("test:integer", int64(123)), Equals, true)
+	c.Assert(Is("test:integer", uint(123)), Equals, true)
+	c.Assert(Is("test:integer", uint64(123)), Equals, true)
+	c.Assert(Is("test:float", 234.5), Equals, true)
+	c.Assert(Is("test:file-mode", os.FileMode(0644)), Equals, true)
+	c.Assert(Is("test:duration", 24*time.Second), Equals, true)
+	c.Assert(Is("test:timestamp", time.Unix(1709629048, 0)), Equals, true)
+	c.Assert(Is("test:list", []string{"Test1", "Test2"}), Equals, true)
+	c.Assert(Is("test:boolean", true), Equals, true)
+
+	l, _ := time.LoadLocation("Europe/Zurich")
+	c.Assert(Is("test:timezone", l), Equals, true)
 
 	mapping := GetMapping("test:string")
 
