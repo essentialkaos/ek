@@ -386,3 +386,29 @@ func ExampleGetL() {
 
 	fmt.Printf("Value from config: %v\n", GetL("issue:labels"))
 }
+
+func ExampleIs() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
+	Combine(
+		config,
+		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
+		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
+	)
+
+	fmt.Printf("user.name == bob: %t\n", Is("user:name", "bob"))
+	fmt.Printf("user.uid == 512: %t\n", Is("user:uid", 512))
+}
+
+func ExampleHas() {
+	config, _ := knf.Read("/path/to/your/config.knf")
+
+	Combine(
+		config,
+		Mapping{"test:option-one", "O:option-one", "TEST_OPTION_ONE"},
+		Mapping{"test:option-two", "k:option-two", "TEST_OPTION_TWO"},
+	)
+
+	fmt.Printf("Is property \"user:name\" exist: %t\n", Has("user:name"))
+	fmt.Printf("Is property \"user:path\" exist: %t\n", Has("user:path"))
+}
