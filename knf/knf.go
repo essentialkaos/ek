@@ -13,13 +13,13 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"slices"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/errors"
 	"github.com/essentialkaos/ek/v13/knf/value"
-	"github.com/essentialkaos/ek/v13/sliceutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -386,8 +386,8 @@ func HasSection(section string) bool {
 	return global.HasSection(section)
 }
 
-// HasProp checks if the property is defined and set
-func HasProp(name string) bool {
+// Has checks if the property is defined and set
+func Has(name string) bool {
 	if global == nil {
 		return false
 	}
@@ -427,6 +427,22 @@ func Validate(validators Validators) errors.Errors {
 // + property name)
 func Q(section, prop string) string {
 	return section + _SYMBOL_DELIMITER + prop
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// HasProp checks if the property is defined and set
+//
+// Deprecated: Use method Has instead
+func HasProp(name string) bool {
+	return Has(name)
+}
+
+// HasProp checks if property is defined and set
+//
+// Deprecated: Use method Has instead
+func (c *Config) HasProp(name string) bool {
+	return c.Has(name)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -775,7 +791,7 @@ func (c *Config) Is(name string, value any) bool {
 	case *time.Location:
 		return fmt.Sprint(c.GetTZ(name)) == fmt.Sprint(t)
 	case []string:
-		return sliceutil.IsEqual(c.GetL(name), t)
+		return slices.Equal(c.GetL(name), t)
 	}
 
 	return false
@@ -796,8 +812,8 @@ func (c *Config) HasSection(section string) bool {
 	return c.data[strings.ToLower(section)] == "!"
 }
 
-// HasProp checks if property is defined and set
-func (c *Config) HasProp(name string) bool {
+// Has checks if property is defined and set
+func (c *Config) Has(name string) bool {
 	if c == nil || c.mx == nil {
 		return false
 	}
