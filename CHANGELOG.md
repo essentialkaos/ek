@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.21.1](https://kaos.sh/ek/13.21.1)
+
+- **`[timeutil]`** Added method `LocalTimezone`
+
 ### [13.21.0](https://kaos.sh/ek/13.21.0)
 
 - **`[knf/united]`** Added methods `Is` and `Has`
