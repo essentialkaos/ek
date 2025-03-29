@@ -139,10 +139,8 @@ jobs:
           --partial
 
   Windows:
-    name: Windows
+    name: Windows (Stubs)
     runs-on: windows-latest
-
-    needs: Linux
 
     strategy:
       matrix:
