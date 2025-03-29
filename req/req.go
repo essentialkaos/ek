@@ -511,6 +511,26 @@ func (r *Response) Bytes() []byte {
 	return result
 }
 
+// Save saves response data into file
+func (r *Response) Save(filename string, mode os.FileMode) error {
+	if r == nil || r.Body == nil {
+		return fmt.Errorf("Response body is empty")
+	}
+
+	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
+
+	if err != nil {
+		return fmt.Errorf("Can't open file to write: %v", err)
+	}
+
+	defer fd.Close()
+	defer r.Body.Close()
+
+	_, err = io.Copy(fd, r.Body)
+
+	return err
+}
+
 // String reads response body as string
 func (r *Response) String() string {
 	if r == nil {

@@ -44,6 +44,7 @@ const (
 	_URL_JSON_RESP    = "/json-response"
 	_URL_DISCARD      = "/discard"
 	_URL_TIMEOUT      = "/timeout"
+	_URL_SAVE         = "/save"
 )
 
 const (
@@ -312,9 +313,7 @@ func (s *ReqSuite) TestClose(c *C) {
 }
 
 func (s *ReqSuite) TestUserAgent(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_USER_AGENT,
-	}.Do()
+	resp, err := Request{URL: s.url + _URL_USER_AGENT}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
@@ -332,9 +331,7 @@ func (s *ReqSuite) TestBasicAuth(c *C) {
 }
 
 func (s *ReqSuite) TestStringResp(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_STRING_RESP,
-	}.Do()
+	resp, err := Request{URL: s.url + _URL_STRING_RESP}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
@@ -342,9 +339,7 @@ func (s *ReqSuite) TestStringResp(c *C) {
 }
 
 func (s *ReqSuite) TestBytesResp(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_STRING_RESP,
-	}.Do()
+	resp, err := Request{URL: s.url + _URL_STRING_RESP}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
@@ -352,9 +347,7 @@ func (s *ReqSuite) TestBytesResp(c *C) {
 }
 
 func (s *ReqSuite) TestJSONResp(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_JSON_RESP,
-	}.Do()
+	resp, err := Request{URL: s.url + _URL_JSON_RESP}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
@@ -369,10 +362,23 @@ func (s *ReqSuite) TestJSONResp(c *C) {
 	c.Assert(testStruct.Boolean, Equals, true)
 }
 
+func (s *ReqSuite) TestSaveResp(c *C) {
+	resp, err := Request{URL: s.url + _URL_SAVE}.Get()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+
+	err = resp.Save("/test", 0644)
+	c.Assert(err, NotNil)
+
+	testDir := c.MkDir()
+
+	err = resp.Save(testDir+"/output.test", 0644)
+	c.Assert(err, IsNil)
+}
+
 func (s *ReqSuite) TestDiscard(c *C) {
-	resp, err := Request{
-		URL: s.url + _URL_JSON_RESP,
-	}.Do()
+	resp, err := Request{URL: s.url + _URL_JSON_RESP}.Do()
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
@@ -644,6 +650,7 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(func() { r.Discard() }, NotPanics)
 
 	c.Assert(r.JSON(nil), DeepEquals, ErrNilResponse)
+	c.Assert(r.Save("/test", 0644), NotNil)
 	c.Assert(r.Bytes(), IsNil)
 	c.Assert(r.String(), Equals, "")
 }
@@ -959,6 +966,7 @@ func runHTTPServer(s *ReqSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_JSON_RESP, jsonRespRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_DISCARD, discardRequestHandler)
 	server.Handler.(*http.ServeMux).HandleFunc(_URL_TIMEOUT, timeoutRequestHandler)
+	server.Handler.(*http.ServeMux).HandleFunc(_URL_SAVE, saveRequestHandler)
 
 	err = server.Serve(listener)
 
@@ -1177,6 +1185,11 @@ func timeoutRequestHandler(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(100 * time.Millisecond)
 	w.WriteHeader(200)
 	w.Write([]byte(`{}`))
+}
+
+func saveRequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
+	w.Write([]byte(`TEST-DATA`))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
