@@ -356,6 +356,10 @@ func ExampleFromISOWeek() {
 	// 2021-06-18 00:00:00 +0000 UTC
 }
 
+func ExampleLocalTimezone() {
+	fmt.Printf("Local timezone: %s\n", LocalTimezone())
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleDate_Unix() {

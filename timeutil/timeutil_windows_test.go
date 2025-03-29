@@ -1,4 +1,7 @@
-package ek
+//go:build windows
+// +build windows
+
+package timeutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,5 +10,18 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "13.21.1"
+import (
+	. "github.com/essentialkaos/check"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *TimeUtilSuite) TestLocalTimezone(c *C) {
+	c.Assert(LocalTimezone(), Not(Equals), "Local")
+
+	registryKeyName = "Unknown"
+	c.Assert(LocalTimezone(), Equals, "Local")
+
+	registryKey = "Unknown"
+	c.Assert(LocalTimezone(), Equals, "Local")
+}
