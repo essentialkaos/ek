@@ -94,7 +94,8 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`usage/completion/bash`](https://kaos.sh/g/ek.v13/usage/completion/bash) — Package provides methods for generating bash completion
 - [`usage/completion/fish`](https://kaos.sh/g/ek.v13/usage/completion/fish) — Package provides methods for generating fish completion
 - [`usage/completion/zsh`](https://kaos.sh/g/ek.v13/usage/completion/zsh) — Package provides methods for generating zsh completion
-- [`uuid`](https://kaos.sh/g/ek.v13/uuid) — Package provides methods for generating version 4 and 5 UUID's
+- [`uuid`](https://kaos.sh/g/ek.v13/uuid) — Package provides methods for generating version 4, 5, and 7 UUID's
+- [`uuid/prefixed`](https://kaos.sh/g/ek.v13/uuid/prefixed) — Package provides methods for encoding and decoding prefixed UUID's
 - [`version`](https://kaos.sh/g/ek.v13/version) — Package version provides methods for working with semver version info
 
 ### Projects with `EK`
