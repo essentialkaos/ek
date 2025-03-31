@@ -401,6 +401,12 @@ func (s *ReqSuite) TestTimeout(c *C) {
 	}.Do()
 
 	c.Assert(err, NotNil)
+
+	_, err = Request{
+		URL:         s.url + _URL_HEAD,
+		Timeout:     10 * time.Millisecond,
+		AutoDiscard: true,
+	}.Get()
 }
 
 func (s *ReqSuite) TestEncoding(c *C) {

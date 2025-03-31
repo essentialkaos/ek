@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.22.0](https://kaos.sh/ek/13.22.0)
+
+- **`[uuid/prefixed]`** Added package for encoding and decoding prefixed UUID's
+- **`[reutil]`** Added package with helpers for working with regular expressions
+- **`[req]`** Fixed bug with canceling context of request with timeout too early
+
 ### [13.21.1](https://kaos.sh/ek/13.21.1)
 
 - **`[timeutil]`** Added method `LocalTimezone`

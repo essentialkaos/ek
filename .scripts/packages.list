@@ -49,6 +49,7 @@ L + netutil
 * + protip
 * + rand
 * + req
+* + reutil
 * + secstr
 L - setup
 * - signal
@@ -77,4 +78,5 @@ L + system/sensors
 * + usage/man
 * + usage/update
 * + uuid
+* + uuid/prefixed
 * + version

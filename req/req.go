@@ -598,10 +598,6 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	req, cancel, err := createRequest(e, r, bodyReader)
 
-	if cancel != nil {
-		defer cancel()
-	}
-
 	if err != nil {
 		return nil, err
 	}
@@ -620,6 +616,10 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 	if resp.StatusCode > 299 && r.AutoDiscard {
 		result.Discard()
+
+		if cancel != nil {
+			cancel()
+		}
 	}
 
 	return result, nil
