@@ -912,6 +912,36 @@ func (s *ReqSuite) TestQueryParsing(c *C) {
 	)
 }
 
+func (s *ReqSuite) TestHeadersHelpers(c *C) {
+	var h Headers
+
+	c.Assert(h.Set("X-Test-Header", "test"), Equals, false)
+	c.Assert(h.SetIf(true, "X-Test-Header", "test"), Equals, false)
+	c.Assert(h.Get("X-Test-Header"), Equals, "")
+	c.Assert(h.Delete("X-Test-Header"), Equals, false)
+	c.Assert(h.DeleteIf(true, "X-Test-Header"), Equals, false)
+
+	h = Headers{}
+
+	c.Assert(h.Set("X-Test-Header", ""), Equals, false)
+	c.Assert(h.Set("", "test"), Equals, false)
+	c.Assert(h.SetIf(true, "", "test"), Equals, false)
+	c.Assert(h.SetIf(false, "X-Test-Header", "test"), Equals, false)
+	c.Assert(h.Get(""), Equals, "")
+	c.Assert(h.Delete(""), Equals, false)
+	c.Assert(h.DeleteIf(true, ""), Equals, false)
+	c.Assert(h.DeleteIf(false, "X-Test-Header"), Equals, false)
+
+	c.Assert(h.Set("X-Test-Header", "test"), Equals, true)
+	c.Assert(h.SetIf(true, "X-Test-Header", "test2"), Equals, true)
+	c.Assert(h.Get("X-Test-Header"), Equals, "test2")
+	c.Assert(h.Delete("X-Test-Header"), Equals, true)
+	c.Assert(h.Get("X-Test-Header"), Equals, "")
+	c.Assert(h.Set("X-Test-Header", "test"), Equals, true)
+	c.Assert(h.DeleteIf(true, "X-Test-Header"), Equals, true)
+	c.Assert(h.Get("X-Test-Header"), Equals, "")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *ReqSuite) BenchmarkQueryEncoding(c *C) {

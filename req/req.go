@@ -181,9 +181,6 @@ const USER_AGENT = "ek.go"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Headers is a map[string]string used for headers
-type Headers map[string]string
-
 // Request is basic struct
 type Request struct {
 	Method         string        // Request method

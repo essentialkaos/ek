@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.22.1](https://kaos.sh/ek/13.22.1)
+
+- **`[req]`** Added new helpers for working with `Headers`
+
 ### [13.22.0](https://kaos.sh/ek/13.22.0)
 
 - **`[uuid/prefixed]`** Added package for encoding and decoding prefixed UUID's
