@@ -32,7 +32,7 @@ var SeparatorSymbol = "-"
 // SeparatorSize contains size of separator
 var SeparatorSize = 88
 
-// SeparatorTitleAlign aligin of separator title (l/left, c/center/, r/right)
+// SeparatorTitleAlign aligning of separator title (l/left, c/center/, r/right)
 var SeparatorTitleAlign = "left"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
