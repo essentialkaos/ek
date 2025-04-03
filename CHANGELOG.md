@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.23.1](https://kaos.sh/ek/13.23.1)
+
+- **`[support]`** Fixed separator title alignment for info sections
+
 ### [13.23.0](https://kaos.sh/ek/13.23.0)
 
 - **`[fmtutil]`** Added title alignment for separator

@@ -410,6 +410,7 @@ func (i *Info) Print() {
 	fmtutil.SeparatorFullscreen = false
 	fmtutil.SeparatorColorTag = "{s-}"
 	fmtutil.SeparatorSize = 80
+	fmtutil.SeparatorTitleAlign = "left"
 
 	i.printAppInfo()
 	i.printOSInfo()
