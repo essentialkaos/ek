@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.23.0](https://kaos.sh/ek/13.23.0)
+
+- **`[fmtutil]`** Added title alignment for separator
+
 ### [13.22.1](https://kaos.sh/ek/13.22.1)
 
 - **`[req]`** Added new helpers for working with `Headers`

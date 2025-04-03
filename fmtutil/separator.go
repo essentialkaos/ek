@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/terminal/tty"
 )
 
@@ -31,6 +32,9 @@ var SeparatorSymbol = "-"
 // SeparatorSize contains size of separator
 var SeparatorSize = 88
 
+// SeparatorTitleAlign aligning of separator title (l/left, c/center/, r/right)
+var SeparatorTitleAlign = "left"
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Separator renders separator to console
@@ -45,15 +49,9 @@ func Separator(tiny bool, args ...string) {
 	}
 
 	if len(args) != 0 {
-		name := args[0]
-		suffixSize := between((size-4)-len(name), 0, 999999)
-
-		separator += SeparatorColorTag
-		separator += strings.Repeat(SeparatorSymbol, 2) + "{!} "
-		separator += SeparatorTitleColorTag + name + "{!} "
-		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, suffixSize) + "{!}"
+		separator = SeparatorColorTag + getAligned(size, args[0]) + "{!}"
 	} else {
-		separator = SeparatorColorTag + getSeparator(size) + "{!}"
+		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, size) + "{!}"
 	}
 
 	if !tiny {
@@ -65,8 +63,29 @@ func Separator(tiny bool, args ...string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func getSeparator(size int) string {
-	return strings.Repeat(SeparatorSymbol, size)
+func getAligned(size int, name string) string {
+	var separator string
+
+	lineSize := between((size-2)-strutil.LenVisual(name), 4, 999999)
+
+	switch strings.ToLower(SeparatorTitleAlign) {
+	case "c", "center":
+		lineSize /= 2
+		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize) + "{!} "
+		separator += strutil.B(size%((lineSize*2)+strutil.LenVisual(name)+2) == 1, " ", "")
+		separator += SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize) + "{!}"
+	case "r", "right":
+		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize-2) + "{!} "
+		separator += SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, 2) + "{!}"
+	default:
+		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, 2) + "{!} "
+		separator += SeparatorTitleColorTag + name + "{!} "
+		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize-2) + "{!}"
+	}
+
+	return separator
 }
 
 func between(val, min, max int) int {

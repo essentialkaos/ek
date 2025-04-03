@@ -199,9 +199,19 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false, "test")
 	Separator(false, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
+	SeparatorTitleAlign = "l"
+	Separator(true, "test1")
+	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
+	SeparatorTitleAlign = "c"
+	Separator(true, "test2")
+	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
+	SeparatorTitleAlign = "r"
+	Separator(true, "test3")
+	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
+
 	SeparatorFullscreen = true
 
-	Separator(true)
+	Separator(false)
 
 	c.Assert(between(0, 1, 3), Equals, 1)
 	c.Assert(between(2, 1, 3), Equals, 2)
