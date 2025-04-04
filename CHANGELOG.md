@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.23.2](https://kaos.sh/ek/13.23.2)
+
+- **`[log]`** Print messages with `AUX` level as `INFO` for JSON format
+
 ### [13.23.1](https://kaos.sh/ek/13.23.1)
 
 - **`[support]`** Fixed separator title alignment for info sections

@@ -640,9 +640,9 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 
 // writeJSON writes JSON encoded message into log
 func (l *Logger) writeJSON(level uint8, msg string, a ...any) error {
-	// Aux ignored in JSON format
+	// Aux in JSON is info
 	if level == AUX {
-		return nil
+		level = INFO
 	}
 
 	if msg == "" && len(a) == 0 {
