@@ -398,13 +398,13 @@ func (ls *LogSuite) TestJSON(c *C) {
 	c.Assert(l.Print(CRIT, "Test crit %d", CRIT, F{"id", 105}, F{"user", "simon"}), IsNil)
 
 	c.Assert(l.Info("Test message"), IsNil)
+	l.Aux("Test aux")
 
 	l.TimeLayout = ""
 
 	c.Assert(l.Info("Test message"), IsNil)
 
 	l.Print(DEBUG, "")
-	l.Aux("Test")
 
 	data, err := os.ReadFile(logfile)
 
@@ -413,11 +413,11 @@ func (ls *LogSuite) TestJSON(c *C) {
 
 	dataSlice := strings.Split(string(data), "\n")
 
-	c.Assert(len(dataSlice), Equals, 8)
+	c.Assert(len(dataSlice), Equals, 9)
 
 	records := parseJSONRecords(dataSlice)
 
-	c.Assert(len(records), Equals, 7)
+	c.Assert(len(records), Equals, 8)
 
 	c.Assert(records[0].Level, Equals, "debug")
 	c.Assert(records[0].TS, Not(Equals), "")
@@ -460,6 +460,13 @@ func (ls *LogSuite) TestJSON(c *C) {
 	c.Assert(records[5].Msg, Equals, "Test message")
 	c.Assert(records[5].ID, Equals, 0)
 	c.Assert(records[5].User, Equals, "")
+
+	c.Assert(records[6].Level, Equals, "info")
+	c.Assert(records[6].TS, Not(Equals), "")
+	c.Assert(records[6].Caller, Not(Equals), "")
+	c.Assert(records[6].Msg, Equals, "Test aux")
+	c.Assert(records[6].ID, Equals, 0)
+	c.Assert(records[6].User, Equals, "")
 }
 
 func (ls *LogSuite) TestWithCaller(c *C) {
@@ -488,8 +495,8 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:473) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:478) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:480) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:485) Test info 2")
 
 	frm := runtime.Frame{File: "/path/to/my/app/code/test.go", Line: 10}
 	c.Assert(extractCallerFromFrame(frm, true), Equals, "/path/to/my/app/code/test.go:10")
