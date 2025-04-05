@@ -151,7 +151,7 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 
 ### Contributing
 
-Before contributing to this project please read our [Contributing Guidelines](https://github.com/essentialkaos/contributing-guidelines#contributing-guidelines).
+Before contributing to this project please read our [Contributing Guidelines](https://github.com/essentialkaos/.github/blob/master/CONTRIBUTING.md).
 
 ### License
 
