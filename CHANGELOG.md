@@ -3,6 +3,7 @@
 ### [13.23.2](https://kaos.sh/ek/13.23.2)
 
 - **`[log]`** Print messages with `AUX` level as `INFO` for JSON format
+- **`[strutil]`** Added support of negative end value
 
 ### [13.23.1](https://kaos.sh/ek/13.23.1)
 

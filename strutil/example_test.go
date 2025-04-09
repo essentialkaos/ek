@@ -61,9 +61,11 @@ func ExampleSubstr() {
 
 func ExampleSubstring() {
 	fmt.Println(Substring("Пример 例子 例 მაგალითად", 7, 9))
+	fmt.Println(Substring(`John 'The Wizard' Doe`, 6, -5))
 
 	// Output:
 	// 例子
+	// The Wizard
 }
 
 func ExampleExtract() {
