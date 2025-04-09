@@ -3,7 +3,7 @@
 ### [13.24.0](https://kaos.sh/ek/13.24.0)
 
 - **`[knf/validators]`** Added more validators for time duration (`TypeDur`, `DurShorter`, `DurLonger`)
-- **`[strutil]`** Added support of negative end value
+- **`[strutil]`** Added support for negative substring end parameter
 - **`[log]`** Print messages with `AUX` level as `INFO` for JSON format
 - **`[knf/validators]`** `LenLess` validator renamed to `LenShorter`
 - **`[knf/validators]`** `LenGreater` validator renamed to `LenLonger`
