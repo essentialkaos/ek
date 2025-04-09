@@ -1,5 +1,18 @@
 ## Changelog
 
+### [13.24.0](https://kaos.sh/ek/13.24.0)
+
+- **`[knf/validators]`** Added more validators for time duration (`TypeDur`, `DurShorter`, `DurLonger`)
+- **`[strutil]`** Added support for negative substring end parameter
+- **`[log]`** Print messages with `AUX` level as `INFO` for JSON format
+- **`[knf/validators]`** `LenLess` validator renamed to `LenShorter`
+- **`[knf/validators]`** `LenGreater` validator renamed to `LenLonger`
+- **`[emoji]`** Code refactoring
+- **`[fmtc]`** Code refactoring
+- **`[knf/value]`** Code refactoring
+- **`[log]`** Code refactoring
+- **`[system]`** Code refactoring
+
 ### [13.23.1](https://kaos.sh/ek/13.23.1)
 
 - **`[support]`** Fixed separator title alignment for info sections

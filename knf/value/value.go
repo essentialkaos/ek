@@ -197,17 +197,17 @@ func ParseTimeDuration(v string, defvals ...time.Duration) time.Duration {
 	v = strings.ToLower(v)
 	m := 1
 
-	switch v[len(v)-1:] {
+	switch strutil.Tail(v, 1) {
 	case "s":
-		v, m = v[:len(v)-1], 1
+		v = strutil.Substring(v, 0, -1)
 	case "m":
-		v, m = v[:len(v)-1], 60
+		v, m = strutil.Substring(v, 0, -1), 60
 	case "h":
-		v, m = v[:len(v)-1], 3600
+		v, m = strutil.Substring(v, 0, -1), 3600
 	case "d":
-		v, m = v[:len(v)-1], 24*3600
+		v, m = strutil.Substring(v, 0, -1), 24*3600
 	case "w":
-		v, m = v[:len(v)-1], 7*24*3600
+		v, m = strutil.Substring(v, 0, -1), 7*24*3600
 	}
 
 	i, err := strconv.Atoi(v)

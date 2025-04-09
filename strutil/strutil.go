@@ -99,8 +99,7 @@ func Substring(s string, start, end int) string {
 	}
 
 	if end < 0 {
-		end = start
-		start = 0
+		end = Len(s) + end
 	}
 
 	var count int

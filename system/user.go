@@ -453,5 +453,5 @@ func parseGroupInfo(data string) (*Group, error) {
 		return group, nil
 	}
 
-	return &Group{GID: gid, Name: name[:len(name)-1]}, nil
+	return &Group{GID: gid, Name: strutil.Substring(name, 0, -1)}, nil
 }
