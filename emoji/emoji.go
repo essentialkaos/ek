@@ -11,6 +11,8 @@ package emoji
 import (
 	"regexp"
 	"strings"
+
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1569,7 +1571,7 @@ func Emojize(text string) string {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func emojiReplacer(text string) string {
-	emoji, ok := data[text[1:len(text)-1]]
+	emoji, ok := data[strutil.Substring(text, 1, -1)]
 
 	if !ok {
 		return text

@@ -627,7 +627,7 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 		}
 	}
 
-	if f == "" || f[len(f)-1:] != "\n" {
+	if f == "" || strutil.Tail(f, 1) != "\n" {
 		l.buf.WriteRune('\n')
 	}
 

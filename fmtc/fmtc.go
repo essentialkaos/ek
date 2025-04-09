@@ -20,6 +20,7 @@ import (
 
 	"github.com/essentialkaos/ek/v13/color"
 	"github.com/essentialkaos/ek/v13/env"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -477,7 +478,7 @@ func tag2ANSI(tag string, clean bool) string {
 		return ""
 	}
 
-	return fmt.Sprintf("\033[" + chars[:len(chars)-1] + "m")
+	return fmt.Sprintf("\033[" + strutil.Substring(chars, 0, -1) + "m")
 }
 
 func parseExtendedColor(tag string) string {
