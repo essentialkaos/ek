@@ -10,6 +10,7 @@ package validators
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/essentialkaos/ek/v13/knf"
 
@@ -62,6 +63,9 @@ test1:      1
 
 [size]
 	test1: 3mb
+
+[dur]
+	test1: 5m
 
 [comment]
   test1: 100
@@ -165,6 +169,7 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
   integer: 10
   float: 10.0
   size: 3mb
+  dur: 5m
   boolean: false`)
 
 	cfg, err := knf.Read(cfgFile)
@@ -206,6 +211,15 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(SizeLess(cfg, "test:size", float64(1*1024*1024)).Error(), check.Equals, "Property test:size can't be greater than 1048576 bytes")
 	c.Assert(SizeLess(cfg, "test:size", false).Error(), check.Equals, "Validator knf.SizeLess doesn't support input with type <bool> for checking test:size property")
 	c.Assert(SizeLess(cfg, "test:size", uint64(10*1024*1024)), check.IsNil)
+
+	c.Assert(DurShorter(cfg, "test:dur", time.Minute).Error(), check.Equals, "Property test:dur can't be greater than 1m0s")
+	c.Assert(DurShorter(cfg, "test:dur", 1234).Error(), check.Equals, "Validator knf.DurShorter doesn't support input with type <int> for checking test:dur property")
+	c.Assert(DurShorter(cfg, "test:empty", time.Hour), check.IsNil)
+	c.Assert(DurShorter(cfg, "test:dur", time.Hour), check.IsNil)
+	c.Assert(DurLonger(cfg, "test:dur", time.Hour).Error(), check.Equals, "Property test:dur can't be less than 1h0m0s")
+	c.Assert(DurLonger(cfg, "test:dur", 1234).Error(), check.Equals, "Validator knf.DurLonger doesn't support input with type <int> for checking test:dur property")
+	c.Assert(DurLonger(cfg, "test:empty", time.Minute), check.IsNil)
+	c.Assert(DurLonger(cfg, "test:dur", time.Minute), check.IsNil)
 
 	c.Assert(InRange(cfg, "test:integer", Range{50, 100}).Error(), check.Equals, "Property test:integer must be in range 50-100")
 	c.Assert(InRange(cfg, "test:integer", Range{1, 100}), check.IsNil)
@@ -282,7 +296,18 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
 [size]
 	test1:
 	test2: 3mb
-	test3: 12.33km`)
+	test3: 12.33km
+
+[dur]
+	test1:
+	test2: 15s
+	test3: 3m
+	test4: 6H
+	test5: 2D
+	test6: 3w
+	test7: 12.4h
+	test8: 1y
+`)
 
 	cfg, err := knf.Read(cfgFile)
 
@@ -314,6 +339,15 @@ func (s *ValidatorSuite) TestTypeValidators(c *check.C) {
 	c.Assert(TypeSize(cfg, "size:test1", nil), check.IsNil)
 	c.Assert(TypeSize(cfg, "size:test2", nil), check.IsNil)
 	c.Assert(TypeSize(cfg, "size:test3", nil).Error(), check.Equals, "Property size:test3 contains unsupported size value (12.33km)")
+
+	c.Assert(TypeDur(cfg, "dur:test1", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test2", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test3", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test4", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test5", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test6", nil), check.IsNil)
+	c.Assert(TypeDur(cfg, "dur:test7", nil).Error(), check.Equals, "Property dur:test7 contains unsupported time duration value (12.4h)")
+	c.Assert(TypeDur(cfg, "dur:test8", nil).Error(), check.Equals, "Property dur:test8 contains unsupported time duration value (1y)")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

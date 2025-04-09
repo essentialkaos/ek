@@ -4,6 +4,9 @@
 
 - **`[log]`** Print messages with `AUX` level as `INFO` for JSON format
 - **`[strutil]`** Added support of negative end value
+- **`[knf/validators]`** Added more validators for time duration (`TypeDur`, `DurShorter`, `DurLonger`)
+- **`[knf/validators]`** `LenLess` validator renamed to `LenShorter`
+- **`[knf/validators]`** `LenGreater` validator renamed to `LenLonger`
 - **`[knf/value]`** Code refactoring
 
 ### [13.23.1](https://kaos.sh/ek/13.23.1)

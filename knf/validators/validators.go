@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/essentialkaos/ek/v13/knf"
 	"github.com/essentialkaos/ek/v13/strutil"
@@ -42,13 +43,13 @@ var (
 	// NotEquals returns an error if the property value is equal to the given string
 	NotEquals = validatorNotEquals
 
-	// LenLess returns an error if the length of the property value is greater than
+	// LenShorter returns an error if the length of the property value is greater than
 	// given number
-	LenLess = validatorLenLess
+	LenShorter = validatorLenShorter
 
-	// LenGreater returns an error if the length of the property value is less than
+	// LenLonger returns an error if the length of the property value is less than
 	// given number
-	LenGreater = validatorLenGreater
+	LenLonger = validatorLenLonger
 
 	// LenNotEquals an error if the length of the property value is not equal to the
 	// given number
@@ -60,11 +61,17 @@ var (
 	// HasSuffix returns error if property doesn't have given suffix
 	HasSuffix = validatorHasSuffix
 
-	// SizeLess returns an error if the property value is smaller than the given number
+	// SizeLess returns an error if the property value is greater than the given number
 	SizeLess = validatorSizeLess
 
-	// SizeGreater returns an error if the property value is greater than the given number
+	// SizeGreater returns an error if the property value is smaller than the given number
 	SizeGreater = validatorSizeGreater
+
+	// DurLess returns an error if the property value is longer than the given duration
+	DurShorter = validatorDurShorter
+
+	// DurGreater returns an error if the property value is shorter than the given duration
+	DurLonger = validatorDurLonger
 
 	// TypeBool returns error if property contains non-boolean value
 	TypeBool = validatorTypeBool
@@ -77,6 +84,17 @@ var (
 
 	// TypeSize returns error if property contains non-size value
 	TypeSize = validatorTypeSize
+
+	// TypeDur returns error if property contains non-duration value
+	TypeDur = validatorTypeDur
+)
+
+var (
+	// Deprecated: Use LenShorter instead
+	LenLess = validatorLenShorter
+
+	// Deprecated: Use LenLonger instead
+	LenGreater = validatorLenLonger
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -163,6 +181,31 @@ func validatorTypeSize(config knf.IConfig, prop string, value any) error {
 	if size == 0 && err != nil {
 		return fmt.Errorf(
 			"Property %s contains unsupported size value (%s)",
+			prop, v,
+		)
+	}
+
+	return nil
+}
+
+func validatorTypeDur(config knf.IConfig, prop string, value any) error {
+	v := config.GetS(prop)
+
+	if v == "" {
+		return nil
+	}
+
+	dur := config.GetS(prop)
+	num := strings.TrimRight(dur, "sSmMhHdDwW")
+	mod := strings.TrimLeft(dur, "0123456789")
+
+	_, err := strconv.Atoi(num)
+
+	switch {
+	case err != nil, len(mod) != 1, num == "",
+		strings.Trim(mod, "sSmMhHdDwW") != "":
+		return fmt.Errorf(
+			"Property %s contains unsupported time duration value (%s)",
 			prop, v,
 		)
 	}
@@ -314,6 +357,46 @@ func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+func validatorDurShorter(config knf.IConfig, prop string, value any) error {
+	v := config.GetS(prop)
+
+	if v == "" {
+		return nil
+	}
+
+	t, ok := value.(time.Duration)
+
+	if !ok {
+		return getValidatorInputError("DurShorter", prop, value)
+	}
+
+	if config.GetTD(prop) > t {
+		return fmt.Errorf("Property %s can't be greater than %v", prop, t)
+	}
+
+	return nil
+}
+
+func validatorDurLonger(config knf.IConfig, prop string, value any) error {
+	v := config.GetS(prop)
+
+	if v == "" {
+		return nil
+	}
+
+	t, ok := value.(time.Duration)
+
+	if !ok {
+		return getValidatorInputError("DurLonger", prop, value)
+	}
+
+	if config.GetTD(prop) < t {
+		return fmt.Errorf("Property %s can't be less than %v", prop, t)
+	}
+
+	return nil
+}
+
 func validatorInRange(config knf.IConfig, prop string, value any) error {
 	rng, ok := value.(Range)
 
@@ -383,7 +466,7 @@ func validatorNotEquals(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
-func validatorLenLess(config knf.IConfig, prop string, value any) error {
+func validatorLenShorter(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if strutil.Len(config.GetS(prop)) > t {
@@ -391,13 +474,13 @@ func validatorLenLess(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("LenLess", prop, value)
+		return getValidatorInputError("LenShorter", prop, value)
 	}
 
 	return nil
 }
 
-func validatorLenGreater(config knf.IConfig, prop string, value any) error {
+func validatorLenLonger(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
 		if strutil.Len(config.GetS(prop)) < t {
@@ -405,7 +488,7 @@ func validatorLenGreater(config knf.IConfig, prop string, value any) error {
 		}
 
 	default:
-		return getValidatorInputError("LenGreater", prop, value)
+		return getValidatorInputError("LenLonger", prop, value)
 	}
 
 	return nil
