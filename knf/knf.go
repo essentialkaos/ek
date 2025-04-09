@@ -161,8 +161,7 @@ func Read(file string) (*Config, error) {
 
 // Parse parses data with KNF configuration
 func Parse(data []byte) (*Config, error) {
-	buf := bytes.NewBuffer(data)
-	return readData(buf)
+	return readData(bytes.NewBuffer(data))
 }
 
 // Reload reloads global configuration file
@@ -709,7 +708,7 @@ func (c *Config) GetSZ(name string, defvals ...uint64) uint64 {
 	return value.ParseSize(c.getValue(name), defvals...)
 }
 
-// GetTD returns configuration value as time duration
+// GetTD returns configuration value as time duration (s/m/h/d/w)
 func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
 	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
