@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.24.1](https://kaos.sh/ek/13.24.1)
+
+- **`[log]`** Fixed a bug with printing divider when using JSON format
+
 ### [13.24.0](https://kaos.sh/ek/13.24.0)
 
 - **`[knf/validators]`** Added more validators for time duration (`TypeDur`, `DurShorter`, `DurLonger`)
