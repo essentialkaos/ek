@@ -391,6 +391,7 @@ func (ls *LogSuite) TestJSON(c *C) {
 
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
+	c.Assert(l.Divider(), IsNil)
 	c.Assert(l.Print(DEBUG, "Test debug %d (%s)", DEBUG, F{"id", 101}, "test1", F{"user", "john"}), IsNil)
 	c.Assert(l.Print(INFO, "Test info %d", INFO, F{"id", 102}, F{"user", "bob"}), IsNil)
 	c.Assert(l.Print(WARN, "Test warn %d", WARN, F{"id", 103}, F{"user", "frida"}), IsNil)
@@ -495,8 +496,8 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:480) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:485) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:481) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:486) Test info 2")
 
 	frm := runtime.Frame{File: "/path/to/my/app/code/test.go", Line: 10}
 	c.Assert(extractCallerFromFrame(frm, true), Equals, "/path/to/my/app/code/test.go:10")

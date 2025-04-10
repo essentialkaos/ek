@@ -480,6 +480,10 @@ func (l *Logger) Divider() error {
 		return ErrNilLogger
 	}
 
+	if l.UseJSON {
+		return nil
+	}
+
 	return l.Print(AUX, strings.Repeat("-", 80))
 }
 
