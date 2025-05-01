@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.24.2](https://kaos.sh/ek/13.24.2)
+
+- **`[fmtutil/table]`** Fixed separator size when full screen mode is disabled
+
 ### [13.24.1](https://kaos.sh/ek/13.24.1)
 
 - **`[log]`** Fixed a bug with printing divider when using JSON format
