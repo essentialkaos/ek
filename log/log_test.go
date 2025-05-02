@@ -820,6 +820,10 @@ func (ls *LogSuite) TestFieldEncoding(c *C) {
 	l.writeJSONField(F{"test", []string{"A"}})
 	c.Assert(l.buf.String(), Equals, "\"test\":\"[A]\"")
 	l.buf.Reset()
+
+	l = &Logger{mu: &sync.Mutex{}, DiscardFields: true}
+	l.writeJSONFields([]any{F{"test1", false}, F{"test2", true}})
+	c.Assert(l.buf.Len(), Equals, 0)
 }
 
 func (ls *LogSuite) TestFields(c *C) {

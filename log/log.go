@@ -69,6 +69,7 @@ type Logger struct {
 	UseJSON            bool   // Encode messages to JSON
 	WithCaller         bool   // Show caller info
 	WithFullCallerPath bool   // Show full path of caller
+	DiscardFields      bool   // Don't write fields to log
 
 	file     string
 	buf      bytes.Buffer
@@ -622,7 +623,7 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 		fmt.Fprintf(&l.buf, f, operands...)
 	}
 
-	if len(fields) > 0 {
+	if len(fields) > 0 && !l.DiscardFields {
 		l.buf.WriteRune(' ')
 		if l.UseColors {
 			fmtc.Fprint(&l.buf, strutil.B(level == DEBUG, Colors[DEBUG], "{b}")+fieldsToText(fields)+"{!}")
@@ -784,6 +785,10 @@ func (l *Logger) writeJSONTimestamp() {
 
 // writeJSONFields writes fields JSON into buffer
 func (l *Logger) writeJSONFields(fields []any) {
+	if l.DiscardFields {
+		return
+	}
+
 	for i, f := range fields {
 		switch t := f.(type) {
 		case Field:

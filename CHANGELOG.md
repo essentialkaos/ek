@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.25.0](https://kaos.sh/ek/13.25.0)
+
+- **`[log]`** Added `DiscardFields` option to discard all fields from log messages
+
 ### [13.24.2](https://kaos.sh/ek/13.24.2)
 
 - **`[fmtutil/table]`** Fixed separator size when full screen mode is disabled
