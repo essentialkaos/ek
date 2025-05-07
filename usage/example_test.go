@@ -107,6 +107,15 @@ func ExampleInfo_AddOption() {
 	info.Print()
 }
 
+func ExampleInfo_AddEnv() {
+	info := NewInfo("", "items…")
+
+	info.AddEnv("QUIET", "Don't output anything")
+
+	// Print data
+	info.Print()
+}
+
 func ExampleInfo_AddExample() {
 	info := NewInfo("", "items…")
 
@@ -219,6 +228,9 @@ func ExampleInfo_Print() {
 
 	// You can define option argument name
 	info.AddOption("o:output", "Output", "file")
+
+	// Add info about supported environment variable
+	info.AddEnv("QUIET", "Don't output anything")
 
 	// Link command and options (will be used for completion generation)
 	info.BoundOptions("publish", "o:output")

@@ -8,6 +8,7 @@ package usage
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -98,6 +99,8 @@ func (s *UsageSuite) TestRawVersion(c *C) {
 }
 
 func (s *UsageSuite) TestUsage(c *C) {
+	os.Setenv("USAGE_TEST", "1")
+
 	info := NewInfo("", "file", "?dir")
 
 	info.AddSpoiler("This is usage of spoiler with {#240}c{#241}o{#242}l{#243}o{#244}r{#245}s {#246}s{#247}u{#248}p{#249}p{#250}o{#251}r{#252}t{!}")
@@ -118,6 +121,12 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.AddOption("test1", "Test option with argument", "arg")
 	info.AddOption("test2", "Test option with optional argument and very very very {*b}long{!} and {c}colored{!} description", "?arg")
 
+	info.AddEnv("", "")     // will be ignored
+	info.AddEnv("TEST", "") // will be ignored
+	info.AddEnv("ENV", "Name of environment")
+	info.AddEnv("USAGE_TEST", "Usage test env var")
+	info.AddEnv("EK_TEST_PORT", "HTTP server test port")
+
 	info.BoundOptions("read", "t:test", "test1")
 
 	info.AddExample("") // will be ignored
@@ -136,6 +145,7 @@ func (s *UsageSuite) TestUsage(c *C) {
 	info.AppNameColorTag = "{#202}"
 	info.CommandsColorTag = "{m}"
 	info.OptionsColorTag = "{b}"
+	info.EnvVarsColorTag = "{r}"
 	info.ExampleDescColorTag = "{&}{b}"
 
 	info.Print()
@@ -189,6 +199,7 @@ func (s *UsageSuite) TestNils(c *C) {
 	c.Assert(func() { i.AddGroup("test") }, NotPanics)
 	c.Assert(func() { i.AddCommand("test", "test") }, NotPanics)
 	c.Assert(func() { i.AddOption("test", "test") }, NotPanics)
+	c.Assert(func() { i.AddEnv("test", "test") }, NotPanics)
 	c.Assert(func() { i.AddExample("test") }, NotPanics)
 	c.Assert(func() { i.AddRawExample("test") }, NotPanics)
 	c.Assert(func() { i.AddSpoiler("test") }, NotPanics)
@@ -202,6 +213,9 @@ func (s *UsageSuite) TestNils(c *C) {
 
 	var o *Option
 	c.Assert(func() { o.Print() }, NotPanics)
+
+	var v *Env
+	c.Assert(func() { v.Print() }, NotPanics)
 
 	var e *Example
 	c.Assert(func() { e.Print() }, NotPanics)

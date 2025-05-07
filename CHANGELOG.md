@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.26.0](https://kaos.sh/ek/13.26.0)
+
+- **`[usage]`** Added support of environment variables to `Info`
+
 ### [13.25.0](https://kaos.sh/ek/13.25.0)
 
 - **`[log]`** Added `DiscardFields` option to discard all fields from log messages
