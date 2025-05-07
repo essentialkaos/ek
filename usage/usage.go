@@ -39,6 +39,7 @@ const _DEFAULT_WRAP_LEN = 88
 const (
 	DEFAULT_COMMANDS_COLOR_TAG     = "{y}"
 	DEFAULT_OPTIONS_COLOR_TAG      = "{g}"
+	DEFAULT_ENV_VAR_COLOR_TAG      = "{m}"
 	DEFAULT_EXAMPLE_DESC_COLOR_TAG = "{&}{s-}"
 	DEFAULT_APP_NAME_COLOR_TAG     = "{c*}"
 	DEFAULT_APP_VER_COLOR_TAG      = "{c}"
@@ -96,18 +97,20 @@ type Info struct {
 	AppNameColorTag     string // AppNameColorTag contains default app name color tag
 	CommandsColorTag    string // CommandsColorTag contains default commands color tag
 	OptionsColorTag     string // OptionsColorTag contains default options color tag
+	EnvVarsColorTag     string // EnvVarsColorTag contains default environment variable color tag
 	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
 
 	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
 	WrapLen     int  // Wrap text if it longer than specified value
 
 	Name    string   // Name is app name
-	Args    []string // Args is slice with app arguments
+	Args    []string // Args is a slice with app arguments
 	Spoiler string   // Spoiler contains additional info
 
-	Commands []*Command // Commands is list of supported commands
-	Options  []*Option  // Options is list of supported options
-	Examples []*Example // Examples is list of usage examples
+	Commands []*Command // Commands is a slice of supported commands
+	Options  []*Option  // Options is a slice of supported options
+	EnvVars  []*Env     // EnvVars is a slice of supported environment variables
+	Examples []*Example // Examples is a slice of usage examples
 
 	curGroup string
 }
@@ -139,6 +142,16 @@ type Option struct {
 	Long  string // Long is long option name (with two minuses prefix)
 	Desc  string // Desc is option description
 	Arg   string // Arg is option argument
+
+	ColorTag string // ColorTag contains default color tag
+
+	info *Info
+}
+
+// Env contains info about environment variable
+type Env struct {
+	Name string // Name is environment variable name
+	Desc string // Desc is environment variable description
 
 	ColorTag string // ColorTag contains default color tag
 
@@ -210,13 +223,14 @@ func (i *Info) AddCommand(name, desc string, args ...string) *Command {
 	return cmd
 }
 
-// AddOption adds option (name, description, args)
+// AddOption adds option
 func (i *Info) AddOption(name, desc string, args ...string) *Option {
 	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
 	long, short := parseOptionName(name)
+
 	opt := &Option{
 		Long:  long,
 		Short: short,
@@ -228,6 +242,19 @@ func (i *Info) AddOption(name, desc string, args ...string) *Option {
 	i.Options = append(i.Options, opt)
 
 	return opt
+}
+
+// AddEnv adds environment variable
+func (i *Info) AddEnv(name, desc string) *Env {
+	if i == nil || name == "" || desc == "" {
+		return nil
+	}
+
+	env := &Env{Name: name, Desc: desc, info: i}
+
+	i.EnvVars = append(i.EnvVars, env)
+
+	return env
 }
 
 // AddExample adds example of application usage
@@ -369,6 +396,10 @@ func (i *Info) Print() {
 		printOptions(i)
 	}
 
+	if len(i.EnvVars) != 0 {
+		printEnvVars(i)
+	}
+
 	if len(i.Examples) != 0 {
 		printExamples(i)
 	}
@@ -398,7 +429,7 @@ func (o *Option) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Print prints info about command
+// Print prints command info
 func (c *Command) Print() {
 	if c == nil {
 		return
@@ -433,7 +464,7 @@ func (c *Command) Print() {
 	fmtc.NewLine()
 }
 
-// Print prints info about option
+// Print prints option info
 func (o *Option) Print() {
 	if o == nil {
 		return
@@ -464,6 +495,41 @@ func (o *Option) Print() {
 
 	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
 	fmtc.Print(wrapText(o.Desc, maxSize+5, wrapLen))
+
+	fmtc.NewLine()
+}
+
+// Print prints environment variable info
+func (e *Env) Print() {
+	if e == nil {
+		return
+	}
+
+	size := strutil.Len(e.Name)
+	useBreadcrumbs := true
+	maxSize := size
+	wrapLen := _DEFAULT_WRAP_LEN
+
+	colorTag := strutil.Q(
+		strutil.B(e.ColorTag != "" && fmtc.IsTag(e.ColorTag), e.ColorTag, ""),
+		DEFAULT_ENV_VAR_COLOR_TAG,
+	)
+
+	if e.info != nil {
+		colorTag = strutil.Q(e.info.EnvVarsColorTag, colorTag)
+		maxSize = getMaxEnvVarSize(e.info.EnvVars)
+		useBreadcrumbs = e.info.Breadcrumbs
+		wrapLen = e.info.WrapLen
+	}
+
+	if os.Getenv(e.Name) != "" {
+		fmtc.Printf("  "+colorTag+"{*}%s{!}", e.Name)
+	} else {
+		fmtc.Printf("  "+colorTag+"%s{!}", e.Name)
+	}
+
+	fmtc.Print(getSeparator(size, maxSize, useBreadcrumbs))
+	fmtc.Print(wrapText(e.Desc, maxSize+2, wrapLen))
 
 	fmtc.NewLine()
 }
@@ -612,6 +678,15 @@ func printOptions(info *Info) {
 	}
 }
 
+// printEnvVars prints all supported environment variables
+func printEnvVars(info *Info) {
+	printGroupHeader("Environment variables")
+
+	for _, env := range info.EnvVars {
+		env.Print()
+	}
+}
+
 // printExamples prints all usage examples
 func printExamples(info *Info) {
 	printGroupHeader("Examples")
@@ -707,7 +782,7 @@ func getSeparator(size, maxSize int, breadcrumbs bool) string {
 	return " " + _SPACES[:maxSize-size] + " "
 }
 
-// getMaxCommandSize returns the biggest command size
+// getMaxCommandSize returns the size of the longest command
 func getMaxCommandSize(commands []*Command, group string) int {
 	var size int
 
@@ -722,12 +797,23 @@ func getMaxCommandSize(commands []*Command, group string) int {
 	return size
 }
 
-// getMaxOptionSize returns the biggest option size
+// getMaxOptionSize returns the size of the longest option
 func getMaxOptionSize(options []*Option) int {
 	var size int
 
 	for _, option := range options {
 		size = mathutil.Max(size, getOptionSize(option)+2)
+	}
+
+	return size
+}
+
+// getMaxEnvVarSize returns the size of the longest environment variable
+func getMaxEnvVarSize(envVars []*Env) int {
+	var size int
+
+	for _, env := range envVars {
+		size = mathutil.Max(size, strutil.Len(env.Name)+2)
 	}
 
 	return size
