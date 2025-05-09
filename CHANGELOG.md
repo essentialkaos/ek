@@ -4,7 +4,7 @@
 
 - **`[usage/update]`** Use token from `GH_TOKEN` environment variable for requests to Github API
 - **`[usage/update]`** Use token from `GL_TOKEN` environment variable for requests to Gitlab API
-- **`[usage/update]`** Gitlab update checker improvements
+- **`[usage/update]`** Gitlab update checker refactoring
 
 ### [13.26.0](https://kaos.sh/ek/13.26.0)
 
