@@ -8,6 +8,8 @@ package update
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -46,25 +48,26 @@ func GitLabChecker(app, version, data string) (string, time.Time, bool) {
 
 // getLatestGitLabRelease fetches the latest release from GitLab
 func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
+	var auth req.Auth
+
 	engine := req.Engine{}
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
 
-	if strings.Contains(repository, "/") {
-		repository = strings.ReplaceAll(repository, "/", "%2F")
+	repository = url.PathEscape(repository)
+
+	if os.Getenv("GL_TOKEN") != "" {
+		auth = req.AuthBearer{os.Getenv("GL_TOKEN")}
 	}
 
 	resp, err := engine.Get(req.Request{
 		URL:         gitlabAPI + "/projects/" + repository + "/releases/permalink/latest",
+		Auth:        auth,
 		AutoDiscard: true,
 	})
 
 	if err != nil || resp.StatusCode != 200 {
-		return nil
-	}
-
-	if resp.Header.Get("RateLimit-Remaining") == "0" {
 		return nil
 	}
 

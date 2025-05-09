@@ -8,6 +8,7 @@ package update
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"os"
 	"strings"
 	"time"
 
@@ -46,14 +47,21 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 
 // getLatestGitHubRelease fetches the latest release from GitHub
 func getLatestGitHubRelease(app, version, repository string) *githubRelease {
+	var auth req.Auth
+
 	engine := req.Engine{}
 
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
 
+	if os.Getenv("GH_TOKEN") != "" {
+		auth = req.AuthBearer{os.Getenv("GH_TOKEN")}
+	}
+
 	resp, err := engine.Get(req.Request{
 		URL:         githubAPI + "/repos/" + repository + "/releases/latest",
 		Headers:     req.Headers{"X-GitHub-Api-Version": "2022-11-28"},
+		Auth:        auth,
 		AutoDiscard: true,
 	})
 
