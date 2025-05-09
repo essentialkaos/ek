@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.26.1](https://kaos.sh/ek/13.26.1)
+
+- **`[usage/update]`** Use token from `GH_TOKEN` environment variable for requests to Github API
+- **`[usage/update]`** Use token from `GL_TOKEN` environment variable for requests to Gitlab API
+- **`[usage/update]`** Gitlab update checker improvements
+
 ### [13.26.0](https://kaos.sh/ek/13.26.0)
 
 - **`[usage]`** Added support of environment variables to `Info`

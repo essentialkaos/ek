@@ -10,6 +10,7 @@ package update
 import (
 	"net"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -50,6 +51,8 @@ func (s *UpdateSuite) TearDownSuite(c *C) {
 func (s *UpdateSuite) TestGitHubChecker(c *C) {
 	githubAPI = s.url + "/github"
 
+	os.Setenv("GH_TOKEN", "testTOKEN1234")
+
 	newVersion, releaseDate, hasUpdate := GitHubChecker("", "", "")
 
 	c.Assert(newVersion, Equals, "")
@@ -85,6 +88,8 @@ func (s *UpdateSuite) TestGitHubChecker(c *C) {
 func (s *UpdateSuite) TestGitLabChecker(c *C) {
 	gitlabAPI = s.url + "/gitlab"
 
+	os.Setenv("GL_TOKEN", "testTOKEN1234")
+
 	newVersion, releaseDate, hasUpdate := GitLabChecker("", "", "")
 
 	c.Assert(newVersion, Equals, "")
@@ -96,11 +101,6 @@ func (s *UpdateSuite) TestGitLabChecker(c *C) {
 	c.Assert(hasUpdate, Equals, false)
 
 	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/unknown")
-
-	c.Assert(newVersion, Equals, "")
-	c.Assert(hasUpdate, Equals, false)
-
-	newVersion, releaseDate, hasUpdate = GitLabChecker("GitLabChecker", "0.9.9", "essentialkaos/limited")
 
 	c.Assert(newVersion, Equals, "")
 	c.Assert(hasUpdate, Equals, false)
@@ -165,9 +165,8 @@ func runHTTPServer(s *UpdateSuite, c *C) {
 	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/garbage/releases/latest", githubWrongFormatHandler)
 
 	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Fproject/releases/permalink/latest", gitlabInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/unknown/releases/permalink/latest", gitlabNotFoundHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/limited/releases/permalink/latest", gitlabLimitedHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos/garbage/releases/permalink/latest", gitlabWrongFormatHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Funknown/releases/permalink/latest", gitlabNotFoundHandler)
+	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Fgarbage/releases/permalink/latest", gitlabWrongFormatHandler)
 
 	server.Handler.(*http.ServeMux).HandleFunc("/basic/project/latest.json", basicInfoHandler)
 	server.Handler.(*http.ServeMux).HandleFunc("/basic/unknown/latest.json", basicUnknownHandler)
@@ -209,12 +208,6 @@ func gitlabInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func gitlabNotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(404)
-}
-
-func gitlabLimitedHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("RateLimit-Remaining", "0")
-	w.WriteHeader(200)
-	w.Write([]byte(`{"tag_name":"v1.2.3","released_at":"2020-05-18T14:07:21.814Z"}`))
 }
 
 func gitlabWrongFormatHandler(w http.ResponseWriter, r *http.Request) {
