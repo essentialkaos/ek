@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.26.2](https://kaos.sh/ek/13.26.2)
+
+- **`[support]`** Improved handling empty slices with data (_deps, apps, services…_)
+
 ### [13.26.1](https://kaos.sh/ek/13.26.1)
 
 - **`[usage/update]`** Use token from `GH_TOKEN` environment variable for requests to Github API
