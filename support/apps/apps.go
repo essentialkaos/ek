@@ -20,19 +20,22 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ExtractVersion extracts version info from given command
-func ExtractVersion(cmd []string, line, field int) support.App {
+func ExtractVersion(cmd string, line, field int) support.App {
 	if len(cmd) == 0 {
 		return support.App{}
 	}
 
-	return support.App{cmd[0], extractField(execVersionCmd(cmd...), line, field)}
+	cmdSlice := strings.Fields(cmd)
+
+	return support.App{cmdSlice[0], extractField(execVersionCmd(cmdSlice...), line, field)}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Golang extracts version info from go command output
 func Golang() support.App {
-	info := ExtractVersion([]string{"go", "version"}, 0, 2)
+	info := ExtractVersion("go version", 0, 2)
+
 	info.Version = strutil.Exclude(info.Version, "go")
 
 	return info
@@ -40,17 +43,17 @@ func Golang() support.App {
 
 // GCC extracts version info from gcc command output
 func GCC() support.App {
-	return ExtractVersion([]string{"gcc", "--version"}, 0, 2)
+	return ExtractVersion("gcc --version", 0, 2)
 }
 
 // Clang extracts version info from clang command output
 func Clang() support.App {
-	return ExtractVersion([]string{"clang", "--version"}, 0, 2)
+	return ExtractVersion("clang --version", 0, 2)
 }
 
 // Python3 extracts version info from python 3.x command output
 func Python3() support.App {
-	return ExtractVersion([]string{"python3", "--version"}, 0, 1)
+	return ExtractVersion("python3 --version", 0, 1)
 }
 
 // Java extracts version info from java command output
@@ -68,17 +71,17 @@ func Java() support.App {
 
 // Groovy extracts version info from groovy command output
 func Groovy() support.App {
-	return ExtractVersion([]string{"groovy", "--version"}, 0, 2)
+	return ExtractVersion("groovy --version", 0, 2)
 }
 
 // Ruby extracts version info from ruby command output
 func Ruby() support.App {
-	return ExtractVersion([]string{"ruby", "--version"}, 0, 1)
+	return ExtractVersion("ruby --version", 0, 1)
 }
 
 // NodeJS extracts version info from node command output
 func NodeJS() support.App {
-	info := ExtractVersion([]string{"node", "--version"}, 0, 2)
+	info := ExtractVersion("node --version", 0, 2)
 	info.Version = strings.TrimLeft(info.Version, "v")
 
 	return info
@@ -86,27 +89,27 @@ func NodeJS() support.App {
 
 // Rust extracts version info from rust command output
 func Rust() support.App {
-	return ExtractVersion([]string{"rustc", "--version"}, 0, 1)
+	return ExtractVersion("rustc --version", 0, 1)
 }
 
 // PHP extracts version info from php command output
 func PHP() support.App {
-	return ExtractVersion([]string{"php", "--version"}, 0, 1)
+	return ExtractVersion("php --version", 0, 1)
 }
 
 // Bash extracts version info from bash command output
 func Bash() support.App {
-	return ExtractVersion([]string{"bash", "--version"}, 0, 3)
+	return ExtractVersion("bash --version", 0, 3)
 }
 
 // Git extracts version info from git command output
 func Git() support.App {
-	return ExtractVersion([]string{"git", "--version"}, 0, 2)
+	return ExtractVersion("git --version", 0, 2)
 }
 
 // Mercurial extracts version info from hg command output
 func Mercurial() support.App {
-	info := ExtractVersion([]string{"hg", "--version"}, 0, 4)
+	info := ExtractVersion("hg --version", 0, 4)
 	info.Version = strings.Trim(info.Version, "()")
 
 	return info
@@ -114,12 +117,12 @@ func Mercurial() support.App {
 
 // SVN extracts version info from svn command output
 func SVN() support.App {
-	return ExtractVersion([]string{"svn", "--version"}, 0, 2)
+	return ExtractVersion("svn --version", 0, 2)
 }
 
 // Docker extracts version info from Docker command output
 func Docker() support.App {
-	info := ExtractVersion([]string{"docker", "--version"}, 0, 2)
+	info := ExtractVersion("docker --version", 0, 2)
 	info.Version = strings.TrimRight(info.Version, ",")
 
 	return info
@@ -127,12 +130,12 @@ func Docker() support.App {
 
 // Podman extracts version info from Podman command output
 func Podman() support.App {
-	return ExtractVersion([]string{"podman", "--version"}, 0, 2)
+	return ExtractVersion("podman --version", 0, 2)
 }
 
 // LXC extracts version info from LXC command output
 func LXC() support.App {
-	return ExtractVersion([]string{"lxc", "--version"}, 0, 0)
+	return ExtractVersion("lxc --version", 0, 0)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
