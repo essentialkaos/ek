@@ -157,6 +157,8 @@ func (s *SupportSuite) TestCollect(c *C) {
 	i.printOSInfo()
 	i.System.ContainerEngine = "yandex"
 	i.printOSInfo()
+	i.System.ContainerEngine = "containerd"
+	i.printOSInfo()
 }
 
 func (s *SupportSuite) TestNil(c *C) {
@@ -175,6 +177,32 @@ func (s *SupportSuite) TestNil(c *C) {
 	c.Assert(i.WithKernel(nil), IsNil)
 
 	c.Assert(func() { i.Print() }, NotPanics)
+}
+
+func (s *SupportSuite) TestIsEmpty(c *C) {
+	k := KernelParams{KernelParam{}}
+	c.Assert(k.IsEmpty(), Equals, true)
+
+	f := FSInfos{FSInfo{}}
+	c.Assert(f.IsEmpty(), Equals, true)
+
+	p := Pkgs{Pkg{}}
+	c.Assert(p.IsEmpty(), Equals, true)
+
+	sv := Services{Service{}}
+	c.Assert(sv.IsEmpty(), Equals, true)
+
+	d := Deps{Dep{}}
+	c.Assert(d.IsEmpty(), Equals, true)
+
+	a := Apps{App{}}
+	c.Assert(a.IsEmpty(), Equals, true)
+
+	ch := Checks{Check{}}
+	c.Assert(ch.IsEmpty(), Equals, true)
+
+	e := EnvVars{EnvVar{}}
+	c.Assert(e.IsEmpty(), Equals, true)
 }
 
 func (s *SupportSuite) TestColorBulletGen(c *C) {

@@ -1,4 +1,4 @@
-package ek
+package apps
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,5 +7,16 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "13.26.2"
+import "fmt"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleExtractVersion() {
+	// Get Ruby version from 'ruby --version' command (line: 0, field: 1)
+	rubyVersion := ExtractVersion("ruby --version", 0, 1)
+	fmt.Println(rubyVersion)
+
+	// Get Java version from 'java -version' command (line: 1, field: 3)
+	javaVersion := ExtractVersion("java -version", 1, 3)
+	fmt.Println(javaVersion)
+}

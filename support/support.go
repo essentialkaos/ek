@@ -112,14 +112,14 @@ type Info struct {
 	System    *SystemInfo    `json:"system,omitempty"`
 	Network   *NetworkInfo   `json:"network,omitempty"`
 	Resources *ResourcesInfo `json:"resources,omitempty"`
-	Kernel    []KernelParam  `json:"kernel,omitempty"`
-	FS        []FSInfo       `json:"fs,omitempty"`
-	Pkgs      []Pkg          `json:"pkgs,omitempty"`
-	Services  []Service      `json:"services,omitempty"`
-	Deps      []Dep          `json:"deps,omitempty"`
-	Apps      []App          `json:"apps,omitempty"`
-	Checks    []Check        `json:"checks,omitempty"`
-	Env       []EnvVar       `json:"env,omitempty"`
+	Kernel    KernelParams   `json:"kernel,omitempty"`
+	FS        FSInfos        `json:"fs,omitempty"`
+	Pkgs      Pkgs           `json:"pkgs,omitempty"`
+	Services  Services       `json:"services,omitempty"`
+	Deps      Deps           `json:"deps,omitempty"`
+	Apps      Apps           `json:"apps,omitempty"`
+	Checks    Checks         `json:"checks,omitempty"`
+	Env       EnvVars        `json:"env,omitempty"`
 }
 
 // BuildInfo contains information about binary
@@ -175,6 +175,9 @@ type FSInfo struct {
 	Free   uint64 `json:"free,omitempty"`
 }
 
+// FSInfos is a slice with fs info
+type FSInfos []FSInfo
+
 // ResourcesInfo contains information about system resources
 type ResourcesInfo struct {
 	CPU       []CPUInfo `json:"cpu"`
@@ -201,14 +204,23 @@ type Service struct {
 	IsEnabled bool          `json:"is_enabled"`
 }
 
+// Services is a slice with services info
+type Services []Service
+
 // App contains basic information about app
 type App struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
+// Apps is a slice with apps info
+type Apps []App
+
 // Pkg contains basic information about package
 type Pkg = App
+
+// Pkgs is a slice with packages info
+type Pkgs = Apps
 
 // Dep contains dependency information
 type Dep struct {
@@ -217,14 +229,23 @@ type Dep struct {
 	Extra   string `json:"extra"`
 }
 
+// Deps is a slice with dependency information
+type Deps []Dep
+
 // EnvVar contains information about environment variable
 type EnvVar struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
 
+// EnvVars is slice with env environment variables
+type EnvVars []EnvVar
+
 // KernelParam contains info about kernel parameter
 type KernelParam = EnvVar
+
+// KernelParams is a slice with kernel parameters
+type KernelParams = EnvVars
 
 // Check contains info about custom check
 type Check struct {
@@ -232,6 +253,9 @@ type Check struct {
 	Title   string      `json:"title"`
 	Message string      `json:"message,omitempty"`
 }
+
+// Checks is a slice of checks
+type Checks []Check
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -603,7 +627,7 @@ func (i *Info) printResourcesInfo() {
 
 // printKernelInfo prints kernel parameters
 func (i *Info) printKernelInfo() {
-	if i.Kernel == nil {
+	if i.Kernel.IsEmpty() {
 		return
 	}
 
@@ -638,7 +662,7 @@ func (i *Info) printEnvVars() {
 
 // printPackagesInfo prints info about packages
 func (i *Info) printPackagesInfo() {
-	if len(i.Pkgs) == 0 {
+	if i.Pkgs.IsEmpty() {
 		return
 	}
 
@@ -657,7 +681,7 @@ func (i *Info) printPackagesInfo() {
 
 // printServicesInfo prints services info
 func (i *Info) printServicesInfo() {
-	if len(i.Services) == 0 {
+	if i.Services.IsEmpty() {
 		return
 	}
 
@@ -685,7 +709,7 @@ func (i *Info) printServicesInfo() {
 
 // printAppsInfo prints info about applications
 func (i *Info) printAppsInfo() {
-	if len(i.Apps) == 0 {
+	if i.Apps.IsEmpty() {
 		return
 	}
 
@@ -709,7 +733,7 @@ func (i *Info) printAppsInfo() {
 
 // printChecksInfo prints checks info
 func (i *Info) printChecksInfo() {
-	if len(i.Checks) == 0 {
+	if i.Checks.IsEmpty() {
 		return
 	}
 
@@ -773,7 +797,7 @@ func (i *Info) printNetworkInfo() {
 
 // printFSInfo prints filesystem info
 func (i *Info) printFSInfo() {
-	if len(i.FS) == 0 {
+	if i.FS.IsEmpty() {
 		return
 	}
 
@@ -797,7 +821,7 @@ func (i *Info) printFSInfo() {
 
 // printDependencies prints used dependencies
 func (i *Info) printDependencies() {
-	if len(i.Deps) == 0 {
+	if i.Deps.IsEmpty() {
 		return
 	}
 
@@ -811,6 +835,98 @@ func (i *Info) printDependencies() {
 			fmtc.Printfn(" {s}%8s{!}  %s {s-}(%s){!}", dep.Version, dep.Path, dep.Extra)
 		}
 	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// IsEmpty return true if slice is empty
+func (k EnvVars) IsEmpty() bool {
+	if len(k) == 0 {
+		return true
+	}
+
+	for _, kk := range k {
+		if kk.Key != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsEmpty return true if slice is empty
+func (f FSInfos) IsEmpty() bool {
+	if len(f) == 0 {
+		return true
+	}
+
+	for _, ff := range f {
+		if ff.Path != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsEmpty return true if slice is empty
+func (p Pkgs) IsEmpty() bool {
+	if len(p) == 0 {
+		return true
+	}
+
+	for _, pp := range p {
+		if pp.Name != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsEmpty return true if slice is empty
+func (s Services) IsEmpty() bool {
+	if len(s) == 0 {
+		return true
+	}
+
+	for _, ss := range s {
+		if ss.Name != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsEmpty return true if slice is empty
+func (d Deps) IsEmpty() bool {
+	if len(d) == 0 {
+		return true
+	}
+
+	for _, dd := range d {
+		if dd.Path != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsEmpty return true if slice is empty
+func (c Checks) IsEmpty() bool {
+	if len(c) == 0 {
+		return true
+	}
+
+	for _, cc := range c {
+		if cc.Title != "" {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
