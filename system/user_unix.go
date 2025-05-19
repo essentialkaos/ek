@@ -11,37 +11,109 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type utmpRecord struct {
+	Type   int16
+	_      [2]byte
+	_      int32
+	Device [32]byte
+	_      [4]byte
+	User   [32]byte
+	Host   [256]byte
+	_      utmpExitStatus
+	_      int32
+	Time   utmpTimeval
+	_      [16]byte
+	_      [20]byte
+}
+
+type utmpExitStatus struct {
+	Termination int16
+	Exit        int16
+}
+
+type utmpTimeval struct {
+	Sec  int32
+	Usec int32
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// devDir is path to dir with pts data
+var devDir = "/dev"
+
+// utmpFile is path to utmp file with sessions info
+var utmpFile = "/var/run/utmp"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Who returns info about all active sessions sorted by login time
+func Who() ([]*SessionInfo, error) {
+	fd, err := os.Open(utmpFile)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	var sessions []*SessionInfo
+
+	for {
+		var rec utmpRecord
+
+		err = binary.Read(fd, binary.LittleEndian, &rec)
+
+		if err != nil {
+			break
+		}
+
+		if rec.Type != 0x7 {
+			continue
+		}
+
+		pts := string(bytes.TrimRight(rec.Device[:], "\x00"))
+		_, mtime, _, _ := getTimes(devDir + "/" + pts)
+
+		sessions = append(sessions, &SessionInfo{
+			Username:         string(bytes.TrimRight(rec.User[:], "\x00")),
+			Host:             string(bytes.TrimRight(rec.Host[:], "\x00")),
+			LoginTime:        time.Unix(int64(rec.Time.Sec), 0),
+			LastActivityTime: mtime,
+		})
+	}
+
+	return sessions, nil
+}
+
 // IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
-	cmd := exec.Command("getent", "passwd", name)
-
-	return cmd.Run() == nil
+	return exec.Command("getent", "passwd", name).Run() == nil
 }
 
 // IsGroupExist checks if group exist on system or not
 func IsGroupExist(name string) bool {
-	cmd := exec.Command("getent", "group", name)
-
-	return cmd.Run() == nil
+	return exec.Command("getent", "group", name).Run() == nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getUserInfo tries to find user info by name or UID
 func getUserInfo(nameOrID string) (*User, error) {
-	cmd := exec.Command("getent", "passwd", nameOrID)
-
-	data, err := cmd.Output()
+	data, err := exec.Command("getent", "passwd", nameOrID).Output()
 
 	if err != nil {
 		return nil, fmt.Errorf("User with name/ID %s does not exist", nameOrID)
@@ -52,9 +124,7 @@ func getUserInfo(nameOrID string) (*User, error) {
 
 // getGroupInfo returns group info by name or id
 func getGroupInfo(nameOrID string) (*Group, error) {
-	cmd := exec.Command("getent", "group", nameOrID)
-
-	data, err := cmd.Output()
+	data, err := exec.Command("getent", "group", nameOrID).Output()
 
 	if err != nil {
 		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
