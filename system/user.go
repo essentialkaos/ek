@@ -14,7 +14,6 @@ import (
 	"errors"
 	"os"
 	"os/exec"
-	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -48,7 +47,8 @@ type Group struct {
 
 // SessionInfo contains information about all sessions
 type SessionInfo struct {
-	User             *User     `json:"user"`
+	Username         string    `json:"username"`
+	Host             string    `json:"host"`
 	LoginTime        time.Time `json:"login_time"`
 	LastActivityTime time.Time `json:"last_activity_time"`
 }
@@ -84,43 +84,7 @@ var curUser *User
 // curUserUpdateDate is date when user data was updated
 var curUserUpdateDate time.Time
 
-// Path to pts dir
-var ptsDir = "/dev/pts"
-
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Who returns info about all active sessions sorted by login time
-func Who() ([]*SessionInfo, error) {
-	var result []*SessionInfo
-
-	ptsList := readDir(ptsDir)
-
-	if len(ptsList) == 0 {
-		return result, nil
-	}
-
-	for _, file := range ptsList {
-		if file == "ptmx" {
-			continue
-		}
-
-		info, err := getSessionInfo(file)
-
-		if err != nil {
-			continue
-		}
-
-		result = append(result, info)
-	}
-
-	if len(result) != 0 {
-		sort.Slice(result, func(i, j int) bool {
-			return result[i].LoginTime.Unix() < result[j].LoginTime.Unix()
-		})
-	}
-
-	return result, nil
-}
 
 // CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
@@ -322,88 +286,6 @@ func getOwner(path string) (int, error) {
 	}
 
 	return int(stat.Uid), nil
-}
-
-// readDir returns list of files in given directory
-func readDir(dir string) []string {
-	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
-
-	if err != nil {
-		return nil
-	}
-
-	defer syscall.Close(fd)
-
-	var size = 100
-	var n = -1
-
-	var nbuf int
-	var bufp int
-
-	var buf = make([]byte, 4096)
-	var names = make([]string, 0, size)
-
-	for n != 0 {
-		if bufp >= nbuf {
-			bufp = 0
-
-			var errno error
-
-			nbuf, errno = fixCount(syscall.ReadDirent(fd, buf))
-
-			if errno != nil {
-				return names
-			}
-
-			if nbuf <= 0 {
-				break
-			}
-		}
-
-		var nb, nc int
-		nb, nc, names = syscall.ParseDirent(buf[bufp:nbuf], n, names)
-		bufp += nb
-		n -= nc
-	}
-
-	return names
-}
-
-// fixCount fix count for negative values
-func fixCount(n int, err error) (int, error) {
-	if n < 0 {
-		n = 0
-	}
-
-	return n, err
-}
-
-// getSessionInfo find session info by pts file
-func getSessionInfo(pts string) (*SessionInfo, error) {
-	ptsFile := ptsDir + "/" + pts
-	uid, err := getOwner(ptsFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := getUserInfo(strconv.Itoa(uid))
-
-	if err != nil {
-		return nil, err
-	}
-
-	_, mtime, ctime, err := getTimes(ptsFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &SessionInfo{
-		User:             user,
-		LoginTime:        ctime,
-		LastActivityTime: mtime,
-	}, nil
 }
 
 // extractGroupsFromIdInfo extracts info from id command output

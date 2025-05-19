@@ -19,6 +19,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Who returns info about all active sessions sorted by login time
+func Who() ([]*SessionInfo, error) {
+	return nil, nil
+}
+
 // IsUserExist checks if user exist on system or not
 func IsUserExist(name string) bool {
 	cmd := exec.Command("dscl", ".", "-read", "/Users/"+name, "RecordName")
