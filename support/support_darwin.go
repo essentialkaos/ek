@@ -21,6 +21,7 @@ func (i *Info) appendSystemInfo() {
 
 	i.System = &SystemInfo{
 		Name:   systemInfo.OS,
+		ID:     systemInfo.ID,
 		Arch:   systemInfo.Arch,
 		Kernel: systemInfo.Kernel,
 	}

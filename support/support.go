@@ -153,6 +153,7 @@ type OSInfo struct {
 // SystemInfo contains basic information about system
 type SystemInfo struct {
 	Name            string `json:"name"`
+	ID              string `json:"id"`
 	Arch            string `json:"arch"`
 	Kernel          string `json:"kernel"`
 	ContainerEngine string `json:"container_engine,omitempty"`
@@ -518,9 +519,13 @@ func (i *Info) printAppInfo() {
 
 // printOSInfo prints info about OS and system
 func (i *Info) printOSInfo() {
-	if i.OS != nil {
-		fmtutil.Separator(false, "OS")
+	if i.OS == nil && i.System == nil {
+		return
+	}
 
+	fmtutil.Separator(false, "SYSTEM")
+
+	if i.OS != nil {
 		format(12, true,
 			"Name", strutil.Q(i.OS.coloredName, i.OS.Name),
 			"Pretty Name", strutil.Q(i.OS.coloredPrettyName, i.OS.PrettyName),
@@ -532,20 +537,20 @@ func (i *Info) printOSInfo() {
 			"Platform ID", i.OS.PlatformID,
 			"CPE", i.OS.CPE,
 		)
-	} else if i.System != nil {
-		fmtutil.Separator(false, "SYSTEM INFO")
 
+		if i.System != nil {
+			format(12, true,
+				"Arch", i.System.Arch,
+				"Kernel", i.System.Kernel,
+				"Machine ID", i.System.ID,
+			)
+		}
+	} else if i.System != nil {
 		format(12, true,
 			"Name", i.System.Name,
 			"Arch", i.System.Arch,
 			"Kernel", i.System.Kernel,
-		)
-	}
-
-	if i.System != nil {
-		format(12, true,
-			"Arch", i.System.Arch,
-			"Kernel", i.System.Kernel,
+			"Machine ID", i.System.ID,
 		)
 	}
 
