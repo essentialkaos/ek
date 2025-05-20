@@ -49,6 +49,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 	return &SystemInfo{
 		Hostname: hostname,
+		ID:       getSystemID(),
 		OS:       os,
 		Kernel:   kernel,
 		Arch:     arch,
@@ -101,8 +102,7 @@ func getMacOSArch(archInfo string) string {
 
 // getArchName returns name for given arch
 func getArchName(arch string) string {
-	switch arch {
-	case "x86_64":
+	if arch == "x86_64" {
 		return "amd64"
 	}
 
