@@ -111,7 +111,7 @@ func getArchName(arch string) string {
 
 // getSystemID returns unique system ID
 func getSystemID() string {
-	ioData, err := exec.Command("ioreg", "-rd1", "-c IOPlatformExpertDevice").Output()
+	ioData, err := exec.Command("ioreg", "-rd1", "-c", "IOPlatformExpertDevice").Output()
 
 	if err != nil {
 		return ""
