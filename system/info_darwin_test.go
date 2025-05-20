@@ -54,6 +54,7 @@ func (s *SystemSuite) TestSystemInfo(c *C) {
 
 	c.Assert(sysInfo.Hostname, Not(Equals), "")
 	c.Assert(sysInfo.OS, Not(Equals), "")
+	c.Assert(sysInfo.ID, Not(Equals), "")
 	c.Assert(sysInfo.Kernel, Not(Equals), "")
 	c.Assert(sysInfo.Arch, Not(Equals), "")
 	c.Assert(sysInfo.ArchName, Not(Equals), "")

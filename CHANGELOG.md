@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.27.1](https://kaos.sh/ek/13.27.1)
+
+- **`[system]`** Collect and add a unique system ID to `SystemInfo`
+
 ### [13.27.0](https://kaos.sh/ek/13.27.0)
 
 - **`[system]`** Read sessions data from [`utmp`](https://www.man7.org/linux/man-pages/man5/utmp.5.html) file

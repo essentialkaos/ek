@@ -124,6 +124,7 @@ type InterfaceStats struct {
 // SystemInfo contains info about a system (hostname, OS, arch...)
 type SystemInfo struct {
 	Hostname        string `json:"hostname"`         // Hostname
+	ID              string `json:"id"`               // ID
 	OS              string `json:"os"`               // OS name
 	Kernel          string `json:"kernel"`           // Kernel version
 	Arch            string `json:"arch"`             // System architecture (i386/i686/x86_64/etc…)
