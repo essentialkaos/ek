@@ -21,7 +21,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// osReleaseFile is the path to a file with information about operating system
 var osReleaseFile = "/etc/os-release"
+
+// machineIDFile is the path to a file with unique system ID
+var machineIDFile = "/etc/machine-id"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -38,6 +42,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 	return &SystemInfo{
 		Hostname:        byteSliceToString(info.Nodename),
+		ID:              getSystemID(),
 		OS:              byteSliceToString(info.Sysname),
 		Kernel:          byteSliceToString(info.Release),
 		Arch:            arch,
@@ -139,4 +144,15 @@ func getArchName(arch string) string {
 	}
 
 	return arch
+}
+
+// getSystemID returns unique system ID
+func getSystemID() string {
+	id, err := os.ReadFile(machineIDFile)
+
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimRight(string(id), "\n")
 }

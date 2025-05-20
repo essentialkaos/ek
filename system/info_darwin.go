@@ -49,6 +49,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 	return &SystemInfo{
 		Hostname: hostname,
+		ID:       getSystemID(),
 		OS:       os,
 		Kernel:   kernel,
 		Arch:     arch,
@@ -59,8 +60,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 
 // GetOSInfo returns info about OS
 func GetOSInfo() (*OSInfo, error) {
-	cmd := exec.Command("sw_vers")
-	versionData, err := cmd.Output()
+	versionData, err := exec.Command("sw_vers").Output()
 
 	if err != nil {
 		return nil, err
@@ -102,10 +102,29 @@ func getMacOSArch(archInfo string) string {
 
 // getArchName returns name for given arch
 func getArchName(arch string) string {
-	switch arch {
-	case "x86_64":
+	if arch == "x86_64" {
 		return "amd64"
 	}
 
 	return arch
+}
+
+// getSystemID returns unique system ID
+func getSystemID() string {
+	ioData, err := exec.Command("ioreg", "-rd1", "-c", "IOPlatformExpertDevice").Output()
+
+	if err != nil {
+		return ""
+	}
+
+	for _, line := range strings.Split(string(ioData), "\n") {
+		if !strings.Contains(line, `"IOPlatformUUID"`) {
+			continue
+		}
+
+		value := strutil.ReadField(line, 1, false, '=')
+		return strings.Trim(value, " \r\t\n\"")
+	}
+
+	return ""
 }

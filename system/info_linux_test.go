@@ -57,6 +57,8 @@ var utmpData = []byte{
 	0x0, 0x0, 0x0,
 }
 
+var machineIDData = []byte("23000007fc9f031ee8c97d15d514b6c8")
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SystemSuite) TestUptime(c *C) {
@@ -655,15 +657,21 @@ func (s *SystemSuite) TestUser(c *C) {
 func (s *SystemSuite) TestGetInfo(c *C) {
 	origOsReleaseFile := osReleaseFile
 
+	machineIDFile = s.CreateTestFile(c, "23000007fc9f031ee8c97d15d514b6c8\n")
+
 	sysInfo, err := GetSystemInfo()
 	c.Assert(err, IsNil)
 	c.Assert(sysInfo, NotNil)
 	c.Assert(sysInfo.Hostname, Not(Equals), "")
+	c.Assert(sysInfo.ID, Equals, "23000007fc9f031ee8c97d15d514b6c8")
 	c.Assert(sysInfo.OS, Not(Equals), "")
 	c.Assert(sysInfo.Kernel, Not(Equals), "")
 	c.Assert(sysInfo.Arch, Not(Equals), "")
 	c.Assert(sysInfo.ArchName, Not(Equals), "")
 	c.Assert(sysInfo.ArchBits, Not(Equals), 0)
+
+	machineIDFile = "/_UNKNOWN_"
+	c.Assert(getSystemID(), Equals, "")
 
 	osReleaseFile = "/_UNKNOWN_"
 	osInfo, err := GetOSInfo()
