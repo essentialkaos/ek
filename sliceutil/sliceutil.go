@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math/rand"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -169,6 +170,13 @@ L2:
 	}
 
 	return added, deleted
+}
+
+// Shuffle shuffles slice in place
+func Shuffle[K comparable](slice []K) {
+	rand.Shuffle(len(slice), func(i, j int) {
+		slice[i], slice[j] = slice[j], slice[i]
+	})
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

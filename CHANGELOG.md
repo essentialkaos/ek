@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.27.2](https://kaos.sh/ek/13.27.2)
+
+- **`[sliceutil]`** Added method `Shuffle`
+
 ### [13.27.1](https://kaos.sh/ek/13.27.1)
 
 - **`[system]`** Collect and add a unique system ID to `SystemInfo`

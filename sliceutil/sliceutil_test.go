@@ -148,6 +148,15 @@ func (s *SliceSuite) TestDiff(c *C) {
 	c.Assert(d, DeepEquals, []int{1})
 }
 
+func (s *SliceSuite) TestShuffle(c *C) {
+	k1 := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	k2 := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	Shuffle(k2)
+
+	c.Assert(k1, Not(DeepEquals), k2)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SliceSuite) BenchmarkStringToInterface(c *C) {
