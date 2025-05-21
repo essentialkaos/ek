@@ -105,3 +105,11 @@ func ExampleDiff() {
 	// Added: 6
 	// Deleted: 1, 8
 }
+
+func ExampleShuffle() {
+	s := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	Shuffle(s)
+
+	fmt.Printf("Result: %v\n", s)
+}
