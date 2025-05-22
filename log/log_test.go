@@ -836,6 +836,7 @@ func (ls *LogSuite) TestFields(c *C) {
 
 	c.Assert(fv.Add(F{}, F{"testF1", 1}, F{"testF2", true}), NotNil)
 	c.Assert(fv.AddF("testF3", "TEST"), NotNil)
+	c.Assert(fv.AddF("", "TEST"), NotNil)
 	c.Assert(fv.data, HasLen, 3)
 	c.Assert(fv.Reset(), NotNil)
 	c.Assert(fv.data, HasLen, 0)
