@@ -473,6 +473,15 @@ func ExampleFields_Add() {
 	Debug("This is %d %s message", 2, "debug", f)
 }
 
+func ExampleFields_AddF() {
+	// Fields do not require initialization
+	var f Fields
+
+	f.AddF("user-id", 1294)
+
+	Debug("This is %d %s message", 2, "debug", f)
+}
+
 func ExampleFields_Reset() {
 	// Fields do not require initialization
 	var f Fields
