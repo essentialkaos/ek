@@ -566,6 +566,17 @@ func (f *Fields) Add(fields ...Field) *Fields {
 	return f
 }
 
+// AddF creates and adds field to collection
+func (f *Fields) AddF(key string, value any) *Fields {
+	if f == nil || key == "" {
+		return f
+	}
+
+	f.data = append(f.data, F{key, value})
+
+	return f
+}
+
 // Reset removes all fields from collection
 func (f *Fields) Reset() *Fields {
 	if f == nil {

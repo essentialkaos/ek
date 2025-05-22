@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.27.3](https://kaos.sh/ek/13.27.3)
+
+- **`[log]`** Added method `Fields.AddF`
+
 ### [13.27.2](https://kaos.sh/ek/13.27.2)
 
 - **`[sliceutil]`** Added method `Shuffle`
