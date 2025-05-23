@@ -382,6 +382,20 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(DurationAs(time.Duration(79872232972344474), DAY), Equals, 924)
 }
 
+func (s *TimeUtilSuite) TestParseWithAny(c *C) {
+	_, err := ParseWithAny("test")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "No layouts provided")
+
+	_, err = ParseWithAny("1.02", "02.Jan")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "Value cannot be parsed using any of the provided layouts")
+
+	t, err := ParseWithAny("06 Dec 1988", "02.01.2006", "2.01.2006", "2.1.2006", "02 Jan 06", "02 Jan 2006", "2 Jan 2006")
+	c.Assert(err, IsNil)
+	c.Assert(Format(t, "%Y/%m/%d"), Equals, "1988/12/06")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *TimeUtilSuite) BenchmarkParseDuration(c *C) {
