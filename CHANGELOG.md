@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.27.4](https://kaos.sh/ek/13.27.4)
+
+- **`[timeutil]`** Added method `ParseWithAny`
+
 ### [13.27.3](https://kaos.sh/ek/13.27.3)
 
 - **`[log]`** Added method `Fields.AddF`

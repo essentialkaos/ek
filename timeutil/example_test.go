@@ -360,6 +360,15 @@ func ExampleLocalTimezone() {
 	fmt.Printf("Local timezone: %s\n", LocalTimezone())
 }
 
+func ExampleParseWithAny() {
+	v := "06 Dec 1988"
+
+	fmt.Println(ParseWithAny(v, "2 Jan 06", "02 Jan 06", "02 Jan 2006", "2 Jan 2006"))
+
+	// Output:
+	// 1988-12-06 00:00:00 +0000 UTC <nil>
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleDate_Unix() {

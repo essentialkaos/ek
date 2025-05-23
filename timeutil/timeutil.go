@@ -502,6 +502,23 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	return time.Date(year, 1, 1, 0, 0, 0, 0, loc).AddDate(0, 0, 7*(week-1))
 }
 
+// ParseWithAny tries to parse value using given layots
+func ParseWithAny(value string, layouts ...string) (time.Time, error) {
+	if len(layouts) == 0 {
+		return time.Time{}, fmt.Errorf("No layouts provided")
+	}
+
+	for _, l := range layouts {
+		t, err := time.Parse(l, value)
+
+		if err == nil {
+			return t, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("Value cannot be parsed using any of the provided layouts")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func convertDuration(d any) (time.Duration, bool) {
