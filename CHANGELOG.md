@@ -1,5 +1,13 @@
 ## Changelog
 
+### [13.28.0](https://kaos.sh/ek/13.28.0)
+
+> [!CAUTION]
+> This release contains breaking changes. The `hash` package has been replaced by the `hashutil` package.
+
+- **`[hash]`** Package removed 
+- **`[hashutil]`** Added new package with helpers for calculating hashes of files, byte slices, and strings using any hasher compatible with `hash.Hash`
+
 ### [13.27.4](https://kaos.sh/ek/13.27.4)
 
 - **`[timeutil]`** Added method `ParseWithAny`

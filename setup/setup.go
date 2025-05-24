@@ -14,13 +14,14 @@ package setup
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fsutil"
-	"github.com/essentialkaos/ek/v13/hash"
+	"github.com/essentialkaos/ek/v13/hashutil"
 	"github.com/essentialkaos/ek/v13/path"
 	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/system"
@@ -145,7 +146,7 @@ func (b *binaryInfo) ServiceUnitPath() string {
 // IsBinInstalled returns true if current binary already installed
 func (b *binaryInfo) IsBinInstalled() bool {
 	return fsutil.IsExist(b.BinInstallPath()) &&
-		b.Checksum() == hash.FileHash(b.BinInstallPath())
+		b.Checksum() == hashutil.File(b.BinInstallPath(), sha256.New())
 }
 
 // IsServiceInstalled returns true if service unit already installed
@@ -159,7 +160,7 @@ func (b *binaryInfo) Checksum() string {
 		return checksum
 	}
 
-	checksum = hash.FileHash(b.File)
+	checksum = hashutil.File(b.File, sha256.New())
 
 	return checksum
 }

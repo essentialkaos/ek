@@ -1,4 +1,4 @@
-package hash
+package hashutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -8,27 +8,31 @@ package hash
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"crypto/sha1"
 	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleJCHash() {
-	var (
-		key     uint64 = 0xDEADBEEF
-		buckets int    = 128 * 1024
-	)
-
-	hash := JCHash(key, buckets)
-
-	fmt.Println(hash)
-
-	// Output:
-	// 110191
+func ExampleFile() {
+	file := "/home/bob/data.txt"
+	fmt.Printf("File %s hash is %q", file, File(file, sha1.New()))
 }
 
-func ExampleFileHash() {
-	hash := FileHash("/path/to/some/file")
+func ExampleBytes() {
+	data := []byte("Test Data\n")
 
-	fmt.Println(hash)
+	fmt.Printf("Data hash is %q\n", Bytes(data, sha1.New()))
+
+	// Output:
+	// Data hash is "58d3f35ebda104f0cc7ff419cc946832154581fc"
+}
+
+func ExampleString() {
+	data := "Test Data\n"
+
+	fmt.Printf("String hash is %q\n", String(data, sha1.New()))
+
+	// Output:
+	// String hash is "58d3f35ebda104f0cc7ff419cc946832154581fc"
 }

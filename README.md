@@ -44,7 +44,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`fmtutil/panel`](https://kaos.sh/g/ek.v13/fmtutil/panel) — Package contains methods for rendering panels with text
 - [`fmtutil/table`](https://kaos.sh/g/ek.v13/fmtutil/table) — Package contains methods and structs for rendering data in tabular format
 - [`fsutil`](https://kaos.sh/g/ek.v13/fsutil) — Package provides methods for working with files on POSIX compatible systems (_BSD/Linux/macOS_)
-- [`hash`](https://kaos.sh/g/ek.v13/hash) — Package hash contains different hash algorithms and utilities
+- [`hashutil`](https://kaos.sh/g/ek.v13/hashutil) — Package hash contains various helper functions for working with hashes
 - [`httputil`](https://kaos.sh/g/ek.v13/httputil) — Package provides methods for working with HTTP request/responses
 - [`i18n`](https://kaos.sh/g/ek.v13/i18n) — Package provides methods and structs for internationalization
 - [`initsystem`](https://kaos.sh/g/ek.v13/initsystem) — Package provides methods for working with different init systems (_sysv, upstart, systemd_)
