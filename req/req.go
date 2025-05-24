@@ -204,12 +204,6 @@ type Response struct {
 	URL string
 }
 
-// RequestError is error struct
-type RequestError struct {
-	class int
-	desc  string
-}
-
 // Engine is request engine
 type Engine struct {
 	UserAgent string // UserAgent is default user-agent used for all requests
@@ -229,25 +223,25 @@ type Engine struct {
 
 var (
 	// ErrNilEngine is returned if engine struct is nil
-	ErrNilEngine = RequestError{ERROR_CREATE_REQUEST, "Engine is nil"}
+	ErrNilEngine = fmt.Errorf("Engine is nil")
 
 	// ErrNilClient is returned if client struct is nil
-	ErrNilClient = RequestError{ERROR_CREATE_REQUEST, "Engine.Client is nil"}
+	ErrNilClient = fmt.Errorf("Engine.Client is nil")
 
 	// ErrNilTransport is returned if transport is nil
-	ErrNilTransport = RequestError{ERROR_CREATE_REQUEST, "Engine.Transport is nil"}
+	ErrNilTransport = fmt.Errorf("Engine.Transport is nil")
 
 	// ErrNilDialer is returned if dialer is nil
-	ErrNilDialer = RequestError{ERROR_CREATE_REQUEST, "Engine.Dialer is nil"}
+	ErrNilDialer = fmt.Errorf("Engine.Dialer is nil")
 
 	// ErrNilResponse is returned if response is nil
-	ErrNilResponse = RequestError{ERROR_CREATE_REQUEST, "Response is nil"}
+	ErrNilResponse = fmt.Errorf("Response is nil")
 
 	// ErrEmptyURL is returned if given URL is empty
-	ErrEmptyURL = RequestError{ERROR_CREATE_REQUEST, "URL property can't be empty and must be set"}
+	ErrEmptyURL = fmt.Errorf("URL property can't be empty and must be set")
 
 	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
-	ErrUnsupportedScheme = RequestError{ERROR_CREATE_REQUEST, "Unsupported scheme in URL"}
+	ErrUnsupportedScheme = fmt.Errorf("Unsupported scheme in URL")
 )
 
 // Global is global engine used by default for Request.Do, Request.Get, Request.Post,
@@ -508,7 +502,7 @@ func (r *Response) Bytes() []byte {
 	return result
 }
 
-// Save saves response data into file
+// Save saves response data into a file
 func (r *Response) Save(filename string, mode os.FileMode) error {
 	if r == nil || r.Body == nil {
 		return fmt.Errorf("Response body is empty")
@@ -535,20 +529,6 @@ func (r *Response) String() string {
 	}
 
 	return string(r.Bytes())
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Error shows error message
-func (e RequestError) Error() string {
-	switch e.class {
-	case ERROR_BODY_ENCODE:
-		return fmt.Sprintf("Can't encode request body (%s)", e.desc)
-	case ERROR_SEND_REQUEST:
-		return fmt.Sprintf("Can't send request (%s)", e.desc)
-	default:
-		return fmt.Sprintf("Can't create request struct (%s)", e.desc)
-	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -586,7 +566,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	bodyReader, contentType, err := getBodyReader(r.Body)
 
 	if err != nil {
-		return nil, RequestError{ERROR_BODY_ENCODE, err.Error()}
+		return nil, fmt.Errorf("Can't encode request body: %w", err)
 	}
 
 	if r.ContentType == "" {
@@ -606,7 +586,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	resp, err := e.Client.Do(req)
 
 	if err != nil {
-		return nil, RequestError{ERROR_SEND_REQUEST, err.Error()}
+		return nil, fmt.Errorf("Can't send request: %w", err)
 	}
 
 	result := &Response{resp, r.URL}
@@ -624,6 +604,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// checkRequest checks request parameters
 func checkRequest(r Request) error {
 	if r.URL == "" {
 		return ErrEmptyURL
@@ -636,6 +617,7 @@ func checkRequest(r Request) error {
 	return nil
 }
 
+// checkEngine checks request engine
 func checkEngine(e *Engine) error {
 	if e == nil {
 		return ErrNilEngine
@@ -656,6 +638,7 @@ func checkEngine(e *Engine) error {
 	return nil
 }
 
+// createRequest creates new http.Request from Request
 func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, context.CancelFunc, error) {
 	var err error
 	var req *http.Request
@@ -670,7 +653,7 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 	}
 
 	if err != nil {
-		return nil, nil, RequestError{ERROR_CREATE_REQUEST, err.Error()}
+		return nil, nil, fmt.Errorf("Can't create request: %w", err)
 	}
 
 	if r.Headers != nil && len(r.Headers) != 0 {
@@ -706,6 +689,7 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 	return req, cancel, nil
 }
 
+// configureMultipartRequest configures request for sending multipart data
 func configureMultipartRequest(r *Request, file, fieldName string, extraFields map[string]string) error {
 	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
 
@@ -741,6 +725,7 @@ func configureMultipartRequest(r *Request, file, fieldName string, extraFields m
 	return nil
 }
 
+// createFormFile creates request from file
 func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, error) {
 	if useFakeFormGenerator {
 		return nil, fmt.Errorf("")
@@ -749,6 +734,7 @@ func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, err
 	return w.CreateFormFile(fieldName, filepath.Base(file))
 }
 
+// getBodyReader returns reader for request body
 func getBodyReader(body any) (io.Reader, string, error) {
 	switch u := body.(type) {
 	case nil:
@@ -770,6 +756,7 @@ func getBodyReader(body any) (io.Reader, string, error) {
 	return nil, "", err
 }
 
+// isURL returns true if URL is valid
 func isURL(url string) bool {
 	switch {
 	case len(url) < 10:
