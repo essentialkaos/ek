@@ -51,3 +51,7 @@ func (s *HashUtilSuite) TestString(c *C) {
 	c.Assert(String("TEST1234!", nil), Equals, "")
 	c.Assert(String("TEST1234!", sha1.New()), Equals, "54b9cb418d8426c4fcf9c91a5923375fd19e6df7")
 }
+
+func (s *HashUtilSuite) TestSum(c *C) {
+	c.Assert(Sum(nil), Equals, "")
+}

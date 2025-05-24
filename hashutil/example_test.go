@@ -36,3 +36,13 @@ func ExampleString() {
 	// Output:
 	// String hash is "58d3f35ebda104f0cc7ff419cc946832154581fc"
 }
+
+func ExampleSum() {
+	hasher := sha1.New()
+	hasher.Write([]byte("Test Data\n"))
+
+	fmt.Println(Sum(hasher))
+
+	// Output:
+	// 58d3f35ebda104f0cc7ff419cc946832154581fc
+}

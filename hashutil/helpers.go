@@ -34,7 +34,7 @@ func File(file string, hasher hash.Hash) string {
 
 	io.Copy(hasher, fd)
 
-	return getSum(hasher)
+	return Sum(hasher)
 }
 
 // Bytes calculates data hash using given hasher
@@ -45,7 +45,7 @@ func Bytes(data []byte, hasher hash.Hash) string {
 
 	hasher.Write(data)
 
-	return getSum(hasher)
+	return Sum(hasher)
 }
 
 // String calculates string hash using given hasher
@@ -56,12 +56,14 @@ func String(data string, hasher hash.Hash) string {
 
 	fmt.Fprint(hasher, data)
 
-	return getSum(hasher)
+	return Sum(hasher)
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+// Sum prints checksum
+func Sum(hasher hash.Hash) string {
+	if hasher == nil {
+		return ""
+	}
 
-// getSum returns string representation of hash
-func getSum(hasher hash.Hash) string {
 	return fmt.Sprintf("%0"+strconv.Itoa(hasher.Size()/2)+"x", hasher.Sum(nil))
 }
