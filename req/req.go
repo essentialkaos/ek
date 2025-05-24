@@ -237,6 +237,9 @@ var (
 	// ErrNilResponse is returned if response is nil
 	ErrNilResponse = fmt.Errorf("Response is nil")
 
+	// ErrEmptyBody is returned if response body has no data
+	ErrEmptyBody = fmt.Errorf("Response body is empty")
+
 	// ErrEmptyURL is returned if given URL is empty
 	ErrEmptyURL = fmt.Errorf("URL property can't be empty and must be set")
 
@@ -474,7 +477,7 @@ func (r Request) PostFile(file, fieldName string, extraFields map[string]string)
 
 // Discard reads response body for closing connection
 func (r *Response) Discard() {
-	if r == nil || r.Body == nil {
+	if r == nil || r.Response == nil || r.Body == nil {
 		return
 	}
 
@@ -483,29 +486,39 @@ func (r *Response) Discard() {
 
 // JSON decodes json encoded body
 func (r *Response) JSON(v any) error {
-	if r == nil || r.Body == nil {
+	switch {
+	case r == nil || r.Response == nil:
 		return ErrNilResponse
+	case r.Body == nil:
+		return ErrEmptyBody
 	}
 
 	defer r.Body.Close()
+
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
 // Bytes reads response body as byte slice
-func (r *Response) Bytes() []byte {
-	if r == nil || r.Body == nil {
-		return nil
+func (r *Response) Bytes() ([]byte, error) {
+	switch {
+	case r == nil || r.Response == nil:
+		return nil, ErrNilResponse
+	case r.Body == nil:
+		return nil, ErrEmptyBody
 	}
 
 	defer r.Body.Close()
-	result, _ := io.ReadAll(r.Body)
-	return result
+
+	return io.ReadAll(r.Body)
 }
 
 // Save saves response data into a file
 func (r *Response) Save(filename string, mode os.FileMode) error {
-	if r == nil || r.Body == nil {
-		return fmt.Errorf("Response body is empty")
+	switch {
+	case r == nil || r.Response == nil:
+		return ErrNilResponse
+	case r.Body == nil:
+		return ErrEmptyBody
 	}
 
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
@@ -524,11 +537,17 @@ func (r *Response) Save(filename string, mode os.FileMode) error {
 
 // String reads response body as string
 func (r *Response) String() string {
-	if r == nil {
+	if r == nil || r.Response == nil {
 		return ""
 	}
 
-	return string(r.Bytes())
+	data, err := r.Bytes()
+
+	if err != nil {
+		return ""
+	}
+
+	return string(data)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

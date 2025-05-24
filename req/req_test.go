@@ -343,7 +343,11 @@ func (s *ReqSuite) TestBytesResp(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
-	c.Assert(resp.Bytes(), DeepEquals, []byte(_TEST_STRING_RESP))
+
+	data, err := resp.Bytes()
+
+	c.Assert(err, IsNil)
+	c.Assert(data, DeepEquals, []byte(_TEST_STRING_RESP))
 }
 
 func (s *ReqSuite) TestJSONResp(c *C) {
@@ -648,9 +652,22 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(func() { r.Discard() }, NotPanics)
 
 	c.Assert(r.JSON(nil), DeepEquals, ErrNilResponse)
-	c.Assert(r.Save("/test", 0644), NotNil)
-	c.Assert(r.Bytes(), IsNil)
+	c.Assert(r.Save("/test", 0644), DeepEquals, ErrNilResponse)
 	c.Assert(r.String(), Equals, "")
+
+	_, err = r.Bytes()
+	c.Assert(err, DeepEquals, ErrNilResponse)
+}
+
+func (s *ReqSuite) TestEmptyBody(c *C) {
+	r := &Response{Response: &http.Response{}}
+
+	c.Assert(r.JSON(nil), DeepEquals, ErrEmptyBody)
+	c.Assert(r.Save("/test", 0644), DeepEquals, ErrEmptyBody)
+	c.Assert(r.String(), Equals, "")
+
+	_, err := r.Bytes()
+	c.Assert(err, DeepEquals, ErrEmptyBody)
 }
 
 func (s *ReqSuite) TestAuth(c *C) {
