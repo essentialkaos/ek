@@ -65,6 +65,7 @@ package support
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -75,7 +76,7 @@ import (
 
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/hash"
+	"github.com/essentialkaos/ek/v13/hashutil"
 	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
@@ -464,7 +465,7 @@ func (i *Info) appendBuildInfo() {
 	}
 
 	bin, _ := os.Executable()
-	binSHA := hash.FileHash(bin)
+	binSHA := hashutil.File(bin, sha256.New())
 	info, ok := buildInfoProvider()
 
 	if ok {

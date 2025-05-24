@@ -343,7 +343,11 @@ func (s *ReqSuite) TestBytesResp(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
-	c.Assert(resp.Bytes(), DeepEquals, []byte(_TEST_STRING_RESP))
+
+	data, err := resp.Bytes()
+
+	c.Assert(err, IsNil)
+	c.Assert(data, DeepEquals, []byte(_TEST_STRING_RESP))
 }
 
 func (s *ReqSuite) TestJSONResp(c *C) {
@@ -452,7 +456,7 @@ func (s *ReqSuite) TestEncoding(c *C) {
 	}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't encode request body \(json: unsupported type: func\(\)\)`)
+	c.Assert(err.Error(), Equals, "Can't encode request body: json: unsupported type: func()")
 	c.Assert(resp, IsNil)
 }
 
@@ -460,40 +464,32 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	resp, err := Request{}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(URL property can't be empty and must be set\)`)
+	c.Assert(err.Error(), Equals, "URL property can't be empty and must be set")
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{URL: "ABCD"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Unsupported scheme in URL\)`)
+	c.Assert(err.Error(), Equals, "Unsupported scheme in URL")
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{URL: "http://127.0.0.1:60000"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't send request \(Get \"http://127.0.0.1:60000\": dial tcp 127.0.0.1:60000: connect: connection refused\)`)
+	c.Assert(err.Error(), Equals, `Can't send request: Get "http://127.0.0.1:60000": dial tcp 127.0.0.1:60000: connect: connection refused`)
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{URL: "%gh&%ij"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Unsupported scheme in URL\)`)
+	c.Assert(err.Error(), Equals, "Unsupported scheme in URL")
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{Method: "ЩУП", URL: "http://127.0.0.1"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(net/http: invalid method "ЩУП"\)`)
+	c.Assert(err.Error(), Equals, `Can't create request: net/http: invalid method "ЩУП"`)
 	c.Assert(resp, IsNil)
-
-	e1 := RequestError{ERROR_BODY_ENCODE, "Test 1"}
-	e2 := RequestError{ERROR_CREATE_REQUEST, "Test 2"}
-	e3 := RequestError{ERROR_SEND_REQUEST, "Test 3"}
-
-	c.Assert(e1.Error(), Equals, "Can't encode request body (Test 1)")
-	c.Assert(e2.Error(), Equals, "Can't create request struct (Test 2)")
-	c.Assert(e3.Error(), Equals, "Can't send request (Test 3)")
 }
 
 func (s *ReqSuite) TestEngineInit(c *C) {
@@ -512,7 +508,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	resp, err := eng.Do(Request{URL: "https://essentialkaos.com"})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Engine is nil\)`)
+	c.Assert(err, Equals, ErrNilEngine)
 	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
@@ -523,7 +519,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Engine.Dialer is nil\)`)
+	c.Assert(err, Equals, ErrNilDialer)
 	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
@@ -533,7 +529,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Engine.Transport is nil\)`)
+	c.Assert(err, Equals, ErrNilTransport)
 	c.Assert(resp, IsNil)
 
 	eng = &Engine{}
@@ -544,7 +540,7 @@ func (s *ReqSuite) TestEngineErrors(c *C) {
 	resp, err = eng.Do(Request{URL: "https://essentialkaos.com"})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't create request struct \(Engine.Client is nil\)`)
+	c.Assert(err, Equals, ErrNilClient)
 	c.Assert(resp, IsNil)
 }
 
@@ -656,9 +652,22 @@ func (s *ReqSuite) TestNil(c *C) {
 	c.Assert(func() { r.Discard() }, NotPanics)
 
 	c.Assert(r.JSON(nil), DeepEquals, ErrNilResponse)
-	c.Assert(r.Save("/test", 0644), NotNil)
-	c.Assert(r.Bytes(), IsNil)
+	c.Assert(r.Save("/test", 0644), DeepEquals, ErrNilResponse)
 	c.Assert(r.String(), Equals, "")
+
+	_, err = r.Bytes()
+	c.Assert(err, DeepEquals, ErrNilResponse)
+}
+
+func (s *ReqSuite) TestEmptyBody(c *C) {
+	r := &Response{Response: &http.Response{}}
+
+	c.Assert(r.JSON(nil), DeepEquals, ErrEmptyBody)
+	c.Assert(r.Save("/test", 0644), DeepEquals, ErrEmptyBody)
+	c.Assert(r.String(), Equals, "")
+
+	_, err := r.Bytes()
+	c.Assert(err, DeepEquals, ErrEmptyBody)
 }
 
 func (s *ReqSuite) TestAuth(c *C) {
