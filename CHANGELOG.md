@@ -7,6 +7,7 @@
 
 - **`[hash]`** Package removed 
 - **`[hashutil]`** Added new package with helpers for calculating hashes of files, byte slices, and strings using any hasher compatible with `hash.Hash`
+- **`[req]`** Added methods `Response.JSONWithHash` and `Response.SaveWithHash` for transparent data's hash calculation
 - **`[req]`** Code refactoring
 
 ### [13.27.4](https://kaos.sh/ek/13.27.4)

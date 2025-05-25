@@ -9,6 +9,7 @@ package req
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
@@ -22,6 +23,7 @@ import (
 	"time"
 
 	. "github.com/essentialkaos/check"
+	"github.com/essentialkaos/ek/v13/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -366,6 +368,32 @@ func (s *ReqSuite) TestJSONResp(c *C) {
 	c.Assert(testStruct.Boolean, Equals, true)
 }
 
+func (s *ReqSuite) TestJSONWithHashResp(c *C) {
+	resp, err := Request{URL: s.url + _URL_JSON_RESP}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+
+	testStruct := &TestStruct{}
+
+	_, err = resp.JSONWithHash(testStruct, nil)
+	c.Assert(err, Equals, hashutil.ErrNilHasher)
+
+	respHash, err := resp.JSONWithHash(testStruct, sha256.New())
+
+	c.Assert(err, IsNil)
+	c.Assert(testStruct.String, Equals, "test")
+	c.Assert(respHash, Equals, "e03b1cde95e6e4fa740de100773bc41804d03b5297b7b0222888fff3e72d2b7c")
+
+	resp, err = Request{URL: s.url + _URL_GET}.Do()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+
+	_, err = resp.JSONWithHash(testStruct, sha256.New())
+	c.Assert(err, NotNil)
+}
+
 func (s *ReqSuite) TestSaveResp(c *C) {
 	resp, err := Request{URL: s.url + _URL_SAVE}.Get()
 
@@ -379,6 +407,27 @@ func (s *ReqSuite) TestSaveResp(c *C) {
 
 	err = resp.Save(testDir+"/output.test", 0644)
 	c.Assert(err, IsNil)
+}
+
+func (s *ReqSuite) TestSaveWithHashResp(c *C) {
+	resp, err := Request{URL: s.url + _URL_SAVE}.Get()
+
+	c.Assert(err, IsNil)
+	c.Assert(resp.StatusCode, Equals, 200)
+
+	testDir := c.MkDir()
+
+	_, err = resp.SaveWithHash("/test", 0644, sha256.New())
+	c.Assert(err, NotNil)
+	_, err = resp.SaveWithHash(testDir+"/output.test", 0644, nil)
+	c.Assert(err, NotNil)
+
+	resp, err = Request{URL: s.url + _URL_SAVE}.Get()
+
+	fileHash, err := resp.SaveWithHash(testDir+"/output.test", 0644, sha256.New())
+
+	c.Assert(err, IsNil)
+	c.Assert(fileHash, Equals, "9546c567ac10e0d47034582eb9f5e5cfabf1c242c5714cf38fecb0a135f99a75")
 }
 
 func (s *ReqSuite) TestDiscard(c *C) {
@@ -657,6 +706,12 @@ func (s *ReqSuite) TestNil(c *C) {
 
 	_, err = r.Bytes()
 	c.Assert(err, DeepEquals, ErrNilResponse)
+
+	_, err = r.JSONWithHash(nil, sha256.New())
+	c.Assert(err, DeepEquals, ErrNilResponse)
+
+	_, err = r.SaveWithHash("/test", 0644, sha256.New())
+	c.Assert(err, DeepEquals, ErrNilResponse)
 }
 
 func (s *ReqSuite) TestEmptyBody(c *C) {
@@ -667,6 +722,12 @@ func (s *ReqSuite) TestEmptyBody(c *C) {
 	c.Assert(r.String(), Equals, "")
 
 	_, err := r.Bytes()
+	c.Assert(err, DeepEquals, ErrEmptyBody)
+
+	_, err = r.JSONWithHash(nil, sha256.New())
+	c.Assert(err, DeepEquals, ErrEmptyBody)
+
+	_, err = r.SaveWithHash("/test", 0644, sha256.New())
 	c.Assert(err, DeepEquals, ErrEmptyBody)
 }
 

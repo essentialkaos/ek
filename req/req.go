@@ -13,6 +13,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"hash"
 	"io"
 	"mime/multipart"
 	"net"
@@ -22,6 +23,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/essentialkaos/ek/v13/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -246,6 +249,8 @@ var (
 	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
 	ErrUnsupportedScheme = fmt.Errorf("Unsupported scheme in URL")
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // Global is global engine used by default for Request.Do, Request.Get, Request.Post,
 // Request.Put, Request.Patch, Request.Head and Request.Delete methods
@@ -475,7 +480,7 @@ func (r Request) PostFile(file, fieldName string, extraFields map[string]string)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Discard reads response body for closing connection
+// Discard discrards response body for closing connection
 func (r *Response) Discard() {
 	if r == nil || r.Response == nil || r.Body == nil {
 		return
@@ -484,7 +489,7 @@ func (r *Response) Discard() {
 	io.Copy(io.Discard, r.Body)
 }
 
-// JSON decodes json encoded body
+// JSON decodes JSON-encoded response body
 func (r *Response) JSON(v any) error {
 	switch {
 	case r == nil || r.Response == nil:
@@ -496,6 +501,32 @@ func (r *Response) JSON(v any) error {
 	defer r.Body.Close()
 
 	return json.NewDecoder(r.Body).Decode(v)
+}
+
+// JSONWithHash decodes JSON-encoded response body and simultaneously calculates the data's hash
+func (r *Response) JSONWithHash(v any, hasher hash.Hash) (string, error) {
+	switch {
+	case r == nil || r.Response == nil:
+		return "", ErrNilResponse
+	case r.Body == nil:
+		return "", ErrEmptyBody
+	}
+
+	hr, err := hashutil.NewReader(r.Body, hasher)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer r.Body.Close()
+
+	err = json.NewDecoder(hr).Decode(v)
+
+	if err != nil {
+		return "", err
+	}
+
+	return hr.Sum(), nil
 }
 
 // Bytes reads response body as byte slice
@@ -533,6 +564,29 @@ func (r *Response) Save(filename string, mode os.FileMode) error {
 	_, err = io.Copy(fd, r.Body)
 
 	return err
+}
+
+// SaveWithHash saves the response data to a file and simultaneously calculates the data's hash
+func (r *Response) SaveWithHash(filename string, mode os.FileMode, hasher hash.Hash) (string, error) {
+	switch {
+	case r == nil || r.Response == nil:
+		return "", ErrNilResponse
+	case r.Body == nil:
+		return "", ErrEmptyBody
+	}
+
+	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
+
+	if err != nil {
+		return "", fmt.Errorf("Can't open file to write: %v", err)
+	}
+
+	defer fd.Close()
+	defer r.Body.Close()
+
+	_, dataHash, err := hashutil.Copy(fd, r.Body, hasher)
+
+	return dataHash, err
 }
 
 // String reads response body as string
