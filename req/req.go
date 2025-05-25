@@ -480,7 +480,7 @@ func (r Request) PostFile(file, fieldName string, extraFields map[string]string)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Discard discrards response body for closing connection
+// Discard discards response body for closing connection
 func (r *Response) Discard() {
 	if r == nil || r.Response == nil || r.Body == nil {
 		return
