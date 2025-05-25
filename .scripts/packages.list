@@ -8,7 +8,6 @@
 * + easing
 * + emoji
 * + env
-* + errutil
 * + errors
 * + events
 * + fmtc
@@ -17,7 +16,7 @@
 * + fmtutil/panel
 * + fmtutil/table
 * + fsutil
-* + hash
+* + hashutil
 * + httputil
 * + i18n
 * - initsystem

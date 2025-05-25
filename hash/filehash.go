@@ -1,4 +1,6 @@
 // Package hash contains different hash algorithms and utilities
+//
+// Deprecated: Use package hashutil instead
 package hash
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -10,26 +12,15 @@ package hash
 
 import (
 	"crypto/sha256"
-	"fmt"
-	"io"
-	"os"
+
+	"github.com/essentialkaos/ek/v13/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // FileHash generates an SHA-256 hash for a given file
+//
+// Deprecated: Use package hashutil instead
 func FileHash(file string) string {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
-
-	if err != nil {
-		return ""
-	}
-
-	defer fd.Close()
-
-	hasher := sha256.New()
-
-	io.Copy(hasher, fd)
-
-	return fmt.Sprintf("%064x", hasher.Sum(nil))
+	return hashutil.File(file, sha256.New())
 }
