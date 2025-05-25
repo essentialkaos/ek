@@ -32,6 +32,7 @@ func File(file string, hasher hash.Hash) string {
 
 	defer fd.Close()
 
+	hasher.Reset()
 	io.Copy(hasher, fd)
 
 	return Sum(hasher)
@@ -43,6 +44,7 @@ func Bytes(data []byte, hasher hash.Hash) string {
 		return ""
 	}
 
+	hasher.Reset()
 	hasher.Write(data)
 
 	return Sum(hasher)
@@ -54,6 +56,7 @@ func String(data string, hasher hash.Hash) string {
 		return ""
 	}
 
+	hasher.Reset()
 	fmt.Fprint(hasher, data)
 
 	return Sum(hasher)
