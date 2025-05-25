@@ -25,7 +25,7 @@ var (
 	// ErrNilSource is returned if given source is nil
 	ErrNilSource = fmt.Errorf("Source is nil")
 
-	// ErrNilDest is returned if given desination is nil
+	// ErrNilDest is returned if given destination is nil
 	ErrNilDest = fmt.Errorf("Destination is nil")
 
 	// ErrNilReader is returned if given reader is nil
