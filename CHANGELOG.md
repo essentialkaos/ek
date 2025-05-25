@@ -6,6 +6,7 @@
 - **`[req]`** Added methods `Response.JSONWithHash` and `Response.SaveWithHash` for transparent data's hash calculation
 - **`[req]`** Code refactoring
 - **`[hash]`** Package deprecated
+- **`[errutil]`** Package deleted
 
 ### [13.27.4](https://kaos.sh/ek/13.27.4)
 
