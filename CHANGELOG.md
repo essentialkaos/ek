@@ -2,13 +2,10 @@
 
 ### [13.28.0](https://kaos.sh/ek/13.28.0)
 
-> [!CAUTION]
-> This release contains breaking changes. The `hash` package has been replaced by the `hashutil` package.
-
-- **`[hash]`** Package removed 
 - **`[hashutil]`** Added new package with helpers for calculating hashes of files, byte slices, and strings using any hasher compatible with `hash.Hash`
 - **`[req]`** Added methods `Response.JSONWithHash` and `Response.SaveWithHash` for transparent data's hash calculation
 - **`[req]`** Code refactoring
+- **`[hash]`** Package deprecated
 
 ### [13.27.4](https://kaos.sh/ek/13.27.4)
 
