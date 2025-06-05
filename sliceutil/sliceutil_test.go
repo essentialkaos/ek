@@ -157,6 +157,15 @@ func (s *SliceSuite) TestShuffle(c *C) {
 	c.Assert(k1, Not(DeepEquals), k2)
 }
 
+func (s *SliceSuite) TestFilter(c *C) {
+	k := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	c.Assert(Filter(nil, func(v int, _ int) bool { return false }), IsNil)
+	c.Assert(Filter(k, nil), IsNil)
+
+	c.Assert(Filter(k, func(v int, _ int) bool { return v > 5 }), DeepEquals, []int{6, 7, 8, 9})
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SliceSuite) BenchmarkStringToInterface(c *C) {

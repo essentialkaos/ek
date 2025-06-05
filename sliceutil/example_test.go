@@ -113,3 +113,16 @@ func ExampleShuffle() {
 
 	fmt.Printf("Result: %v\n", s)
 }
+
+func ExampleFilter() {
+	s := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	r := Filter(s, func(v int, index int) bool {
+		return v%2 == 0
+	})
+
+	fmt.Printf("Result: %v\n", r)
+
+	// Output:
+	// Result: [2 4 6 8 10]
+}
