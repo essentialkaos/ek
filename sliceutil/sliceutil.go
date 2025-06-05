@@ -77,23 +77,6 @@ func ErrorToString(data []error) []string {
 	return result
 }
 
-// Index returns index of given item in a slice or -1 otherwise
-//
-// Deprecated: Use method slices.Index instead
-func Index[K comparable](slice []K, item K) int {
-	if len(slice) == 0 {
-		return -1
-	}
-
-	for i, v := range slice {
-		if v == item {
-			return i
-		}
-	}
-
-	return -1
-}
-
 // Exclude removes items from slice
 func Exclude[K comparable](slice []K, items ...K) []K {
 	var n int
@@ -121,7 +104,7 @@ LOOP:
 
 // Join concatenates the elements of its first argument to create a single string.
 // Unlike strings.Join, this method supports slices of any type.
-func Join[K any](slice []K, sep string) string {
+func Join[T any](slice []T, sep string) string {
 	var buf bytes.Buffer
 
 	for i, v := range slice {
@@ -173,13 +156,48 @@ L2:
 }
 
 // Shuffle shuffles slice in place
-func Shuffle[K comparable](slice []K) {
+func Shuffle[T any](slice []T) {
 	rand.Shuffle(len(slice), func(i, j int) {
 		slice[i], slice[j] = slice[j], slice[i]
 	})
 }
 
+// Filter filters slice items using given filtering function and returns
+// a new slice with result
+func Filter[T any](slice []T, filter func(v T, index int) bool) []T {
+	if len(slice) == 0 || filter == nil {
+		return nil
+	}
+
+	var result []T
+
+	for index, item := range slice {
+		if filter(item, index) {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// Index returns index of given item in a slice or -1 otherwise
+//
+// Deprecated: Use method slices.Index instead
+func Index[K comparable](slice []K, item K) int {
+	if len(slice) == 0 {
+		return -1
+	}
+
+	for i, v := range slice {
+		if v == item {
+			return i
+		}
+	}
+
+	return -1
+}
 
 // Copy creates copy of given slice
 //

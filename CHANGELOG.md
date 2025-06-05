@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.28.0](https://kaos.sh/ek/13.28.1)
+
+- **`[sliceutil]`** Added method `Filter`
+
 ### [13.28.0](https://kaos.sh/ek/13.28.0)
 
 - **`[hashutil]`** Added new package with helpers for calculating hashes of files, byte slices, and strings using any hasher compatible with `hash.Hash`
