@@ -685,7 +685,8 @@ func (o *Options) parseOptions(data []string) (Arguments, errors.Errors) {
 	var arguments Arguments
 	var errs errors.Errors
 
-	for _, curOpt := range data {
+LOOP:
+	for index, curOpt := range data {
 		if optName == "" || mixedOpt {
 			var err error
 			var curOptName, curOptValue string
@@ -693,6 +694,10 @@ func (o *Options) parseOptions(data []string) (Arguments, errors.Errors) {
 			curOptLen := len(curOpt)
 
 			switch {
+			case curOpt == "--":
+				arguments = append(arguments, sliceToArguments(data[index:])...)
+				break LOOP
+
 			case strings.TrimRight(curOpt, "-") == "":
 				arguments = append(arguments, Argument(curOpt))
 				continue
@@ -1016,6 +1021,16 @@ func updateIntOption(name string, opt *V, value string) error {
 	}
 
 	return nil
+}
+
+func sliceToArguments(data []string) Arguments {
+	var result Arguments
+
+	for _, arg := range data {
+		result = append(result, Argument(arg))
+	}
+
+	return result
 }
 
 func appendError(errs errors.Errors, err error) errors.Errors {

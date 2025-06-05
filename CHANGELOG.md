@@ -1,6 +1,11 @@
 ## Changelog
 
-### [13.28.0](https://kaos.sh/ek/13.28.1)
+### [13.28.2](https://kaos.sh/ek/13.28.2)
+
+- **`[options]`** Improved support of `--` option (_POSIX standard convention that means "everything that follows is not an option"_)
+- **`[options]`** Code refactoring
+
+### [13.28.1](https://kaos.sh/ek/13.28.1)
 
 - **`[sliceutil]`** Added method `Filter`
 
