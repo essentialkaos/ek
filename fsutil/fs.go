@@ -548,19 +548,6 @@ func IsEmpty(path string) bool {
 	return GetSize(path) == 0
 }
 
-// IsNonEmpty returns true if given file is not empty
-//
-// Deprecated: Use method IsEmpty instead
-func IsNonEmpty(path string) bool {
-	if path == "" {
-		return false
-	}
-
-	path = PATH.Clean(path)
-
-	return GetSize(path) > 0
-}
-
 // IsEmptyDir returns true if given directory es empty
 func IsEmptyDir(path string) bool {
 	if path == "" {

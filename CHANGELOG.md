@@ -1,8 +1,9 @@
 ## Changelog
 
-### [13.28.3](https://kaos.sh/ek/13.28.3)
+### [13.29.0](https://kaos.sh/ek/13.29.0)
 
 - **`[fmtc]`** Deprecated methods have been removed
+- **`[fsutil]`** Deprecated methods have been removed
 
 ### [13.28.2](https://kaos.sh/ek/13.28.2)
 

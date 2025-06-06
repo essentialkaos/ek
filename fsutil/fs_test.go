@@ -413,11 +413,6 @@ func (s *FSSuite) TestIsEmpty(c *check.C) {
 	c.Assert(IsEmpty("/not_exist"), check.Equals, false)
 	c.Assert(IsEmpty(tmpFile2), check.Equals, true)
 	c.Assert(IsEmpty(tmpFile1), check.Equals, false)
-
-	c.Assert(IsNonEmpty(""), check.Equals, false)
-	c.Assert(IsNonEmpty("/not_exist"), check.Equals, false)
-	c.Assert(IsNonEmpty(tmpFile2), check.Equals, false)
-	c.Assert(IsNonEmpty(tmpFile1), check.Equals, true)
 }
 
 func (s *FSSuite) TestTypeChecks(c *check.C) {
