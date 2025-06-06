@@ -1,5 +1,14 @@
 ## Changelog
 
+### [13.29.0](https://kaos.sh/ek/13.29.0)
+
+- **`[fmtc]`** Deprecated methods have been removed
+- **`[fsutil]`** Deprecated methods have been removed
+- **`[knf]`** Deprecated methods have been removed
+- **`[knf/validators]`** Deprecated validators have been removed
+- **`[log]`** Deprecated variables have been removed
+- **`[sliceutil]`** Deprecated methods have been removed
+
 ### [13.28.2](https://kaos.sh/ek/13.28.2)
 
 - **`[options]`** Improved support of `--` option (_POSIX standard convention that means "everything that follows is not an option"_)

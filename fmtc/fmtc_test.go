@@ -217,21 +217,21 @@ func (s *FormatSuite) TestNamedColors(c *C) {
 	RemoveColor("myTest_1")
 	parseNamedColor("?myTest_1", false)
 
-	c.Assert(NameColor("", "{r}"), ErrorMatches, `Can't add named color: name can't be empty`)
-	c.Assert(NameColor("test", ""), ErrorMatches, `Can't add named color: tag can't be empty`)
-	c.Assert(NameColor("test", "{H}"), ErrorMatches, `Can't add named color: "{H}" is not valid color tag`)
-	c.Assert(NameColor("test%", "{r}"), ErrorMatches, `Can't add named color: "test%" is not valid name`)
+	c.Assert(AddColor("", "{r}"), ErrorMatches, `Can't add named color: name can't be empty`)
+	c.Assert(AddColor("test", ""), ErrorMatches, `Can't add named color: tag can't be empty`)
+	c.Assert(AddColor("test", "{H}"), ErrorMatches, `Can't add named color: "{H}" is not valid color tag`)
+	c.Assert(AddColor("test%", "{r}"), ErrorMatches, `Can't add named color: "test%" is not valid name`)
 
-	NameColor("myTest_1", "{r}")
+	AddColor("myTest_1", "{r}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[31mo\x1b[0m")
 
-	NameColor("myTest_1", "{#214}")
+	AddColor("myTest_1", "{#214}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;5;214mo\x1b[0m")
 
-	NameColor("myTest_1", "{#f1c1b2}")
+	AddColor("myTest_1", "{#f1c1b2}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;2;241;193;178mo\x1b[0m")
 
-	NameColor("myTest_1", "{#f1c1b2}{_}{&}")
+	AddColor("myTest_1", "{#f1c1b2}{_}{&}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[38;2;241;193;178m\x1b[4m\x1b[3mo\x1b[0m")
 
 	RemoveColor("myTest_1")
@@ -421,7 +421,7 @@ func (s *FormatSuite) Benchmark24bit(c *C) {
 }
 
 func (s *FormatSuite) BenchmarkNamed(c *C) {
-	NameColor("myTest_1", "{r}")
+	AddColor("myTest_1", "{r}")
 
 	for range c.N {
 		Sprint("Test {?myTest_1}1{!}!")
@@ -431,7 +431,7 @@ func (s *FormatSuite) BenchmarkNamed(c *C) {
 }
 
 func (s *FormatSuite) BenchmarkAll(c *C) {
-	NameColor("myTest_1", "{r}")
+	AddColor("myTest_1", "{r}")
 
 	for range c.N {
 		Sprint("Test {r}1{!} {#123}2{!} {#fac1bd}3{!} {?myTest_1}4{!}!")

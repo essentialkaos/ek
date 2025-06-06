@@ -391,7 +391,7 @@ func Has(name string) bool {
 		return false
 	}
 
-	return global.HasProp(name)
+	return global.Has(name)
 }
 
 // Sections returns slice with section names
@@ -426,22 +426,6 @@ func Validate(validators Validators) errors.Errors {
 // + property name)
 func Q(section, prop string) string {
 	return section + _SYMBOL_DELIMITER + prop
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// HasProp checks if the property is defined and set
-//
-// Deprecated: Use method Has instead
-func HasProp(name string) bool {
-	return Has(name)
-}
-
-// HasProp checks if property is defined and set
-//
-// Deprecated: Use method Has instead
-func (c *Config) HasProp(name string) bool {
-	return c.Has(name)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

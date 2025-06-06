@@ -89,14 +89,6 @@ var (
 	TypeDur = validatorTypeDur
 )
 
-var (
-	// Deprecated: Use LenShorter instead
-	LenLess = validatorLenShorter
-
-	// Deprecated: Use LenLonger instead
-	LenGreater = validatorLenLonger
-)
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Range is numeric range
