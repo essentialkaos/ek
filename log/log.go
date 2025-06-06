@@ -127,21 +127,6 @@ var Colors = map[uint8]string{
 	CRIT:  "{#196}{*}",
 }
 
-// LogLevels is a slice with supported log level names
-//
-// Deprecated: Use method Levels instead
-var LogLevels = []string{
-	"",
-	"debug",
-	"info",
-	"warn",
-	"warning",
-	"error",
-	"crit",
-	"critical",
-	"fatal",
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Errors

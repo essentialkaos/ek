@@ -6,6 +6,7 @@
 - **`[fsutil]`** Deprecated methods have been removed
 - **`[knf]`** Deprecated methods have been removed
 - **`[knf/validators]`** Deprecated validators have been removed
+- **`[log]`** Deprecated variables have been removed
 
 ### [13.28.2](https://kaos.sh/ek/13.28.2)
 
