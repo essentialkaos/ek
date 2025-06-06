@@ -66,8 +66,8 @@ func ExampleGlobal() {
 		// Section exist
 	}
 
-	// Check property
-	if HasProp("main:string") {
+	// Check for property
+	if Has("main:string") {
 		// Property exist
 	}
 
@@ -318,7 +318,7 @@ func ExampleHasSection() {
 	fmt.Printf("Is section \"user\" exist: %t\n", HasSection("user"))
 }
 
-func ExampleHasProp() {
+func ExampleHas() {
 	err := Global("/path/to/your/config.knf")
 
 	if err != nil {
@@ -326,8 +326,8 @@ func ExampleHasProp() {
 		return
 	}
 
-	fmt.Printf("Is property \"user:name\" exist: %t\n", HasProp("user:name"))
-	fmt.Printf("Is property \"user:path\" exist: %t\n", HasProp("user:path"))
+	fmt.Printf("Is property \"user:name\" exist: %t\n", Has("user:name"))
+	fmt.Printf("Is property \"user:path\" exist: %t\n", Has("user:path"))
 }
 
 func ExampleSections() {
@@ -850,7 +850,7 @@ func ExampleConfig_HasSection() {
 	// Is section "user" exist: true
 }
 
-func ExampleConfig_HasProp() {
+func ExampleConfig_Has() {
 	cfg, err := Parse([]byte(`
 [user]
 	name: john
@@ -870,8 +870,8 @@ func ExampleConfig_HasProp() {
 		return
 	}
 
-	fmt.Printf("Is property \"user:name\" exist: %t\n", cfg.HasProp("user:name"))
-	fmt.Printf("Is property \"user:path\" exist: %t\n", cfg.HasProp("user:path"))
+	fmt.Printf("Is property \"user:name\" exist: %t\n", cfg.Has("user:name"))
+	fmt.Printf("Is property \"user:path\" exist: %t\n", cfg.Has("user:path"))
 
 	// Output:
 	// Is property "user:name" exist: true

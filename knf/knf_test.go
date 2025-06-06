@@ -230,7 +230,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(GetL("test:test"), check.IsNil)
 	c.Assert(Is("test:test", ""), check.Equals, false)
 	c.Assert(HasSection("test"), check.Equals, false)
-	c.Assert(HasProp("test:test"), check.Equals, false)
+	c.Assert(Has("test:test"), check.Equals, false)
 	c.Assert(Sections(), check.HasLen, 0)
 	c.Assert(Props("test"), check.HasLen, 0)
 	c.Assert(Validate(Validators{}), check.DeepEquals, errors.Errors{ErrNilConfig})
@@ -252,7 +252,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(config.GetL("test:test"), check.IsNil)
 	c.Assert(config.Is("test:test", ""), check.Equals, true)
 	c.Assert(config.HasSection("test"), check.Equals, false)
-	c.Assert(config.HasProp("test:test"), check.Equals, false)
+	c.Assert(config.Has("test:test"), check.Equals, false)
 	c.Assert(config.Sections(), check.HasLen, 0)
 	c.Assert(config.Props("test"), check.HasLen, 0)
 	c.Assert(config.Validate(Validators{}), check.HasLen, 0)
@@ -391,9 +391,9 @@ func (s *KNFSuite) TestCheckers(c *check.C) {
 	c.Assert(HasSection("string"), check.Equals, true)
 	c.Assert(HasSection("strings"), check.Equals, false)
 
-	c.Assert(HasProp("string:test1"), check.Equals, true)
-	c.Assert(HasProp("string:test6"), check.Equals, false)
-	c.Assert(HasProp("strings:test6"), check.Equals, false)
+	c.Assert(Has("string:test1"), check.Equals, true)
+	c.Assert(Has("string:test6"), check.Equals, false)
+	c.Assert(Has("strings:test6"), check.Equals, false)
 }
 
 func (s *KNFSuite) TestFormatting(c *check.C) {
@@ -572,7 +572,7 @@ func (s *KNFSuite) TestComments(c *check.C) {
 
 	c.Assert(GetI("comment:test1"), check.Equals, 100)
 	c.Assert(GetI("comment:test2"), check.Not(check.Equals), 100)
-	c.Assert(HasProp("comment:test2"), check.Equals, false)
+	c.Assert(Has("comment:test2"), check.Equals, false)
 }
 
 func (s *KNFSuite) TestMacro(c *check.C) {
@@ -611,7 +611,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 	c.Assert(nilConf.GetL("formatting:test1"), check.IsNil)
 	c.Assert(nilConf.Is("formatting:test1", ""), check.Equals, false)
 	c.Assert(nilConf.HasSection("formatting"), check.Equals, false)
-	c.Assert(nilConf.HasProp("formatting:test1"), check.Equals, false)
+	c.Assert(nilConf.Has("formatting:test1"), check.Equals, false)
 	c.Assert(nilConf.Sections(), check.HasLen, 0)
 	c.Assert(nilConf.Props("formatting"), check.HasLen, 0)
 	c.Assert(nilConf.File(), check.Equals, "")
