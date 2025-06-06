@@ -88,13 +88,13 @@ type optionName struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilOptions returns if options struct is nil
+	// ErrNilOptions is returned if options struct is nil
 	ErrNilOptions = fmt.Errorf("Options struct is nil")
 
-	// ErrNilMap returns if options map is nil
+	// ErrNilMap is returned if options map is nil
 	ErrNilMap = fmt.Errorf("Options map is nil")
 
-	// ErrEmptyName returns if option have no name
+	// ErrEmptyName is returned if option have no name
 	ErrEmptyName = fmt.Errorf("One or more options do not have a name")
 )
 
@@ -391,7 +391,7 @@ func (o *Options) Delete(name string) bool {
 }
 
 // Parse parses slice with raw options
-func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, errors.Errors) {
+func (o *Options) Parse(data []string, optMap ...Map) (Arguments, errors.Errors) {
 	if o == nil {
 		return nil, errors.Errors{ErrNilOptions}
 	}
@@ -408,7 +408,7 @@ func (o *Options) Parse(rawOpts []string, optMap ...Map) (Arguments, errors.Erro
 		return Arguments{}, errs
 	}
 
-	return o.parseOptions(rawOpts)
+	return o.parseOptions(data)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -673,10 +673,10 @@ func (o optionName) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (o *Options) parseOptions(rawOpts []string) (Arguments, errors.Errors) {
+func (o *Options) parseOptions(data []string) (Arguments, errors.Errors) {
 	o.prepare()
 
-	if len(rawOpts) == 0 {
+	if len(data) == 0 {
 		return nil, o.validate()
 	}
 
@@ -685,17 +685,19 @@ func (o *Options) parseOptions(rawOpts []string) (Arguments, errors.Errors) {
 	var arguments Arguments
 	var errs errors.Errors
 
-	for _, curOpt := range rawOpts {
+LOOP:
+	for index, curOpt := range data {
 		if optName == "" || mixedOpt {
-			var (
-				curOptName  string
-				curOptValue string
-				err         error
-			)
+			var err error
+			var curOptName, curOptValue string
 
-			var curOptLen = len(curOpt)
+			curOptLen := len(curOpt)
 
 			switch {
+			case curOpt == "--":
+				arguments = append(arguments, sliceToArguments(data[index:])...)
+				break LOOP
+
 			case strings.TrimRight(curOpt, "-") == "":
 				arguments = append(arguments, Argument(curOpt))
 				continue
@@ -1019,6 +1021,16 @@ func updateIntOption(name string, opt *V, value string) error {
 	}
 
 	return nil
+}
+
+func sliceToArguments(data []string) Arguments {
+	var result Arguments
+
+	for _, arg := range data {
+		result = append(result, Argument(arg))
+	}
+
+	return result
 }
 
 func appendError(errs errors.Errors, err error) errors.Errors {
