@@ -123,8 +123,8 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	validators = validators.Add(knf.Validators{
 		{"string:test3", HasPrefix, "45"},
 		{"string:test3", HasSuffix, "00"},
-		{"string:test1", LenGreater, 3},
-		{"string:test1", LenLess, 10},
+		{"string:test1", LenLonger, 3},
+		{"string:test1", LenShorter, 10},
 		{"string:test1", LenEquals, 4},
 	})
 
@@ -142,8 +142,8 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 		{"integer:test1", SetToAnyIgnoreCase, []string{"A", "B", "C"}},
 		{"string:test3", HasPrefix, "AB"},
 		{"string:test3", HasSuffix, "CD"},
-		{"string:test1", LenLess, 3},
-		{"string:test1", LenGreater, 10},
+		{"string:test1", LenShorter, 3},
+		{"string:test1", LenLonger, 10},
 		{"string:test1", LenEquals, 10},
 	})
 
@@ -259,8 +259,8 @@ func (s *ValidatorSuite) TestBasicValidators(c *check.C) {
 	c.Assert(NotEquals(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(HasPrefix(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(HasSuffix(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(LenLess(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
-	c.Assert(LenGreater(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenShorter(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
+	c.Assert(LenLonger(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 	c.Assert(LenEquals(cfg, "test:string", float32(1.1)), check.ErrorMatches, "Validator knf..* doesn't support input with type <float32> for checking test:string property")
 
 	c.Assert(HasPrefix(cfg, "test:string", ""), check.ErrorMatches, "Validator knf..* requires non-empty input for checking test:string property")

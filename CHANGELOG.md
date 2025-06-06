@@ -4,6 +4,7 @@
 
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed
+- **`[knf/validators]`** Deprecated validators have been removed
 
 ### [13.28.2](https://kaos.sh/ek/13.28.2)
 
