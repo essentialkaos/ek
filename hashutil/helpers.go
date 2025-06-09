@@ -37,6 +37,9 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Hash is bytes slice with hash data
+type Hash []byte
+
 // Reader is transparent hashing reader
 type Reader struct {
 	hasher hash.Hash
@@ -52,14 +55,14 @@ type Writer struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Copy is io.Copy like function with transparent hash calculation
-func Copy(dst io.Writer, src io.Reader, hasher hash.Hash) (int64, string, error) {
+func Copy(dst io.Writer, src io.Reader, hasher hash.Hash) (int64, Hash, error) {
 	switch {
 	case src == nil:
-		return 0, "", ErrNilSource
+		return 0, nil, ErrNilSource
 	case dst == nil:
-		return 0, "", ErrNilDest
+		return 0, nil, ErrNilDest
 	case hasher == nil:
-		return 0, "", ErrNilHasher
+		return 0, nil, ErrNilHasher
 	}
 
 	hasher.Reset()
@@ -71,15 +74,15 @@ func Copy(dst io.Writer, src io.Reader, hasher hash.Hash) (int64, string, error)
 }
 
 // File calculates hash of the file using given hasher
-func File(file string, hasher hash.Hash) string {
+func File(file string, hasher hash.Hash) Hash {
 	if hasher == nil {
-		return ""
+		return nil
 	}
 
 	fd, err := os.Open(file)
 
 	if err != nil {
-		return ""
+		return nil
 	}
 
 	defer fd.Close()
@@ -91,9 +94,9 @@ func File(file string, hasher hash.Hash) string {
 }
 
 // Bytes calculates data hash using given hasher
-func Bytes(data []byte, hasher hash.Hash) string {
+func Bytes(data []byte, hasher hash.Hash) Hash {
 	if len(data) == 0 || hasher == nil {
-		return ""
+		return nil
 	}
 
 	hasher.Reset()
@@ -103,9 +106,9 @@ func Bytes(data []byte, hasher hash.Hash) string {
 }
 
 // String calculates string hash using given hasher
-func String(data string, hasher hash.Hash) string {
+func String(data string, hasher hash.Hash) Hash {
 	if len(data) == 0 || hasher == nil {
-		return ""
+		return nil
 	}
 
 	hasher.Reset()
@@ -115,12 +118,28 @@ func String(data string, hasher hash.Hash) string {
 }
 
 // Sum prints checksum
-func Sum(hasher hash.Hash) string {
+func Sum(hasher hash.Hash) Hash {
 	if hasher == nil {
+		return nil
+	}
+
+	return Hash(hasher.Sum(nil))
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// String returns string representation of hash
+func (h Hash) String() string {
+	if len(h) == 0 {
 		return ""
 	}
 
-	return fmt.Sprintf("%0"+strconv.Itoa(hasher.Size()/2)+"x", hasher.Sum(nil))
+	return fmt.Sprintf("%0"+strconv.Itoa(len(h)/2)+"x", h.Bytes())
+}
+
+// Bytes returns hash as byte slice
+func (h Hash) Bytes() []byte {
+	return []byte(h)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -158,9 +177,9 @@ func (r *Reader) Read(p []byte) (int, error) {
 }
 
 // Sum returns hash of read data
-func (r *Reader) Sum() string {
+func (r *Reader) Sum() Hash {
 	if r == nil || r.r == nil || r.hasher == nil {
-		return ""
+		return nil
 	}
 
 	return Sum(r.hasher)
@@ -199,9 +218,9 @@ func (w *Writer) Write(p []byte) (int, error) {
 }
 
 // Sum returns hash of written data
-func (w *Writer) Sum() string {
+func (w *Writer) Sum() Hash {
 	if w == nil || w.w == nil || w.hasher == nil {
-		return ""
+		return nil
 	}
 
 	return Sum(w.hasher)

@@ -504,18 +504,18 @@ func (r *Response) JSON(v any) error {
 }
 
 // JSONWithHash decodes JSON-encoded response body and simultaneously calculates the data's hash
-func (r *Response) JSONWithHash(v any, hasher hash.Hash) (string, error) {
+func (r *Response) JSONWithHash(v any, hasher hash.Hash) (hashutil.Hash, error) {
 	switch {
 	case r == nil || r.Response == nil:
-		return "", ErrNilResponse
+		return nil, ErrNilResponse
 	case r.Body == nil:
-		return "", ErrEmptyBody
+		return nil, ErrEmptyBody
 	}
 
 	hr, err := hashutil.NewReader(r.Body, hasher)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer r.Body.Close()
@@ -523,7 +523,7 @@ func (r *Response) JSONWithHash(v any, hasher hash.Hash) (string, error) {
 	err = json.NewDecoder(hr).Decode(v)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return hr.Sum(), nil
@@ -567,18 +567,18 @@ func (r *Response) Save(filename string, mode os.FileMode) error {
 }
 
 // SaveWithHash saves the response data to a file and simultaneously calculates the data's hash
-func (r *Response) SaveWithHash(filename string, mode os.FileMode, hasher hash.Hash) (string, error) {
+func (r *Response) SaveWithHash(filename string, mode os.FileMode, hasher hash.Hash) (hashutil.Hash, error) {
 	switch {
 	case r == nil || r.Response == nil:
-		return "", ErrNilResponse
+		return nil, ErrNilResponse
 	case r.Body == nil:
-		return "", ErrEmptyBody
+		return nil, ErrEmptyBody
 	}
 
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 
 	if err != nil {
-		return "", fmt.Errorf("Can't open file to write: %v", err)
+		return nil, fmt.Errorf("Can't open file to write: %v", err)
 	}
 
 	defer fd.Close()

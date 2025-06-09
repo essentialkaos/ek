@@ -48,7 +48,7 @@ func (s *HashUtilSuite) TestCopy(c *C) {
 	n, hash, err := Copy(dst, src, sha256.New())
 	c.Assert(err, IsNil)
 	c.Assert(n, Equals, int64(9))
-	c.Assert(hash, Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
+	c.Assert(hash.String(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
 }
 
 func (s *HashUtilSuite) TestFileHash(c *C) {
@@ -57,26 +57,26 @@ func (s *HashUtilSuite) TestFileHash(c *C) {
 	err := os.WriteFile(testFile, []byte("ABCDEF12345\n\n"), 0644)
 	c.Assert(err, IsNil)
 
-	c.Assert(File("_unknown_", sha1.New()), Equals, "")
-	c.Assert(File(testFile, nil), Equals, "")
-	c.Assert(File(testFile, sha1.New()), Equals, "9267257cafff1df7a8c0dea354d71c7221d17eda")
-	c.Assert(File(testFile, sha256.New()), Equals, "2d7ec20906125cd23fee7b628b98463d554b1105b141b2d39a19bac5f3274dec")
+	c.Assert(File("_unknown_", sha1.New()).String(), Equals, "")
+	c.Assert(File(testFile, nil).String(), Equals, "")
+	c.Assert(File(testFile, sha1.New()).String(), Equals, "9267257cafff1df7a8c0dea354d71c7221d17eda")
+	c.Assert(File(testFile, sha256.New()).String(), Equals, "2d7ec20906125cd23fee7b628b98463d554b1105b141b2d39a19bac5f3274dec")
 }
 
 func (s *HashUtilSuite) TestDataHash(c *C) {
-	c.Assert(Bytes([]byte(""), sha1.New()), Equals, "")
-	c.Assert(Bytes([]byte("TEST1234!"), nil), Equals, "")
-	c.Assert(Bytes([]byte("TEST1234!"), sha256.New()), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
+	c.Assert(Bytes([]byte(""), sha1.New()).String(), Equals, "")
+	c.Assert(Bytes([]byte("TEST1234!"), nil).String(), Equals, "")
+	c.Assert(Bytes([]byte("TEST1234!"), sha256.New()).String(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
 }
 
 func (s *HashUtilSuite) TestString(c *C) {
-	c.Assert(String("", sha1.New()), Equals, "")
-	c.Assert(String("TEST1234!", nil), Equals, "")
-	c.Assert(String("TEST1234!", sha256.New()), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
+	c.Assert(String("", sha1.New()).String(), Equals, "")
+	c.Assert(String("TEST1234!", nil).String(), Equals, "")
+	c.Assert(String("TEST1234!", sha256.New()).String(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
 }
 
 func (s *HashUtilSuite) TestSum(c *C) {
-	c.Assert(Sum(nil), Equals, "")
+	c.Assert(Sum(nil).String(), Equals, "")
 }
 
 func (s *HashUtilSuite) TestReader(c *C) {
@@ -88,7 +88,7 @@ func (s *HashUtilSuite) TestReader(c *C) {
 	data, err := io.ReadAll(r)
 	c.Assert(err, IsNil)
 	c.Assert(string(data), Equals, "TEST1234!")
-	c.Assert(r.Sum(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
+	c.Assert(r.Sum().String(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
 }
 
 func (s *HashUtilSuite) TestReaderErrors(c *C) {
@@ -113,9 +113,9 @@ func (s *HashUtilSuite) TestReaderErrors(c *C) {
 	_, err = r3.Read([]byte{})
 	c.Assert(err, Equals, ErrNilHasher)
 
-	c.Assert(r1.Sum(), Equals, "")
-	c.Assert(r2.Sum(), Equals, "")
-	c.Assert(r3.Sum(), Equals, "")
+	c.Assert(r1.Sum().String(), Equals, "")
+	c.Assert(r2.Sum().String(), Equals, "")
+	c.Assert(r3.Sum().String(), Equals, "")
 }
 
 func (s *HashUtilSuite) TestWriter(c *C) {
@@ -128,7 +128,7 @@ func (s *HashUtilSuite) TestWriter(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(buf.String(), Equals, "TEST1234!")
-	c.Assert(w.Sum(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
+	c.Assert(w.Sum().String(), Equals, "ffa3f7c87408925c3acee34a21a4b6b5141f3a3948f144abd3c4489f086b6cb4")
 }
 
 func (s *HashUtilSuite) TestWriterErrors(c *C) {
@@ -153,7 +153,7 @@ func (s *HashUtilSuite) TestWriterErrors(c *C) {
 	_, err = w3.Write([]byte("TEST1234!"))
 	c.Assert(err, Equals, ErrNilHasher)
 
-	c.Assert(w1.Sum(), Equals, "")
-	c.Assert(w2.Sum(), Equals, "")
-	c.Assert(w3.Sum(), Equals, "")
+	c.Assert(w1.Sum().String(), Equals, "")
+	c.Assert(w2.Sum().String(), Equals, "")
+	c.Assert(w3.Sum().String(), Equals, "")
 }

@@ -2,6 +2,7 @@
 
 ### [13.29.0](https://kaos.sh/ek/13.29.0)
 
+- **`[hashutil]`** Using `Hash` type instead of strings
 - **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
 - **`[spinner]`** Added support of different duration formats
 - **`[fmtc]`** Deprecated methods have been removed

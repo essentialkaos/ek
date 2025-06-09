@@ -22,5 +22,5 @@ import (
 //
 // Deprecated: Use package hashutil instead
 func FileHash(file string) string {
-	return hashutil.File(file, sha256.New())
+	return hashutil.File(file, sha256.New()).String()
 }

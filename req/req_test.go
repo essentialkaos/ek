@@ -383,7 +383,7 @@ func (s *ReqSuite) TestJSONWithHashResp(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(testStruct.String, Equals, "test")
-	c.Assert(respHash, Equals, "e03b1cde95e6e4fa740de100773bc41804d03b5297b7b0222888fff3e72d2b7c")
+	c.Assert(respHash.String(), Equals, "e03b1cde95e6e4fa740de100773bc41804d03b5297b7b0222888fff3e72d2b7c")
 
 	resp, err = Request{URL: s.url + _URL_GET}.Do()
 
@@ -427,7 +427,7 @@ func (s *ReqSuite) TestSaveWithHashResp(c *C) {
 	fileHash, err := resp.SaveWithHash(testDir+"/output.test", 0644, sha256.New())
 
 	c.Assert(err, IsNil)
-	c.Assert(fileHash, Equals, "9546c567ac10e0d47034582eb9f5e5cfabf1c242c5714cf38fecb0a135f99a75")
+	c.Assert(fileHash.String(), Equals, "9546c567ac10e0d47034582eb9f5e5cfabf1c242c5714cf38fecb0a135f99a75")
 }
 
 func (s *ReqSuite) TestDiscard(c *C) {
