@@ -48,3 +48,14 @@ func (s *SpinnerSuite) TestSpinner(c *C) {
 
 	Skip()
 }
+
+func (s *SpinnerSuite) TestAux(c *C) {
+	DurationFormat = DURATION_SHORT
+	c.Assert(formatDuration(time.Minute), Equals, "1:00")
+
+	DurationFormat = DURATION_MINI
+	c.Assert(formatDuration(time.Minute), Equals, "1m")
+
+	DurationFormat = DURATION_SIMPLE
+	c.Assert(formatDuration(time.Minute), Equals, "1 minute")
+}

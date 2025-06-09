@@ -3,6 +3,7 @@
 ### [13.29.0](https://kaos.sh/ek/13.29.0)
 
 - **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
+- **`[spinner]`** Added support of different duration formats
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed
 - **`[knf]`** Deprecated methods have been removed
