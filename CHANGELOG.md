@@ -5,6 +5,7 @@
 - **`[hashutil]`** Using `Hash` type instead of strings
 - **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
 - **`[spinner]`** Added support of different duration formats
+- **`[strutil]`** Added method `Wrap`
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed
 - **`[knf]`** Deprecated methods have been removed

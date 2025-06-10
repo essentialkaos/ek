@@ -556,6 +556,27 @@ func JoinFunc(elems []string, sep string, f func(s string) string) string {
 	return buf.String()
 }
 
+// Wrap splits a string into lines of fixed width by inserting a newline character
+// ('\n') every n characters. It does not consider word boundaries or Unicode
+// characters; it simply slices the raw byte string.
+func Wrap(s string, n int) string {
+	if s == "" || n <= 0 || len(s) <= n {
+		return s
+	}
+
+	var buf bytes.Buffer
+
+	for i := 0; i < len(s); i += n {
+		if i+n >= len(s) {
+			buf.WriteString(s[i:len(s)])
+		} else {
+			buf.WriteString(s[i:i+n] + "\n")
+		}
+	}
+
+	return buf.String()
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func appendField(data []string, item string) []string {

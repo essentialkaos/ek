@@ -237,6 +237,14 @@ func (s *StrUtilSuite) TestJoinFunc(c *C) {
 	)
 }
 
+func (s *StrUtilSuite) TestWrap(c *C) {
+	c.Assert(Wrap("", 100), Equals, "")
+	c.Assert(Wrap("TEST", -1), Equals, "TEST")
+	c.Assert(Wrap("TEST", 4), Equals, "TEST")
+	c.Assert(Wrap("TEST", 10), Equals, "TEST")
+	c.Assert(Wrap("AAAABBBBCCCCDDDD", 4), Equals, "AAAA\nBBBB\nCCCC\nDDDD")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *StrUtilSuite) BenchmarkSubstr(c *C) {

@@ -243,3 +243,14 @@ func ExampleJoinFunc() {
 	// Output:
 	// "John", "Bob Smith", "Fiona", "Elen Vire", "Joe Doe"
 }
+
+func ExampleWrap() {
+	text := "AAAABBBBCCCC"
+
+	fmt.Println(Wrap(text, 4))
+
+	// Output:
+	// AAAA
+	// BBBB
+	// CCCC
+}
