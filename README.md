@@ -70,6 +70,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`req`](https://kaos.sh/g/ek.v13/req) — Package simplify working with an HTTP requests
 - [`reutil`](https://kaos.sh/g/ek.v13/reutil) — Package provides helpers for working with regular expressions
 - [`secstr`](https://kaos.sh/g/ek.v13/secstr) — Package provides methods and structs for working with protected (_secure_) strings
+- [`selfupdate`](https://kaos.sh/g/ek.v13/selfupdate) — Package provides methods and structs for application self-update
 - [`setup`](https://kaos.sh/g/ek.v13/setup) — provides methods to install/unistall application as a service on the system
 - [`signal`](https://kaos.sh/g/ek.v13/signal) — Package provides methods for handling POSIX signals
 - [`sliceutil`](https://kaos.sh/g/ek.v13/sliceutil) — Package provides methods for working with slices
