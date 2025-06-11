@@ -40,6 +40,7 @@ type TempSensor struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// hwmonDir is a path to hwmon directory
 var hwmonDir = "/sys/class/hwmon"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -111,6 +112,7 @@ func (s TempSensor) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// hasSensorsData checks if directory contains sensors data
 func hasSensorsData(dir string) bool {
 	switch {
 	case hasTempSensorsData(dir):
@@ -120,10 +122,12 @@ func hasSensorsData(dir string) bool {
 	return false
 }
 
+// hasTempSensorsData checks if directory contains temperature sensors data
 func hasTempSensorsData(dir string) bool {
 	return fsutil.IsExist(dir + "/temp1_input")
 }
 
+// collectDeviceInfo collects information about device sensors
 func collectDeviceInfo(dir string) (*Device, error) {
 	var err error
 
@@ -146,6 +150,7 @@ func collectDeviceInfo(dir string) (*Device, error) {
 	return device, nil
 }
 
+// collectTempSensorsInfo collects information about temperature sensors
 func collectTempSensorsInfo(dir string) ([]TempSensor, error) {
 	var result []TempSensor
 
@@ -168,6 +173,7 @@ func collectTempSensorsInfo(dir string) ([]TempSensor, error) {
 	return result, nil
 }
 
+// readTempSensors reads temperature sensors data from files
 func readTempSensors(filePrefix string) (TempSensor, error) {
 	var err error
 
@@ -208,6 +214,7 @@ func readTempSensors(filePrefix string) (TempSensor, error) {
 	return sensor, nil
 }
 
+// readSensorLabel reads sensor label from file
 func readSensorLabel(file string) (string, error) {
 	data, err := os.ReadFile(file)
 
@@ -218,6 +225,7 @@ func readSensorLabel(file string) (string, error) {
 	return strings.Trim(string(data), "\r\n"), nil
 }
 
+// readTempSensorValue reads temperature sensor value from file
 func readTempSensorValue(file string) (float64, error) {
 	if !fsutil.IsExist(file) {
 		return 0.0, nil

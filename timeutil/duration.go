@@ -43,6 +43,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Duration is a wrapper for time.Duration with additional methods for pretty formatting
 type Duration struct {
 	time.Duration
 	isInvalid bool
@@ -172,6 +173,7 @@ func (d Duration) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getShortDuration returns pretty short duration in format "h:mm:ss" or "m:ss" or "m:ss.sss"
 func getShortDuration(dur time.Duration, highPrecision bool) string {
 	var h, m int64
 
@@ -201,6 +203,7 @@ func getShortDuration(dur time.Duration, highPrecision bool) string {
 	return fmt.Sprintf("%d:%02d", m, d)
 }
 
+// getPrettyMiniDuration returns pretty mini duration (e.g. 1d, 2h, 3m, 4s, 5ms, 6μs, 7ns)
 func getPrettyMiniDuration(d time.Duration, separator string) string {
 	switch {
 	case d >= DAY:
@@ -244,6 +247,7 @@ func getPrettyMiniDuration(d time.Duration, separator string) string {
 	}
 }
 
+// getPrettyLongDuration returns pretty long duration (e.g. 1 week 2 days 3 hours)
 func getPrettyLongDuration(dur time.Duration) string {
 	d := int64(dur.Seconds())
 

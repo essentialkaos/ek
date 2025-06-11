@@ -95,7 +95,7 @@ var mu = &sync.RWMutex{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Show shows spinner with given task description
+// Show starts spinner animation and shows task description
 func Show(message string, args ...any) {
 	if isActive.Load() {
 		return
@@ -116,7 +116,7 @@ func Show(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Update updates task description
+// Update updates spinner description
 func Update(message string, args ...any) {
 	if !isActive.Load() || isHidden.Load() {
 		return
@@ -127,7 +127,7 @@ func Update(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Done finishes spinner animation and shows task status
+// Done finishes spinner animation and marks it as done
 func Done(ok bool) {
 	if !isActive.Load() {
 		return
@@ -140,7 +140,7 @@ func Done(ok bool) {
 	}
 }
 
-// Skip finishes spinner animation and mark it as skipped
+// Skip finishes spinner animation and marks it as skipped
 func Skip() {
 	if !isActive.Load() {
 		return
@@ -151,6 +151,7 @@ func Skip() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// showSpinner starts spinner animation in a separate goroutine
 func showSpinner() {
 	var i int
 
@@ -180,6 +181,7 @@ func showSpinner() {
 	}
 }
 
+// stopSpinner stops spinner animation and prints final message
 func stopSpinner(action uint8) {
 	isActive.Store(false)
 
@@ -215,6 +217,7 @@ func stopSpinner(action uint8) {
 	mu.Unlock()
 }
 
+// formatDuration formats duration based on the global DurationFormat setting
 func formatDuration(d time.Duration) string {
 	switch DurationFormat {
 	case DURATION_MINI:

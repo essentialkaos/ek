@@ -26,6 +26,7 @@ type Model struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// suggestItem is struct for storing suggestion item
 type suggestItem struct {
 	term  string
 	score int
@@ -33,7 +34,7 @@ type suggestItem struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Train trains words by given string slice
+// Train trains spellcheck model with given words
 func Train(words []string) *Model {
 	model := &Model{Threshold: 2}
 
@@ -54,7 +55,7 @@ func Train(words []string) *Model {
 	return model
 }
 
-// Distance calculates distance using Damerau–Levenshtein algorithm
+// Distance calculates Damerau–Levenshtein distance between two strings
 func Distance(source, target string) int {
 	sl, tl := len(source), len(target)
 
@@ -118,7 +119,7 @@ func Distance(source, target string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Correct corrects given value
+// Correct returns corrected word for given word
 func (m *Model) Correct(word string) string {
 	if m == nil || len(m.terms) == 0 {
 		return word
@@ -140,7 +141,7 @@ func (m *Model) Correct(word string) string {
 	return result.term
 }
 
-// Suggest suggests words for given word or word part
+// Suggest returns suggestions for given word
 func (m *Model) Suggest(word string, max int) []string {
 	if m == nil || len(m.terms) == 0 {
 		return []string{word}
@@ -167,6 +168,7 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getSuggestSlice returns slice of suggestItem for given terms and word
 func getSuggestSlice(terms []string, word string) []suggestItem {
 	var result []suggestItem
 

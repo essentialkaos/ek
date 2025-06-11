@@ -35,7 +35,7 @@ func (s stringSlice) Less(i, j int) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Versions sorts versions slice
+// Versions sorts a slice of version strings in ascending order
 func Versions(s []string) {
 	sort.Sort(versionSlice(s))
 }

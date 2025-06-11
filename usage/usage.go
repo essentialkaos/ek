@@ -59,14 +59,16 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Environment is a slice with environment variables
 type Environment []EnvironmentInfo
 
+// EnvironmentInfo contains info about environment variable
 type EnvironmentInfo struct {
 	Name    string
 	Version string
 }
 
-// About contains info about app
+// About contains info about application
 type About struct {
 	App        string // App is app name
 	Version    string // Version is current app version in semver notation
@@ -915,7 +917,7 @@ func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
 	}
 }
 
-// wrapText wraps long text
+// wrapText wraps text to the specified length with indentation
 func wrapText(text string, indent, maxLen int) string {
 	size := mathutil.Max(_DEFAULT_WRAP_LEN, maxLen) - indent
 

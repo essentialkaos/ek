@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Format returns formatted date as a string
+// Format formats time.Time value using given format string
 //
 // Interpreted sequences:
 //
@@ -387,7 +387,7 @@ func DurationAs(t, unit time.Duration) int {
 	return int(math.Round(float64(t) / float64(unit)))
 }
 
-// FromISOWeek returns date for given week number in given year
+// FromISOWeek returns time.Time from ISO week number and year
 func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	week = mathutil.Between(week, 1, 53)
 
@@ -454,6 +454,7 @@ func MiniDuration(d time.Duration, separator ...string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// replaceDateTag replaces date tag in format string
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	r, _, err := input.ReadRune()
 
@@ -556,6 +557,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	}
 }
 
+// getShortWeekday returns short weekday name (e.g. Sun)
 func getShortWeekday(d time.Weekday) string {
 	long := getLongWeekday(d)
 
@@ -566,6 +568,7 @@ func getShortWeekday(d time.Weekday) string {
 	return long[:3]
 }
 
+// getLongWeekday returns long weekday name (e.g. Sunday)
 func getLongWeekday(d time.Weekday) string {
 	switch int(d) {
 	case 0:
@@ -587,6 +590,7 @@ func getLongWeekday(d time.Weekday) string {
 	return ""
 }
 
+// getShortMonth returns short month name (e.g. Jan)
 func getShortMonth(m time.Month) string {
 	long := getLongMonth(m)
 
@@ -597,6 +601,7 @@ func getShortMonth(m time.Month) string {
 	return long[:3]
 }
 
+// getLongMonth returns long month name (e.g. January)
 func getLongMonth(m time.Month) string {
 	switch int(m) {
 	case 1:
@@ -628,6 +633,7 @@ func getLongMonth(m time.Month) string {
 	return ""
 }
 
+// getAMPMHour returns hour in 12-hour format (e.g. 1..12)
 func getAMPMHour(d time.Time) int {
 	h := d.Hour()
 
@@ -643,6 +649,7 @@ func getAMPMHour(d time.Time) int {
 	}
 }
 
+// getAMPM returns AM or PM depending on the time and caps flag
 func getAMPM(d time.Time, caps bool) string {
 	if d.Hour() < 12 {
 		switch caps {
@@ -661,6 +668,7 @@ func getAMPM(d time.Time, caps bool) string {
 	}
 }
 
+// getWeekdayNum returns weekday number (1..7) where 1 is Monday and 7 is Sunday
 func getWeekdayNum(d time.Time) int {
 	r := int(d.Weekday())
 
@@ -671,6 +679,7 @@ func getWeekdayNum(d time.Time) int {
 	return r
 }
 
+// getTimezone returns timezone offset in +hh:mm or +hhmm format
 func getTimezone(d time.Time, separator bool) string {
 	negative := false
 	_, tzofs := d.Zone()
@@ -700,6 +709,7 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
+// appendDur appends duration value to the buffer and returns new value
 func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
 	v, err := strconv.ParseInt(buf.String(), 10, 64)
 
