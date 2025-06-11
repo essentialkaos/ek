@@ -24,7 +24,7 @@ var defaultFieldsSeparators = []rune{' ', '\t'}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Q is simple helper for working with default values
+// Q returns first non-empty string from given slice
 func Q(v ...string) string {
 	for _, k := range v {
 		if k != "" {
@@ -35,7 +35,7 @@ func Q(v ...string) string {
 	return ""
 }
 
-// B is shorthand for choosing value by condition
+// B returns positive string if condition is true, otherwise returns negative string
 func B(cond bool, positive, negative string) string {
 	if cond {
 		return positive
@@ -44,7 +44,7 @@ func B(cond bool, positive, negative string) string {
 	return negative
 }
 
-// Concat is method for fast string concatenation
+// Concat concatenates all strings into a single string
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
 
@@ -579,6 +579,7 @@ func Wrap(s string, n int) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// appendField appends item to data if item is not empty
 func appendField(data []string, item string) []string {
 	if strings.TrimSpace(item) == "" {
 		return data
@@ -587,6 +588,7 @@ func appendField(data []string, item string) []string {
 	return append(data, item)
 }
 
+// getClosingChar returns the closing character for the given opening character
 func getClosingChar(r rune) rune {
 	switch r {
 	case '“':
