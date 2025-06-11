@@ -86,7 +86,7 @@ func (q Query) DeleteIf(cond bool, name string) bool {
 	return true
 }
 
-// Encode converts query struct to URL-encoded string
+// Encode encodes query parameters into a URL-encoded string
 func (q Query) Encode() string {
 	var buf bytes.Buffer
 
@@ -304,18 +304,22 @@ func (q Query) Encode() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// queryFormatString formats string for query
 func queryFormatString(v string) string {
 	return url.QueryEscape(v)
 }
 
+// queryFormatNumber formats number for query
 func queryFormatNumber(v any) string {
 	return fmt.Sprintf("%d", v)
 }
 
+// queryFormatFloat formats float for query
 func queryFormatFloat(v any) string {
 	return strings.TrimRight(strings.TrimRight(fmt.Sprintf("%f", v), "0"), ".")
 }
 
+// queryFormatStringSlice formats slice of strings for query
 func queryFormatStringSlice(buf *bytes.Buffer, v []string) {
 	l := buf.Len()
 
@@ -331,6 +335,7 @@ func queryFormatStringSlice(buf *bytes.Buffer, v []string) {
 	}
 }
 
+// queryFormatStringSliceSplit formats slice of strings for query with key
 func queryFormatStringSliceSplit(buf *bytes.Buffer, k string, v []string) {
 	buf.WriteString(v[0])
 
@@ -342,6 +347,7 @@ func queryFormatStringSliceSplit(buf *bytes.Buffer, k string, v []string) {
 	}
 }
 
+// queryFormatStringerSlice formats slice of fmt.Stringer compatible objects for query
 func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 	l := buf.Len()
 
@@ -359,6 +365,8 @@ func queryFormatStringerSlice(buf *bytes.Buffer, v []fmt.Stringer) {
 	}
 }
 
+// queryFormatStringerSliceSplit formats slice of fmt.Stringer compatible objects for query
+// with key
 func queryFormatStringerSliceSplit(buf *bytes.Buffer, k string, v []fmt.Stringer) {
 	buf.WriteString(v[0].String())
 
@@ -370,6 +378,7 @@ func queryFormatStringerSliceSplit(buf *bytes.Buffer, k string, v []fmt.Stringer
 	}
 }
 
+// queryFormatNumSlice formats slice of numbers for query
 func queryFormatNumSlice[T mathutil.Integer](buf *bytes.Buffer, v []T) {
 	for _, vv := range v {
 		buf.WriteString(queryFormatNumber(vv))
@@ -379,6 +388,7 @@ func queryFormatNumSlice[T mathutil.Integer](buf *bytes.Buffer, v []T) {
 	buf.Truncate(buf.Len() - 1)
 }
 
+// queryFormatNumSliceSplit formats slice of numbers for query with key
 func queryFormatNumSliceSplit[T mathutil.Integer](buf *bytes.Buffer, k string, v []T) {
 	buf.WriteString(queryFormatNumber(v[0]))
 
@@ -390,6 +400,7 @@ func queryFormatNumSliceSplit[T mathutil.Integer](buf *bytes.Buffer, k string, v
 	}
 }
 
+// queryFormatFloatSlice formats slice of floats for query
 func queryFormatFloatSlice[T mathutil.Float](buf *bytes.Buffer, v []T) {
 	for _, vv := range v {
 		buf.WriteString(queryFormatFloat(vv))
@@ -399,6 +410,7 @@ func queryFormatFloatSlice[T mathutil.Float](buf *bytes.Buffer, v []T) {
 	buf.Truncate(buf.Len() - 1)
 }
 
+// queryFormatFloatSliceSplit formats slice of floats for query with key
 func queryFormatFloatSliceSplit[T mathutil.Float](buf *bytes.Buffer, k string, v []T) {
 	buf.WriteString(queryFormatFloat(v[0]))
 

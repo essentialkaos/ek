@@ -288,7 +288,7 @@ func SetLimit(rps float64) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Init initializes engine
+// Init initializes engine and sets default values for Dialer, Transport and Client
 func (e *Engine) Init() *Engine {
 	if e.initialized {
 		return e
@@ -606,6 +606,7 @@ func (r *Response) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// doRequest sends request and process response
 func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	// Lazy engine initialization
 	if e != nil && !e.initialized {
@@ -677,7 +678,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// checkRequest checks request parameters
+// checkRequest checks request properties
 func checkRequest(r Request) error {
 	if r.URL == "" {
 		return ErrEmptyURL
