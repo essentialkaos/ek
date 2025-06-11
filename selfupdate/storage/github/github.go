@@ -21,7 +21,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Storage is github storage client
+// Storage is a storage for selfupdate that uses GitHub releases
 type Storage struct {
 	Org        string // Organization name
 	Repository string // Repository name
@@ -44,14 +44,14 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewStorage creates new storage instance
+// NewStorage creates a new Storage instance
 func NewStorage(org, repo string) *Storage {
 	return &Storage{Org: org, Repository: repo}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Check checks the storage to see if there's an update for the app
+// Check checks for updates in the storage
 func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, error) {
 	switch {
 	case s == nil:
@@ -99,7 +99,7 @@ func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, er
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestVersion fetches info about the latest version
+// getLatestVersion fetches the latest version from GitHub releases
 func (s *Storage) getLatestVersion() (string, error) {
 	var auth req.Auth
 

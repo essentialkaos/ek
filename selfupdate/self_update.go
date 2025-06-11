@@ -54,7 +54,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Update contains basic info about update
+// Update contains information about update
 type Update struct {
 	BinaryURL    string // URL of binary
 	SignatureURL string // URL of signature
@@ -88,7 +88,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Run updates current binary using given configuration
+// Run runs self-update process
 func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 	if pubKeyData == "" {
 		return dispatchError(dispatcher, ErrEmptyPubKey)
@@ -155,7 +155,7 @@ func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Validate validates update info
+// Validate checks if update info is valid
 func (i Update) Validate() error {
 	switch {
 	case len(i.Signature) == 0 && i.SignatureURL == "":
@@ -171,7 +171,7 @@ func (i Update) Validate() error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getBinaryPaths returns paths to current binary and update file
+// getBinaryPaths retrieves paths of current binary and update binary
 func getBinaryPaths() (string, string, error) {
 	curBinary, err := os.Executable()
 
@@ -200,7 +200,7 @@ func getBinaryPaths() (string, string, error) {
 	return curBinary, updBinary, nil
 }
 
-// parsePublicKey parses public key data
+// parsePublicKey parses ECDSA public key from PEM-encoded data
 func parsePublicKey(data string) (*ecdsa.PublicKey, error) {
 	pubKeyBlock, _ := pem.Decode([]byte(data))
 
@@ -223,7 +223,7 @@ func parsePublicKey(data string) (*ecdsa.PublicKey, error) {
 	return pubKey, nil
 }
 
-// downloadSignature downloads signature data from given URL
+// downloadSignature downloads ECDSA signature from the specified URL
 func downloadSignature(signatureURL string, dispatcher *events.Dispatcher) ([]byte, error) {
 	dispatcher.DispatchAndWait(EV_SIGNATURE_DOWNLOAD_START, nil)
 
@@ -257,7 +257,7 @@ func downloadSignature(signatureURL string, dispatcher *events.Dispatcher) ([]by
 	return data, nil
 }
 
-// parseSignature parses ASN.1-encoded signature
+// parseSignature parses ECDSA signature from ASN.1-encoded data
 func parseSignature(data []byte, dispatcher *events.Dispatcher) (*ecdsaSignature, error) {
 	dispatcher.DispatchAndWait(EV_SIGNATURE_PARSE_START, nil)
 
@@ -273,7 +273,7 @@ func parseSignature(data []byte, dispatcher *events.Dispatcher) (*ecdsaSignature
 	return signature, nil
 }
 
-// downloadBinary downloads binary
+// downloadBinary downloads binary from the specified URL and saves it to the output file
 func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher) (hashutil.Hash, error) {
 	dispatcher.DispatchAndWait(EV_BINARY_DOWNLOAD_START, nil)
 
@@ -308,7 +308,7 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 	return hash, nil
 }
 
-// validateSignature validates ECDSA signature
+// validateSignature validates ECDSA signature for the given hash using the provided public key
 func validateSignature(pubKey *ecdsa.PublicKey, signature *ecdsaSignature, hash hashutil.Hash, dispatcher *events.Dispatcher) bool {
 	dispatcher.DispatchAndWait(EV_BINARY_VERIFY_START, nil)
 
@@ -322,7 +322,7 @@ func validateSignature(pubKey *ecdsa.PublicKey, signature *ecdsaSignature, hash 
 	return false
 }
 
-// replaceBinary replaces current binary with the new one
+// replaceBinary replaces the current binary with the new binary
 func replaceBinary(curBinary, newBinary string, dispatcher *events.Dispatcher) error {
 	dispatcher.DispatchAndWait(EV_BINARY_REPLACE_START, nil)
 
@@ -355,8 +355,7 @@ func replaceBinary(curBinary, newBinary string, dispatcher *events.Dispatcher) e
 	return nil
 }
 
-// formatPubKey formats public key if it has short form (without prefix/suffix and
-// newlines)
+// formatPubKey formats the public key string to ensure it is in the correct PEM format
 func formatPubKey(key string) string {
 	if !strings.ContainsRune(key, '\n') {
 		key = strutil.Wrap(key, 64)
@@ -369,7 +368,7 @@ func formatPubKey(key string) string {
 	return key
 }
 
-// dispatchError dispatches event with error info
+// dispatchError dispatches an error event with the provided error message
 func dispatchError(dispatcher *events.Dispatcher, err error) error {
 	dispatcher.DispatchAndWait(EV_UPDATE_ERROR, err.Error())
 	return err

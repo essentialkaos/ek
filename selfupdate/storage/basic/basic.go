@@ -38,14 +38,14 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewStorage creates new storage instance
+// NewStorage creates a new Storage instance
 func NewStorage(url string) *Storage {
 	return &Storage{URL: url}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Check checks the storage to see if there's an update for the app
+// Check checks for updates in the storage
 func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, error) {
 	switch {
 	case s == nil:
@@ -91,7 +91,7 @@ func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, er
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestVersion fetches info about the latest version
+// getLatestVersion fetches the latest version of the application from the storage
 func (s *Storage) getLatestVersion(appName, appVersion string) (string, error) {
 	resp, err := req.Request{
 		URL:         s.URL + "/" + appName + "/latest.json",

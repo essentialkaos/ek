@@ -60,7 +60,7 @@ func Dispatcher() *events.Dispatcher {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// updateStart prints message about update start
+// updateStart prints message about start update process
 func updateStart(payload any) {
 	info, ok := payload.(selfupdate.Update)
 
@@ -95,34 +95,34 @@ func updateComplete(payload any) {
 	}
 }
 
-// signatureDownloadStart shows spinner with message about start signature download
+// signatureDownloadStart shows spinner with message about start ECDSA signature downloading
 func signatureDownloadStart(_ any) {
 	spinner.Show("Download ECDSA signature")
 }
 
-// signatureDownloadError stops spinner with message about signature download error
+// signatureDownloadError stops spinner with message about ECDSA signature downloading error
 func signatureDownloadError(_ any) {
 	spinner.Done(false)
 }
 
-// signatureDownloadComplete stops spinner with message about successfully downloaded
-// signature
+// signatureDownloadComplete stops spinner with message about successfully downloaded 
+// ECDSA signature
 func signatureDownloadComplete(_ any) {
 	spinner.Done(true)
 }
 
-// signatureParseStart shows spinner with message about start signature parsing
+// signatureParseStart shows spinner with message about start ECDSA signature parsing
 func signatureParseStart(_ any) {
 	spinner.Show("Parse ECDSA signature data")
 }
 
-// signatureParseError stops spinner with message about signature parsing error
+// signatureParseError stops spinner with message about ECDSA signature parsing error
 func signatureParseError(_ any) {
 	spinner.Done(false)
 }
 
 // signatureParseComplete stops spinner with message about successfully parsed
-// signature data
+// ECDSA signature
 func signatureParseComplete(_ any) {
 	spinner.Done(true)
 }
@@ -132,7 +132,7 @@ func binaryDownloadStart(_ any) {
 	spinner.Show("Download binary")
 }
 
-// binaryDownloadSize updates spinner with message and adds info about binary size
+// binaryDownloadSize updates spinner with message about binary downloading size
 func binaryDownloadSize(payload any) {
 	binarySize, ok := payload.(int64)
 
@@ -152,34 +152,35 @@ func binaryDownloadComplete(_ any) {
 	spinner.Done(true)
 }
 
-// binaryVerifyStart shows spinner with message about starting binary verification
+// binaryVerifyStart shows spinner with message about start binary ECDSA signature
+// verification
 func binaryVerifyStart(_ any) {
 	spinner.Show("Verify binary ECDSA signature")
 }
 
-// binaryVerifyError stops spinner with message about binary verification error
+// binaryVerifyError stops spinner with message about binary ECDSA signature verification error
 func binaryVerifyError(_ any) {
 	spinner.Done(false)
 }
 
-// binaryVerifyComplete stops spinner with message about successful binary
-// verification
+// binaryVerifyComplete stops spinner with message about successfully verified
+// binary ECDSA signature
 func binaryVerifyComplete(_ any) {
 	spinner.Done(true)
 }
 
-// binaryReplaceStart shows spinner with message about binary replacement
+// binaryReplaceStart shows spinner with message about start binary replacement
 func binaryReplaceStart(_ any) {
 	spinner.Show("Replace binary")
 }
 
-// binaryReplaceError stops spinner with message about binary replacement
+// binaryReplaceError stops spinner with message about binary replacement error
 func binaryReplaceError(_ any) {
 	spinner.Done(false)
 }
 
-// binaryReplaceComplete stops spinner with message about successful binary
-// replacement
+// binaryReplaceComplete stops spinner with message about successfully replaced
+// binary
 func binaryReplaceComplete(_ any) {
 	spinner.Done(true)
 }

@@ -29,9 +29,9 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Storage is an interface for update storage
+// Storage is an interface for storage
 type Storage interface {
-	// Check checks the storage to see if there's an update for the app
+	// Check checks for updates in the storage
 	Check(app, version string) (selfupdate.Update, bool, error)
 }
 
