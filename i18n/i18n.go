@@ -30,6 +30,7 @@ type Data map[string]any
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
+	// ErrNilBundle is returned when one or more provided bundles is nil
 	ErrNilBundle = fmt.Errorf("One or more provided bundles is nil")
 )
 

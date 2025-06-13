@@ -123,6 +123,7 @@ func secureStringFromStringPointer(data *string) (*String, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// destroySecureString destroys secure string data
 func destroySecureString(s *String) error {
 	if s.Data == nil {
 		return nil
@@ -154,7 +155,7 @@ func destroySecureString(s *String) error {
 	return nil
 }
 
-// clearByteSlice clears byte slice
+// clearByteSlice clears byte slice data
 func clearByteSlice(s []byte) {
 	for i := range s {
 		s[i] = 0

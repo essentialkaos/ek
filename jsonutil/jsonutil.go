@@ -45,6 +45,7 @@ func WriteGz(file string, v any, perms ...os.FileMode) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// readFile reads and decode JSON file
 func readFile(file string, v any, compress bool) error {
 	fd, err := os.Open(file)
 
@@ -57,6 +58,7 @@ func readFile(file string, v any, compress bool) error {
 	return readData(fd, v, compress)
 }
 
+// readData reads and decode JSON data from io.ReadWriter
 func readData(rw io.ReadWriter, v any, compress bool) error {
 	var err error
 	var dr io.Reader
@@ -76,6 +78,7 @@ func readData(rw io.ReadWriter, v any, compress bool) error {
 	return json.NewDecoder(dr).Decode(v)
 }
 
+// writeFile encodes data to JSON and save it to file
 func writeFile(file string, v any, perms []os.FileMode, compressed bool) error {
 	var perm os.FileMode = 0644
 
@@ -94,6 +97,7 @@ func writeFile(file string, v any, perms []os.FileMode, compressed bool) error {
 	return writeData(fd, v, compressed)
 }
 
+// writeData encodes data to JSON and writes it to io.ReadWriter
 func writeData(rw io.ReadWriter, v any, compressed bool) error {
 	var err error
 	var je *json.Encoder

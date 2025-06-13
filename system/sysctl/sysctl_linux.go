@@ -19,7 +19,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getParam reads kernel parameter from procfs
+// getParam reads kernel parameter from /proc/sys
 func getParam(param string) (string, error) {
 	p, err := os.ReadFile(path.Clean(path.Join(
 		procFS, strings.ReplaceAll(param, ".", "/"),
@@ -32,7 +32,7 @@ func getParam(param string) (string, error) {
 	return strings.Trim(string(p), "\n\r"), nil
 }
 
-// getParams reads all kernel parameters
+// getParams reads all kernel parameters from sysctl binary output
 func getParams() (Params, error) {
 	output, err := exec.Command(binary, "-a").Output()
 

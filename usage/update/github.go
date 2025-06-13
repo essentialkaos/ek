@@ -28,7 +28,7 @@ var githubAPI = "https://api.github.com"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitHubChecker checks new releases on GitHub
+// GitHubChecker checks for updates on GitHub
 func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
@@ -45,7 +45,7 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestGitHubRelease fetches the latest release from GitHub
+// getLatestGitHubRelease fetches the latest release from a GitHub repository
 func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	var auth req.Auth
 

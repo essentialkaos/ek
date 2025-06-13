@@ -9,7 +9,6 @@ package sliceutil
 
 import (
 	"errors"
-	"sort"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -26,30 +25,6 @@ type SliceSuite struct{}
 var _ = Suite(&SliceSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func (s *SliceSuite) TestCopy(c *C) {
-	var ss []string
-
-	c.Assert(Copy(ss), IsNil)
-
-	c.Assert(Copy([]string{"A"}), DeepEquals, []string{"A"})
-}
-
-func (s *SliceSuite) TestIsEqual(c *C) {
-	s1 := []int{1, 2, 3, 4}
-	s2 := []int{1, 2, 3, 4}
-	s3 := []int{1, 3, 2, 4}
-	s4 := []int{1, 2, 3}
-
-	var s5, s6 []int
-
-	c.Assert(IsEqual(s1, nil), Equals, false)
-	c.Assert(IsEqual(nil, s2), Equals, false)
-	c.Assert(IsEqual(s1, s2), Equals, true)
-	c.Assert(IsEqual(s1, s3), Equals, false)
-	c.Assert(IsEqual(s1, s4), Equals, false)
-	c.Assert(IsEqual(s5, s6), Equals, true)
-}
 
 func (s *SliceSuite) TestStringToInterface(c *C) {
 	source := []string{"1", "2", "3"}
@@ -88,22 +63,6 @@ func (s *SliceSuite) TestErrorToString(c *C) {
 	c.Assert(ErrorToString(source), DeepEquals, []string{"A", "B", "C"})
 }
 
-func (s *SliceSuite) TestIndex(c *C) {
-	source := []string{"1", "2", "3"}
-
-	c.Assert(Index(source, "2"), Equals, 1)
-	c.Assert(Index(source, "4"), Equals, -1)
-	c.Assert(Index([]string{}, "1"), Equals, -1)
-}
-
-func (s *SliceSuite) TestContains(c *C) {
-	source := []string{"1", "2", "3"}
-
-	c.Assert(Contains(source, "1"), Equals, true)
-	c.Assert(Contains(source, "4"), Equals, false)
-	c.Assert(Contains([]string{}, "1"), Equals, false)
-}
-
 func (s *SliceSuite) TestExclude(c *C) {
 	source := []string{"1", "2", "3", "4", "5", "6"}
 
@@ -111,18 +70,6 @@ func (s *SliceSuite) TestExclude(c *C) {
 	c.Assert(Exclude(source, "1"), DeepEquals, []string{"2", "3", "4", "5", "6"})
 	c.Assert(Exclude(source, "1", "3", "6"), DeepEquals, []string{"2", "4", "5"})
 	c.Assert(Exclude(source, "1", "2", "3", "4", "5", "6"), DeepEquals, []string{})
-}
-
-func (s *SliceSuite) TestDeduplicate(c *C) {
-	source1 := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
-	source2 := []string{"abc", "ABC", "A", "B", "C", "abc", "D", "E", "ABC"}
-
-	sort.Strings(source1)
-	sort.Strings(source2)
-
-	c.Assert(Deduplicate(source1), DeepEquals, []string{"1", "2", "3", "4", "5", "6"})
-	c.Assert(Deduplicate(source2), DeepEquals, []string{"A", "ABC", "B", "C", "D", "E", "abc"})
-	c.Assert(Deduplicate([]string{"1"}), DeepEquals, []string{"1"})
 }
 
 func (s *SliceSuite) TestJoin(c *C) {
@@ -201,14 +148,6 @@ func (s *SliceSuite) BenchmarkErrorToString(c *C) {
 
 	for range c.N {
 		ErrorToString(source)
-	}
-}
-
-func (s *SliceSuite) BenchmarkDeduplicate(c *C) {
-	source := []string{"1", "2", "2", "2", "3", "4", "5", "5", "6", "6"}
-
-	for range c.N {
-		Deduplicate(source)
 	}
 }
 

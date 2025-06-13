@@ -1,5 +1,26 @@
 ## Changelog
 
+### [13.29.0](https://kaos.sh/ek/13.29.0)
+
+- **`[selfupdate]`** Added new package for application self-update
+- **`[hashutil]`** Using `Hash` type instead of strings
+- **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
+- **`[spinner]`** Added support of different duration formats
+- **`[strutil]`** Added method `Wrap`
+- **`[color]`** Code refactoring
+- **`[cron]`** Code refactoring
+- **`[fmtutil]`** Code refactoring
+- **`[fmtutil/filetree]`** Code refactoring
+- **`[options]`** Code refactoring
+- **`[usage]`** Code refactoring
+- **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
+- **`[fmtc]`** Deprecated methods have been removed
+- **`[fsutil]`** Deprecated methods have been removed
+- **`[knf]`** Deprecated methods have been removed
+- **`[knf/validators]`** Deprecated validators have been removed
+- **`[log]`** Deprecated variables have been removed
+- **`[sliceutil]`** Deprecated methods have been removed
+
 ### [13.28.2](https://kaos.sh/ek/13.28.2)
 
 - **`[options]`** Improved support of `--` option (_POSIX standard convention that means "everything that follows is not an option"_)

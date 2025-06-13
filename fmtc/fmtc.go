@@ -93,13 +93,6 @@ var colorTermEnvVar = env.Var("COLORTERM")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NameColor defines or redifines named color
-//
-// Deprecated: Use method AddColor instead
-func NameColor(name, tag string) error {
-	return AddColor(name, tag)
-}
-
 // AddColor defines or redifines named color
 func AddColor(name, tag string) error {
 	if colorsMap == nil {
@@ -415,6 +408,7 @@ func IsTag(tag string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// tag2ANSI converts color tag to ANSI escape code
 func tag2ANSI(tag string, clean bool) string {
 	switch {
 	case clean:
@@ -481,6 +475,7 @@ func tag2ANSI(tag string, clean bool) string {
 	return fmt.Sprintf("\033[" + strutil.Substring(chars, 0, -1) + "m")
 }
 
+// parseExtendedColor parses extended color tag and returns ANSI code for it
 func parseExtendedColor(tag string) string {
 	if len(tag) == 7 {
 		hex := strings.TrimLeft(tag, "#%")
@@ -501,6 +496,7 @@ func parseExtendedColor(tag string) string {
 	return "\033[48;5;" + tag[1:] + "m"
 }
 
+// parseNamedColor parses named color tag and returns ANSI code for it
 func parseNamedColor(tag string, clean bool) string {
 	if colorsMap == nil || clean {
 		return ""
@@ -516,6 +512,7 @@ func parseNamedColor(tag string, clean bool) string {
 	return t.(string)
 }
 
+// getResetCode returns reset code for the given code
 func getResetCode(code int) string {
 	if code == codes['*'] {
 		code++
@@ -524,6 +521,7 @@ func getResetCode(code int) string {
 	return "2" + strconv.Itoa(code)
 }
 
+// replaceColorTags reads color tags from input and writes ANSI codes to output buffer
 func replaceColorTags(input, output *bytes.Buffer, clean bool) bool {
 	tag := bytes.NewBufferString("")
 
@@ -567,6 +565,8 @@ LOOP:
 	return false
 }
 
+// searchColors searches for color tags in the input text and replaces them with
+// ANSI escape codes. It limits the number of processed characters to 'limit'.
 func searchColors(text string, limit int, clean, close bool) string {
 	if text == "" {
 		return ""
@@ -605,6 +605,7 @@ func searchColors(text string, limit int, clean, close bool) string {
 	return output.String()
 }
 
+// applyColors applies color tags to the slice of data
 func applyColors(a *[]any, limit int, clean bool) {
 	for i, x := range *a {
 		if s, ok := x.(string); ok {
@@ -613,6 +614,7 @@ func applyColors(a *[]any, limit int, clean bool) {
 	}
 }
 
+// isValidSimpleTag checks if the tag is a valid simple color tag
 func isValidSimpleTag(tag string) bool {
 	switch {
 	case tag == "",
@@ -633,6 +635,7 @@ func isValidSimpleTag(tag string) bool {
 	return true
 }
 
+// isExtendedColorTag checks if the tag is an extended color tag
 func isExtendedColorTag(tag string) bool {
 	switch {
 	case len(tag) < 2,
@@ -644,10 +647,12 @@ func isExtendedColorTag(tag string) bool {
 	return true
 }
 
+// isValidTag checks if the given data is a valid color tag
 func isValidTag(tag string) bool {
 	return isValidSimpleTag(tag) || isValidExtendedTag(tag) || isValidNamedTag(tag)
 }
 
+// isValidExtendedTag checks if the given data is a valid extended color tag
 func isValidExtendedTag(tag string) bool {
 	if !isExtendedColorTag(tag) {
 		return false
@@ -671,10 +676,12 @@ func isValidExtendedTag(tag string) bool {
 	return true
 }
 
+// isNamedColorTag checks if the tag is a named color tag
 func isNamedColorTag(tag string) bool {
 	return len(tag) >= 2 && strings.HasPrefix(tag, "?")
 }
 
+// isValidNamedTag checks if the tag is a valid named color tag
 func isValidNamedTag(tag string) bool {
 	if !isNamedColorTag(tag) {
 		return false
@@ -695,6 +702,7 @@ func isValidNamedTag(tag string) bool {
 	return true
 }
 
+// checkForColorsSupport checks if terminal supports colored output
 func checkForColorsSupport() {
 	term := termEnvVar.Get()
 	colorTerm := colorTermEnvVar.Get()

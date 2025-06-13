@@ -86,13 +86,13 @@ func ExamplePrint() {
 	// pattern: [a-zA-Z0-9_]+
 
 	// Add new color with name "error"
-	NameColor("error", "{r}")
+	AddColor("error", "{r}")
 
 	// Print using named color
 	Print("{?error}lawngreen text{!}\n")
 
 	// Redefine "error" color to 24-bit color
-	NameColor("error", "{#ff0000}")
+	AddColor("error", "{#ff0000}")
 
 	// Remove named color
 	RemoveColor("error")
@@ -443,21 +443,21 @@ func ExampleIf() {
 	If(userIsAdmin).Println("You are admin!")
 }
 
-func ExampleNameColor() {
+func ExampleAddColor() {
 	// Add new color with name "error"
-	NameColor("error", "{r}")
+	AddColor("error", "{r}")
 
 	// Print a message with named color
 	Print("{?error}lawngreen text{!}\n")
 
 	// Redefine "error" color to 24-bit color
-	NameColor("error", "{#ff0000}")
+	AddColor("error", "{#ff0000}")
 
 	// Print a message with new color
 	Print("{?error}lawngreen text{!}\n")
 
 	// Create complex named color: pink, italic & underline
-	NameColor("notice", "{#ff728a}{_}{&}")
+	AddColor("notice", "{#ff728a}{_}{&}")
 
 	// Print a message with complex color
 	Print("{?notice}lawngreen text{!}\n")
@@ -465,7 +465,7 @@ func ExampleNameColor() {
 
 func ExampleRemoveColor() {
 	// Add new color with name "error"
-	NameColor("error", "{r}")
+	AddColor("error", "{r}")
 
 	// Print a message with named color
 	Print("{?error}lawngreen text{!}\n")

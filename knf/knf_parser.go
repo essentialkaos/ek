@@ -77,7 +77,7 @@ func readData(r io.Reader) (*Config, error) {
 
 		fullPropName := genPropName(section, propName)
 
-		if config.HasProp(fullPropName) {
+		if config.Has(fullPropName) {
 			return nil, fmt.Errorf("Error at line %d: Property %q defined more than once", lineNum, propName)
 		}
 
@@ -128,7 +128,7 @@ func evalMacros(value string, config *Config) (string, error) {
 	for _, macro := range macros {
 		full, section, prop := macro[0], macro[1], macro[2]
 
-		if !config.HasProp(genPropName(section, prop)) {
+		if !config.Has(genPropName(section, prop)) {
 			return "", fmt.Errorf("Unknown property %s", full)
 		}
 

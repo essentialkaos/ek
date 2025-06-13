@@ -70,7 +70,7 @@ func GetMountInfo(pid int) ([]*MountInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// parseMountInfoLine parses mount info from given line
+// parseMountInfoLine parses a single line from /proc/[pid]/mountinfo
 func parseMountInfoLine(data string) (*MountInfo, error) {
 	var err error
 
@@ -125,7 +125,7 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 	return info, nil
 }
 
-// parseStDevValue parses st_dev major and minor values
+// parseStDevValue parses st_dev value from mount info line
 func parseStDevValue(data string) (uint16, uint16, error) {
 	major, err := parseFieldUint16(strutil.ReadField(data, 0, false, ':'), "StDevMajor")
 
@@ -142,7 +142,7 @@ func parseStDevValue(data string) (uint16, uint16, error) {
 	return major, minor, nil
 }
 
-// parseFieldUint16 parses uint fields
+// parseFieldUint16 parses a field as uint16
 func parseFieldUint16(s, field string) (uint16, error) {
 	u, err := strconv.ParseUint(s, 10, 16)
 

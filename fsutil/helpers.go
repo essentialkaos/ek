@@ -187,6 +187,7 @@ func TouchFile(path string, perm os.FileMode) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// copyFile copies file using bufio with given permissions
 func copyFile(from, to string, perms os.FileMode) error {
 	from, to = path.Clean(from), path.Clean(to)
 
@@ -224,6 +225,8 @@ func copyFile(from, to string, perms os.FileMode) error {
 	return w.Flush()
 }
 
+// copyAttributes copies attributes (mode, ownership, timestamps) from one object
+// (file or directory) to another
 func copyAttributes(from, to string) error {
 	from, to = path.Clean(from), path.Clean(to)
 
@@ -290,6 +293,7 @@ func copyAttributes(from, to string) error {
 	return nil
 }
 
+// moveFile moves file with given permissions
 func moveFile(from, to string, perms os.FileMode) error {
 	from, to = path.Clean(from), path.Clean(to)
 
@@ -306,6 +310,7 @@ func moveFile(from, to string, perms os.FileMode) error {
 	return chmodFunc(to, perms)
 }
 
+// copyDir copies directory content recursively to target directory
 func copyDir(from, to string) error {
 	from, to = path.Clean(from), path.Clean(to)
 

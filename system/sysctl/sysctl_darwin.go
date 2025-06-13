@@ -16,7 +16,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getParam reads kernel parameter from procfs
+// getParam reads kernel parameter by name
 func getParam(param string) (string, error) {
 	output, err := exec.Command(binary, "-n", param).Output()
 

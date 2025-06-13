@@ -14,7 +14,6 @@ import (
 
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/lscolors"
-	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/sortutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
@@ -138,7 +137,7 @@ func (t *Tree) addFile(filePath string) {
 	dir := t.Root.createDir(dirPath)
 	dir.Files = append(dir.Files, fileName)
 
-	t.MaxDepth = mathutil.Max(t.MaxDepth, len(dirPath))
+	t.MaxDepth = max(t.MaxDepth, len(dirPath))
 }
 
 // createDir creates new directory structure or returns existing one

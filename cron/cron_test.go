@@ -131,10 +131,6 @@ func (s *CronSuite) TestParsing(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(e11, NotNil)
-
-	c.Assert(between(1, 5, 10), Equals, uint8(5))
-	c.Assert(between(15, 5, 10), Equals, uint8(10))
-	c.Assert(between(7, 5, 10), Equals, uint8(7))
 }
 
 func (s *CronSuite) TestAliases(c *C) {

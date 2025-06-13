@@ -146,7 +146,7 @@ func (b *binaryInfo) ServiceUnitPath() string {
 // IsBinInstalled returns true if current binary already installed
 func (b *binaryInfo) IsBinInstalled() bool {
 	return fsutil.IsExist(b.BinInstallPath()) &&
-		b.Checksum() == hashutil.File(b.BinInstallPath(), sha256.New())
+		b.Checksum() == hashutil.File(b.BinInstallPath(), sha256.New()).String()
 }
 
 // IsServiceInstalled returns true if service unit already installed
@@ -160,7 +160,7 @@ func (b *binaryInfo) Checksum() string {
 		return checksum
 	}
 
-	checksum = hashutil.File(b.File, sha256.New())
+	checksum = hashutil.File(b.File, sha256.New()).String()
 
 	return checksum
 }

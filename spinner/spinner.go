@@ -23,6 +23,14 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
+	DURATION_SHORT uint8 = iota
+	DURATION_MINI
+	DURATION_SIMPLE
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const (
 	_ACTION_DONE uint8 = iota
 	_ACTION_ERROR
 	_ACTION_SKIP
@@ -57,6 +65,9 @@ var SkipSymbol = "✔ "
 // DisableAnimation is global animation off switch flag
 var DisableAnimation = false
 
+// DurationFormat is format used for printing result action duration
+var DurationFormat = DURATION_SHORT
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var spinnerFrames = []string{"⠒", "⠲", "⠴", "⠤", "⠦", "⠇", "⠋", "⠉", "⠙", "⠸"}
@@ -84,7 +95,7 @@ var mu = &sync.RWMutex{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Show shows spinner with given task description
+// Show starts spinner animation and shows task description
 func Show(message string, args ...any) {
 	if isActive.Load() {
 		return
@@ -105,7 +116,7 @@ func Show(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Update updates task description
+// Update updates spinner description
 func Update(message string, args ...any) {
 	if !isActive.Load() || isHidden.Load() {
 		return
@@ -116,7 +127,7 @@ func Update(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Done finishes spinner animation and shows task status
+// Done finishes spinner animation and marks it as done
 func Done(ok bool) {
 	if !isActive.Load() {
 		return
@@ -129,7 +140,7 @@ func Done(ok bool) {
 	}
 }
 
-// Skip finishes spinner animation and mark it as skipped
+// Skip finishes spinner animation and marks it as skipped
 func Skip() {
 	if !isActive.Load() {
 		return
@@ -140,6 +151,7 @@ func Skip() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// showSpinner starts spinner animation in a separate goroutine
 func showSpinner() {
 	var i int
 
@@ -150,7 +162,7 @@ func showSpinner() {
 		mu.RLock()
 		fmtc.Printf(spinnerColorTag+"%s  {!}", spinnerFrames[i])
 		fmtc.Print(desc + "… ")
-		fmtc.Printf(timeColorTag+"[%s]{!}", timeutil.ShortDuration(time.Since(start)))
+		fmtc.Printf(timeColorTag+"[%s]{!}", timeutil.Pretty(time.Since(start)).Short(false))
 		mu.RUnlock()
 
 		i++
@@ -169,6 +181,7 @@ func showSpinner() {
 	}
 }
 
+// stopSpinner stops spinner animation and prints final message
 func stopSpinner(action uint8) {
 	isActive.Store(false)
 
@@ -195,11 +208,23 @@ func stopSpinner(action uint8) {
 	}
 
 	fmtc.Print(desc + " ")
-	fmtc.Printfn(timeColorTag+"(%s){!}", timeutil.ShortDuration(time.Since(start), true))
+	fmtc.Printfn(timeColorTag+"(%s){!}", formatDuration(time.Since(start)))
 
 	mu.RUnlock()
 
 	mu.Lock()
 	desc, start = "", time.Time{}
 	mu.Unlock()
+}
+
+// formatDuration formats duration based on the global DurationFormat setting
+func formatDuration(d time.Duration) string {
+	switch DurationFormat {
+	case DURATION_MINI:
+		return timeutil.Pretty(d).Mini("")
+	case DURATION_SIMPLE:
+		return timeutil.Pretty(d).Simple()
+	}
+
+	return timeutil.Pretty(d).Short(true)
 }

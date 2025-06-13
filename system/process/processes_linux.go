@@ -72,6 +72,7 @@ func GetList() ([]*ProcessInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// findInfo recursively searches for process info in the specified directory
 func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 	var result []*ProcessInfo
 
@@ -116,6 +117,7 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 	return result, nil
 }
 
+// readProcessInfo reads process info from the specified directory
 func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, error) {
 	pidInt, err := strconv.Atoi(pid)
 
@@ -161,6 +163,7 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 	}, nil
 }
 
+// getProcessUser returns username by UID
 func getProcessUser(uid int, userMap map[int]string) (string, error) {
 	if uid == 0 {
 		return "root", nil
@@ -181,6 +184,7 @@ func getProcessUser(uid int, userMap map[int]string) (string, error) {
 	return user.Name, nil
 }
 
+// getProcessParent returns parent PID and true if process is thread
 func getProcessParent(pidDir string, pid int) (int, bool) {
 	tgid, ppid := getParentPIDs(pidDir)
 
@@ -191,6 +195,7 @@ func getProcessParent(pidDir string, pid int) (int, bool) {
 	return ppid, false
 }
 
+// getParentPIDs reads /proc/[pid]/status file and returns Tgid and PPid
 func getParentPIDs(pidDir string) (int, int) {
 	data, err := os.ReadFile(pidDir + "/status")
 
@@ -228,6 +233,7 @@ func getParentPIDs(pidDir string) (int, int) {
 	return tgidInt, ppidInt
 }
 
+// formatCommand formats command string by normalizing delimiters and trimming spaces
 func formatCommand(cmd string) string {
 	// Normalize delimiters
 	command := strings.Replace(cmd, "\000", " ", -1)
@@ -238,6 +244,7 @@ func formatCommand(cmd string) string {
 	return command
 }
 
+// processListToTree converts a flat list of processes into a tree structure
 func processListToTree(processes []*ProcessInfo, root int) *ProcessInfo {
 	var result = make(map[int]*ProcessInfo)
 
@@ -262,6 +269,7 @@ func processListToTree(processes []*ProcessInfo, root int) *ProcessInfo {
 	return result[root]
 }
 
+// isPID checks if the given string is a valid PID
 func isPID(pid string) bool {
 	if pid == "" {
 		return false

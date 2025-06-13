@@ -102,6 +102,7 @@ func (r Retry) Validate() error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// doRequest tries to send request with retry logic
 func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, error) {
 	switch {
 	case rt == nil:

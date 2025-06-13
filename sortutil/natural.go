@@ -13,22 +13,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type naturalSlice []string
-
-func (s naturalSlice) Len() int           { return len(s) }
-func (s naturalSlice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s naturalSlice) Less(i, j int) bool { return NaturalLess(s[i], s[j]) }
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // StringsNatural sorts a slice of strings in natural order
 // Limitation: only ASCII digits (0-9) are considered.
-func StringsNatural(a []string) {
-	if len(a) <= 1 {
+func StringsNatural(s []string) {
+	if len(s) <= 1 {
 		return
 	}
 
-	sort.Sort(naturalSlice(a))
+	sort.Slice(s, func(i, j int) bool {
+		return NaturalLess(s[i], s[j])
+	})
 }
 
 // NaturalLess compares two strings using natural ordering. This means that e.g.
@@ -91,6 +85,7 @@ func NaturalLess(s1, s2 string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isDigit checks if a byte is a digit (0-9)
 func isDigit(b byte) bool {
 	switch b {
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':

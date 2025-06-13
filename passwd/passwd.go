@@ -26,6 +26,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Strength represents password strength
 type Strength uint8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -45,8 +46,13 @@ const (
 )
 
 var (
+	// ErrEmptyPassword is returned when password is empty
 	ErrEmptyPassword = errors.New("Password can't be empty")
+
+	// ErrEmptyPepper is returned when pepper is empty
 	ErrEmptyPepper   = errors.New("Pepper can't be empty")
+
+	// ErrInvalidPepper is returned when pepper has invalid size
 	ErrInvalidPepper = errors.New("Pepper has invalid size")
 )
 
@@ -253,6 +259,7 @@ func getStrength(s Strength) Strength {
 	return s
 }
 
+// padData adds padding to data to make its length a multiple of the AES block size
 func padData(src []byte) []byte {
 	padding := aes.BlockSize - len(src)%aes.BlockSize
 	padText := bytes.Repeat([]byte{byte(padding)}, padding)
@@ -260,6 +267,7 @@ func padData(src []byte) []byte {
 	return append(src, padText...)
 }
 
+// unpadData removes padding from data
 func unpadData(src []byte) ([]byte, bool) {
 	length := len(src)
 	unpadding := int(src[length-1])
@@ -271,6 +279,7 @@ func unpadData(src []byte) ([]byte, bool) {
 	return src[:(length - unpadding)], true
 }
 
+// addBase64Padding adds padding to base64 encoded data
 func addBase64Padding(src []byte) []byte {
 	m := len(src) % 4
 
@@ -288,10 +297,12 @@ func addBase64Padding(src []byte) []byte {
 	return buf
 }
 
+// removeBase64Padding removes padding from base64 encoded data
 func removeBase64Padding(src []byte) []byte {
 	return bytes.TrimRight(src, "=")
 }
 
+// getRandomPasswordBytes generates a random password of the specified length and strength
 func getRandomPasswordBytes(length int, strength Strength) []byte {
 	if length == 0 {
 		return nil
@@ -326,6 +337,7 @@ func getRandomPasswordBytes(length int, strength Strength) []byte {
 	}
 }
 
+// isValidPepper checks if the pepper has a valid size for AES encryption
 func isValidPepper(pepper []byte) bool {
 	switch len(pepper) {
 	case 16, 24, 32:
@@ -335,6 +347,8 @@ func isValidPepper(pepper []byte) bool {
 	return false
 }
 
+// genVariantFlipAll generates a password variant with all letters
+// flipped (case swap)
 func genVariantFlipAll(password []byte) []byte {
 	result := make([]byte, len(password))
 
@@ -345,6 +359,8 @@ func genVariantFlipAll(password []byte) []byte {
 	return result
 }
 
+// genVariantFlipFirst generates a password variant with the first letter
+// flipped (case swap)
 func genVariantFlipFirst(password []byte) []byte {
 	result := make([]byte, len(password))
 
@@ -355,10 +371,12 @@ func genVariantFlipFirst(password []byte) []byte {
 	return result
 }
 
+// genVariantTrimLast generates a password variant with the last symbol trimmed
 func genVariantTrimLast(password []byte) []byte {
 	return append(password[:0:0], password[:len(password)-1]...)
 }
 
+// flipCase flips the case of a single byte
 func flipCase(b byte) byte {
 	s := string(b)
 	sc := strings.ToLower(s)

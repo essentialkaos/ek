@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/errors"
+	"github.com/essentialkaos/ek/v13/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -673,6 +674,7 @@ func (o optionName) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// parseOptions parses slice with raw options data
 func (o *Options) parseOptions(data []string) (Arguments, errors.Errors) {
 	o.prepare()
 
@@ -781,6 +783,8 @@ LOOP:
 	return arguments, errs
 }
 
+// parseLongOption parses long option (started with --) and returns option name
+// and value
 func (o *Options) parseLongOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
 		optName, optValue, ok := strings.Cut(opt, "=")
@@ -803,6 +807,8 @@ func (o *Options) parseLongOption(opt string) (string, string, error) {
 	return "", "", OptionError{"--" + opt, "", ERROR_UNSUPPORTED}
 }
 
+// parseShortOption parses short option (started with -) and returns option name
+// and value
 func (o *Options) parseShortOption(opt string) (string, string, error) {
 	if strings.Contains(opt, "=") {
 		optName, optValue, ok := strings.Cut(opt, "=")
@@ -838,6 +844,7 @@ func (o *Options) prepare() {
 	}
 }
 
+// validate checks options for errors
 func (o *Options) validate() errors.Errors {
 	var errs errors.Errors
 
@@ -880,12 +887,14 @@ func (o *Options) validate() errors.Errors {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// initOptions initializes options struct
 func initOptions(opts *Options) {
 	opts.full = make(Map)
 	opts.short = make(map[string]string)
 	opts.initialized = true
 }
 
+// parseName parses option name and returns long and short names
 func parseName(name string) optionName {
 	short, long, ok := strings.Cut(name, ":")
 
@@ -896,6 +905,7 @@ func parseName(name string) optionName {
 	return optionName{long, short}
 }
 
+// parseOptionsList parses options list and returns slice with option names
 func parseOptionsList(list any) ([]optionName, bool) {
 	var result []optionName
 
@@ -920,6 +930,7 @@ func parseOptionsList(list any) ([]optionName, bool) {
 	return result, true
 }
 
+// formatOptionsList formats options list to string
 func formatOptionsList(list any) string {
 	opts, ok := parseOptionsList(list)
 
@@ -937,6 +948,7 @@ func formatOptionsList(list any) string {
 	return fmt.Sprintf("%v", opts)
 }
 
+// updateOption updates option value in options map
 func updateOption(opt *V, name, value string) error {
 	switch opt.Type {
 	case STRING, MIXED:
@@ -955,6 +967,7 @@ func updateOption(opt *V, name, value string) error {
 	return fmt.Errorf("Option %q has unsupported type", Format(name))
 }
 
+// updateStringOption updates string option value
 func updateStringOption(opt *V, value string) error {
 	if opt.set && opt.Mergeble {
 		opt.Value = opt.Value.(string) + MergeSymbol + value
@@ -966,6 +979,7 @@ func updateStringOption(opt *V, value string) error {
 	return nil
 }
 
+// updateBooleanOption updates boolean option value
 func updateBooleanOption(opt *V) error {
 	opt.Value = true
 	opt.set = true
@@ -973,6 +987,7 @@ func updateBooleanOption(opt *V) error {
 	return nil
 }
 
+// updateFloatOption updates float option value
 func updateFloatOption(name string, opt *V, value string) error {
 	floatValue, err := strconv.ParseFloat(value, 64)
 
@@ -983,7 +998,7 @@ func updateFloatOption(name string, opt *V, value string) error {
 	var resultFloat float64
 
 	if opt.Min != opt.Max {
-		resultFloat = betweenFloat(floatValue, opt.Min, opt.Max)
+		resultFloat = mathutil.Between(floatValue, opt.Min, opt.Max)
 	} else {
 		resultFloat = floatValue
 	}
@@ -998,6 +1013,7 @@ func updateFloatOption(name string, opt *V, value string) error {
 	return nil
 }
 
+// updateIntOption updates integer option value
 func updateIntOption(name string, opt *V, value string) error {
 	intValue, err := strconv.Atoi(value)
 
@@ -1008,7 +1024,7 @@ func updateIntOption(name string, opt *V, value string) error {
 	var resultInt int
 
 	if opt.Min != opt.Max {
-		resultInt = betweenInt(intValue, int(opt.Min), int(opt.Max))
+		resultInt = mathutil.Between(intValue, int(opt.Min), int(opt.Max))
 	} else {
 		resultInt = intValue
 	}
@@ -1023,6 +1039,7 @@ func updateIntOption(name string, opt *V, value string) error {
 	return nil
 }
 
+// sliceToArguments converts slice of strings to Arguments type
 func sliceToArguments(data []string) Arguments {
 	var result Arguments
 
@@ -1033,6 +1050,7 @@ func sliceToArguments(data []string) Arguments {
 	return result
 }
 
+// appendError appends error to errors slice
 func appendError(errs errors.Errors, err error) errors.Errors {
 	if err == nil {
 		return errs
@@ -1041,28 +1059,7 @@ func appendError(errs errors.Errors, err error) errors.Errors {
 	return append(errs, err)
 }
 
-func betweenInt(val, min, max int) int {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
-}
-
-func betweenFloat(val, min, max float64) float64 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
-}
-
+// isSupportedType checks if value has supported type for options
 func isSupportedType(v any) bool {
 	switch v.(type) {
 	case nil, string, bool, int, float64:
@@ -1072,6 +1069,7 @@ func isSupportedType(v any) bool {
 	return false
 }
 
+// guessType guesses type of value based on its type
 func guessType(v any) uint8 {
 	switch v.(type) {
 	case string:
@@ -1089,6 +1087,7 @@ func guessType(v any) uint8 {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Error returns string representation of OptionError
 func (e OptionError) Error() string {
 	switch e.Type {
 	default:

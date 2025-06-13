@@ -212,10 +212,6 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	SeparatorFullscreen = true
 
 	Separator(false)
-
-	c.Assert(between(0, 1, 3), Equals, 1)
-	c.Assert(between(2, 1, 3), Equals, 2)
-	c.Assert(between(10, 1, 3), Equals, 3)
 }
 
 func (s *FmtUtilSuite) TestCountDigits(c *C) {

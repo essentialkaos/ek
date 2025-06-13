@@ -48,7 +48,7 @@ func PluralizeSpecial[N mathutil.Numeric](p Pluralizer, n N, data ...string) str
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// safeSliceGet returns value from slice with given index
+// safeSliceGet safely retrieves an element from a slice by index
 func safeSliceGet(data []string, index int) string {
 	if len(data) < index {
 		return ""
@@ -57,7 +57,7 @@ func safeSliceGet(data []string, index int) string {
 	return data[index]
 }
 
-// convertNumber converts numeric to uint64
+// convertNumber converts any numeric type to uint64
 func convertNumber(n any) uint64 {
 	switch u := n.(type) {
 	case int:

@@ -1570,6 +1570,7 @@ func Emojize(text string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// emojiReplacer replaces emoji code by emoji symbol
 func emojiReplacer(text string) string {
 	emoji, ok := data[strutil.Substring(text, 1, -1)]
 

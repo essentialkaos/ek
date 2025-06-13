@@ -58,6 +58,7 @@ func IsEnabled(name string) (bool, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getLaunchdStatus returns service status in Launchd
 func getLaunchdStatus(name string) (bool, bool, error) {
 	output, err := exec.Command("launchctl", "list").Output()
 
@@ -70,6 +71,7 @@ func getLaunchdStatus(name string) (bool, bool, error) {
 	return isExist, isWorks, nil
 }
 
+// parseLaunchdOutput parses output of `launchctl list` command
 func parseLaunchdOutput(data []byte, name string) (bool, bool) {
 	buf := bytes.NewBuffer(data)
 

@@ -41,7 +41,7 @@ func UpdateChecker(app, version, data string) (string, time.Time, bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLastReleaseInfo fetches info about the latest version
+// getLastReleaseInfo fetches the latest release information from the storage
 func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	engine := req.Engine{}
 
@@ -69,7 +69,7 @@ func getLastReleaseInfo(app, version, storage string) *ReleaseInfo {
 	return release
 }
 
-// isUpdateCheckRequired checks if update check is required
+// isUpdateCheckRequired checks if the update check is required
 func isUpdateCheckRequired() bool {
 	return !(os.Getenv("CI") == "true" && os.Getenv("EK_TEST_PORT") == "")
 }

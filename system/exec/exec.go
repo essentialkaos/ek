@@ -29,7 +29,7 @@ func Sudo(user string, args ...string) error {
 	return Run("sudo", cmdArgs...)
 }
 
-// Run executes command
+// Run executes command with arguments
 func Run(command string, args ...string) error {
 	var cmd = exec.Command(command)
 
@@ -38,7 +38,7 @@ func Run(command string, args ...string) error {
 	return cmd.Run()
 }
 
-// RunAsUser runs command as a given user
+// RunAsUser executes command as specified user
 func RunAsUser(user, logFile, command string, args ...string) error {
 	var logFd *os.File
 	var err error

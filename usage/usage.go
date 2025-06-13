@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/version"
 )
@@ -59,14 +58,16 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Environment is a slice with environment variables
 type Environment []EnvironmentInfo
 
+// EnvironmentInfo contains info about environment variable
 type EnvironmentInfo struct {
 	Name    string
 	Version string
 }
 
-// About contains info about app
+// About contains info about application
 type About struct {
 	App        string // App is app name
 	Version    string // Version is current app version in semver notation
@@ -791,7 +792,7 @@ func getMaxCommandSize(commands []*Command, group string) int {
 			continue
 		}
 
-		size = mathutil.Max(size, getCommandSize(command)+2)
+		size = max(size, getCommandSize(command)+2)
 	}
 
 	return size
@@ -802,7 +803,7 @@ func getMaxOptionSize(options []*Option) int {
 	var size int
 
 	for _, option := range options {
-		size = mathutil.Max(size, getOptionSize(option)+2)
+		size = max(size, getOptionSize(option)+2)
 	}
 
 	return size
@@ -813,7 +814,7 @@ func getMaxEnvVarSize(envVars []*Env) int {
 	var size int
 
 	for _, env := range envVars {
-		size = mathutil.Max(size, strutil.Len(env.Name)+2)
+		size = max(size, strutil.Len(env.Name)+2)
 	}
 
 	return size
@@ -915,9 +916,9 @@ func printNewVersionInfo(curVersion, newVersion string, releaseDate time.Time) {
 	}
 }
 
-// wrapText wraps long text
+// wrapText wraps text to the specified length with indentation
 func wrapText(text string, indent, maxLen int) string {
-	size := mathutil.Max(_DEFAULT_WRAP_LEN, maxLen) - indent
+	size := max(_DEFAULT_WRAP_LEN, maxLen) - indent
 
 	if strutil.LenVisual(fmtc.Clean(text)) <= size {
 		return text

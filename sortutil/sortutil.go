@@ -16,28 +16,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type versionSlice []string
-type stringSlice []string
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-func (s versionSlice) Len() int      { return len(s) }
-func (s versionSlice) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
-func (s versionSlice) Less(i, j int) bool {
-	return VersionCompare(s[i], s[j])
-}
-
-func (s stringSlice) Len() int      { return len(s) }
-func (s stringSlice) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
-func (s stringSlice) Less(i, j int) bool {
-	return strings.ToLower(s[i]) < strings.ToLower(s[j])
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Versions sorts versions slice
+// Versions sorts a slice of version strings in ascending order
 func Versions(s []string) {
-	sort.Sort(versionSlice(s))
+	sort.Slice(s, func(i, j int) bool {
+		return VersionCompare(s[i], s[j])
+	})
 }
 
 // VersionCompare compares 2 versions and returns true if v1 less v2. This function
@@ -48,13 +31,9 @@ func VersionCompare(v1, v2 string) bool {
 
 	il, jl := len(is), len(js)
 
-	l := il
+	l := max(jl, il)
 
-	if jl > l {
-		l = jl
-	}
-
-	for k := 0; k < l; k++ {
+	for k := range l {
 		switch {
 		case il-1 < k:
 			return true
@@ -86,9 +65,12 @@ func VersionCompare(v1, v2 string) bool {
 
 // Strings sorts strings slice and support case insensitive mode
 func Strings(s []string, caseInsensitive bool) {
-	if caseInsensitive {
-		sort.Sort(stringSlice(s))
-	} else {
+	if !caseInsensitive {
 		sort.Strings(s)
+		return
 	}
+
+	sort.Slice(s, func(i, j int) bool {
+		return strings.ToLower(s[i]) < strings.ToLower(s[j])
+	})
 }

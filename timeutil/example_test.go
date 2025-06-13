@@ -14,39 +14,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExamplePrettyDuration() {
-	// you can use int/int64/uint as seconds...
-	fmt.Println(PrettyDuration(300))
-
-	// ...or time.Duration types
-	fmt.Println(PrettyDuration(123456 * time.Second))
-
-	// Output:
-	// 5 minutes
-	// 1 day 10 hours 17 minutes and 36 seconds
-}
-
-func ExamplePrettyDurationSimple() {
-	// you can use int/int64/uint as seconds...
-	fmt.Println(PrettyDurationSimple(300))
-
-	// ...or time.Duration types
-	fmt.Println(PrettyDurationSimple(50400 * time.Second))
-
-	// Output:
-	// 5 minutes
-	// 14 hours
-}
-
-func ExamplePrettyDurationInDays() {
-	fmt.Println(PrettyDurationInDays(2 * time.Hour))
-	fmt.Println(PrettyDurationInDays(168 * HOUR))
-
-	// Output:
-	// 1 day
-	// 7 days
-}
-
 func ExampleParseDuration() {
 	d, _ := ParseDuration("2w3d10h20m35s")
 
@@ -63,37 +30,6 @@ func ExampleFormat() {
 
 	// Output:
 	// Tuesday 15/Jun/2010 15:30:45.000001234
-}
-
-func ExampleShortDuration() {
-	fmt.Println(ShortDuration(time.Second * 85))
-	fmt.Println(ShortDuration(3215*time.Millisecond, true))
-
-	// Output:
-	// 1:25
-	// 0:03.215
-}
-
-func ExampleMiniDuration() {
-	fmt.Println(MiniDuration(36 * HOUR))
-	fmt.Println(MiniDuration(18 * time.Second))
-	fmt.Println(MiniDuration(time.Second / 125))
-
-	// You can remove or change separator
-	fmt.Println(MiniDuration(time.Second/2000, ""))
-
-	// Output:
-	// 2 d
-	// 18 s
-	// 8 ms
-	// 500μs
-}
-
-func ExampleDurationToSeconds() {
-	fmt.Println(DurationToSeconds(2500 * time.Millisecond))
-
-	// Output:
-	// 2.5
 }
 
 func ExampleSecondsToDuration() {
@@ -367,6 +303,92 @@ func ExampleParseWithAny() {
 
 	// Output:
 	// 1988-12-06 00:00:00 +0000 UTC <nil>
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExamplePretty() {
+	d1 := Pretty(time.Second * 850) // You can use time.Duration
+	d2 := Pretty(1250)              // or any number (int/float) type
+	d3 := Pretty("2h45m15s")        // or duration notation
+
+	fmt.Println(d1)
+	fmt.Println(d2)
+	fmt.Println(d3)
+
+	// Output:
+	// 14 minutes and 10 seconds
+	// 20 minutes and 50 seconds
+	// 2 hours 45 minutes and 15 seconds
+}
+
+func ExampleDuration_Short() {
+	d1 := Pretty(time.Millisecond * 850) // You can use time.Duration
+	d2 := Pretty(1250)                   // or any number (int/float) type
+	d3 := Pretty("2h45m15s")             // or duration notation
+
+	fmt.Println(d1.Short(true))
+	fmt.Println(d2.Short())
+	fmt.Println(d3.Short())
+
+	// Output:
+	// 0:00.850
+	// 20:50
+	// 2:45:15
+}
+
+func ExampleDuration_Mini() {
+	d1 := Pretty(time.Millisecond * 850) // You can use time.Duration
+	d2 := Pretty(12)                     // or any number (int/float) type
+	d3 := Pretty("25m")                  // or duration notation
+
+	fmt.Println(d1.Mini())
+	fmt.Println(d2.Mini(""))
+	fmt.Println(d3.Mini(""))
+
+	// Output:
+	// 850 ms
+	// 12s
+	// 25m
+}
+
+func ExampleDuration_Simple() {
+	d1 := Pretty(time.Millisecond * 850) // You can use time.Duration
+	d2 := Pretty(12)                     // or any number (int/float) type
+	d3 := Pretty("25m")                  // or duration notation
+
+	fmt.Println(d1.Simple())
+	fmt.Println(d2.Simple())
+	fmt.Println(d3.Simple())
+
+	// Output:
+	// < 1 second
+	// 12 seconds
+	// 25 minutes
+}
+
+func ExampleDuration_String() {
+	d1 := Pretty(time.Millisecond * 850) // You can use time.Duration
+	d2 := Pretty(1234567)                // or any number (int/float) type
+	d3 := Pretty("1d7h25m13s")           // or duration notation
+
+	fmt.Println(d1)
+	fmt.Println(d2)
+	fmt.Println(d3)
+
+	// Output:
+	// 850 ms
+	// 2 weeks 6 hours 56 minutes and 7 seconds
+	// 1 day 7 hours 25 minutes and 13 seconds
+}
+
+func ExampleDuration_InDays() {
+	d := Pretty(time.Hour * 917)
+
+	fmt.Println(d.InDays())
+
+	// Output:
+	// 38 days
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

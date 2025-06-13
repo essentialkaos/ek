@@ -465,7 +465,7 @@ func (i *Info) appendBuildInfo() {
 	}
 
 	bin, _ := os.Executable()
-	binSHA := hashutil.File(bin, sha256.New())
+	binSHA := hashutil.File(bin, sha256.New()).String()
 	info, ok := buildInfoProvider()
 
 	if ok {

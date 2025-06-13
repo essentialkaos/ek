@@ -69,6 +69,7 @@ func Replace(from, to string) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// changeArgument changes argument in os.Args slice
 func changeArgument(index int, newArg string) {
 	argStrHr := (*reflect.StringHeader)(unsafe.Pointer(&os.Args[index]))
 	arg := (*[1 << 30]byte)(unsafe.Pointer(argStrHr.Data))[:argStrHr.Len]
