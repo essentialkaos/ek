@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/errors"
+	"github.com/essentialkaos/ek/v13/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -997,7 +998,7 @@ func updateFloatOption(name string, opt *V, value string) error {
 	var resultFloat float64
 
 	if opt.Min != opt.Max {
-		resultFloat = betweenFloat(floatValue, opt.Min, opt.Max)
+		resultFloat = mathutil.Between(floatValue, opt.Min, opt.Max)
 	} else {
 		resultFloat = floatValue
 	}
@@ -1023,7 +1024,7 @@ func updateIntOption(name string, opt *V, value string) error {
 	var resultInt int
 
 	if opt.Min != opt.Max {
-		resultInt = betweenInt(intValue, int(opt.Min), int(opt.Max))
+		resultInt = mathutil.Between(intValue, int(opt.Min), int(opt.Max))
 	} else {
 		resultInt = intValue
 	}
@@ -1056,30 +1057,6 @@ func appendError(errs errors.Errors, err error) errors.Errors {
 	}
 
 	return append(errs, err)
-}
-
-// betweenInt ensures that integer value is between min and max values
-func betweenInt(val, min, max int) int {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
-}
-
-// betweenFloat ensures that float value is between min and max values
-func betweenFloat(val, min, max float64) float64 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
 }
 
 // isSupportedType checks if value has supported type for options
