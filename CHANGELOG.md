@@ -7,6 +7,7 @@
 - **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
 - **`[spinner]`** Added support of different duration formats
 - **`[strutil]`** Added method `Wrap`
+- **`[cron]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed

@@ -11,6 +11,7 @@ package cron
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -156,23 +157,23 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 		t = time.Now()
 	}
 
-	if !contains(e.minutes, uint8(t.Minute())) {
+	if !slices.Contains(e.minutes, uint8(t.Minute())) {
 		return false
 	}
 
-	if !contains(e.hours, uint8(t.Hour())) {
+	if !slices.Contains(e.hours, uint8(t.Hour())) {
 		return false
 	}
 
-	if !contains(e.doms, uint8(t.Day())) {
+	if !slices.Contains(e.doms, uint8(t.Day())) {
 		return false
 	}
 
-	if !contains(e.months, uint8(t.Month())) {
+	if !slices.Contains(e.months, uint8(t.Month())) {
 		return false
 	}
 
-	if !contains(e.dows, uint8(t.Weekday())) {
+	if !slices.Contains(e.dows, uint8(t.Weekday())) {
 		return false
 	}
 
@@ -221,7 +222,7 @@ func (e *Expr) Next(args ...time.Time) time.Time {
 							uint8(d.Day()) != e.doms[j],
 							uint8(d.Hour()) != e.hours[k],
 							uint8(d.Minute()) != e.minutes[l],
-							!contains(e.dows, uint8(d.Weekday())):
+							!slices.Contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -281,7 +282,7 @@ func (e *Expr) Prev(args ...time.Time) time.Time {
 							uint8(d.Day()) != e.doms[j],
 							uint8(d.Hour()) != e.hours[k],
 							uint8(d.Minute()) != e.minutes[l],
-							!contains(e.dows, uint8(d.Weekday())):
+							!slices.Contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -558,15 +559,4 @@ func between(val, min, max uint8) uint8 {
 	default:
 		return val
 	}
-}
-
-// contains checks if a slice of uint8 contains a specific item
-func contains(data []uint8, item uint8) bool {
-	for _, v := range data {
-		if item == v {
-			return true
-		}
-	}
-
-	return false
 }
