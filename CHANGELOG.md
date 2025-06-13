@@ -7,6 +7,7 @@
 - **`[timeutil]`** Added `time.Duration` wrapper for printing pretty duration
 - **`[spinner]`** Added support of different duration formats
 - **`[strutil]`** Added method `Wrap`
+- **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
 - **`[options]`** Code refactoring

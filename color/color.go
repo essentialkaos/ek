@@ -562,7 +562,7 @@ func Term2RGB(c uint8) RGB {
 // RGB2CMYK converts RGB color to CMYK
 func RGB2CMYK(c RGB) CMYK {
 	R, G, B := float64(c.R)/255.0, float64(c.G)/255.0, float64(c.B)/255.0
-	K := 1.0 - math.Max(math.Max(R, G), B)
+	K := 1.0 - max(max(R, G), B)
 
 	return CMYK{
 		calcCMYKColor(R, K),
@@ -683,8 +683,8 @@ func Contrast(fg, bg Hex) float64 {
 func rgbToHsv(r, g, b uint8) (float64, float64, float64) {
 	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
 
-	max := math.Max(math.Max(R, G), B)
-	min := math.Min(math.Min(R, G), B)
+	max := max(max(R, G), B)
+	min := min(min(R, G), B)
 
 	h, s, v := 0.0, 0.0, max
 
@@ -730,8 +730,8 @@ func hsvToRgb(h, s, v float64) (uint8, uint8, uint8) {
 func rgbToHsl(r, g, b uint8) (float64, float64, float64) {
 	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
 
-	max := math.Max(math.Max(R, G), B)
-	min := math.Min(math.Min(R, G), B)
+	max := max(max(R, G), B)
+	min := min(min(R, G), B)
 
 	h, s, l := 0.0, 0.0, (min+max)/2.0
 
