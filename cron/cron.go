@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
@@ -378,8 +379,8 @@ func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
 	}
 
 	return fillUintSlice(
-		between(t1, ei.min, ei.max),
-		between(t2, ei.min, ei.max),
+		mathutil.Between(t1, ei.min, ei.max),
+		mathutil.Between(t2, ei.min, ei.max),
 		1,
 	), nil
 }
@@ -547,16 +548,4 @@ func getNearPrevIndex(items []uint8, item uint8) int {
 	}
 
 	return len(items) - 1
-}
-
-// between ensures that a value is within a specified range [min, max].
-func between(val, min, max uint8) uint8 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
 }
