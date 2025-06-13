@@ -11,6 +11,7 @@
 - **`[cron]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
 - **`[options]`** Code refactoring
+- **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed
