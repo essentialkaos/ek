@@ -109,24 +109,6 @@ func Between[N Numeric](val, min, max N) N {
 	}
 }
 
-// Min returns a smaller value
-func Min[N Numeric](val1, val2 N) N {
-	if val1 < val2 {
-		return val1
-	}
-
-	return val2
-}
-
-// Max returns a greater value
-func Max[N Numeric](val1, val2 N) N {
-	if val1 > val2 {
-		return val1
-	}
-
-	return val2
-}
-
 // Abs returns absolute value
 func Abs[N NumericNeg](val N) N {
 	if val < 0 {
@@ -165,6 +147,22 @@ func Round(v float64, p int) float64 {
 	}
 
 	return math.Floor(digit) / pow
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Min returns a smaller value
+//
+// Deprecated: Use built-in method min instead
+func Min[N Numeric](val1, val2 N) N {
+	return min(val1, val2)
+}
+
+// Max returns a greater value
+//
+// Deprecated: Use built-in method max instead
+func Max[N Numeric](val1, val2 N) N {
+	return max(val1, val2)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
