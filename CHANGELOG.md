@@ -10,6 +10,7 @@
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
+- **`[fmtutil/filetree]`** Code refactoring
 - **`[options]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
