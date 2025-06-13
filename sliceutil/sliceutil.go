@@ -78,7 +78,7 @@ func ErrorToString(data []error) []string {
 	return result
 }
 
-// Exclude removes items from slice
+// Exclude removes all items from the first slice that are present in the second slice
 func Exclude[K comparable](slice []K, items ...K) []K {
 	var n int
 

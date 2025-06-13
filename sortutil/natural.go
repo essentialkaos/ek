@@ -85,6 +85,7 @@ func NaturalLess(s1, s2 string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isDigit checks if a byte is a digit (0-9)
 func isDigit(b byte) bool {
 	switch b {
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':

@@ -124,7 +124,7 @@ func (o Options) Has(option Option) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// renderPanel renders panel
+// renderPanel renders panel with given label, color tag, title, and message
 func renderPanel(label, colorTag, title, message string, options Options) {
 	var buf *bytes.Buffer
 

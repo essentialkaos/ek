@@ -34,8 +34,13 @@ var binMore = "more"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
+	// ErrAlreadySet is returned when pager is already set
 	ErrAlreadySet = errors.New("Pager already set")
+
+	// ErrNoPager is returned when pager is not found
 	ErrNoPager    = errors.New("There is no pager on the system")
+	
+	// ErrStdinPipe is returned when we can't get stdin pipe for pager
 	ErrStdinPipe  = errors.New("Can't get pager stdin")
 )
 

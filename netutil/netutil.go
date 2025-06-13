@@ -40,6 +40,7 @@ func GetAllIP6() []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getAllIP returns all IP addresses (IPv4 or IPv6)
 func getAllIP(v6 bool) []string {
 	interfaces, err := net.Interfaces()
 
@@ -68,6 +69,7 @@ func getAllIP(v6 bool) []string {
 	return result
 }
 
+// getMainIP returns main IP address (IPv4 or IPv6)
 func getMainIP(v6 bool) string {
 	interfaces, err := net.Interfaces()
 

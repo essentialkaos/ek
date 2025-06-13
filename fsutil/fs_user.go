@@ -17,6 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getCurrentUser returns the current user information
 func getCurrentUser() (*system.User, error) {
 	return system.CurrentUser()
 }

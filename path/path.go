@@ -23,6 +23,7 @@ var ErrBadPattern = errors.New("Syntax error in pattern")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// pathSeparator is a string representation of the filepath separator
 var pathSeparator = string(filepath.Separator)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -174,6 +175,7 @@ func IsGlob(pattern string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// dirNRight returns the path to the Nth directory from the right
 func dirNRight(path string, n int) string {
 	if path[0] == filepath.Separator {
 		n++
@@ -194,6 +196,7 @@ func dirNRight(path string, n int) string {
 	return path
 }
 
+// dirNLeft returns the path to the Nth directory from the left
 func dirNLeft(path string, n int) string {
 	if path[len(path)-1] == filepath.Separator {
 		n++
@@ -214,6 +217,7 @@ func dirNLeft(path string, n int) string {
 	return path
 }
 
+// evalHome evaluates the home directory in the given path
 func evalHome(path string) string {
 	if path == "" || path[0:1] != "~" {
 		return path

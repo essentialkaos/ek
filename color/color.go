@@ -19,17 +19,20 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Hex represents a color in hex format
 type Hex struct {
 	v uint32 // Hex color 0x00000000 - 0xFFFFFFFF
 	a bool   // alpha flag
 }
 
+// RGB represents a color in RGB format (Red, Green, Blue)
 type RGB struct {
 	R uint8 // Red
 	G uint8 // Green
 	B uint8 // Blue
 }
 
+// RGBA represents a color in RGBA format (Red, Green, Blue, Alpha)
 type RGBA struct {
 	R uint8 // Red
 	G uint8 // Green
@@ -37,6 +40,7 @@ type RGBA struct {
 	A uint8 // Alpha
 }
 
+// CMYK represents a color in CMYK format (Cyan, Magenta, Yellow, Key/Black)
 type CMYK struct {
 	C float64 // Cyan
 	M float64 // Magenta
@@ -44,6 +48,7 @@ type CMYK struct {
 	K float64 // Key (black)
 }
 
+// HSV represents a color in HSV format (Hue, Saturation, Value)
 type HSV struct {
 	H float64 // Hue
 	S float64 // Saturation
@@ -51,6 +56,7 @@ type HSV struct {
 	A float64 // Alpha
 }
 
+// HSL represents a color in HSL format (Hue, Saturation, Lightness)
 type HSL struct {
 	H float64 // Hue
 	S float64 // Saturation
@@ -673,6 +679,7 @@ func Contrast(fg, bg Hex) float64 {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// rgbToHsv converts RGB color to HSV (HSB) color
 func rgbToHsv(r, g, b uint8) (float64, float64, float64) {
 	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
 
@@ -690,6 +697,7 @@ func rgbToHsv(r, g, b uint8) (float64, float64, float64) {
 	return h, s, v
 }
 
+// hsvToRgb converts HSV (HSB) color to RGB color
 func hsvToRgb(h, s, v float64) (uint8, uint8, uint8) {
 	i := (h * 360.0) / 60.0
 	f := i - math.Floor(i)
@@ -718,6 +726,7 @@ func hsvToRgb(h, s, v float64) (uint8, uint8, uint8) {
 	return uint8(r * 0xFF), uint8(g * 0xFF), uint8(b * 0xFF)
 }
 
+// rgbToHsl converts RGB color to HSL color
 func rgbToHsl(r, g, b uint8) (float64, float64, float64) {
 	R, G, B := float64(r)/255.0, float64(g)/255.0, float64(b)/255.0
 
@@ -741,6 +750,7 @@ func rgbToHsl(r, g, b uint8) (float64, float64, float64) {
 	return h, s, l
 }
 
+// hsl2Rgb converts HSL color to RGB color
 func hsl2Rgb(h, s, l float64) (uint8, uint8, uint8) {
 	R, G, B := l, l, l
 
@@ -763,6 +773,7 @@ func hsl2Rgb(h, s, l float64) (uint8, uint8, uint8) {
 	return uint8(R * 255), uint8(G * 255), uint8(B * 255)
 }
 
+// calcCMYKColor calculates CMYK color value for given RGB color component
 func calcCMYKColor(c, k float64) float64 {
 	if c == 0 && k == 1 {
 		return 0
@@ -771,6 +782,7 @@ func calcCMYKColor(c, k float64) float64 {
 	return (1 - c - k) / (1 - k)
 }
 
+// calcLumColor calculates relative luminance for given color component
 func calcLumColor(c float64) float64 {
 	if c <= 0.03928 {
 		return c / 12.92
@@ -779,6 +791,7 @@ func calcLumColor(c float64) float64 {
 	return math.Pow(((c + 0.055) / 1.055), 2.4)
 }
 
+// calcHUE calculates HUE value for given RGB color component
 func calcHUE(max, r, g, b, d float64) float64 {
 	var h float64
 

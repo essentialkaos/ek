@@ -56,6 +56,7 @@ func DirN(path string, n int) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isSafePath checks if path is safe to use
 func isSafePath(path string) bool {
 	for _, p := range unsafePaths {
 		if strings.HasPrefix(path, p) {

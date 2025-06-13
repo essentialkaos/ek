@@ -21,6 +21,7 @@ var procRouteFile = "/proc/net/route"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getDefaultRouteInterface returns the name of the default route interface
 func getDefaultRouteInterface() string {
 	fd, err := os.OpenFile(procRouteFile, os.O_RDONLY, 0)
 

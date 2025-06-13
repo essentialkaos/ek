@@ -674,6 +674,7 @@ func GetModeOctal(path string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getMode returns file mode bits
 func getMode(path string) os.FileMode {
 	var stat = &syscall.Stat_t{}
 
@@ -686,6 +687,7 @@ func getMode(path string) os.FileMode {
 	return os.FileMode(stat.Mode)
 }
 
+// getModeOctal returns file mode bits in octal form (like 0644)
 func getModeOctal(path string) string {
 	var stat = &syscall.Stat_t{}
 
@@ -713,6 +715,7 @@ func getModeOctal(path string) string {
 	return strconv.Itoa(s) + m
 }
 
+// isReadableStat checks if the object stat info indicates that the object is readable
 func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	if uid == 0 {
 		return true
@@ -735,6 +738,7 @@ func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	return false
 }
 
+// isWritableStat checks if the object stat info indicates that the object is writable
 func isWritableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	if uid == 0 {
 		return true
@@ -757,6 +761,7 @@ func isWritableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	return false
 }
 
+// isExecutableStat checks if the object stat info indicates that the object is executable
 func isExecutableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	if uid == 0 {
 		return true
@@ -779,6 +784,7 @@ func isExecutableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 	return false
 }
 
+// getGIDList returns a list of group IDs for the given user
 func getGIDList(user *system.User) []int {
 	if user == nil {
 		return nil
@@ -793,6 +799,8 @@ func getGIDList(user *system.User) []int {
 	return result
 }
 
+// getObjectType returns a string representation of the object type based on its
+// mode bits
 func getObjectType(stat *syscall.Stat_t) string {
 	switch {
 	case stat.Mode&_IFMT == _IFREG:

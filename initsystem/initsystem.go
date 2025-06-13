@@ -153,6 +153,7 @@ func IsEnabled(name string) (bool, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// hasSysVService checks if service exists in SysV init system
 func hasSysVService(name string) bool {
 	// Default path for linux
 	initDir := "/etc/rc.d/init.d"
@@ -167,6 +168,7 @@ func hasSysVService(name string) bool {
 	return fsutil.CheckPerms("FXS", initDir+"/"+name)
 }
 
+// hasUpstartService checks if service exists in Upstart init system
 func hasUpstartService(name string) bool {
 	if !strings.HasSuffix(name, ".conf") {
 		name = name + ".conf"
@@ -175,6 +177,7 @@ func hasUpstartService(name string) bool {
 	return fsutil.IsExist("/etc/init/" + name)
 }
 
+// hasSystemdService checks if service exists in Systemd init system
 func hasSystemdService(name string) bool {
 	if !strings.Contains(name, ".") {
 		name = name + ".service"
@@ -191,6 +194,7 @@ func hasSystemdService(name string) bool {
 	return fsutil.IsExist("/usr/lib/systemd/system/" + name)
 }
 
+// getSysVServiceState returns service state from SysV init system
 func getSysVServiceState(name string) (bool, error) {
 	cmd := exec.Command("/sbin/service", name, "status")
 
@@ -228,6 +232,7 @@ func getSysVServiceState(name string) (bool, error) {
 	return false, fmt.Errorf("service command return unsupported exit code (%d)", exitStatus)
 }
 
+// getUpstartServiceState returns service state from Upstart init system
 func getUpstartServiceState(name string) (bool, error) {
 	if strings.HasSuffix(name, ".conf") {
 		name = strings.Replace(name, ".conf", "", -1)
@@ -242,6 +247,7 @@ func getUpstartServiceState(name string) (bool, error) {
 	return parseUpstartStatusOutput(string(output))
 }
 
+// getSystemdServiceState returns service state from Systemd init system
 func getSystemdServiceState(name string) (bool, error) {
 	output, err := exec.Command("/usr/bin/systemctl", "show", name, "-p", "ActiveState", "-p", "LoadState").Output()
 
@@ -252,6 +258,7 @@ func getSystemdServiceState(name string) (bool, error) {
 	return parseSystemdStatusOutput(name, string(output))
 }
 
+// isSysVEnabled checks if service is enabled in SysV init system
 func isSysVEnabled(name string) (bool, error) {
 	output, err := exec.Command("/sbin/chkconfig", "--list", name).Output()
 
@@ -262,6 +269,7 @@ func isSysVEnabled(name string) (bool, error) {
 	return parseSysvEnabledOutput(string(output))
 }
 
+// isUpstartEnabled checks if service is enabled in Upstart init system
 func isUpstartEnabled(name string) (bool, error) {
 	if !strings.HasSuffix(name, ".conf") {
 		name = name + ".conf"
@@ -270,6 +278,7 @@ func isUpstartEnabled(name string) (bool, error) {
 	return parseUpstartEnabledData("/etc/init/" + name)
 }
 
+// isSystemdEnabled checks if service is enabled in Systemd init system
 func isSystemdEnabled(name string) (bool, error) {
 	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", name).Output()
 
@@ -282,6 +291,7 @@ func isSystemdEnabled(name string) (bool, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// parseSystemdEnabledOutput parses output of 'systemctl is-enabled' command output
 func parseSystemdEnabledOutput(data string) bool {
 	return strings.TrimRight(data, "\n\r") == "enabled"
 }
@@ -313,6 +323,7 @@ func parseUpstartEnabledData(file string) (bool, error) {
 	return false, nil
 }
 
+// parseSysvEnabledOutput parses output of 'chkconfig --list' command output
 func parseSysvEnabledOutput(data string) (bool, error) {
 	switch {
 	case strings.Contains(data, ":on"):
@@ -326,6 +337,7 @@ func parseSysvEnabledOutput(data string) (bool, error) {
 	}
 }
 
+// parseSystemdStatusOutput parses output of 'systemctl show' command output
 func parseSystemdStatusOutput(name, data string) (bool, error) {
 	loadState := strutil.ReadField(data, 0, false, '\n')
 	loadStateValue := strutil.ReadField(loadState, 1, false, '=')
@@ -348,6 +360,7 @@ func parseSystemdStatusOutput(name, data string) (bool, error) {
 	return false, fmt.Errorf("Can't parse systemd output")
 }
 
+// parseUpstartStatusOutput parses output of 'initctl status' command output
 func parseUpstartStatusOutput(data string) (bool, error) {
 	data = strings.TrimRight(data, "\r\n")
 	status := strutil.ReadField(data, 1, false, ' ')
