@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.29.1](https://kaos.sh/ek/13.29.1)
+
+- **`[support]`** Fixed minor bug with printing custom binary name
+
 ### [13.29.0](https://kaos.sh/ek/13.29.0)
 
 - **`[selfupdate]`** Added new package for application self-update
