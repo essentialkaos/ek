@@ -105,10 +105,10 @@ func Distance(source, target string) int {
 				h[i+1][j+1] = h[i][j]
 				d = j
 			} else {
-				h[i+1][j+1] = mathutil.Min(h[i][j], mathutil.Min(h[i+1][j], h[i][j+1])) + 1
+				h[i+1][j+1] = min(h[i][j], min(h[i+1][j], h[i][j+1])) + 1
 			}
 
-			h[i+1][j+1] = mathutil.Min(h[i+1][j+1], h[i1][j1]+(i-i1-1)+1+(j-j1-1))
+			h[i+1][j+1] = min(h[i+1][j+1], h[i1][j1]+(i-i1-1)+1+(j-j1-1))
 		}
 
 		sd[rune(source[i-1])] = i
