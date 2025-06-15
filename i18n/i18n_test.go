@@ -158,6 +158,7 @@ func (s *I18NSuite) TestValidateBundle(c *C) {
 	c.Assert(err, ErrorMatches, `Bundle struct ERRORS is nil`)
 
 	b, err := Fallback(en, ru)
+	c.Assert(err, IsNil)
 	c.Assert(b.(*testBundle).ERRORS, NotNil)
 }
 

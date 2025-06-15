@@ -40,18 +40,20 @@ type ListingFilter struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// hasMatchPatterns checks if filter has match patterns
 func (lf ListingFilter) hasMatchPatterns() bool {
 	return len(lf.MatchPatterns) != 0
 }
 
+// hasNotMatchPatterns checks if filter has not-match patterns
 func (lf ListingFilter) hasNotMatchPatterns() bool {
 	return len(lf.NotMatchPatterns) != 0
 }
 
+// hasTimes checks if filter has time-related properties
 func (lf ListingFilter) hasTimes() bool {
 	switch {
 	case lf.ATimeOlder != 0,
-		lf.ATimeOlder != 0,
 		lf.ATimeYounger != 0,
 		lf.CTimeOlder != 0,
 		lf.CTimeYounger != 0,
@@ -63,10 +65,12 @@ func (lf ListingFilter) hasTimes() bool {
 	return false
 }
 
+// hasPerms checks if filter has permission-related properties
 func (lf ListingFilter) hasPerms() bool {
 	return lf.Perms != "" || lf.NotPerms != ""
 }
 
+// hasSize checks if filter has size-related properties
 func (lf ListingFilter) hasSize() bool {
 	return lf.SizeZero || lf.SizeGreater > 0 || lf.SizeLess > 0 || lf.SizeEqual > 0
 }
@@ -124,6 +128,7 @@ func ListToAbsolute(path string, list []string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// readDir reads directory and returns slice with names of files and directories
 func readDir(dir string) []string {
 	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
 
@@ -168,6 +173,8 @@ func readDir(dir string) []string {
 	return names
 }
 
+// readDirRecAll reads directory recursively and returns slice with names of files
+// and directories
 func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result []string
 
@@ -206,6 +213,7 @@ func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) [
 	return result
 }
 
+// readDirRecAll reads directory recursively and returns slice with names of directories
 func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result []string
 
@@ -234,6 +242,7 @@ func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) 
 	return result
 }
 
+// readDirRecDirs reads directory recursively and returns slice with names of files
 func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter) []string {
 	var result []string
 
@@ -266,6 +275,7 @@ func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter)
 	return result
 }
 
+// isMatch checks if file or directory matches filter
 func isMatch(name, fullPath string, filter ListingFilter) bool {
 	var (
 		hasNotMatchPatterns = filter.hasNotMatchPatterns()
@@ -376,6 +386,7 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 	return match
 }
 
+// filterList filters slice with names of files and directories using given filter
 func filterList(names []string, dir string, filter ListingFilter) []string {
 	var filteredNames []string
 
@@ -388,6 +399,7 @@ func filterList(names []string, dir string, filter ListingFilter) []string {
 	return filteredNames
 }
 
+// filterHidden filters out hidden files and directories (those that start with a dot)
 func filterHidden(names []string) []string {
 	var filteredNames []string
 
@@ -402,6 +414,7 @@ func filterHidden(names []string) []string {
 	return filteredNames
 }
 
+// fixCount ensures that the count from syscall.ReadDirent is non-negative
 func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0

@@ -11,10 +11,12 @@ package cron
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
@@ -91,7 +93,7 @@ var info = []exprInfo{
 // Parse parse cron expression
 // https://en.wikipedia.org/wiki/Cron
 func Parse(expr string) (*Expr, error) {
-	expr = strings.Replace(expr, "\t", " ", -1)
+	expr = strings.ReplaceAll(expr, "\t", " ")
 	expr = getAliasExpression(expr)
 
 	if strings.Count(expr, " ") < 4 {
@@ -156,23 +158,23 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 		t = time.Now()
 	}
 
-	if !contains(e.minutes, uint8(t.Minute())) {
+	if !slices.Contains(e.minutes, uint8(t.Minute())) {
 		return false
 	}
 
-	if !contains(e.hours, uint8(t.Hour())) {
+	if !slices.Contains(e.hours, uint8(t.Hour())) {
 		return false
 	}
 
-	if !contains(e.doms, uint8(t.Day())) {
+	if !slices.Contains(e.doms, uint8(t.Day())) {
 		return false
 	}
 
-	if !contains(e.months, uint8(t.Month())) {
+	if !slices.Contains(e.months, uint8(t.Month())) {
 		return false
 	}
 
-	if !contains(e.dows, uint8(t.Weekday())) {
+	if !slices.Contains(e.dows, uint8(t.Weekday())) {
 		return false
 	}
 
@@ -221,7 +223,7 @@ func (e *Expr) Next(args ...time.Time) time.Time {
 							uint8(d.Day()) != e.doms[j],
 							uint8(d.Hour()) != e.hours[k],
 							uint8(d.Minute()) != e.minutes[l],
-							!contains(e.dows, uint8(d.Weekday())):
+							!slices.Contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -281,7 +283,7 @@ func (e *Expr) Prev(args ...time.Time) time.Time {
 							uint8(d.Day()) != e.doms[j],
 							uint8(d.Hour()) != e.hours[k],
 							uint8(d.Minute()) != e.minutes[l],
-							!contains(e.dows, uint8(d.Weekday())):
+							!slices.Contains(e.dows, uint8(d.Weekday())):
 							continue
 						}
 
@@ -310,22 +312,28 @@ func (e *Expr) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isAnyToken checks if the token is a wildcard token (*)
 func isAnyToken(t string) bool {
 	return t == string(_SYMBOL_ANY)
 }
 
+// isEnumToken checks if the token contains enumeration (comma-separated values)
 func isEnumToken(t string) bool {
 	return strings.ContainsRune(t, _SYMBOL_ENUM)
 }
 
+// isPeriodToken checks if the token contains a period (dash) indicating a range
 func isPeriodToken(t string) bool {
 	return strings.ContainsRune(t, _SYMBOL_PERIOD)
 }
 
+// isIntervalToken checks if the token contains an interval (slash) indicating
+// a step value
 func isIntervalToken(t string) bool {
 	return strings.ContainsRune(t, _SYMBOL_INTERVAL)
 }
 
+// parseEnumToken parses a token with enumeration, which may include periods
 func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 	var result []uint8
 
@@ -356,6 +364,7 @@ func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 	return result, nil
 }
 
+// parsePeriodToken parses a token with a period, which indicates a range of values
 func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
 	t1, err := parseToken(strutil.ReadField(t, 0, false, _SYMBOL_PERIOD), ei.nt)
 
@@ -370,12 +379,13 @@ func parsePeriodToken(t string, ei exprInfo) ([]uint8, error) {
 	}
 
 	return fillUintSlice(
-		between(t1, ei.min, ei.max),
-		between(t2, ei.min, ei.max),
+		mathutil.Between(t1, ei.min, ei.max),
+		mathutil.Between(t2, ei.min, ei.max),
 		1,
 	), nil
 }
 
+// parseIntervalToken parses a token with an interval, which indicates a step value
 func parseIntervalToken(t string, ei exprInfo) ([]uint8, error) {
 	i, err := str2uint(strutil.ReadField(t, 1, false, _SYMBOL_INTERVAL))
 
@@ -390,6 +400,7 @@ func parseIntervalToken(t string, ei exprInfo) ([]uint8, error) {
 	return fillUintSlice(ei.min, ei.max, i), nil
 }
 
+// parseSimpleToken parses a simple token without any special characters
 func parseSimpleToken(t string, ei exprInfo) ([]uint8, error) {
 	v, err := parseToken(t, ei.nt)
 
@@ -400,6 +411,7 @@ func parseSimpleToken(t string, ei exprInfo) ([]uint8, error) {
 	return []uint8{v}, nil
 }
 
+// getAliasExpression returns the full cron expression for a given alias
 func getAliasExpression(expr string) string {
 	switch expr {
 	case "@yearly":
@@ -419,6 +431,7 @@ func getAliasExpression(expr string) string {
 	return expr
 }
 
+// parseToken parses a token based on its naming type (days or months)
 func parseToken(t string, nt uint8) (uint8, error) {
 	switch nt {
 	case _NAMES_DAYS:
@@ -437,6 +450,7 @@ func parseToken(t string, nt uint8) (uint8, error) {
 	return str2uint(t)
 }
 
+// getDayNumByName returns the numeric representation of a day name
 func getDayNumByName(token string) (uint8, bool) {
 	switch strings.ToLower(token) {
 	case "sun":
@@ -458,6 +472,7 @@ func getDayNumByName(token string) (uint8, bool) {
 	return 0, false
 }
 
+// getMonthNumByName returns the numeric representation of a month name
 func getMonthNumByName(token string) (uint8, bool) {
 	switch strings.ToLower(token) {
 	case "jan":
@@ -489,6 +504,7 @@ func getMonthNumByName(token string) (uint8, bool) {
 	return 0, false
 }
 
+// fillUintSlice fills a slice with uint8 values from start to end with a given interval
 func fillUintSlice(start, end, interval uint8) []uint8 {
 	var result []uint8
 
@@ -499,6 +515,7 @@ func fillUintSlice(start, end, interval uint8) []uint8 {
 	return result
 }
 
+// str2uint converts a string to uint8
 func str2uint(t string) (uint8, error) {
 	u, err := strconv.ParseUint(t, 10, 8)
 
@@ -509,6 +526,8 @@ func str2uint(t string) (uint8, error) {
 	return uint8(u), nil
 }
 
+// getNearNextIndex finds the index of the nearest item in the slice that is greater than
+// or equal to the given item
 func getNearNextIndex(items []uint8, item uint8) int {
 	for i := range len(items) {
 		if items[i] >= item {
@@ -519,6 +538,8 @@ func getNearNextIndex(items []uint8, item uint8) int {
 	return 0
 }
 
+// getNearPrevIndex finds the index of the nearest item in the slice that is less than
+// or equal to the given item
 func getNearPrevIndex(items []uint8, item uint8) int {
 	for i := len(items) - 1; i >= 0; i-- {
 		if items[i] <= item {
@@ -527,25 +548,4 @@ func getNearPrevIndex(items []uint8, item uint8) int {
 	}
 
 	return len(items) - 1
-}
-
-func between(val, min, max uint8) uint8 {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
-}
-
-func contains(data []uint8, item uint8) bool {
-	for _, v := range data {
-		if item == v {
-			return true
-		}
-	}
-
-	return false
 }

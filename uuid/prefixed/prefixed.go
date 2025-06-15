@@ -18,12 +18,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// encoder is Base64 encoder
+// encoder is base64 encoder
 var encoder = base64.StdEncoding.WithPadding(base64.NoPadding)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encode creates Base64-encoded prefixed UUID
+// Encode creates base64-encoded prefixed UUID
 func Encode(prefix string, uuid uuid.UUID) string {
 	if prefix == "" || uuid.IsZero() {
 		return ""
@@ -32,7 +32,7 @@ func Encode(prefix string, uuid uuid.UUID) string {
 	return prefix + "." + encoder.EncodeToString(uuid)
 }
 
-// Decode decodes prefixed UUID
+// Decode decodes base64-encoded prefixed UUID and returns prefix and UUID
 func Decode(prefixedUUID string) (string, uuid.UUID, error) {
 	prefix, data, ok := strings.Cut(prefixedUUID, ".")
 

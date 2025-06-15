@@ -9,7 +9,6 @@ package strutil
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -235,11 +234,22 @@ func ExampleMask() {
 func ExampleJoinFunc() {
 	e := []string{"John", "Bob Smith", "Fiona", "Elen Vire", "Joe Doe"}
 	s := JoinFunc(e, ", ", func(s string) string {
-		return strconv.Quote(s)
+		return `"` + s + `"`
 	})
 
 	fmt.Println(s)
 
 	// Output:
 	// "John", "Bob Smith", "Fiona", "Elen Vire", "Joe Doe"
+}
+
+func ExampleWrap() {
+	text := "AAAABBBBCCCC"
+
+	fmt.Println(Wrap(text, 4))
+
+	// Output:
+	// AAAA
+	// BBBB
+	// CCCC
 }

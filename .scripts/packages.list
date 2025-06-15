@@ -50,6 +50,7 @@ L + netutil
 * + req
 * + reutil
 * + secstr
+* ! selfupdate
 L - setup
 * - signal
 * + sliceutil

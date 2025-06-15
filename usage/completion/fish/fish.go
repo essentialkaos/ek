@@ -48,13 +48,13 @@ end
 func Generate(info *usage.Info, name string) string {
 	result := _FISH_TEMPLATE
 
-	result = strings.Replace(result, "{{GLOBAL_OPTS}}", genGlobalOptionCompletion(info, name), -1)
-	result = strings.Replace(result, "{{COMMANDS}}", genCommandsCompletion(info, name), -1)
-	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
+	result = strings.ReplaceAll(result, "{{GLOBAL_OPTS}}", genGlobalOptionCompletion(info, name))
+	result = strings.ReplaceAll(result, "{{COMMANDS}}", genCommandsCompletion(info, name))
+	result = strings.ReplaceAll(result, "{{COMPNAME}}", name)
 
-	nameSafe := strings.Replace(name, "-", "_", -1)
+	nameSafe := strings.ReplaceAll(name, "-", "_")
 
-	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
+	result = strings.ReplaceAll(result, "{{COMPNAME_SAFE}}", nameSafe)
 
 	return result
 }

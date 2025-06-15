@@ -31,8 +31,13 @@ type Handler func(payload any)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
+	// ErrNilDispatcher is returned when dispatcher is nil
 	ErrNilDispatcher = fmt.Errorf("Dispatcher is nil")
-	ErrEmptyType     = fmt.Errorf("Event type is empty")
+
+	// ErrEmptyName is returned when event name is empty
+	ErrEmptyName     = fmt.Errorf("Event name is empty")
+
+	// ErrNilHandler is returned when handler is nil
 	ErrNilHandler    = fmt.Errorf("Handler must not be nil")
 )
 
@@ -48,9 +53,9 @@ func NewDispatcher() *Dispatcher {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// AddHandler registers handler for events with given event type
-func (d *Dispatcher) AddHandler(typ string, handler Handler) error {
-	err := validateArguments(d, typ, handler, true)
+// AddHandler registers handler for specified event
+func (d *Dispatcher) AddHandler(ev string, handler Handler) error {
+	err := validateArguments(d, ev, handler, true)
 
 	if err != nil {
 		return err
@@ -58,20 +63,20 @@ func (d *Dispatcher) AddHandler(typ string, handler Handler) error {
 
 	d.mx.Lock()
 
-	if d.getHandlerIndex(typ, handler) != -1 {
+	if d.getHandlerIndex(ev, handler) != -1 {
 		d.mx.Unlock()
-		return fmt.Errorf("Handler already registered for given event type (%s)", typ)
+		return fmt.Errorf("Handler already registered for given event (%s)", ev)
 	}
 
-	d.handlers[typ] = append(d.handlers[typ], handler)
+	d.handlers[ev] = append(d.handlers[ev], handler)
 
 	d.mx.Unlock()
 	return nil
 }
 
-// RemoveHandler removes handler for given event type
-func (d *Dispatcher) RemoveHandler(typ string, handler Handler) error {
-	err := validateArguments(d, typ, handler, true)
+// RemoveHandler removes handler for specified event
+func (d *Dispatcher) RemoveHandler(ev string, handler Handler) error {
+	err := validateArguments(d, ev, handler, true)
 
 	if err != nil {
 		return err
@@ -79,24 +84,24 @@ func (d *Dispatcher) RemoveHandler(typ string, handler Handler) error {
 
 	d.mx.Lock()
 
-	i := d.getHandlerIndex(typ, handler)
+	i := d.getHandlerIndex(ev, handler)
 
 	if i == -1 {
 		d.mx.Unlock()
-		return fmt.Errorf("Handler is not registered for given event type (%s)", typ)
+		return fmt.Errorf("Handler is not registered for given event (%s)", ev)
 	}
 
-	copy(d.handlers[typ][i:], d.handlers[typ][i+1:])
-	d.handlers[typ][len(d.handlers[typ])-1] = nil
-	d.handlers[typ] = d.handlers[typ][:len(d.handlers[typ])-1]
+	copy(d.handlers[ev][i:], d.handlers[ev][i+1:])
+	d.handlers[ev][len(d.handlers[ev])-1] = nil
+	d.handlers[ev] = d.handlers[ev][:len(d.handlers[ev])-1]
 
 	d.mx.Unlock()
 	return nil
 }
 
-// HasHandler returns true if given handler is registered for given event type
-func (d *Dispatcher) HasHandler(typ string, handler Handler) bool {
-	err := validateArguments(d, typ, handler, true)
+// HasHandler returns true if there is a handler for given event
+func (d *Dispatcher) HasHandler(ev string, handler Handler) bool {
+	err := validateArguments(d, ev, handler, true)
 
 	if err != nil {
 		return false
@@ -105,12 +110,12 @@ func (d *Dispatcher) HasHandler(typ string, handler Handler) bool {
 	d.mx.RLock()
 	defer d.mx.RUnlock()
 
-	return d.getHandlerIndex(typ, handler) != -1
+	return d.getHandlerIndex(ev, handler) != -1
 }
 
-// Dispatch dispatches event with given type and payload
-func (d *Dispatcher) Dispatch(typ string, payload any) error {
-	err := validateArguments(d, typ, nil, false)
+// Dispatch dispatches event with given payload
+func (d *Dispatcher) Dispatch(ev string, payload any) error {
+	err := validateArguments(d, ev, nil, false)
 
 	if err != nil {
 		return err
@@ -118,15 +123,15 @@ func (d *Dispatcher) Dispatch(typ string, payload any) error {
 
 	d.mx.RLock()
 
-	if d.handlers[typ] == nil {
+	if d.handlers[ev] == nil {
 		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event %q", typ)
+		return fmt.Errorf("No handlers for event %q", ev)
 	}
 
 	d.mx.RUnlock()
 	d.mx.RLock()
 
-	for _, h := range d.handlers[typ] {
+	for _, h := range d.handlers[ev] {
 		go h(payload)
 	}
 
@@ -134,10 +139,10 @@ func (d *Dispatcher) Dispatch(typ string, payload any) error {
 	return nil
 }
 
-// DispatchAndWait dispatches event with given type and payload and waits
+// DispatchAndWait dispatches event with given payload and waits
 // until all handlers will be executed
-func (d *Dispatcher) DispatchAndWait(typ string, payload any) error {
-	err := validateArguments(d, typ, nil, false)
+func (d *Dispatcher) DispatchAndWait(ev string, payload any) error {
+	err := validateArguments(d, ev, nil, false)
 
 	if err != nil {
 		return err
@@ -145,31 +150,27 @@ func (d *Dispatcher) DispatchAndWait(typ string, payload any) error {
 
 	d.mx.RLock()
 
-	if d.handlers[typ] == nil {
+	if d.handlers[ev] == nil {
 		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event %q", typ)
+		return fmt.Errorf("No handlers for event %q", ev)
 	}
 
 	d.mx.RUnlock()
 	d.mx.RLock()
 
-	cur, tot := 0, len(d.handlers[typ])
+	cur, tot := 0, len(d.handlers[ev])
 	ch := make(chan bool, tot)
 
-	for _, h := range d.handlers[typ] {
+	for _, h := range d.handlers[ev] {
 		go execWrapper(ch, h, payload)
 	}
 
 	d.mx.RUnlock()
 
-MAIN:
-	for {
-		select {
-		case <-ch:
-			cur++
-			if cur == tot {
-				break MAIN
-			}
+	for range ch {
+		cur++
+		if cur == tot {
+			break
 		}
 	}
 
@@ -179,10 +180,10 @@ MAIN:
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getHandlerIndex returns index of handler in the slice
-func (d *Dispatcher) getHandlerIndex(typ string, handler Handler) int {
+func (d *Dispatcher) getHandlerIndex(ev string, handler Handler) int {
 	hp := reflect.ValueOf(handler).Pointer()
 
-	for i, h := range d.handlers[typ] {
+	for i, h := range d.handlers[ev] {
 		if reflect.ValueOf(h).Pointer() == hp {
 			return i
 		}
@@ -194,13 +195,13 @@ func (d *Dispatcher) getHandlerIndex(typ string, handler Handler) int {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // validateArguments validates arguments
-func validateArguments(d *Dispatcher, typ string, handler Handler, isHandlerRequired bool) error {
+func validateArguments(d *Dispatcher, ev string, handler Handler, isHandlerRequired bool) error {
 	if d == nil || d.handlers == nil {
 		return ErrNilDispatcher
 	}
 
-	if typ == "" {
-		return ErrEmptyType
+	if ev == "" {
+		return ErrEmptyName
 	}
 
 	if isHandlerRequired && handler == nil {

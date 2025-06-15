@@ -34,11 +34,9 @@ func ExampleSeparator() {
 }
 
 func ExamplePrettyNum() {
-	var (
-		n1 int     = 10
-		n2 uint    = 5000
-		n3 float64 = 6128750.26
-	)
+	var n1 int = 10
+	var n2 uint = 5000
+	var n3 float64 = 6128750.26
 
 	fmt.Printf("%d → %s\n", n1, PrettyNum(n1))
 	fmt.Printf("%d → %s\n", n2, PrettyNum(n2))
@@ -74,11 +72,9 @@ func ExamplePrettyBool() {
 }
 
 func ExamplePrettyPerc() {
-	var (
-		n1 float64 = 0.123
-		n2 float64 = 10.24
-		n3 float64 = 1294.193
-	)
+	var n1 = 0.123
+	var n2 = 10.24
+	var n3 = 1294.193
 
 	OrderSeparator = ","
 

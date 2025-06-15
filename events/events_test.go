@@ -92,9 +92,7 @@ func (s *EventsSuite) TestNil(c *C) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func basicTestHandler(payload any) {
-	return
-}
+func basicTestHandler(payload any) {}
 
 func asyncTestHandler1(payload any) {
 	atomic.AddUint32(&counter, payload.(uint32))

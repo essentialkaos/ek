@@ -66,6 +66,7 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isEmptyDirent checks if the dirent shows that the directory is empty
 func isEmptyDirent(n int) bool {
 	return n <= 0x40
 }

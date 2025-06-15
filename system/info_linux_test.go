@@ -57,8 +57,6 @@ var utmpData = []byte{
 	0x0, 0x0, 0x0,
 }
 
-var machineIDData = []byte("23000007fc9f031ee8c97d15d514b6c8")
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SystemSuite) TestUptime(c *C) {
@@ -182,7 +180,7 @@ func (s *SystemSuite) TestCPUInfoErrors(c *C) {
 	origProcStatFile := procStatFile
 
 	for i := 1; i <= 8; i++ {
-		data := strings.Replace("cpu  1 2 3 4 5 6 7 8 0", strconv.Itoa(i), "AB", -1)
+		data := strings.ReplaceAll("cpu  1 2 3 4 5 6 7 8 0", strconv.Itoa(i), "AB")
 
 		procStatFile = s.CreateTestFile(c, data)
 
@@ -514,8 +512,8 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 
 	for i := range 11 {
 		data := "   8       0 sda X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10"
-		data = strings.Replace(data, "X"+strconv.Itoa(i), "A", -1)
-		data = strings.Replace(data, "X", "", -1)
+		data = strings.ReplaceAll(data, "X"+strconv.Itoa(i), "A")
+		data = strings.ReplaceAll(data, "X", "")
 
 		procDiskStatsFile = s.CreateTestFile(c, data)
 
@@ -703,6 +701,7 @@ REDHAT_SUPPORT_PRODUCT_VERSION="7"
 
 	osInfo, err = GetOSInfo()
 
+	c.Assert(err, IsNil)
 	c.Assert(osInfo.Name, Equals, "Ubuntu")
 	c.Assert(osInfo.PrettyName, Equals, "Ubuntu 20.10")
 	c.Assert(osInfo.Version, Equals, "20.10 (Groovy Gorilla)")

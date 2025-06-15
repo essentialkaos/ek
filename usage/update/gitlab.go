@@ -29,7 +29,7 @@ var gitlabAPI = "https://gitlab.com/api/v4"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GitLabChecker checks new releases on GitLab
+// GitLabChecker checks for updates on GitLab
 func GitLabChecker(app, version, data string) (string, time.Time, bool) {
 	if version == "" || data == "" || !isUpdateCheckRequired() {
 		return "", time.Time{}, false
@@ -46,7 +46,7 @@ func GitLabChecker(app, version, data string) (string, time.Time, bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLatestGitLabRelease fetches the latest release from GitLab
+// getLatestGitLabRelease fetches the latest release from a GitLab repository
 func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 	var auth req.Auth
 

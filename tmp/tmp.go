@@ -21,7 +21,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Temp is basic temp struct
+// Temp is a structure for working with temporary files and directories
 type Temp struct {
 	Dir       string
 	DirPerms  os.FileMode
@@ -141,7 +141,8 @@ func (t *Temp) Clean() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getTempName returns name of temporary file
+// getTempName generates a unique temporary name based on the current time and
+// a random string
 func getTempName(dir, name string) string {
 	var result string
 

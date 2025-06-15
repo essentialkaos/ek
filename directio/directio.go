@@ -53,6 +53,7 @@ func WriteFile(file string, data []byte, perms os.FileMode) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// readData reads data from the file using Direct IO
 func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
 	var buf []byte
 
@@ -73,6 +74,7 @@ func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
 	return buf, nil
 }
 
+// writeData writes data to the file using Direct IO
 func writeData(fd *os.File, data []byte) error {
 	block := allocateBlock()
 	blockSize := len(block)
@@ -102,6 +104,7 @@ func writeData(fd *os.File, data []byte) error {
 	return fd.Truncate(int64(dataSize))
 }
 
+// allocateBlock allocates a block of memory with the specified size and alignment
 func allocateBlock() []byte {
 	block := make([]byte, BLOCK_SIZE+ALIGN_SIZE)
 

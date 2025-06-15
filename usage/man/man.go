@@ -47,7 +47,7 @@ func genHeader(about *usage.About) string {
 		strings.ToUpper(about.App),
 		timeutil.Format(time.Now(), "%d %b %Y"),
 		about.App,
-		strings.Replace(about.Version, ".", "\\&.", -1),
+		strings.ReplaceAll(about.Version, ".", "\\&."),
 		about.App,
 	)
 }
@@ -227,8 +227,8 @@ func genLicense(about *usage.About) string {
 
 	license := about.License
 
-	license = strings.Replace(license, "<", `<\fB`, -1)
-	license = strings.Replace(license, ">", `\fP>`, -1)
+	license = strings.ReplaceAll(license, "<", `<\fB`)
+	license = strings.ReplaceAll(license, ">", `\fP>`)
 
 	return fmt.Sprintf(".SH LICENSE\n\n%s.\n\n", license)
 }
@@ -258,7 +258,7 @@ func formatCommandArgs(args []string) string {
 
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "?") {
-			result += fmt.Sprintf(" \\fR%s\\fP", strings.Replace(arg, "?", "", -1))
+			result += fmt.Sprintf(" \\fR%s\\fP", strings.ReplaceAll(arg, "?", ""))
 		} else {
 			result += fmt.Sprintf(" \\fI%s\\fP", arg)
 		}

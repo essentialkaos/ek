@@ -20,7 +20,6 @@ import (
 
 	"github.com/essentialkaos/ek/v13/fmtc"
 	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/passthru"
 )
 
@@ -562,7 +561,7 @@ func (b *Bar) renderRemaining(remaining time.Duration) (string, int) {
 
 // renderBar returns bar graphics
 func (b *Bar) renderBar(dataSize int) string {
-	size := mathutil.Max(5, mathutil.Max(MIN_WIDTH, b.settings.Width)-dataSize)
+	size := max(5, max(MIN_WIDTH, b.settings.Width)-dataSize)
 
 	if b.total <= 0 {
 		return b.renderPlaceholder(size)

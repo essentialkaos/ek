@@ -24,6 +24,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validateRegexp checks if the value of the property matches the given regexp pattern
 func validateRegexp(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -56,6 +57,8 @@ func validateRegexp(config knf.IConfig, prop string, value any) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getValidatorInputError returns an error for unsupported input type in regexp
+// validator
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
 		"Validator regexp.%s doesn't support input with type <%T> for checking %s property",
@@ -63,6 +66,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 	)
 }
 
+// getValidatorEmptyInputError returns an error for empty input in regexp validator
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
 		"Validator regexp.%s requires non-empty input for checking %s property",

@@ -82,25 +82,25 @@ complete -F _{{COMPNAME_SAFE}} {{COMPNAME}} {{COMP_OPTS}}
 func Generate(info *usage.Info, name string, fileExt ...string) string {
 	result := _BASH_TEMPLATE
 
-	result = strings.Replace(result, "{{COMMANDS}}", genCommandsList(info), -1)
-	result = strings.Replace(result, "{{GLOBAL_OPTIONS}}", genGlobalOptionsList(info), -1)
-	result = strings.Replace(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info), -1)
-	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
+	result = strings.ReplaceAll(result, "{{COMMANDS}}", genCommandsList(info))
+	result = strings.ReplaceAll(result, "{{GLOBAL_OPTIONS}}", genGlobalOptionsList(info))
+	result = strings.ReplaceAll(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info))
+	result = strings.ReplaceAll(result, "{{COMPNAME}}", name)
 
 	if len(info.Args) != 0 {
-		result = strings.Replace(result, "{{SHOW_FILES}}", "true", -1)
-		result = strings.Replace(result, "{{COMP_OPTS}}", "-o filenames", -1)
+		result = strings.ReplaceAll(result, "{{SHOW_FILES}}", "true")
+		result = strings.ReplaceAll(result, "{{COMP_OPTS}}", "-o filenames")
 		if len(fileExt) != 0 {
-			result = strings.Replace(result, "{{FILE_GLOB}}", fileExt[0], -1)
+			result = strings.ReplaceAll(result, "{{FILE_GLOB}}", fileExt[0])
 		}
 	} else {
-		result = strings.Replace(result, "{{SHOW_FILES}}", "", -1)
-		result = strings.Replace(result, "{{COMP_OPTS}}", "", -1)
-		result = strings.Replace(result, "{{FILE_GLOB}}", "", -1)
+		result = strings.ReplaceAll(result, "{{SHOW_FILES}}", "")
+		result = strings.ReplaceAll(result, "{{COMP_OPTS}}", "")
+		result = strings.ReplaceAll(result, "{{FILE_GLOB}}", "")
 	}
 
-	nameSafe := strings.Replace(name, "-", "_", -1)
-	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
+	nameSafe := strings.ReplaceAll(name, "-", "_")
+	result = strings.ReplaceAll(result, "{{COMPNAME_SAFE}}", nameSafe)
 
 	return result
 }

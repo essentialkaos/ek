@@ -95,7 +95,7 @@ func Read(pidFile string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// normalizePIDFilename returns PID file name with extension
+// normalizePIDFilename ensures that the PID file name ends with ".pid"
 func normalizePIDFilename(name string) string {
 	if !strings.Contains(name, ".pid") {
 		return name + ".pid"

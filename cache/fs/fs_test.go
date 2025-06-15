@@ -65,6 +65,9 @@ func (s *CacheSuite) TestCache(c *C) {
 		Dir:               c.MkDir(),
 	})
 
+	c.Assert(err, IsNil)
+	c.Assert(cache2, NotNil)
+
 	cache2.Set("1", "TEST")
 	cache2.Set("2", "TEST")
 	cache2.Set("3", "TEST", time.Minute)

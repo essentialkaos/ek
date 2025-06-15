@@ -13,113 +13,14 @@ import (
 	"fmt"
 	"math"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const (
-	NS     = time.Nanosecond
-	US     = time.Microsecond
-	MS     = time.Millisecond
-	SECOND = time.Second
-	MINUTE = time.Minute
-	HOUR   = time.Hour
-	DAY    = 24 * HOUR
-	WEEK   = 7 * DAY
-	YEAR   = 365 * DAY
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-const (
-	_SECOND int64 = 1
-	_MINUTE int64 = 60
-	_HOUR   int64 = 3600
-	_DAY    int64 = 86400
-	_WEEK   int64 = 604800
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
-func PrettyDuration(d any) string {
-	dur, ok := convertDuration(d)
-
-	if !ok {
-		return ""
-	}
-
-	if dur != 0 && dur < SECOND {
-		return getPrettyShortDuration(dur, " ")
-	}
-
-	return getPrettyLongDuration(dur)
-}
-
-// PrettyDurationSimple returns simple pretty duration (seconds → minutes → hours → days)
-func PrettyDurationSimple(d any) string {
-	dur, ok := convertDuration(d)
-
-	if !ok {
-		return ""
-	}
-
-	return getPrettySimpleDuration(dur)
-}
-
-// PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
-func PrettyDurationInDays(d any) string {
-	dur, ok := convertDuration(d)
-
-	if !ok {
-		return ""
-	}
-
-	if dur < 24*HOUR {
-		dur = 24 * HOUR
-	}
-
-	days := int(dur.Hours()) / 24
-
-	return pluralize.PS(pluralize.En, "%d %s", days, "day", "days")
-}
-
-// ShortDuration returns pretty short duration (e.g. 1:37)
-func ShortDuration(d any, highPrecision ...bool) string {
-	dur, ok := convertDuration(d)
-
-	if !ok {
-		return ""
-	}
-
-	if dur == 0 {
-		return "0:00"
-	}
-
-	if len(highPrecision) != 0 && highPrecision[0] {
-		return getShortDuration(dur, true)
-	}
-
-	return getShortDuration(dur, false)
-}
-
-// MiniDuration returns formatted value of duration (d/hr/m/s/ms/us/ns)
-func MiniDuration(d time.Duration, separator ...string) string {
-	sep := " "
-
-	if len(separator) != 0 {
-		sep = separator[0]
-	}
-
-	return getPrettyShortDuration(d, sep)
-}
-
-// Format returns formatted date as a string
+// Format formats time.Time value using given format string
 //
 // Interpreted sequences:
 //
@@ -187,11 +88,6 @@ func Format(d time.Time, f string) string {
 	}
 
 	return output.String()
-}
-
-// DurationToSeconds converts time.Duration to float64
-func DurationToSeconds(d time.Duration) float64 {
-	return float64(d) / 1000000000.0
 }
 
 // SecondsToDuration converts float64 to time.Duration
@@ -491,7 +387,7 @@ func DurationAs(t, unit time.Duration) int {
 	return int(math.Round(float64(t) / float64(unit)))
 }
 
-// FromISOWeek returns date for given week number in given year
+// FromISOWeek returns time.Time from ISO week number and year
 func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	week = mathutil.Between(week, 1, 53)
 
@@ -521,35 +417,44 @@ func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func convertDuration(d any) (time.Duration, bool) {
-	switch u := d.(type) {
-	case time.Duration:
-		return u, true
-	case int:
-		return time.Duration(u) * SECOND, true
-	case int16:
-		return time.Duration(u) * SECOND, true
-	case int32:
-		return time.Duration(u) * SECOND, true
-	case uint:
-		return time.Duration(u) * SECOND, true
-	case uint16:
-		return time.Duration(u) * SECOND, true
-	case uint32:
-		return time.Duration(u) * SECOND, true
-	case uint64:
-		return time.Duration(u) * SECOND, true
-	case float32:
-		return time.Duration(u) * SECOND, true
-	case float64:
-		return time.Duration(u) * SECOND, true
-	case int64:
-		return time.Duration(u) * SECOND, true
-	}
-
-	return 0, false
+// PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
+//
+// Deprecated: Use Duration.String instead
+func PrettyDuration(d any) string {
+	return Pretty(d).String()
 }
 
+// PrettyDurationSimple returns simple pretty duration (seconds → minutes → hours → days)
+//
+// Deprecated: Use Duration.Simple instead
+func PrettyDurationSimple(d any) string {
+	return Pretty(d).Simple()
+}
+
+// PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
+//
+// Deprecated: Use Duration.InDays instead
+func PrettyDurationInDays(d any) string {
+	return Pretty(d).InDays()
+}
+
+// ShortDuration returns pretty short duration (e.g. 1:37)
+//
+// Deprecated: Use Duration.Short instead
+func ShortDuration(d any, highPrecision ...bool) string {
+	return Pretty(d).Short(highPrecision...)
+}
+
+// MiniDuration returns formatted value of duration (d/hr/m/s/ms/us/ns)
+//
+// Deprecated: Use Duration.Mini instead
+func MiniDuration(d time.Duration, separator ...string) string {
+	return Pretty(d).Mini(separator...)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// replaceDateTag replaces date tag in format string
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	r, _, err := input.ReadRune()
 
@@ -652,6 +557,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	}
 }
 
+// getShortWeekday returns short weekday name (e.g. Sun)
 func getShortWeekday(d time.Weekday) string {
 	long := getLongWeekday(d)
 
@@ -662,6 +568,7 @@ func getShortWeekday(d time.Weekday) string {
 	return long[:3]
 }
 
+// getLongWeekday returns long weekday name (e.g. Sunday)
 func getLongWeekday(d time.Weekday) string {
 	switch int(d) {
 	case 0:
@@ -683,6 +590,7 @@ func getLongWeekday(d time.Weekday) string {
 	return ""
 }
 
+// getShortMonth returns short month name (e.g. Jan)
 func getShortMonth(m time.Month) string {
 	long := getLongMonth(m)
 
@@ -693,6 +601,7 @@ func getShortMonth(m time.Month) string {
 	return long[:3]
 }
 
+// getLongMonth returns long month name (e.g. January)
 func getLongMonth(m time.Month) string {
 	switch int(m) {
 	case 1:
@@ -724,6 +633,7 @@ func getLongMonth(m time.Month) string {
 	return ""
 }
 
+// getAMPMHour returns hour in 12-hour format (e.g. 1..12)
 func getAMPMHour(d time.Time) int {
 	h := d.Hour()
 
@@ -739,6 +649,7 @@ func getAMPMHour(d time.Time) int {
 	}
 }
 
+// getAMPM returns AM or PM depending on the time and caps flag
 func getAMPM(d time.Time, caps bool) string {
 	if d.Hour() < 12 {
 		switch caps {
@@ -757,6 +668,7 @@ func getAMPM(d time.Time, caps bool) string {
 	}
 }
 
+// getWeekdayNum returns weekday number (1..7) where 1 is Monday and 7 is Sunday
 func getWeekdayNum(d time.Time) int {
 	r := int(d.Weekday())
 
@@ -767,6 +679,7 @@ func getWeekdayNum(d time.Time) int {
 	return r
 }
 
+// getTimezone returns timezone offset in +hh:mm or +hhmm format
 func getTimezone(d time.Time, separator bool) string {
 	negative := false
 	_, tzofs := d.Zone()
@@ -796,136 +709,7 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 }
 
-func getShortDuration(dur time.Duration, highPrecision bool) string {
-	var h, m int64
-
-	s := dur.Seconds()
-	d := int64(s)
-
-	if d >= 3600 {
-		h = d / 3600
-		d = d % 3600
-	}
-
-	if d >= 60 {
-		m = d / 60
-		d = d % 60
-	}
-
-	if h > 0 {
-		return fmt.Sprintf("%d:%02d:%02d", h, m, d)
-	}
-
-	if highPrecision && s < 10.0 {
-		ms := fmt.Sprintf("%.3f", s-math.Floor(s))
-		ms = strings.ReplaceAll(ms, "0.", "")
-		return fmt.Sprintf("%d:%02d.%s", m, d, ms)
-	}
-
-	return fmt.Sprintf("%d:%02d", m, d)
-}
-
-func getPrettyLongDuration(dur time.Duration) string {
-	d := int64(dur.Seconds())
-
-	var result []string
-
-MAINLOOP:
-	for range 5 {
-		switch {
-		case d >= _WEEK:
-			weeks := d / _WEEK
-			d = d % _WEEK
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
-		case d >= _DAY:
-			days := d / _DAY
-			d = d % _DAY
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
-		case d >= _HOUR:
-			hours := d / _HOUR
-			d = d % _HOUR
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
-		case d >= _MINUTE:
-			minutes := d / _MINUTE
-			d = d % _MINUTE
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
-		case d >= 1:
-			result = append(result, pluralize.PS(pluralize.En, "%d %s", d, "second", "seconds"))
-			break MAINLOOP
-		case d <= 0 && len(result) == 0:
-			return "< 1 second"
-		}
-	}
-
-	resultLen := len(result)
-
-	if resultLen > 1 {
-		return strings.Join(result[:resultLen-1], " ") + " and " + result[resultLen-1]
-	}
-
-	return result[0]
-}
-
-func getPrettySimpleDuration(dur time.Duration) string {
-	d := int64(dur.Seconds())
-
-	switch {
-	case d >= _DAY:
-		return pluralize.PS(pluralize.En, "%d %s", d/_DAY, "day", "days")
-	case d >= _HOUR:
-		return pluralize.PS(pluralize.En, "%d %s", d/_HOUR, "hour", "hours")
-	case d >= _MINUTE:
-		return pluralize.PS(pluralize.En, "%d %s", d/_MINUTE, "minute", "minutes")
-	case d >= 1:
-		return pluralize.PS(pluralize.En, "%d %s", d, "second", "seconds")
-	}
-
-	return "< 1 second"
-}
-
-func getPrettyShortDuration(d time.Duration, separator string) string {
-	switch {
-	case d >= DAY:
-		return fmt.Sprintf(
-			"%.0f"+separator+"d",
-			formatFloat(float64(d)/float64(DAY)),
-		)
-
-	case d >= HOUR:
-		return fmt.Sprintf(
-			"%.2g"+separator+"h",
-			formatFloat(float64(d)/float64(HOUR)),
-		)
-
-	case d >= MINUTE:
-		return fmt.Sprintf(
-			"%.2g"+separator+"m",
-			formatFloat(float64(d)/float64(MINUTE)),
-		)
-
-	case d >= SECOND:
-		return fmt.Sprintf(
-			"%.2g"+separator+"s",
-			formatFloat(float64(d)/float64(SECOND)),
-		)
-
-	case d >= MS:
-		return fmt.Sprintf(
-			"%g"+separator+"ms",
-			formatFloat(float64(d)/float64(MS)),
-		)
-
-	case d >= US:
-		return fmt.Sprintf(
-			"%g"+separator+"μs",
-			formatFloat(float64(d)/float64(US)),
-		)
-
-	default:
-		return fmt.Sprintf("%d"+separator+"ns", d.Nanoseconds())
-	}
-}
-
+// appendDur appends duration value to the buffer and returns new value
 func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
 	v, err := strconv.ParseInt(buf.String(), 10, 64)
 
@@ -936,12 +720,4 @@ func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
 	buf.Reset()
 
 	return value + (v * mod), nil
-}
-
-func formatFloat(f float64) float64 {
-	if f < 10.0 {
-		return mathutil.Round(f, 2)
-	}
-
-	return mathutil.Round(f, 1)
 }

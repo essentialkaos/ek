@@ -24,7 +24,7 @@ var defaultFieldsSeparators = []rune{' ', '\t'}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Q is simple helper for working with default values
+// Q returns first non-empty string from given slice
 func Q(v ...string) string {
 	for _, k := range v {
 		if k != "" {
@@ -35,7 +35,7 @@ func Q(v ...string) string {
 	return ""
 }
 
-// B is shorthand for choosing value by condition
+// B returns positive string if condition is true, otherwise returns negative string
 func B(cond bool, positive, negative string) string {
 	if cond {
 		return positive
@@ -44,7 +44,7 @@ func B(cond bool, positive, negative string) string {
 	return negative
 }
 
-// Concat is method for fast string concatenation
+// Concat concatenates all strings into a single string
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
 
@@ -374,13 +374,14 @@ func Fields(data string) []string {
 			buf.WriteRune(char)
 			escaped = true
 		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»', '„':
-			if waitChar == 0 && !escaped {
+			switch {
+			case waitChar == 0 && !escaped:
 				waitChar = getClosingChar(char)
-			} else if waitChar != 0 && waitChar == char && !escaped {
+			case waitChar != 0 && waitChar == char && !escaped:
 				result = appendField(result, buf.String())
 				buf.Reset()
 				waitChar = 0
-			} else {
+			default:
 				if escaped && buf.Len() > 0 {
 					buf.Truncate(buf.Len() - 1)
 				}
@@ -556,8 +557,30 @@ func JoinFunc(elems []string, sep string, f func(s string) string) string {
 	return buf.String()
 }
 
+// Wrap splits a string into lines of fixed width by inserting a newline character
+// ('\n') every n characters. It does not consider word boundaries or Unicode
+// characters; it simply slices the raw byte string.
+func Wrap(s string, n int) string {
+	if s == "" || n <= 0 || len(s) <= n {
+		return s
+	}
+
+	var buf bytes.Buffer
+
+	for i := 0; i < len(s); i += n {
+		if i+n >= len(s) {
+			buf.WriteString(s[i:])
+		} else {
+			buf.WriteString(s[i:i+n] + "\n")
+		}
+	}
+
+	return buf.String()
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// appendField appends item to data if item is not empty
 func appendField(data []string, item string) []string {
 	if strings.TrimSpace(item) == "" {
 		return data
@@ -566,6 +589,7 @@ func appendField(data []string, item string) []string {
 	return append(data, item)
 }
 
+// getClosingChar returns the closing character for the given opening character
 func getClosingChar(r rune) rune {
 	switch r {
 	case '“':

@@ -383,7 +383,7 @@ func (s *ReqSuite) TestJSONWithHashResp(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(testStruct.String, Equals, "test")
-	c.Assert(respHash, Equals, "e03b1cde95e6e4fa740de100773bc41804d03b5297b7b0222888fff3e72d2b7c")
+	c.Assert(respHash.String(), Equals, "e03b1cde95e6e4fa740de100773bc41804d03b5297b7b0222888fff3e72d2b7c")
 
 	resp, err = Request{URL: s.url + _URL_GET}.Do()
 
@@ -422,12 +422,11 @@ func (s *ReqSuite) TestSaveWithHashResp(c *C) {
 	_, err = resp.SaveWithHash(testDir+"/output.test", 0644, nil)
 	c.Assert(err, NotNil)
 
-	resp, err = Request{URL: s.url + _URL_SAVE}.Get()
-
+	resp, _ = Request{URL: s.url + _URL_SAVE}.Get()
 	fileHash, err := resp.SaveWithHash(testDir+"/output.test", 0644, sha256.New())
 
 	c.Assert(err, IsNil)
-	c.Assert(fileHash, Equals, "9546c567ac10e0d47034582eb9f5e5cfabf1c242c5714cf38fecb0a135f99a75")
+	c.Assert(fileHash.String(), Equals, "9546c567ac10e0d47034582eb9f5e5cfabf1c242c5714cf38fecb0a135f99a75")
 }
 
 func (s *ReqSuite) TestDiscard(c *C) {
@@ -460,6 +459,8 @@ func (s *ReqSuite) TestTimeout(c *C) {
 		Timeout:     10 * time.Millisecond,
 		AutoDiscard: true,
 	}.Get()
+
+	c.Assert(err, IsNil)
 }
 
 func (s *ReqSuite) TestEncoding(c *C) {
@@ -539,6 +540,12 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err.Error(), Equals, `Can't create request: net/http: invalid method "ЩУП"`)
 	c.Assert(resp, IsNil)
+
+	eng := &Engine{}
+	eng.Init()
+
+	_, _, err = createRequest(eng, Request{Method: "ЩУП", Timeout: 1}, nil)
+	c.Assert(err, NotNil)
 }
 
 func (s *ReqSuite) TestEngineInit(c *C) {
@@ -633,21 +640,21 @@ func (s *ReqSuite) TestRetrier(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(resp, NotNil)
 
-	resp, err = r.Get(
+	_, err = r.Get(
 		Request{URL: "http://127.0.0.1:1"},
 		Retry{Num: 3},
 	)
 
 	c.Assert(err, NotNil)
 
-	resp, err = r.Get(
+	_, err = r.Get(
 		Request{URL: s.url + "/unknown"},
 		Retry{Num: 3, Status: STATUS_OK, Pause: time.Millisecond},
 	)
 
 	c.Assert(err, NotNil)
 
-	resp, err = r.Get(
+	_, err = r.Get(
 		Request{URL: s.url + "/unknown"},
 		Retry{Num: 3, MinStatus: 299},
 	)

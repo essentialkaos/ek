@@ -44,15 +44,15 @@ _{{COMPNAME}} "$@"
 func Generate(info *usage.Info, opts options.Map, name string, fileGlob ...string) string {
 	result := _ZSH_TEMPLATE
 
-	result = strings.Replace(result, "{{GLOBAL_ARGS}}", genGlobalOptionList(info, opts), -1)
-	result = strings.Replace(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info, opts), -1)
-	result = strings.Replace(result, "{{COMMANDS_FUNC}}", genCommandsFunc(info), -1)
-	result = strings.Replace(result, "{{FILES_HANDLER}}", genFilesHandler(info, fileGlob), -1)
-	result = strings.Replace(result, "{{COMPNAME}}", name, -1)
+	result = strings.ReplaceAll(result, "{{GLOBAL_ARGS}}", genGlobalOptionList(info, opts))
+	result = strings.ReplaceAll(result, "{{COMMANDS_HANDLERS}}", genCommandsHandlers(info, opts))
+	result = strings.ReplaceAll(result, "{{COMMANDS_FUNC}}", genCommandsFunc(info))
+	result = strings.ReplaceAll(result, "{{FILES_HANDLER}}", genFilesHandler(info, fileGlob))
+	result = strings.ReplaceAll(result, "{{COMPNAME}}", name)
 
-	nameSafe := strings.Replace(name, "-", "_", -1)
+	nameSafe := strings.ReplaceAll(name, "-", "_")
 
-	result = strings.Replace(result, "{{COMPNAME_SAFE}}", nameSafe, -1)
+	result = strings.ReplaceAll(result, "{{COMPNAME_SAFE}}", nameSafe)
 
 	return result
 }

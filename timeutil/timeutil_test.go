@@ -25,91 +25,80 @@ type TimeUtilSuite struct{}
 
 var _ = Suite(&TimeUtilSuite{})
 
-func (s *TimeUtilSuite) TestPrettyDuration(c *C) {
-	c.Assert(PrettyDuration(time.Duration(59000000000)), Equals, "59 seconds")
-	c.Assert(PrettyDuration(120), Equals, "2 minutes")
-	c.Assert(PrettyDuration(int16(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(int32(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(int64(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(uint16(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(uint32(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(uint64(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(uint(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(float32(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(float64(120)), Equals, "2 minutes")
-	c.Assert(PrettyDuration(3720), Equals, "1 hour and 2 minutes")
-	c.Assert(PrettyDuration(3720), Equals, "1 hour and 2 minutes")
-	c.Assert(PrettyDuration(3720), Equals, "1 hour and 2 minutes")
-	c.Assert(PrettyDuration(3720), Equals, "1 hour and 2 minutes")
-	c.Assert(PrettyDuration(60), Equals, "1 minute")
-	c.Assert(PrettyDuration(1370137), Equals, "2 weeks 1 day 20 hours 35 minutes and 37 seconds")
-	c.Assert(PrettyDuration(0), Equals, "< 1 second")
-	c.Assert(PrettyDuration("string"), Equals, "")
-	c.Assert(PrettyDuration(time.Second/3), Equals, "333.3 ms")
-	c.Assert(PrettyDuration(time.Second/3669), Equals, "272.6 μs")
-	c.Assert(PrettyDuration(time.Second/366995), Equals, "2.72 μs")
-	c.Assert(PrettyDuration(time.Second/36698888), Equals, "27 ns")
+func (s *TimeUtilSuite) TestDuration(c *C) {
+	c.Assert(Pretty(time.Duration(59000000000)).String(), Equals, "59 seconds")
+	c.Assert(Pretty(2430).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(int16(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(int32(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(int64(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(uint16(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(uint32(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(uint64(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(uint(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(float32(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty(float64(2430)).String(), Equals, "40 minutes and 30 seconds")
+	c.Assert(Pretty("2h30m").String(), Equals, "2 hours and 30 minutes")
 }
 
-func (s *TimeUtilSuite) TestPrettyDurationSimple(c *C) {
-	c.Assert(PrettyDurationSimple(true), Equals, "")
-	c.Assert(PrettyDurationSimple(0), Equals, "< 1 second")
-	c.Assert(PrettyDurationSimple(1), Equals, "1 second")
-	c.Assert(PrettyDurationSimple(123), Equals, "2 minutes")
-	c.Assert(PrettyDurationSimple(12134), Equals, "3 hours")
-	c.Assert(PrettyDurationSimple(112345), Equals, "1 day")
-	c.Assert(PrettyDurationSimple(4523412), Equals, "52 days")
+func (s *TimeUtilSuite) TestDuration_String(c *C) {
+	c.Assert(Pretty(3720).String(), Equals, "1 hour and 2 minutes")
+	c.Assert(Pretty(60).String(), Equals, "1 minute")
+	c.Assert(Pretty(1370137).String(), Equals, "2 weeks 1 day 20 hours 35 minutes and 37 seconds")
+	c.Assert(Pretty(0).String(), Equals, "< 1 second")
+	c.Assert(Pretty("string").String(), Equals, "")
+	c.Assert(Pretty(time.Second/3).String(), Equals, "333.3 ms")
+	c.Assert(Pretty(time.Second/3669).String(), Equals, "272.6 μs")
+	c.Assert(Pretty(time.Second/366995).String(), Equals, "2.72 μs")
+	c.Assert(Pretty(time.Second/36698888).String(), Equals, "27 ns")
 }
 
-func (s *TimeUtilSuite) TestPrettyDurationInDays(c *C) {
-	c.Assert(PrettyDurationInDays("ABC"), Equals, "")
-	c.Assert(PrettyDurationInDays(120), Equals, "1 day")
-	c.Assert(PrettyDurationInDays(7200), Equals, "1 day")
-	c.Assert(PrettyDurationInDays(90000), Equals, "1 day")
-	c.Assert(PrettyDurationInDays(1296000), Equals, "15 days")
+func (s *TimeUtilSuite) TestDuration_Simple(c *C) {
+	c.Assert(Pretty(true).Simple(), Equals, "")
+	c.Assert(Pretty(0).Simple(), Equals, "< 1 second")
+	c.Assert(Pretty(1).Simple(), Equals, "1 second")
+	c.Assert(Pretty(123).Simple(), Equals, "2 minutes")
+	c.Assert(Pretty(12134).Simple(), Equals, "3 hours")
+	c.Assert(Pretty(112345).Simple(), Equals, "1 day")
+	c.Assert(Pretty(4523412).Simple(), Equals, "52 days")
 }
 
-func (s *TimeUtilSuite) TestShortDuration(c *C) {
-	c.Assert(ShortDuration(time.Duration(0)), Equals, "0:00")
-	c.Assert(ShortDuration(time.Duration(3546*time.Millisecond), false), Equals, "0:03")
-	c.Assert(ShortDuration(time.Duration(3546*time.Millisecond), true), Equals, "0:03.546")
-	c.Assert(ShortDuration(time.Duration(59000000000)), Equals, "0:59")
-	c.Assert(ShortDuration(60), Equals, "1:00")
-	c.Assert(ShortDuration(120), Equals, "2:00")
-	c.Assert(ShortDuration(2235), Equals, "37:15")
-	c.Assert(ShortDuration(1234567), Equals, "342:56:07")
-	c.Assert(ShortDuration(int16(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(int32(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(int64(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(uint16(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(uint32(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(uint64(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(uint(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(float32(1234)), Equals, "20:34")
-	c.Assert(ShortDuration(float64(1234)), Equals, "20:34")
-	c.Assert(ShortDuration("ABCD"), Equals, "")
+func (s *TimeUtilSuite) TestDuration_InDays(c *C) {
+	c.Assert(Pretty("ABC").InDays(), Equals, "")
+	c.Assert(Pretty(120).InDays(), Equals, "1 day")
+	c.Assert(Pretty(7200).InDays(), Equals, "1 day")
+	c.Assert(Pretty(90000).InDays(), Equals, "1 day")
+	c.Assert(Pretty(1296000).InDays(), Equals, "15 days")
 }
 
-func (s *TimeUtilSuite) TestMiniDuration(c *C) {
-	c.Assert(MiniDuration(89*time.Hour, ""), Equals, "4d")
-	c.Assert(MiniDuration(time.Duration(0)), Equals, "0 ns")
-	c.Assert(MiniDuration(89*time.Hour), Equals, "4 d")
-	c.Assert(MiniDuration(15*time.Hour), Equals, "15 h")
-	c.Assert(MiniDuration(80*time.Second), Equals, "1.3 m")
-	c.Assert(MiniDuration(3*time.Second), Equals, "3 s")
-	c.Assert(MiniDuration(3*time.Millisecond), Equals, "3 ms")
-	c.Assert(MiniDuration(3*time.Microsecond), Equals, "3 μs")
-	c.Assert(MiniDuration(3*time.Nanosecond), Equals, "3 ns")
+func (s *TimeUtilSuite) TestDuration_Short(c *C) {
+	c.Assert(Pretty(time.Duration(0)).Short(), Equals, "0:00")
+	c.Assert(Pretty(time.Duration(3546*time.Millisecond)).Short(false), Equals, "0:03")
+	c.Assert(Pretty(time.Duration(3546*time.Millisecond)).Short(true), Equals, "0:03.546")
+	c.Assert(Pretty(time.Duration(59000000000)).Short(), Equals, "0:59")
+	c.Assert(Pretty(60).Short(), Equals, "1:00")
+	c.Assert(Pretty(6725).Short(), Equals, "1:52:05")
+	c.Assert(Pretty(float64(1234)).Short(), Equals, "20:34")
+	c.Assert(Pretty("ABCD").Short(), Equals, "")
+}
+
+func (s *TimeUtilSuite) TestDuration_Mini(c *C) {
+	c.Assert(Pretty("ABCD").Mini(""), Equals, "")
+	c.Assert(Pretty(89*time.Hour).Mini(""), Equals, "4d")
+	c.Assert(Pretty(89*time.Hour).Mini(""), Equals, "4d")
+	c.Assert(Pretty(time.Duration(0)).Mini(), Equals, "0 ns")
+	c.Assert(Pretty(89*time.Hour).Mini(), Equals, "4 d")
+	c.Assert(Pretty(15*time.Hour).Mini(), Equals, "15 h")
+	c.Assert(Pretty(80*time.Second).Mini(), Equals, "1.3 m")
+	c.Assert(Pretty(3*time.Second).Mini(), Equals, "3 s")
+	c.Assert(Pretty(3*time.Millisecond).Mini(), Equals, "3 ms")
+	c.Assert(Pretty(3*time.Microsecond).Mini(), Equals, "3 μs")
+	c.Assert(Pretty(3*time.Nanosecond).Mini(), Equals, "3 ns")
 }
 
 func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
 	c.Assert(SecondsToDuration(1), Equals, time.Second)
 	c.Assert(SecondsToDuration(1.5), Equals, 1500*time.Millisecond)
 	c.Assert(SecondsToDuration(3600), Equals, time.Hour)
-}
-
-func (s *TimeUtilSuite) TestSecondsToDuration(c *C) {
-	c.Assert(DurationToSeconds(time.Second/4), Equals, 0.25)
 }
 
 func (s *TimeUtilSuite) TestFormat(c *C) {
@@ -378,7 +367,6 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	d = time.Date(2012, 1, 1, 12, 0, 0, 0, time.Local)
 	c.Assert(Since(d, DAY), Not(Equals), 0)
 
-	d = time.Date(2023, 8, 1, 6, 30, 15, 0, time.Local)
 	c.Assert(DurationAs(time.Duration(79872232972344474), DAY), Equals, 924)
 }
 
@@ -394,6 +382,14 @@ func (s *TimeUtilSuite) TestParseWithAny(c *C) {
 	t, err := ParseWithAny("06 Dec 1988", "02.01.2006", "2.01.2006", "2.1.2006", "02 Jan 06", "02 Jan 2006", "2 Jan 2006")
 	c.Assert(err, IsNil)
 	c.Assert(Format(t, "%Y/%m/%d"), Equals, "1988/12/06")
+}
+
+func (s *TimeUtilSuite) TestDeprecated(c *C) {
+	c.Assert(PrettyDuration(time.Minute), Equals, "1 minute")
+	c.Assert(PrettyDurationSimple(time.Minute), Equals, "1 minute")
+	c.Assert(PrettyDurationInDays(time.Minute), Equals, "1 day")
+	c.Assert(ShortDuration(time.Minute), Equals, "1:00")
+	c.Assert(MiniDuration(time.Minute), Equals, "1 m")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

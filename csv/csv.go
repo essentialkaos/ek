@@ -40,11 +40,13 @@ type Row []string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrEmptyDest is returned by the ReadTo method if empty destination slice was given
-var ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
+var (
+	// ErrEmptyDest is returned by the ReadTo method if empty destination slice was given
+	ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
 
-// ErrNilReader is returned when reader struct is nil
-var ErrNilReader = errors.New("Reader is nil")
+	// ErrNilReader is returned when reader struct is nil
+	ErrNilReader = errors.New("Reader is nil")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -375,11 +377,7 @@ func parseAndFill(src string, dst Row, sep string) {
 	}
 
 	for i < n && i < l {
-		m := strings.Index(src, sep)
-
-		dst[i] = src[:m]
-		src = src[m+1:]
-
+		dst[i], src, _ = strings.Cut(src, sep)
 		i++
 	}
 

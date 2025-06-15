@@ -31,14 +31,17 @@ type Version struct {
 var (
 	// ErrEmpty is returned is given version is empty
 	ErrEmpty = errors.New("Version can't be empty")
+	
 	// ErrEmptyBuild is returned if build number is empty
 	ErrEmptyBuild = errors.New("Build number is empty")
+	
 	// ErrEmptyPrerelease is returned is prerelease number is empty
 	ErrEmptyPrerelease = errors.New("Prerelease number is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// preRegExp is used to parse prerelease version
 var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -260,6 +263,8 @@ func (v Version) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// prereleaseLess compares two prerelease versions and returns true if
+// first version is less than second version
 func prereleaseLess(pr1, pr2 string) bool {
 	// Current version is release and given is prerelease
 	if pr1 == "" && pr2 != "" {

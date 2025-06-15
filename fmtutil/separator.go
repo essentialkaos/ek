@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/terminal/tty"
 )
@@ -43,9 +44,9 @@ func Separator(tiny bool, args ...string) {
 	var size int
 
 	if SeparatorFullscreen {
-		size = between(tty.GetWidth(), 16, 999999)
+		size = mathutil.Between(tty.GetWidth(), 16, 999999)
 	} else {
-		size = between(SeparatorSize, 80, 999999)
+		size = mathutil.Between(SeparatorSize, 80, 999999)
 	}
 
 	if len(args) != 0 {
@@ -66,7 +67,7 @@ func Separator(tiny bool, args ...string) {
 func getAligned(size int, name string) string {
 	var separator string
 
-	lineSize := between((size-2)-strutil.LenVisual(name), 4, 999999)
+	lineSize := mathutil.Between((size-2)-strutil.LenVisual(name), 4, 999999)
 
 	switch strings.ToLower(SeparatorTitleAlign) {
 	case "c", "center":
@@ -86,15 +87,4 @@ func getAligned(size int, name string) string {
 	}
 
 	return separator
-}
-
-func between(val, min, max int) int {
-	switch {
-	case val < min:
-		return min
-	case val > max:
-		return max
-	default:
-		return val
-	}
 }

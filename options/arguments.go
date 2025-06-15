@@ -10,10 +10,10 @@ package options
 import (
 	"fmt"
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/path"
 )
 
@@ -67,7 +67,7 @@ func (a Arguments) Last() Argument {
 func (a Arguments) Append(args ...string) Arguments {
 	var result Arguments
 
-	result = append(Arguments{}, a...)
+	result = slices.Clone(a)
 
 	for _, arg := range args {
 		result = append(result, Argument(arg))
@@ -196,7 +196,7 @@ func (a Argument) Int64() (int64, error) {
 // Uint converts argument to uint
 func (a Argument) Uint() (uint, error) {
 	u, err := strconv.ParseUint(string(a), 10, 64)
-	return uint(mathutil.Min(u, math.MaxUint)), err
+	return uint(min(u, math.MaxUint)), err
 }
 
 // Uint converts argument to uint64

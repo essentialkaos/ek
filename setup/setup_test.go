@@ -125,7 +125,7 @@ func (s *SetupSuite) TestUninstallErrors(c *C) {
 }
 
 func (s *SetupSuite) TestAux(c *C) {
-	bin := getBinaryInfo()
+	getBinaryInfo()
 
 	app, bin := s.generateApp(), s.generateBin()
 
