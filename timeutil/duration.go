@@ -125,11 +125,12 @@ func (d Duration) Mini(separator ...string) string {
 func (d Duration) InDays() string {
 	var days int
 
-	if d.isInvalid {
+	switch {
+	case d.isInvalid:
 		return ""
-	} else if d.Duration < 24*HOUR {
+	case d.Duration < 24*HOUR:
 		days = 1
-	} else {
+	default:
 		days = int(d.Hours()) / 24
 	}
 
@@ -182,12 +183,12 @@ func getShortDuration(dur time.Duration, highPrecision bool) string {
 
 	if d >= 3600 {
 		h = d / 3600
-		d = d % 3600
+		d %= 3600
 	}
 
 	if d >= 60 {
 		m = d / 60
-		d = d % 60
+		d %= 60
 	}
 
 	if h > 0 {
@@ -258,19 +259,19 @@ MAINLOOP:
 		switch {
 		case d >= _WEEK:
 			weeks := d / _WEEK
-			d = d % _WEEK
+			d %= _WEEK
 			result = append(result, pluralize.PS(pluralize.En, "%d %s", weeks, "week", "weeks"))
 		case d >= _DAY:
 			days := d / _DAY
-			d = d % _DAY
+			d %= _DAY
 			result = append(result, pluralize.PS(pluralize.En, "%d %s", days, "day", "days"))
 		case d >= _HOUR:
 			hours := d / _HOUR
-			d = d % _HOUR
+			d %= _HOUR
 			result = append(result, pluralize.PS(pluralize.En, "%d %s", hours, "hour", "hours"))
 		case d >= _MINUTE:
 			minutes := d / _MINUTE
-			d = d % _MINUTE
+			d %= _MINUTE
 			result = append(result, pluralize.PS(pluralize.En, "%d %s", minutes, "minute", "minutes"))
 		case d >= 1:
 			result = append(result, pluralize.PS(pluralize.En, "%d %s", d, "second", "seconds"))
