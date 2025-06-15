@@ -128,7 +128,7 @@ func Sum(hasher hash.Hash) Hash {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns string representation of hash
+// String returns hash as hex string
 func (h Hash) String() string {
 	if len(h) == 0 {
 		return ""

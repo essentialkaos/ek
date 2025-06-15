@@ -40,14 +40,17 @@ type ListingFilter struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// hasMatchPatterns checks if filter has match patterns
 func (lf ListingFilter) hasMatchPatterns() bool {
 	return len(lf.MatchPatterns) != 0
 }
 
+// hasNotMatchPatterns checks if filter has not-match patterns
 func (lf ListingFilter) hasNotMatchPatterns() bool {
 	return len(lf.NotMatchPatterns) != 0
 }
 
+// hasTimes checks if filter has time-related properties
 func (lf ListingFilter) hasTimes() bool {
 	switch {
 	case lf.ATimeOlder != 0,
@@ -62,10 +65,12 @@ func (lf ListingFilter) hasTimes() bool {
 	return false
 }
 
+// hasPerms checks if filter has permission-related properties
 func (lf ListingFilter) hasPerms() bool {
 	return lf.Perms != "" || lf.NotPerms != ""
 }
 
+// hasSize checks if filter has size-related properties
 func (lf ListingFilter) hasSize() bool {
 	return lf.SizeZero || lf.SizeGreater > 0 || lf.SizeLess > 0 || lf.SizeEqual > 0
 }
@@ -409,6 +414,7 @@ func filterHidden(names []string) []string {
 	return filteredNames
 }
 
+// fixCount ensures that the count from syscall.ReadDirent is non-negative
 func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0
