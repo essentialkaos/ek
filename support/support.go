@@ -492,7 +492,7 @@ func (i *Info) printAppInfo() {
 
 	name := i.Name
 
-	if strings.ToLower(i.Name) != strings.ToLower(i.Binary) {
+	if strings.EqualFold(i.Name, i.Binary) {
 		name += fmtc.Sprintf(" {s-}(%s){!}", i.Binary)
 	}
 
@@ -945,7 +945,7 @@ func format(size int, printEmpty bool, records ...string) {
 				continue
 			}
 
-			size = mathutil.Max(size, len(records[i]))
+			size = max(size, len(records[i]))
 		}
 	}
 
@@ -978,7 +978,7 @@ func getMaxKeySize(vars []EnvVar) int {
 	var size int
 
 	for _, ev := range vars {
-		size = mathutil.Max(size, len(ev.Key))
+		size = max(size, len(ev.Key))
 	}
 
 	return size
@@ -989,7 +989,7 @@ func getMaxAppNameSize(apps []App) int {
 	var size int
 
 	for _, p := range apps {
-		size = mathutil.Max(size, len(p.Name))
+		size = max(size, len(p.Name))
 	}
 
 	return size
@@ -1000,7 +1000,7 @@ func getMaxServiceNameSize(apps []Service) int {
 	var size int
 
 	for _, s := range apps {
-		size = mathutil.Max(size, len(s.Name))
+		size = max(size, len(s.Name))
 	}
 
 	return size
@@ -1011,7 +1011,7 @@ func getMaxDeviceNameSize(mounts []FSInfo) int {
 	var size int
 
 	for _, m := range mounts {
-		size = mathutil.Max(size, len(m.Device))
+		size = max(size, len(m.Device))
 	}
 
 	return size
