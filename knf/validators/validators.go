@@ -206,29 +206,31 @@ func validatorTypeDur(config knf.IConfig, prop string, value any) error {
 }
 
 func validatorSetToAny(config knf.IConfig, prop string, value any) error {
-	switch t := value.(type) {
-	case []string:
-		if !isSliceContainsValue(t, config.GetS(prop), false) {
-			return fmt.Errorf("Property %s doesn't contains any valid value", prop)
-		}
+	t, ok := value.([]string)
 
-		return nil
+	if !ok {
+		return getValidatorInputError("SetToAny", prop, value)
 	}
 
-	return getValidatorInputError("SetToAny", prop, value)
+	if !isSliceContainsValue(t, config.GetS(prop), false) {
+		return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+	}
+
+	return nil
 }
 
 func validatorSetToAnyIgnoreCase(config knf.IConfig, prop string, value any) error {
-	switch t := value.(type) {
-	case []string:
-		if !isSliceContainsValue(t, config.GetS(prop), true) {
-			return fmt.Errorf("Property %s doesn't contains any valid value", prop)
-		}
+	t, ok := value.([]string)
 
-		return nil
+	if !ok {
+		return getValidatorInputError("SetToAnyIgnoreCase", prop, value)
 	}
 
-	return getValidatorInputError("SetToAnyIgnoreCase", prop, value)
+	if !isSliceContainsValue(t, config.GetS(prop), true) {
+		return fmt.Errorf("Property %s doesn't contains any valid value", prop)
+	}
+
+	return nil
 }
 
 func validatorLess(config knf.IConfig, prop string, value any) error {
