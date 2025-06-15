@@ -10,6 +10,7 @@
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
 - **`[csv]`** Code refactoring
+- **`[events]`** Code refactoring
 - **`[fmtutil/filetree]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
 - **`[options]`** Code refactoring
