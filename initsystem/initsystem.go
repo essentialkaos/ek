@@ -171,7 +171,7 @@ func hasSysVService(name string) bool {
 // hasUpstartService checks if service exists in Upstart init system
 func hasUpstartService(name string) bool {
 	if !strings.HasSuffix(name, ".conf") {
-		name = name + ".conf"
+		name += ".conf"
 	}
 
 	return fsutil.IsExist("/etc/init/" + name)
@@ -180,7 +180,7 @@ func hasUpstartService(name string) bool {
 // hasSystemdService checks if service exists in Systemd init system
 func hasSystemdService(name string) bool {
 	if !strings.Contains(name, ".") {
-		name = name + ".service"
+		name += ".service"
 	}
 
 	if fsutil.IsExist("/etc/systemd/system/" + name) {
@@ -234,9 +234,7 @@ func getSysVServiceState(name string) (bool, error) {
 
 // getUpstartServiceState returns service state from Upstart init system
 func getUpstartServiceState(name string) (bool, error) {
-	if strings.HasSuffix(name, ".conf") {
-		name = strings.Replace(name, ".conf", "", -1)
-	}
+	name = strings.TrimSuffix(name, ".conf")
 
 	output, err := exec.Command("/sbin/status", name).Output()
 
@@ -272,7 +270,7 @@ func isSysVEnabled(name string) (bool, error) {
 // isUpstartEnabled checks if service is enabled in Upstart init system
 func isUpstartEnabled(name string) (bool, error) {
 	if !strings.HasSuffix(name, ".conf") {
-		name = name + ".conf"
+		name += ".conf"
 	}
 
 	return parseUpstartEnabledData("/etc/init/" + name)
