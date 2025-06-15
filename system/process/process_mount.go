@@ -79,6 +79,7 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 	optFieldsNum := 0
 	optFieldParsed := false
 
+LOOP:
 	for i := range 128 {
 		pseudoIndex := i - optFieldsNum
 		value := strutil.ReadField(data, i, false, ' ')
@@ -114,7 +115,7 @@ func parseMountInfoLine(data string) (*MountInfo, error) {
 		case 8:
 			info.SuperOptions = strings.Split(value, ",")
 		default:
-			break
+			break LOOP
 		}
 
 		if err != nil {

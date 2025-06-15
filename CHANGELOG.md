@@ -24,6 +24,7 @@
 - **`[spellcheck]`** Code refactoring
 - **`[strutil]`** Code refactoring
 - **`[support]`** Code refactoring
+- **`[system]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
 - **`[fmtc]`** Deprecated methods have been removed

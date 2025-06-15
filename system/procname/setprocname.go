@@ -80,7 +80,7 @@ func changeArgument(index int, newArg string) {
 
 	switch {
 	case curArgLen > newArgLen:
-		newArg = newArg + strings.Repeat(" ", curArgLen-newArgLen)
+		newArg += strings.Repeat(" ", curArgLen-newArgLen)
 	case curArgLen < newArgLen:
 		newArg = newArg[:curArgLen]
 	}

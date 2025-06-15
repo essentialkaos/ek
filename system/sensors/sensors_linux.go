@@ -114,12 +114,7 @@ func (s TempSensor) String() string {
 
 // hasSensorsData checks if directory contains sensors data
 func hasSensorsData(dir string) bool {
-	switch {
-	case hasTempSensorsData(dir):
-		return true
-	}
-
-	return false
+	return hasTempSensorsData(dir)
 }
 
 // hasTempSensorsData checks if directory contains temperature sensors data
