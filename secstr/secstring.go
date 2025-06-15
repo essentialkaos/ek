@@ -66,7 +66,7 @@ func secureStringFromSlice(data []byte) (*String, error) {
 	s := &String{}
 
 	// Destroy source data
-	defer clearByteSlice(data)
+	defer clear(data)
 
 	s.Data, err = unix.Mmap(
 		-1, 0, len(data),
@@ -87,16 +87,14 @@ func secureStringFromSlice(data []byte) (*String, error) {
 	}
 
 	// Copy data
-	for i := range data {
-		s.Data[i] = data[i]
-	}
+	copy(s.Data, data)
 
 	// Protect memory region with data
 	err = unix.Mprotect(s.Data, unix.PROT_READ) // The memory can be read
 
 	if err != nil {
 		unix.Munmap(s.Data)
-		clearByteSlice(s.Data) // Destroy data if memory cannot be protected
+		clear(s.Data) // Destroy data if memory cannot be protected
 		return nil, err
 	}
 
@@ -135,7 +133,7 @@ func destroySecureString(s *String) error {
 		return err
 	}
 
-	clearByteSlice(s.Data) // Clear data
+	clear(s.Data) // Clear data
 
 	// Unlock memory
 	err = unix.Munlock(s.Data)
@@ -153,11 +151,4 @@ func destroySecureString(s *String) error {
 	s.Data = nil // Mark as nil for GC
 
 	return nil
-}
-
-// clearByteSlice clears byte slice data
-func clearByteSlice(s []byte) {
-	for i := range s {
-		s[i] = 0
-	}
 }

@@ -20,6 +20,7 @@
 - **`[options]`** Code refactoring
 - **`[progress]`** Code refactoring
 - **`[req]`** Code refactoring
+- **`[secstr]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
 - **`[fmtc]`** Deprecated methods have been removed
