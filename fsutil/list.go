@@ -51,7 +51,6 @@ func (lf ListingFilter) hasNotMatchPatterns() bool {
 func (lf ListingFilter) hasTimes() bool {
 	switch {
 	case lf.ATimeOlder != 0,
-		lf.ATimeOlder != 0,
 		lf.ATimeYounger != 0,
 		lf.CTimeOlder != 0,
 		lf.CTimeYounger != 0,
