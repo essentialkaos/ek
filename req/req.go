@@ -727,10 +727,14 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 	}
 
 	if err != nil {
+		if cancel != nil {
+			cancel()
+		}
+
 		return nil, nil, fmt.Errorf("Can't create request: %w", err)
 	}
 
-	if r.Headers != nil && len(r.Headers) != 0 {
+	if len(r.Headers) != 0 {
 		for k, v := range r.Headers {
 			req.Header.Add(k, v)
 		}
