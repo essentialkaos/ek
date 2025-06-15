@@ -230,6 +230,8 @@ func (ls *LogSuite) TestStdOutput(c *C) {
 	l.UseJSON = true
 
 	err = l.Print(ERROR, "Error message")
+
+	c.Assert(err, IsNil)
 }
 
 func (ls *LogSuite) TestWithoutPrefixes(c *C) {
@@ -496,8 +498,8 @@ func (ls *LogSuite) TestWithCaller(c *C) {
 
 	c.Assert(len(dataSlice), Equals, 3)
 
-	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:481) Test info 1")
-	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:486) Test info 2")
+	c.Assert(dataSlice[0][28:], Equals, "(log/log_test.go:483) Test info 1")
+	c.Assert(dataSlice[1][28:], Equals, "(log/log_test.go:488) Test info 2")
 
 	frm := runtime.Frame{File: "/path/to/my/app/code/test.go", Line: 10}
 	c.Assert(extractCallerFromFrame(frm, true), Equals, "/path/to/my/app/code/test.go:10")

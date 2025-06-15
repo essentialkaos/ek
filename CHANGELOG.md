@@ -16,6 +16,7 @@
 - **`[i18n]`** Code refactoring
 - **`[initsystem]`** Code refactoring
 - **`[knf]`** Code refactoring
+- **`[log]`** Code refactoring
 - **`[options]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated

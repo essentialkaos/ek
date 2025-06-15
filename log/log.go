@@ -786,8 +786,9 @@ func (l *Logger) writeJSONFields(fields []any) {
 	}
 
 	for i, f := range fields {
-		switch t := f.(type) {
-		case Field:
+		t, ok := f.(Field)
+
+		if ok {
 			l.writeJSONField(t)
 			if i+1 != len(fields) {
 				l.buf.WriteRune(',')
@@ -890,8 +891,9 @@ func fieldsToText(fields []any) string {
 	buf.WriteRune('{')
 
 	for i, f := range fields {
-		switch t := f.(type) {
-		case Field:
+		t, ok := f.(Field)
+
+		if ok {
 			v := fmt.Sprintf("%v", t.Value)
 			fmt.Fprintf(&buf, "%s: %s", t.Key, strutil.Q(v, `—`))
 
