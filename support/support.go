@@ -492,7 +492,7 @@ func (i *Info) printAppInfo() {
 
 	name := i.Name
 
-	if strings.EqualFold(i.Name, i.Binary) {
+	if !strings.EqualFold(i.Name, i.Binary) {
 		name += fmtc.Sprintf(" {s-}(%s){!}", i.Binary)
 	}
 
