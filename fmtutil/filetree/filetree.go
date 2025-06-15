@@ -10,6 +10,7 @@ package filetree
 
 import (
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
@@ -46,6 +47,11 @@ var (
 	// DirColorTag is color tag for directory names
 	DirColorTag = "{*}"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// pathSeparator is path separator
+var pathSeparator = string(filepath.Separator)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -95,7 +101,7 @@ func (t *Tree) Render() {
 		return
 	}
 
-	t.Root.render(strutil.Q(t.Path, "/"), true, true)
+	t.Root.render(strutil.Q(t.Path, pathSeparator), true, true)
 }
 
 // IsEmpty returns true if dir is empty
@@ -107,7 +113,7 @@ func (d *Dir) IsEmpty() bool {
 func (d DirIndex) Names() []string {
 	var result []string
 
-	for n, _ := range d {
+	for n := range d {
 		result = append(result, n)
 	}
 
@@ -120,7 +126,7 @@ func (d DirIndex) Names() []string {
 
 // addFile adds file to the tree
 func (t *Tree) addFile(filePath string) {
-	filePath = strings.TrimLeft(filePath, "/")
+	filePath = strings.TrimLeft(filePath, pathSeparator)
 
 	if strings.ReplaceAll(filePath, " ", "") == "" {
 		return
@@ -128,12 +134,12 @@ func (t *Tree) addFile(filePath string) {
 
 	fileName := path.Base(filePath)
 
-	if !strings.Contains(filePath, "/") {
+	if !strings.Contains(filePath, pathSeparator) {
 		t.Root.Files = append(t.Root.Files, fileName)
 		return
 	}
 
-	dirPath := strings.Split(path.Dir(filePath), "/")
+	dirPath := strings.Split(path.Dir(filePath), pathSeparator)
 	dir := t.Root.createDir(dirPath)
 	dir.Files = append(dir.Files, fileName)
 
@@ -218,7 +224,7 @@ func getRootDir(paths []string) string {
 		}
 	}
 
-	return strings.TrimRight(rootDir, "/")
+	return strings.TrimRight(rootDir, pathSeparator)
 }
 
 // getLongestPath returns the most longest path from given slice
@@ -227,7 +233,7 @@ func getLongestPath(paths []string) string {
 	var longestPath string
 
 	for _, p := range paths {
-		depth := strings.Count(p, "/")
+		depth := strings.Count(p, pathSeparator)
 
 		if maxDepth < depth {
 			maxDepth = depth
