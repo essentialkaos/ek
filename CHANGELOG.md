@@ -9,8 +9,9 @@
 - **`[strutil]`** Added method `Wrap`
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
-- **`[fmtutil]`** Code refactoring
+- **`[csv]`** Code refactoring
 - **`[fmtutil/filetree]`** Code refactoring
+- **`[fmtutil]`** Code refactoring
 - **`[options]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
