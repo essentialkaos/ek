@@ -11,8 +11,8 @@
 - **`[cron]`** Code refactoring
 - **`[csv]`** Code refactoring
 - **`[events]`** Code refactoring
-- **`[fmtutil/filetree]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
+- **`[fmtutil/filetree]`** Code refactoring
 - **`[i18n]`** Code refactoring
 - **`[initsystem]`** Code refactoring
 - **`[knf]`** Code refactoring
@@ -27,6 +27,7 @@
 - **`[system]`** Code refactoring
 - **`[timeutil]`** Code refactoring
 - **`[usage]`** Code refactoring
+- **`[usage/update]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated
 - **`[fmtc]`** Deprecated methods have been removed
 - **`[fsutil]`** Deprecated methods have been removed
