@@ -22,7 +22,7 @@ import (
 
 var (
 	// Perms returns error if configuration property contains path to object with given
-	// permissions
+	// permissions. Supported permissions: F, FR, FW, FX, FRW, DX, DRX, DWX, DRWX
 	Perms = validatePerms
 
 	// Owner returns error if configuration property contains path to object with other
@@ -38,12 +38,14 @@ var (
 	FileMode = validateFileMode
 
 	// MatchPattern returns error if configuration property contains path which doesn't
-	// match given shell pattern
+	// match given shell pattern (e.g. "*.txt", "/etc/*", etc.)
 	MatchPattern = validateMatchPattern
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validatePerms checks if configuration property contains path to object with given
+// permissions. Supported permissions: F, FR, FW, FX, FRW, DX, DRX, DWX, DRWX
 func validatePerms(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -93,6 +95,8 @@ func validatePerms(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateOwner checks if configuration property contains path to object with given
+// owner
 func validateOwner(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -133,6 +137,8 @@ func validateOwner(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateOwnerGroup checks if configuration property contains path to object with
+// given owner group
 func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -173,6 +179,8 @@ func validateOwnerGroup(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateFileMode checks if configuration property contains path to object with
+// given file mode
 func validateFileMode(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -208,6 +216,8 @@ func validateFileMode(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateMatchPattern checks if configuration property contains path which
+// match given shell pattern (e.g. "*.txt", "/etc/*", etc.)
 func validateMatchPattern(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -244,6 +254,7 @@ func validateMatchPattern(config knf.IConfig, prop string, value any) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getValidatorInputError returns error for unsupported input type
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
 		"Validator fs.%s doesn't support input with type <%T> for checking %s property",
@@ -251,6 +262,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 	)
 }
 
+// getValidatorEmptyInputError returns error for empty input
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
 		"Validator fs.%s requires non-empty input for checking %s property",

@@ -99,6 +99,7 @@ type Range struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validatorSet checks if property is set to non-empty value
 func validatorSet(config knf.IConfig, prop string, value any) error {
 	if config.GetS(prop) == "" {
 		return fmt.Errorf("Property %s must be set", prop)
@@ -121,6 +122,7 @@ func validatorTypeBool(config knf.IConfig, prop string, value any) error {
 	}
 }
 
+// validatorTypeNum checks if property contains numeric (int/uint) value
 func validatorTypeNum(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -140,6 +142,7 @@ func validatorTypeNum(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorTypeFloat checks if property contains float value
 func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -159,6 +162,7 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorTypeSize checks if property contains size value (e.g. 10MB, 100KB, etc.)
 func validatorTypeSize(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -180,6 +184,7 @@ func validatorTypeSize(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorTypeDur checks if property contains duration value (e.g. 10s, 5m, etc.)
 func validatorTypeDur(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -205,6 +210,7 @@ func validatorTypeDur(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorSetToAny checks if property contains any value from given slice
 func validatorSetToAny(config knf.IConfig, prop string, value any) error {
 	t, ok := value.([]string)
 
@@ -219,6 +225,8 @@ func validatorSetToAny(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorSetToAnyIgnoreCase checks if property contains any value from given slice
+// in any letter case
 func validatorSetToAnyIgnoreCase(config knf.IConfig, prop string, value any) error {
 	t, ok := value.([]string)
 
@@ -233,6 +241,7 @@ func validatorSetToAnyIgnoreCase(config knf.IConfig, prop string, value any) err
 	return nil
 }
 
+// validatorLess checks if property value is less than given value
 func validatorLess(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
@@ -267,6 +276,7 @@ func validatorLess(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorGreater checks if property value is greater than given value
 func validatorGreater(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
@@ -301,6 +311,7 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorSizeLess checks if property value is greater than given size
 func validatorSizeLess(config knf.IConfig, prop string, value any) error {
 	var v uint64
 
@@ -326,6 +337,7 @@ func validatorSizeLess(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorSizeGreater checks if property value is less than given size
 func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 	var v uint64
 
@@ -351,6 +363,7 @@ func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorDurShorter checks if property value is shorter than given duration
 func validatorDurShorter(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -371,6 +384,7 @@ func validatorDurShorter(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorDurLonger checks if property value is longer than given duration
 func validatorDurLonger(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -391,6 +405,7 @@ func validatorDurLonger(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorInRange checks if property value is in given range
 func validatorInRange(config knf.IConfig, prop string, value any) error {
 	rng, ok := value.(Range)
 
@@ -431,6 +446,7 @@ func validatorInRange(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorNotEquals checks if property value is not equal to given value
 func validatorNotEquals(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
@@ -460,6 +476,7 @@ func validatorNotEquals(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorLenShorter checks if property value length is shorter than given value
 func validatorLenShorter(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
@@ -488,6 +505,7 @@ func validatorLenLonger(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorLenEquals checks if property value length is equal to given value
 func validatorLenEquals(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case int:
@@ -502,6 +520,7 @@ func validatorLenEquals(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorHasPrefix checks if property value has given prefix
 func validatorHasPrefix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
@@ -520,6 +539,7 @@ func validatorHasPrefix(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatorHasSuffix checks if property value has given suffix
 func validatorHasSuffix(config knf.IConfig, prop string, value any) error {
 	switch t := value.(type) {
 	case string:
@@ -540,6 +560,7 @@ func validatorHasSuffix(config knf.IConfig, prop string, value any) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isSliceContainsValue checks if slice contains given value
 func isSliceContainsValue(s []string, value string, ignoreCase bool) bool {
 	value = strings.ToLower(value)
 
@@ -559,6 +580,7 @@ func isSliceContainsValue(s []string, value string, ignoreCase bool) bool {
 	return false
 }
 
+// getValidatorInputError returns error for validators that don't support given input type
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
 		"Validator knf.%s doesn't support input with type <%T> for checking %s property",
@@ -566,6 +588,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 	)
 }
 
+// getValidatorEmptyInputError returns error for validators that require non-empty input
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
 		"Validator knf.%s requires non-empty input for checking %s property",
@@ -573,6 +596,7 @@ func getValidatorEmptyInputError(validator, prop string) error {
 	)
 }
 
+// getValidatorRangeError returns error for unsupported Range types
 func getValidatorRangeError(prop string, value any) error {
 	return fmt.Errorf(
 		"Validator knf.InRange doesn't support type <%T> for 'Range.%s' value",

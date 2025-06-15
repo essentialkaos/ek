@@ -45,6 +45,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validateIP returns error if configuration property isn't a valid IP address
 func validateIP(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -61,6 +62,7 @@ func validateIP(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validatePort returns error if configuration property isn't a valid port number
 func validatePort(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -77,6 +79,7 @@ func validatePort(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateMAC returns error if configuration property isn't a valid MAC address
 func validateMAC(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -93,6 +96,7 @@ func validateMAC(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateCIDR returns error if configuration property isn't a valid CIDR address
 func validateCIDR(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -109,6 +113,7 @@ func validateCIDR(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateURL returns error if configuration property isn't a valid URL
 func validateURL(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -125,6 +130,7 @@ func validateURL(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateMail returns error if configuration property isn't a valid email address
 func validateMail(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -139,6 +145,8 @@ func validateMail(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateHasIP returns error if system doesn't have interface with IP from configuration
+// property
 func validateHasIP(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 

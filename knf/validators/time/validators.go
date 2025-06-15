@@ -32,6 +32,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validateFormat checks if the given property contains a valid time conversion format
 func validateFormat(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -53,6 +54,7 @@ func validateFormat(config knf.IConfig, prop string, value any) error {
 	)
 }
 
+// validateTimezone checks if the given property contains a valid time zone name
 func validateTimezone(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 

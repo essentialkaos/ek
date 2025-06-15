@@ -25,6 +25,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validateCronExpression checks if the given property contains a valid cron expression
 func validateCronExpression(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 

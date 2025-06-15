@@ -30,6 +30,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validateUser checks if user exists on the system
 func validateUser(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
@@ -40,6 +41,7 @@ func validateUser(config knf.IConfig, prop string, value any) error {
 	return nil
 }
 
+// validateGroup checks if group exists on the system
 func validateGroup(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
