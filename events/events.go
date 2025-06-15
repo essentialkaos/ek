@@ -31,8 +31,13 @@ type Handler func(payload any)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
+	// ErrNilDispatcher is returned when dispatcher is nil
 	ErrNilDispatcher = fmt.Errorf("Dispatcher is nil")
+
+	// ErrEmptyName is returned when event name is empty
 	ErrEmptyName     = fmt.Errorf("Event name is empty")
+
+	// ErrNilHandler is returned when handler is nil
 	ErrNilHandler    = fmt.Errorf("Handler must not be nil")
 )
 
