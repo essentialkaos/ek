@@ -374,13 +374,14 @@ func Fields(data string) []string {
 			buf.WriteRune(char)
 			escaped = true
 		case '"', '\'', '`', '“', '”', '‘', '’', '«', '»', '„':
-			if waitChar == 0 && !escaped {
+			switch {
+			case waitChar == 0 && !escaped:
 				waitChar = getClosingChar(char)
-			} else if waitChar != 0 && waitChar == char && !escaped {
+			case waitChar != 0 && waitChar == char && !escaped:
 				result = appendField(result, buf.String())
 				buf.Reset()
 				waitChar = 0
-			} else {
+			default:
 				if escaped && buf.Len() > 0 {
 					buf.Truncate(buf.Len() - 1)
 				}
@@ -568,7 +569,7 @@ func Wrap(s string, n int) string {
 
 	for i := 0; i < len(s); i += n {
 		if i+n >= len(s) {
-			buf.WriteString(s[i:len(s)])
+			buf.WriteString(s[i:])
 		} else {
 			buf.WriteString(s[i:i+n] + "\n")
 		}
