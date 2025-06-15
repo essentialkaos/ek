@@ -13,6 +13,7 @@
 - **`[events]`** Code refactoring
 - **`[fmtutil/filetree]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
+- **`[i18n]`** Code refactoring
 - **`[options]`** Code refactoring
 - **`[usage]`** Code refactoring
 - **`[mathutil]`** Methods `Min` and `Max` marked as deprecated

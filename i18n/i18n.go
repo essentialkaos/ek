@@ -21,6 +21,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// UNKNOWN_VALUE contains string representation of unknown value
+const UNKNOWN_VALUE = "???"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // String is a simple string
 type String string
 
@@ -165,7 +170,7 @@ func (d Data) Plural(lang, prop string, values ...string) string {
 // PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
 func (d Data) PrettyNum(prop string) string {
 	if d[prop] == nil {
-		return "???"
+		return UNKNOWN_VALUE
 	}
 
 	return fmtutil.PrettyNum(d[prop])
@@ -187,7 +192,7 @@ func (d Data) PrettySize(prop string) string {
 	case float64:
 		return fmtutil.PrettySize(t)
 	case nil:
-		return "???"
+		return UNKNOWN_VALUE
 	}
 
 	return fmt.Sprintf("%s", d[prop])
@@ -197,12 +202,13 @@ func (d Data) PrettySize(prop string) string {
 //
 // Note that this method only supports float64
 func (d Data) PrettyPerc(prop string) string {
-	switch t := d[prop].(type) {
-	case float64:
-		return fmtutil.PrettyPerc(t)
+	t, ok := d[prop].(float64)
+
+	if !ok {
+		return UNKNOWN_VALUE
 	}
 
-	return "???"
+	return fmtutil.PrettyPerc(t)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
