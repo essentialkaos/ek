@@ -592,28 +592,32 @@ func ExampleArguments_Filter() {
 func ExampleMap_Set() {
 	m := Map{}
 
-	err := m.Set("t:test", &V{Value: "abcd"})
+	m.Set("u:user", &V{Value: "john"})
+	m.Set("i:id", &V{Type: INT})
+}
 
-	if err != nil {
-		panic(err.Error())
+func ExampleMap_SetIf() {
+	m := Map{
+		"u:user": &V{Value: "john"},
+		"i:id":   &V{Type: INT},
 	}
+
+	isAdmin := true
+
+	// If isAdmin is true add additional option
+	m.SetIf(isAdmin, "g:group", &V{})
 }
 
 func ExampleMap_Delete() {
-	optName := "t:test"
-
 	m := Map{
-		optName: &V{Value: "abcd"},
+		"u:user": &V{Value: "abcd"},
 	}
 
-	if m.Delete(optName) {
-		fmt.Printf("Option %s deleted\n", F(optName))
+	if m.Delete("u:user") {
+		fmt.Printf("Option %s deleted\n", F("u:user"))
 	} else {
-		fmt.Printf("There is no option %s\n", F(optName))
+		fmt.Printf("There is no option %s\n", F("u:user"))
 	}
-
-	// Output:
-	// Option -t/--test deleted
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

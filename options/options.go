@@ -47,8 +47,11 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// V is basic option struct
-type V struct {
+// V is an alias for Option
+type V = Option
+
+// Option is basic option struct
+type Option struct {
 	Type      uint8   // option type
 	Max       float64 // maximum integer option value
 	Min       float64 // minimum integer option value
@@ -63,7 +66,7 @@ type V struct {
 }
 
 // Map is map with list of options
-type Map map[string]*V
+type Map map[string]*Option
 
 // Options is options struct
 type Options struct {
@@ -112,7 +115,7 @@ var global *Options
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add adds a new option
-func (o *Options) Add(name string, option *V) error {
+func (o *Options) Add(name string, option *Option) error {
 	if o == nil {
 		return ErrNilOptions
 	}
@@ -414,23 +417,32 @@ func (o *Options) Parse(data []string, optMap ...Map) (Arguments, errors.Errors)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Set set option in map
+// Set sets option in map
 // Note that if the option is already set, it will be replaced
-func (m Map) Set(name string, opt *V) error {
+func (m Map) Set(name string, opt *Option) Map {
 	optName := parseName(name)
 
 	switch {
 	case m == nil:
-		return ErrNilMap
+		panic(ErrNilMap.Error())
 	case optName.Long == "":
-		return ErrEmptyName
+		panic(ErrEmptyName.Error())
 	case opt == nil:
-		return OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}
+		panic(OptionError{"--" + optName.Long, "", ERROR_OPTION_IS_NIL}.Error())
 	}
 
 	m[name] = opt
 
-	return nil
+	return m
+}
+
+// SetIf conditionally sets option in map
+func (m Map) SetIf(cond bool, name string, opt *Option) Map {
+	if cond {
+		m.Set(name, opt)
+	}
+
+	return m
 }
 
 // Delete removes option from map
@@ -456,7 +468,7 @@ func NewOptions() *Options {
 }
 
 // Add adds new supported option
-func Add(name string, opt *V) error {
+func Add(name string, opt *Option) error {
 	if global == nil || !global.initialized {
 		global = NewOptions()
 	}
@@ -605,7 +617,7 @@ func (m Map) String() string {
 }
 
 // String returns string representation of option
-func (v *V) String() string {
+func (v *Option) String() string {
 	if v == nil {
 		return "Nil{}"
 	}
@@ -949,7 +961,7 @@ func formatOptionsList(list any) string {
 }
 
 // updateOption updates option value in options map
-func updateOption(opt *V, name, value string) error {
+func updateOption(opt *Option, name, value string) error {
 	switch opt.Type {
 	case STRING, MIXED:
 		return updateStringOption(opt, value)
@@ -968,7 +980,7 @@ func updateOption(opt *V, name, value string) error {
 }
 
 // updateStringOption updates string option value
-func updateStringOption(opt *V, value string) error {
+func updateStringOption(opt *Option, value string) error {
 	if opt.set && opt.Mergeble {
 		opt.Value = opt.Value.(string) + MergeSymbol + value
 	} else {
@@ -980,7 +992,7 @@ func updateStringOption(opt *V, value string) error {
 }
 
 // updateBooleanOption updates boolean option value
-func updateBooleanOption(opt *V) error {
+func updateBooleanOption(opt *Option) error {
 	opt.Value = true
 	opt.set = true
 
@@ -988,7 +1000,7 @@ func updateBooleanOption(opt *V) error {
 }
 
 // updateFloatOption updates float option value
-func updateFloatOption(name string, opt *V, value string) error {
+func updateFloatOption(name string, opt *Option, value string) error {
 	floatValue, err := strconv.ParseFloat(value, 64)
 
 	if err != nil {
@@ -1014,7 +1026,7 @@ func updateFloatOption(name string, opt *V, value string) error {
 }
 
 // updateIntOption updates integer option value
-func updateIntOption(name string, opt *V, value string) error {
+func updateIntOption(name string, opt *Option, value string) error {
 	intValue, err := strconv.Atoi(value)
 
 	if err != nil {
