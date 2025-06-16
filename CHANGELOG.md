@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.30.0](https://kaos.sh/ek/13.30.0)
+
+- **`[options]`** Added method `Map.SetIf`
+- **`[options]`** Improved method `Map.Set`
+
 ### [13.29.1](https://kaos.sh/ek/13.29.1)
 
 - **`[support]`** Fixed minor bug with printing custom binary name

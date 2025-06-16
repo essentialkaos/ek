@@ -47,16 +47,18 @@ func (s *OptUtilSuite) TestAdd(c *C) {
 func (s *OptUtilSuite) TestMap(c *C) {
 	var m Map
 
-	c.Assert(m.Set("test", &V{}), Equals, ErrNilMap)
+	c.Assert(func() { m.Set("test", &V{}) }, PanicMatches, ErrNilMap.Error())
+	c.Assert(func() { m.SetIf(true, "test", &V{}) }, PanicMatches, ErrNilMap.Error())
 	c.Assert(m.Delete("test"), Equals, false)
 
 	m = Map{}
 
-	c.Assert(m.Set("", &V{}), Equals, ErrEmptyName)
-	c.Assert(m.Set("test", nil), ErrorMatches, `Struct for option "--test" is nil`)
-	c.Assert(m.Delete("_unknown_"), Equals, false)
+	c.Assert(func() { m.Set("", &V{}) }, PanicMatches, ErrEmptyName.Error())
+	c.Assert(func() { m.Set("test", nil) }, PanicMatches, `Struct for option "--test" is nil`)
+	c.Assert(m.Delete("test"), Equals, false)
 
-	c.Assert(m.Set("test", &V{}), IsNil)
+	c.Assert(func() { m.Set("test", &V{}) }, NotPanics)
+	c.Assert(func() { m.SetIf(true, "test", &V{}) }, NotPanics)
 	c.Assert(m.Delete("test"), Equals, true)
 }
 
