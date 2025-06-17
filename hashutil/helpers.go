@@ -9,6 +9,7 @@ package hashutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"hash"
 	"io"
@@ -140,6 +141,21 @@ func (h Hash) String() string {
 // Bytes returns hash as byte slice
 func (h Hash) Bytes() []byte {
 	return []byte(h)
+}
+
+// Equal returns true if both hashes are equal
+func (h Hash) Equal(hh Hash) bool {
+	return bytes.Equal(h, hh)
+}
+
+// EqualString returns true if hash is equal to given string representation of hash
+func (h Hash) EqualString(hh string) bool {
+	return h.String() == hh
+}
+
+// IsEmpty returns true if hash has no data
+func (h Hash) IsEmpty() bool {
+	return len(h) == 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -79,6 +79,19 @@ func (s *HashUtilSuite) TestSum(c *C) {
 	c.Assert(Sum(nil).String(), Equals, "")
 }
 
+func (s *HashUtilSuite) TestHash(c *C) {
+	h := sha256.New()
+
+	h1 := String("Test1234!", h)
+	h2 := String("Test1234!", h)
+
+	c.Assert(h1.String(), Equals, "0fadf52a4580cfebb99e61162139af3d3a6403c1d36b83e4962b721d1c8cbd0b")
+	c.Assert(h1.Bytes(), HasLen, 32)
+	c.Assert(h1.IsEmpty(), Equals, false)
+	c.Assert(h1.Equal(h2), Equals, true)
+	c.Assert(h1.EqualString("0fadf52a4580cfebb99e61162139af3d3a6403c1d36b83e4962b721d1c8cbd0b"), Equals, true)
+}
+
 func (s *HashUtilSuite) TestReader(c *C) {
 	buf := bytes.NewBufferString("TEST1234!")
 
