@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.30.1](https://kaos.sh/ek/13.30.1)
+
+- **`[hashutil]`** Added method `Hash.Equal`
+- **`[hashutil]`** Added method `Hash.EqualString`
+
 ### [13.30.0](https://kaos.sh/ek/13.30.0)
 
 - **`[options]`** Added method `Map.SetIf`

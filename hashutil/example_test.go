@@ -93,3 +93,46 @@ func ExampleNewWriter() {
 	// Data: Test Data
 	// Hash: bcfe67172a6f4079d69fe2f27a9960f9d62edae2fcd4bb5a606c2ebb74b3ba65
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleHash_String() {
+	h := String("Test1234!", sha256.New())
+
+	fmt.Printf("Hash: %s\n", h.String())
+
+	// Output:
+	// Hash: 0fadf52a4580cfebb99e61162139af3d3a6403c1d36b83e4962b721d1c8cbd0b
+}
+
+func ExampleHash_Bytes() {
+	h := String("Test1234!", sha256.New())
+
+	fmt.Printf("Hash: %v\n", h.Bytes())
+
+	// Output:
+	// Hash: [15 173 245 42 69 128 207 235 185 158 97 22 33 57 175 61 58 100 3 193 211 107 131 228 150 43 114 29 28 140 189 11]
+}
+
+func ExampleHash_Equal() {
+	h1 := String("Test1234!", sha256.New())
+	h2 := String("Test1234!", sha256.New())
+	h3 := String("1234!Test", sha256.New())
+
+	fmt.Printf("h1 == h2: %t\n", h1.Equal(h2))
+	fmt.Printf("h2 == h3: %t\n", h2.Equal(h3))
+
+	// Output:
+	// h1 == h2: true
+	// h2 == h3: false
+}
+
+func ExampleHash_EqualString() {
+	h1 := String("Test1234!", sha256.New())
+	h2 := "0fadf52a4580cfebb99e61162139af3d3a6403c1d36b83e4962b721d1c8cbd0b"
+
+	fmt.Printf("h1 == h2: %t\n", h1.EqualString(h2))
+
+	// Output:
+	// h1 == h2: true
+}
