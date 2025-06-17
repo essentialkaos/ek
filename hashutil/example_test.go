@@ -136,3 +136,12 @@ func ExampleHash_EqualString() {
 	// Output:
 	// h1 == h2: true
 }
+
+func ExampleHash_IsEmpty() {
+	h := String("Test1234!", sha256.New())
+
+	fmt.Printf("Is empty: %t\n", h.IsEmpty())
+
+	// Output:
+	// Is empty: false
+}

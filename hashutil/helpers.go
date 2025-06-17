@@ -153,6 +153,11 @@ func (h Hash) EqualString(hh string) bool {
 	return h.String() == hh
 }
 
+// IsEmpty returns true if hash has no data
+func (h Hash) IsEmpty() bool {
+	return len(h) == 0
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewReader creates new reader with transparent hash calculation

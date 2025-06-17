@@ -4,6 +4,7 @@
 
 - **`[hashutil]`** Added method `Hash.Equal`
 - **`[hashutil]`** Added method `Hash.EqualString`
+- **`[hashutil]`** Added method `Hash.IsEmpty`
 
 ### [13.30.0](https://kaos.sh/ek/13.30.0)
 
