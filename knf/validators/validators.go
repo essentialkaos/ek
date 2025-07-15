@@ -16,6 +16,8 @@ import (
 
 	"github.com/essentialkaos/ek/v13/knf"
 	"github.com/essentialkaos/ek/v13/strutil"
+
+	kv "github.com/essentialkaos/ek/v13/knf/value"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -116,7 +118,7 @@ func validatorTypeBool(config knf.IConfig, prop string, value any) error {
 		return nil
 	default:
 		return fmt.Errorf(
-			"Property %s contains unsupported boolean value (%s)",
+			"Boolean property %s contains unsupported value (%s)",
 			prop, v,
 		)
 	}
@@ -134,7 +136,7 @@ func validatorTypeNum(config knf.IConfig, prop string, value any) error {
 
 	if err != nil {
 		return fmt.Errorf(
-			"Property %s contains unsupported numeric value (%s)",
+			"Numeric property %s contains unsupported value (%s)",
 			prop, v,
 		)
 	}
@@ -154,7 +156,7 @@ func validatorTypeFloat(config knf.IConfig, prop string, value any) error {
 
 	if err != nil {
 		return fmt.Errorf(
-			"Property %s contains unsupported float value (%s)",
+			"Float property %s contains unsupported value (%s)",
 			prop, v,
 		)
 	}
@@ -176,7 +178,7 @@ func validatorTypeSize(config knf.IConfig, prop string, value any) error {
 
 	if size == 0 && err != nil {
 		return fmt.Errorf(
-			"Property %s contains unsupported size value (%s)",
+			"Size property %s contains unsupported value (%s)",
 			prop, v,
 		)
 	}
@@ -202,7 +204,7 @@ func validatorTypeDur(config knf.IConfig, prop string, value any) error {
 	case err != nil, len(mod) != 1, num == "",
 		strings.Trim(mod, "sSmMhHdDwW") != "":
 		return fmt.Errorf(
-			"Property %s contains unsupported time duration value (%s)",
+			"Time duration property %s contains unsupported value (%s)",
 			prop, v,
 		)
 	}
@@ -313,6 +315,10 @@ func validatorGreater(config knf.IConfig, prop string, value any) error {
 
 // validatorSizeLess checks if property value is greater than given size
 func validatorSizeLess(config knf.IConfig, prop string, value any) error {
+	if config.GetS(prop) == "" {
+		return nil
+	}
+
 	var v uint64
 
 	switch t := value.(type) {
@@ -326,6 +332,12 @@ func validatorSizeLess(config knf.IConfig, prop string, value any) error {
 		v = uint64(t)
 	case float64:
 		v = uint64(t)
+	case string:
+		v = kv.ParseSize(t)
+
+		if t != "" && v == 0 {
+			return fmt.Errorf("Invalid SizeLess validator value %q", t)
+		}
 	default:
 		return getValidatorInputError("SizeLess", prop, value)
 	}
@@ -339,6 +351,10 @@ func validatorSizeLess(config knf.IConfig, prop string, value any) error {
 
 // validatorSizeGreater checks if property value is less than given size
 func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
+	if config.GetS(prop) == "" {
+		return nil
+	}
+
 	var v uint64
 
 	switch t := value.(type) {
@@ -352,6 +368,12 @@ func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 		v = uint64(t)
 	case float64:
 		v = uint64(t)
+	case string:
+		v = kv.ParseSize(t)
+
+		if t != "" && v == 0 {
+			return fmt.Errorf("Invalid SizeGreater validator value %q", t)
+		}
 	default:
 		return getValidatorInputError("SizeGreater", prop, value)
 	}
@@ -365,9 +387,7 @@ func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 
 // validatorDurShorter checks if property value is shorter than given duration
 func validatorDurShorter(config knf.IConfig, prop string, value any) error {
-	v := config.GetS(prop)
-
-	if v == "" {
+	if config.GetS(prop) == "" {
 		return nil
 	}
 
@@ -386,9 +406,7 @@ func validatorDurShorter(config knf.IConfig, prop string, value any) error {
 
 // validatorDurLonger checks if property value is longer than given duration
 func validatorDurLonger(config knf.IConfig, prop string, value any) error {
-	v := config.GetS(prop)
-
-	if v == "" {
+	if config.GetS(prop) == "" {
 		return nil
 	}
 
@@ -407,6 +425,10 @@ func validatorDurLonger(config knf.IConfig, prop string, value any) error {
 
 // validatorInRange checks if property value is in given range
 func validatorInRange(config knf.IConfig, prop string, value any) error {
+	if config.GetS(prop) == "" {
+		return nil
+	}
+
 	rng, ok := value.(Range)
 
 	if !ok {
@@ -583,7 +605,7 @@ func isSliceContainsValue(s []string, value string, ignoreCase bool) bool {
 // getValidatorInputError returns error for validators that don't support given input type
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
-		"Validator knf.%s doesn't support input with type <%T> for checking %s property",
+		"Validator %s doesn't support input with type <%T> for checking %s property",
 		validator, value, prop,
 	)
 }
@@ -591,7 +613,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 // getValidatorEmptyInputError returns error for validators that require non-empty input
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
-		"Validator knf.%s requires non-empty input for checking %s property",
+		"Validator %s requires non-empty input for checking %s property",
 		validator, prop,
 	)
 }
@@ -599,7 +621,7 @@ func getValidatorEmptyInputError(validator, prop string) error {
 // getValidatorRangeError returns error for unsupported Range types
 func getValidatorRangeError(prop string, value any) error {
 	return fmt.Errorf(
-		"Validator knf.InRange doesn't support type <%T> for 'Range.%s' value",
+		"Validator InRange doesn't support type <%T> for 'Range.%s' value",
 		value, prop,
 	)
 }

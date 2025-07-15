@@ -3,6 +3,10 @@
 ### [13.31.0](https://kaos.sh/ek/13.31.0)
 
 - **`[req]`** Added support of [`Retry-After`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After) header to `Retrier`
+- **`[knf/validators]`** Added support of string values to `SizeGreater` validator
+- **`[knf/validators]`** Added support of string values to `SizeLess` validator
+- **`[knf/validators]`** Improved support of empty property values in `SizeLess`, `SizeGreater`, and `InRange` validators
+- **`[knf/validators]`** Improved error messages
 
 ### [13.30.1](https://kaos.sh/ek/13.30.1)
 
