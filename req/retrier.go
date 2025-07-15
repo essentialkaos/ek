@@ -9,7 +9,11 @@ package req
 
 import (
 	"fmt"
+	"strconv"
 	"time"
+
+	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v13/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -137,10 +141,51 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 			return resp, nil
 		}
 
-		if rr.Pause > 0 {
+		retryPause := getRetryPause(rr, resp)
+
+		if retryPause > 0 {
 			time.Sleep(rr.Pause)
 		}
 	}
 
 	return nil, lastErr
+}
+
+// getRetryPause returns pause between requests
+func getRetryPause(rr Retry, resp *Response) time.Duration {
+	if rr.Pause > 0 {
+		return rr.Pause
+	}
+
+	if resp == nil {
+		return 0
+	}
+
+	retryAfter := resp.Header.Get("Retry-After")
+
+	if retryAfter == "" {
+		return 0
+	}
+
+	var pause time.Duration
+
+	if mathutil.IsNumber(retryAfter) {
+		pauseFloat, err := strconv.ParseFloat(retryAfter, 10)
+
+		if err != nil {
+			return 0
+		}
+
+		pause = timeutil.SecondsToDuration(pauseFloat)
+	} else {
+		pauseUntil, err := time.Parse(time.RFC1123, retryAfter)
+
+		if err != nil {
+			return 0
+		}
+
+		return time.Until(pauseUntil)
+	}
+
+	return pause
 }
