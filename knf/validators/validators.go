@@ -336,7 +336,7 @@ func validatorSizeLess(config knf.IConfig, prop string, value any) error {
 		v = kv.ParseSize(t)
 
 		if t != "" && v == 0 {
-			return fmt.Errorf("Invalid SizeLess validator value %q", t)
+			return fmt.Errorf("Invalid validators.SizeLess validator value %q", t)
 		}
 	default:
 		return getValidatorInputError("SizeLess", prop, value)
@@ -372,7 +372,7 @@ func validatorSizeGreater(config knf.IConfig, prop string, value any) error {
 		v = kv.ParseSize(t)
 
 		if t != "" && v == 0 {
-			return fmt.Errorf("Invalid SizeGreater validator value %q", t)
+			return fmt.Errorf("Invalid validators.SizeGreater validator value %q", t)
 		}
 	default:
 		return getValidatorInputError("SizeGreater", prop, value)
@@ -605,7 +605,7 @@ func isSliceContainsValue(s []string, value string, ignoreCase bool) bool {
 // getValidatorInputError returns error for validators that don't support given input type
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
-		"Validator %s doesn't support input with type <%T> for checking %s property",
+		"Validator validators.%s doesn't support input with type <%T> for checking %s property",
 		validator, value, prop,
 	)
 }
@@ -613,7 +613,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 // getValidatorEmptyInputError returns error for validators that require non-empty input
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
-		"Validator %s requires non-empty input for checking %s property",
+		"Validator validators.%s requires non-empty input for checking %s property",
 		validator, prop,
 	)
 }
@@ -621,7 +621,7 @@ func getValidatorEmptyInputError(validator, prop string) error {
 // getValidatorRangeError returns error for unsupported Range types
 func getValidatorRangeError(prop string, value any) error {
 	return fmt.Errorf(
-		"Validator InRange doesn't support type <%T> for 'Range.%s' value",
+		"Validator validators.InRange doesn't support type <%T> for 'Range.%s' value",
 		value, prop,
 	)
 }
