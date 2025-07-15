@@ -692,6 +692,31 @@ func (s *ReqSuite) TestRetrierErrors(c *C) {
 	c.Assert(Retry{Num: 3, MinStatus: 2000}.Validate(), NotNil)
 }
 
+func (s *ReqSuite) TestRetrierAux(c *C) {
+	r := Retry{Num: 10, Pause: time.Second}
+	c.Assert(getRetryPause(r, nil), Equals, time.Second)
+
+	r.Pause = 0
+	c.Assert(getRetryPause(r, nil), Equals, time.Duration(0))
+
+	c.Assert(getRetryPause(r, &Response{Response: &http.Response{}}), Equals, time.Duration(0))
+
+	h := http.Header{}
+	h.Add("Retry-After", "35")
+	c.Assert(getRetryPause(r, &Response{Response: &http.Response{Header: h}}), Equals, 35*time.Second)
+
+	retryDate := time.Now().Add(time.Second * 15)
+
+	h.Set("Retry-After", retryDate.Format(time.RFC1123))
+	c.Assert(getRetryPause(r, &Response{Response: &http.Response{Header: h}}), Not(Equals), time.Duration(0))
+
+	h.Set("Retry-After", "0123.123.123")
+	c.Assert(getRetryPause(r, &Response{Response: &http.Response{Header: h}}), Equals, time.Duration(0))
+
+	h.Set("Retry-After", "TEST HEADER")
+	c.Assert(getRetryPause(r, &Response{Response: &http.Response{Header: h}}), Equals, time.Duration(0))
+}
+
 func (s *ReqSuite) TestNil(c *C) {
 	var e *Engine
 
