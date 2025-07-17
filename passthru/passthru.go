@@ -139,7 +139,7 @@ func (r *Reader) SetTotal(total int64) {
 // If Calculator was not set on the first call, a default calculator with
 // a 10 second window is created.
 func (r *Reader) Speed() (float64, time.Duration) {
-	if r == nil || r.Total() <= 0 {
+	if r == nil {
 		return 0, 0
 	}
 
@@ -209,7 +209,7 @@ func (w *Writer) SetTotal(total int64) {
 // If Calculator was not set on the first call, a default calculator with
 // a 10 second window is created.
 func (w *Writer) Speed() (float64, time.Duration) {
-	if w == nil || w.Total() <= 0 {
+	if w == nil {
 		return 0, 0
 	}
 
@@ -234,10 +234,6 @@ func (c *Calculator) Calculate(current int64) (float64, time.Duration) {
 	cur := float64(current)
 	now := time.Now()
 
-	if c.total == 0 {
-		return 0, 0
-	}
-
 	if !c.lastUpdate.IsZero() && now.Sub(c.lastUpdate) < time.Second/2 {
 		return c.speed, c.remaining
 	}
@@ -245,7 +241,7 @@ func (c *Calculator) Calculate(current int64) (float64, time.Duration) {
 	speed := math.Abs(cur-c.prev) / time.Since(c.lastUpdate).Seconds()
 	c.speed = (speed * c.decay) + (c.speed * (1.0 - c.decay))
 
-	if c.prev != 0 && c.speed > 0 {
+	if c.total != 0 && c.prev != 0 && c.speed > 0 {
 		c.remaining = time.Duration((c.total-cur)/c.speed) * time.Second
 	}
 
