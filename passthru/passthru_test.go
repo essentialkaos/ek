@@ -138,10 +138,6 @@ func (s *PassthruSuite) TestCalculator(c *C) {
 	cl := NewCalculator(0, 1.0)
 	c.Assert(cl, NotNil)
 
-	cs, cr := cl.Calculate(1)
-	c.Assert(cs, Equals, 0.0)
-	c.Assert(cr, Equals, time.Duration(0))
-
 	cl = NewCalculator(1000, 1.0)
 	c.Assert(cl, NotNil)
 
@@ -155,7 +151,7 @@ func (s *PassthruSuite) TestCalculator(c *C) {
 
 	cl.Calculate(2)
 
-	cs, cr = cl.Calculate(1)
+	cs, cr := cl.Calculate(1)
 	c.Assert(cs, Not(Equals), 0.0)
 	c.Assert(cr, Not(Equals), time.Duration(0))
 }

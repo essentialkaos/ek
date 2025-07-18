@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.31.1](https://kaos.sh/ek/13.31.1)
+
+- **`[passthru]`** Calculate speed even if total data size is not provided
+
 ### [13.31.0](https://kaos.sh/ek/13.31.0)
 
 - **`[req]`** Added support of [`Retry-After`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After) header to `Retrier`
