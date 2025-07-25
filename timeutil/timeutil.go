@@ -365,6 +365,30 @@ func NextWeekend(t time.Time) time.Time {
 	}
 }
 
+// AddWorkdays adds working days to a given date
+func AddWorkdays(t time.Time, days int) time.Time {
+	diff := 1
+
+	if days < 0 {
+		diff = -1
+	}
+
+	days = mathutil.Abs(days)
+
+	for days > 0 {
+		t = t.AddDate(0, 0, diff)
+
+		switch t.Weekday() {
+		case time.Saturday, time.Sunday:
+			continue
+		default:
+			days--
+		}
+	}
+
+	return t
+}
+
 // IsWeekend returns true if given day is weekend (saturday or sunday)
 func IsWeekend(t time.Time) bool {
 	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday

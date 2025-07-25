@@ -368,6 +368,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(Since(d, DAY), Not(Equals), 0)
 
 	c.Assert(DurationAs(time.Duration(79872232972344474), DAY), Equals, 924)
+
+	d = time.Date(2012, 6, 1, 12, 0, 0, 0, time.UTC)
+	c.Assert(AddWorkdays(d, 0).String(), Equals, "2012-06-01 12:00:00 +0000 UTC")
+	c.Assert(AddWorkdays(d, 10).String(), Equals, "2012-06-15 12:00:00 +0000 UTC")
+	c.Assert(AddWorkdays(d, -10).String(), Equals, "2012-05-18 12:00:00 +0000 UTC")
 }
 
 func (s *TimeUtilSuite) TestParseWithAny(c *C) {
