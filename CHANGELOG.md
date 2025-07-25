@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.31.2](https://kaos.sh/ek/13.31.2)
+
+- **`[timeutil]`** Added method `AddWorkdays`
+
 ### [13.31.1](https://kaos.sh/ek/13.31.1)
 
 - **`[passthru]`** Calculate speed even if total data size is not provided
