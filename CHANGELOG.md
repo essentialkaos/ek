@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.31.3](https://kaos.sh/ek/13.31.3)
+
+- **`[timeutil]`** Added usage example for `AddWorkdays`
+
 ### [13.31.2](https://kaos.sh/ek/13.31.2)
 
 - **`[timeutil]`** Added method `AddWorkdays`
