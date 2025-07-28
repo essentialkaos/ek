@@ -251,6 +251,15 @@ func ExampleNextWeekend() {
 	// 2021-06-12 00:00:00 +0000 UTC
 }
 
+func ExampleAddWorkdays() {
+	d := time.Date(2021, 6, 4, 12, 30, 15, 0, time.UTC)
+
+	fmt.Println(AddWorkdays(d, 3))
+
+	// Output:
+	// 2021-06-09 12:30:15 +0000 UTC
+}
+
 func ExampleIsWeekend() {
 	d := time.Date(2021, 6, 6, 12, 30, 15, 0, time.UTC)
 
