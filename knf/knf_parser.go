@@ -75,14 +75,14 @@ func readData(r io.Reader) (*Config, error) {
 			return nil, fmt.Errorf("Error at line %d: %w", lineNum, err)
 		}
 
-		fullPropName := genPropName(section, propName)
+		fullPropName := Q(section, propName)
 
 		if config.Has(fullPropName) {
 			return nil, fmt.Errorf("Error at line %d: Property %q defined more than once", lineNum, propName)
 		}
 
 		config.props = append(config.props, fullPropName)
-		config.data[strings.ToLower(fullPropName)] = propValue
+		config.data[fullPropName] = propValue
 	}
 
 	if !isDataRead {
@@ -94,19 +94,16 @@ func readData(r io.Reader) (*Config, error) {
 
 // parseProperty parses line with property name and value
 func parseProperty(line string, config *Config) (string, string, error) {
-	di := strings.Index(line, _SYMBOL_DELIMITER)
+	name, value, ok := strings.Cut(line, _SYMBOL_DELIMITER)
 
-	if di == -1 {
-		return "", "", fmt.Errorf(`Property must have ":" as a delimiter`)
+	if !ok {
+		return "", "", fmt.Errorf("Property must have %q as a delimiter", _SYMBOL_DELIMITER)
 	}
-
-	name, value := line[:di], line[di+1:]
 
 	name = strings.Trim(name, " \t")
 	value = strings.Trim(value, " \t")
 
-	if !strings.Contains(value, _SYMBOL_MACRO_START) &&
-		!strings.Contains(value, _SYMBOL_MACRO_END) {
+	if !strings.ContainsAny(value, _SYMBOL_MACRO_START+_SYMBOL_MACRO_END) {
 		return name, value, nil
 	}
 
@@ -121,26 +118,20 @@ func parseProperty(line string, config *Config) (string, string, error) {
 	return name, value, nil
 }
 
-// evalMacros evaluates all macros in given string
+// evalMacros evaluates all macro in given string
 func evalMacros(value string, config *Config) (string, error) {
 	macros := macroRE.FindAllStringSubmatch(value, -1)
 
 	for _, macro := range macros {
 		full, section, prop := macro[0], macro[1], macro[2]
 
-		if !config.Has(genPropName(section, prop)) {
+		if !config.Has(Q(section, prop)) {
 			return "", fmt.Errorf("Unknown property %s", full)
 		}
 
-		propVal := config.GetS(genPropName(section, prop))
+		propVal := config.GetS(Q(section, prop))
 		value = strings.ReplaceAll(value, full, propVal)
 	}
 
 	return value, nil
-}
-
-// genPropName generates "full property name" which contains section and
-// property name
-func genPropName(section, prop string) string {
-	return section + _SYMBOL_DELIMITER + prop
 }

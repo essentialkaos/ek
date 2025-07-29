@@ -425,7 +425,7 @@ func Validate(validators Validators) errors.Errors {
 // Q is a helper to create a valid full property name (section + delimiter
 // + property name)
 func Q(section, prop string) string {
-	return section + _SYMBOL_DELIMITER + prop
+	return strings.ToLower(section + _SYMBOL_DELIMITER + prop)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
