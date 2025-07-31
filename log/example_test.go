@@ -38,6 +38,9 @@ func Example() {
 	logger.Error("This is error message")
 	logger.Crit("This is critical message")
 
+	// Add handler for panic
+	defer logger.PanicHandler("Got panic")
+
 	// Enable colors for output
 	logger.UseColors = true
 
@@ -275,6 +278,19 @@ func ExampleIs() {
 	}
 }
 
+func ExamplePanicHandler() {
+	err := Set("/path/to/file.log", 0644)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	defer PanicHandler("Got panic")
+
+	panic("Some panic")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleLogger_Reopen() {
@@ -454,6 +470,19 @@ func ExampleLogger_Is() {
 	if logger.Is(INFO) {
 		logger.Info("Info message")
 	}
+}
+
+func ExampleLogger_PanicHandler() {
+	logger, err := New("/path/to/file.log", 0644)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	defer logger.PanicHandler("Got panic")
+
+	panic("Some panic")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

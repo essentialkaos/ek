@@ -16,6 +16,7 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -263,6 +264,13 @@ func Levels() []string {
 	return logLevels
 }
 
+// PanicHandler is a handler that logs panic info with crit level.
+//
+// Note that you must defer this function rather than calling it directly.
+func PanicHandler(msg string) {
+	Global.PanicHandler(msg)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Reopen closes file descriptor and opens it again
@@ -477,6 +485,25 @@ func (l *Logger) Divider() error {
 // given
 func (l *Logger) Is(level uint8) bool {
 	return l != nil && level >= l.minLevel
+}
+
+// PanicHandler is a handler that logs panic info with crit level.
+//
+// Note that you must defer this function rather than calling it directly.
+func (l *Logger) PanicHandler(msg string) {
+	if l == nil || l.mu == nil {
+		return
+	}
+
+	r := recover()
+
+	if r != nil {
+		if l.UseJSON {
+			l.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
+		} else {
+			l.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
+		}
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1003,4 +1030,29 @@ func extractCallerFromFrame(f runtime.Frame, full bool) string {
 
 	index := strutil.IndexByteSkip(f.File, '/', -1)
 	return f.File[index+1:] + ":" + strconv.Itoa(f.Line)
+}
+
+// extractPanicPath tries to extract path to the line with panic
+func extractPanicPath(stackData []byte) string {
+	stack := string(stackData)
+	rs := strings.Index(stack, "panic(")
+
+	if rs == -1 {
+		return "unknown position"
+	}
+
+	stack = stack[rs:]
+
+	rs = strutil.IndexByteSkip(stack, '\n', 2)
+	re := strutil.IndexByteSkip(stack, '\n', 3)
+
+	if rs <= 0 || re <= 0 {
+		return "unknown position"
+	}
+
+	stack = stack[rs+1 : re]
+
+	fp, _, _ := strings.Cut(strings.Trim(stack, "\t\n"), " ")
+
+	return fp
 }
