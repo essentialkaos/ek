@@ -3,6 +3,7 @@
 ### [13.32.0](https://kaos.sh/ek/13.32.0)
 
 - **`[log]`** Added handler `PanicHandler` for `panic`
+- **`[req]`** Fixed minor bug with parsing `Retry-After` header
 - **`[knf]`** Code refactoring
 
 ### [13.31.3](https://kaos.sh/ek/13.31.3)
