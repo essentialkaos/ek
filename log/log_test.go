@@ -862,6 +862,55 @@ func (ls *LogSuite) TestPayloadSplitter(c *C) {
 	c.Assert(p2, HasLen, 4)
 }
 
+func (ls *LogSuite) TestPanicHandler(c *C) {
+	c.Assert(func() {
+		defer PanicHandler("Code paniced")
+		panic("Test panic")
+	}, NotPanics)
+
+	var l *Logger
+
+	c.Assert(func() {
+		defer l.PanicHandler("Code paniced")
+		panic("Test panic")
+	}, Panics, "Test panic")
+
+	l = &Logger{mu: &sync.Mutex{}}
+
+	c.Assert(func() {
+		defer l.PanicHandler("Code paniced")
+		panic("Test panic")
+	}, NotPanics)
+
+	l.UseJSON = true
+
+	c.Assert(func() {
+		defer l.PanicHandler("Code paniced")
+		panic("Test panic")
+	}, NotPanics)
+}
+
+func (ls *LogSuite) TestPanicPathExtractor(c *C) {
+	stackTrace := `goroutine 43 [running]:
+runtime/debug.Stack()
+	/usr/lib/golang/src/runtime/debug/stack.go:26 +0x5e
+github.com/essentialkaos/ek/v13/log.(*Logger).PanicHandler(0xc000130880, {0x6dcb3d, 0xc})
+	/home/user/src/github.com/essentialkaos/ek/log/log.go:502 +0xca
+panic({0x684a00?, 0x73d2a0?})
+	/usr/lib/golang/src/runtime/panic.go:792 +0x132
+github.com/essentialkaos/ek/v13/log.(*LogSuite).TestPanicHandler.func4()
+	/home/user/src/github.com/essentialkaos/ek/log/log_test.go:889 +0x54
+reflect.Value.call({0x680960?, 0xc000184ed0?, 0x0?}, {0x6da3fc, 0x4}, {0x0, 0x0, 0xc000135568?})
+	/usr/lib/golang/src/reflect/value.go:584 +0xca6
+reflect.Value.Call({0x680960?, 0xc000184ed0?, 0xc000080008?}, {0x0?, 0xc000135598?, 0x476119?})
+	/usr/lib/golang/src/reflect/value.go:368 +0xb9
+`
+
+	c.Assert(extractPanicPath([]byte(stackTrace)), Equals, "/home/user/src/github.com/essentialkaos/ek/log/log_test.go:889")
+	c.Assert(extractPanicPath([]byte("test")), Equals, "unknown position")
+	c.Assert(extractPanicPath([]byte("panic(\nXXXX")), Equals, "unknown position")
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *LogSuite) BenchmarkJSONWrite(c *C) {

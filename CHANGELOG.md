@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.32.0](https://kaos.sh/ek/13.32.0)
+
+- **`[log]`** Added handler `PanicHandler` for `panic`
+- **`[knf]`** Code refactoring
+
 ### [13.31.3](https://kaos.sh/ek/13.31.3)
 
 - **`[timeutil]`** Added usage example for `AddWorkdays`
