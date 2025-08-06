@@ -26,18 +26,12 @@ var _ = Suite(&SliceSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *SliceSuite) TestStringToInterface(c *C) {
-	source := []string{"1", "2", "3"}
+func (s *SliceSuite) TestToAny(c *C) {
+	var t []string
 
-	c.Assert(StringToInterface(nil), IsNil)
-	c.Assert(StringToInterface(source), DeepEquals, []any{"1", "2", "3"})
-}
-
-func (s *SliceSuite) TestIntToInterface(c *C) {
-	source := []int{1, 2, 3}
-
-	c.Assert(IntToInterface(nil), IsNil)
-	c.Assert(IntToInterface(source), DeepEquals, []any{1, 2, 3})
+	c.Assert(ToAny(t), IsNil)
+	c.Assert(ToAny([]int{1, 2, 3}), DeepEquals, []any{1, 2, 3})
+	c.Assert(ToAny([]string{"A", "B", "C"}), DeepEquals, []any{"A", "B", "C"})
 }
 
 func (s *SliceSuite) TestStringToError(c *C) {
@@ -111,6 +105,11 @@ func (s *SliceSuite) TestFilter(c *C) {
 	c.Assert(Filter(k, nil), IsNil)
 
 	c.Assert(Filter(k, func(v int, _ int) bool { return v > 5 }), DeepEquals, []int{6, 7, 8, 9})
+}
+
+func (s *SliceSuite) TestDeprecated(c *C) {
+	c.Assert(IntToInterface([]int{1, 2, 3}), DeepEquals, []any{1, 2, 3})
+	c.Assert(StringToInterface([]string{"A", "B", "C"}), DeepEquals, []any{"A", "B", "C"})
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
