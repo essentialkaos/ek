@@ -18,23 +18,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// StringToInterface converts slice with strings to slice with any
-func StringToInterface(data []string) []any {
-	if len(data) == 0 {
-		return nil
-	}
-
-	result := make([]any, len(data))
-
-	for i, r := range data {
-		result[i] = r
-	}
-
-	return result
-}
-
-// IntToInterface converts slice with ints to slice with any
-func IntToInterface(data []int) []any {
+// ToAny converts slice to slice with any type
+func ToAny[T any](data []T) []any {
 	if len(data) == 0 {
 		return nil
 	}
@@ -179,6 +164,22 @@ func Filter[T any](slice []T, filter func(v T, index int) bool) []T {
 	}
 
 	return result
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// IntToInterface converts slice with ints to slice with any
+//
+// Deprecated: Use ToAny instead
+func IntToInterface(data []int) []any {
+	return ToAny(data)
+}
+
+// StringToInterface converts slice with strings to slice with any
+//
+// Deprecated: Use ToAny instead
+func StringToInterface(data []string) []any {
+	return ToAny(data)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

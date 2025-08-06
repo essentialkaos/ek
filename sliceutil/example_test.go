@@ -13,18 +13,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleStringToInterface() {
-	s := []string{"A", "B"}
-
-	fmt.Printf("%v\n", StringToInterface(s))
-	// Output: [A B]
-}
-
-func ExampleIntToInterface() {
-	s := []int{1, 2}
-
-	fmt.Printf("%v\n", IntToInterface(s))
-	// Output: [1 2]
+func ExampleToAny() {
+	fmt.Printf("%#v\n", ToAny([]int{1, 2}))
+	fmt.Printf("%#v\n", ToAny([]string{"A", "B"}))
+	// Output:
+	// []interface {}{1, 2}
+	// []interface {}{"A", "B"}
 }
 
 func ExampleErrorToString() {

@@ -864,28 +864,28 @@ func (ls *LogSuite) TestPayloadSplitter(c *C) {
 
 func (ls *LogSuite) TestPanicHandler(c *C) {
 	c.Assert(func() {
-		defer PanicHandler("Code paniced")
+		defer PanicHandler("Code panicked")
 		panic("Test panic")
 	}, NotPanics)
 
 	var l *Logger
 
 	c.Assert(func() {
-		defer l.PanicHandler("Code paniced")
+		defer l.PanicHandler("Code panicked")
 		panic("Test panic")
 	}, Panics, "Test panic")
 
 	l = &Logger{mu: &sync.Mutex{}}
 
 	c.Assert(func() {
-		defer l.PanicHandler("Code paniced")
+		defer l.PanicHandler("Code panicked")
 		panic("Test panic")
 	}, NotPanics)
 
 	l.UseJSON = true
 
 	c.Assert(func() {
-		defer l.PanicHandler("Code paniced")
+		defer l.PanicHandler("Code panicked")
 		panic("Test panic")
 	}, NotPanics)
 }

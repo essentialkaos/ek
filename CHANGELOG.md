@@ -1,5 +1,11 @@
 ## Changelog
 
+### [13.33.0](https://kaos.sh/ek/13.33.0)
+
+- **`[sliceutil]`** Added method `ToAny`
+- **`[sliceutil]`** Method `IntToInterface` marked as deprecated
+- **`[sliceutil]`** Method `StringToInterface` marked as deprecated
+
 ### [13.32.0](https://kaos.sh/ek/13.32.0)
 
 - **`[log]`** Added handler `PanicHandler` for `panic`
