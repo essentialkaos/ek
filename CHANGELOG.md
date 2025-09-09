@@ -3,6 +3,7 @@
 ### [13.33.1](https://kaos.sh/ek/13.33.1)
 
 - **`[fmtc]`** Code refactoring
+- **`[log]`** Code refactoring
 
 ### [13.33.0](https://kaos.sh/ek/13.33.0)
 
