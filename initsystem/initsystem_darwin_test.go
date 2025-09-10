@@ -28,7 +28,7 @@ var _ = Suite(&InitSuite{})
 func (s *InitSuite) TestLaunchdIsPresent(c *C) {
 	c.Assert(IsPresent("com.apple.unknown"), Equals, false)
 	c.Assert(IsPresent("com.apple.homed"), Equals, true)
-	c.Assert(IsPresent("com.apple.cloudphotod"), Equals, true)
+	c.Assert(IsPresent("com.apple.avatarsd"), Equals, true)
 }
 
 func (s *InitSuite) TestLaunchdIsWorks(c *C) {
@@ -37,7 +37,7 @@ func (s *InitSuite) TestLaunchdIsWorks(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(isWorks, Equals, true)
 
-	isWorks, err = IsWorks("com.apple.cloudphotod")
+	isWorks, err = IsWorks("com.apple.avatarsd")
 
 	c.Assert(err, IsNil)
 	c.Assert(isWorks, Equals, false)
