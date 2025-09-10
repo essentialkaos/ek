@@ -335,13 +335,7 @@ func NewLine(num ...int) (int, error) {
 		return fmt.Print("\n")
 	}
 
-	lineNum := num[0]
-
-	if lineNum <= 1 {
-		lineNum = 1
-	}
-
-	return fmt.Print(strings.Repeat("\n", lineNum))
+	return fmt.Print(strings.Repeat("\n", max(num[0], 1)))
 }
 
 // Clean returns string without color tags
@@ -472,7 +466,7 @@ func tag2ANSI(tag string, clean bool) string {
 		return ""
 	}
 
-	return fmt.Sprintf("\033[" + strutil.Substring(chars, 0, -1) + "m")
+	return "\033[" + strutil.Substring(chars, 0, -1) + "m"
 }
 
 // parseExtendedColor parses extended color tag and returns ANSI code for it

@@ -634,7 +634,7 @@ func (l *Logger) writeText(level uint8, f string, a ...any) error {
 		if l.UseColors {
 			fmtc.Fprintf(&l.buf, color+"{@}%s{!} ", PrefixMap[level])
 		} else {
-			fmt.Fprintf(&l.buf, PrefixMap[level]+" ")
+			fmt.Fprint(&l.buf, PrefixMap[level]+" ")
 		}
 	}
 
