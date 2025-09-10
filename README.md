@@ -12,7 +12,7 @@
 
 <br/>
 
-Auxiliary packages for [Go 1.23+](https://github.com/essentialkaos/.github/blob/master/GO-VERSION-SUPPORT.md).
+Auxiliary packages for [Go 1.24+](https://github.com/essentialkaos/.github/blob/master/GO-VERSION-SUPPORT.md).
 
 ### Platform support
 
@@ -111,6 +111,7 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 - [bibop](https://kaos.sh/bibop) — Utility for testing command-line tools
 - [bop](https://kaos.sh/bop) — Utility for generating bibop tests for RPM packages
 - [Deadline](https://kaos.sh/deadline) — Simple utility for controlling application working time
+- [fmtc](https://kaos.sh/fmtc) — Simple utility for rendering `fmtc` formatted data
 - [fz](https://kaos.sh/fz) — Simple tool for formatting `go-fuzz` output
 - [GoHeft](https://kaos.sh/goheft) — Utility for listing sizes of all used static libraries compiled into golang binary
 - [GoMakeGen](https://kaos.sh/gomakegen) — Utility for generating makefiles for golang applications
@@ -120,6 +121,7 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 - [init-exporter](https://github.com/funbox/init-exporter) — Utility for exporting services described by Procfile to init system
 - [jira-reindex-runner](https://kaos.sh/jira-reindex-runner) — Application for periodical running Jira re-index process
 - [knf](https://kaos.sh/knf) — Simple utility for reading values from KNF files
+- [lj](https://kaos.sh/lj) — Tool for viewing JSON logs
 - [MDToc](https://kaos.sh/mdtoc) — Utility for generating table of contents for markdown files
 - [path](https://kaos.sh/path) — Dead simple tool for working with paths
 - [perfecto](https://kaos.sh/perfecto) — Tool for checking perfectly written RPM specs
