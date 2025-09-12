@@ -175,6 +175,17 @@ func ExampleString_String() {
 	// Hello!
 }
 
+func ExampleString_Format() {
+	en := &Bundle{
+		GREETING: "Hello %s!",
+	}
+
+	fmt.Println(en.GREETING.Format("Bob"))
+
+	// Output:
+	// Hello Bob!
+}
+
 func ExampleData_Plural() {
 	en := &Bundle{
 		GREETING: "Hello!",

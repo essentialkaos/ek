@@ -126,6 +126,11 @@ func (s String) With(data any) string {
 	return buf.String()
 }
 
+// Format formats string using given data
+func (s String) Format(a ...any) string {
+	return fmt.Sprintf(string(s), a...)
+}
+
 // Add adds prefix and/or suffix to result string
 func (s String) Add(prefix, suffix string) string {
 	return prefix + string(s) + suffix
@@ -136,9 +141,16 @@ func (s String) String() string {
 	return string(s)
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // S is shortcut for String
 func (s String) S() string {
 	return string(s)
+}
+
+// F is shortcut for Format
+func (s String) F(a ...any) string {
+	return s.Format(a...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
