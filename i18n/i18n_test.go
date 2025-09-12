@@ -222,6 +222,11 @@ func (s *I18NSuite) TestString(c *C) {
 	c.Assert(is.String(), Equals, "Hello")
 	c.Assert(is.S(), Equals, "Hello")
 	c.Assert(is.Add("[", "]"), Equals, "[Hello]")
+
+	is = String("User %s (%d)")
+
+	c.Assert(is.Format("John", 831), Equals, "User John (831)")
+	c.Assert(is.F("John", 831), Equals, "User John (831)")
 }
 
 func (s *I18NSuite) TestPlurLang(c *C) {

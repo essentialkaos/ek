@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.34.0](https://kaos.sh/ek/13.34.0)
+
+- **`[i18n]`** Added method `String.Format`
+
 ### [13.33.1](https://kaos.sh/ek/13.33.1)
 
 - **`[fmtc]`** Code refactoring
