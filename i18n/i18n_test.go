@@ -22,14 +22,14 @@ type I18NSuite struct{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type testBundle struct {
-	GREETING      String
-	EXIT_QUESTION String
+	GREETING      Text
+	EXIT_QUESTION Text
 	ERRORS        *testErrors
 }
 
 type testErrors struct {
-	UNKNOWN_USER String
-	UNKNOWN_ID   String
+	UNKNOWN_USER Text
+	UNKNOWN_ID   Text
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -165,20 +165,20 @@ func (s *I18NSuite) TestValidateBundle(c *C) {
 func (s *I18NSuite) TestWith(c *C) {
 	data := Data{"Test": 100}
 
-	var str String
-	c.Assert(str.With(data), Equals, "")
+	var txt Text
+	c.Assert(txt.With(data), Equals, "")
 
-	str = "Test"
-	c.Assert(str.With(nil), Equals, "Test")
+	txt = "Test"
+	c.Assert(txt.With(nil), Equals, "Test")
 
-	str = "Test {{.Test}"
-	c.Assert(str.With(data), Equals, "Test {{.Test}")
+	txt = "Test {{.Test}"
+	c.Assert(txt.With(data), Equals, "Test {{.Test}")
 
-	str = "Test {.Test}}"
-	c.Assert(str.With(data), Equals, "Test {.Test}}")
+	txt = "Test {.Test}}"
+	c.Assert(txt.With(data), Equals, "Test {.Test}}")
 
-	str = "Test {{.Test1}}"
-	c.Assert(str.With(data), Equals, "Test <no value>")
+	txt = "Test {{.Test1}}"
+	c.Assert(txt.With(data), Equals, "Test <no value>")
 }
 
 func (s *I18NSuite) TestData(c *C) {
@@ -217,11 +217,16 @@ func (s *I18NSuite) TestData(c *C) {
 }
 
 func (s *I18NSuite) TestString(c *C) {
-	is := String("Hello")
+	is := Text("Hello")
 
 	c.Assert(is.String(), Equals, "Hello")
 	c.Assert(is.S(), Equals, "Hello")
 	c.Assert(is.Add("[", "]"), Equals, "[Hello]")
+
+	is = Text("User %s (%d)")
+
+	c.Assert(is.Format("John", 831), Equals, "User John (831)")
+	c.Assert(is.F("John", 831), Equals, "User John (831)")
 }
 
 func (s *I18NSuite) TestPlurLang(c *C) {
