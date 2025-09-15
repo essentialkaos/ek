@@ -26,8 +26,8 @@ const UNKNOWN_VALUE = "???"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String is a simple string
-type String string
+// Text is a simple string
+type Text string
 
 // Data can be used for storing data for templates
 type Data map[string]any
@@ -103,54 +103,54 @@ func IsComplete(bundle any) (bool, []string) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // With uses String as a templates and applies payload from given data to it
-func (s String) With(data any) string {
-	if s == "" || data == nil ||
-		!strings.Contains(string(s), `{{`) ||
-		!strings.Contains(string(s), `}}`) {
-		return string(s)
+func (t Text) With(data any) string {
+	if t == "" || data == nil ||
+		!strings.Contains(string(t), `{{`) ||
+		!strings.Contains(string(t), `}}`) {
+		return string(t)
 	}
 
-	t, err := template.New("").Parse(string(s))
+	tt, err := template.New("").Parse(string(t))
 
 	if err != nil {
-		return string(s)
+		return string(t)
 	}
 
 	var buf bytes.Buffer
-	err = t.Execute(&buf, data)
+	err = tt.Execute(&buf, data)
 
 	if err != nil {
-		return string(s)
+		return string(t)
 	}
 
 	return buf.String()
 }
 
 // Format formats string using given data
-func (s String) Format(a ...any) string {
-	return fmt.Sprintf(string(s), a...)
+func (t Text) Format(a ...any) string {
+	return fmt.Sprintf(string(t), a...)
 }
 
 // Add adds prefix and/or suffix to result string
-func (s String) Add(prefix, suffix string) string {
-	return prefix + string(s) + suffix
+func (t Text) Add(prefix, suffix string) string {
+	return prefix + string(t) + suffix
 }
 
 // String converts String to string type
-func (s String) String() string {
-	return string(s)
+func (t Text) String() string {
+	return string(t)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // S is shortcut for String
-func (s String) S() string {
-	return string(s)
+func (t Text) S() string {
+	return string(t)
 }
 
 // F is shortcut for Format
-func (s String) F(a ...any) string {
-	return s.Format(a...)
+func (t Text) F(a ...any) string {
+	return t.Format(a...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -235,7 +235,7 @@ func copyFieldsData(bundles []reflect.Value) {
 			continue
 		}
 
-		if s == "i18n.String" {
+		if s == "i18n.Text" {
 		DEFLOOP:
 			for j := 1; j < len(bundles); j++ {
 				jf := bundles[j].Field(i)
@@ -305,7 +305,7 @@ func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
 		f := v.Field(i)
 		typ := f.Type().String()
 
-		if typ == "i18n.String" {
+		if typ == "i18n.Text" {
 			if f.IsZero() {
 				incompleteFields = append(
 					incompleteFields,

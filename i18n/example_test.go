@@ -15,8 +15,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Bundle struct {
-	GREETING String
-	MESSAGE  String
+	GREETING Text
+	MESSAGE  Text
 
 	ERRORS *Errors
 
@@ -27,8 +27,8 @@ type Bundle struct {
 }
 
 type Errors struct {
-	UNKNOWN_USER String
-	UNKNOWN_ID   String
+	UNKNOWN_USER Text
+	UNKNOWN_ID   Text
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -123,7 +123,7 @@ func ExampleIsComplete() {
 	// RU is complete: false (empty: MESSAGE, ERRORS.UNKNOWN_ID)
 }
 
-func ExampleString_With() {
+func ExampleText_With() {
 	en := &Bundle{
 		GREETING: "Hello!",
 		ERRORS: &Errors{
@@ -145,7 +145,7 @@ func ExampleString_With() {
 	// Unknown ID 183
 }
 
-func ExampleString_Add() {
+func ExampleText_Add() {
 	en := &Bundle{
 		GREETING: "Hello",
 		ERRORS: &Errors{
@@ -160,7 +160,7 @@ func ExampleString_Add() {
 	// > Hello!
 }
 
-func ExampleString_String() {
+func ExampleText_String() {
 	en := &Bundle{
 		GREETING: "Hello!",
 		ERRORS: &Errors{
@@ -175,7 +175,7 @@ func ExampleString_String() {
 	// Hello!
 }
 
-func ExampleString_Format() {
+func ExampleText_Format() {
 	en := &Bundle{
 		GREETING: "Hello %s!",
 	}
