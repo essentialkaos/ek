@@ -155,11 +155,22 @@ func (t Text) F(a ...any) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Has returns true if property with given name is present in data map
+func (d Data) Has(prop string) bool {
+	if len(d) == 0 {
+		return false
+	}
+
+	_, ok := d[prop]
+
+	return ok
+}
+
 // Plural prints plural form of word based on language and value
 //
 // Note that this method only supports int, int64, uint, uint64, and float64
 func (d Data) Plural(lang, prop string, values ...string) string {
-	if len(values) == 0 {
+	if len(values) == 0 || len(d) == 0 {
 		return ""
 	}
 
@@ -181,7 +192,7 @@ func (d Data) Plural(lang, prop string, values ...string) string {
 
 // PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
 func (d Data) PrettyNum(prop string) string {
-	if d[prop] == nil {
+	if !d.Has(prop) {
 		return UNKNOWN_VALUE
 	}
 
@@ -192,6 +203,10 @@ func (d Data) PrettyNum(prop string) string {
 //
 // Note that this method only supports int, int64, uint, uint64, and float64
 func (d Data) PrettySize(prop string) string {
+	if !d.Has(prop) {
+		return UNKNOWN_VALUE
+	}
+
 	switch t := d[prop].(type) {
 	case int:
 		return fmtutil.PrettySize(t)
@@ -214,6 +229,10 @@ func (d Data) PrettySize(prop string) string {
 //
 // Note that this method only supports float64
 func (d Data) PrettyPerc(prop string) string {
+	if !d.Has(prop) {
+		return UNKNOWN_VALUE
+	}
+
 	t, ok := d[prop].(float64)
 
 	if !ok {
