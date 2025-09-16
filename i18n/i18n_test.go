@@ -182,7 +182,15 @@ func (s *I18NSuite) TestWith(c *C) {
 }
 
 func (s *I18NSuite) TestData(c *C) {
-	data := Data{
+	var data Data
+
+	c.Assert(data.Has("int"), Equals, false)
+	c.Assert(data.Plural("EN", "int", "1", "2", "3"), Equals, "")
+	c.Assert(data.PrettyNum("int"), Equals, UNKNOWN_VALUE)
+	c.Assert(data.PrettySize("int"), Equals, UNKNOWN_VALUE)
+	c.Assert(data.PrettyPerc("perc"), Equals, UNKNOWN_VALUE)
+
+	data = Data{
 		"int":     123456,
 		"int64":   int64(123456),
 		"uint":    uint(123456),
@@ -190,6 +198,7 @@ func (s *I18NSuite) TestData(c *C) {
 		"float64": float64(123456.0),
 		"perc":    65.34,
 		"string":  "abcd",
+		"nil":     nil,
 	}
 
 	c.Assert(data.Plural("EN", "int", "1", "2", "3"), Equals, "2")
@@ -210,9 +219,11 @@ func (s *I18NSuite) TestData(c *C) {
 	c.Assert(data.PrettySize("uint64"), Equals, "120.6KB")
 	c.Assert(data.PrettySize("float64"), Equals, "120.6KB")
 	c.Assert(data.PrettySize("string"), Equals, "abcd")
+	c.Assert(data.PrettySize("nil"), Equals, "???")
 	c.Assert(data.PrettySize("unknown"), Equals, "???")
 
 	c.Assert(data.PrettyPerc("perc"), Equals, "65.3%")
+	c.Assert(data.PrettyPerc("int"), Equals, "???")
 	c.Assert(data.PrettyPerc("unknown"), Equals, "???")
 }
 

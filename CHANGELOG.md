@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.34.1](https://kaos.sh/ek/13.34.1)
+
+- **`[i18n]`** Added method `Data.Has`
+- **`[i18n]`** Improved working with empty `Data` map
+
 ### [13.34.0](https://kaos.sh/ek/13.34.0)
 
 - **`[i18n]`** Type `String` has been renamed to `Text`
