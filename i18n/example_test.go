@@ -186,6 +186,19 @@ func ExampleText_Format() {
 	// Hello Bob!
 }
 
+func ExampleData_Has() {
+	data := Data{
+		"ServerNum": 12,
+	}
+
+	fmt.Println("ServerNum", data.Has("ServerNum"))
+	fmt.Println("ServerName", data.Has("ServerName"))
+
+	// Output:
+	// ServerNum true
+	// ServerName false
+}
+
 func ExampleData_Plural() {
 	en := &Bundle{
 		GREETING: "Hello!",
