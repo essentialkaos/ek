@@ -18,6 +18,9 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// DEFAULT_EXPIRATION is default expiration
+const DEFAULT_EXPIRATION = cache.MINUTE
+
 // MIN_EXPIRATION is minimal expiration duration
 const MIN_EXPIRATION = cache.MILLISECOND
 
@@ -57,10 +60,14 @@ func New(config Config) (*Cache, error) {
 	}
 
 	c := &Cache{
-		expiration: config.DefaultExpiration,
+		expiration: DEFAULT_EXPIRATION,
 		data:       make(map[string]any),
 		expiry:     make(map[string]int64),
 		mu:         &sync.RWMutex{},
+	}
+
+	if config.DefaultExpiration != 0 {
+		c.expiration = config.DefaultExpiration
 	}
 
 	if config.CleanupInterval != 0 {
@@ -242,6 +249,42 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 	return item, time.Unix(0, expiration)
 }
 
+// Keys is an iterator over cache keys
+func (c *Cache) Keys(yield func(k string) bool) {
+	if c == nil {
+		return
+	}
+
+	c.mu.RLock()
+
+	for k := range c.data {
+		if !yield(k) {
+			c.mu.RUnlock()
+			return
+		}
+	}
+
+	c.mu.RUnlock()
+}
+
+// All is an iterator over cache items
+func (c *Cache) All(yield func(k string, v any) bool) {
+	if c == nil {
+		return
+	}
+
+	c.mu.RLock()
+
+	for k, v := range c.data {
+		if !yield(k, v) {
+			c.mu.RUnlock()
+			return
+		}
+	}
+
+	c.mu.RUnlock()
+}
+
 // Delete removes item from cache
 func (c *Cache) Delete(key string) bool {
 	if c == nil {
@@ -278,7 +321,7 @@ func (c *Cache) Flush() bool {
 
 // Validate validates cache configuration
 func (c Config) Validate() error {
-	if c.DefaultExpiration < MIN_EXPIRATION {
+	if c.DefaultExpiration != 0 && c.DefaultExpiration < MIN_EXPIRATION {
 		return errors.New("Invalid configuration: Expiration is too short (< 1ms)")
 	}
 

@@ -30,7 +30,6 @@ func ExampleNew() {
 func ExampleCache_Set() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -43,7 +42,6 @@ func ExampleCache_Set() {
 func ExampleCache_Has() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -55,7 +53,6 @@ func ExampleCache_Has() {
 func ExampleCache_Get() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -67,7 +64,6 @@ func ExampleCache_Get() {
 func ExampleCache_Size() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -79,7 +75,6 @@ func ExampleCache_Size() {
 func ExampleCache_Expired() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -91,7 +86,6 @@ func ExampleCache_Expired() {
 func ExampleCache_GetWithExpiration() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -101,10 +95,35 @@ func ExampleCache_GetWithExpiration() {
 	fmt.Println(item, exp.String())
 }
 
+func ExampleCache_Keys() {
+	c, _ := New(Config{
+		DefaultExpiration: cache.SECOND,
+	})
+
+	c.Set("test1", "ABCD")
+	c.Set("test2", 1234)
+
+	for k := range c.Keys {
+		fmt.Println(k)
+	}
+}
+
+func ExampleCache_All() {
+	c, _ := New(Config{
+		DefaultExpiration: cache.SECOND,
+	})
+
+	c.Set("test1", "ABCD")
+	c.Set("test2", 1234)
+
+	for k, v := range c.All {
+		fmt.Println(k, v)
+	}
+}
+
 func ExampleCache_Delete() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -117,7 +136,6 @@ func ExampleCache_Delete() {
 func ExampleCache_Flush() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")

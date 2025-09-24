@@ -93,6 +93,34 @@ func (s *CacheSuite) TestCacheWithoutJanitor(c *C) {
 	c.Assert(data, Equals, nil)
 }
 
+func (s *CacheSuite) TestIterators(c *C) {
+	cache, err := New(Config{})
+
+	c.Assert(err, IsNil)
+	c.Assert(cache, NotNil)
+
+	cache.Set("1", "TEST")
+
+	for k := range cache.Keys {
+		c.Assert(k, Equals, "1")
+	}
+
+	for k, v := range cache.All {
+		c.Assert(k, Equals, "1")
+		c.Assert(v, Equals, "TEST")
+	}
+
+	cache.Set("2", "TEST")
+
+	for range cache.Keys {
+		break
+	}
+
+	for range cache.All {
+		break
+	}
+}
+
 func (s *CacheSuite) TestExpiration(c *C) {
 	cache, err := New(Config{
 		DefaultExpiration: time.Second / 16,
@@ -130,6 +158,13 @@ func (s *CacheSuite) TestNil(c *C) {
 	item, exp := cache.GetWithExpiration("1")
 	c.Assert(item, Equals, nil)
 	c.Assert(exp.IsZero(), Equals, true)
+
+	c.Assert(func() {
+		for range cache.Keys {
+		}
+		for range cache.All {
+		}
+	}, NotPanics)
 }
 
 func (s *CacheSuite) TestConfig(c *C) {
