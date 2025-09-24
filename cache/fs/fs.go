@@ -12,12 +12,11 @@ package fs
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
-	"hash"
 	"os"
 	"path"
+	"regexp"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/cache"
@@ -25,6 +24,12 @@ import (
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// DEFAULT_EXPIRATION is default expiration
+const DEFAULT_EXPIRATION = cache.HOUR
+
+// DEFAULT_VALIDATION_REGEXP is default regular expression pattern to validate keys
+const DEFAULT_VALIDATION_REGEXP = `^[a-zA-Z0-9_-]{1,}$`
 
 // MIN_EXPIRATION is minimal expiration duration
 const MIN_EXPIRATION = cache.SECOND
@@ -36,15 +41,16 @@ const MIN_CLEANUP_INTERVAL = cache.SECOND
 
 // Cache is fs cache instance
 type Cache struct {
-	dir            string
-	hasher         hash.Hash
-	expiration     cache.Duration
-	isJanitorWorks bool
+	dir             string
+	expiration      cache.Duration
+	validationRegex *regexp.Regexp
+	isJanitorWorks  bool
 }
 
 // Config is cache configuration
 type Config struct {
 	Dir               string
+	ValidationRegexp  string
 	DefaultExpiration cache.Duration
 	CleanupInterval   cache.Duration
 }
@@ -73,8 +79,17 @@ func New(config Config) (*Cache, error) {
 
 	c := &Cache{
 		dir:        config.Dir,
-		expiration: config.DefaultExpiration,
-		hasher:     sha256.New(),
+		expiration: DEFAULT_EXPIRATION,
+	}
+
+	if config.DefaultExpiration != 0 {
+		c.expiration = config.DefaultExpiration
+	}
+
+	if config.ValidationRegexp != "" {
+		c.validationRegex = regexp.MustCompile(config.ValidationRegexp)
+	} else {
+		c.validationRegex = regexp.MustCompile(DEFAULT_VALIDATION_REGEXP)
 	}
 
 	if config.CleanupInterval != 0 {
@@ -121,7 +136,7 @@ func (c *Cache) Expired() int {
 
 // Has returns true if cache contains data for given key
 func (c *Cache) Has(key string) bool {
-	if c == nil || key == "" {
+	if c == nil || !c.isValidKey(key) {
 		return false
 	}
 
@@ -130,23 +145,13 @@ func (c *Cache) Has(key string) bool {
 
 // Set adds or updates item in cache
 func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
-	if c == nil || data == nil || key == "" {
+	if c == nil || data == nil || !c.isValidKey(key) {
 		return false
 	}
 
 	tmpFile := c.getItemPath(key, true)
-	fd, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 
-	if err != nil {
-		return false
-	}
-
-	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
-
-	fd.Close()
-
-	if err != nil {
-		os.Remove(tmpFile)
+	if !writeItem(tmpFile, data) {
 		return false
 	}
 
@@ -163,12 +168,12 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 		expr = expiration[0]
 	}
 
-	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(expr)) == err
+	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(expr)) == nil
 }
 
 // GetWithExpiration returns item from cache
 func (c *Cache) Get(key string) any {
-	if c == nil || key == "" || !c.Has(key) {
+	if c == nil || !c.isValidKey(key) || !c.Has(key) {
 		return nil
 	}
 
@@ -179,27 +184,12 @@ func (c *Cache) Get(key string) any {
 		return nil
 	}
 
-	fd, err := os.Open(c.getItemPath(key, false))
-
-	if err != nil {
-		return nil
-	}
-
-	item := &cacheItem{}
-	err = gob.NewDecoder(fd).Decode(item)
-
-	fd.Close()
-
-	if err != nil {
-		return nil
-	}
-
-	return item.Data
+	return readItem(c.getItemPath(key, false))
 }
 
 // GetWithExpiration returns item expiration date
 func (c *Cache) GetExpiration(key string) time.Time {
-	if c == nil || key == "" || !c.Has(key) {
+	if c == nil || !c.isValidKey(key) || !c.Has(key) {
 		return time.Time{}
 	}
 
@@ -210,7 +200,7 @@ func (c *Cache) GetExpiration(key string) time.Time {
 
 // GetWithExpiration returns item from cache and expiration date or nil
 func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
-	if c == nil || key == "" || !c.Has(key) {
+	if c == nil || !c.isValidKey(key) || !c.Has(key) {
 		return nil, time.Time{}
 	}
 
@@ -223,9 +213,35 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 	return nil, time.Time{}
 }
 
+// Keys is an iterator over cache keys
+func (c *Cache) Keys(yield func(k string) bool) {
+	if c == nil {
+		return
+	}
+
+	for _, k := range fsutil.List(c.dir, true) {
+		if !yield(k) {
+			return
+		}
+	}
+}
+
+// All is an iterator over cache items
+func (c *Cache) All(yield func(k string, v any) bool) {
+	if c == nil {
+		return
+	}
+
+	for _, k := range fsutil.List(c.dir, true) {
+		if !yield(k, c.Get(k)) {
+			return
+		}
+	}
+}
+
 // Delete removes item from cache
 func (c *Cache) Delete(key string) bool {
-	if c == nil {
+	if c == nil || !c.isValidKey(key) {
 		return false
 	}
 
@@ -252,7 +268,7 @@ func (c *Cache) Flush() bool {
 
 // Validate validates cache configuration
 func (c Config) Validate() error {
-	if c.DefaultExpiration < MIN_EXPIRATION {
+	if c.DefaultExpiration != 0 && c.DefaultExpiration < MIN_EXPIRATION {
 		return fmt.Errorf("Expiration is too short (< 1s)")
 	}
 
@@ -271,26 +287,18 @@ func (c Config) Validate() error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// func encodeItem(item any) ([]byte, error) {
-// 	return nil, nil
-// }
-
-// func decodeItem() ([]byte, error) {
-// 	return nil, nil
-// }
+// isValidKey returns true if key is valid
+func (c *Cache) isValidKey(key string) bool {
+	return key != "" && c.validationRegex.MatchString(key)
+}
 
 // getItemPath returns path to cache item
 func (c *Cache) getItemPath(key string, temporary bool) string {
 	if temporary {
-		return path.Join(c.dir, "."+c.hashKey(key))
+		return path.Join(c.dir, "."+key)
 	}
 
-	return path.Join(c.dir, c.hashKey(key))
-}
-
-// hashKey generates SHA-1 hash for given key
-func (c *Cache) hashKey(key string) string {
-	return fmt.Sprintf("%64x", c.hasher.Sum([]byte(key)))
+	return path.Join(c.dir, key)
 }
 
 // janitor is cache cleanup job
@@ -309,4 +317,45 @@ func (c *Cache) janitor(interval time.Duration) {
 			}
 		}
 	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// writeItem encodes data into GOB format and writes it into the file
+func writeItem(file string, data any) bool {
+	fd, err := os.OpenFile(file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+
+	if err != nil {
+		return false
+	}
+
+	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
+
+	fd.Close()
+
+	if err != nil {
+		os.Remove(file)
+	}
+
+	return err == nil
+}
+
+// readItem reads GOB-encoded data from the file
+func readItem(file string) any {
+	fd, err := os.Open(file)
+
+	if err != nil {
+		return nil
+	}
+
+	item := &cacheItem{}
+	err = gob.NewDecoder(fd).Decode(item)
+
+	fd.Close()
+
+	if err != nil {
+		return nil
+	}
+
+	return item.Data
 }

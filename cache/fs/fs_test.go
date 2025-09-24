@@ -8,6 +8,7 @@ package fs
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -30,6 +31,7 @@ var _ = Suite(&CacheSuite{})
 
 func (s *CacheSuite) TestCache(c *C) {
 	cache, err := New(Config{
+		ValidationRegexp:  `^[a-z0-9]$`,
 		DefaultExpiration: 2 * time.Second,
 		CleanupInterval:   time.Second,
 		Dir:               c.MkDir(),
@@ -88,7 +90,34 @@ func (s *CacheSuite) TestCache(c *C) {
 	c.Assert(expr.IsZero(), Equals, true)
 
 	c.Assert(cache.Flush(), Equals, true)
+}
 
+func (s *CacheSuite) TestIterators(c *C) {
+	cache, err := New(Config{Dir: c.MkDir()})
+
+	c.Assert(err, IsNil)
+	c.Assert(cache, NotNil)
+
+	cache.Set("1", "TEST")
+
+	for k := range cache.Keys {
+		c.Assert(k, Equals, "1")
+	}
+
+	for k, v := range cache.All {
+		c.Assert(k, Equals, "1")
+		c.Assert(v, Equals, "TEST")
+	}
+
+	cache.Set("2", "TEST")
+
+	for range cache.Keys {
+		break
+	}
+
+	for range cache.All {
+		break
+	}
 }
 
 func (s *CacheSuite) TestNil(c *C) {
@@ -107,6 +136,29 @@ func (s *CacheSuite) TestNil(c *C) {
 	item, exp := cache.GetWithExpiration("1")
 	c.Assert(item, Equals, nil)
 	c.Assert(exp.IsZero(), Equals, true)
+
+	c.Assert(func() {
+		for range cache.Keys {
+		}
+		for range cache.All {
+		}
+	}, NotPanics)
+}
+
+func (s *CacheSuite) TestErrors(c *C) {
+	cache, err := New(Config{Dir: c.MkDir()})
+
+	c.Assert(err, IsNil)
+	c.Assert(cache, NotNil)
+
+	c.Assert(cache.Set("1", "TEST"), Equals, true)
+	os.WriteFile(cache.dir+"/1", []byte("0000"), 0600)
+	c.Assert(readItem(cache.dir+"/1"), IsNil)
+	c.Assert(readItem(cache.dir+"/2"), IsNil)
+
+	cache.dir = "/_unknown_"
+
+	c.Assert(cache.Set("1", "TEST"), Equals, false)
 }
 
 func (s *CacheSuite) TestConfig(c *C) {

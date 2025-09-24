@@ -20,9 +20,10 @@ func ExampleNew() {
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
 		CleanupInterval:   cache.MINUTE,
+		ValidationRegexp:  `^[a-fA-F0-9]{8}$`,
 	})
 
-	c.Set("test", "ABCD")
+	c.Set("045d01c1", "Test data")
 
 	fmt.Println(c.Get("test"))
 }
@@ -31,7 +32,6 @@ func ExampleCache_Set() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -44,7 +44,6 @@ func ExampleCache_Has() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -56,7 +55,6 @@ func ExampleCache_Get() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -68,7 +66,6 @@ func ExampleCache_Size() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -80,7 +77,6 @@ func ExampleCache_Expired() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -92,7 +88,6 @@ func ExampleCache_GetWithExpiration() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -106,7 +101,6 @@ func ExampleCache_Delete() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")
@@ -119,7 +113,6 @@ func ExampleCache_Flush() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",
 		DefaultExpiration: cache.DAY,
-		CleanupInterval:   cache.MINUTE,
 	})
 
 	c.Set("test", "ABCD")

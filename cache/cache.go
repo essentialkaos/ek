@@ -40,6 +40,12 @@ type Cache interface {
 	// GetWithExpiration returns item from cache and expiration date or nil
 	GetWithExpiration(key string) (any, time.Time)
 
+	// Keys is an iterator over cache keys
+	Keys(yield func(k string) bool)
+
+	// All is an iterator over cache items
+	All(yield func(k string, v any) bool)
+
 	// Delete removes item from cache
 	Delete(key string) bool
 

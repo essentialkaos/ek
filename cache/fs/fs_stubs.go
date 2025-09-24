@@ -81,6 +81,16 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 	panic("UNSUPPORTED")
 }
 
+// ❗ Keys is an iterator over cache keys
+func (c *Cache) Keys(yield func(k string) bool) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ All is an iterator over cache items
+func (c *Cache) All(yield func(k string, v any) bool) {
+	panic("UNSUPPORTED")
+}
+
 // ❗ Delete removes item from cache
 func (c *Cache) Delete(key string) bool {
 	panic("UNSUPPORTED")
