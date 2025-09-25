@@ -291,10 +291,23 @@ func (s *TimeUtilSuite) TestPeriod(c *C) {
 		time.Date(2023, 6, 15, 18, 45, 30, 0, time.Local),
 	}
 
+	p2 := Period{
+		time.Date(2023, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2025, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
+	p3 := Period{
+		time.Date(2024, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2025, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
 	c.Assert(p.Contains(time.Date(2021, 1, 1, 9, 30, 15, 0, time.Local)), Equals, false)
 	c.Assert(p.Contains(time.Date(2023, 6, 15, 18, 50, 30, 0, time.Local)), Equals, false)
 	c.Assert(p.Contains(time.Date(2021, 1, 1, 12, 30, 16, 0, time.Local)), Equals, true)
 	c.Assert(p.Contains(time.Date(2023, 6, 15, 18, 45, 29, 0, time.Local)), Equals, true)
+
+	c.Assert(p.Intersects(p2), Equals, true)
+	c.Assert(p.Intersects(p3), Equals, false)
 
 	c.Assert(p.Duration().String(), Equals, "21486h15m15s")
 	c.Assert(p.Seconds(), Equals, 77350515)
