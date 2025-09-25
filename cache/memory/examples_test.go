@@ -133,6 +133,18 @@ func ExampleCache_Delete() {
 	// Output: <nil>
 }
 
+func ExampleCache_Invalidate() {
+	c, _ := New(Config{
+		DefaultExpiration: cache.SECOND,
+	})
+
+	c.Set("test", "ABCD")
+
+	// ... some time after
+
+	c.Invalidate()
+}
+
 func ExampleCache_Flush() {
 	c, _ := New(Config{
 		DefaultExpiration: cache.SECOND,

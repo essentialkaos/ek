@@ -97,6 +97,19 @@ func ExampleCache_GetWithExpiration() {
 	fmt.Println(item, exp.String())
 }
 
+func ExampleCache_Invalidate() {
+	c, _ := New(Config{
+		Dir:               "/path/to/cache",
+		DefaultExpiration: cache.DAY,
+	})
+
+	c.Set("test", "ABCD")
+
+	// ... some time after
+
+	c.Invalidate()
+}
+
 func ExampleCache_Delete() {
 	c, _ := New(Config{
 		Dir:               "/path/to/cache",

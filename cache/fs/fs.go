@@ -248,6 +248,32 @@ func (c *Cache) Delete(key string) bool {
 	return os.Remove(c.getItemPath(key, false)) == nil
 }
 
+// Invalidate deletes all expired records
+func (c *Cache) Invalidate() bool {
+	if c == nil {
+		return false
+	}
+
+	items := fsutil.List(c.dir, true)
+
+	if len(items) == 0 {
+		return false
+	}
+
+	now := time.Now()
+	fsutil.ListToAbsolute(c.dir, items)
+
+	for _, item := range items {
+		mtime, _ := fsutil.GetMTime(item)
+
+		if mtime.Before(now) {
+			os.Remove(item)
+		}
+	}
+
+	return true
+}
+
 // Flush removes all data from cache
 func (c *Cache) Flush() bool {
 	if c == nil {
@@ -304,18 +330,7 @@ func (c *Cache) getItemPath(key string, temporary bool) string {
 // janitor is cache cleanup job
 func (c *Cache) janitor(interval time.Duration) {
 	for range time.NewTicker(interval).C {
-		now := time.Now()
-
-		items := fsutil.List(c.dir, true)
-		fsutil.ListToAbsolute(c.dir, items)
-
-		for _, item := range items {
-			mtime, _ := fsutil.GetMTime(item)
-
-			if mtime.Before(now) {
-				os.Remove(item)
-			}
-		}
+		c.Invalidate()
 	}
 }
 

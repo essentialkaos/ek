@@ -49,6 +49,9 @@ type Cache interface {
 	// Delete removes item from cache
 	Delete(key string) bool
 
+	// Invalidate deletes all expired records
+	Invalidate() bool
+
 	// Flush removes all data from cache
 	Flush() bool
 }

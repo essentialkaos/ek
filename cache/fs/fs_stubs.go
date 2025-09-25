@@ -39,6 +39,11 @@ type Config struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validate storage interface
+var _ cache.Cache = (*Cache)(nil)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ New creates new cache instance
 func New(config Config) (*Cache, error) {
 	panic("UNSUPPORTED")
@@ -88,6 +93,11 @@ func (c *Cache) Keys(yield func(k string) bool) {
 
 // ❗ All is an iterator over cache items
 func (c *Cache) All(yield func(k string, v any) bool) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Invalidate deletes all expired records
+func (c *Cache) Invalidate() bool {
 	panic("UNSUPPORTED")
 }
 

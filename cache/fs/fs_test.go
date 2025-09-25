@@ -90,6 +90,7 @@ func (s *CacheSuite) TestCache(c *C) {
 	c.Assert(expr.IsZero(), Equals, true)
 
 	c.Assert(cache.Flush(), Equals, true)
+	c.Assert(cache.Invalidate(), Equals, false)
 }
 
 func (s *CacheSuite) TestIterators(c *C) {
@@ -132,6 +133,7 @@ func (s *CacheSuite) TestNil(c *C) {
 	c.Assert(cache.Get("1"), Equals, nil)
 	c.Assert(cache.Has("1"), Equals, false)
 	c.Assert(cache.GetExpiration("1").IsZero(), Equals, true)
+	c.Assert(cache.Invalidate(), Equals, false)
 
 	item, exp := cache.GetWithExpiration("1")
 	c.Assert(item, Equals, nil)

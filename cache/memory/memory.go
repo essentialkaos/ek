@@ -232,7 +232,7 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 		return nil, time.Time{}
 	}
 
-	if time.Now().UnixNano() > expiration {
+	if time.Now().UnixNano() >= expiration {
 		c.mu.RUnlock()
 
 		if !c.isJanitorWorks {
@@ -301,6 +301,28 @@ func (c *Cache) Delete(key string) bool {
 	return true
 }
 
+// Invalidate deletes all expired records
+func (c *Cache) Invalidate() bool {
+	if c == nil || len(c.data) == 0 {
+		return false
+	}
+
+	now := time.Now().UnixNano()
+
+	c.mu.Lock()
+
+	for key, expiration := range c.expiry {
+		if now >= expiration {
+			delete(c.data, key)
+			delete(c.expiry, key)
+		}
+	}
+
+	c.mu.Unlock()
+
+	return true
+}
+
 // Flush removes all data from cache
 func (c *Cache) Flush() bool {
 	if c == nil {
@@ -337,21 +359,6 @@ func (c Config) Validate() error {
 // janitor is cache cleanup job
 func (c *Cache) janitor(interval time.Duration) {
 	for range time.NewTicker(interval).C {
-		if len(c.data) == 0 {
-			continue
-		}
-
-		now := time.Now().UnixNano()
-
-		c.mu.Lock()
-
-		for key, expiration := range c.expiry {
-			if now > expiration {
-				delete(c.data, key)
-				delete(c.expiry, key)
-			}
-		}
-
-		c.mu.Unlock()
+		c.Invalidate()
 	}
 }

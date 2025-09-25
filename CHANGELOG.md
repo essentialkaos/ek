@@ -3,7 +3,9 @@
 ### [13.35.0](https://kaos.sh/ek/13.35.0)
 
 - **`[cache/fs]`** Added keys/items iterators
+- **`[cache/fs]`** Added `Invalidate` method
 - **`[cache/memory]`** Added keys/items iterators
+- **`[cache/memory]`** Added `Invalidate` method
 
 ### [13.34.1](https://kaos.sh/ek/13.34.1)
 
