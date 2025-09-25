@@ -440,6 +440,23 @@ func ExamplePeriod_Contains() {
 	// Period contains date: true
 }
 
+func ExamplePeriod_Intersects() {
+	p1 := Period{
+		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2023, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
+	p2 := Period{
+		time.Date(2022, 1, 1, 12, 30, 15, 0, time.Local),
+		time.Date(2025, 6, 15, 18, 45, 30, 0, time.Local),
+	}
+
+	fmt.Printf("Periods intersect: %t\n", p1.Intersects(p2))
+
+	// Output:
+	// Periods intersect: true
+}
+
 func ExamplePeriod_Duration() {
 	p := Period{
 		time.Date(2021, 1, 1, 12, 30, 15, 0, time.Local),

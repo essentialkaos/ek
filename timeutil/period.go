@@ -27,6 +27,11 @@ func (p Period) Contains(t time.Time) bool {
 	return p.Start.Equal(t) || p.End.Equal(t) || (t.After(p.Start) && t.Before(p.End))
 }
 
+// Intersects returns true if two periods intersect
+func (p Period) Intersects(pp Period) bool {
+	return p.Contains(pp.Start) || p.Contains(pp.End)
+}
+
 // Duration returns duration of period
 func (p Period) Duration() time.Duration {
 	return p.End.Sub(p.Start)

@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.35.1](https://kaos.sh/ek/13.35.1)
+
+- **`[timeutil]`** Added method `Period.Intersects`
+
 ### [13.35.0](https://kaos.sh/ek/13.35.0)
 
 - **`[cache/fs]`** Added keys/items iterators
