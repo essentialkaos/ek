@@ -39,6 +39,11 @@ type Config struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// validate storage interface
+var _ cache.Cache = (*Cache)(nil)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ❗ New creates new cache instance
 func New(config Config) (*Cache, error) {
 	panic("UNSUPPORTED")
@@ -78,6 +83,21 @@ func (c *Cache) GetExpiration(key string) time.Time {
 
 // ❗ GetWithExpiration returns item from cache and expiration date or nil
 func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Keys is an iterator over cache keys
+func (c *Cache) Keys(yield func(k string) bool) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ All is an iterator over cache items
+func (c *Cache) All(yield func(k string, v any) bool) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Invalidate deletes all expired records
+func (c *Cache) Invalidate() bool {
 	panic("UNSUPPORTED")
 }
 
