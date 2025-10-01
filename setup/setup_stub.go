@@ -50,7 +50,7 @@ func (app App) Install() error {
 	panic("UNSUPPORTED")
 }
 
-// ❗ Uninstall uninstall unistalls application from the system
+// ❗ Uninstall uninstall uninstalls application from the system
 func (app App) Uninstall(full bool) error {
 	panic("UNSUPPORTED")
 }

@@ -106,7 +106,7 @@ func (app App) Install() error {
 	return nil
 }
 
-// Uninstall uninstall unistalls application from the system
+// Uninstall uninstall uninstalls application from the system
 func (app App) Uninstall(full bool) error {
 	bin := getBinaryInfo()
 	err := checkForUninstall(app, bin)
