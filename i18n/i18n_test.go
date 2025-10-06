@@ -8,6 +8,7 @@ package i18n
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -85,8 +86,12 @@ func (s *I18NSuite) TestFallback(c *C) {
 	}
 
 	c.Assert(l.GREETING.String(), Equals, "Сәлеметсіз бе!")
-	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, `Неизвестный пользователь johndoe`)
-	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, `Unknown ID 183`)
+	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, "Неизвестный пользователь johndoe")
+	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, "Unknown ID 183")
+
+	buf := &bytes.Buffer{}
+	c.Assert(l.ERRORS.UNKNOWN_USER.Write(buf, data), IsNil)
+	c.Assert(buf.String(), Equals, "Неизвестный пользователь johndoe")
 }
 
 func (s *I18NSuite) TestIsComplete(c *C) {
@@ -179,6 +184,30 @@ func (s *I18NSuite) TestWith(c *C) {
 
 	txt = "Test {{.Test1}}"
 	c.Assert(txt.With(data), Equals, "Test <no value>")
+}
+
+func (s *I18NSuite) TestWrite(c *C) {
+	var txt Text
+
+	buf := &bytes.Buffer{}
+	data := Data{"Test": 100}
+
+	txt = "Test"
+
+	c.Assert(txt.Write(nil, data), NotNil)
+	c.Assert(txt.Write(nil, data), Equals, ErrNilWriter)
+
+	txt = `Test {{'a}}`
+
+	c.Assert(txt.Write(buf, data), NotNil)
+	c.Assert(buf.String(), Equals, `Test {{'a}}`)
+
+	buf.Reset()
+
+	txt = "Test {{.Test1 123}}"
+
+	c.Assert(txt.Write(buf, data), NotNil)
+	c.Assert(buf.String(), Equals, `Test Test {{.Test1 123}}`)
 }
 
 func (s *I18NSuite) TestData(c *C) {

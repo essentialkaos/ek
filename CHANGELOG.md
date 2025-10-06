@@ -4,6 +4,7 @@
 
 - **`[i18n]`** Added method `Text.Start`
 - **`[i18n]`** Added method `Text.End`
+- **`[i18n]`** Added method `Text.Write`
 
 ### [13.35.1](https://kaos.sh/ek/13.35.1)
 
