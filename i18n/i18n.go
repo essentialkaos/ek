@@ -136,6 +136,16 @@ func (t Text) Add(prefix, suffix string) string {
 	return prefix + string(t) + suffix
 }
 
+// Start returns text as a string starting with given data
+func (t Text) Start(s string) string {
+	return s + string(t)
+}
+
+// End returns text as a string ending with given data
+func (t Text) End(s string) string {
+	return string(t) + s
+}
+
 // String converts String to string type
 func (t Text) String() string {
 	return string(t)

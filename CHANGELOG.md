@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.35.2](https://kaos.sh/ek/13.35.2)
+
+- **`[i18n]`** Added method `Text.Start`
+- **`[i18n]`** Added method `Text.End`
+
 ### [13.35.1](https://kaos.sh/ek/13.35.1)
 
 - **`[timeutil]`** Added method `Period.Intersects`

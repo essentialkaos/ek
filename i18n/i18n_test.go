@@ -233,6 +233,8 @@ func (s *I18NSuite) TestString(c *C) {
 	c.Assert(is.String(), Equals, "Hello")
 	c.Assert(is.S(), Equals, "Hello")
 	c.Assert(is.Add("[", "]"), Equals, "[Hello]")
+	c.Assert(is.Start("- "), Equals, "- Hello")
+	c.Assert(is.End(";"), Equals, "Hello;")
 
 	is = Text("User %s (%d)")
 

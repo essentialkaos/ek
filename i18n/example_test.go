@@ -160,6 +160,36 @@ func ExampleText_Add() {
 	// > Hello!
 }
 
+func ExampleText_Start() {
+	en := &Bundle{
+		GREETING: "Hello",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.ERRORS.UNKNOWN_USER.Start("[!] "))
+
+	// Output:
+	// [!] Unknown user {{.Username}}
+}
+
+func ExampleText_End() {
+	en := &Bundle{
+		GREETING: "Hello",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.GREETING.End(" [i]"))
+
+	// Output:
+	// Hello [i]
+}
+
 func ExampleText_String() {
 	en := &Bundle{
 		GREETING: "Hello!",
