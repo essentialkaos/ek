@@ -41,7 +41,7 @@ var (
 	ErrNilBundle = errors.New("One or more provided bundles is nil")
 
 	// ErrNilWriter is returned when given writes is nil
-	ErrNilWriter = errors.New("Writer is nil")
+	ErrNilWriter = errors.New("Target writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
