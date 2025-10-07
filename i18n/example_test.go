@@ -8,6 +8,7 @@ package i18n
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 )
@@ -145,6 +146,30 @@ func ExampleText_With() {
 	// Unknown ID 183
 }
 
+func ExampleText_Write() {
+	en := &Bundle{
+		GREETING: "Hello!",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	data := Data{
+		"Username": "johndoe",
+		"ID":       183,
+	}
+
+	buf := &bytes.Buffer{}
+
+	en.ERRORS.UNKNOWN_USER.Write(buf, data)
+
+	fmt.Println(buf.String())
+
+	// Output:
+	// Unknown user johndoe
+}
+
 func ExampleText_Add() {
 	en := &Bundle{
 		GREETING: "Hello",
@@ -158,6 +183,36 @@ func ExampleText_Add() {
 
 	// Output:
 	// > Hello!
+}
+
+func ExampleText_Start() {
+	en := &Bundle{
+		GREETING: "Hello",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.ERRORS.UNKNOWN_USER.Start("[!] "))
+
+	// Output:
+	// [!] Unknown user {{.Username}}
+}
+
+func ExampleText_End() {
+	en := &Bundle{
+		GREETING: "Hello",
+		ERRORS: &Errors{
+			UNKNOWN_USER: "Unknown user {{.Username}}",
+			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+		},
+	}
+
+	fmt.Println(en.GREETING.End(" [i]"))
+
+	// Output:
+	// Hello [i]
 }
 
 func ExampleText_String() {

@@ -10,7 +10,9 @@ package i18n
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"reflect"
 	"strings"
 	"text/template"
@@ -36,7 +38,10 @@ type Data map[string]any
 
 var (
 	// ErrNilBundle is returned when one or more provided bundles is nil
-	ErrNilBundle = fmt.Errorf("One or more provided bundles is nil")
+	ErrNilBundle = errors.New("One or more provided bundles is nil")
+
+	// ErrNilWriter is returned when given writes is nil
+	ErrNilWriter = errors.New("Target writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -102,28 +107,44 @@ func IsComplete(bundle any) (bool, []string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// With uses String as a templates and applies payload from given data to it
+// With uses Text as a template and applies payload from given data to it
 func (t Text) With(data any) string {
+	var buf bytes.Buffer
+
+	t.Write(&buf, data)
+
+	return buf.String()
+}
+
+// Write uses Text as a template, applies payload from given data to it and writes
+// resulting data into given writer
+func (t Text) Write(wr io.Writer, data any) error {
+	if wr == nil {
+		return ErrNilWriter
+	}
+
 	if t == "" || data == nil ||
 		!strings.Contains(string(t), `{{`) ||
 		!strings.Contains(string(t), `}}`) {
-		return string(t)
+		fmt.Fprint(wr, t)
+		return nil
 	}
 
 	tt, err := template.New("").Parse(string(t))
 
 	if err != nil {
-		return string(t)
+		fmt.Fprint(wr, t)
+		return fmt.Errorf("Can't parse template: %w", err)
 	}
 
-	var buf bytes.Buffer
-	err = tt.Execute(&buf, data)
+	err = tt.Execute(wr, data)
 
 	if err != nil {
-		return string(t)
+		fmt.Fprint(wr, t)
+		return fmt.Errorf("Can't apply template: %w", err)
 	}
 
-	return buf.String()
+	return nil
 }
 
 // Format formats string using given data
@@ -134,6 +155,16 @@ func (t Text) Format(a ...any) string {
 // Add adds prefix and/or suffix to result string
 func (t Text) Add(prefix, suffix string) string {
 	return prefix + string(t) + suffix
+}
+
+// Start returns text as a string starting with given data
+func (t Text) Start(s string) string {
+	return s + string(t)
+}
+
+// End returns text as a string ending with given data
+func (t Text) End(s string) string {
+	return string(t) + s
 }
 
 // String converts String to string type
