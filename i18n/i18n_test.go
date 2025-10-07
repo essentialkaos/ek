@@ -88,10 +88,16 @@ func (s *I18NSuite) TestFallback(c *C) {
 	c.Assert(l.GREETING.String(), Equals, "Сәлеметсіз бе!")
 	c.Assert(l.ERRORS.UNKNOWN_USER.With(data), Equals, "Неизвестный пользователь johndoe")
 	c.Assert(l.ERRORS.UNKNOWN_ID.With(data), Equals, "Unknown ID 183")
+	c.Assert(l.ERRORS.UNKNOWN_ID.With(data, "_", "_"), Equals, "_Unknown ID 183_")
 
 	buf := &bytes.Buffer{}
 	c.Assert(l.ERRORS.UNKNOWN_USER.Write(buf, data), IsNil)
 	c.Assert(buf.String(), Equals, "Неизвестный пользователь johndoe")
+
+	buf.Reset()
+
+	c.Assert(l.ERRORS.UNKNOWN_USER.Write(buf, data, "**", "**"), IsNil)
+	c.Assert(buf.String(), Equals, "**Неизвестный пользователь johndoe**")
 }
 
 func (s *I18NSuite) TestIsComplete(c *C) {
@@ -199,15 +205,15 @@ func (s *I18NSuite) TestWrite(c *C) {
 
 	txt = `Test {{'a}}`
 
-	c.Assert(txt.Write(buf, data), NotNil)
-	c.Assert(buf.String(), Equals, `Test {{'a}}`)
+	c.Assert(txt.Write(buf, data, "_", "_"), NotNil)
+	c.Assert(buf.String(), Equals, `_Test {{'a}}_`)
 
 	buf.Reset()
 
 	txt = "Test {{.Test1 123}}"
 
-	c.Assert(txt.Write(buf, data), NotNil)
-	c.Assert(buf.String(), Equals, `Test Test {{.Test1 123}}`)
+	c.Assert(txt.Write(buf, data, "_", "_"), NotNil)
+	c.Assert(buf.String(), Equals, `_Test Test {{.Test1 123}}_`)
 }
 
 func (s *I18NSuite) TestData(c *C) {
