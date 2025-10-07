@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.35.3](https://kaos.sh/ek/13.35.3)
+
+- **`[i18n]`** Added support for prefix/suffix data to methods `Text.With` and `Text.Write`
+
 ### [13.35.2](https://kaos.sh/ek/13.35.2)
 
 - **`[i18n]`** Added method `Text.Start`

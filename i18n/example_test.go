@@ -141,9 +141,13 @@ func ExampleText_With() {
 	fmt.Println(en.ERRORS.UNKNOWN_USER.With(data))
 	fmt.Println(en.ERRORS.UNKNOWN_ID.With(data))
 
+	// Also, you can add prefix/suffix
+	fmt.Println(en.ERRORS.UNKNOWN_USER.With(data, "[!] ", " (ERR/21.1)"))
+
 	// Output:
 	// Unknown user johndoe
 	// Unknown ID 183
+	// [!] Unknown user johndoe (ERR/21.1)
 }
 
 func ExampleText_Write() {
@@ -164,10 +168,16 @@ func ExampleText_Write() {
 
 	en.ERRORS.UNKNOWN_USER.Write(buf, data)
 
+	buf.WriteRune('\n')
+
+	// Also, you can add prefix/suffix
+	en.ERRORS.UNKNOWN_USER.Write(buf, data, "- ", " (ERR/21.1)\n")
+
 	fmt.Println(buf.String())
 
 	// Output:
 	// Unknown user johndoe
+	// - Unknown user johndoe (ERR/21.1)
 }
 
 func ExampleText_Add() {

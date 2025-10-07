@@ -108,40 +108,48 @@ func IsComplete(bundle any) (bool, []string) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // With uses Text as a template and applies payload from given data to it
-func (t Text) With(data any) string {
+func (t Text) With(data any, extra ...string) string {
 	var buf bytes.Buffer
 
-	t.Write(&buf, data)
+	t.Write(&buf, data, extra...)
 
 	return buf.String()
 }
 
 // Write uses Text as a template, applies payload from given data to it and writes
 // resulting data into given writer
-func (t Text) Write(wr io.Writer, data any) error {
+func (t Text) Write(wr io.Writer, data any, extra ...string) error {
 	if wr == nil {
 		return ErrNilWriter
+	}
+
+	if len(extra) > 0 {
+		fmt.Fprint(wr, extra[0])
 	}
 
 	if t == "" || data == nil ||
 		!strings.Contains(string(t), `{{`) ||
 		!strings.Contains(string(t), `}}`) {
-		fmt.Fprint(wr, t)
+		writeWithExtra(wr, t, extra...)
 		return nil
 	}
 
 	tt, err := template.New("").Parse(string(t))
 
 	if err != nil {
-		fmt.Fprint(wr, t)
+		writeWithExtra(wr, t, extra...)
 		return fmt.Errorf("Can't parse template: %w", err)
 	}
 
 	err = tt.Execute(wr, data)
 
 	if err != nil {
-		fmt.Fprint(wr, t)
+		writeWithExtra(wr, t, extra...)
 		return fmt.Errorf("Can't apply template: %w", err)
+	}
+
+	if len(extra) > 1 {
+		fmt.Fprint(wr, extra[1])
 	}
 
 	return nil
@@ -274,6 +282,16 @@ func (d Data) PrettyPerc(prop string) string {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// writeWithExtra writes text into
+func writeWithExtra(wr io.Writer, t Text, extra ...string) {
+	switch len(extra) {
+	case 0, 1:
+		fmt.Fprint(wr, t)
+	default:
+		fmt.Fprintf(wr, "%s%s", t, extra[1])
+	}
+}
 
 // copyFieldsData copy fields data between bundles
 func copyFieldsData(bundles []reflect.Value) {
