@@ -10,6 +10,7 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -151,7 +152,7 @@ func (e Errors) Error(prefix string) string {
 
 // Add adds new error to slice
 func (b *Bundle) Add(errs ...any) *Bundle {
-	if errs == nil {
+	if len(errs) == 0 || b == nil {
 		return b
 	}
 
@@ -196,6 +197,12 @@ func (b *Bundle) Add(errs ...any) *Bundle {
 		b.errors = b.errors[len(b.errors)-b.capacity:]
 	}
 
+	return b
+}
+
+// Addf creates error and appends it to the bundle
+func (b *Bundle) Addf(format string, a ...any) *Bundle {
+	b.Add(fmt.Errorf(format, a...))
 	return b
 }
 

@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.35.4](https://kaos.sh/ek/13.35.4)
+
+- **`[errors]`** Added method `Bundle.Addf`
+
 ### [13.35.3](https://kaos.sh/ek/13.35.3)
 
 - **`[i18n]`** Added support for prefix/suffix data to methods `Text.With` and `Text.Write`

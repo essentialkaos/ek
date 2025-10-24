@@ -169,8 +169,23 @@ func ExampleBundle_Add() {
 	var errs Bundle
 
 	errs.Add(fmt.Errorf("Error 1"))
-	errs.Add(fmt.Errorf("Error 2"))
-	errs.Add(fmt.Errorf("Error 3"))
+	errs.Add("Error 2")
+	errs.Add(`Error 3`)
+
+	fmt.Printf("First: %v\n", errs.First())
+	fmt.Printf("Last: %v\n", errs.Last())
+
+	// Output:
+	// First: Error 1
+	// Last: Error 3
+}
+
+func ExampleBundle_Addf() {
+	var errs Bundle
+
+	errs.Addf("Error %d", 1)
+	errs.Addf("Error %d", 2)
+	errs.Addf("Error %d", 3)
 
 	fmt.Printf("First: %v\n", errs.First())
 	fmt.Printf("Last: %v\n", errs.Last())
