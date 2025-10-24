@@ -129,10 +129,11 @@ func (s *ErrorsSuite) TestAdd(c *C) {
 	errs1.Add([]string{"9", "10"})
 	errs1.Add("11")
 	errs1.Add(Errors{New("12")})
+	errs1.Addf("Test %s %d", "error", 100)
 
 	c.Assert(errs1.IsEmpty(), Equals, false)
-	c.Assert(errs1.Num(), Equals, 12)
-	c.Assert(errs1.All(), HasLen, 12)
+	c.Assert(errs1.Num(), Equals, 13)
+	c.Assert(errs1.All(), HasLen, 13)
 }
 
 func (s *ErrorsSuite) TestNegative(c *C) {
