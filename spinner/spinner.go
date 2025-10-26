@@ -153,26 +153,44 @@ func Skip() {
 
 // showSpinner starts spinner animation in a separate goroutine
 func showSpinner() {
-	var i int
+	var dur time.Duration
 
 	spinnerColorTag := strutil.B(fmtc.IsTag(SpinnerColorTag), SpinnerColorTag, "{y}")
 	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
 
+	mu.RLock()
+	fmtc.Printf(spinnerColorTag+"%s  {!}"+desc+"… "+timeColorTag+"[0:00]{!}", spinnerFrames[0])
+	mu.RUnlock()
+
+	frame := 1
+
 	for {
+		dur += framesDelay[frame]
+
 		mu.RLock()
-		fmtc.Printf(spinnerColorTag+"%s  {!}", spinnerFrames[i])
-		fmtc.Print(desc + "… ")
-		fmtc.Printf(timeColorTag+"[%s]{!}", timeutil.Pretty(time.Since(start)).Short(false))
-		mu.RUnlock()
 
-		i++
+		fmtc.Printf("\033[1G"+spinnerColorTag+"%s  {!}", spinnerFrames[frame])
 
-		if i == 10 {
-			i = 2
+		if dur >= time.Second/2 {
+			fmtc.Printf(
+				desc+"… "+timeColorTag+"[%s]{!}\033[K",
+				timeutil.Pretty(time.Since(start)).Short(false),
+			)
+
+			dur = 0
 		}
 
-		time.Sleep(framesDelay[i])
-		fmt.Print("\033[2K\r")
+		mu.RUnlock()
+
+		fmt.Print("\033[999G")
+
+		frame++
+
+		if frame == 10 {
+			frame = 2
+		}
+
+		time.Sleep(framesDelay[frame])
 
 		if !isActive.Load() {
 			isHidden.Store(true)
@@ -195,6 +213,8 @@ func stopSpinner(action uint8) {
 
 	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
 
+	fmt.Print("\033[1G")
+
 	switch action {
 	case _ACTION_ERROR:
 		errColorTag := strutil.B(fmtc.IsTag(ErrColorTag), ErrColorTag, "{r}")
@@ -208,7 +228,7 @@ func stopSpinner(action uint8) {
 	}
 
 	fmtc.Print(desc + " ")
-	fmtc.Printfn(timeColorTag+"(%s){!}", formatDuration(time.Since(start)))
+	fmtc.Printfn(timeColorTag+"(%s){!}\033[K", formatDuration(time.Since(start)))
 
 	mu.RUnlock()
 

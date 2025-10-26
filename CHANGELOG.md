@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.36.0](https://kaos.sh/ek/13.36.0)
+
+- **`[spinner]`** More efficient spinner rendering
+
 ### [13.35.4](https://kaos.sh/ek/13.35.4)
 
 - **`[errors]`** Added method `Bundle.Addf`
