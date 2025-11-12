@@ -1,5 +1,4 @@
 //go:build windows
-// +build windows
 
 // Package fs provides cache with file system storage
 package fs

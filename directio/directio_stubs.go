@@ -1,5 +1,4 @@
 //go:build !linux && !darwin
-// +build !linux,!darwin
 
 // Package directio provides methods for reading/writing files with direct io
 package directio

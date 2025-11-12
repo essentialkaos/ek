@@ -1,5 +1,4 @@
 //go:build linux || darwin
-// +build linux darwin
 
 // Package resources provides methods for collecting information about system
 // resources (cpu/memory)

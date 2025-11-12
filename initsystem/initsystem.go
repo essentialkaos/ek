@@ -1,5 +1,4 @@
 //go:build linux || freebsd
-// +build linux freebsd
 
 // Package initsystem provides methods for working with different init systems
 package initsystem

@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package lock provides methods for working with lock files
 package lock

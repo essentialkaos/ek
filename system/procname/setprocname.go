@@ -1,5 +1,4 @@
 //go:build linux || darwin
-// +build linux darwin
 
 // Package procname provides methods for changing process name in the process tree
 package procname

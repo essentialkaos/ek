@@ -1,5 +1,4 @@
 //go:build !linux && !darwin
-// +build !linux,!darwin
 
 // Package lock provides methods for working with lock files
 package lock

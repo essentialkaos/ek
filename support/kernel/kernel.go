@@ -1,5 +1,4 @@
 //go:build linux || darwin
-// +build linux darwin
 
 // Package kernel provides methods for collecting information from OS kernel
 package kernel

@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package services provides methods for collecting information about system services
 package services

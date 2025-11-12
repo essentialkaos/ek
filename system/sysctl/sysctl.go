@@ -1,5 +1,4 @@
 //go:build linux || darwin
-// +build linux darwin
 
 // Package sysctl provides methods for reading kernel parameters
 package sysctl
