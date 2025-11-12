@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.36.1](https://kaos.sh/ek/13.36.1)
+
+- **`[spinner]`** Description now limited by the size of the line
+- **`[terminal/tty]`** Fixed bug with closing tty file descriptor
+
 ### [13.36.0](https://kaos.sh/ek/13.36.0)
 
 - **`[spinner]`** More efficient spinner rendering

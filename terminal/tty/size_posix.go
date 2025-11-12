@@ -30,20 +30,27 @@ type winsize struct {
 // tty is a path to TTY device file
 var tty = "/dev/tty"
 
+// ttyFile is a tty file descriptor
+var ttyFile *os.File
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize returns window width and height
+// GetSize returns window width (columns) and height (rows)
 func GetSize() (int, int) {
-	t, err := os.OpenFile(tty, syscall.O_RDONLY, 0)
+	var err error
 
-	if err != nil {
-		return -1, -1
+	if ttyFile == nil {
+		ttyFile, err = os.Open(tty)
+
+		if err != nil {
+			return -1, -1
+		}
 	}
 
 	var sz winsize
 
 	_, _, _ = syscall.Syscall(
-		syscall.SYS_IOCTL, t.Fd(),
+		syscall.SYS_IOCTL, ttyFile.Fd(),
 		uintptr(syscall.TIOCGWINSZ),
 		uintptr(unsafe.Pointer(&sz)),
 	)
@@ -51,13 +58,13 @@ func GetSize() (int, int) {
 	return int(sz.cols), int(sz.rows)
 }
 
-// GetWidth returns window width
+// GetWidth returns window width (columns)
 func GetWidth() int {
 	w, _ := GetSize()
 	return w
 }
 
-// GetHeight returns window height
+// GetHeight returns window height (rows)
 func GetHeight() int {
 	_, h := GetSize()
 	return h
