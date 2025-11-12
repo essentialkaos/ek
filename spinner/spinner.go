@@ -162,7 +162,7 @@ func showSpinner() {
 
 	mu.RLock()
 	fmtc.Printf(spinnerColorTag+"%s  {!}", spinnerFrames[0])
-	fmtc.LPrintf(getMaxDescSize(), desc)
+	fmtc.LPrint(getMaxDescSize(), desc)
 	fmtc.Print("… " + timeColorTag + "[0:00]{!}")
 	mu.RUnlock()
 
@@ -176,7 +176,7 @@ func showSpinner() {
 		fmtc.Printf("\033[1G"+spinnerColorTag+"%s  {!}", spinnerFrames[frame])
 
 		if dur >= time.Second/2 {
-			fmtc.LPrintf(getMaxDescSize(), desc)
+			fmtc.LPrint(getMaxDescSize(), desc)
 			fmtc.Printf("… "+timeColorTag+"[%s]{!}\033[K", timeutil.Pretty(time.Since(start)).Short(false))
 
 			dur = 0
