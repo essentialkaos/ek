@@ -30,17 +30,17 @@ func IsSystemd() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetSize returns window width and height
+// ❗ GetSize returns window width (columns) and height (rows)
 func GetSize() (int, int) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetWidth returns window width
+// ❗ GetWidth returns window width (columns)
 func GetWidth() int {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetHeight returns window height
+// ❗ GetHeight returns window height (rows)
 func GetHeight() int {
 	panic("UNSUPPORTED")
 }
