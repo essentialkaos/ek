@@ -16,7 +16,9 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/fmtc"
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v13/terminal/tty"
 	"github.com/essentialkaos/ek/v13/timeutil"
 )
 
@@ -159,7 +161,9 @@ func showSpinner() {
 	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
 
 	mu.RLock()
-	fmtc.Printf(spinnerColorTag+"%s  {!}"+desc+"… "+timeColorTag+"[0:00]{!}", spinnerFrames[0])
+	fmtc.Printf(spinnerColorTag+"%s  {!}", spinnerFrames[0])
+	fmtc.LPrintf(getMaxDescSize(), desc)
+	fmtc.Print("… " + timeColorTag + "[0:00]{!}")
 	mu.RUnlock()
 
 	frame := 1
@@ -172,10 +176,8 @@ func showSpinner() {
 		fmtc.Printf("\033[1G"+spinnerColorTag+"%s  {!}", spinnerFrames[frame])
 
 		if dur >= time.Second/2 {
-			fmtc.Printf(
-				desc+"… "+timeColorTag+"[%s]{!}\033[K",
-				timeutil.Pretty(time.Since(start)).Short(false),
-			)
+			fmtc.LPrintf(getMaxDescSize(), desc)
+			fmtc.Printf("… "+timeColorTag+"[%s]{!}\033[K", timeutil.Pretty(time.Since(start)).Short(false))
 
 			dur = 0
 		}
@@ -247,4 +249,10 @@ func formatDuration(d time.Duration) string {
 	}
 
 	return timeutil.Pretty(d).Short(true)
+}
+
+// getMaxDescSize returns size of the current line for the description
+func getMaxDescSize() int {
+	w := tty.GetWidth()
+	return mathutil.B(w < 20, 9999, w-14)
 }
