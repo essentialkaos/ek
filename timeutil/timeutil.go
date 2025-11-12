@@ -422,7 +422,7 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	return time.Date(year, 1, 1, 0, 0, 0, 0, loc).AddDate(0, 0, 7*(week-1))
 }
 
-// ParseWithAny tries to parse value using given layots
+// ParseWithAny tries to parse value using given layouts
 func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 	if len(layouts) == 0 {
 		return time.Time{}, fmt.Errorf("No layouts provided")
