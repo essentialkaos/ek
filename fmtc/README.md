@@ -99,7 +99,7 @@ Tag: `{%hex}`
 
 Tag: `{?name}`
 
-For more information about named colors see documentation for method `NameColor`.
+For more information about named colors see documentation for method `AddColor`.
 
 #### Examples
 
