@@ -25,10 +25,11 @@ type Retrier struct {
 
 // Retry contains retry configuration
 type Retry struct {
-	Num       int           // Number of tries (1 or more)
-	Pause     time.Duration // Pause between tries
-	Status    int           // Required HTTP status (100-599)
-	MinStatus int           // Minimal HTTP status number (100-599)
+	Num              int           // Number of tries (1 or more)
+	Pause            time.Duration // Pause between tries
+	Status           int           // Required HTTP status (100-599)
+	MinStatus        int           // Minimal HTTP status number (100-599)
+	IgnoreRetryAfter bool          // Ignore Retry-After header
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -163,7 +164,7 @@ func getRetryPause(rr Retry, resp *Response) time.Duration {
 
 	retryAfter := resp.Header.Get("Retry-After")
 
-	if retryAfter == "" {
+	if retryAfter == "" || rr.IgnoreRetryAfter {
 		return 0
 	}
 
