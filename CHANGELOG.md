@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.36.2](https://kaos.sh/ek/13.36.2)
+
+- **`[req]`** Added option to `Retrier` configuration to ignore `Retry-After` header value
+- **`[req]`** Documentation fixes
+
 ### [13.36.1](https://kaos.sh/ek/13.36.1)
 
 - **`[spinner]`** Description now limited by the size of the line
