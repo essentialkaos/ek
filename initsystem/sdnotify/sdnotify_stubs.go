@@ -1,5 +1,4 @@
 //go:build !linux
-// +build !linux
 
 // Package sdnotify provides methods for sending notifications to systemd
 package sdnotify

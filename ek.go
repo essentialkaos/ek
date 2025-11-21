@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package ek is a set of auxiliary packages
 package ek

@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package fsutil provides methods for working with files on POSIX compatible systems
 package fsutil

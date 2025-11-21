@@ -1,5 +1,4 @@
 //go:build !linux && !darwin
-// +build !linux,!darwin
 
 // Package sensors provide methods for collecting sensors information
 package sensors

@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package input provides methods for reading user input
 package input

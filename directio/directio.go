@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package directio provides methods for reading/writing files with direct io
 package directio

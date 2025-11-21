@@ -1,5 +1,4 @@
 //go:build !linux
-// +build !linux
 
 // Package setup provides methods to install/unistall application as a service on the
 // system

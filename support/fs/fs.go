@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package pkgs provides methods for collecting information about filesystem
 package fs

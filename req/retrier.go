@@ -25,10 +25,11 @@ type Retrier struct {
 
 // Retry contains retry configuration
 type Retry struct {
-	Num       int           // Number of tries (1 or more)
-	Pause     time.Duration // Pause between tries
-	Status    int           // Required HTTP status (100-599)
-	MinStatus int           // Minimal HTTP status number (100-599)
+	Num              int           // Number of tries (1 or more)
+	Pause            time.Duration // Pause between tries
+	Status           int           // Required HTTP status (100-599)
+	MinStatus        int           // Minimal HTTP status number (100-599)
+	IgnoreRetryAfter bool          // Ignore Retry-After header
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -53,32 +54,32 @@ func NewRetrier(e ...*Engine) *Retrier {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Delete tries to send given request
+// Do tries to send given request
 func (rt *Retrier) Do(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest("", r, rr)
 }
 
-// Delete tries to send GET request
+// Get tries to send GET request
 func (rt *Retrier) Get(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest(GET, r, rr)
 }
 
-// Delete tries to send POST request
+// Post tries to send POST request
 func (rt *Retrier) Post(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest(POST, r, rr)
 }
 
-// Delete tries to send PUT request
+// Put tries to send PUT request
 func (rt *Retrier) Put(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest(PUT, r, rr)
 }
 
-// Delete tries to send HEAD request
+// Head tries to send HEAD request
 func (rt *Retrier) Head(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest(HEAD, r, rr)
 }
 
-// Delete tries to send PATCH request
+// Patch tries to send PATCH request
 func (rt *Retrier) Patch(r Request, rr Retry) (*Response, error) {
 	return rt.doRequest(PATCH, r, rr)
 }
@@ -163,7 +164,7 @@ func getRetryPause(rr Retry, resp *Response) time.Duration {
 
 	retryAfter := resp.Header.Get("Retry-After")
 
-	if retryAfter == "" {
+	if retryAfter == "" || rr.IgnoreRetryAfter {
 		return 0
 	}
 

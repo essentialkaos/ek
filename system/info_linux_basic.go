@@ -1,6 +1,4 @@
 //go:build linux && (386 || arm64 || amd64)
-// +build linux
-// +build 386 arm64 amd64
 
 package system
 

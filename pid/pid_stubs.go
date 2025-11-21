@@ -1,5 +1,4 @@
 //go:build !linux && !darwin && !freebsd
-// +build !linux,!darwin,!freebsd
 
 // Package pid provides methods for working with PID files
 package pid

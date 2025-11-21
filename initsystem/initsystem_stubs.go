@@ -1,5 +1,4 @@
 //go:build !linux && !darwin
-// +build !linux,!darwin
 
 // Package initsystem provides methods for working with different init systems
 package initsystem

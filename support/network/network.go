@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 // Package network provides methods for collecting information about machine network
 package network

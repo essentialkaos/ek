@@ -1,5 +1,4 @@
 //go:build !linux && !darwin
-// +build !linux,!darwin
 
 // Package netutil provides methods for working with network
 package netutil

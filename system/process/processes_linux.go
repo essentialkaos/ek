@@ -1,5 +1,4 @@
 //go:build linux
-// +build linux
 
 // Package process provides methods for gathering information about active processes
 package process
