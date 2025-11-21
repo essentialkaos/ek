@@ -4,6 +4,7 @@
 
 - **`[req]`** Added option to `Retrier` configuration to ignore `Retry-After` header value
 - **`[req]`** Documentation fixes
+- **`[usage/update]`** Tests refactoring
 
 ### [13.36.1](https://kaos.sh/ek/13.36.1)
 

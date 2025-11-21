@@ -40,6 +40,8 @@ func (s *UpdateSuite) SetUpSuite(c *C) {
 	s.url = "http://127.0.0.1:" + s.port
 
 	go runHTTPServer(s, c)
+
+	time.Sleep(time.Second)
 }
 
 func (s *UpdateSuite) TearDownSuite(c *C) {
@@ -159,18 +161,20 @@ func runHTTPServer(s *UpdateSuite, c *C) {
 
 	s.listener = listener
 
-	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/project/releases/latest", githubInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/unknown/releases/latest", githubNotFoundHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/limited/releases/latest", githubLimitedHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/github/repos/essentialkaos/garbage/releases/latest", githubWrongFormatHandler)
+	mux := server.Handler.(*http.ServeMux)
 
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Fproject/releases/permalink/latest", gitlabInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Funknown/releases/permalink/latest", gitlabNotFoundHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/gitlab/projects/essentialkaos%2Fgarbage/releases/permalink/latest", gitlabWrongFormatHandler)
+	mux.HandleFunc("/github/repos/essentialkaos/project/releases/latest", githubInfoHandler)
+	mux.HandleFunc("/github/repos/essentialkaos/unknown/releases/latest", githubNotFoundHandler)
+	mux.HandleFunc("/github/repos/essentialkaos/limited/releases/latest", githubLimitedHandler)
+	mux.HandleFunc("/github/repos/essentialkaos/garbage/releases/latest", githubWrongFormatHandler)
 
-	server.Handler.(*http.ServeMux).HandleFunc("/basic/project/latest.json", basicInfoHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/basic/unknown/latest.json", basicUnknownHandler)
-	server.Handler.(*http.ServeMux).HandleFunc("/basic/garbage/latest.json", basicWrongFormatHandler)
+	mux.HandleFunc("/gitlab/projects/essentialkaos%2Fproject/releases/permalink/latest", gitlabInfoHandler)
+	mux.HandleFunc("/gitlab/projects/essentialkaos%2Funknown/releases/permalink/latest", gitlabNotFoundHandler)
+	mux.HandleFunc("/gitlab/projects/essentialkaos%2Fgarbage/releases/permalink/latest", gitlabWrongFormatHandler)
+
+	mux.HandleFunc("/basic/project/latest.json", basicInfoHandler)
+	mux.HandleFunc("/basic/unknown/latest.json", basicUnknownHandler)
+	mux.HandleFunc("/basic/garbage/latest.json", basicWrongFormatHandler)
 
 	err = server.Serve(listener)
 
