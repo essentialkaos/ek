@@ -33,8 +33,8 @@ type ListingFilter struct {
 	SizeEqual   int64 // Files with size equals to defined
 	SizeZero    bool  // Empty files
 
-	Perms    string // Permission (see fsutil.CheckPerms for more info)
-	NotPerms string // Permission (see fsutil.CheckPerms for more info)
+	Perms    string // Permission (see [fsutil.CheckPerms] for more info)
+	NotPerms string // Permission (see [fsutil.CheckPerms] for more info)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -413,7 +413,7 @@ func filterHidden(names []string) []string {
 	return filteredNames
 }
 
-// fixCount ensures that the count from syscall.ReadDirent is non-negative
+// fixCount ensures that the count from [syscall.ReadDirent] is non-negative
 func fixCount(n int, err error) (int, error) {
 	if n < 0 {
 		n = 0

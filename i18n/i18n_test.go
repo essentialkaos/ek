@@ -9,6 +9,7 @@ package i18n
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -271,10 +272,8 @@ func (s *I18NSuite) TestString(c *C) {
 	c.Assert(is.Start("- "), Equals, "- Hello")
 	c.Assert(is.End(";"), Equals, "Hello;")
 
-	is = Text("User %s (%d)")
-
-	c.Assert(is.Format("John", 831), Equals, "User John (831)")
-	c.Assert(is.F("John", 831), Equals, "User John (831)")
+	c.Assert(Text("User %s (%d)").F("John", 831), Equals, "User John (831)")
+	c.Assert(Text("Unknown user %s (%d)").E("John", 831), DeepEquals, errors.New("Unknown user John (831)"))
 }
 
 func (s *I18NSuite) TestPlurLang(c *C) {

@@ -585,12 +585,12 @@ func Merge(opts ...string) string {
 	return strings.Join(opts, " ")
 }
 
-// Q merges several options into string (shortcut for Merge)
+// Q merges several options into string (shortcut for [Merge])
 func Q(opts ...string) string {
 	return Merge(opts...)
 }
 
-// F formats option name (shortcut for Format)
+// F formats option name (shortcut for [Format])
 func F(opt string) string {
 	return Format(opt)
 }

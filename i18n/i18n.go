@@ -160,6 +160,11 @@ func (t Text) Format(a ...any) string {
 	return fmt.Sprintf(string(t), a...)
 }
 
+// Error formats string using given data and returns it as error
+func (t Text) Error(a ...any) error {
+	return fmt.Errorf(string(t), a...)
+}
+
 // Add adds prefix and/or suffix to result string
 func (t Text) Add(prefix, suffix string) string {
 	return prefix + string(t) + suffix
@@ -175,21 +180,26 @@ func (t Text) End(s string) string {
 	return string(t) + s
 }
 
-// String converts String to string type
+// String converts Text into string type
 func (t Text) String() string {
 	return string(t)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// S is shortcut for String
+// S is shortcut for [String]
 func (t Text) S() string {
 	return string(t)
 }
 
-// F is shortcut for Format
+// F is shortcut for [Format]
 func (t Text) F(a ...any) string {
 	return t.Format(a...)
+}
+
+// E is shortcut for [Error]
+func (t Text) E(a ...any) error {
+	return t.Error(a...)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

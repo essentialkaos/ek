@@ -157,12 +157,12 @@ func ToEnvVar(name string) string {
 	return strutil.ReplaceAll(strings.ToUpper(name), "-:", "_")
 }
 
-// O is a shortcut for ToOption
+// O is a shortcut for [ToOption]
 func O(name string) string {
 	return ToOption(name)
 }
 
-// E is a shortcut for ToEnvVar
+// E is a shortcut for [ToEnvVar]
 func E(name string) string {
 	return ToEnvVar(name)
 }
