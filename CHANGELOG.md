@@ -1,5 +1,10 @@
 ## Changelog
 
+### [13.36.3](https://kaos.sh/ek/13.36.3)
+
+- **`[i18n]`** Add method `Text.Error`
+- **`[i18n]`** Improved documentation
+
 ### [13.36.2](https://kaos.sh/ek/13.36.2)
 
 - **`[req]`** Added option to `Retrier` configuration to ignore `Retry-After` header value

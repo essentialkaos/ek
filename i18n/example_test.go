@@ -28,8 +28,9 @@ type Bundle struct {
 }
 
 type Errors struct {
-	UNKNOWN_USER Text
-	UNKNOWN_ID   Text
+	UNKNOWN_USER    Text
+	UNKNOWN_ID      Text
+	UNKNOWN_COMMAND Text
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,8 +42,9 @@ func ExampleFallback() {
 
 		GREETING: "Hello!",
 		ERRORS: &Errors{
-			UNKNOWN_USER: "Unknown user {{.Username}}",
-			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+			UNKNOWN_USER:    "Unknown user {{.Username}}",
+			UNKNOWN_ID:      "Unknown ID {{.ID}}",
+			UNKNOWN_COMMAND: "Unknown command %q",
 		},
 	}
 
@@ -99,8 +101,9 @@ func ExampleIsComplete() {
 		GREETING: "Hello!",
 		MESSAGE:  "Hi user!",
 		ERRORS: &Errors{
-			UNKNOWN_USER: "Unknown user {{.Username}}",
-			UNKNOWN_ID:   "Unknown ID {{.ID}}",
+			UNKNOWN_USER:    "Unknown user {{.Username}}",
+			UNKNOWN_ID:      "Unknown ID {{.ID}}",
+			UNKNOWN_COMMAND: "Unknown command %q",
 		},
 	}
 
@@ -121,7 +124,7 @@ func ExampleIsComplete() {
 
 	// Output:
 	// EN is complete: true
-	// RU is complete: false (empty: MESSAGE, ERRORS.UNKNOWN_ID)
+	// RU is complete: false (empty: MESSAGE, ERRORS.UNKNOWN_ID, ERRORS.UNKNOWN_COMMAND)
 }
 
 func ExampleText_With() {
@@ -249,6 +252,19 @@ func ExampleText_Format() {
 
 	// Output:
 	// Hello Bob!
+}
+
+func ExampleText_Error() {
+	en := &Bundle{
+		ERRORS: &Errors{
+			UNKNOWN_COMMAND: "Unknown command %q",
+		},
+	}
+
+	fmt.Println(en.ERRORS.UNKNOWN_COMMAND.Error("list"))
+
+	// Output:
+	// Unknown command "list"
 }
 
 func ExampleData_Has() {
