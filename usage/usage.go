@@ -84,6 +84,8 @@ type About struct {
 	ReleaseColorTag string // ReleaseColorTag contains default app release color tag
 	BuildColorTag   string // BuildColorTag contains default app build color tag
 
+	Copyright string // Copyright contains custom copyright prefix
+
 	ReleaseSeparator string // ReleaseSeparator contains symbol for version and release separation (default: -)
 	DescSeparator    string // DescSeparator contains symbol for version and description separation (default: -)
 
@@ -97,8 +99,12 @@ type About struct {
 type Info struct {
 	AppNameColorTag     string // AppNameColorTag contains default app name color tag
 	CommandsColorTag    string // CommandsColorTag contains default commands color tag
+	CommandsHeader      string // CommandsHeader contains custom commands header
 	OptionsColorTag     string // OptionsColorTag contains default options color tag
+	OptionsHeader       string // OptionsHeader contains custom options header
 	EnvVarsColorTag     string // EnvVarsColorTag contains default environment variable color tag
+	EnvVarsHeader       string // EnvVarsHeader contains custom env vars header
+	ExamplesHeader      string // ExamplesHeader contains custom examples header
 	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
 
 	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
@@ -171,11 +177,11 @@ type Example struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewInfo creates new info struct
-func NewInfo(args ...string) *Info {
+func NewInfo(args ...any) *Info {
 	var name string
 
 	if len(args) != 0 {
-		name = args[0]
+		name = evalString(args[0])
 		args = args[1:]
 	}
 
@@ -183,7 +189,7 @@ func NewInfo(args ...string) *Info {
 
 	info := &Info{
 		Name:        name,
-		Args:        args,
+		Args:        evalStrings(args),
 		Breadcrumbs: true,
 	}
 
@@ -191,30 +197,30 @@ func NewInfo(args ...string) *Info {
 }
 
 // AddGroup adds new command group
-func (i *Info) AddGroup(group string) {
+func (i *Info) AddGroup(group any) {
 	if i == nil || group == "" {
 		return
 	}
 
-	i.curGroup = group
+	i.curGroup = evalString(group)
 }
 
 // AddCommand adds command
-func (i *Info) AddCommand(name, desc string, args ...string) *Command {
+func (i *Info) AddCommand(name, desc any, args ...any) *Command {
 	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
-	group := "Commands"
+	group := strutil.Q(i.CommandsHeader, "Commands")
 
 	if i.curGroup != "" {
 		group = i.curGroup
 	}
 
 	cmd := &Command{
-		Name:  name,
-		Desc:  desc,
-		Args:  args,
+		Name:  evalString(name),
+		Desc:  evalString(desc),
+		Args:  evalStrings(args),
 		Group: group,
 		info:  i,
 	}
@@ -225,18 +231,18 @@ func (i *Info) AddCommand(name, desc string, args ...string) *Command {
 }
 
 // AddOption adds option
-func (i *Info) AddOption(name, desc string, args ...string) *Option {
+func (i *Info) AddOption(name, desc any, args ...any) *Option {
 	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
-	long, short := parseOptionName(name)
+	long, short := parseOptionName(evalString(name))
 
 	opt := &Option{
 		Long:  long,
 		Short: short,
-		Desc:  desc,
-		Arg:   strings.Join(args, " "),
+		Desc:  evalString(desc),
+		Arg:   strings.Join(evalStrings(args), " "),
 		info:  i,
 	}
 
@@ -246,12 +252,16 @@ func (i *Info) AddOption(name, desc string, args ...string) *Option {
 }
 
 // AddEnv adds environment variable
-func (i *Info) AddEnv(name, desc string) *Env {
+func (i *Info) AddEnv(name, desc any) *Env {
 	if i == nil || name == "" || desc == "" {
 		return nil
 	}
 
-	env := &Env{Name: name, Desc: desc, info: i}
+	env := &Env{
+		Name: evalString(name),
+		Desc: evalString(desc),
+		info: i,
+	}
 
 	i.EnvVars = append(i.EnvVars, env)
 
@@ -259,7 +269,7 @@ func (i *Info) AddEnv(name, desc string) *Env {
 }
 
 // AddExample adds example of application usage
-func (i *Info) AddExample(cmd string, desc ...string) {
+func (i *Info) AddExample(cmd any, desc ...any) {
 	if i == nil || cmd == "" {
 		return
 	}
@@ -267,14 +277,14 @@ func (i *Info) AddExample(cmd string, desc ...string) {
 	var cmdDesc string
 
 	if len(desc) != 0 {
-		cmdDesc = desc[0]
+		cmdDesc = evalString(desc[0])
 	}
 
-	i.Examples = append(i.Examples, &Example{cmd, cmdDesc, false, i})
+	i.Examples = append(i.Examples, &Example{evalString(cmd), cmdDesc, false, i})
 }
 
 // AddRawExample adds example of application usage without command prefix
-func (i *Info) AddRawExample(cmd string, desc ...string) {
+func (i *Info) AddRawExample(cmd any, desc ...any) {
 	if i == nil || cmd == "" {
 		return
 	}
@@ -282,23 +292,23 @@ func (i *Info) AddRawExample(cmd string, desc ...string) {
 	var cmdDesc string
 
 	if len(desc) != 0 {
-		cmdDesc = desc[0]
+		cmdDesc = evalString(desc[0])
 	}
 
-	i.Examples = append(i.Examples, &Example{cmd, cmdDesc, true, i})
+	i.Examples = append(i.Examples, &Example{evalString(cmd), cmdDesc, true, i})
 }
 
 // AddSpoiler adds spoiler
-func (i *Info) AddSpoiler(spoiler string) {
+func (i *Info) AddSpoiler(spoiler any) {
 	if i == nil {
 		return
 	}
 
-	i.Spoiler = spoiler
+	i.Spoiler = evalString(spoiler)
 }
 
 // BoundOptions bounds command with options
-func (i *Info) BoundOptions(cmd string, options ...string) {
+func (i *Info) BoundOptions(cmd any, options ...any) {
 	if i == nil || cmd == "" {
 		return
 	}
@@ -306,7 +316,7 @@ func (i *Info) BoundOptions(cmd string, options ...string) {
 	for _, command := range i.Commands {
 		if command.Name == cmd {
 			for _, opt := range options {
-				longOption, _ := parseOptionName(opt)
+				longOption, _ := parseOptionName(evalString(opt))
 				command.BoundOptions = append(command.BoundOptions, longOption)
 			}
 
@@ -316,13 +326,15 @@ func (i *Info) BoundOptions(cmd string, options ...string) {
 }
 
 // GetCommand tries to find command with given name
-func (i *Info) GetCommand(name string) *Command {
+func (i *Info) GetCommand(name any) *Command {
 	if i == nil {
 		return nil
 	}
 
+	cmdName := evalString(name)
+
 	for _, command := range i.Commands {
-		if command.Name == name {
+		if command.Name == cmdName {
 			return command
 		}
 	}
@@ -331,15 +343,15 @@ func (i *Info) GetCommand(name string) *Command {
 }
 
 // GetOption tries to find option with given name
-func (i *Info) GetOption(name string) *Option {
+func (i *Info) GetOption(name any) *Option {
 	if i == nil {
 		return nil
 	}
 
-	name, _ = parseOptionName(name)
+	optName, _ := parseOptionName(evalString(name))
 
 	for _, option := range i.Options {
-		if option.Long == name {
+		if option.Long == optName {
 			return option
 		}
 	}
@@ -629,12 +641,14 @@ func (a *About) Print(infoType ...string) {
 
 	if a.Owner != "" {
 		fmtc.If(a.Year == 0).Printf(
-			"{s-}Copyright (C) %d %s{!}\n",
+			"{s-}%s %d %s{!}\n",
+			strutil.Q(a.Copyright, "Copyright (C)"),
 			time.Now().Year(), a.Owner,
 		)
 
 		fmtc.If(a.Year != 0).Printf(
-			"{s-}Copyright (C) %d-%d %s{!}\n",
+			"{s-}%s %d-%d %s{!}\n",
+			strutil.Q(a.Copyright, "Copyright (C)"),
 			a.Year, time.Now().Year(), a.Owner,
 		)
 	}
@@ -672,7 +686,7 @@ func printCommands(info *Info) {
 
 // printOptions prints all supported options
 func printOptions(info *Info) {
-	printGroupHeader("Options")
+	printGroupHeader(strutil.Q(info.OptionsHeader, "Options"))
 
 	for _, option := range info.Options {
 		option.Print()
@@ -681,7 +695,7 @@ func printOptions(info *Info) {
 
 // printEnvVars prints all supported environment variables
 func printEnvVars(info *Info) {
-	printGroupHeader("Environment variables")
+	printGroupHeader(strutil.Q(info.EnvVarsHeader, "Environment variables"))
 
 	for _, env := range info.EnvVars {
 		env.Print()
@@ -690,7 +704,7 @@ func printEnvVars(info *Info) {
 
 // printExamples prints all usage examples
 func printExamples(info *Info) {
-	printGroupHeader("Examples")
+	printGroupHeader(strutil.Q(info.ExamplesHeader, "Examples"))
 
 	total := len(info.Examples)
 
@@ -946,4 +960,20 @@ func wrapText(text string, indent, maxLen int) string {
 	}
 
 	return buf.String()
+}
+
+// evalStrings converts slice with any into slice with strings
+func evalStrings(data []any) []string {
+	var result []string
+
+	for _, v := range data {
+		result = append(result, evalString(v))
+	}
+
+	return result
+}
+
+// evalString converts any into string
+func evalString(v any) string {
+	return fmt.Sprintf("%v", v)
 }
