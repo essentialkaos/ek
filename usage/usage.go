@@ -106,6 +106,7 @@ type Info struct {
 	EnvVarsHeader       string // EnvVarsHeader contains custom env vars header
 	ExamplesHeader      string // ExamplesHeader contains custom examples header
 	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
+	UsageHeader         string // UsageHeader is custom usage header
 
 	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
 	WrapLen     int  // Wrap text if it longer than specified value
@@ -380,7 +381,8 @@ func (i *Info) Print() {
 		i.CommandsColorTag, DEFAULT_COMMANDS_COLOR_TAG,
 	)
 
-	usageMessage := "\n{*}Usage:{!} " + appNameColorTag + i.Name + "{!}"
+	usageMessage := "\n{*}" + strutil.Q(i.UsageHeader, "Usage") + ":{!} "
+	usageMessage += appNameColorTag + i.Name + "{!}"
 
 	if len(i.Options) != 0 {
 		usageMessage += " " + optionsColorTag + "{options}{!}"
