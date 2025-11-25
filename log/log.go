@@ -82,7 +82,7 @@ type Logger struct {
 	useBufIO bool
 }
 
-// F is a shortcut for Field struct
+// F is an alias for [Field] struct
 type F = Field
 
 // Field contains key and value for JSON log

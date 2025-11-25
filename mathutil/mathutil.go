@@ -153,14 +153,14 @@ func Round(v float64, p int) float64 {
 
 // Min returns a smaller value
 //
-// Deprecated: Use built-in method min instead
+// Deprecated: Use built-in method `min` instead
 func Min[N Numeric](val1, val2 N) N {
 	return min(val1, val2)
 }
 
 // Max returns a greater value
 //
-// Deprecated: Use built-in method max instead
+// Deprecated: Use built-in method `max` instead
 func Max[N Numeric](val1, val2 N) N {
 	return max(val1, val2)
 }

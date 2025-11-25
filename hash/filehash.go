@@ -20,7 +20,7 @@ import (
 
 // FileHash generates an SHA-256 hash for a given file
 //
-// Deprecated: Use package hashutil instead
+// Deprecated: Use package [hashutil] instead
 func FileHash(file string) string {
 	return hashutil.File(file, sha256.New()).String()
 }

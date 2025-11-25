@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Format formats time.Time value using given format string
+// Format formats [time.Time] value using given format string
 //
 // Interpreted sequences:
 //
@@ -411,7 +411,7 @@ func DurationAs(t, unit time.Duration) int {
 	return int(math.Round(float64(t) / float64(unit)))
 }
 
-// FromISOWeek returns time.Time from ISO week number and year
+// FromISOWeek returns [time.Time] from ISO week number and year
 func FromISOWeek(week, year int, loc *time.Location) time.Time {
 	week = mathutil.Between(week, 1, 53)
 
@@ -443,35 +443,35 @@ func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 //
-// Deprecated: Use Duration.String instead
+// Deprecated: Use [Duration.String] instead
 func PrettyDuration(d any) string {
 	return Pretty(d).String()
 }
 
 // PrettyDurationSimple returns simple pretty duration (seconds → minutes → hours → days)
 //
-// Deprecated: Use Duration.Simple instead
+// Deprecated: Use [Duration.Simple] instead
 func PrettyDurationSimple(d any) string {
 	return Pretty(d).Simple()
 }
 
 // PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
 //
-// Deprecated: Use Duration.InDays instead
+// Deprecated: Use [Duration.InDays] instead
 func PrettyDurationInDays(d any) string {
 	return Pretty(d).InDays()
 }
 
 // ShortDuration returns pretty short duration (e.g. 1:37)
 //
-// Deprecated: Use Duration.Short instead
+// Deprecated: Use [Duration.Short] instead
 func ShortDuration(d any, highPrecision ...bool) string {
 	return Pretty(d).Short(highPrecision...)
 }
 
 // MiniDuration returns formatted value of duration (d/hr/m/s/ms/us/ns)
 //
-// Deprecated: Use Duration.Mini instead
+// Deprecated: Use [Duration.Mini] instead
 func MiniDuration(d time.Duration, separator ...string) string {
 	return Pretty(d).Mini(separator...)
 }
