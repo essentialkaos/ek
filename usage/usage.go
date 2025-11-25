@@ -108,6 +108,9 @@ type Info struct {
 	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
 	UsageHeader         string // UsageHeader is custom usage header
 
+	CommandPlaceholder string // CommandPlaceholder is custom command placeholder
+	OptionsPlaceholder string // OptionsPlaceholder is custom options placeholder
+
 	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
 	WrapLen     int  // Wrap text if it longer than specified value
 
@@ -385,11 +388,11 @@ func (i *Info) Print() {
 	usageMessage += appNameColorTag + i.Name + "{!}"
 
 	if len(i.Options) != 0 {
-		usageMessage += " " + optionsColorTag + "{options}{!}"
+		usageMessage += " " + optionsColorTag + strutil.Q(i.OptionsPlaceholder, "{options}") + "{!}"
 	}
 
 	if len(i.Commands) != 0 {
-		usageMessage += " " + commandsColorTag + "{command}{!}"
+		usageMessage += " " + commandsColorTag + strutil.Q(i.OptionsPlaceholder, "{command}") + "{!}"
 	}
 
 	if len(i.Args) != 0 {

@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.37.3](https://kaos.sh/ek/13.37.3)
+
+- **`[usage]`** Better i18n support
+
 ### [13.37.2](https://kaos.sh/ek/13.37.2)
 
 - **`[usage]`** Better i18n support
