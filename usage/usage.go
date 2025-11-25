@@ -392,7 +392,7 @@ func (i *Info) Print() {
 	}
 
 	if len(i.Commands) != 0 {
-		usageMessage += " " + commandsColorTag + strutil.Q(i.OptionsPlaceholder, "{command}") + "{!}"
+		usageMessage += " " + commandsColorTag + strutil.Q(i.CommandPlaceholder, "{command}") + "{!}"
 	}
 
 	if len(i.Args) != 0 {
