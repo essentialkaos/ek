@@ -285,7 +285,7 @@ func (s *FormatSuite) TestClean(c *C) {
 }
 
 func (s *FormatSuite) TestRender(c *C) {
-	c.Assert(Render("{S*_}W{!}"), Equals, "\x1b[47;1;4mW\x1b[0m")
+	c.Assert(Render("{S*_}W"), Equals, "\x1b[47;1;4mW")
 }
 
 func (s *FormatSuite) TestMethods(c *C) {

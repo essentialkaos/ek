@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.37.4](https://kaos.sh/ek/13.37.4)
+
+- **`[fmtc]`** Disabled color reset in `Render` method
+
 ### [13.37.3](https://kaos.sh/ek/13.37.3)
 
 - **`[usage]`** Better i18n support

@@ -343,9 +343,9 @@ func Clean(s string) string {
 	return searchColors(s, -1, true, true)
 }
 
-// Render converts color tags to ANSI escape codes
+// Render converts all color tags to ANSI escape codes in given string
 func Render(s string) string {
-	return searchColors(s, -1, false, true)
+	return searchColors(s, -1, false, false)
 }
 
 // Bell prints alert (bell) symbol
