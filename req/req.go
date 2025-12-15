@@ -295,22 +295,28 @@ func (e *Engine) Init() *Engine {
 	}
 
 	if e.Dialer == nil {
-		e.Dialer = &net.Dialer{}
+		e.Dialer = &net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}
 	}
 
 	if e.Transport == nil {
 		e.Transport = &http.Transport{
-			DialContext: e.Dialer.DialContext,
-			Proxy:       http.ProxyFromEnvironment,
+			DialContext:           e.Dialer.DialContext,
+			Proxy:                 http.ProxyFromEnvironment,
+			ForceAttemptHTTP2:     true,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
 		}
 	} else {
 		e.Transport.DialContext = e.Dialer.DialContext
 	}
 
 	if e.Client == nil {
-		e.Client = &http.Client{
-			Transport: e.Transport,
-		}
+		e.Client = &http.Client{Transport: e.Transport}
 	}
 
 	if e.dialTimeout > 0 {

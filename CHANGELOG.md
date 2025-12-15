@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.37.5](https://kaos.sh/ek/13.37.5)
+
+- **`[req]`** Improved default client settings for `Dialer` and `Transport`
+
 ### [13.37.4](https://kaos.sh/ek/13.37.4)
 
 - **`[fmtc]`** Disabled color reset in `Render` method
