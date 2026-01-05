@@ -61,6 +61,7 @@ func (s *CSVSuite) TestRead(c *C) {
 
 	line := 0
 	r := NewReader(fd, ',').WithHeader(true)
+	m := map[string]string{}
 
 	for {
 		rr, err := r.Read()
@@ -74,6 +75,11 @@ func (s *CSVSuite) TestRead(c *C) {
 			c.Assert(rr, HasLen, 4)
 			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
 			c.Assert(r.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
+			c.Assert(r.Header.Map(m, rr), IsNil)
+			c.Assert(m["ID"], Equals, "1")
+			c.Assert(m["FIRST NAME"], Equals, "John")
+			c.Assert(m["LAST NAME"], Equals, "Doe")
+			c.Assert(m["BALANCE"], Equals, "0.34")
 		case 1:
 			c.Assert(rr, HasLen, 4)
 			c.Assert(rr, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
@@ -168,6 +174,17 @@ func (s *CSVSuite) TestReadErrors(c *C) {
 
 	err = r.ReadTo(row)
 	c.Assert(err, NotNil)
+
+	var h Header
+	var m map[string]string
+
+	rr := Row{"1", "John", "Doe", "0.34"}
+
+	c.Assert(h.Map(m, rr), Equals, ErrEmptyHeader)
+
+	h = Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"}
+
+	c.Assert(h.Map(m, rr), Equals, ErrNilMap)
 }
 
 func (s *CSVSuite) TestLineParser(c *C) {

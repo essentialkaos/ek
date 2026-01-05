@@ -542,3 +542,31 @@ func ExampleRow_ToBytes() {
 	// Output:
 	// 1;John;Doe;0.34
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleHeader_Map() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	r := NewReader(fd, ';')
+	m := map[string]string{}
+
+	for {
+		row, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		r.Header.Map(m, row)
+
+		fmt.Printf("%#v\n", m)
+	}
+}

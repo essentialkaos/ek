@@ -45,6 +45,12 @@ var (
 
 	// ErrNilReader is returned when reader struct is nil
 	ErrNilReader = errors.New("Reader is nil")
+
+	// ErrEmptyHeader is returned when header has no data
+	ErrEmptyHeader = errors.New("Header is empty")
+
+	// ErrNilMap is returned when map is nil
+	ErrNilMap = errors.New("Map is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -363,6 +369,24 @@ func (r Row) ToBytes(comma rune) []byte {
 	}
 
 	return buf.Bytes()
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Map maps row data using headers names
+func (h Header) Map(m map[string]string, r Row) error {
+	switch {
+	case len(h) == 0:
+		return ErrEmptyHeader
+	case m == nil:
+		return ErrNilMap
+	}
+
+	for i, name := range h {
+		m[name] = r.Get(i)
+	}
+
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
