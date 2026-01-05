@@ -60,7 +60,7 @@ func (s *CSVSuite) TestRead(c *C) {
 	defer fd.Close()
 
 	line := 0
-	reader := NewReader(fd).WithComma(',').WithHeaderSkip(true)
+	reader := NewReader(fd, ',').WithHeader(true)
 
 	for {
 		row, err := reader.Read()
@@ -73,6 +73,7 @@ func (s *CSVSuite) TestRead(c *C) {
 		case 0:
 			c.Assert(row, HasLen, 4)
 			c.Assert(row, DeepEquals, Row{"1", "John", "Doe", "0.34"})
+			c.Assert(reader.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
 		case 1:
 			c.Assert(row, HasLen, 4)
 			c.Assert(row, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
@@ -96,7 +97,7 @@ func (s *CSVSuite) TestReadTo(c *C) {
 	defer fd.Close()
 
 	line := 0
-	reader := NewReader(fd).WithComma(',').WithHeaderSkip(true)
+	reader := NewReader(fd, ',').WithHeader(true)
 
 	var row Row
 
@@ -130,6 +131,19 @@ func (s *CSVSuite) TestReadTo(c *C) {
 	c.Assert(reader.Line(), Equals, 5)
 }
 
+func (s *CSVSuite) TestReadErrors(c *C) {
+	var fd *os.File
+	r := NewReader(fd, ',').WithHeader(true)
+
+	_, err := r.Read()
+	c.Assert(err, NotNil)
+
+	row := make(Row, 4)
+
+	err = r.ReadTo(row)
+	c.Assert(err, NotNil)
+}
+
 func (s *CSVSuite) TestLineParser(c *C) {
 	data := make(Row, 2)
 
@@ -151,8 +165,7 @@ func (s *CSVSuite) TestNil(c *C) {
 
 	c.Assert(err, DeepEquals, ErrNilReader)
 	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
-	c.Assert(r.WithComma('X'), IsNil)
-	c.Assert(r.WithHeaderSkip(false), IsNil)
+	c.Assert(r.WithHeader(false), IsNil)
 	c.Assert(r.Line(), Equals, 0)
 }
 
@@ -245,8 +258,7 @@ func (s *CSVSuite) BenchmarkRead(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
 	for range c.N {
-		reader := NewReader(fd)
-		reader.Comma = ','
+		reader := NewReader(fd, ',')
 
 		for {
 			_, err := reader.Read()
@@ -264,9 +276,7 @@ func (s *CSVSuite) BenchmarkReadTo(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
 	for range c.N {
-		reader := NewReader(fd)
-		reader.Comma = ','
-
+		reader := NewReader(fd, ',')
 		k := make([]string, 10)
 
 		for {

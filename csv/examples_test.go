@@ -5,7 +5,7 @@ package csv
 //                         Copyright (c) 2025 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
-// ////////////////////////////////////////////////////////////////////////////////// //
+// ///////////////////////////////////////////////////////////////////////////////// //
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func ExampleNew() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
@@ -49,7 +49,7 @@ func ExampleReader_Read() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
@@ -72,7 +72,7 @@ func ExampleReader_ReadTo() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 	row := make(Row, 10)
 
 	for {
@@ -86,7 +86,7 @@ func ExampleReader_ReadTo() {
 	}
 }
 
-func ExampleReader_WithComma() {
+func ExampleReader_WithHeader() {
 	fd, err := os.Open("file.csv")
 
 	if err != nil {
@@ -96,30 +96,7 @@ func ExampleReader_WithComma() {
 
 	defer fd.Close()
 
-	r := NewReader(fd).WithComma(',')
-
-	for {
-		row, err := r.Read()
-
-		if err == io.EOF {
-			break
-		}
-
-		fmt.Printf("%#v\n", row)
-	}
-}
-
-func ExampleReader_WithHeaderSkip() {
-	fd, err := os.Open("file.csv")
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	defer fd.Close()
-
-	r := NewReader(fd).WithHeaderSkip(true)
+	r := NewReader(fd, ';').WithHeader(true)
 
 	for {
 		row, err := r.Read()
@@ -142,7 +119,7 @@ func ExampleReader_Line() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
