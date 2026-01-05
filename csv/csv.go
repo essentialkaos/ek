@@ -49,7 +49,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader create new CSV reader
+// NewReader creates new CSV reader
 func NewReader(r io.Reader, comma rune) *Reader {
 	return &Reader{
 		comma:     string(comma),
@@ -110,9 +110,23 @@ func (r *Reader) ReadTo(dst Row) error {
 	return nil
 }
 
+// Seq is an iterator over all CSV data
+func (r *Reader) Seq(yield func(line int, row Row) bool) {
+	if r == nil || r.s == nil {
+		return
+	}
+
+	for {
+		rr, err := r.Read()
+		if err != nil || !yield(r.currentLine, rr) {
+			return
+		}
+	}
+}
+
 // WithHeader sets header skip flag
 func (r *Reader) WithHeader(flag bool) *Reader {
-	if r == nil {
+	if r == nil || r.s == nil {
 		return nil
 	}
 
@@ -123,11 +137,20 @@ func (r *Reader) WithHeader(flag bool) *Reader {
 
 // Line returns number of the last line read
 func (r *Reader) Line() int {
-	if r == nil {
+	if r == nil || r.s == nil {
 		return 0
 	}
 
 	return r.currentLine
+}
+
+// Error returns error from underlying scanner
+func (r *Reader) Error() error {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	return r.s.Err()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

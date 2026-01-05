@@ -60,10 +60,10 @@ func (s *CSVSuite) TestRead(c *C) {
 	defer fd.Close()
 
 	line := 0
-	reader := NewReader(fd, ',').WithHeader(true)
+	r := NewReader(fd, ',').WithHeader(true)
 
 	for {
-		row, err := reader.Read()
+		rr, err := r.Read()
 
 		if err == io.EOF {
 			break
@@ -71,21 +71,21 @@ func (s *CSVSuite) TestRead(c *C) {
 
 		switch line {
 		case 0:
-			c.Assert(row, HasLen, 4)
-			c.Assert(row, DeepEquals, Row{"1", "John", "Doe", "0.34"})
-			c.Assert(reader.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
+			c.Assert(rr, HasLen, 4)
+			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
+			c.Assert(r.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
 		case 1:
-			c.Assert(row, HasLen, 4)
-			c.Assert(row, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
+			c.Assert(rr, HasLen, 4)
+			c.Assert(rr, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
 		case 2:
-			c.Assert(row, HasLen, 6)
-			c.Assert(row, DeepEquals, Row{"3", "Mathew", "Timothy", "34.19371", "1", "2"})
+			c.Assert(rr, HasLen, 6)
+			c.Assert(rr, DeepEquals, Row{"3", "Mathew", "Timothy", "34.19371", "1", "2"})
 		}
 
 		line++
 	}
 
-	c.Assert(reader.Line(), Equals, 5)
+	c.Assert(r.Line(), Equals, 5)
 }
 
 func (s *CSVSuite) TestReadTo(c *C) {
@@ -97,16 +97,16 @@ func (s *CSVSuite) TestReadTo(c *C) {
 	defer fd.Close()
 
 	line := 0
-	reader := NewReader(fd, ',').WithHeader(true)
+	r := NewReader(fd, ',').WithHeader(true)
 
-	var row Row
+	var rr Row
 
 	for {
-		err := reader.ReadTo(row)
+		err := r.ReadTo(rr)
 
-		if row == nil {
+		if rr == nil {
 			c.Assert(err, NotNil)
-			row = make(Row, 4)
+			rr = make(Row, 4)
 			continue
 		}
 
@@ -116,19 +116,45 @@ func (s *CSVSuite) TestReadTo(c *C) {
 
 		switch line {
 		case 0:
-			c.Assert(row, DeepEquals, Row{"1", "John", "Doe", "0.34"})
+			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
 		case 1:
-			c.Assert(row, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
+			c.Assert(rr, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
 		case 2:
-			c.Assert(row, DeepEquals, Row{"3", "Mathew", "Timothy", "34.19371"})
+			c.Assert(rr, DeepEquals, Row{"3", "Mathew", "Timothy", "34.19371"})
 		case 3:
-			c.Assert(row, DeepEquals, Row{"4", "Lou", "", ""})
+			c.Assert(rr, DeepEquals, Row{"4", "Lou", "", ""})
 		}
 
 		line++
 	}
 
-	c.Assert(reader.Line(), Equals, 5)
+	c.Assert(r.Line(), Equals, 5)
+}
+
+func (s *CSVSuite) TestSeq(c *C) {
+	fd, err := os.Open(s.dataFile)
+
+	c.Assert(err, IsNil)
+	c.Assert(fd, NotNil)
+
+	defer fd.Close()
+
+	r := NewReader(fd, ',').WithHeader(true)
+
+	for line, rr := range r.Seq {
+		switch line {
+		case 2:
+			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
+		case 3:
+			c.Assert(rr, DeepEquals, Row{"2", "Fiammetta", "Miriana", "30"})
+		case 4:
+			c.Assert(rr, DeepEquals, Row{"3", "Mathew", "Timothy", "34.19371", "1", "2"})
+		case 5:
+			c.Assert(rr, DeepEquals, Row{"4", "Lou"})
+		}
+	}
+
+	c.Assert(r.Error(), IsNil)
 }
 
 func (s *CSVSuite) TestReadErrors(c *C) {
@@ -167,6 +193,9 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
 	c.Assert(r.WithHeader(false), IsNil)
 	c.Assert(r.Line(), Equals, 0)
+	c.Assert(r.Error(), IsNil)
+
+	r.Seq(nil)
 }
 
 func (s *CSVSuite) TestRow(c *C) {
@@ -258,10 +287,10 @@ func (s *CSVSuite) BenchmarkRead(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
 	for range c.N {
-		reader := NewReader(fd, ',')
+		r := NewReader(fd, ',')
 
 		for {
-			_, err := reader.Read()
+			_, err := r.Read()
 
 			if err == io.EOF {
 				break
@@ -276,11 +305,11 @@ func (s *CSVSuite) BenchmarkReadTo(c *C) {
 	fd, _ := os.Open(s.dataFile)
 
 	for range c.N {
-		reader := NewReader(fd, ',')
+		r := NewReader(fd, ',')
 		k := make([]string, 10)
 
 		for {
-			err := reader.ReadTo(k)
+			err := r.ReadTo(k)
 
 			if err == io.EOF {
 				break

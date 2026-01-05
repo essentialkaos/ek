@@ -86,6 +86,23 @@ func ExampleReader_ReadTo() {
 	}
 }
 
+func ExampleReader_Seq() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	r := NewReader(fd, ';')
+
+	for line, row := range r.Seq {
+		fmt.Printf("%d: %#v\n", line, row)
+	}
+}
+
 func ExampleReader_WithHeader() {
 	fd, err := os.Open("file.csv")
 
