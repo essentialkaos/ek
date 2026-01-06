@@ -1,5 +1,15 @@
 ## Changelog
 
+### [13.38.0](https://kaos.sh/ek/13.38.0)
+
+> [!IMPORTANT]
+> This release introduces breaking changes to the `NewReader` method. You now have
+> to provide a comma (_columns separator_) as a method argument.
+
+- **`[csv]`** Read CSV header to `Header` slice if `WithHeader` is set to true
+- **`[csv]`** Added method for mapping CSV row data to a map using header data
+- **`[csv]`** Code refactoring
+
 ### [13.37.5](https://kaos.sh/ek/13.37.5)
 
 - **`[req]`** Improved default client settings for `Dialer` and `Transport`
