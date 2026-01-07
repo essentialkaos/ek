@@ -3,7 +3,7 @@ package csv
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2026 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -19,24 +19,23 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// COMMA is default separator for CSV cells
-const COMMA = ';'
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // Reader is CSV reader struct
 type Reader struct {
-	Comma      rune
-	SkipHeader bool
+	Header Header
 
+	comma         string
+	hasHeader     bool
 	headerSkipped bool
 	currentLine   int
 
-	br *bufio.Reader
+	s *bufio.Scanner
 }
 
 // Row is CSV row
 type Row []string
+
+// Header is row with header data
+type Header []string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -46,17 +45,22 @@ var (
 
 	// ErrNilReader is returned when reader struct is nil
 	ErrNilReader = errors.New("Reader is nil")
+
+	// ErrEmptyHeader is returned when header has no data
+	ErrEmptyHeader = errors.New("Header is empty")
+
+	// ErrNilMap is returned when map is nil
+	ErrNilMap = errors.New("Map is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader create new CSV reader
-func NewReader(r io.Reader) *Reader {
+// NewReader creates new CSV reader
+func NewReader(r io.Reader, comma rune) *Reader {
 	return &Reader{
-		Comma:      COMMA,
-		SkipHeader: false,
-
-		br: bufio.NewReader(r),
+		comma:     string(comma),
+		hasHeader: false,
+		s:         bufio.NewScanner(r),
 	}
 }
 
@@ -64,84 +68,95 @@ func NewReader(r io.Reader) *Reader {
 
 // Read reads line from CSV file
 func (r *Reader) Read() (Row, error) {
-	if r == nil {
+	if r == nil || r.s == nil {
 		return nil, ErrNilReader
 	}
 
-	if r.SkipHeader && !r.headerSkipped {
-		r.br.ReadLine()
-		r.headerSkipped = true
-		r.currentLine++
+	if r.hasHeader && !r.headerSkipped {
+		err := r.readHeader()
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	str, _, err := r.br.ReadLine()
-
-	if err != nil || len(str) == 0 {
-		return nil, err
+	if !r.s.Scan() {
+		return nil, r.getError()
 	}
 
 	r.currentLine++
 
-	return strings.Split(string(str), string(r.Comma)), nil
+	return strings.Split(r.s.Text(), r.comma), nil
 }
 
 // ReadTo reads data to given slice
 func (r *Reader) ReadTo(dst Row) error {
-	if r == nil {
+	switch {
+	case r == nil, r.s == nil:
 		return ErrNilReader
-	}
-
-	if len(dst) == 0 {
+	case len(dst) == 0:
 		return ErrEmptyDest
 	}
 
-	if r.SkipHeader && !r.headerSkipped {
-		r.br.ReadLine()
-		r.headerSkipped = true
-		r.currentLine++
+	if r.hasHeader && !r.headerSkipped {
+		err := r.readHeader()
+
+		if err != nil {
+			return err
+		}
 	}
 
-	str, _, err := r.br.ReadLine()
-
-	if err != nil {
-		return err
+	if !r.s.Scan() {
+		return r.getError()
 	}
 
-	parseAndFill(string(str), dst, string(r.Comma))
+	parseAndFill(r.s.Text(), dst, r.comma)
 	r.currentLine++
 
 	return nil
 }
 
-// WithComma sets comma (fields delimiter) for CSV reader
-func (r *Reader) WithComma(comma rune) *Reader {
-	if r == nil {
-		return nil
+// Seq is an iterator over all CSV data
+func (r *Reader) Seq(yield func(line int, row Row) bool) {
+	if r == nil || r.s == nil {
+		return
 	}
 
-	r.Comma = comma
-
-	return r
+	for {
+		rr, err := r.Read()
+		if err != nil || !yield(r.currentLine, rr) {
+			return
+		}
+	}
 }
 
-// WithHeaderSkip sets header skip flag
-func (r *Reader) WithHeaderSkip(flag bool) *Reader {
-	if r == nil {
+// WithHeader sets header skip flag
+func (r *Reader) WithHeader(flag bool) *Reader {
+	if r == nil || r.s == nil {
 		return nil
 	}
 
-	r.SkipHeader = flag
+	r.hasHeader = flag
 
 	return r
 }
 
 // Line returns number of the last line read
 func (r *Reader) Line() int {
-	if r == nil {
+	if r == nil || r.s == nil {
 		return 0
 	}
 
 	return r.currentLine
+}
+
+// Error returns error from underlying scanner
+func (r *Reader) Error() error {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	return r.s.Err()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -358,15 +373,55 @@ func (r Row) ToBytes(comma rune) []byte {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Map maps row data using headers names
+func (h Header) Map(m map[string]string, r Row) error {
+	switch {
+	case len(h) == 0:
+		return ErrEmptyHeader
+	case m == nil:
+		return ErrNilMap
+	}
+
+	for i, name := range h {
+		m[name] = r.Get(i)
+	}
+
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// getError returns error from scanner
+func (r *Reader) getError() error {
+	if r.s.Err() == nil {
+		return io.EOF
+	}
+
+	return r.s.Err()
+}
+
+// readHeader reads header data
+func (r *Reader) readHeader() error {
+	if !r.s.Scan() {
+		return r.getError()
+	}
+
+	r.headerSkipped = true
+	r.currentLine++
+
+	r.Header = strings.Split(r.s.Text(), r.comma)
+
+	return nil
+}
+
 // parseAndFill parses CSV row and fills slice with data
 func parseAndFill(src string, dst Row, sep string) {
-	l := len(dst)
-
 	if src == "" {
 		clean(dst, 0)
 		return
 	}
 
+	l := len(dst)
 	n := strings.Count(src, sep)
 	i := 0
 

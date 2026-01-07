@@ -2,10 +2,10 @@ package csv
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2026 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
-// ////////////////////////////////////////////////////////////////////////////////// //
+// ///////////////////////////////////////////////////////////////////////////////// //
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func ExampleNew() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
@@ -49,7 +49,7 @@ func ExampleReader_Read() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
@@ -72,7 +72,7 @@ func ExampleReader_ReadTo() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 	row := make(Row, 10)
 
 	for {
@@ -86,7 +86,7 @@ func ExampleReader_ReadTo() {
 	}
 }
 
-func ExampleReader_WithComma() {
+func ExampleReader_Seq() {
 	fd, err := os.Open("file.csv")
 
 	if err != nil {
@@ -96,20 +96,14 @@ func ExampleReader_WithComma() {
 
 	defer fd.Close()
 
-	r := NewReader(fd).WithComma(',')
+	r := NewReader(fd, ';')
 
-	for {
-		row, err := r.Read()
-
-		if err == io.EOF {
-			break
-		}
-
-		fmt.Printf("%#v\n", row)
+	for line, row := range r.Seq {
+		fmt.Printf("%d: %#v\n", line, row)
 	}
 }
 
-func ExampleReader_WithHeaderSkip() {
+func ExampleReader_WithHeader() {
 	fd, err := os.Open("file.csv")
 
 	if err != nil {
@@ -119,7 +113,7 @@ func ExampleReader_WithHeaderSkip() {
 
 	defer fd.Close()
 
-	r := NewReader(fd).WithHeaderSkip(true)
+	r := NewReader(fd, ';').WithHeader(true)
 
 	for {
 		row, err := r.Read()
@@ -142,7 +136,7 @@ func ExampleReader_Line() {
 
 	defer fd.Close()
 
-	r := NewReader(fd)
+	r := NewReader(fd, ';')
 
 	for {
 		row, err := r.Read()
@@ -547,4 +541,32 @@ func ExampleRow_ToBytes() {
 	fmt.Println(string(r.ToBytes(';')))
 	// Output:
 	// 1;John;Doe;0.34
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleHeader_Map() {
+	fd, err := os.Open("file.csv")
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer fd.Close()
+
+	r := NewReader(fd, ';')
+	m := map[string]string{}
+
+	for {
+		row, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		r.Header.Map(m, row)
+
+		fmt.Printf("%#v\n", m)
+	}
 }

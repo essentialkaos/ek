@@ -3,7 +3,7 @@ package sliceutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2026 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -170,7 +170,7 @@ func Filter[T any](slice []T, filter func(v T, index int) bool) []T {
 
 // IntToInterface converts slice with ints to slice with any
 //
-// Deprecated: Use [ToAny[] instead
+// Deprecated: Use [ToAny] instead
 func IntToInterface(data []int) []any {
 	return ToAny(data)
 }
