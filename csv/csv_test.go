@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const _DATA = `ID,FIRST NAME,LAST NAME,BALANCE
+const _DATA = `ID,First name,Last name,Balance
 1,John,Doe,0.34
 2,Fiammetta,Miriana,30
 3,Mathew,Timothy,34.19371,1,2
@@ -74,6 +74,9 @@ func (s *CSVSuite) TestRead(c *C) {
 		case 0:
 			c.Assert(rr, HasLen, 4)
 			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
+			r.Header.ToLower()
+			c.Assert(r.Header, DeepEquals, Header{"id", "first name", "last name", "balance"})
+			r.Header.ToUpper()
 			c.Assert(r.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
 			c.Assert(r.Header.Map(m, rr), IsNil)
 			c.Assert(m["ID"], Equals, "1")
@@ -213,6 +216,11 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r.Error(), IsNil)
 
 	r.Seq(nil)
+
+	var h Header
+
+	h.ToLower()
+	h.ToUpper()
 }
 
 func (s *CSVSuite) TestRow(c *C) {

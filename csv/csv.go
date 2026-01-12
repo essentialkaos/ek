@@ -378,6 +378,28 @@ func (r Row) ToBytes(comma rune) []byte {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ToLower converts all headers to lower case
+func (h Header) ToLower() {
+	if len(h) == 0 {
+		return
+	}
+
+	for i, v := range h {
+		h[i] = strings.ToLower(v)
+	}
+}
+
+// ToUpper converts all headers to upper case
+func (h Header) ToUpper() {
+	if len(h) == 0 {
+		return
+	}
+
+	for i, v := range h {
+		h[i] = strings.ToUpper(v)
+	}
+}
+
 // Map maps row data using headers names
 func (h Header) Map(m map[string]string, r Row) error {
 	switch {
