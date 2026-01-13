@@ -1,5 +1,14 @@
 ## Changelog
 
+### [13.38.1](https://kaos.sh/ek/13.38.1)
+
+- **`[csv]`** Added method `Header.ToLower`
+- **`[csv]`** Added method `Header.ToUpper`
+- **`[timeutil]`** Added method `UnixIn`
+- **`[timeutil]`** Added method `UnixMilliIn`
+- **`[timeutil]`** Added method `UnixMicroIn`
+- **`[csv]`** Improved documentation
+
 ### [13.38.0](https://kaos.sh/ek/13.38.0)
 
 > [!IMPORTANT]
