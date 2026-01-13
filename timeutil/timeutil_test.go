@@ -402,6 +402,13 @@ func (s *TimeUtilSuite) TestParseWithAny(c *C) {
 	c.Assert(Format(t, "%Y/%m/%d"), Equals, "1988/12/06")
 }
 
+func (s *TimeUtilSuite) TestUnixIn(c *C) {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+	c.Assert(UnixIn(1718452800, 0, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+	c.Assert(UnixMilliIn(1718452800000, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+	c.Assert(UnixMicroIn(1718452800000000, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+}
+
 func (s *TimeUtilSuite) TestDeprecated(c *C) {
 	c.Assert(PrettyDuration(time.Minute), Equals, "1 minute")
 	c.Assert(PrettyDurationSimple(time.Minute), Equals, "1 minute")
