@@ -314,6 +314,33 @@ func ExampleParseWithAny() {
 	// 1988-12-06 00:00:00 +0000 UTC <nil>
 }
 
+func ExampleUnixIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	fmt.Println(UnixIn(1718452800, 0, loc))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+}
+
+func ExampleUnixMilliIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	fmt.Println(UnixMilliIn(1718452800000, loc))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+}
+
+func ExampleUnixMicroIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	fmt.Println(UnixMicroIn(1718452800000000, loc))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExamplePretty() {

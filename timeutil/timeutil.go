@@ -439,6 +439,24 @@ func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("Value cannot be parsed using any of the provided layouts")
 }
 
+// UnixIn returns the time corresponding to the given Unix timestamp interpreted
+// as local time in the specified timezone rather than UTC.
+func UnixIn(sec int64, nsec int64, loc *time.Location) time.Time {
+	return removeTZOffset(time.Unix(sec, nsec).In(loc))
+}
+
+// UnixMicroIn returns the time corresponding to the given Unix microsecond
+// timestamp interpreted as local time in the specified timezone rather than UTC.
+func UnixMicroIn(usec int64, loc *time.Location) time.Time {
+	return removeTZOffset(time.UnixMicro(usec).In(loc))
+}
+
+// UnixMilliIn returns the time corresponding to the given Unix millisecond
+// timestamp interpreted as local time in the specified timezone rather than UTC.
+func UnixMilliIn(msec int64, loc *time.Location) time.Time {
+	return removeTZOffset(time.UnixMilli(msec).In(loc))
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
@@ -744,4 +762,10 @@ func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
 	buf.Reset()
 
 	return value + (v * mod), nil
+}
+
+// removeTZOffset removes timezone offset to interpret timestamp as local time
+func removeTZOffset(t time.Time) time.Time {
+	_, offset := t.Zone()
+	return t.Add(-time.Duration(offset) * time.Second)
 }
