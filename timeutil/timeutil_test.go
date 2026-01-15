@@ -404,9 +404,19 @@ func (s *TimeUtilSuite) TestParseWithAny(c *C) {
 
 func (s *TimeUtilSuite) TestUnixIn(c *C) {
 	loc, _ := time.LoadLocation("Pacific/Guam")
-	c.Assert(UnixIn(1718452800, 0, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
-	c.Assert(UnixMilliIn(1718452800000, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
-	c.Assert(UnixMicroIn(1718452800000000, loc).String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+
+	d1 := UnixIn(1718452800, 0, loc)
+	d2 := UnixMilliIn(1718452800000, loc)
+	d3 := UnixMicroIn(1718452800000000, loc)
+
+	c.Assert(d1.String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+	c.Assert(d2.String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+	c.Assert(d3.String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
+
+	c.Assert(ToUnixIn(d1, loc), Equals, int64(1718452800))
+	c.Assert(ToUnixMilliIn(d1, loc), Equals, int64(1718452800000))
+	c.Assert(ToUnixMicroIn(d1, loc), Equals, int64(1718452800000000))
+	c.Assert(ToUnixNanoIn(d1, loc), Equals, int64(1718452800000000000))
 }
 
 func (s *TimeUtilSuite) TestDeprecated(c *C) {
