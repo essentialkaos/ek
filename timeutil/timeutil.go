@@ -445,7 +445,8 @@ func UnixIn(sec int64, nsec int64, loc *time.Location) time.Time {
 	return removeTZOffset(time.Unix(sec, nsec).In(loc))
 }
 
-// ToUnixIn returns the Unix timestamp in given timezone
+// ToUnixIn returns t as a Unix timestamp (seconds) with timezone offset applied.
+// This reverses the UnixIn conversion, enabling round-trip timestamp handling.
 func ToUnixIn(t time.Time) int64 {
 	ts := t.Unix()
 	_, offset := t.Zone()
@@ -459,7 +460,8 @@ func UnixMilliIn(msec int64, loc *time.Location) time.Time {
 	return removeTZOffset(time.UnixMilli(msec).In(loc))
 }
 
-// ToUnixMilliIn returns the Unix timestamp in given timezone
+// ToUnixMilliIn returns t as a Unix timestamp (milliseconds) with timezone offset applied.
+// This reverses the UnixMilliIn conversion, enabling round-trip timestamp handling.
 func ToUnixMilliIn(t time.Time) int64 {
 	ts := t.UnixMilli()
 	_, offset := t.Zone()
@@ -473,7 +475,8 @@ func UnixMicroIn(usec int64, loc *time.Location) time.Time {
 	return removeTZOffset(time.UnixMicro(usec).In(loc))
 }
 
-// ToUnixMicroIn returns the Unix timestamp in given timezone
+// ToUnixMicroIn returns t as a Unix timestamp (microseconds) with timezone offset applied.
+// This reverses the UnixMicroIn conversion, enabling round-trip timestamp handling.
 func ToUnixMicroIn(t time.Time) int64 {
 	ts := t.UnixMicro()
 	_, offset := t.Zone()
@@ -481,7 +484,7 @@ func ToUnixMicroIn(t time.Time) int64 {
 	return ts + (int64(offset) * 1_000_000)
 }
 
-// ToUnixNanoIn returns the Unix timestamp in given timezone
+// ToUnixNanoIn returns t as a Unix timestamp (nanoseconds) with timezone offset applied.
 func ToUnixNanoIn(t time.Time) int64 {
 	ts := t.UnixNano()
 	_, offset := t.Zone()
