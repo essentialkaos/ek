@@ -1,5 +1,12 @@
 ## Changelog
 
+### [13.38.2](https://kaos.sh/ek/13.38.2)
+
+- **`[timeutil]`** Added method `ToUnixIn`
+- **`[timeutil]`** Added method `ToUnixMilliIn`
+- **`[timeutil]`** Added method `ToUnixMicroIn`
+- **`[timeutil]`** Added method `ToUnixNanoIn`
+
 ### [13.38.1](https://kaos.sh/ek/13.38.1)
 
 - **`[csv]`** Added method `Header.ToLower`

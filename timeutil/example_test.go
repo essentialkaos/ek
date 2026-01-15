@@ -323,6 +323,19 @@ func ExampleUnixIn() {
 	// 2024-06-15 12:00:00 +1000 ChST
 }
 
+func ExampleToUnixIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	d := UnixIn(1718452800, 0, loc)
+
+	fmt.Println(d)
+	fmt.Println(ToUnixIn(d))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+	// 1718452800
+}
+
 func ExampleUnixMilliIn() {
 	loc, _ := time.LoadLocation("Pacific/Guam")
 
@@ -332,6 +345,19 @@ func ExampleUnixMilliIn() {
 	// 2024-06-15 12:00:00 +1000 ChST
 }
 
+func ExampleToUnixMilliIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	d := UnixMilliIn(1718452800000, loc)
+
+	fmt.Println(d)
+	fmt.Println(ToUnixMilliIn(d))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+	// 1718452800000
+}
+
 func ExampleUnixMicroIn() {
 	loc, _ := time.LoadLocation("Pacific/Guam")
 
@@ -339,6 +365,32 @@ func ExampleUnixMicroIn() {
 
 	// Output:
 	// 2024-06-15 12:00:00 +1000 ChST
+}
+
+func ExampleToUnixMicroIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	d := UnixMicroIn(1718452800000000, loc)
+
+	fmt.Println(d)
+	fmt.Println(ToUnixMicroIn(d))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+	// 1718452800000000
+}
+
+func ExampleToUnixNanoIn() {
+	loc, _ := time.LoadLocation("Pacific/Guam")
+
+	d := UnixIn(1718452800, 0, loc)
+
+	fmt.Println(d)
+	fmt.Println(ToUnixNanoIn(d))
+
+	// Output:
+	// 2024-06-15 12:00:00 +1000 ChST
+	// 1718452800000000000
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
