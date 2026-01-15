@@ -329,7 +329,7 @@ func ExampleToUnixIn() {
 	d := UnixIn(1718452800, 0, loc)
 
 	fmt.Println(d)
-	fmt.Println(ToUnixIn(d, loc))
+	fmt.Println(ToUnixIn(d))
 
 	// Output:
 	// 2024-06-15 12:00:00 +1000 ChST
@@ -351,7 +351,7 @@ func ExampleToUnixMilliIn() {
 	d := UnixMilliIn(1718452800000, loc)
 
 	fmt.Println(d)
-	fmt.Println(ToUnixMilliIn(d, loc))
+	fmt.Println(ToUnixMilliIn(d))
 
 	// Output:
 	// 2024-06-15 12:00:00 +1000 ChST
@@ -373,7 +373,7 @@ func ExampleToUnixMicroIn() {
 	d := UnixMicroIn(1718452800000000, loc)
 
 	fmt.Println(d)
-	fmt.Println(ToUnixMicroIn(d, loc))
+	fmt.Println(ToUnixMicroIn(d))
 
 	// Output:
 	// 2024-06-15 12:00:00 +1000 ChST
@@ -386,7 +386,7 @@ func ExampleToUnixNanoIn() {
 	d := UnixIn(1718452800, 0, loc)
 
 	fmt.Println(d)
-	fmt.Println(ToUnixMicroIn(d, loc))
+	fmt.Println(ToUnixMicroIn(d))
 
 	// Output:
 	// 2024-06-15 12:00:00 +1000 ChST

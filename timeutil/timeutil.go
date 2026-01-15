@@ -446,7 +446,7 @@ func UnixIn(sec int64, nsec int64, loc *time.Location) time.Time {
 }
 
 // ToUnixIn returns the Unix timestamp in given timezone
-func ToUnixIn(t time.Time, loc *time.Location) int64 {
+func ToUnixIn(t time.Time) int64 {
 	ts := t.Unix()
 	_, offset := t.Zone()
 
@@ -460,7 +460,7 @@ func UnixMilliIn(msec int64, loc *time.Location) time.Time {
 }
 
 // ToUnixMilliIn returns the Unix timestamp in given timezone
-func ToUnixMilliIn(t time.Time, loc *time.Location) int64 {
+func ToUnixMilliIn(t time.Time) int64 {
 	ts := t.UnixMilli()
 	_, offset := t.Zone()
 
@@ -474,7 +474,7 @@ func UnixMicroIn(usec int64, loc *time.Location) time.Time {
 }
 
 // ToUnixMicroIn returns the Unix timestamp in given timezone
-func ToUnixMicroIn(t time.Time, loc *time.Location) int64 {
+func ToUnixMicroIn(t time.Time) int64 {
 	ts := t.UnixMicro()
 	_, offset := t.Zone()
 
@@ -482,7 +482,7 @@ func ToUnixMicroIn(t time.Time, loc *time.Location) int64 {
 }
 
 // ToUnixNanoIn returns the Unix timestamp in given timezone
-func ToUnixNanoIn(t time.Time, loc *time.Location) int64 {
+func ToUnixNanoIn(t time.Time) int64 {
 	ts := t.UnixNano()
 	_, offset := t.Zone()
 

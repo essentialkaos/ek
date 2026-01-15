@@ -413,10 +413,10 @@ func (s *TimeUtilSuite) TestUnixIn(c *C) {
 	c.Assert(d2.String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
 	c.Assert(d3.String(), Equals, "2024-06-15 12:00:00 +1000 ChST")
 
-	c.Assert(ToUnixIn(d1, loc), Equals, int64(1718452800))
-	c.Assert(ToUnixMilliIn(d1, loc), Equals, int64(1718452800000))
-	c.Assert(ToUnixMicroIn(d1, loc), Equals, int64(1718452800000000))
-	c.Assert(ToUnixNanoIn(d1, loc), Equals, int64(1718452800000000000))
+	c.Assert(ToUnixIn(d1), Equals, int64(1718452800))
+	c.Assert(ToUnixMilliIn(d1), Equals, int64(1718452800000))
+	c.Assert(ToUnixMicroIn(d1), Equals, int64(1718452800000000))
+	c.Assert(ToUnixNanoIn(d1), Equals, int64(1718452800000000000))
 }
 
 func (s *TimeUtilSuite) TestDeprecated(c *C) {
