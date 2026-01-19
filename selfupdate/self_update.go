@@ -279,7 +279,7 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 
 	resp, err := req.Request{
 		URL:         binaryURL,
-		Timeout:     time.Minute,
+		Timeout:     10 * time.Second,
 		AutoDiscard: true,
 	}.Get()
 
