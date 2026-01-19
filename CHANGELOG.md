@@ -2,6 +2,7 @@
 
 ### [13.38.3](https://kaos.sh/ek/13.38.3)
 
+- **`[selfupdate]`** Reduced timeout for binary downloads to 10 seconds
 - **`[selfupdate]`** Fixed bug with dispatching `EV_BINARY_DOWNLOAD_COMPLETE` event
 
 ### [13.38.2](https://kaos.sh/ek/13.38.2)
