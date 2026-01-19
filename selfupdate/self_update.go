@@ -305,6 +305,8 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 		return nil, err
 	}
 
+	dispatcher.DispatchAndWait(EV_BINARY_DOWNLOAD_COMPLETE, nil)
+
 	return hash, nil
 }
 
