@@ -105,7 +105,7 @@ func signatureDownloadError(_ any) {
 	spinner.Done(false)
 }
 
-// signatureDownloadComplete stops spinner with message about successfully downloaded 
+// signatureDownloadComplete stops spinner with message about successfully downloaded
 // ECDSA signature
 func signatureDownloadComplete(_ any) {
 	spinner.Done(true)

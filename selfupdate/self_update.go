@@ -279,7 +279,7 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 
 	resp, err := req.Request{
 		URL:         binaryURL,
-		Timeout:     time.Minute,
+		Timeout:     10 * time.Second,
 		AutoDiscard: true,
 	}.Get()
 
@@ -304,6 +304,8 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 		dispatcher.DispatchAndWait(EV_BINARY_DOWNLOAD_ERROR, nil)
 		return nil, err
 	}
+
+	dispatcher.DispatchAndWait(EV_BINARY_DOWNLOAD_COMPLETE, nil)
 
 	return hash, nil
 }
