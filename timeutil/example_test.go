@@ -393,6 +393,42 @@ func ExampleToUnixNanoIn() {
 	// 1718452800000000000
 }
 
+func ExampleToSeconds() {
+	sec := ToSeconds(300)
+
+	fmt.Println(sec)
+
+	// Output:
+	// 5m0s
+}
+
+func ExampleToMinutes() {
+	min := ToMinutes(300)
+
+	fmt.Println(min)
+
+	// Output:
+	// 5h0m0s
+}
+
+func ExampleToHours() {
+	hrs := ToHours(72)
+
+	fmt.Println(hrs)
+
+	// Output:
+	// 72h0m0s
+}
+
+func ExampleToDays() {
+	days := ToDays(7)
+
+	fmt.Println(days)
+
+	// Output:
+	// 168h0m0s
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExamplePretty() {

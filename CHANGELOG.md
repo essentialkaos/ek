@@ -1,5 +1,12 @@
 ## Changelog
 
+### [13.38.4](https://kaos.sh/ek/13.38.4)
+
+- **`[timeutil]`** Added method `ToSeconds`
+- **`[timeutil]`** Added method `ToMinutes`
+- **`[timeutil]`** Added method `ToHours`
+- **`[timeutil]`** Added method `ToDays`
+
 ### [13.38.3](https://kaos.sh/ek/13.38.3)
 
 - **`[selfupdate]`** Reduced timeout for binary downloads to 10 seconds
