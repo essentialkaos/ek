@@ -96,11 +96,6 @@ func Format(d time.Time, f string) string {
 	return output.String()
 }
 
-// SecondsToDuration converts float64 to time.Duration
-func SecondsToDuration(d float64) time.Duration {
-	return time.Duration(1000000000.0 * d)
-}
-
 // ParseDuration parses duration in 1w2d3h5m6s format and return as seconds
 func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 	if dur == "" {
@@ -400,6 +395,12 @@ func IsWeekend(t time.Time) bool {
 	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday
 }
 
+// IsToday returns true if given date is today
+func IsToday(t time.Time) bool {
+	today := time.Now()
+	return !t.IsZero() && t.After(StartOfDay(today)) && t.Before(EndOfDay(today))
+}
+
 // Until returns time until given moment in given units
 func Until(t time.Time, unit time.Duration) int {
 	now := time.Now().In(t.Location())
@@ -519,6 +520,13 @@ func ToDays[N Numeric](days N) time.Duration {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// SecondsToDuration converts float64 to time.Duration
+//
+// Deprecated: Use [ToSeconds] instead
+func SecondsToDuration(d float64) time.Duration {
+	return ToSeconds(d)
+}
 
 // PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
 //

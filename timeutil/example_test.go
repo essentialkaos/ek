@@ -269,6 +269,12 @@ func ExampleIsWeekend() {
 	// true
 }
 
+func ExampleIsToday() {
+	now := time.Now()
+
+	fmt.Println(IsToday(now))
+}
+
 func ExampleUntil() {
 	d := time.Date(2030, 6, 6, 12, 30, 15, 0, time.UTC)
 
