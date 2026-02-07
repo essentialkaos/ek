@@ -395,6 +395,12 @@ func IsWeekend(t time.Time) bool {
 	return t.Weekday() == time.Saturday || t.Weekday() == time.Sunday
 }
 
+// IsToday returns true if given date is today
+func IsToday(t time.Time) bool {
+	today := time.Now()
+	return !t.IsZero() && t.After(StartOfDay(today)) && t.Before(EndOfDay(today))
+}
+
 // Until returns time until given moment in given units
 func Until(t time.Time, unit time.Duration) int {
 	now := time.Now().In(t.Location())

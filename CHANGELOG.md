@@ -2,6 +2,7 @@
 
 ### [13.38.5](https://kaos.sh/ek/13.38.5)
 
+- **`[timeutil]`** Added method `IsToday`
 - **`[timeutil]`** Method `SecondsToDuration` marked as deprecated
 
 ### [13.38.4](https://kaos.sh/ek/13.38.4)
