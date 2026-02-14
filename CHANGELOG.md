@@ -2,6 +2,7 @@
 
 ### [13.38.6](https://kaos.sh/ek/13.38.6)
 
+- **`[log]`** Fixed compatibility of `PanicHandler` with Go 1.26+
 - **`[timeutil]`** Code refactoring
 
 ### [13.38.5](https://kaos.sh/ek/13.38.5)
