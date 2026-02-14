@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.38.6](https://kaos.sh/ek/13.38.6)
+
+- **`[timeutil]`** Code refactoring
+
 ### [13.38.5](https://kaos.sh/ek/13.38.5)
 
 - **`[timeutil]`** Added method `IsToday`
