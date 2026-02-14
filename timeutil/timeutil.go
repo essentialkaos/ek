@@ -501,22 +501,22 @@ func ToUnixNanoIn(t time.Time) int64 {
 
 // ToSeconds converts number with seconds to time.Duration
 func ToSeconds[N Numeric](sec N) time.Duration {
-	return time.Duration(sec * N(time.Second))
+	return time.Duration(float64(sec) * float64(time.Second))
 }
 
 // ToMinutes converts number with minutes to time.Duration
 func ToMinutes[N Numeric](min N) time.Duration {
-	return time.Duration(min * N(time.Minute))
+	return time.Duration(float64(min) * float64(time.Minute))
 }
 
 // ToHours converts number with hours to time.Duration
 func ToHours[N Numeric](hrs N) time.Duration {
-	return time.Duration(hrs * N(time.Hour))
+	return time.Duration(float64(hrs) * float64(time.Hour))
 }
 
 // ToDays converts number with days to time.Duration
 func ToDays[N Numeric](days N) time.Duration {
-	return time.Duration(days * N(24*time.Hour))
+	return time.Duration(float64(days) * float64(24*time.Hour))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

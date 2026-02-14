@@ -268,7 +268,19 @@ func Levels() []string {
 //
 // Note that you must defer this function rather than calling it directly.
 func PanicHandler(msg string) {
-	Global.PanicHandler(msg)
+	if Global == nil {
+		return
+	}
+
+	r := recover()
+
+	if r != nil {
+		if Global.UseJSON {
+			Global.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
+		} else {
+			Global.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
+		}
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
