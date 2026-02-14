@@ -2,9 +2,9 @@
 
 <p align="center">
   <a href="https://kaos.sh/g/ek.v13"><img src=".github/images/godoc.svg"/></a>
-  <a href="https://kaos.sh/y/ek"><img src="https://kaos.sh/y/e5f84d40af0e4a9ab3ff94852f93007c.svg" alt="Codacy badge" /></a>
-  <a href="https://kaos.sh/w/ek/ci"><img src="https://kaos.sh/w/ek/ci.svg" alt="GitHub Actions CI Status" /></a>
-  <a href="https://kaos.sh/w/ek/codeql-analysis"><img src="https://kaos.sh/w/ek/codeql-analysis.svg" alt="GitHub Actions CodeQL Status" /></a>
+  <a href="https://kaos.sh/y/ek"><img src="https://app.codacy.com/project/badge/Grade/e5f84d40af0e4a9ab3ff94852f93007c" alt="Codacy badge" /></a>
+  <a href="https://kaos.sh/w/ek/ci"><img src="https://github.com/essentialkaos/ek/actions/workflows/ci.yml/badge.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/w/ek/codeql-analysis"><img src="https://github.com/essentialkaos/ek/actions/workflows/codeql-analysis.yml/badge.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
@@ -149,8 +149,8 @@ _It's hard to show all the possibilities of all the subpackages. But you can tak
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![CI](https://kaos.sh/w/ek/ci.svg?branch=master)](https://kaos.sh/w/ek/ci?query=branch:master) |
-| `develop` | [![CI](https://kaos.sh/w/ek/ci.svg?branch=develop)](https://kaos.sh/w/ek/ci?query=branch:develop) |
+| `master` | [![CI](https://github.com/essentialkaos/ek/actions/workflows/ci.yml/badge.svg?branch=master)](https://kaos.sh/w/ek/ci?query=branch:master) |
+| `develop` | [![CI](https://github.com/essentialkaos/ek/actions/workflows/ci.yml/badge.svg?branch=develop)](https://kaos.sh/w/ek/ci?query=branch:develop) |
 
 ### Contributing
 
