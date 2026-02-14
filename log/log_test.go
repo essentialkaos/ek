@@ -863,10 +863,29 @@ func (ls *LogSuite) TestPayloadSplitter(c *C) {
 }
 
 func (ls *LogSuite) TestPanicHandler(c *C) {
+	g := Global
+	Global = nil
+
+	c.Assert(func() {
+		defer PanicHandler("Code panicked")
+		panic("Test panic")
+	}, Panics, "Test panic")
+
+	Global = g
+
 	c.Assert(func() {
 		defer PanicHandler("Code panicked")
 		panic("Test panic")
 	}, NotPanics)
+
+	Global.UseJSON = true
+
+	c.Assert(func() {
+		defer PanicHandler("Code panicked")
+		panic("Test panic")
+	}, NotPanics)
+
+	Global.UseJSON = false
 
 	var l *Logger
 
