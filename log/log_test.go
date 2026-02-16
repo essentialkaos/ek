@@ -869,7 +869,11 @@ func (ls *LogSuite) TestPanicHandler(c *C) {
 	c.Assert(func() {
 		defer PanicHandler("Code panicked")
 		panic("Test panic")
-	}, Panics, "Test panic")
+	}, NotPanics)
+
+	c.Assert(func() {
+		defer PanicHandler("Code panicked")
+	}, NotPanics)
 
 	Global = g
 

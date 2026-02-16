@@ -268,11 +268,16 @@ func Levels() []string {
 //
 // Note that you must defer this function rather than calling it directly.
 func PanicHandler(msg string) {
-	if Global == nil {
+	r := recover()
+
+	if r == nil {
 		return
 	}
 
-	r := recover()
+	if Global == nil {
+		fmt.Fprintf(os.Stderr, "%s: %v (%s)\n", msg, r, extractPanicPath(debug.Stack()))
+		return
+	}
 
 	if r != nil {
 		if Global.UseJSON {

@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.38.7](https://kaos.sh/ek/13.38.7)
+
+- **`[log]`** Log panic to stderr with `PanicHandler` if global logger is nil
+
 ### [13.38.6](https://kaos.sh/ek/13.38.6)
 
 - **`[log]`** Fixed compatibility of `PanicHandler` with Go 1.26+
