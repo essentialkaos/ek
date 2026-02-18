@@ -763,20 +763,18 @@ func getAMPMHour(d time.Time) int {
 // getAMPM returns AM or PM depending on the time and caps flag
 func getAMPM(d time.Time, caps bool) string {
 	if d.Hour() < 12 {
-		switch caps {
-		case true:
+		if caps {
 			return "AM"
-		default:
-			return "am"
 		}
-	} else {
-		switch caps {
-		case true:
-			return "PM"
-		default:
-			return "pm"
-		}
+
+		return "am"
 	}
+
+	if caps {
+		return "PM"
+	}
+
+	return "pm"
 }
 
 // getWeekdayNum returns weekday number (1..7) where 1 is Monday and 7 is Sunday
