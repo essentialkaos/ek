@@ -290,6 +290,7 @@ MAINLOOP:
 	return result[0]
 }
 
+// formatFloat formats float based on it's value
 func formatFloat(f float64) float64 {
 	if f < 10.0 {
 		return mathutil.Round(f, 2)
