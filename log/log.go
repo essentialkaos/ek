@@ -308,10 +308,12 @@ func (l *Logger) Reopen() error {
 		l.w.Flush()
 	}
 
+	file, perms := l.file, l.perms
+
 	l.fd.Close()
 	l.mu.Unlock()
 
-	return l.Set(l.file, l.perms)
+	return l.Set(file, perms)
 }
 
 // MinLevel defines minimal logging level

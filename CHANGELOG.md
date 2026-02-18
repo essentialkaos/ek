@@ -2,6 +2,7 @@
 
 ### [13.38.8](https://kaos.sh/ek/13.38.8)
 
+- **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
 
 ### [13.38.7](https://kaos.sh/ek/13.38.7)
