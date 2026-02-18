@@ -404,11 +404,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 func (s *TimeUtilSuite) TestParseWithAny(c *C) {
 	_, err := ParseWithAny("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "No layouts provided")
+	c.Assert(err.Error(), Equals, "no layouts provided")
 
 	_, err = ParseWithAny("1.02", "02.Jan")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Value cannot be parsed using any of the provided layouts")
+	c.Assert(err.Error(), Equals, "value cannot be parsed using any of the provided layouts")
 
 	t, err := ParseWithAny("06 Dec 1988", "02.01.2006", "2.01.2006", "2.1.2006", "02 Jan 06", "02 Jan 2006", "2 Jan 2006")
 	c.Assert(err, IsNil)

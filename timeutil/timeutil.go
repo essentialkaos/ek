@@ -398,7 +398,7 @@ func IsWeekend(t time.Time) bool {
 // IsToday returns true if given date is today
 func IsToday(t time.Time) bool {
 	today := time.Now()
-	return !t.IsZero() && t.After(StartOfDay(today)) && t.Before(EndOfDay(today))
+	return !t.IsZero() && !t.Before(StartOfDay(today)) && t.Before(EndOfDay(today))
 }
 
 // Until returns time until given moment in given units
