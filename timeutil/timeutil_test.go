@@ -160,6 +160,7 @@ func (s *TimeUtilSuite) TestTinyDate(c *C) {
 
 	c.Assert(td.Unix(), Equals, dt.Unix())
 	c.Assert(td.Time().Unix(), Equals, dt.Unix())
+	c.Assert(TinyDate(1000), Equals, Date(0))
 }
 
 func (s *TimeUtilSuite) TestDateNames(c *C) {

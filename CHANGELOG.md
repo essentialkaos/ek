@@ -5,6 +5,7 @@
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
+- **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
