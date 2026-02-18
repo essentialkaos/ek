@@ -122,7 +122,7 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 		case 's', 'S':
 			result, err = appendDur(result, buf, _SECOND)
 		default:
-			return 0, fmt.Errorf("Unsupported symbol %q", string(sym))
+			return 0, fmt.Errorf("unsupported symbol %q", string(sym))
 		}
 
 		if err != nil {
@@ -132,7 +132,7 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 
 	if buf.Len() != 0 {
 		if result != 0 {
-			return 0, fmt.Errorf("Misformatted duration %q", dur)
+			return 0, fmt.Errorf("misformatted duration %q", dur)
 		}
 
 		mod := 's'
@@ -432,7 +432,7 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 // ParseWithAny tries to parse value using given layouts
 func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 	if len(layouts) == 0 {
-		return time.Time{}, fmt.Errorf("No layouts provided")
+		return time.Time{}, fmt.Errorf("no layouts provided")
 	}
 
 	for _, l := range layouts {
@@ -443,7 +443,7 @@ func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 		}
 	}
 
-	return time.Time{}, fmt.Errorf("Value cannot be parsed using any of the provided layouts")
+	return time.Time{}, fmt.Errorf("value cannot be parsed using any of the provided layouts")
 }
 
 // UnixIn returns the time corresponding to the given Unix timestamp interpreted
