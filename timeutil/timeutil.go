@@ -315,7 +315,7 @@ func NextYear(t time.Time) time.Time {
 	return StartOfYear(t.AddDate(1, 0, 0))
 }
 
-// NextWorkday returns previous workday
+// PrevWorkday returns previous workday
 func PrevWorkday(t time.Time) time.Time {
 	for {
 		t = t.AddDate(0, 0, -1)
@@ -801,7 +801,7 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 
 	hours := int64(tzofs) / _HOUR
-	minutes := int64(tzofs) % _HOUR
+	minutes := (int64(tzofs) % _HOUR) / _MINUTE
 
 	switch negative {
 	case true:

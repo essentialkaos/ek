@@ -3,6 +3,7 @@
 ### [13.38.8](https://kaos.sh/ek/13.38.8)
 
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
+- **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring

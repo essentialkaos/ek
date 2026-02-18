@@ -102,8 +102,11 @@ func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
 }
 
 func (s *TimeUtilSuite) TestFormat(c *C) {
+	loc, _ := time.LoadLocation("Asia/Kathmandu")
+
 	d := time.Unix(1388535309, 123456789).UTC()
 	d1 := time.Unix(1389744909, 123456789).UTC()
+	d2 := time.Unix(1388535309, 123456789).In(loc)
 
 	c.Assert(Format(d, "%%"), Equals, "%")
 	c.Assert(Format(d, "%a"), Equals, "Wed")
@@ -146,6 +149,7 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%1234"), Equals, "%1234")
 	c.Assert(Format(d, "%SSec"), Equals, "09Sec")
 	c.Assert(Format(d1, "%e"), Equals, "15")
+	c.Assert(Format(d2, "%:"), Equals, "+05:45")
 
 	replaceDateTag(time.Now(), bytes.NewBufferString(""), bytes.NewBufferString(""))
 }
