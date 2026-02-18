@@ -426,7 +426,10 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 		year = time.Now().In(loc).Year()
 	}
 
-	return time.Date(year, 1, 1, 0, 0, 0, 0, loc).AddDate(0, 0, 7*(week-1))
+	jan4 := time.Date(year, 1, 4, 0, 0, 0, 0, loc)
+	startOfWeek := jan4.AddDate(0, 0, -int(jan4.Weekday()-time.Monday))
+
+	return startOfWeek.AddDate(0, 0, (week-1)*7)
 }
 
 // ParseWithAny tries to parse value using given layouts
@@ -618,7 +621,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'k':
 		fmt.Fprintf(output, "%2d", d.Hour())
 	case 'K':
-		output.WriteString(fmt.Sprintf("%03d", d.Nanosecond())[:3])
+		fmt.Fprintf(output, "%03d", d.Nanosecond()/1_000_000)
 	case 'l':
 		output.WriteString(strconv.Itoa(getAMPMHour(d)))
 	case 'm':
@@ -681,7 +684,7 @@ func getShortWeekday(d time.Weekday) string {
 
 // getLongWeekday returns long weekday name (e.g. Sunday)
 func getLongWeekday(d time.Weekday) string {
-	switch int(d) {
+	switch d {
 	case 0:
 		return "Sunday"
 	case 1:
@@ -714,7 +717,7 @@ func getShortMonth(m time.Month) string {
 
 // getLongMonth returns long month name (e.g. January)
 func getLongMonth(m time.Month) string {
-	switch int(m) {
+	switch m {
 	case 1:
 		return "January"
 	case 2:
@@ -801,21 +804,19 @@ func getTimezone(d time.Time, separator bool) string {
 	hours := int64(tzofs) / _HOUR
 	minutes := (int64(tzofs) % _HOUR) / _MINUTE
 
-	switch negative {
-	case true:
+	if negative {
 		if separator {
 			return fmt.Sprintf("-%02d:%02d", hours, minutes)
 		}
 
 		return fmt.Sprintf("-%02d%02d", hours, minutes)
-
-	default:
-		if separator {
-			return fmt.Sprintf("+%02d:%02d", hours, minutes)
-		}
-
-		return fmt.Sprintf("+%02d%02d", hours, minutes)
 	}
+
+	if separator {
+		return fmt.Sprintf("+%02d:%02d", hours, minutes)
+	}
+
+	return fmt.Sprintf("+%02d%02d", hours, minutes)
 }
 
 // appendDur appends duration value to the buffer and returns new value

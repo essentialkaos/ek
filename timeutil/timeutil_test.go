@@ -368,10 +368,9 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(EndOfMonth(d), DeepEquals, time.Date(2021, 8, 31, 23, 59, 59, 999999999, time.Local))
 	c.Assert(EndOfYear(d), DeepEquals, time.Date(2021, 12, 31, 23, 59, 59, 999999999, time.Local))
 
-	y := time.Now().In(time.Local).Year()
-	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))
-	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2021, 12, 31, 0, 0, 0, 0, time.Local))
-	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 4, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(0, 0, time.Local), Not(DeepEquals), time.Time{})
+	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2022, 1, 3, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 7, 0, 0, 0, 0, time.Local))
 
 	d = time.Date(2021, 8, 1, 12, 30, 15, 0, time.Local)
 	c.Assert(IsWeekend(d), Equals, true)

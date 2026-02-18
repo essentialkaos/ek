@@ -304,7 +304,7 @@ func ExampleFromISOWeek() {
 	fmt.Println(t)
 
 	// Output:
-	// 2021-06-18 00:00:00 +0000 UTC
+	// 2021-06-21 00:00:00 +0000 UTC
 }
 
 func ExampleLocalTimezone() {
