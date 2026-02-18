@@ -748,71 +748,71 @@ func (ls *LogSuite) TestFieldEncoding(c *C) {
 
 	l := &Logger{mu: &sync.Mutex{}}
 	l.writeJSONField(F{"test", "abcd"})
-	c.Assert(l.buf.String(), Equals, "\"test\":\"abcd\"")
+	c.Assert(l.buf.String(), Equals, `"test":"abcd"`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", false})
-	c.Assert(l.buf.String(), Equals, "\"test\":false")
+	c.Assert(l.buf.String(), Equals, `"test":false`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", 123})
-	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	c.Assert(l.buf.String(), Equals, `"test":123`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int16(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int32(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int64(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint(123)})
-	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	c.Assert(l.buf.String(), Equals, `"test":123`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint16(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint32(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint64(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", float32(1.23)})
-	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	c.Assert(l.buf.String(), Equals, `"test":1.23`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", float64(1.23)})
-	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	c.Assert(l.buf.String(), Equals, `"test":1.23`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", time.Minute - (150 * time.Millisecond)})
-	c.Assert(l.buf.String(), Equals, "\"test\":59.85")
+	c.Assert(l.buf.String(), Equals, `"test":59.85`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", time.Now()})
@@ -820,8 +820,13 @@ func (ls *LogSuite) TestFieldEncoding(c *C) {
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", []string{"A"}})
-	c.Assert(l.buf.String(), Equals, "\"test\":\"[A]\"")
+	c.Assert(l.buf.String(), Equals, `"test":"[A]"`)
 	l.buf.Reset()
+
+	l = &Logger{mu: &sync.Mutex{}}
+	l.writeJSONFields([]any{123, F{"test1", false}, F{"test2", true}, "test"})
+	c.Assert(l.buf.Len(), Not(Equals), 0)
+	c.Assert(l.buf.String(), Equals, `"test1":false,"test2":true`)
 
 	l = &Logger{mu: &sync.Mutex{}, DiscardFields: true}
 	l.writeJSONFields([]any{F{"test1", false}, F{"test2", true}})

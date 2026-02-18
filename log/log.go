@@ -831,15 +831,21 @@ func (l *Logger) writeJSONFields(fields []any) {
 		return
 	}
 
-	for i, f := range fields {
+	first := true
+
+	for _, f := range fields {
 		t, ok := f.(Field)
 
-		if ok {
-			l.writeJSONField(t)
-			if i+1 != len(fields) {
-				l.buf.WriteRune(',')
-			}
+		if !ok {
+			continue
 		}
+
+		if !first {
+			l.buf.WriteRune(',')
+		}
+
+		l.writeJSONField(t)
+		first = false
 	}
 }
 
