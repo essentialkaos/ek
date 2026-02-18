@@ -135,7 +135,7 @@ func (s *FormatSuite) Test256Colors(c *C) {
 	termEnvVar = env.Var("TERM")
 	colorTermEnvVar = env.Var("COLORTERM")
 
-	c.Assert(Is256ColorsSupported(), Equals, false)
+	c.Assert(IsColorsSupported(), Equals, true)
 	c.Assert(Is256ColorsSupported(), Equals, false)
 	c.Assert(IsTrueColorSupported(), Equals, false)
 

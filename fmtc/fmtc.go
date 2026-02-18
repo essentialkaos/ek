@@ -258,7 +258,7 @@ func Sprintln(a ...any) string {
 // Errorf formats according to a format specifier and returns the string as a
 // value that satisfies error.
 func Errorf(f string, a ...any) error {
-	return errors.New(Sprintf(f, a...))
+	return fmt.Errorf(f, a...)
 }
 
 // TPrint removes all content on the current line and prints the new message
@@ -413,8 +413,8 @@ func tag2ANSI(tag string, clean bool) string {
 		return parseNamedColor(tag, clean)
 	}
 
-	light := strings.Contains(tag, "-")
-	reset := strings.Contains(tag, "!")
+	light := strings.ContainsRune(tag, '-')
+	reset := strings.ContainsRune(tag, '!')
 
 	var chars string
 
@@ -533,7 +533,7 @@ LOOP:
 			tag.WriteRune(i)
 		case '{':
 			output.WriteString("{" + tag.String())
-			tag = bytes.NewBufferString("")
+			tag.Reset()
 		case '}':
 			break LOOP
 		}
@@ -715,7 +715,7 @@ func checkForColorsSupport() {
 	if term == "iterm" || colorTerm == "truecolor" ||
 		strings.Contains(term, "truecolor") ||
 		strings.HasPrefix(term, "vte") {
-		isColors256Supported, isColorsTCSupported = true, true
+		isColorsSupported, isColors256Supported, isColorsTCSupported = true, true, true
 	}
 
 	isColorsSupportChecked = true
