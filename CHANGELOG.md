@@ -2,6 +2,7 @@
 
 ### [13.38.8](https://kaos.sh/ek/13.38.8)
 
+- **`[timeutil]`** Added method `TinyDate.IsZero`
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation

@@ -32,6 +32,11 @@ func TinyDate(t int64) Date {
 	return Date(uint32(t) - StartDate)
 }
 
+// IsZero returns true if date is zero
+func (d Date) IsZero() bool {
+	return d == 0
+}
+
 // Unix returns unix timestamp
 func (d Date) Unix() int64 {
 	return int64(StartDate + uint32(d))

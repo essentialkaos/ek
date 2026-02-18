@@ -534,6 +534,15 @@ func ExampleDate_Unix() {
 	// 1583020800
 }
 
+func ExampleDate_IsZero() {
+	d := TinyDate(123456)
+
+	fmt.Println(d.IsZero())
+
+	// Output:
+	// true
+}
+
 func ExampleDate_Time() {
 	StartDate = 1577836800
 
