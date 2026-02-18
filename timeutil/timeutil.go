@@ -777,6 +777,10 @@ func getTimezone(d time.Time, separator bool) string {
 
 // appendDur appends duration value to the buffer and returns new value
 func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
+	if buf.Len() == 0 {
+		return 0, fmt.Errorf("missing number before modifier")
+	}
+
 	v, err := strconv.ParseInt(buf.String(), 10, 64)
 
 	if err != nil {

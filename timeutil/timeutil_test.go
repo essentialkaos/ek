@@ -237,6 +237,9 @@ func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	d, _ := ParseDuration("")
 	c.Assert(d, Equals, time.Duration(0))
 
+	d, _ = ParseDuration("w1")
+	c.Assert(d, Equals, time.Duration(0))
+
 	d, _ = ParseDuration("25s")
 	c.Assert(d, Equals, time.Duration(25)*time.Second)
 
