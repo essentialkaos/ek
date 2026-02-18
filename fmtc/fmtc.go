@@ -662,7 +662,7 @@ func isValidExtendedTag(tag string) bool {
 		}
 	default:
 		code, err := strconv.Atoi(tag)
-		if err != nil || code < 0 || code > 256 {
+		if err != nil || code < 0 || code >= 256 {
 			return false
 		}
 	}
