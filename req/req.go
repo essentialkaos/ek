@@ -827,7 +827,7 @@ func getBodyReader(body any) (io.Reader, string, error) {
 		return bytes.NewReader(u), CONTENT_TYPE_OCTET_STREAM, nil
 	}
 
-	jsonBody, err := json.MarshalIndent(body, "", "  ")
+	jsonBody, err := json.Marshal(body)
 
 	if err == nil {
 		return bytes.NewReader(jsonBody), CONTENT_TYPE_JSON, nil
