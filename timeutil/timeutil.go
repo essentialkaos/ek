@@ -60,15 +60,11 @@ type Numeric interface {
 //	'%R' 24-hour hour and minute; same as %H:%M
 //	'%s' seconds since 1970-01-01 00:00:00 UTC
 //	'%S' second (00..60)
-//	'%t' a tab
 //	'%T' time; same as %H:%M:%S
 //	'%u' day of week (1..7); 1 is Monday
-//	'%U' week number of year, with Sunday as first day of week (00..53)
 //	'%V' ISO week number, with Monday as first day of week (01..53)
 //	'%w' day of week (0..6); 0 is Sunday
 //	'%W' week number of year, with Monday as first day of week (00..53)
-//	'%x' locale's date representation (e.g., 12/31/99)
-//	'%X' locale's time representation (e.g., 23:13:48)
 //	'%y' last two digits of year (00..99)
 //	'%Y' year
 //	'%z' +hhmm numeric timezone (e.g., -0400)
@@ -544,17 +540,14 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'B':
 		output.WriteString(getLongMonth(d.Month()))
 	case 'c':
-		zn, _ := d.Zone()
-		fmt.Fprintf(output, "%s %02d %s %d %02d:%02d:%02d %s %s",
+		fmt.Fprintf(output, "%s %s %d %02d:%02d:%02d %d",
 			getShortWeekday(d.Weekday()),
-			d.Day(),
 			getShortMonth(d.Month()),
-			d.Year(),
-			getAMPMHour(d),
+			d.Day(),
+			d.Hour(),
 			d.Minute(),
 			d.Second(),
-			getAMPM(d, true),
-			zn,
+			d.Year(),
 		)
 	case 'C', 'g':
 		output.WriteString(strconv.Itoa(d.Year())[0:2])
@@ -589,9 +582,9 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'N':
 		fmt.Fprintf(output, "%09d", d.Nanosecond())
 	case 'p':
-		output.WriteString(getAMPM(d, false))
-	case 'P':
 		output.WriteString(getAMPM(d, true))
+	case 'P':
+		output.WriteString(getAMPM(d, false))
 	case 'r':
 		fmt.Fprintf(output, "%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true))
 	case 'R':
