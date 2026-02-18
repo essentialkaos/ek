@@ -279,13 +279,12 @@ func PanicHandler(msg string) {
 		return
 	}
 
-	if r != nil {
-		if Global.UseJSON {
-			Global.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
-		} else {
-			Global.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
-		}
+	if Global.UseJSON {
+		Global.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
+	} else {
+		Global.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
 	}
+
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
