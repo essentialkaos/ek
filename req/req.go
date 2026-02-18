@@ -226,28 +226,28 @@ type Engine struct {
 
 var (
 	// ErrNilEngine is returned if engine struct is nil
-	ErrNilEngine = fmt.Errorf("Engine is nil")
+	ErrNilEngine = fmt.Errorf("engine is nil")
 
 	// ErrNilClient is returned if client struct is nil
-	ErrNilClient = fmt.Errorf("Engine.Client is nil")
+	ErrNilClient = fmt.Errorf("client is nil")
 
 	// ErrNilTransport is returned if transport is nil
-	ErrNilTransport = fmt.Errorf("Engine.Transport is nil")
+	ErrNilTransport = fmt.Errorf("transport is nil")
 
 	// ErrNilDialer is returned if dialer is nil
-	ErrNilDialer = fmt.Errorf("Engine.Dialer is nil")
+	ErrNilDialer = fmt.Errorf("dialer is nil")
 
 	// ErrNilResponse is returned if response is nil
-	ErrNilResponse = fmt.Errorf("Response is nil")
+	ErrNilResponse = fmt.Errorf("response is nil")
 
 	// ErrEmptyBody is returned if response body has no data
-	ErrEmptyBody = fmt.Errorf("Response body is empty")
+	ErrEmptyBody = fmt.Errorf("response body is empty")
 
 	// ErrEmptyURL is returned if given URL is empty
 	ErrEmptyURL = fmt.Errorf("URL property can't be empty and must be set")
 
 	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
-	ErrUnsupportedScheme = fmt.Errorf("Unsupported scheme in URL")
+	ErrUnsupportedScheme = fmt.Errorf("unsupported scheme in URL")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -593,7 +593,7 @@ func (r *Response) Save(filename string, mode os.FileMode) error {
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 
 	if err != nil {
-		return fmt.Errorf("Can't open file to write: %v", err)
+		return fmt.Errorf("can't open file to write: %v", err)
 	}
 
 	defer fd.Close()
@@ -616,7 +616,7 @@ func (r *Response) SaveWithHash(filename string, mode os.FileMode, hasher hash.H
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't open file to write: %v", err)
+		return nil, fmt.Errorf("can't open file to write: %v", err)
 	}
 
 	defer fd.Close()
@@ -678,7 +678,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	bodyReader, contentType, err := getBodyReader(r.Body)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't encode request body: %w", err)
+		return nil, fmt.Errorf("can't encode request body: %w", err)
 	}
 
 	if r.ContentType == "" {
@@ -698,7 +698,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	resp, err := e.Client.Do(req)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't send request: %w", err)
+		return nil, fmt.Errorf("can't send request: %w", err)
 	}
 
 	result := &Response{resp, r.URL}
@@ -769,7 +769,7 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 			cancel()
 		}
 
-		return nil, nil, fmt.Errorf("Can't create request: %w", err)
+		return nil, nil, fmt.Errorf("can't create request: %w", err)
 	}
 
 	if len(r.Headers) != 0 {
