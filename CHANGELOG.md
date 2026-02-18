@@ -1,5 +1,9 @@
 ## Changelog
 
+### [13.38.8](https://kaos.sh/ek/13.38.8)
+
+- **`[req]`** Code refactoring
+
 ### [13.38.7](https://kaos.sh/ek/13.38.7)
 
 - **`[log]`** Log panic to stderr with `PanicHandler` if global logger is nil

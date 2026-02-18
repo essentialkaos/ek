@@ -376,11 +376,43 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 
 // PostFile sends multipart POST request with file data
 func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
-	err := configureMultipartRequest(&r, file, fieldName, extraFields)
+	fd, err := os.Open(file)
 
 	if err != nil {
 		return nil, err
 	}
+
+	defer fd.Close()
+
+	pr, pw := io.Pipe()
+	mw := multipart.NewWriter(pw)
+	contentType := mw.FormDataContentType()
+
+	go func() {
+		defer pw.Close()
+		defer mw.Close()
+
+		for k, v := range extraFields {
+			mw.WriteField(k, v)
+		}
+
+		fw, err := createFormFile(mw, fieldName, file)
+
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+
+		_, err = ioCopyFunc(fw, fd)
+
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+	}()
+
+	r.ContentType = contentType
+	r.Body = pr
 
 	return e.doRequest(r, POST)
 }
@@ -771,42 +803,6 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 	}
 
 	return req, cancel, nil
-}
-
-// configureMultipartRequest configures request for sending multipart data
-func configureMultipartRequest(r *Request, file, fieldName string, extraFields map[string]string) error {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
-
-	if err != nil {
-		return err
-	}
-
-	defer fd.Close()
-
-	buf := &bytes.Buffer{}
-	w := multipart.NewWriter(buf)
-	part, err := createFormFile(w, fieldName, file)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = ioCopyFunc(part, fd)
-
-	if err != nil {
-		return err
-	}
-
-	for k, v := range extraFields {
-		w.WriteField(k, v)
-	}
-
-	w.Close()
-
-	r.ContentType = w.FormDataContentType()
-	r.Body = buf
-
-	return nil
 }
 
 // createFormFile creates request from file
