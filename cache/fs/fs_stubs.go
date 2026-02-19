@@ -70,12 +70,12 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetWithExpiration returns item from cache
+// ❗ Get returns item from cache
 func (c *Cache) Get(key string) any {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetWithExpiration returns item expiration date
+// ❗ GetExpiration returns item expiration date
 func (c *Cache) GetExpiration(key string) time.Time {
 	panic("UNSUPPORTED")
 }
@@ -107,5 +107,10 @@ func (c *Cache) Delete(key string) bool {
 
 // ❗ Flush removes all data from cache
 func (c *Cache) Flush() bool {
+	panic("UNSUPPORTED")
+}
+
+// ❗ Stop stops janitor goroutine
+func (c *Cache) Stop() bool {
 	panic("UNSUPPORTED")
 }

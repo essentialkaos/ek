@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"os"
-	"path"
+	"path/filepath"
 	"regexp"
 	"time"
 
@@ -177,7 +177,7 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(exp)) == nil
 }
 
-// GetWithExpiration returns item from cache
+// Get returns item from cache
 func (c *Cache) Get(key string) any {
 	if c == nil || !c.isValidKey(key) {
 		return nil
@@ -195,7 +195,7 @@ func (c *Cache) Get(key string) any {
 	return readItem(c.getItemPath(key, false))
 }
 
-// GetWithExpiration returns item expiration date
+// GetExpiration returns item expiration date
 func (c *Cache) GetExpiration(key string) time.Time {
 	if c == nil || !c.isValidKey(key) || !c.Has(key) {
 		return time.Time{}
@@ -340,10 +340,10 @@ func (c *Cache) isExpired(key string) bool {
 // getItemPath returns path to cache item
 func (c *Cache) getItemPath(key string, temporary bool) string {
 	if temporary {
-		return path.Join(c.dir, fmt.Sprintf(".%s-%x", key, rand.Uint64()))
+		return filepath.Join(c.dir, fmt.Sprintf(".%s-%x", key, rand.Uint64()))
 	}
 
-	return path.Join(c.dir, key)
+	return filepath.Join(c.dir, key)
 }
 
 // janitor is cache cleanup job
@@ -373,9 +373,9 @@ func writeItem(file string, data any) bool {
 		return false
 	}
 
-	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
+	defer fd.Close()
 
-	fd.Close()
+	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
 
 	if err != nil {
 		os.Remove(file)

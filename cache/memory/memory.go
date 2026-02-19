@@ -39,7 +39,7 @@ var _ cache.Cache = (*Cache)(nil)
 type Cache struct {
 	data           map[string]any
 	expiry         map[string]int64
-	mu             *sync.RWMutex
+	mu             sync.RWMutex
 	expiration     cache.Duration
 	doneChan       chan struct{}
 	isJanitorWorks bool
@@ -65,7 +65,6 @@ func New(config Config) (*Cache, error) {
 		expiration: DEFAULT_EXPIRATION,
 		data:       make(map[string]any),
 		expiry:     make(map[string]int64),
-		mu:         &sync.RWMutex{},
 	}
 
 	if config.DefaultExpiration != 0 {
@@ -155,7 +154,7 @@ func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
 
 	c.mu.Lock()
 
-	if len(expiration) > 0 && expiration[0] > MIN_EXPIRATION {
+	if len(expiration) > 0 && expiration[0] >= MIN_EXPIRATION {
 		c.expiry[key] = time.Now().Add(expiration[0]).UnixNano()
 	} else {
 		c.expiry[key] = time.Now().Add(c.expiration).UnixNano()
