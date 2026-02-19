@@ -10,6 +10,7 @@ package ansi
 
 import (
 	"bytes"
+	"slices"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -27,13 +28,7 @@ func HasCodes(s string) bool {
 
 // HasCodes returns true if given byte slice contains ANSI/VT100 control sequences
 func HasCodesBytes(b []byte) bool {
-	for _, r := range b {
-		if r == 0x1B {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(b, 0x1B)
 }
 
 // RemoveCodesBytes returns string without all ANSI/VT100 control sequences
