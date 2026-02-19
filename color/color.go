@@ -423,8 +423,10 @@ func (c HSL) GoString() string {
 
 // Parse parses color
 func Parse(c string) (Hex, error) {
-	if named[strings.ToLower(c)] != 0 {
-		return Hex{v: named[strings.ToLower(c)]}, nil
+	h, ok := named[strings.ToLower(c)]
+
+	if ok {
+		return Hex{v: h}, nil
 	}
 
 	if c != "" && c[0] == '#' {
@@ -435,7 +437,7 @@ func Parse(c string) (Hex, error) {
 
 	switch len(c) {
 	case 0:
-		return Hex{}, fmt.Errorf("Color is empty")
+		return Hex{}, fmt.Errorf("color is empty")
 
 	// Shorthand #RGB
 	case 3:
@@ -445,9 +447,22 @@ func Parse(c string) (Hex, error) {
 	case 4:
 		hasAlpha = true
 		c = c[0:1] + c[0:1] + c[1:2] + c[1:2] + c[2:3] + c[2:3] + c[3:4] + c[3:4]
+
+	case 6:
+		// RGB Hex
+
+	case 8:
+		hasAlpha = true
+
+	default:
+		return Hex{}, fmt.Errorf("color %q is invalid", c)
 	}
 
 	k, err := strconv.ParseUint(c, 16, 32)
+
+	if err != nil {
+		return Hex{}, err
+	}
 
 	return Hex{v: uint32(k), a: k > 0xFFFFFF || hasAlpha}, err
 }

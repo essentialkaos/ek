@@ -32,6 +32,10 @@ func (s *ColorSuite) TestParse(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xEE82EE))
 
+	color, err = Parse("black")
+	c.Assert(err, IsNil)
+	c.Assert(color.v, Equals, uint32(0x0))
+
 	color, err = Parse("#ff6347")
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xFF6347))
@@ -52,17 +56,25 @@ func (s *ColorSuite) TestParse(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xFF6347AA))
 
+	color, err = Parse("#00000000")
+	c.Assert(err, IsNil)
+	c.Assert(color.v, Equals, uint32(0x00000000))
+
 	color, err = Parse("#b3fa")
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xBB33FFAA))
 
 	_, err = Parse("")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, "Color is empty")
+	c.Assert(err, ErrorMatches, "color is empty")
 
-	_, err = Parse("TEST")
+	_, err = Parse("qwerty1234")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, "strconv.ParseUint: parsing \"TTEESSTT\": invalid syntax")
+	c.Assert(err, ErrorMatches, `color "qwerty1234" is invalid`)
+
+	_, err = Parse("TEST12")
+	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.ParseUint: parsing "TEST12": invalid syntax`)
 }
 
 func (s *ColorSuite) TestRGB(c *C) {
