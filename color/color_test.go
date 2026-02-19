@@ -219,7 +219,24 @@ func (s *ColorSuite) TestTerm(c *C) {
 
 	c.Assert(Term2RGB(238), DeepEquals, RGB{68, 68, 68})
 	c.Assert(Term2RGB(153), DeepEquals, RGB{175, 215, 255})
+}
 
+func (s *ColorSuite) TestEncodeDecode(c *C) {
+	h, _ := Parse("#FF6347")
+	b, err := h.MarshalText()
+
+	c.Assert(err, IsNil)
+	c.Assert(string(b), Equals, `#FF6347`)
+
+	hh := &Hex{}
+	err = hh.UnmarshalText(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(hh.String(), Equals, `#FF6347`)
+
+	hh = &Hex{}
+	err = hh.UnmarshalText([]byte(`#TEST12`))
+	c.Assert(err, NotNil)
 }
 
 func (s *ColorSuite) TestLuminance(c *C) {

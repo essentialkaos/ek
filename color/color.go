@@ -409,6 +409,26 @@ func (c HSL) GoString() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// MarshalText used to encode HEX color for JSON/YAML/TOML
+func (c Hex) MarshalText() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
+// UnmarshalText used to decode HEX color from JSON/YAML/TOML
+func (c *Hex) UnmarshalText(b []byte) error {
+	h, err := Parse(string(b))
+
+	if err != nil {
+		return err
+	}
+
+	*c = h
+
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Parse parses color
 func Parse(c string) (Hex, error) {
 	h, ok := named[strings.ToLower(c)]
@@ -788,7 +808,7 @@ func calcCMYKColor(c, k float64) float64 {
 
 // calcLumColor calculates relative luminance for given color component
 func calcLumColor(c float64) float64 {
-	if c <= 0.03928 {
+	if c <= 0.04045 {
 		return c / 12.92
 	}
 

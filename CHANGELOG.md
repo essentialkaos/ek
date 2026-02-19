@@ -5,11 +5,14 @@
 - **`[cache/fs]`** Added method `Stop`
 - **`[cache/memory]`** Added method `Stop`
 - **`[timeutil]`** Added method `TinyDate.IsZero`
+- **`[color]`** Added methods to encode/decode `Hex`
+- **`[color]`** Improved relative luminance calculation
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
 - **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[cache]`** Code refactoring
+- **`[color]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
