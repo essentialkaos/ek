@@ -307,7 +307,8 @@ func (c Hex) ToRGBA() RGBA {
 	return Hex2RGBA(c)
 }
 
-// WithAlpha returns color with given alpha value
+// WithAlpha returns a copy of the color with the given alpha value.
+// The alpha parameter is clamped to the range 0.0 — 1.0.
 func (c RGBA) WithAlpha(alpha float64) RGBA {
 	c.A = uint8(255.0 * mathutil.Between(alpha, 0, 1))
 	return c
