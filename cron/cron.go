@@ -72,10 +72,10 @@ type exprInfo struct {
 var (
 	// ErrMalformedExpression is returned by the Parse method if given cron expression has
 	// wrong or unsupported format
-	ErrMalformedExpression = errors.New("Expression must have 5 tokens")
+	ErrMalformedExpression = errors.New("expression must have 5 tokens")
 
 	// ErrZeroInterval is returned if interval part of expression is empty
-	ErrZeroInterval = errors.New("Interval can't be less or equals 0")
+	ErrZeroInterval = errors.New("interval can't be less or equals 0")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -122,7 +122,7 @@ func Parse(expr string) (*Expr, error) {
 		}
 
 		if err != nil {
-			return nil, fmt.Errorf("Can't parse token %q: %w", token, err)
+			return nil, fmt.Errorf("can't parse token %q: %w", token, err)
 		}
 
 		switch tn {
@@ -351,13 +351,13 @@ func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 			result = append(result, d...)
 
 		default:
-			t, err := parseToken(tt, ei.nt)
+			tk, err := parseToken(tt, ei.nt)
 
 			if err != nil {
 				return nil, err
 			}
 
-			result = append(result, t)
+			result = append(result, tk)
 		}
 	}
 
