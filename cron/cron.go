@@ -351,13 +351,13 @@ func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 			result = append(result, d...)
 
 		default:
-			tk, err := parseToken(tt, ei.nt)
+			v, err := parseToken(tt, ei.nt)
 
 			if err != nil {
 				return nil, err
 			}
 
-			result = append(result, tk)
+			result = append(result, v)
 		}
 	}
 
