@@ -119,7 +119,7 @@ func (c *Cache) Expired() int {
 		return 0
 	}
 
-	expired := 0
+	counter := 0
 	now := time.Now()
 	items := fsutil.List(c.dir, true)
 
@@ -128,12 +128,12 @@ func (c *Cache) Expired() int {
 	for _, item := range items {
 		mtime, _ := fsutil.GetMTime(item)
 
-		if mtime.Before(now) {
-			expired++
+		if mtime.IsZero() || mtime.Before(now) {
+			counter++
 		}
 	}
 
-	return expired
+	return counter
 }
 
 // Has returns true if cache contains data for given key
@@ -142,7 +142,11 @@ func (c *Cache) Has(key string) bool {
 		return false
 	}
 
-	return fsutil.IsExist(c.getItemPath(key, false))
+	if fsutil.IsExist(c.getItemPath(key, false)) {
+		return !c.isExpired(key)
+	}
+
+	return false
 }
 
 // Set adds or updates item in cache
@@ -164,24 +168,26 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 		return false
 	}
 
-	expr := c.expiration
+	exp := c.expiration
 
 	if len(expiration) > 0 && expiration[0] >= MIN_EXPIRATION {
-		expr = expiration[0]
+		exp = expiration[0]
 	}
 
-	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(expr)) == nil
+	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(exp)) == nil
 }
 
 // GetWithExpiration returns item from cache
 func (c *Cache) Get(key string) any {
-	if c == nil || !c.isValidKey(key) || !c.Has(key) {
+	if c == nil || !c.isValidKey(key) {
 		return nil
 	}
 
-	expr := c.GetExpiration(key)
+	if !fsutil.IsExist(c.getItemPath(key, false)) {
+		return nil
+	}
 
-	if !expr.IsZero() && expr.Before(time.Now()) {
+	if c.isExpired(key) {
 		c.Delete(key)
 		return nil
 	}
@@ -195,9 +201,9 @@ func (c *Cache) GetExpiration(key string) time.Time {
 		return time.Time{}
 	}
 
-	mt, _ := fsutil.GetMTime(c.getItemPath(key, false))
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
 
-	return mt
+	return exp
 }
 
 // GetWithExpiration returns item from cache and expiration date or nil
@@ -206,13 +212,9 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 		return nil, time.Time{}
 	}
 
-	data := c.Get(key)
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
 
-	if data != nil {
-		return data, c.GetExpiration(key)
-	}
-
-	return nil, time.Time{}
+	return readItem(c.getItemPath(key, false)), exp
 }
 
 // Keys is an iterator over cache keys
@@ -327,6 +329,12 @@ func (c Config) Validate() error {
 // isValidKey returns true if key is valid
 func (c *Cache) isValidKey(key string) bool {
 	return key != "" && c.validationRegex.MatchString(key)
+}
+
+// isExpired returns true if cache item is expired
+func (c *Cache) isExpired(key string) bool {
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
+	return exp.IsZero() || exp.Before(time.Now())
 }
 
 // getItemPath returns path to cache item
