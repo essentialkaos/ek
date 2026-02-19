@@ -13,6 +13,7 @@ package fs
 import (
 	"encoding/gob"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"path"
 	"regexp"
@@ -331,7 +332,7 @@ func (c *Cache) isValidKey(key string) bool {
 // getItemPath returns path to cache item
 func (c *Cache) getItemPath(key string, temporary bool) string {
 	if temporary {
-		return path.Join(c.dir, "."+key)
+		return path.Join(c.dir, fmt.Sprintf(".%s-%x", key, rand.Uint64()))
 	}
 
 	return path.Join(c.dir, key)
