@@ -156,3 +156,14 @@ func ExampleCache_Flush() {
 	fmt.Println(c.Get("test"))
 	// Output: <nil>
 }
+
+func ExampleCache_Stop() {
+	c, _ := New(Config{
+		DefaultExpiration: cache.SECOND,
+		CleanupInterval:   cache.MINUTE,
+	})
+
+	c.Set("test", "ABCD")
+
+	defer c.Stop()
+}

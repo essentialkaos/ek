@@ -1,12 +1,15 @@
 ## Changelog
 
-### [13.38.8](https://kaos.sh/ek/13.38.8)
+### [13.39.0](https://kaos.sh/ek/13.39.0)
 
+- **`[cache/fs]`** Added method `Stop`
+- **`[cache/memory]`** Added method `Stop`
 - **`[timeutil]`** Added method `TinyDate.IsZero`
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
 - **`[timeutil]`** Fixed `%c` output in `Format`
+- **`[cache]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring

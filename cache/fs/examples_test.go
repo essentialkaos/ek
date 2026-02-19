@@ -133,3 +133,15 @@ func ExampleCache_Flush() {
 
 	fmt.Println(c.Get("test"))
 }
+
+func ExampleCache_Stop() {
+	c, _ := New(Config{
+		Dir:               "/path/to/cache",
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
+	})
+
+	c.Set("test", "ABCD")
+
+	defer c.Stop()
+}

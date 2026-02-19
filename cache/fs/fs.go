@@ -43,6 +43,7 @@ type Cache struct {
 	dir             string
 	expiration      cache.Duration
 	validationRegex *regexp.Regexp
+	doneChan        chan struct{}
 	isJanitorWorks  bool
 }
 
@@ -73,7 +74,7 @@ func New(config Config) (*Cache, error) {
 	err := config.Validate()
 
 	if err != nil {
-		return nil, fmt.Errorf("Invalid configuration: %w", err)
+		return nil, fmt.Errorf("invalid configuration: %w", err)
 	}
 
 	c := &Cache{
@@ -93,6 +94,7 @@ func New(config Config) (*Cache, error) {
 
 	if config.CleanupInterval != 0 {
 		c.isJanitorWorks = true
+		c.doneChan = make(chan struct{})
 		go c.janitor(config.CleanupInterval)
 	}
 
@@ -289,22 +291,31 @@ func (c *Cache) Flush() bool {
 	return true
 }
 
+// Stop stops janitor goroutine
+func (c *Cache) Stop() {
+	if c == nil || !c.isJanitorWorks || c.doneChan == nil {
+		return
+	}
+
+	close(c.doneChan)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Validate validates cache configuration
 func (c Config) Validate() error {
 	if c.DefaultExpiration != 0 && c.DefaultExpiration < MIN_EXPIRATION {
-		return fmt.Errorf("Expiration is too short (< 1s)")
+		return fmt.Errorf("expiration is too short (< 1s)")
 	}
 
 	if c.CleanupInterval != 0 && c.CleanupInterval < MIN_CLEANUP_INTERVAL {
-		return fmt.Errorf("Cleanup interval is too short (< 1s)")
+		return fmt.Errorf("cleanup interval is too short (< 1s)")
 	}
 
 	err := fsutil.ValidatePerms("DRWX", c.Dir)
 
 	if err != nil {
-		return fmt.Errorf("Can't use given directory for cache: %w", err)
+		return fmt.Errorf("can't use given directory for cache: %w", err)
 	}
 
 	return nil
@@ -328,9 +339,19 @@ func (c *Cache) getItemPath(key string, temporary bool) string {
 
 // janitor is cache cleanup job
 func (c *Cache) janitor(interval time.Duration) {
-	for range time.NewTicker(interval).C {
-		c.Invalidate()
+	ticker := time.NewTicker(interval)
+
+MAIN:
+	for {
+		select {
+		case <-ticker.C:
+			c.Invalidate()
+		case <-c.doneChan:
+			break MAIN
+		}
 	}
+
+	ticker.Stop()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
