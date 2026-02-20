@@ -51,12 +51,14 @@ const (
 
 // Expr cron expression struct
 type Expr struct {
-	expression string
-	minutes    []uint8
-	hours      []uint8
-	doms       []uint8
-	months     []uint8
-	dows       []uint8
+	expression  string
+	minutes     []uint8
+	hours       []uint8
+	doms        []uint8
+	months      []uint8
+	dows        []uint8
+	domExplicit bool
+	dowExplicit bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -103,14 +105,16 @@ func Parse(expr string) (*Expr, error) {
 	result := &Expr{expression: expr}
 
 	for tn, ei := range info {
-		var data []uint8
 		var err error
+		var data []uint8
+		var isAny bool
 
 		token := strutil.ReadField(expr, tn, true, ' ')
 
 		switch {
 		case isAnyToken(token):
 			data = fillUintSlice(ei.min, ei.max, 1)
+			isAny = true
 		case isEnumToken(token):
 			data, err = parseEnumToken(token, ei)
 		case isPeriodToken(token):
@@ -131,10 +135,12 @@ func Parse(expr string) (*Expr, error) {
 		case 1:
 			result.hours = data
 		case 2:
+			result.domExplicit = !isAny
 			result.doms = data
 		case 3:
 			result.months = data
 		case 4:
+			result.dowExplicit = !isAny
 			result.dows = data
 		}
 	}
@@ -167,7 +173,13 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 	}
 
 	if !slices.Contains(e.doms, uint8(t.Day())) {
-		return false
+		if e.domExplicit && e.dowExplicit {
+			if !slices.Contains(e.dows, uint8(t.Weekday())) {
+				return false
+			}
+		} else {
+			return false
+		}
 	}
 
 	if !slices.Contains(e.months, uint8(t.Month())) {
@@ -175,7 +187,11 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 	}
 
 	if !slices.Contains(e.dows, uint8(t.Weekday())) {
-		return false
+		if e.domExplicit && e.dowExplicit {
+			return slices.Contains(e.doms, uint8(t.Day()))
+		} else {
+			return false
+		}
 	}
 
 	return true
@@ -298,7 +314,7 @@ func (e *Expr) Prev(args ...time.Time) time.Time {
 		mStart = len(e.months) - 1
 	}
 
-	return time.Unix(0, 0)
+	return time.Time{}
 }
 
 // String return raw expression
