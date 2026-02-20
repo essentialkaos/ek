@@ -238,7 +238,7 @@ func (e *Expr) Next(args ...time.Time) time.Time {
 		mStart = 0
 	}
 
-	return time.Unix(0, 0)
+	return time.Time{}
 }
 
 // Prev get time of prev matched moment
