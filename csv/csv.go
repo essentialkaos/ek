@@ -56,7 +56,8 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader creates new CSV reader
+// NewReader creates a new CSV reader that reads from r, using comma as the
+// field delimiter
 func NewReader(r io.Reader, comma rune) *Reader {
 	if r == nil {
 		return nil
@@ -139,7 +140,7 @@ func (r *Reader) Seq(yield func(line int, row Row) bool) {
 	}
 }
 
-// WithHeader sets header skip flag
+// WithHeader configures the reader to treat the first row as a header
 func (r *Reader) WithHeader(flag bool) *Reader {
 	if r == nil || r.s == nil {
 		return nil
@@ -363,31 +364,13 @@ func (r Row) ForEach(fn func(index int, value string) error) error {
 
 // ToString returns string representation of row
 func (r Row) ToString(comma rune) string {
-	var buf bytes.Buffer
-
-	for i, c := range r {
-		buf.WriteString(c)
-
-		if i+1 != len(r) {
-			buf.WriteRune(comma)
-		}
-	}
-
+	buf := r.writeRow(comma)
 	return buf.String()
 }
 
 // ToBytes returns representation of row as a byte slice
 func (r Row) ToBytes(comma rune) []byte {
-	var buf bytes.Buffer
-
-	for i, c := range r {
-		buf.WriteString(c)
-
-		if i+1 != len(r) {
-			buf.WriteRune(comma)
-		}
-	}
-
+	buf := r.writeRow(comma)
 	return buf.Bytes()
 }
 
@@ -455,6 +438,25 @@ func (r *Reader) readHeader() error {
 
 	return nil
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// writeRow returns buffer with row data
+func (r Row) writeRow(comma rune) bytes.Buffer {
+	var buf bytes.Buffer
+
+	for i, c := range r {
+		buf.WriteString(c)
+
+		if i+1 != len(r) {
+			buf.WriteRune(comma)
+		}
+	}
+
+	return buf
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 // parseAndFill parses CSV row and fills slice with data
 func parseAndFill(src string, dst Row, sep string) {
