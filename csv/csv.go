@@ -150,6 +150,17 @@ func (r *Reader) WithHeader(flag bool) *Reader {
 	return r
 }
 
+// WithBufferSize sets the maximum token size for the underlying scanner
+func (r *Reader) WithBufferSize(n int) *Reader {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	r.s.Buffer(make([]byte, n), n)
+
+	return r
+}
+
 // Line returns number of the last line read
 func (r *Reader) Line() int {
 	if r == nil || r.s == nil {

@@ -60,7 +60,7 @@ func (s *CSVSuite) TestRead(c *C) {
 	defer fd.Close()
 
 	line := 0
-	r := NewReader(fd, ',').WithHeader(true)
+	r := NewReader(fd, ',').WithHeader(true).WithBufferSize(1024)
 	m := map[string]string{}
 
 	for {
@@ -221,6 +221,7 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r.WithHeader(false), IsNil)
 	c.Assert(r.Line(), Equals, 0)
 	c.Assert(r.Error(), IsNil)
+	c.Assert(r.WithBufferSize(100), IsNil)
 
 	r = NewReader(nil, ',')
 	c.Assert(r, IsNil)

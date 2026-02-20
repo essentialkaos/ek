@@ -5,6 +5,7 @@
 - **`[cache/fs]`** Added method `Stop`
 - **`[cache/memory]`** Added method `Stop`
 - **`[timeutil]`** Added method `TinyDate.IsZero`
+- **`[csv]`** Added method `WithBufferSize` to set underlying scanner token size
 - **`[color]`** Added methods to encode/decode `Hex`
 - **`[color]`** Improved relative luminance calculation
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
@@ -14,6 +15,7 @@
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
+- **`[csv]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
