@@ -42,22 +42,26 @@ type Header []string
 
 var (
 	// ErrEmptyDest is returned by the ReadTo method if empty destination slice was given
-	ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
+	ErrEmptyDest = errors.New("destination slice must not be empty")
 
 	// ErrNilReader is returned when reader struct is nil
-	ErrNilReader = errors.New("Reader is nil")
+	ErrNilReader = errors.New("reader is nil")
 
 	// ErrEmptyHeader is returned when header has no data
-	ErrEmptyHeader = errors.New("Header is empty")
+	ErrEmptyHeader = errors.New("header is empty")
 
 	// ErrNilMap is returned when map is nil
-	ErrNilMap = errors.New("Map is nil")
+	ErrNilMap = errors.New("map is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewReader creates new CSV reader
 func NewReader(r io.Reader, comma rune) *Reader {
+	if r == nil {
+		return nil
+	}
+
 	return &Reader{
 		comma:     string(comma),
 		hasHeader: false,
@@ -280,7 +284,7 @@ func (r Row) GetF32(index int) (float32, error) {
 
 // GetU returns cell value as uint
 func (r Row) GetU(index int) (uint, error) {
-	u, err := strconv.ParseUint(r.Get(index), 10, 32)
+	u, err := strconv.ParseUint(r.Get(index), 10, strconv.IntSize)
 
 	if err != nil {
 		return 0, err
@@ -463,12 +467,13 @@ func parseAndFill(src string, dst Row, sep string) {
 		i++
 	}
 
-	if src != "" && i != l {
+	if src != "" && i < l {
 		dst[i] = src
+		i++
 	}
 
-	if i < l-1 {
-		clean(dst, i+1)
+	if i < l {
+		clean(dst, i)
 	}
 }
 

@@ -13,6 +13,7 @@
 - **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
+- **`[cron]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
