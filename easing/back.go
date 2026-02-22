@@ -7,10 +7,15 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// BackIn Accelerating from zero velocity
+// BackIn accelerating from zero velocity
 // https://easings.net/#easeInBack
 func BackIn(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 
@@ -20,10 +25,15 @@ func BackIn(t, b, c, d float64) float64 {
 	return c*t*t*((s+1)*t-s) + b
 }
 
-// BackOut Decelerating to zero velocity
+// BackOut decelerating to zero velocity
 // https://easings.net/#easeOutBack
 func BackOut(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 
@@ -33,10 +43,15 @@ func BackOut(t, b, c, d float64) float64 {
 	return c*(t*t*((s+1)*t+s)+1) + b
 }
 
-// BackInOut Acceleration until halfway, then deceleration
+// BackInOut acceleration until halfway, then deceleration
 // https://easings.net/#easeInOutBack
 func BackInOut(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 

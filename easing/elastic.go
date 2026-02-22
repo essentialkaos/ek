@@ -20,100 +20,82 @@ const DOUBLE_PI = math.Pi * 2
 // ElasticIn accelerating from zero velocity
 // https://easings.net/#easeInElastic
 func ElasticIn(t, b, c, d float64) float64 {
-	if t > d {
-		return c
-	}
-
-	var s float64
-
-	p := d * 0.3
-	a := c
-
-	if t == 0 {
+	switch {
+	case t <= 0:
 		return b
-	}
-
-	t /= d
-
-	if t == 1 {
+	case t >= d:
 		return b + c
 	}
 
-	if a < math.Abs(c) {
+	p := d * 0.3
+
+	t /= d
+
+	var s float64
+
+	if c < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DOUBLE_PI * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/c)
 	}
 
 	t--
 
-	return -(a * math.Pow(2, 10*t) * math.Sin((t*d-s)*DOUBLE_PI/p)) + b
+	return -(c * math.Pow(2, 10*t) * math.Sin((t*d-s)*DOUBLE_PI/p)) + b
 }
 
 // ElasticOut decelerating to zero velocity
 // https://easings.net/#easeOutElastic
 func ElasticOut(t, b, c, d float64) float64 {
-	if t > d {
-		return c
-	}
-
-	var s float64
-
-	p := d * 0.3
-	a := c
-
-	if t == 0 {
+	switch {
+	case t <= 0:
 		return b
-	}
-
-	t /= d
-
-	if t == 1 {
+	case t >= d:
 		return b + c
 	}
 
-	if a < math.Abs(c) {
+	p := d * 0.3
+
+	t /= d
+
+	var s float64
+
+	if c < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DOUBLE_PI * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/c)
 	}
 
-	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p) + c + b
+	return c*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p) + c + b
 }
 
 // ElasticInOut acceleration until halfway, then deceleration
 // https://easings.net/#easeInOutElastic
 func ElasticInOut(t, b, c, d float64) float64 {
-	if t > d {
-		return c
-	}
-
-	var s float64
-
-	p := d * (0.3 * 1.5)
-	a := c
-
-	if t == 0 {
+	switch {
+	case t <= 0:
 		return b
-	}
-
-	t /= d / 2
-
-	if t == 2 {
+	case t >= d:
 		return b + c
 	}
 
-	if a < math.Abs(c) {
+	p := d * 0.45
+
+	t /= d / 2
+
+	var s float64
+
+	if c < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DOUBLE_PI * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/c)
 	}
 
 	t--
 
 	if t < 0 {
-		return -0.5*(a*math.Pow(2, 10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)) + b
+		return -0.5*(c*math.Pow(2, 10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)) + b
 	}
 
-	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)*0.5 + c + b
+	return c*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)*0.5 + c + b
 }
