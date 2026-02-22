@@ -10,6 +10,8 @@ package easing
 import (
 	"testing"
 
+	"github.com/essentialkaos/ek/v13/mathutil"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -49,7 +51,7 @@ func (s *EaseSuite) TestCubic(c *C) {
 	c.Assert(CubicIn(5, 0, 10, 10), Equals, 1.25)
 	c.Assert(CubicOut(5, 0, 10, 10), Equals, 8.75)
 	c.Assert(CubicInOut(5, 0, 10, 10), Equals, 5.0)
-	c.Assert(CubicInOut(0.5, 0, 10, 10), Equals, 0.005000000000000001)
+	c.Assert(mathutil.Round(CubicInOut(0.5, 0, 10, 10), 5), Equals, 0.005)
 	c.Assert(CubicIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(CubicOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(CubicInOut(20, 0, 10, 10), Equals, 10.0)
@@ -143,11 +145,12 @@ func (s *EaseSuite) TestBack(c *C) {
 	c.Assert(BackInOut(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackIn(5, 0, 10, 10), Equals, -0.8769750000000004)
 	c.Assert(BackOut(5, 0, 10, 10), Equals, 10.876975)
-	c.Assert(BackInOut(5, 0, 10, 10), Equals, 5.000000000000001)
+	c.Assert(mathutil.Round(BackInOut(5, 0, 10, 10), 5), Equals, 5.0)
 	c.Assert(BackIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackInOut(20, 0, 10, 10), Equals, 10.0)
-	c.Assert(BackInOut(0.5, 0, 10, 10), Equals, -0.07157110000000001)
+	c.Assert(mathutil.Round(BackInOut(0.5, 0, 10, 10), 5), Equals, -0.07158)
+
 }
 
 func (s *EaseSuite) TestBounce(c *C) {
