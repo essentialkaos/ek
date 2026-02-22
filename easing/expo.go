@@ -16,8 +16,11 @@ import (
 // ExpoIn accelerating from zero velocity
 // https://easings.net/#easeInExpo
 func ExpoIn(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
 		return c
+	case t == 0:
+		return b
 	}
 
 	return c*math.Pow(2, 10*(t/d-1)) + b
@@ -26,8 +29,11 @@ func ExpoIn(t, b, c, d float64) float64 {
 // ExpoOut decelerating to zero velocity
 // https://easings.net/#easeOutExpo
 func ExpoOut(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
 		return c
+	case t == d:
+		return b + c
 	}
 
 	return c*(-math.Pow(2, -10*t/d)+1) + b

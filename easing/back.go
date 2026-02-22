@@ -7,12 +7,6 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"math"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // BackIn Accelerating from zero velocity
 // https://easings.net/#easeInBack
 func BackIn(t, b, c, d float64) float64 {
@@ -20,7 +14,7 @@ func BackIn(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi
+	s := 1.70158
 	t /= d
 
 	return c*t*t*((s+1)*t-s) + b
@@ -33,7 +27,7 @@ func BackOut(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi
+	s := 1.70158
 	t = t/d - 1
 
 	return c*(t*t*((s+1)*t+s)+1) + b
@@ -46,7 +40,7 @@ func BackInOut(t, b, c, d float64) float64 {
 		return c
 	}
 
-	s := math.SqrtPi * 1.525
+	s := 1.70158
 	t /= d / 2
 
 	if t < 1 {

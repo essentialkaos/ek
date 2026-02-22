@@ -73,7 +73,11 @@ func (s *EaseSuite) TestExpo(c *C) {
 	c.Assert(ExpoOut(5, 0, 10, 10), Equals, 9.6875)
 	c.Assert(ExpoInOut(5, 0, 10, 10), Equals, 5.0)
 	c.Assert(ExpoInOut(0.5, 0, 10, 10), Equals, 0.009765625)
+	c.Assert(ExpoIn(0, 0, 10, 10), Equals, 0.0)
+	c.Assert(ExpoIn(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(ExpoIn(20, 0, 10, 10), Equals, 10.0)
+	c.Assert(ExpoOut(0, 0, 10, 10), Equals, 0.0)
+	c.Assert(ExpoOut(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(ExpoOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(ExpoInOut(20, 0, 10, 10), Equals, 10.0)
 }
@@ -112,13 +116,13 @@ func (s *EaseSuite) TestElastic(c *C) {
 }
 
 func (s *EaseSuite) TestBack(c *C) {
-	c.Assert(BackIn(5, 0, 10, 10), Equals, -0.9655673136318949)
-	c.Assert(BackOut(5, 0, 10, 10), Equals, 10.965567313631894)
-	c.Assert(BackInOut(5, 0, 10, 10), Equals, 5.0)
+	c.Assert(BackIn(5, 0, 10, 10), Equals, -0.8769750000000004)
+	c.Assert(BackOut(5, 0, 10, 10), Equals, 10.876975)
+	c.Assert(BackInOut(5, 0, 10, 10), Equals, 5.000000000000001)
 	c.Assert(BackIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackInOut(20, 0, 10, 10), Equals, 10.0)
-	c.Assert(BackInOut(0.5, 0, 10, 10), Equals, -0.11663464551839108)
+	c.Assert(BackInOut(0.5, 0, 10, 10), Equals, -0.07157110000000001)
 }
 
 func (s *EaseSuite) TestBounce(c *C) {

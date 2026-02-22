@@ -8,15 +8,17 @@
 - **`[csv]`** Added method `WithBufferSize` to set underlying scanner token size
 - **`[color]`** Added methods to encode/decode `Hex`
 - **`[color]`** Improved relative luminance calculation
+- **`[ease]`** Fixed `SineIn` and `SineOut` calculation
+- **`[ease]`** Fixed overshoot constant for `BackIn`, `BackOut`, and `BackInOut`
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
 - **`[timeutil]`** Fixed `%c` output in `Format`
-- **`[ease]`** Fixed `SineIn` and `SineOut` calculation
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
 - **`[csv]`** Code refactoring
+- **`[ease]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
