@@ -111,6 +111,6 @@ func (c *Cache) Flush() bool {
 }
 
 // ❗ Stop stops janitor goroutine
-func (c *Cache) Stop() bool {
+func (c *Cache) Stop() {
 	panic("UNSUPPORTED")
 }
