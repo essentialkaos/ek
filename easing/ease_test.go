@@ -60,8 +60,8 @@ func (s *EaseSuite) TestQuint(c *C) {
 }
 
 func (s *EaseSuite) TestSine(c *C) {
-	c.Assert(SineIn(5, 0, 10, 10), Equals, 3.0978992192751917)
-	c.Assert(SineOut(5, 0, 10, 10), Equals, 7.236090437019012)
+	c.Assert(SineIn(5, 0, 10, 10), Equals, 2.9289321881345245)
+	c.Assert(SineOut(5, 0, 10, 10), Equals, 7.071067811865475)
 	c.Assert(SineInOut(5, 0, 10, 10), Equals, 4.999999999999999)
 	c.Assert(SineIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(SineOut(20, 0, 10, 10), Equals, 10.0)

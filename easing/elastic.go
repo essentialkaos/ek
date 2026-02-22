@@ -13,6 +13,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const DOUBLE_PI = math.Pi * 2
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // ElasticIn accelerating from zero velocity
 // https://easings.net/#easeInElastic
 func ElasticIn(t, b, c, d float64) float64 {
@@ -38,12 +42,12 @@ func ElasticIn(t, b, c, d float64) float64 {
 	if a < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DoublePi * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/a)
 	}
 
 	t--
 
-	return -(a * math.Pow(2, 10*t) * math.Sin((t*d-s)*DoublePi/p)) + b
+	return -(a * math.Pow(2, 10*t) * math.Sin((t*d-s)*DOUBLE_PI/p)) + b
 }
 
 // ElasticOut decelerating to zero velocity
@@ -71,10 +75,10 @@ func ElasticOut(t, b, c, d float64) float64 {
 	if a < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DoublePi * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/a)
 	}
 
-	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DoublePi/p) + c + b
+	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p) + c + b
 }
 
 // ElasticInOut acceleration until halfway, then deceleration
@@ -102,14 +106,14 @@ func ElasticInOut(t, b, c, d float64) float64 {
 	if a < math.Abs(c) {
 		s = p / 4
 	} else {
-		s = p / DoublePi * math.Asin(c/a)
+		s = p / DOUBLE_PI * math.Asin(c/a)
 	}
 
 	t--
 
 	if t < 0 {
-		return -0.5*(a*math.Pow(2, 10*t)*math.Sin((t*d-s)*DoublePi/p)) + b
+		return -0.5*(a*math.Pow(2, 10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)) + b
 	}
 
-	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DoublePi/p)*0.5 + c + b
+	return a*math.Pow(2, -10*t)*math.Sin((t*d-s)*DOUBLE_PI/p)*0.5 + c + b
 }

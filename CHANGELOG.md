@@ -12,6 +12,7 @@
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
 - **`[timeutil]`** Fixed `%c` output in `Format`
+- **`[ease]`** Fixed `SineIn` and `SineOut` calculation
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring

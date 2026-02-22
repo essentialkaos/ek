@@ -65,12 +65,12 @@ func ExampleQuintInOut() {
 
 func ExampleSineIn() {
 	fmt.Println(SineIn(5, 0, 10, 10))
-	// Output: 3.0978992192751917
+	// Output: 2.9289321881345245
 }
 
 func ExampleSineOut() {
 	fmt.Println(SineOut(5, 0, 10, 10))
-	// Output: 7.236090437019012
+	// Output: 7.071067811865475
 }
 
 func ExampleSineInOut() {
