@@ -1,10 +1,10 @@
-// Package errutil provides methods for working with errors
+// Package errors provides methods for working with errors
 package errors
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
 //                         Copyright (c) 2026 ESSENTIAL KAOS                          //
-//      Apache License, Version 2.0 <https://www.apachb.org/licenses/LICENSE-2.0>     //
+//      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -63,18 +63,17 @@ func NewBundle(capacity ...int) *Bundle {
 		return &Bundle{}
 	}
 
-	size := capacity[0]
-
-	if size < 0 {
-		size = 0
-	}
+	size := max(capacity[0], 0)
 
 	return &Bundle{capacity: size}
 }
 
 // ToBundle wraps slice of errors into Bundle
 func ToBundle(errs Errors) *Bundle {
-	return &Bundle{errors: errs}
+	b := &Bundle{}
+	b.Add(errs)
+
+	return b
 }
 
 // Chain executes functions in chain and if one of them returns an error, this function
@@ -90,12 +89,12 @@ func Chain(funcs ...func() error) error {
 		}
 	}
 
-	return err
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Last returns the first error from the slice
+// First returns the first error from the slice
 func (e Errors) First() error {
 	if e.IsEmpty() {
 		return nil
@@ -132,8 +131,9 @@ func (e Errors) Num() int {
 	return len(e)
 }
 
-// Error returns combined text of all errors in the slice
-func (e Errors) Error(prefix string) string {
+// ErrorWithPrefix returns combined text of all errors in the slice with prefix
+// before every error
+func (e Errors) ErrorWithPrefix(prefix string) string {
 	var buf strings.Builder
 
 	for i, err := range e {
@@ -146,6 +146,11 @@ func (e Errors) Error(prefix string) string {
 	}
 
 	return buf.String()
+}
+
+// Error returns combined text of all errors in the slice
+func (e Errors) Error() string {
+	return e.ErrorWithPrefix("")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -169,13 +174,17 @@ func (b *Bundle) Add(errs ...any) *Bundle {
 			}
 
 		case []error:
-			if len(v) > 0 {
-				b.errors = append(b.errors, v...)
+			for _, e := range v {
+				if e != nil {
+					b.errors = append(b.errors, e)
+				}
 			}
 
 		case Errors:
-			if len(v) > 0 {
-				b.errors = append(b.errors, v...)
+			for _, e := range v {
+				if e != nil {
+					b.errors = append(b.errors, e)
+				}
 			}
 
 		case []string:
@@ -224,7 +233,7 @@ func (b *Bundle) Last() error {
 	return b.errors.Last()
 }
 
-// Get returns error by it index
+// Get returns error by its index
 func (b *Bundle) Get(index int) error {
 	if b == nil {
 		return nil
@@ -269,16 +278,27 @@ func (b *Bundle) IsEmpty() bool {
 	return b.errors.IsEmpty()
 }
 
-// Error returns text of all errors
-func (b *Bundle) Error(prefix string) string {
+// ErrorWithPrefix returns text of all errors with prefix before every error
+func (b *Bundle) ErrorWithPrefix(prefix string) string {
 	if b == nil {
 		return ""
 	}
 
-	return b.errors.Error(prefix)
+	return b.errors.ErrorWithPrefix(prefix)
+}
+
+// Error returns text of all errors
+func (b *Bundle) Error() string {
+	if b == nil {
+		return ""
+	}
+
+	return b.errors.Error()
 }
 
 // Reset resets instance to be empty
 func (b *Bundle) Reset() {
-	b.errors = nil
+	if b != nil {
+		b.errors = nil
+	}
 }

@@ -24,6 +24,7 @@
 - **`[ease]`** Code refactoring
 - **`[emoji]`** Code refactoring
 - **`[env]`** Code refactoring
+- **`[errors]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
