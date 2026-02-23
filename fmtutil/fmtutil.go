@@ -60,10 +60,6 @@ var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var spaces = strings.Repeat(" ", 256)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
 func PrettyNum(i any, separator ...string) string {
 	var str string
@@ -204,13 +200,13 @@ func Align(text string, alignment Alignment, size int) string {
 
 	switch alignment {
 	case RIGHT:
-		return spaces[:size-len] + text
+		return padding(size-len) + text
 	case CENTER:
 		pad := (size - len) / 2
-		return spaces[:pad] +
-			text + spaces[:size-(len+pad)]
+		return padding(pad) +
+			text + padding(size-(len+pad))
 	default:
-		return text + spaces[:size-len]
+		return text + padding(size-len)
 	}
 }
 
@@ -224,14 +220,12 @@ func Wrap(text, indent string, maxLineLength int) string {
 		MaxLineLength: maxLineLength,
 	}
 
-	reader := strings.NewReader(text)
-
-	for i := int64(0); i < reader.Size(); i++ {
-		r, _, _ := reader.ReadRune()
-
+	for _, r := range text {
 		switch r {
 		case ' ':
-			// break
+			w.AddWord(word)
+			word.Reset()
+
 		case '\n', '\r':
 			if !isNewLine {
 				isNewLine = true
@@ -240,14 +234,11 @@ func Wrap(text, indent string, maxLineLength int) string {
 			} else {
 				w.NewLine()
 			}
+
 		default:
 			isNewLine = false
 			word.WriteRune(r)
-			continue
 		}
-
-		w.AddWord(word)
-		word.Reset()
 	}
 
 	w.AddWord(word)
@@ -370,6 +361,15 @@ func extractSizeInfo(s string) (float64, string) {
 	}
 
 	return mod, suf
+}
+
+// padding generates padding with spaces
+func padding(n int) string {
+	if n <= 0 {
+		return ""
+	}
+
+	return strings.Repeat(" ", n)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
