@@ -179,7 +179,7 @@ func getMask(message string) string {
 	var masking string
 
 	// Remove fmtc color tags and ANSI escape codes
-	prompt := fmtc.Clean(ansi.RemoveCodes(Prompt))
+	prompt := fmtc.Clean(ansi.Remove(Prompt))
 	prefix := strings.Repeat(" ", utf8.RuneCountInString(prompt))
 	length := utf8.RuneCountInString(message)
 

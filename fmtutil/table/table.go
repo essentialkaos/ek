@@ -591,5 +591,5 @@ func getTableWidth(t *Table) int {
 
 // getDataLen returns len of data excludinf ANSI escape codes and fmtc tags
 func getDataLen(data string) int {
-	return strutil.LenVisual(ansi.RemoveCodes(fmtc.Clean(data)))
+	return strutil.LenVisual(ansi.Remove(fmtc.Clean(data)))
 }

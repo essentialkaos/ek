@@ -196,7 +196,7 @@ func Float(f float64) float64 {
 
 // Align can align text with ANSI control sequences (for example colors)
 func Align(text string, alignment Alignment, size int) string {
-	len := strutil.Len(ansi.RemoveCodes(text))
+	len := strutil.Len(ansi.Remove(text))
 
 	if len >= size {
 		return text
@@ -382,8 +382,8 @@ func (w *wrapper) AddWord(word bytes.Buffer) {
 
 	var wordLen int
 
-	if ansi.HasCodesBytes(word.Bytes()) {
-		wordLen = len(ansi.RemoveCodesBytes(word.Bytes()))
+	if ansi.HasBytes(word.Bytes()) {
+		wordLen = len(ansi.RemoveBytes(word.Bytes()))
 	} else {
 		wordLen = len(word.String())
 	}
