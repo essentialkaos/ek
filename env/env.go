@@ -38,9 +38,7 @@ func Get() Env {
 	env := make(Env)
 
 	for _, ev := range os.Environ() {
-		evs := strings.Split(ev, "=")
-		k, v := evs[0], evs[1]
-
+		k, v, _ := strings.Cut(ev, "=")
 		env[k] = v
 	}
 
@@ -51,7 +49,7 @@ func Get() Env {
 
 // Get returns environment variable value
 func (v *Variable) Get() string {
-	if v == nil {
+	if v == nil || v.key == "" {
 		return ""
 	}
 
@@ -88,32 +86,51 @@ func (v *Variable) Reset() *Variable {
 
 // Path return path as string slice
 func (e Env) Path() []string {
+	if e == nil {
+		return nil
+	}
+
 	return strings.Split(e["PATH"], ":")
 }
 
-// GetS return environment variable value as string
-func (e Env) GetS(name string) string {
+// Has checks if value with given name is present in env
+func (e Env) Has(name string) bool {
+	if e == nil || name == "" {
+		return false
+	}
+
+	_, ok := e[name]
+
+	return ok
+}
+
+// Get return environment variable value as string
+func (e Env) Get(name string) string {
+	if e == nil || name == "" {
+		return ""
+	}
+
 	return e[name]
 }
 
 // GetI return environment variable value as int
 func (e Env) GetI(name string) int {
-	value, err := strconv.Atoi(e[name])
-
-	if err != nil {
-		return -1
+	if e == nil || name == "" {
+		return 0
 	}
+
+	value, _ := strconv.Atoi(e[name])
 
 	return value
 }
 
 // GetF return environment variable value as float
 func (e Env) GetF(name string) float64 {
-	value, err := strconv.ParseFloat(e[name], 64)
-
-	if err != nil {
-		return -1.0
+	if e == nil || name == "" {
+		return 0.0
 	}
+
+	value, _ := strconv.ParseFloat(e[name], 64)
 
 	return value
 }
