@@ -162,28 +162,23 @@ func PrettyBool(b bool, vals ...string) string {
 
 // ParseSize parses a human-readable size string and returns the equivalent byte count
 // (e.g. "2.2 GB" → 2362232012).
-func ParseSize(size string) uint64 {
+func ParseSize(size string) (uint64, error) {
 	v := strings.ToLower(strings.ReplaceAll(size, " ", ""))
 	mod, suf := extractSizeInfo(v)
 
-	if suf == "" {
-		num, err := strconv.ParseUint(size, 10, 64)
+	v = strings.TrimRight(v, suf)
 
-		if err != nil {
-			return 0
-		}
-
-		return num
+	if v == "" {
+		return 0, fmt.Errorf("size has no digits")
 	}
 
-	v = strings.TrimRight(v, suf)
 	numFlt, err := strconv.ParseFloat(v, 64)
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
-	return uint64(numFlt * mod)
+	return uint64(numFlt * mod), nil
 }
 
 // Float rounds f to 2 decimal places below 10, or 1 decimal place above. Returns 0.0
@@ -353,8 +348,7 @@ func appendPrettySymbol(str, sep string) string {
 
 // extractSizeInfo returns the byte multiplier and suffix for a size string
 func extractSizeInfo(s string) (float64, string) {
-	var mod float64
-
+	mod := 1.0
 	suf := strings.TrimLeft(s, "0123456789. ")
 
 	switch suf {
@@ -375,7 +369,7 @@ func extractSizeInfo(s string) (float64, string) {
 	case "k":
 		mod = 1000
 	case "b":
-		mod = 1
+		// okay
 	default:
 		suf = ""
 	}

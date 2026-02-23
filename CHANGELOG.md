@@ -13,6 +13,7 @@
 - **`[ease]`** Fixed `SineIn` and `SineOut` calculation
 - **`[ease]`** Fixed overshoot constant for `BackIn`, `BackOut`, and `BackInOut`
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
+- **`[fmtutil]`** Method `ParseSize` now returns parsing error
 - **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
@@ -27,6 +28,7 @@
 - **`[errors]`** Code refactoring
 - **`[events]`** Code refactoring
 - **`[fmtc]`** Code refactoring
+- **`[fmtutil]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
 

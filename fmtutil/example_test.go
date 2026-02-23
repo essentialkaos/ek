@@ -119,9 +119,14 @@ func ExampleParseSize() {
 	s2 := "34Mb"
 	s3 := "2.2 GB"
 
-	fmt.Printf("%s → %d\n", s1, ParseSize(s1))
-	fmt.Printf("%s → %d\n", s2, ParseSize(s2))
-	fmt.Printf("%s → %d\n", s3, ParseSize(s3))
+	si1, _ := ParseSize(s1)
+	fmt.Printf("%s → %d\n", s1, si1)
+
+	si2, _ := ParseSize(s2)
+	fmt.Printf("%s → %d\n", s2, si2)
+
+	si3, _ := ParseSize(s3)
+	fmt.Printf("%s → %d\n", s3, si3)
 
 	// Output:
 	// 160 → 160
