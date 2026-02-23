@@ -87,7 +87,7 @@ func (v *Variable) Reset() *Variable {
 
 // Path returns the PATH variable as a string slice
 func (e Env) Path() []string {
-	if e == nil {
+	if e == nil || e["PATH"] == "" {
 		return nil
 	}
 
