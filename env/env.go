@@ -29,12 +29,12 @@ type Variable struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Var creates new environment variable struct
+// Var creates new environment variable for lazy reading
 func Var(name string) *Variable {
 	return &Variable{key: name}
 }
 
-// Get return key-value map with environment values
+// Get returns key-value map with environment values
 func Get() Env {
 	env := make(Env)
 
@@ -61,7 +61,7 @@ func (v *Variable) Get() string {
 	return v.value
 }
 
-// Is returns true if environment variable value is equal to given one
+// Is returns true if environment variable value is equal to the given one
 func (v *Variable) Is(value string) bool {
 	return v.Get() == value
 }
@@ -84,7 +84,7 @@ func (v *Variable) Reset() *Variable {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path return path as string slice
+// Path returns the PATH variable as a string slice
 func (e Env) Path() []string {
 	if e == nil {
 		return nil
@@ -104,7 +104,7 @@ func (e Env) Has(name string) bool {
 	return ok
 }
 
-// Get return environment variable value as string
+// Get returns environment variable value as a string
 func (e Env) Get(name string) string {
 	if e == nil || name == "" {
 		return ""
@@ -113,7 +113,7 @@ func (e Env) Get(name string) string {
 	return e[name]
 }
 
-// GetI return environment variable value as int
+// GetI returns environment variable value as an int
 func (e Env) GetI(name string) int {
 	if e == nil || name == "" {
 		return 0
@@ -124,7 +124,7 @@ func (e Env) GetI(name string) int {
 	return value
 }
 
-// GetF return environment variable value as float
+// GetF returns environment variable value as a float
 func (e Env) GetF(name string) float64 {
 	if e == nil || name == "" {
 		return 0.0
