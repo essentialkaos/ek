@@ -22,6 +22,7 @@
 - **`[cron]`** Code refactoring
 - **`[csv]`** Code refactoring
 - **`[ease]`** Code refactoring
+- **`[emoji]`** Code refactoring
 - **`[env]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[log]`** Code refactoring

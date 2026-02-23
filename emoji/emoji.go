@@ -11,8 +11,6 @@ package emoji
 import (
 	"regexp"
 	"strings"
-
-	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1530,7 +1528,7 @@ var emojiRegex = regexp.MustCompile(`\:[a-zA-Z0-9\+\-_]+\:`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Get tries to find emoji by it name
+// Get tries to find emoji by its name
 func Get(name string) string {
 	return data[name]
 }
@@ -1572,9 +1570,9 @@ func Emojize(text string) string {
 
 // emojiReplacer replaces emoji code by emoji symbol
 func emojiReplacer(text string) string {
-	emoji, ok := data[strutil.Substring(text, 1, -1)]
+	emoji, ok := data[text[1:len(text)-1]]
 
-	if !ok {
+	if !ok || emoji == "" {
 		return text
 	}
 
