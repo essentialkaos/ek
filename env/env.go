@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -21,9 +22,9 @@ type Env map[string]string
 
 // Variable is environment variable for lazy reading
 type Variable struct {
-	key    string
-	value  string
-	isRead bool
+	key   string
+	value string
+	once  sync.Once
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -53,10 +54,9 @@ func (v *Variable) Get() string {
 		return ""
 	}
 
-	if !v.isRead {
+	v.once.Do(func() {
 		v.value = os.Getenv(v.key)
-		v.isRead = true
-	}
+	})
 
 	return v.value
 }
@@ -77,7 +77,7 @@ func (v *Variable) Reset() *Variable {
 		return nil
 	}
 
-	v.value, v.isRead = "", false
+	v.value, v.once = "", sync.Once{}
 
 	return v
 }
