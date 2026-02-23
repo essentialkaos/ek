@@ -10,6 +10,7 @@ package env
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -90,7 +91,7 @@ func (e Env) Path() []string {
 		return nil
 	}
 
-	return strings.Split(e["PATH"], ":")
+	return filepath.SplitList(e["PATH"])
 }
 
 // Has checks if value with given name is present in env

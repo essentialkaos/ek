@@ -21,8 +21,10 @@ import (
 // Which find full path to some app
 func Which(name string) string {
 	for _, path := range filepath.SplitList(os.Getenv("PATH")) {
-		if syscall.Access(path+"/"+name, syscall.F_OK) == nil {
-			return path + "/" + name
+		full := filepath.Join(path, name)
+
+		if syscall.Access(full, syscall.F_OK) == nil {
+			return full
 		}
 	}
 

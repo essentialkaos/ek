@@ -41,6 +41,7 @@ func (s *ENVSuite) TestEnv(c *C) {
 	c.Assert(envs.Get("EK_TEST_PORT"), Equals, "8080")
 	c.Assert(envs.GetI("EK_TEST_PORT"), Equals, 8080)
 	c.Assert(envs.GetF("EK_TEST_PORT"), Equals, 8080.0)
+	c.Assert(envs.Path(), Not(HasLen), 0)
 
 	c.Assert(envs.Has("UNKNOWN_VARIABLE"), Equals, false)
 	c.Assert(envs.Get("UNKNOWN_VARIABLE"), Equals, "")
