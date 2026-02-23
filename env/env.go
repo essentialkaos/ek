@@ -40,8 +40,11 @@ func Get() Env {
 	env := make(Env)
 
 	for _, ev := range os.Environ() {
-		k, v, _ := strings.Cut(ev, "=")
-		env[k] = v
+		k, v, ok := strings.Cut(ev, "=")
+
+		if ok {
+			env[k] = v
+		}
 	}
 
 	return env
