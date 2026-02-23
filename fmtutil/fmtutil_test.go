@@ -188,6 +188,7 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
 		"  1234 1234"
 
 	c.Assert(Wrap(input, "  ", 20), Equals, result)
+	c.Assert(padding(0), Equals, "")
 }
 
 func (s *FmtUtilSuite) TestSeparator(c *C) {
@@ -199,13 +200,13 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false, "test")
 	Separator(false, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
-	SeparatorTitleAlign = "l"
+	SeparatorTitleAlign = LEFT
 	Separator(true, "test1")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
-	SeparatorTitleAlign = "c"
+	SeparatorTitleAlign = CENTER
 	Separator(true, "test2")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
-	SeparatorTitleAlign = "r"
+	SeparatorTitleAlign = RIGHT
 	Separator(true, "test3")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
@@ -215,6 +216,7 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 }
 
 func (s *FmtUtilSuite) TestCountDigits(c *C) {
+	c.Assert(CountDigits(0), Equals, 1)
 	c.Assert(CountDigits(1), Equals, 1)
 	c.Assert(CountDigits(999), Equals, 3)
 	c.Assert(CountDigits(45999), Equals, 5)
