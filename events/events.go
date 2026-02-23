@@ -9,6 +9,7 @@ package events
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"sync"
@@ -18,27 +19,29 @@ import (
 
 // Dispatcher is event dispatcher
 type Dispatcher struct {
-	handlers map[string]Handlers
-	mx       *sync.RWMutex
+	handlers map[string]handlers
+	mx       sync.RWMutex
 }
-
-// Handlers is a slice with handlers
-type Handlers []Handler
 
 // Handler is a function that handles an event
 type Handler func(payload any)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// handlers is a slice with handlers
+type handlers []Handler
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var (
 	// ErrNilDispatcher is returned when dispatcher is nil
-	ErrNilDispatcher = fmt.Errorf("Dispatcher is nil")
+	ErrNilDispatcher = errors.New("dispatcher is nil")
 
 	// ErrEmptyName is returned when event name is empty
-	ErrEmptyName     = fmt.Errorf("Event name is empty")
+	ErrEmptyName = errors.New("event name is empty")
 
 	// ErrNilHandler is returned when handler is nil
-	ErrNilHandler    = fmt.Errorf("Handler must not be nil")
+	ErrNilHandler = errors.New("handler must not be nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -46,8 +49,8 @@ var (
 // NewDispatcher creates new event dispatcher instance
 func NewDispatcher() *Dispatcher {
 	return &Dispatcher{
-		handlers: make(map[string]Handlers),
-		mx:       &sync.RWMutex{},
+		handlers: make(map[string]handlers),
+		mx:       sync.RWMutex{},
 	}
 }
 
@@ -55,53 +58,51 @@ func NewDispatcher() *Dispatcher {
 
 // AddHandler registers handler for specified event
 func (d *Dispatcher) AddHandler(ev string, handler Handler) error {
-	err := validateArguments(d, ev, handler, true)
+	err := d.validateArguments(ev, handler, true)
 
 	if err != nil {
 		return err
 	}
 
 	d.mx.Lock()
+	defer d.mx.Unlock()
 
 	if d.getHandlerIndex(ev, handler) != -1 {
-		d.mx.Unlock()
-		return fmt.Errorf("Handler already registered for given event (%s)", ev)
+		return fmt.Errorf("handler already registered for given event (%s)", ev)
 	}
 
 	d.handlers[ev] = append(d.handlers[ev], handler)
 
-	d.mx.Unlock()
 	return nil
 }
 
 // RemoveHandler removes handler for specified event
 func (d *Dispatcher) RemoveHandler(ev string, handler Handler) error {
-	err := validateArguments(d, ev, handler, true)
+	err := d.validateArguments(ev, handler, true)
 
 	if err != nil {
 		return err
 	}
 
 	d.mx.Lock()
+	defer d.mx.Unlock()
 
 	i := d.getHandlerIndex(ev, handler)
 
 	if i == -1 {
-		d.mx.Unlock()
-		return fmt.Errorf("Handler is not registered for given event (%s)", ev)
+		return fmt.Errorf("handler is not registered for given event (%s)", ev)
 	}
 
 	copy(d.handlers[ev][i:], d.handlers[ev][i+1:])
 	d.handlers[ev][len(d.handlers[ev])-1] = nil
 	d.handlers[ev] = d.handlers[ev][:len(d.handlers[ev])-1]
 
-	d.mx.Unlock()
 	return nil
 }
 
 // HasHandler returns true if there is a handler for given event
 func (d *Dispatcher) HasHandler(ev string, handler Handler) bool {
-	err := validateArguments(d, ev, handler, true)
+	err := d.validateArguments(ev, handler, true)
 
 	if err != nil {
 		return false
@@ -115,71 +116,63 @@ func (d *Dispatcher) HasHandler(ev string, handler Handler) bool {
 
 // Dispatch dispatches event with given payload
 func (d *Dispatcher) Dispatch(ev string, payload any) error {
-	err := validateArguments(d, ev, nil, false)
+	err := d.validateArguments(ev, nil, false)
 
 	if err != nil {
 		return err
 	}
 
 	d.mx.RLock()
+	defer d.mx.RUnlock()
 
 	if d.handlers[ev] == nil {
-		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event %q", ev)
+		return fmt.Errorf("no handlers for event %q", ev)
 	}
-
-	d.mx.RUnlock()
-	d.mx.RLock()
 
 	for _, h := range d.handlers[ev] {
 		go h(payload)
 	}
 
-	d.mx.RUnlock()
 	return nil
 }
 
 // DispatchAndWait dispatches event with given payload and waits
 // until all handlers will be executed
 func (d *Dispatcher) DispatchAndWait(ev string, payload any) error {
-	err := validateArguments(d, ev, nil, false)
+	err := d.validateArguments(ev, nil, false)
 
 	if err != nil {
 		return err
 	}
 
 	d.mx.RLock()
+	defer d.mx.RUnlock()
 
 	if d.handlers[ev] == nil {
-		d.mx.RUnlock()
-		return fmt.Errorf("No handlers for event %q", ev)
+		return fmt.Errorf("no handlers for event %q", ev)
 	}
 
-	d.mx.RUnlock()
-	d.mx.RLock()
-
-	cur, tot := 0, len(d.handlers[ev])
-	ch := make(chan bool, tot)
+	var wg sync.WaitGroup
 
 	for _, h := range d.handlers[ev] {
-		go execWrapper(ch, h, payload)
+		wg.Add(1)
+
+		go func(h Handler) {
+			defer wg.Done()
+			defer func() { recover() }()
+			h(payload)
+		}(h)
 	}
 
-	d.mx.RUnlock()
-
-	for range ch {
-		cur++
-		if cur == tot {
-			break
-		}
-	}
+	wg.Wait()
 
 	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getHandlerIndex returns index of handler in the slice
+// getHandlerIndex returns the index of handler in d.handlers[ev].
+// Caller must hold d.mx (at minimum for reading) before calling this method.
 func (d *Dispatcher) getHandlerIndex(ev string, handler Handler) int {
 	hp := reflect.ValueOf(handler).Pointer()
 
@@ -192,10 +185,9 @@ func (d *Dispatcher) getHandlerIndex(ev string, handler Handler) int {
 	return -1
 }
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// validateArguments validates arguments
-func validateArguments(d *Dispatcher, ev string, handler Handler, isHandlerRequired bool) error {
+// validateArguments checks that the event name are non-empty, and optionally that
+// the handler is non-nil
+func (d *Dispatcher) validateArguments(ev string, handler Handler, isHandlerRequired bool) error {
 	if d == nil || d.handlers == nil {
 		return ErrNilDispatcher
 	}
@@ -211,9 +203,4 @@ func validateArguments(d *Dispatcher, ev string, handler Handler, isHandlerRequi
 	return nil
 }
 
-// execWrapper exec wrapper runs given handler function and sends true to the channel
-// when function is successfully executed
-func execWrapper(ch chan bool, handler Handler, payload any) {
-	handler(payload)
-	ch <- true
-}
+// ////////////////////////////////////////////////////////////////////////////////// //
