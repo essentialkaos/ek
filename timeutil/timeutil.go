@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -550,11 +551,11 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 			d.Year(),
 		)
 	case 'C', 'g':
-		output.WriteString(strconv.Itoa(d.Year())[0:2])
+		output.WriteString(strutil.Head(strconv.Itoa(d.Year()), 2))
 	case 'd':
 		fmt.Fprintf(output, "%02d", d.Day())
 	case 'D':
-		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4])
+		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strutil.Tail(strconv.Itoa(d.Year()), 2))
 	case 'e':
 		fmt.Fprintf(output, "%2d", d.Day())
 	case 'F':
@@ -603,7 +604,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'w':
 		fmt.Fprintf(output, "%d", d.Weekday())
 	case 'y':
-		output.WriteString(strconv.Itoa(d.Year())[2:4])
+		output.WriteString(strutil.Tail(strconv.Itoa(d.Year()), 2))
 	case 'Y':
 		output.WriteString(strconv.Itoa(d.Year()))
 	case 'z':
