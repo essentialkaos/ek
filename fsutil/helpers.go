@@ -11,11 +11,16 @@ package fsutil
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"path"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const _BUFFER_SIZE int = 32 * 1024
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -182,6 +187,41 @@ func TouchFile(path string, perm os.FileMode) error {
 	}
 
 	return fd.Close()
+}
+
+// CountLines returns number of lines in given file
+func CountLines(file string) (int, error) {
+	if file == "" {
+		return 0, ErrEmptyPath
+	}
+
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+
+	if err != nil {
+		return 0, err
+	}
+
+	defer fd.Close()
+
+	// Use 32k buffer
+	buf := make([]byte, _BUFFER_SIZE)
+	count, sep := 0, []byte{'\n'}
+
+	for {
+		c, err := fd.Read(buf)
+
+		if err != nil && err != io.EOF {
+			return 0, err
+		}
+
+		count += bytes.Count(buf[:c], sep)
+
+		if err == io.EOF {
+			break
+		}
+	}
+
+	return count, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
