@@ -215,13 +215,13 @@ func copyFile(from, to string, perms os.FileMode) error {
 		return err
 	}
 
-	err = chmodFunc(to, perms)
+	err = w.Flush()
 
 	if err != nil {
 		return err
 	}
 
-	return w.Flush()
+	return chmodFunc(to, perms)
 }
 
 // copyAttributes copies attributes (mode, ownership, timestamps) from one object
@@ -241,13 +241,13 @@ func copyAttributes(from, to string) error {
 		return fmt.Errorf("error while reading target object mode")
 	}
 
-	fUid, fGid, err := ownerFunc(from)
+	fUID, fGID, err := ownerFunc(from)
 
 	if err != nil {
 		return err
 	}
 
-	tUid, tGid, err := ownerFunc(to)
+	tUID, tGID, err := ownerFunc(to)
 
 	if err != nil {
 		return err
@@ -273,8 +273,8 @@ func copyAttributes(from, to string) error {
 		}
 	}
 
-	if fUid != tUid || fGid != tGid {
-		err = chownFunc(to, fUid, fGid)
+	if fUID != tUID || fGID != tGID {
+		err = chownFunc(to, fUID, fGID)
 
 		if err != nil {
 			return err

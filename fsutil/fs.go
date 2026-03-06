@@ -73,6 +73,7 @@ func CheckPerms(perms, path string) bool {
 	path = PATH.Clean(path)
 	perms = strings.ToUpper(perms)
 
+	var gidList []int
 	var stat = &syscall.Stat_t{}
 
 	err := syscall.Stat(path, stat)
@@ -85,6 +86,10 @@ func CheckPerms(perms, path string) bool {
 
 	if err != nil {
 		return false
+	}
+
+	if strings.ContainsAny(perms, "XWR") {
+		gidList = getGIDList(user)
 	}
 
 	for _, k := range perms {
@@ -116,17 +121,17 @@ func CheckPerms(perms, path string) bool {
 			}
 
 		case 'X':
-			if !isExecutableStat(stat, user.UID, getGIDList(user)) {
+			if !isExecutableStat(stat, user.UID, gidList) {
 				return false
 			}
 
 		case 'W':
-			if !isWritableStat(stat, user.UID, getGIDList(user)) {
+			if !isWritableStat(stat, user.UID, gidList) {
 				return false
 			}
 
 		case 'R':
-			if !isReadableStat(stat, user.UID, getGIDList(user)) {
+			if !isReadableStat(stat, user.UID, gidList) {
 				return false
 			}
 
@@ -268,7 +273,7 @@ func ValidatePerms(perms, path string) error {
 //   - S: not empty (only for files)
 func ProperPath(perms string, paths []string) string {
 	for _, path := range paths {
-		if strings.Trim(path, " ") == "" {
+		if strings.TrimSpace(path) == "" {
 			continue
 		}
 

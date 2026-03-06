@@ -11,6 +11,7 @@ package fsutil
 
 import (
 	PATH "path"
+	"path/filepath"
 	"syscall"
 )
 
@@ -118,10 +119,10 @@ func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []str
 	return readDirRecFiles(dir, "", ignoreHidden, filters[0])
 }
 
-// ListToAbsolute converts slice with relative paths to slice with absolute paths
-func ListToAbsolute(path string, list []string) {
+// ListToAbsolute updates slice with relative paths to slice with absolute paths
+func ListToAbsolute(root string, list []string) {
 	for i, t := range list {
-		list[i] = path + "/" + t
+		list[i] = filepath.Join(root, t)
 	}
 }
 
@@ -184,26 +185,29 @@ func readDirRecAll(path, base string, ignoreHidden bool, filter ListingFilter) [
 			continue
 		}
 
-		if !IsDir(path + "/" + name) {
+		targetPath := filepath.Join(path, name)
+
+		if !IsDir(targetPath) {
 			if base == "" {
-				if isMatch(name, path+"/"+name, filter) {
+				if isMatch(name, targetPath, filter) {
 					result = append(result, name)
 				}
 			} else {
-				if isMatch(name, path+"/"+name, filter) {
-					result = append(result, base+"/"+name)
+				if isMatch(name, targetPath, filter) {
+					result = append(result, filepath.Join(base, name))
 				}
 			}
 		} else {
 			if base == "" {
-				if isMatch(name, path+"/"+name, filter) {
+				if isMatch(name, targetPath, filter) {
 					result = append(result, name)
-					result = append(result, readDirRecAll(path+"/"+name, name, ignoreHidden, filter)...)
+					result = append(result, readDirRecAll(targetPath, name, ignoreHidden, filter)...)
 				}
 			} else {
-				if isMatch(name, path+"/"+name, filter) {
-					result = append(result, base+"/"+name)
-					result = append(result, readDirRecAll(path+"/"+name, base+"/"+name, ignoreHidden, filter)...)
+				if isMatch(name, targetPath, filter) {
+					basePath := filepath.Join(base, name)
+					result = append(result, basePath)
+					result = append(result, readDirRecAll(targetPath, basePath, ignoreHidden, filter)...)
 				}
 			}
 		}
@@ -223,16 +227,19 @@ func readDirRecDirs(path, base string, ignoreHidden bool, filter ListingFilter) 
 			continue
 		}
 
-		if IsDir(path + "/" + name) {
+		targetPath := filepath.Join(path, name)
+
+		if IsDir(targetPath) {
 			if base == "" {
-				if isMatch(name, path+"/"+name, filter) {
+				if isMatch(name, targetPath, filter) {
 					result = append(result, name)
-					result = append(result, readDirRecDirs(path+"/"+name, name, ignoreHidden, filter)...)
+					result = append(result, readDirRecDirs(targetPath, name, ignoreHidden, filter)...)
 				}
 			} else {
-				if isMatch(name, path+"/"+name, filter) {
-					result = append(result, base+"/"+name)
-					result = append(result, readDirRecDirs(path+"/"+name, base+"/"+name, ignoreHidden, filter)...)
+				if isMatch(name, targetPath, filter) {
+					basePath := filepath.Join(base, name)
+					result = append(result, basePath)
+					result = append(result, readDirRecDirs(targetPath, basePath, ignoreHidden, filter)...)
 				}
 			}
 		}
@@ -252,20 +259,22 @@ func readDirRecFiles(path, base string, ignoreHidden bool, filter ListingFilter)
 			continue
 		}
 
-		if IsDir(path + "/" + name) {
+		targetPath := filepath.Join(path, name)
+
+		if IsDir(targetPath) {
 			if base == "" {
-				result = append(result, readDirRecFiles(path+"/"+name, name, ignoreHidden, filter)...)
+				result = append(result, readDirRecFiles(targetPath, name, ignoreHidden, filter)...)
 			} else {
-				result = append(result, readDirRecFiles(path+"/"+name, base+"/"+name, ignoreHidden, filter)...)
+				result = append(result, readDirRecFiles(targetPath, filepath.Join(base, name), ignoreHidden, filter)...)
 			}
 		} else {
 			if base == "" {
-				if isMatch(name, path+"/"+name, filter) {
+				if isMatch(name, targetPath, filter) {
 					result = append(result, name)
 				}
 			} else {
-				if isMatch(name, path+"/"+name, filter) {
-					result = append(result, base+"/"+name)
+				if isMatch(name, targetPath, filter) {
+					result = append(result, filepath.Join(base, name))
 				}
 			}
 		}
@@ -393,7 +402,7 @@ func filterList(names []string, dir string, filter ListingFilter) []string {
 	var filteredNames []string
 
 	for _, name := range names {
-		if isMatch(name, dir+"/"+name, filter) {
+		if isMatch(name, filepath.Join(dir, name), filter) {
 			filteredNames = append(filteredNames, name)
 		}
 	}
