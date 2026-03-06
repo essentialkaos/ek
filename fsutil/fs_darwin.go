@@ -32,7 +32,7 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return time.Time{}, time.Time{}, time.Time{}, fmt.Errorf("Can't get file info for %q: %w", path, err)
+		return time.Time{}, time.Time{}, time.Time{}, fmt.Errorf("can't get file info for %q: %w", path, err)
 	}
 
 	return time.Unix(int64(stat.Atimespec.Sec), int64(stat.Atimespec.Nsec)),
@@ -54,7 +54,7 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return -1, -1, -1, fmt.Errorf("Can't get file info for %q: %w", path, err)
+		return -1, -1, -1, fmt.Errorf("can't get file info for %q: %w", path, err)
 	}
 
 	return int64(stat.Atimespec.Sec),

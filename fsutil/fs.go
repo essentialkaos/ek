@@ -45,9 +45,10 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrEmptyPath can be returned by different methods if given path is empty and can't be
-// used
-var ErrEmptyPath = errors.New("Path is empty")
+var (
+	ErrEmptyPath  = errors.New("path is empty")
+	ErrEmptyPerms = errors.New("permissions is empty")
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -155,9 +156,9 @@ func CheckPerms(perms, path string) bool {
 func ValidatePerms(perms, path string) error {
 	switch {
 	case perms == "":
-		return errors.New("Props is empty")
+		return ErrEmptyPerms
 	case path == "":
-		return errors.New("Path is empty")
+		return ErrEmptyPath
 	}
 
 	path = PATH.Clean(path)
@@ -170,24 +171,24 @@ func ValidatePerms(perms, path string) error {
 	if err != nil {
 		switch {
 		case strings.ContainsRune(perms, 'F'):
-			return fmt.Errorf("File %s doesn't exist or not accessible", path)
+			return fmt.Errorf("file %s doesn't exist or not accessible", path)
 		case strings.ContainsRune(perms, 'D'):
-			return fmt.Errorf("Directory %s doesn't exist or not accessible", path)
+			return fmt.Errorf("directory %s doesn't exist or not accessible", path)
 		case strings.ContainsRune(perms, 'B'):
-			return fmt.Errorf("Block device %s doesn't exist or not accessible", path)
+			return fmt.Errorf("block device %s doesn't exist or not accessible", path)
 		case strings.ContainsRune(perms, 'C'):
-			return fmt.Errorf("Character device %s doesn't exist or not accessible", path)
+			return fmt.Errorf("character device %s doesn't exist or not accessible", path)
 		case strings.ContainsRune(perms, 'L'):
-			return fmt.Errorf("Link %s doesn't exist or not accessible", path)
+			return fmt.Errorf("link %s doesn't exist or not accessible", path)
 		}
 
-		return fmt.Errorf("Object %s doesn't exist or not accessible", path)
+		return fmt.Errorf("object %s doesn't exist or not accessible", path)
 	}
 
 	user, err := getCurrentUser()
 
 	if err != nil {
-		return errors.New("Can't get information about the current user")
+		return errors.New("can't get information about the current user")
 	}
 
 	for _, k := range perms {
@@ -585,7 +586,7 @@ func GetOwner(path string) (int, int, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return -1, -1, fmt.Errorf("Can't get owner info for %q: %w", path, err)
+		return -1, -1, fmt.Errorf("can't get owner info for %q: %w", path, err)
 	}
 
 	return int(stat.Uid), int(stat.Gid), nil
@@ -716,6 +717,10 @@ func getModeOctal(path string) string {
 
 // isReadableStat checks if the object stat info indicates that the object is readable
 func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
+	if stat == nil {
+		return false
+	}
+
 	if uid == 0 {
 		return true
 	}
@@ -739,6 +744,10 @@ func isReadableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 
 // isWritableStat checks if the object stat info indicates that the object is writable
 func isWritableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
+	if stat == nil {
+		return false
+	}
+
 	if uid == 0 {
 		return true
 	}
@@ -762,8 +771,12 @@ func isWritableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
 
 // isExecutableStat checks if the object stat info indicates that the object is executable
 func isExecutableStat(stat *syscall.Stat_t, uid int, gids []int) bool {
+	if stat == nil {
+		return false
+	}
+
 	if uid == 0 {
-		return true
+		return stat.Mode&(_IXUSR|_IXGRP|_IXOTH) != 0
 	}
 
 	if stat.Mode&_IXOTH == _IXOTH {
@@ -801,16 +814,16 @@ func getGIDList(user *system.User) []int {
 // getObjectType returns a string representation of the object type based on its
 // mode bits
 func getObjectType(stat *syscall.Stat_t) string {
-	switch {
-	case stat.Mode&_IFMT == _IFREG:
-		return "File"
-	case stat.Mode&_IFMT == _IFDIR:
-		return "Directory"
-	case stat.Mode&_IFMT != _IFBLK:
-		return "Block device"
-	case stat.Mode&_IFMT != _IFCHR:
-		return "Character device"
+	switch stat.Mode & _IFMT {
+	case _IFREG:
+		return "file"
+	case _IFDIR:
+		return "directory"
+	case _IFBLK:
+		return "block device"
+	case _IFCHR:
+		return "character device"
 	}
 
-	return "Object"
+	return "object"
 }

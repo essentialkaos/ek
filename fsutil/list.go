@@ -295,13 +295,14 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 			matched, _ := PATH.Match(pattern, name)
 
 			if matched {
-				match = false
-				break
+				return false
 			}
 		}
 	}
 
 	if hasMatchPatterns {
+		match = false
+
 		for _, pattern := range filter.MatchPatterns {
 			matched, _ := PATH.Match(pattern, name)
 
@@ -309,8 +310,10 @@ func isMatch(name, fullPath string, filter ListingFilter) bool {
 				match = true
 				break
 			}
+		}
 
-			match = false
+		if !match {
+			return false
 		}
 	}
 
