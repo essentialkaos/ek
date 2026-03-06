@@ -8,6 +8,7 @@
 - **`[csv]`** Added method `WithBufferSize` to set underlying scanner token size
 - **`[env]`** Added method `Env.Has`
 - **`[timeutil]`** Added method `TinyDate.IsZero`
+- **`[support/network]`** Added support of multiple resolvers
 - **`[color]`** Improved relative luminance calculation
 - **`[ansi]`** Removed `Codes` from all methods names
 - **`[ease]`** Fixed `SineIn` and `SineOut` calculation
