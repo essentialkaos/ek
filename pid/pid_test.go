@@ -43,7 +43,7 @@ func (s *PidSuite) TestErrors(c *C) {
 	err := Create("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -61,14 +61,14 @@ func (s *PidSuite) TestErrors(c *C) {
 	err = Create("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory / is not writable")
+	c.Assert(err.Error(), Equals, "directory / is not writable")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	err = Remove("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory / is not writable")
+	c.Assert(err.Error(), Equals, "directory / is not writable")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -110,7 +110,7 @@ func (s *PidSuite) TestErrors(c *C) {
 	err = Create("test.pid")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, fmt.Sprintf("Directory %s is not readable", nonReadableDir))
+	c.Assert(err.Error(), Equals, fmt.Sprintf("directory %s is not readable", nonReadableDir))
 	c.Assert(Get("test.pid"), Equals, -1)
 }
 

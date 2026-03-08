@@ -180,5 +180,5 @@ func (s *CacheSuite) TestConfig(c *C) {
 
 	_, err = New(Config{DefaultExpiration: time.Minute, CleanupInterval: time.Minute, Dir: "_unknown_"})
 
-	c.Assert(err.Error(), Equals, "invalid configuration: can't use given directory for cache: Directory _unknown_ doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "invalid configuration: can't use given directory for cache: directory _unknown_ doesn't exist or not accessible")
 }

@@ -33,11 +33,11 @@ func (s *LockSuite) TestErrors(c *C) {
 
 	err := Create("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	err = Remove("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	c.Assert(IsExpired("test", time.Second), Equals, false)
 }
