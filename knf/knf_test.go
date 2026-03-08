@@ -12,7 +12,6 @@ import (
 	"os"
 	"runtime"
 	"strings"
-	"sync"
 	"testing"
 	"time"
 
@@ -237,7 +236,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(Alias("test:test", "test:test"), check.NotNil)
 	c.Assert(global.Merge(nil), check.NotNil)
 
-	config := &Config{mx: &sync.RWMutex{}}
+	config := &Config{}
 
 	c.Assert(config.GetS("test:test"), check.Equals, "")
 	c.Assert(config.GetI("test:test"), check.Equals, 0)
@@ -269,7 +268,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(err, check.NotNil)
 	c.Assert(err, check.DeepEquals, ErrCantReload)
 
-	config = &Config{file: "/_not_exists_", mx: &sync.RWMutex{}}
+	config = &Config{file: "/_not_exists_"}
 
 	updated, err = config.Reload()
 

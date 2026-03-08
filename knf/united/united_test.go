@@ -68,6 +68,59 @@ func (s *UnitedSuite) SetUpSuite(c *C) {
 	s.config = config
 }
 
+func (s *UnitedSuite) TestGlobalNil(c *C) {
+	global = nil
+
+	l, _ := time.LoadLocation("Asia/Yerevan")
+
+	c.Assert(GetS("string:test100", "fail"), Equals, "fail")
+	c.Assert(GetB("boolean:test100", true), Equals, true)
+	c.Assert(GetI("integer:test100", 9999), Equals, 9999)
+	c.Assert(GetU("integer:test100", 9999), Equals, uint(9999))
+	c.Assert(GetI64("integer:test100", 9999), Equals, int64(9999))
+	c.Assert(GetU64("integer:test100", 9999), Equals, uint64(9999))
+	c.Assert(GetF("integer:test100", 123.45), Equals, 123.45)
+	c.Assert(GetM("file-mode:test100", 0755), Equals, os.FileMode(0755))
+	c.Assert(GetD("duration:test100", SECOND, time.Minute), Equals, time.Minute)
+	c.Assert(GetSZ("size:test100", 1024), Equals, uint64(1024))
+	c.Assert(GetTD("duration:test100", time.Minute), Equals, time.Minute)
+	c.Assert(GetTS("duration:test100", time.Now()).IsZero(), Equals, false)
+	c.Assert(GetTZ("duration:test100", l), Equals, l)
+	c.Assert(GetL("duration:test100", []string{"A", "B"}), DeepEquals, []string{"A", "B"})
+
+	c.Assert(global.GetS("string:test100", "fail"), Equals, "fail")
+	c.Assert(global.GetB("boolean:test100", true), Equals, true)
+	c.Assert(global.GetI("integer:test100", 9999), Equals, 9999)
+	c.Assert(global.GetU("integer:test100", 9999), Equals, uint(9999))
+	c.Assert(global.GetI64("integer:test100", 9999), Equals, int64(9999))
+	c.Assert(global.GetU64("integer:test100", 9999), Equals, uint64(9999))
+	c.Assert(global.GetF("integer:test100", 123.45), Equals, 123.45)
+	c.Assert(global.GetM("file-mode:test100", 0755), Equals, os.FileMode(0755))
+	c.Assert(global.GetD("duration:test100", SECOND, time.Minute), Equals, time.Minute)
+	c.Assert(global.GetSZ("size:test100", 1024), Equals, uint64(1024))
+	c.Assert(global.GetTD("duration:test100", time.Minute), Equals, time.Minute)
+	c.Assert(global.GetTS("duration:test100", time.Now()).IsZero(), Equals, false)
+	c.Assert(global.GetTZ("duration:test100", l), Equals, l)
+	c.Assert(global.GetL("duration:test100", []string{"A", "B"}), DeepEquals, []string{"A", "B"})
+
+	c.Assert(global.GetS("string:test100"), Equals, "")
+	c.Assert(global.GetB("boolean:test100"), Equals, false)
+	c.Assert(global.GetI("integer:test100"), Equals, 0)
+	c.Assert(global.GetU("integer:test100"), Equals, uint(0))
+	c.Assert(global.GetI64("integer:test100"), Equals, int64(0))
+	c.Assert(global.GetU64("integer:test100"), Equals, uint64(0))
+	c.Assert(global.GetF("integer:test100"), Equals, 0.0)
+	c.Assert(global.GetM("file-mode:test100"), Equals, os.FileMode(0))
+	c.Assert(global.GetD("duration:test100", SECOND), Equals, time.Duration(0))
+	c.Assert(global.GetSZ("size:test100"), Equals, uint64(0))
+	c.Assert(global.GetTD("duration:test100"), Equals, time.Duration(0))
+	c.Assert(global.GetTS("duration:test100").IsZero(), Equals, true)
+	c.Assert(global.GetTZ("duration:test100"), IsNil)
+	c.Assert(global.GetL("duration:test100"), IsNil)
+	c.Assert(global.Has("duration:test100"), Equals, false)
+	c.Assert(global.Is("duration:test100", ""), Equals, false)
+}
+
 func (s *UnitedSuite) TestKNFOnly(c *C) {
 	err := Combine(nil)
 

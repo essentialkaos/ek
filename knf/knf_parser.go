@@ -13,7 +13,6 @@ import (
 	"io"
 	"regexp"
 	"strings"
-	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,7 +37,6 @@ var macroRE = regexp.MustCompile(`\{([\w\-]+):([\w\-]+)\}`)
 func readData(r io.Reader) (*Config, error) {
 	config := &Config{
 		data: make(map[string]string),
-		mx:   &sync.RWMutex{},
 	}
 
 	var isDataRead bool

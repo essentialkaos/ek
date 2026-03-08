@@ -90,7 +90,7 @@ type Config struct {
 	aliases  map[string]string
 	file     string
 
-	mx *sync.RWMutex
+	mx sync.RWMutex
 }
 
 // Validator is configuration property validator struct
@@ -120,8 +120,8 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	global   *Config      // global is global configuration file
-	globalMu sync.RWMutex // globalMu is global config mutex
+	global   *Config    // global is global configuration file
+	globalMu sync.Mutex // globalMu is global config mutex
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -452,11 +452,11 @@ func (v Validators) AddIf(cond bool, validators Validators) Validators {
 
 // Merge merges two configurations
 func (c *Config) Merge(cfg *Config) error {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return ErrNilConfig
 	}
 
-	if cfg == nil || cfg.mx == nil {
+	if cfg == nil {
 		return ErrCantMerge
 	}
 
@@ -496,7 +496,7 @@ PROP_LOOP:
 
 // Reload reloads configuration file
 func (c *Config) Reload() (map[string]bool, error) {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return nil, ErrNilConfig
 	}
 
@@ -530,7 +530,7 @@ func (c *Config) Reload() (map[string]bool, error) {
 // It's useful for refactoring the configuration or for providing support for
 // renamed properties
 func (c *Config) Alias(oldProp, newProp string) error {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return ErrNilConfig
 	}
 
@@ -560,7 +560,7 @@ func (c *Config) Alias(oldProp, newProp string) error {
 
 // GetS returns configuration value as string
 func (c *Config) GetS(name string, defvals ...string) string {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return ""
 		}
@@ -583,7 +583,7 @@ func (c *Config) GetS(name string, defvals ...string) string {
 
 // GetI returns configuration value as int
 func (c *Config) GetI(name string, defvals ...int) int {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -596,7 +596,7 @@ func (c *Config) GetI(name string, defvals ...int) int {
 
 // GetI64 returns configuration value as int64
 func (c *Config) GetI64(name string, defvals ...int64) int64 {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -609,7 +609,7 @@ func (c *Config) GetI64(name string, defvals ...int64) int64 {
 
 // GetU returns configuration value as uint
 func (c *Config) GetU(name string, defvals ...uint) uint {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -622,7 +622,7 @@ func (c *Config) GetU(name string, defvals ...uint) uint {
 
 // GetU64 returns configuration value as uint64
 func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -635,7 +635,7 @@ func (c *Config) GetU64(name string, defvals ...uint64) uint64 {
 
 // GetF returns configuration value as floating number
 func (c *Config) GetF(name string, defvals ...float64) float64 {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0.0
 		}
@@ -648,7 +648,7 @@ func (c *Config) GetF(name string, defvals ...float64) float64 {
 
 // GetB returns configuration value as boolean
 func (c *Config) GetB(name string, defvals ...bool) bool {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return false
 		}
@@ -661,7 +661,7 @@ func (c *Config) GetB(name string, defvals ...bool) bool {
 
 // GetM returns configuration value as file mode
 func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return os.FileMode(0)
 		}
@@ -674,7 +674,7 @@ func (c *Config) GetM(name string, defvals ...os.FileMode) os.FileMode {
 
 // GetD returns configuration value as duration
 func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -687,7 +687,7 @@ func (c *Config) GetD(name string, mod DurationMod, defvals ...time.Duration) ti
 
 // GetSZ returns configuration value as a size in bytes
 func (c *Config) GetSZ(name string, defvals ...uint64) uint64 {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -700,7 +700,7 @@ func (c *Config) GetSZ(name string, defvals ...uint64) uint64 {
 
 // GetTD returns configuration value as time duration (s/m/h/d/w)
 func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -713,7 +713,7 @@ func (c *Config) GetTD(name string, defvals ...time.Duration) time.Duration {
 
 // GetTS returns configuration timestamp value as time
 func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return time.Time{}
 		}
@@ -726,7 +726,7 @@ func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
 
 // GetTZ returns configuration value as timezone
 func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -739,7 +739,7 @@ func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
 
 // GetL returns configuration value as list
 func (c *Config) GetL(name string, defvals ...[]string) []string {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -752,7 +752,7 @@ func (c *Config) GetL(name string, defvals ...[]string) []string {
 
 // Is checks if given property contains given value
 func (c *Config) Is(name string, value any) bool {
-	if c == nil || c.mx == nil || !isValidPropName(name) {
+	if c == nil || !isValidPropName(name) {
 		return false
 	}
 
@@ -788,7 +788,7 @@ func (c *Config) Is(name string, value any) bool {
 
 // HasSection checks if section exists
 func (c *Config) HasSection(section string) bool {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return false
 	}
 
@@ -803,7 +803,7 @@ func (c *Config) HasSection(section string) bool {
 
 // Has checks if property is defined and set
 func (c *Config) Has(name string) bool {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return false
 	}
 
@@ -812,7 +812,7 @@ func (c *Config) Has(name string) bool {
 
 // Sections returns slice with section names
 func (c *Config) Sections() []string {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return nil
 	}
 
@@ -851,7 +851,7 @@ func (c *Config) Props(section string) []string {
 
 // File returns path to configuration file
 func (c *Config) File() string {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return ""
 	}
 
@@ -861,7 +861,7 @@ func (c *Config) File() string {
 // Validate executes all given validators and
 // returns slice with validation errors
 func (c *Config) Validate(validators Validators) errors.Errors {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return errors.Errors{ErrNilConfig}
 	}
 
@@ -885,7 +885,7 @@ func (c *Config) Validate(validators Validators) errors.Errors {
 
 // getValue returns property value from the storage
 func (c *Config) getValue(propName string) string {
-	if c == nil || c.mx == nil {
+	if c == nil {
 		return ""
 	}
 
