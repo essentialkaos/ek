@@ -19,6 +19,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// MIN_DIRENT_SIZE is the minimum ReadDirent byte count indicating a non-empty
+// directory on Linux (covers the '.' and '..' entries at 32 bytes each).
+const MIN_DIRENT_SIZE = 0x40
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // GetTimes returns time of access, modification, and creation at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
@@ -67,5 +73,5 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 
 // isEmptyDirent checks if the dirent shows that the directory is empty
 func isEmptyDirent(n int) bool {
-	return n <= 0x40
+	return n <= MIN_DIRENT_SIZE
 }

@@ -130,7 +130,7 @@ func ListToAbsolute(root string, list []string) {
 
 // readDir reads directory and returns slice with names of files and directories
 func readDir(dir string) []string {
-	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0644)
+	fd, err := syscall.Open(dir, syscall.O_CLOEXEC, 0)
 
 	if err != nil {
 		return nil
