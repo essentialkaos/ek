@@ -19,6 +19,7 @@
 - **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
+- **`[httputil]`** Method `GetDescByCode` marked as deprecated
 - **`[ansi]`** Code refactoring
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
