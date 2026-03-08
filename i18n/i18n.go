@@ -1,4 +1,4 @@
-// Package i18n provides provides methods and structs for internationalization
+// Package i18n provides methods and structs for internationalization
 package i18n
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,16 +38,16 @@ type Data map[string]any
 
 var (
 	// ErrNilBundle is returned when one or more provided bundles is nil
-	ErrNilBundle = errors.New("One or more provided bundles is nil")
+	ErrNilBundle = errors.New("one or more provided bundles is nil")
 
 	// ErrNilWriter is returned when given writes is nil
-	ErrNilWriter = errors.New("Target writer is nil")
+	ErrNilWriter = errors.New("target writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Fallback copies values between bundles to use it as a fallback
-func Fallback(bundles ...any) (any, error) {
+func Fallback[T any](bundles ...*T) (*T, error) {
 	switch {
 	case len(bundles) == 0,
 		len(bundles) == 1 && bundles[0] == nil:
@@ -77,11 +77,6 @@ func Fallback(bundles ...any) (any, error) {
 
 		if bundleType == "" {
 			bundleType = bv.Type().Name()
-		} else if bundleType != bv.Type().Name() {
-			return nil, fmt.Errorf(
-				"Given bundles have different types (%s, %s)",
-				bundleType, bv.Type().Name(),
-			)
 		}
 	}
 
@@ -138,14 +133,14 @@ func (t Text) Write(wr io.Writer, data any, extra ...string) error {
 
 	if err != nil {
 		writeWithExtra(wr, t, extra...)
-		return fmt.Errorf("Can't parse template: %w", err)
+		return fmt.Errorf("can't parse template: %w", err)
 	}
 
 	err = tt.Execute(wr, data)
 
 	if err != nil {
 		writeWithExtra(wr, t, extra...)
-		return fmt.Errorf("Can't apply template: %w", err)
+		return fmt.Errorf("can't apply template: %w", err)
 	}
 
 	if len(extra) > 1 {
@@ -271,10 +266,10 @@ func (d Data) PrettySize(prop string) string {
 		return UNKNOWN_VALUE
 	}
 
-	return fmt.Sprintf("%s", d[prop])
+	return fmt.Sprintf("%v", d[prop])
 }
 
-// PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
+// PrettyPerc formats a float64 value as a percentage string (e.g. 45.31 -> "45.3%")
 //
 // Note that this method only supports float64
 func (d Data) PrettyPerc(prop string) string {
@@ -305,6 +300,10 @@ func writeWithExtra(wr io.Writer, t Text, extra ...string) {
 
 // copyFieldsData copy fields data between bundles
 func copyFieldsData(bundles []reflect.Value) {
+	if len(bundles) == 0 {
+		return
+	}
+
 	for i := range bundles[0].NumField() {
 		f := bundles[0].Field(i)
 		s := f.Type().String()
@@ -314,12 +313,11 @@ func copyFieldsData(bundles []reflect.Value) {
 		}
 
 		if s == "i18n.Text" {
-		DEFLOOP:
 			for j := 1; j < len(bundles); j++ {
 				jf := bundles[j].Field(i)
 				if !jf.IsZero() {
 					f.SetString(jf.String())
-					break DEFLOOP
+					break
 				}
 			}
 
