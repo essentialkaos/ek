@@ -35,8 +35,9 @@
 - **`[fmtutil]`** Code refactoring
 - **`[hashutil]`** Code refactoring
 - **`[httputil]`** Code refactoring
-- **`[jsonutil]`** Code refactoring
 - **`[i18n]`** Code refactoring
+- **`[jsonutil]`** Code refactoring
+- **`[knf]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
 

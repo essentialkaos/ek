@@ -73,7 +73,7 @@ type IConfig interface {
 	// GetTS returns configuration timestamp value as time
 	GetTS(name string, defvals ...time.Time) time.Time
 
-	// GetTS returns configuration value as timezone
+	// GetTZ returns configuration value as timezone
 	GetTZ(name string, defvals ...*time.Location) *time.Location
 
 	// GetL returns configuration value as list
@@ -112,15 +112,17 @@ type DurationMod int64
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrNilConfig  = errors.New("Configuration is nil")
-	ErrCantReload = errors.New("Can't reload configuration file: path to file is empty")
-	ErrCantMerge  = errors.New("Can't merge configurations: given configuration is nil")
+	ErrNilConfig  = errors.New("configuration is nil")
+	ErrCantReload = errors.New("can't reload configuration file: path to file is empty")
+	ErrCantMerge  = errors.New("can't merge configurations: given configuration is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// global is global configuration file
-var global *Config
+var (
+	global   *Config      // global is global configuration file
+	globalMu sync.RWMutex // globalMu is global config mutex
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -133,7 +135,9 @@ func Global(file string) error {
 		return err
 	}
 
+	globalMu.Lock()
 	global = config
+	globalMu.Unlock()
 
 	return nil
 }
@@ -177,12 +181,12 @@ func Reload() (map[string]bool, error) {
 //
 // It's useful for refactoring the configuration or for providing support for
 // renamed properties
-func Alias(old, new string) error {
+func Alias(oldProp, newProp string) error {
 	if global == nil {
 		return ErrNilConfig
 	}
 
-	return global.Alias(old, new)
+	return global.Alias(oldProp, newProp)
 }
 
 // GetS returns configuration value as string
@@ -341,7 +345,7 @@ func GetTS(name string, defvals ...time.Time) time.Time {
 	return global.GetTS(name, defvals...)
 }
 
-// GetTS returns configuration value as timezone
+// GetTZ returns configuration value as timezone
 func GetTZ(name string, defvals ...*time.Location) *time.Location {
 	if global == nil {
 		if len(defvals) == 0 {
@@ -456,6 +460,11 @@ func (c *Config) Merge(cfg *Config) error {
 		return ErrCantMerge
 	}
 
+	cfg.mx.RLock()
+	defer cfg.mx.RUnlock()
+	c.mx.Lock()
+	defer c.mx.Unlock()
+
 	for k, v := range cfg.data {
 		c.data[k] = v
 	}
@@ -503,19 +512,16 @@ func (c *Config) Reload() (map[string]bool, error) {
 
 	changes := make(map[string]bool)
 
-	c.mx.RLock()
+	c.mx.Lock()
+	defer c.mx.Unlock()
 
 	for _, prop := range c.props {
-		changes[prop] = c.GetS(prop) != nc.GetS(prop)
+		changes[prop] = c.data[prop] != nc.data[prop]
 	}
-
-	c.mx.RUnlock()
-	c.mx.Lock()
 
 	// Update current config data
 	c.data, c.sections, c.props = nc.data, nc.sections, nc.props
 
-	c.mx.Unlock()
 	return changes, nil
 }
 
@@ -523,20 +529,20 @@ func (c *Config) Reload() (map[string]bool, error) {
 //
 // It's useful for refactoring the configuration or for providing support for
 // renamed properties
-func (c *Config) Alias(old, new string) error {
+func (c *Config) Alias(oldProp, newProp string) error {
 	if c == nil || c.mx == nil {
 		return ErrNilConfig
 	}
 
 	switch {
-	case old == "":
-		return fmt.Errorf("Old property name is empty")
-	case new == "":
-		return fmt.Errorf("New property name is empty")
-	case !isValidPropName(old):
-		return fmt.Errorf("Old property name (%q) is invalid", old)
-	case !isValidPropName(new):
-		return fmt.Errorf("New property name (%q) is invalid", new)
+	case oldProp == "":
+		return fmt.Errorf("old property name is empty")
+	case newProp == "":
+		return fmt.Errorf("new property name is empty")
+	case !isValidPropName(oldProp):
+		return fmt.Errorf("old property name (%q) is invalid", oldProp)
+	case !isValidPropName(newProp):
+		return fmt.Errorf("new property name (%q) is invalid", newProp)
 	}
 
 	c.mx.Lock()
@@ -545,7 +551,7 @@ func (c *Config) Alias(old, new string) error {
 		c.aliases = make(map[string]string)
 	}
 
-	c.aliases[strings.ToLower(new)] = strings.ToLower(old)
+	c.aliases[strings.ToLower(newProp)] = strings.ToLower(oldProp)
 
 	c.mx.Unlock()
 
@@ -718,7 +724,7 @@ func (c *Config) GetTS(name string, defvals ...time.Time) time.Time {
 	return value.ParseTimestamp(c.getValue(name), defvals...)
 }
 
-// GetTS returns configuration value as timezone
+// GetTZ returns configuration value as timezone
 func (c *Config) GetTZ(name string, defvals ...*time.Location) *time.Location {
 	if c == nil || c.mx == nil || !isValidPropName(name) {
 		if len(defvals) == 0 {
@@ -824,22 +830,21 @@ func (c *Config) Props(section string) []string {
 
 	var result []string
 
-	// Section name + delimiter
-	snLength := len(section) + 1
+	prefix := strings.ToLower(section) + _SYMBOL_DELIMITER
+	prefixLen := len(prefix)
 
 	c.mx.RLock()
+	defer c.mx.RUnlock()
 
 	for _, prop := range c.props {
-		if len(prop) <= snLength {
+		if len(prop) <= prefixLen {
 			continue
 		}
 
-		if prop[:snLength] == section+_SYMBOL_DELIMITER {
-			result = append(result, prop[snLength:])
+		if strings.HasPrefix(prop, prefix) {
+			result = append(result, prop[prefixLen:])
 		}
 	}
-
-	defer c.mx.RUnlock()
 
 	return result
 }
@@ -863,6 +868,7 @@ func (c *Config) Validate(validators Validators) errors.Errors {
 	var errs errors.Errors
 
 	c.mx.RLock()
+	defer c.mx.RUnlock()
 
 	for _, v := range validators {
 		err := v.Func(c, v.Property, v.Value)
@@ -871,8 +877,6 @@ func (c *Config) Validate(validators Validators) errors.Errors {
 			errs = append(errs, err)
 		}
 	}
-
-	defer c.mx.RUnlock()
 
 	return errs
 }

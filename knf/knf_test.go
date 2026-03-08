@@ -196,7 +196,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 
 	err = Global(s.EmptyConfigPath)
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.ErrorMatches, `Configuration file doesn't contain any valid data`)
+	c.Assert(err, check.ErrorMatches, `configuration file doesn't contain any valid data`)
 
 	err = Global(s.NonReadableConfigPath)
 	c.Assert(err, check.NotNil)
@@ -205,7 +205,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	err = Global(s.MalformedConfigPath)
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err.Error(), check.Equals, "Error at line 2: Data defined before section")
+	c.Assert(err.Error(), check.Equals, "error at line 2: data defined before section")
 
 	updated, err := Reload()
 
@@ -727,7 +727,7 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 	`)
 
 	_, err := readData(r)
-	c.Assert(err.Error(), check.Equals, `Error at line 3: Property must have ":" as a delimiter`)
+	c.Assert(err.Error(), check.Equals, `error at line 3: property must have ":" as a delimiter`)
 
 	r = strings.NewReader(`
 		[section]
@@ -736,7 +736,7 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 	`)
 
 	_, err = readData(r)
-	c.Assert(err.Error(), check.Equals, `Error at line 4: Property "A" defined more than once`)
+	c.Assert(err.Error(), check.Equals, `error at line 4: property "A" defined more than once`)
 
 	r = strings.NewReader(`
 		[section]
@@ -744,7 +744,7 @@ func (s *KNFSuite) TestKNFParserExceptions(c *check.C) {
 	`)
 
 	_, err = readData(r)
-	c.Assert(err.Error(), check.Equals, "Error at line 3: Unknown property {abcd:test}")
+	c.Assert(err.Error(), check.Equals, "error at line 3: unknown property {abcd:test}")
 }
 
 func (s *KNFSuite) TestHelpers(c *check.C) {

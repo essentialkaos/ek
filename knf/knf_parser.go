@@ -21,7 +21,7 @@ import (
 const (
 	_SYMBOL_COMMENT       = "#"
 	_SYMBOL_SECTION_START = "["
-	_SYMBOL_SECTION_END   = "["
+	_SYMBOL_SECTION_END   = "]"
 	_SYMBOL_DELIMITER     = ":"
 	_SYMBOL_MACRO_START   = "{"
 	_SYMBOL_MACRO_END     = "}"
@@ -58,27 +58,27 @@ func readData(r io.Reader) (*Config, error) {
 		isDataRead = true
 
 		if strings.HasPrefix(line, _SYMBOL_SECTION_START) &&
-			strings.HasPrefix(line, _SYMBOL_SECTION_END) {
-			section = strings.Trim(line, "[]")
+			strings.HasSuffix(line, _SYMBOL_SECTION_END) {
+			section = line[1 : len(line)-1]
 			config.data[strings.ToLower(section)] = "!"
 			config.sections = append(config.sections, section)
 			continue
 		}
 
 		if section == "" {
-			return nil, fmt.Errorf("Error at line %d: Data defined before section", lineNum)
+			return nil, fmt.Errorf("error at line %d: data defined before section", lineNum)
 		}
 
 		propName, propValue, err := parseProperty(line, config)
 
 		if err != nil {
-			return nil, fmt.Errorf("Error at line %d: %w", lineNum, err)
+			return nil, fmt.Errorf("error at line %d: %w", lineNum, err)
 		}
 
 		fullPropName := Q(section, propName)
 
 		if config.Has(fullPropName) {
-			return nil, fmt.Errorf("Error at line %d: Property %q defined more than once", lineNum, propName)
+			return nil, fmt.Errorf("error at line %d: property %q defined more than once", lineNum, propName)
 		}
 
 		config.props = append(config.props, fullPropName)
@@ -86,7 +86,7 @@ func readData(r io.Reader) (*Config, error) {
 	}
 
 	if !isDataRead {
-		return nil, fmt.Errorf("Configuration file doesn't contain any valid data")
+		return nil, fmt.Errorf("configuration file doesn't contain any valid data")
 	}
 
 	return config, scanner.Err()
@@ -97,7 +97,7 @@ func parseProperty(line string, config *Config) (string, string, error) {
 	name, value, ok := strings.Cut(line, _SYMBOL_DELIMITER)
 
 	if !ok {
-		return "", "", fmt.Errorf("Property must have %q as a delimiter", _SYMBOL_DELIMITER)
+		return "", "", fmt.Errorf("property must have %q as a delimiter", _SYMBOL_DELIMITER)
 	}
 
 	name = strings.Trim(name, " \t")
@@ -124,12 +124,12 @@ func evalMacros(value string, config *Config) (string, error) {
 
 	for _, macro := range macros {
 		full, section, prop := macro[0], macro[1], macro[2]
+		propVal, exists := config.data[Q(section, prop)]
 
-		if !config.Has(Q(section, prop)) {
-			return "", fmt.Errorf("Unknown property %s", full)
+		if !exists {
+			return "", fmt.Errorf("unknown property %s", full)
 		}
 
-		propVal := config.GetS(Q(section, prop))
 		value = strings.ReplaceAll(value, full, propVal)
 	}
 
