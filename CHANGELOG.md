@@ -10,6 +10,7 @@
 - **`[timeutil]`** Added method `TinyDate.IsZero`
 - **`[support/network]`** Added support of multiple resolvers
 - **`[hashutil]`** Added method `Hash.EqualConstantTime`
+- **`[jsonutil]`** Added methods to set/get GZip compression level
 - **`[color]`** Improved relative luminance calculation
 - **`[ansi]`** Removed `Codes` from all methods names
 - **`[ease]`** Fixed `SineIn` and `SineOut` calculation
@@ -34,6 +35,7 @@
 - **`[fmtutil]`** Code refactoring
 - **`[hashutil]`** Code refactoring
 - **`[httputil]`** Code refactoring
+- **`[jsonutil]`** Code refactoring
 - **`[i18n]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
