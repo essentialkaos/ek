@@ -137,6 +137,19 @@ func ExampleHash_EqualString() {
 	// h1 == h2: true
 }
 
+func ExampleHash_EqualConstantTime() {
+	h1 := String("Test1234!", sha256.New())
+	h2 := String("Test1234!", sha256.New())
+	h3 := String("1234!Test", sha256.New())
+
+	fmt.Printf("h1 == h2: %t\n", h1.EqualConstantTime(h2))
+	fmt.Printf("h2 == h3: %t\n", h2.EqualConstantTime(h3))
+
+	// Output:
+	// h1 == h2: true
+	// h2 == h3: false
+}
+
 func ExampleHash_IsEmpty() {
 	h := String("Test1234!", sha256.New())
 
