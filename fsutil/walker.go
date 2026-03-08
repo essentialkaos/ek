@@ -24,6 +24,7 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Push changes current working directory and add previous working directory to stack
+// best-effort; failure yields empty string
 func Push(dir string) string {
 	dirStackMu.Lock()
 	defer dirStackMu.Unlock()
@@ -49,6 +50,7 @@ func Push(dir string) string {
 }
 
 // Pop changes current working directory to previous in stack
+// best-effort; failure yields empty string
 func Pop() string {
 	dirStackMu.Lock()
 	defer dirStackMu.Unlock()
