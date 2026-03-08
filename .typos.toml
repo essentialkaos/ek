@@ -1,5 +1,5 @@
 [files]
-extend-exclude = ["go.sum"]
+extend-exclude = ["go.sum", "CHANGELOG.md"]
 
 [default.extend-identifiers]
 Childs = "Childs"

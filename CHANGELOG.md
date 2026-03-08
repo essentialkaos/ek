@@ -2463,7 +2463,7 @@
 
 ### [7.3.0](https://kaos.sh/ek/7.3.0)
 
-- **`[sortutil]`** Added methods `NaturalLess` and `StringsNatual` for natural ordering
+- **`[sortutil]`** Added methods `NatualLess` and `StringsNatual` for natural ordering
 - **`[jsonutil]`** Added optional argument to `EncodeToFile` method with file permissions (0644 by default)
 - **`[jsonutil]`** Code refactoring
 - **`[jsonutil]`** Improved tests
