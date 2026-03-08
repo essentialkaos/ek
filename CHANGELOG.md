@@ -31,6 +31,8 @@
 - **`[events]`** Code refactoring
 - **`[fmtc]`** Code refactoring
 - **`[fmtutil]`** Code refactoring
+- **`[hashutil]`** Code refactoring
+- **`[httputil]`** Code refactoring
 - **`[log]`** Code refactoring
 - **`[req]`** Code refactoring
 
