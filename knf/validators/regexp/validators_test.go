@@ -64,10 +64,10 @@ func (s *ValidatorSuite) TestRegexpValidator(c *check.C) {
 	})
 
 	c.Assert(errs, check.HasLen, 4)
-	c.Assert(errs[0].Error(), check.Equals, `Property regexp:test2 must match regexp pattern "^[A-Z0-9]{4}$"`)
-	c.Assert(errs[1].Error(), check.Equals, "Invalid input for regexp.Regexp validator: error parsing regexp: trailing backslash at end of expression: ``")
-	c.Assert(errs[2].Error(), check.Equals, "Validator regexp.Regexp requires non-empty input for checking regexp:test2 property")
-	c.Assert(errs[3].Error(), check.Equals, "Validator regexp.Regexp doesn't support input with type <int> for checking regexp:test2 property")
+	c.Assert(errs[0].Error(), check.Equals, `property regexp:test2 must match regexp pattern "^[A-Z0-9]{4}$"`)
+	c.Assert(errs[1].Error(), check.Equals, "invalid input for regexp.Regexp validator: error parsing regexp: trailing backslash at end of expression: ``")
+	c.Assert(errs[2].Error(), check.Equals, "validator regexp.Regexp requires non-empty input for checking regexp:test2 property")
+	c.Assert(errs[3].Error(), check.Equals, "validator regexp.Regexp doesn't support input with type <int> for checking regexp:test2 property")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

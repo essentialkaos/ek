@@ -1,4 +1,4 @@
-// Package regexp provides KNF validators for cron expressions
+// Package cron provides KNF validators for cron expressions
 package cron
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,7 +36,7 @@ func validateCronExpression(config knf.IConfig, prop string, value any) error {
 	_, err := cron.Parse(v)
 
 	if err != nil {
-		return fmt.Errorf("Property %s contains invalid cron expression: %w", prop, err)
+		return fmt.Errorf("property %s contains invalid cron expression: %w", prop, err)
 	}
 
 	return nil

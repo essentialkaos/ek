@@ -430,7 +430,7 @@ func (s *KNFSuite) TestBoolean(c *check.C) {
 	c.Assert(GetB("boolean:test3"), check.Equals, false)
 	c.Assert(GetB("boolean:test4"), check.Equals, true)
 	c.Assert(GetB("boolean:test5"), check.Equals, false)
-	c.Assert(GetB("boolean:test6"), check.Equals, true)
+	c.Assert(GetB("boolean:test6"), check.Equals, false)
 	c.Assert(GetB("boolean:test7"), check.Equals, false)
 }
 

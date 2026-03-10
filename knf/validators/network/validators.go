@@ -11,8 +11,9 @@ package network
 import (
 	"fmt"
 	"net"
+	"net/mail"
 	"net/url"
-	"strings"
+	"strconv"
 
 	"github.com/essentialkaos/ek/v13/knf"
 )
@@ -70,9 +71,9 @@ func validatePort(config knf.IConfig, prop string, value any) error {
 		return nil
 	}
 
-	portInt := config.GetI(prop)
+	portInt, err := strconv.Atoi(config.GetS(prop))
 
-	if portInt == 0 || portInt > 65535 {
+	if err != nil || portInt < 0 || portInt > 65535 {
 		return fmt.Errorf("%q is not a valid port number", v)
 	}
 
@@ -138,7 +139,9 @@ func validateMail(config knf.IConfig, prop string, value any) error {
 		return nil
 	}
 
-	if !strings.ContainsRune(v, '@') || !strings.ContainsRune(v, '.') {
+	_, err := mail.ParseAddress(v)
+
+	if err != nil {
 		return fmt.Errorf("%q is not a valid email address", v)
 	}
 
@@ -157,7 +160,7 @@ func validateHasIP(config knf.IConfig, prop string, value any) error {
 	interfaces, err := net.Interfaces()
 
 	if err != nil {
-		return fmt.Errorf("Can't get interfaces info for check: %v", err)
+		return fmt.Errorf("can't get interfaces info for check: %v", err)
 	}
 
 	for _, i := range interfaces {
@@ -168,11 +171,22 @@ func validateHasIP(config knf.IConfig, prop string, value any) error {
 		}
 
 		for _, a := range addr {
-			if v == a.(*net.IPNet).IP.String() {
+			var ip net.IP
+
+			switch v := a.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			default:
+				continue
+			}
+
+			if v == ip.String() {
 				return nil
 			}
 		}
 	}
 
-	return fmt.Errorf("The system does not have an interface with the address %q", v)
+	return fmt.Errorf("the system does not have an interface with the address %q", v)
 }
