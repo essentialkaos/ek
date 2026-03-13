@@ -100,15 +100,6 @@ func getMacOSArch(archInfo string) string {
 	return "unknown"
 }
 
-// getArchName returns name for given arch
-func getArchName(arch string) string {
-	if arch == "x86_64" {
-		return "amd64"
-	}
-
-	return arch
-}
-
 // getSystemID returns unique system ID
 func getSystemID() string {
 	ioData, err := exec.Command("ioreg", "-rd1", "-c", "IOPlatformExpertDevice").Output()

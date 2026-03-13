@@ -129,22 +129,6 @@ func applyOSInfo(info *OSInfo, name, value string) {
 	}
 }
 
-// getArchName returns name for given arch
-func getArchName(arch string) string {
-	switch arch {
-	case "i386":
-		return "386"
-	case "i586":
-		return "586"
-	case "i686":
-		return "686"
-	case "x86_64":
-		return "amd64"
-	}
-
-	return arch
-}
-
 // getSystemID returns unique system ID
 func getSystemID() string {
 	id, err := os.ReadFile(machineIDFile)

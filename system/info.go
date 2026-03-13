@@ -226,6 +226,22 @@ func parseSize(v string) (uint64, error) {
 	return size * 1024, nil
 }
 
+// getArchName returns name for given arch
+func getArchName(arch string) string {
+	switch arch {
+	case "i386":
+		return "386"
+	case "i586":
+		return "586"
+	case "i686":
+		return "686"
+	case "x86_64":
+		return "amd64"
+	}
+
+	return arch
+}
+
 // isValidANSIColor validates ansi color code
 func isValidANSIColor(color string) bool {
 	return color != "" && strings.Trim(color, "0123456789;") == ""
