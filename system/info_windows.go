@@ -46,7 +46,7 @@ func GetOSInfo() (*OSInfo, error) {
 		ID:         "win",
 		Version:    version,
 		ANSIColor:  "36",
-		PlatformID: "paltform:win",
+		PlatformID: "platform:win",
 	}
 
 	switch versionInfo.BuildNumber {
