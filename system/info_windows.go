@@ -45,7 +45,7 @@ func GetOSInfo() (*OSInfo, error) {
 		Name:       "Windows",
 		ID:         "win",
 		Version:    version,
-		ANSIColor:  "\033[36m",
+		ANSIColor:  "36",
 		PlatformID: "paltform:win",
 	}
 
