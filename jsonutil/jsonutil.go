@@ -82,14 +82,14 @@ func readFile(file string, v any, compress bool) error {
 }
 
 // readData reads and decode JSON data from io.ReadWriter
-func readData(rw io.ReadWriter, v any, compress bool) error {
+func readData(r io.Reader, v any, compress bool) error {
 	var err error
 	var dr io.Reader
 
-	r := bufio.NewReader(rw)
+	rr := bufio.NewReader(r)
 
 	if compress {
-		dr, err = gzip.NewReader(r)
+		dr, err = gzip.NewReader(rr)
 
 		if err != nil {
 			return err
@@ -97,7 +97,7 @@ func readData(rw io.ReadWriter, v any, compress bool) error {
 
 		defer dr.(*gzip.Reader).Close()
 	} else {
-		dr = r
+		dr = rr
 	}
 
 	return json.NewDecoder(dr).Decode(v)
@@ -127,23 +127,27 @@ func writeFile(file string, v any, perms []os.FileMode, compressed bool) error {
 }
 
 // writeData encodes data to JSON and writes it to io.ReadWriter
-func writeData(rw io.ReadWriter, v any, compressed bool) error {
+func writeData(w io.Writer, v any, compressed bool) error {
 	var err error
 	var je *json.Encoder
 	var gw *gzip.Writer
 
-	w := bufio.NewWriter(rw)
+	ww := bufio.NewWriter(w)
+
+	defer ww.Flush()
 
 	if compressed {
-		gw, err = gzip.NewWriterLevel(w, gzipLevel)
+		gw, err = gzip.NewWriterLevel(ww, gzipLevel)
 
 		if err != nil {
 			return err
 		}
 
 		je = json.NewEncoder(gw)
+
+		defer gw.Close()
 	} else {
-		je = json.NewEncoder(w)
+		je = json.NewEncoder(ww)
 	}
 
 	je.SetIndent("", "  ")
@@ -162,5 +166,5 @@ func writeData(rw io.ReadWriter, v any, compressed bool) error {
 		}
 	}
 
-	return w.Flush()
+	return ww.Flush()
 }
