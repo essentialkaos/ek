@@ -14,6 +14,8 @@ func ExampleConnect() {
 		panic(err.Error())
 	}
 
+	defer Disconnect()
+
 	Status("Loading data %d%%", 50)
 	Ready()
 }
