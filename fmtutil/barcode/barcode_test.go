@@ -27,15 +27,15 @@ var _ = Suite(&BarcodeSuite{})
 
 func (s *BarcodeSuite) TestDots(c *C) {
 	c.Assert(Dots([]byte("")), Equals, "\x1b[38;5;1m⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒\x1b[0m")
-	c.Assert(Dots([]byte("Test1234!")), Equals, "\x1b[38;5;1m⠮\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;6m⠳\x1b[0m\x1b[38;5;14m⠌\x1b[0m\x1b[38;5;11m⠕\x1b[0m\x1b[38;5;1m⠮\x1b[0m\x1b[38;5;2m⠉\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;4m⠤\x1b[0m\x1b[38;5;12m⠢\x1b[0m\x1b[38;5;14m⠌\x1b[0m\x1b[38;5;9m⠪\x1b[0m\x1b[38;5;2m⠉\x1b[0m\x1b[38;5;6m⠳\x1b[0m\x1b[38;5;14m⠌\x1b[0m\x1b[38;5;9m⠪\x1b[0m")
+	c.Assert(Dots([]byte("Test1234!")), Equals, "\x1b[38;5;1m⠮⠮\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;4m⠤\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;1m⠮⠮\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;1m⠮\x1b[0m\x1b[38;5;4m⠤\x1b[0m\x1b[38;5;2m⠉\x1b[0m\x1b[38;5;3m⠒\x1b[0m\x1b[38;5;1m⠮\x1b[0m\x1b[38;5;2m⠉⠉\x1b[0m\x1b[38;5;3m⠒\x1b[0m")
 }
 
 func (s *BarcodeSuite) TestLines(c *C) {
 	c.Assert(Lines([]byte("")), Equals, "\x1b[38;5;1m╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬\x1b[0m")
-	c.Assert(Lines([]byte("Test1234!")), Equals, "\x1b[38;5;1m╬\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;6m╤\x1b[0m\x1b[38;5;14m╛\x1b[0m\x1b[38;5;11m╠\x1b[0m\x1b[38;5;1m╬\x1b[0m\x1b[38;5;2m╪\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;4m╧\x1b[0m\x1b[38;5;12m╘\x1b[0m\x1b[38;5;14m╛\x1b[0m\x1b[38;5;9m╣\x1b[0m\x1b[38;5;2m╪\x1b[0m\x1b[38;5;6m╤\x1b[0m\x1b[38;5;14m╛\x1b[0m\x1b[38;5;9m╣\x1b[0m")
+	c.Assert(Lines([]byte("Test1234!")), Equals, "\x1b[38;5;1m╬╬\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;4m╧\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;1m╬╬\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;1m╬\x1b[0m\x1b[38;5;4m╧\x1b[0m\x1b[38;5;2m╪\x1b[0m\x1b[38;5;3m╩\x1b[0m\x1b[38;5;1m╬\x1b[0m\x1b[38;5;2m╪╪\x1b[0m\x1b[38;5;3m╩\x1b[0m")
 }
 
 func (s *BarcodeSuite) TestBoxes(c *C) {
 	c.Assert(Boxes([]byte("")), Equals, "\x1b[38;5;1m████████████████\x1b[0m")
-	c.Assert(Boxes([]byte("Test1234!")), Equals, "\x1b[38;5;1m▁\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;6m▆\x1b[0m\x1b[38;5;14m▅\x1b[0m\x1b[38;5;11m█\x1b[0m\x1b[38;5;1m▁\x1b[0m\x1b[38;5;2m▂\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;4m▄\x1b[0m\x1b[38;5;12m▃\x1b[0m\x1b[38;5;14m▅\x1b[0m\x1b[38;5;9m▇\x1b[0m\x1b[38;5;2m▂\x1b[0m\x1b[38;5;6m▆\x1b[0m\x1b[38;5;14m▅\x1b[0m\x1b[38;5;9m▇\x1b[0m")
+	c.Assert(Boxes([]byte("Test1234!")), Equals, "\x1b[38;5;1m▁▁\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;4m▄\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;1m▁▁\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;1m▁\x1b[0m\x1b[38;5;4m▄\x1b[0m\x1b[38;5;2m▂\x1b[0m\x1b[38;5;3m▃\x1b[0m\x1b[38;5;1m▁\x1b[0m\x1b[38;5;2m▂▂\x1b[0m\x1b[38;5;3m▃\x1b[0m")
 }
