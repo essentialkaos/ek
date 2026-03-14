@@ -73,6 +73,10 @@ func FromPaths(paths []string) *Tree {
 	for _, p := range paths {
 		p = strings.TrimPrefix(p, tree.Path)
 
+		if prevPath == p {
+			continue
+		}
+
 		if prevPath == "" || strings.HasPrefix(p, prevPath) {
 			prevPath = p
 			continue
@@ -109,7 +113,7 @@ func (d *Dir) IsEmpty() bool {
 	return d == nil || (len(d.Files) == 0 && len(d.Dirs) == 0)
 }
 
-// IsEmpty returns sorted slice of directory names
+// Names returns sorted slice of directory names
 func (d DirIndex) Names() []string {
 	var result []string
 
@@ -128,7 +132,7 @@ func (d DirIndex) Names() []string {
 func (t *Tree) addFile(filePath string) {
 	filePath = strings.TrimLeft(filePath, pathSeparator)
 
-	if strings.ReplaceAll(filePath, " ", "") == "" {
+	if strings.TrimSpace(filePath) == "" {
 		return
 	}
 
@@ -155,10 +159,10 @@ func (d *Dir) createDir(path []string) *Dir {
 
 		if !ok {
 			cwd.Dirs[p] = &Dir{Dirs: DirIndex{}, level: cwd.level + 1}
-			cwd = cwd.Dirs[p]
-		} else {
-			cwd = dd
+			dd = cwd.Dirs[p]
 		}
+
+		cwd = dd
 	}
 
 	return cwd
@@ -224,10 +228,16 @@ func getRootDir(paths []string) string {
 		}
 	}
 
-	return strings.TrimRight(rootDir, pathSeparator)
+	idx := strings.LastIndex(rootDir, pathSeparator)
+
+	if idx >= 0 {
+		rootDir = rootDir[:idx]
+	}
+
+	return rootDir
 }
 
-// getLongestPath returns the most longest path from given slice
+// getLongestPath returns the longest path from the given slice
 func getLongestPath(paths []string) string {
 	var maxDepth int
 	var longestPath string
