@@ -21,30 +21,30 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Tree is file tree
+// Tree represents a file tree built from a flat list of paths
 type Tree struct {
 	Path     string
 	MaxDepth int
 	Root     *Dir
 }
 
-// Dir contains info about directory
+// Dir represents a single directory node containing files and subdirectories
 type Dir struct {
 	Files []string
 	Dirs  DirIndex
 	level int
 }
 
-// DirIndex is map "name" → dir
+// DirIndex maps directory names to their corresponding [Dir] nodes
 type DirIndex map[string]*Dir
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// TreeColorTag is color tag of tree lines
+	// TreeColorTag is the fmtc color tag applied to tree branch and connector lines
 	TreeColorTag = "{s-}"
 
-	// DirColorTag is color tag for directory names
+	// DirColorTag is the fmtc color tag applied to directory name labels
 	DirColorTag = "{*}"
 )
 
@@ -55,7 +55,8 @@ var pathSeparator = string(filepath.Separator)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// FromPaths builds tree from paths slice
+// FromPaths builds a Tree from the given slice of file paths, deduplicating
+// nested entries
 func FromPaths(paths []string) *Tree {
 	if len(paths) == 0 {
 		return &Tree{}
@@ -94,12 +95,12 @@ func FromPaths(paths []string) *Tree {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsEmpty returns true if tree is empty
+// IsEmpty returns true if the tree is nil or contains no files or directories
 func (t *Tree) IsEmpty() bool {
 	return t == nil || t.Root.IsEmpty()
 }
 
-// Render renders tree data
+// Render prints the file tree to stdout using fmtc color formatting
 func (t *Tree) Render() {
 	if t.IsEmpty() {
 		return
@@ -108,12 +109,12 @@ func (t *Tree) Render() {
 	t.Root.render(strutil.Q(t.Path, pathSeparator), true, true)
 }
 
-// IsEmpty returns true if dir is empty
+// IsEmpty returns true if the directory is nil or contains no files or subdirectories
 func (d *Dir) IsEmpty() bool {
 	return d == nil || (len(d.Files) == 0 && len(d.Dirs) == 0)
 }
 
-// Names returns sorted slice of directory names
+// Names returns a naturally sorted slice of directory names in the index
 func (d DirIndex) Names() []string {
 	var result []string
 
@@ -128,7 +129,8 @@ func (d DirIndex) Names() []string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// addFile adds file to the tree
+// addFile inserts a file path into the tree, creating intermediate directories
+// as needed
 func (t *Tree) addFile(filePath string) {
 	filePath = strings.TrimLeft(filePath, pathSeparator)
 
@@ -150,7 +152,8 @@ func (t *Tree) addFile(filePath string) {
 	t.MaxDepth = max(t.MaxDepth, len(dirPath))
 }
 
-// createDir creates new directory structure or returns existing one
+// createDir traverses or creates the directory chain described by path and returns
+// the leaf [Dir]
 func (d *Dir) createDir(path []string) *Dir {
 	cwd := d
 
@@ -168,7 +171,8 @@ func (d *Dir) createDir(path []string) *Dir {
 	return cwd
 }
 
-// Render renders dir data
+// render recursively prints this directory and its contents with tree-drawing
+// connectors
 func (d *Dir) render(name string, isFirst, isLast bool) {
 	if d.IsEmpty() {
 		return
@@ -197,7 +201,8 @@ func (d *Dir) render(name string, isFirst, isLast bool) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getRootDir returns root dir of all paths in given slice
+// getRootDir returns the longest common directory prefix shared by all paths
+// in the slice
 func getRootDir(paths []string) string {
 	rootDir := getLongestPath(paths)
 
@@ -219,7 +224,8 @@ func getRootDir(paths []string) string {
 	return rootDir
 }
 
-// getLongestPath returns the longest path from the given slice
+// getLongestPath returns the path with the greatest number of separators from
+// the given slice
 func getLongestPath(paths []string) string {
 	var maxDepth int
 	var longestPath string
