@@ -93,7 +93,7 @@ func Warn(title, message string, options ...Option) {
 	Panel("WARNING", WarnColorTag, title, message, options...)
 }
 
-// Info shows panel with warning message
+// Info shows panel with info message
 func Info(title, message string, options ...Option) {
 	Panel("INFO", InfoColorTag, title, message, options...)
 }
@@ -171,12 +171,11 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
-	switch {
-	case options.Has(WRAP):
+	if options.Has(WRAP) {
 		buf = bytes.NewBufferString(
 			fmtutil.Wrap(fmtc.Sprint(message), "", width-2) + "\n",
 		)
-	default:
+	} else {
 		buf = bytes.NewBufferString(message)
 		buf.WriteRune('\n')
 	}
