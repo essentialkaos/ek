@@ -12,6 +12,7 @@ package lock
 
 import (
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/fsutil"
@@ -19,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Create creates new lock file
+// Create creates a new lock file with the given name in [Dir]
 func Create(name string) error {
 	err := fsutil.ValidatePerms("DW", Dir)
 
@@ -30,7 +31,7 @@ func Create(name string) error {
 	return fsutil.TouchFile(getLockPath(name), 0644)
 }
 
-// Remove deletes lock file
+// Remove deletes the lock file with the given name from [Dir]
 func Remove(name string) error {
 	err := fsutil.ValidatePerms("DW", Dir)
 
@@ -41,18 +42,22 @@ func Remove(name string) error {
 	return os.Remove(getLockPath(name))
 }
 
-// Has returns true if lock file exists
+// Has reports whether a lock file with the given name currently exists
 func Has(name string) bool {
 	return fsutil.IsExist(getLockPath(name))
 }
 
-// Wait waits until lock file being deleted
+// Wait blocks until the named lock file is removed or the deadline is exceeded.
+// Returns true if the lock was released, false if the deadline was reached.
 func Wait(name string, deadline time.Time) bool {
 	if !Has(name) {
 		return true
 	}
 
-	for range time.NewTicker(time.Second / 4).C {
+	ticker := time.NewTicker(time.Second / 4)
+	defer ticker.Stop()
+
+	for range ticker.C {
 		if !deadline.IsZero() && time.Now().After(deadline) {
 			return false
 		}
@@ -65,7 +70,7 @@ func Wait(name string, deadline time.Time) bool {
 	return true
 }
 
-// IsExpired returns true if lock file reached TTL
+// IsExpired reports whether the named lock file has existed longer than TTL
 func IsExpired(name string, ttl time.Duration) bool {
 	ct, err := fsutil.GetCTime(getLockPath(name))
 
@@ -78,7 +83,7 @@ func IsExpired(name string, ttl time.Duration) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLockPath returns path to lock file
+// getLockPath returns the full filesystem path for the named lock file
 func getLockPath(name string) string {
-	return Dir + "/" + name + ".lock"
+	return filepath.Join(Dir, name+".lock")
 }
