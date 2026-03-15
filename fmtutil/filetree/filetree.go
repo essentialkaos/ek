@@ -177,39 +177,21 @@ func (d *Dir) render(name string, isFirst, isLast bool) {
 	if isFirst {
 		fmtc.Printfn(TreeColorTag+"┌{!} "+DirColorTag+"%s{!}", name)
 	} else {
-		if isLast && len(d.Files) == 0 {
-			fmtc.Printfn(
-				TreeColorTag+strings.Repeat("│  ", d.level-1)+"└─{!} "+DirColorTag+"%s{!}",
-				name,
-			)
-		} else {
-			fmtc.Printfn(
-				TreeColorTag+strings.Repeat("│  ", d.level-1)+"├─{!} "+DirColorTag+"%s{!}",
-				name,
-			)
-		}
+		fmtc.Printfn(
+			TreeColorTag+strings.Repeat("│  ", d.level-1)+"%s{!} "+DirColorTag+"%s{!}",
+			strutil.B(isLast && len(d.Files) == 0, "└─", "├─"), name,
+		)
 	}
 
 	for i, n := range d.Dirs.Names() {
-		if i+1 == len(d.Dirs) {
-			d.Dirs[n].render(n, false, true)
-		} else {
-			d.Dirs[n].render(n, false, false)
-		}
+		d.Dirs[n].render(n, false, i+1 == len(d.Dirs) && len(d.Files) == 0)
 	}
 
 	for i, f := range d.Files {
-		if i+1 == len(d.Files) {
-			fmtc.Printfn(
-				TreeColorTag+strings.Repeat("│  ", d.level)+"└─{!} %s",
-				lscolors.Colorize(f),
-			)
-		} else {
-			fmtc.Printfn(
-				TreeColorTag+strings.Repeat("│  ", d.level)+"├─{!} %s",
-				lscolors.Colorize(f),
-			)
-		}
+		fmtc.Printfn(
+			TreeColorTag+strings.Repeat("│  ", d.level)+"%s{!} %s",
+			strutil.B(i+1 == len(d.Files), "└─", "├─"), lscolors.Colorize(f),
+		)
 	}
 }
 
