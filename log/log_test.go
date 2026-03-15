@@ -568,6 +568,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	EnableBufIO(250 * time.Millisecond)
+	EnableBufIO(250 * time.Millisecond) // check flush daemon stop
 
 	Print(DEBUG, "Test debug %d", DEBUG)
 	Print(INFO, "Test info %d", INFO)
@@ -709,6 +710,25 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	dataSlice := strings.Split(string(data), "\n")
 
 	c.Assert(len(dataSlice), Equals, 11)
+}
+
+func (ls *LogSuite) TestNilStdLogger(c *C) {
+	var std *StdLogger
+
+	exitFunc = func(code int) {}
+
+	c.Assert(std.Output(2, "1"), Equals, ErrNilLogger)
+
+	std.Fatal("2")
+	std.Fatalf("%s", "3")
+	std.Fatalln("4")
+	std.Print("5")
+	std.Printf("%s", "6")
+	std.Println("7")
+
+	c.Assert(func() { std.Panic("testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicf("%s", "testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicln("testPanic") }, PanicMatches, "testPanic\n")
 }
 
 func (ls *LogSuite) TestNilLogger(c *C) {
