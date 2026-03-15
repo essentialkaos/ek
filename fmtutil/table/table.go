@@ -282,13 +282,14 @@ func (t *Table) Render() *Table {
 	t.data = nil
 	t.columnSizes = nil
 	t.headerShown = false
+	t.cursor = 0
 
 	return t
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// prepareRender prepare table for render
+// prepareRender prepares table for render
 func prepareRender(t *Table) {
 	if len(t.columnSizes) == 0 {
 		calculateColumnSizes(t)
@@ -299,7 +300,7 @@ func prepareRender(t *Table) {
 	}
 }
 
-// renderHeaders render headers
+// renderHeaders renders headers
 func renderHeaders(t *Table) {
 	t.headerShown = true
 
@@ -345,11 +346,15 @@ func renderHeaders(t *Table) {
 	renderBorder(t)
 }
 
-// renderData render table data
+// renderData renders table data
 func renderData(t *Table) {
 	totalColumns := len(t.columnSizes)
 
 	for _, rowData := range t.data {
+		if len(rowData) == 0 {
+			continue
+		}
+
 		if rowData[0] == _SEPARATOR_TAG {
 			renderSeparator(t)
 			continue
@@ -363,7 +368,7 @@ func renderData(t *Table) {
 	}
 }
 
-// renderRowData render data in row
+// renderRowData renders data in row
 func renderRowData(t *Table, data []string, totalColumns int) {
 	if t.Breaks > 0 && t.cursor > 0 && t.cursor%t.Breaks == 0 {
 		renderSeparator(t)
@@ -415,18 +420,18 @@ func renderBorder(t *Table) {
 	fmtc.Println(strutil.Q(t.BorderColorTag, BorderColorTag) + border + "{!}")
 }
 
-// convertSlice convert slice with any to slice with strings
+// convertSlice converts slice with any to slice with strings
 func convertSlice(data []any) []string {
-	var result []string
+	result := make([]string, len(data))
 
-	for _, item := range data {
-		result = append(result, fmt.Sprintf("%v", item))
+	for i, item := range data {
+		result[i] = fmt.Sprintf("%v", item)
 	}
 
 	return result
 }
 
-// calculateColumnSizes calculate size for each column
+// calculateColumnSizes calculates size for each column
 func calculateColumnSizes(t *Table) {
 	totalColumns := getColumnsNum(t)
 	t.columnSizes = make([]int, totalColumns)
@@ -480,7 +485,7 @@ func calculateColumnSizes(t *Table) {
 	}
 }
 
-// setColumnsSizes set columns sizes by number of columns
+// setColumnsSizes sets columns sizes by number of columns
 func setColumnsSizes(t *Table, columns int) {
 	tableWidth := getTableWidth(t)
 	t.columnSizes = make([]int, columns)
@@ -527,7 +532,7 @@ func getColumnsNum(t *Table) int {
 	return columns
 }
 
-// formatText align text with color tags
+// formatText aligns text with color tags
 func formatText(data string, size int, align uint8) string {
 	dataLen := getDataLen(data)
 
@@ -548,7 +553,7 @@ func formatText(data string, size int, align uint8) string {
 	return data + strings.Repeat(" ", size-dataLen)
 }
 
-// getAlignment return align for given column
+// getAlignment returns alignment for given column
 func getAlignment(t *Table, columnIndex int) uint8 {
 	l := len(t.Alignment)
 
@@ -559,7 +564,7 @@ func getAlignment(t *Table, columnIndex int) uint8 {
 	return t.Alignment[columnIndex]
 }
 
-// getSeparatorSize return separator size based on size of all columns
+// getSeparatorSize returns separator size based on size of all columns
 func getSeparatorSize(t *Table) int {
 	tableWidth := getTableWidth(t)
 
