@@ -21,15 +21,14 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Column alignment flags
 const (
-	ALIGN_LEFT   uint8 = 0
-	ALIGN_CENTER uint8 = 1
-	ALIGN_RIGHT  uint8 = 2
+	ALIGN_LEFT   uint8 = 0 // Aligns column content to the left
+	ALIGN_CENTER uint8 = 1 // Centers column content
+	ALIGN_RIGHT  uint8 = 2 // Aligns column content to the right
 
-	AL uint8 = 0 // Short form of ALIGN_LEFT
-	AC uint8 = 1 // Short form of ALIGN_CENTER
-	AR uint8 = 2 // Short form of ALIGN_RIGHT
+	AL uint8 = 0 // Short form of [ALIGN_LEFT]
+	AC uint8 = 1 // Short form of [ALIGN_CENTER]
+	AR uint8 = 2 // Short form of [ALIGN_RIGHT]
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,47 +40,54 @@ const _SEPARATOR_TAG = "--[@SEPARATOR@]--"
 
 // Table is struct which can be used for table rendering
 type Table struct {
-	Sizes     []int    // Custom columns sizes
-	Headers   []string // Slice with headers
-	Alignment []uint8  // Columns alignment
+	// Sizes defines fixed widths for each column; overrides auto-calculation
+	Sizes []int
 
-	// Width is table maximum width
+	// Headers contains the column header labels
+	Headers []string
+
+	// Alignment defines per-column text alignment using [ALIGN_LEFT], [ALIGN_CENTER],
+	// or [ALIGN_RIGHT]
+	Alignment []uint8
+
+	// Width sets the maximum table width in characters; clamped to [80, 9999]
 	Width int
 
-	// Breaks is an interval for separators between given number of rows
+	// Breaks defines the row interval at which automatic separators are inserted
 	Breaks int
 
-	// SeparatorSymbol is symbol used for borders rendering
+	// BorderSymbol is the character used to render top and bottom borders
 	BorderSymbol string
 
-	// SeparatorSymbol is symbol used for separator rendering
+	// SeparatorSymbol is the character used to render horizontal separators between rows
 	SeparatorSymbol string
 
-	// ColumnSeparatorSymbol is column separator symbol
+	// ColumnSeparatorSymbol is the character used to divide adjacent columns
 	ColumnSeparatorSymbol string
 
-	// HeaderColorTag is fmtc tag used for headers
+	// HeaderColorTag is the fmtc color tag applied to header text
 	HeaderColorTag string
 
-	// BorderColorTag is fmtc tag used for separator
+	// BorderColorTag is the fmtc color tag applied to border lines
 	BorderColorTag string
 
-	// SeparatorColorTag is fmtc tag used for separator
+	// SeparatorColorTag is the fmtc color tag applied to separator lines
 	SeparatorColorTag string
 
-	// HeaderCapitalize is a flag for capitalizing headers
+	// HeaderCapitalize controls whether header labels are uppercased before rendering
 	HeaderCapitalize bool
 
-	// HideTopBorder is a flag for disabling bottom border rendering
+	// HideTopBorder disables rendering of the top border line
 	HideTopBorder bool
 
-	// HideBottomBorder is a flag for disabling bottom border rendering
+	// HideBottomBorder disables rendering of the bottom border line
 	HideBottomBorder bool
 
-	// FullScreen is a flag for full-screen table
+	// FullScreen stretches the table to the full terminal width
 	FullScreen bool
 
-	// Processor is function used for processing and formatting input data
+	// Processor is the function used to convert a row of any values into strings.
+	// It defaults to fmt.Sprintf("%v", …) conversion for each element.
 	Processor func(data []any) []string
 
 	// Slice with data
@@ -102,36 +108,36 @@ type Table struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// HeaderCapitalize is a flag for capitalizing headers by default
+// HeaderCapitalize controls whether headers are uppercased by default for new tables
 var HeaderCapitalize = false
 
-// HeaderColorTag is default fmtc tag used for headers
+// HeaderColorTag is the default fmtc color tag applied to header text
 var HeaderColorTag = "{*}"
 
-// SeparatorSymbol is default symbol used for borders rendering
+// BorderSymbol is the default character used for top and bottom border lines
 var BorderSymbol = "-"
 
-// BorderColorTag is default fmtc tag used for separator
+// BorderColorTag is the default fmtc color tag applied to border lines
 var BorderColorTag = "{s}"
 
-// SeparatorSymbol is default symbol used for separator rendering
+// SeparatorSymbol is the default character used for horizontal separator lines
 var SeparatorSymbol = "-"
 
-// SeparatorColorTag is default fmtc tag used for separator
+// SeparatorColorTag is the default fmtc color tag applied to separator lines
 var SeparatorColorTag = "{s}"
 
-// ColumnSeparatorSymbol is default column separator symbol
+// ColumnSeparatorSymbol is the default character used to divide adjacent columns
 var ColumnSeparatorSymbol = "|"
 
-// Breaks is an interval for separators between given number of rows
-var Breaks = -1
+// Breaks is the default row interval for automatic separator insertion
+var Breaks = 0
 
-// FullScreen is a flag for full-screen table by default
+// FullScreen controls whether new tables expand to the full terminal width by default
 var FullScreen = true
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewTable creates new table struct
+// NewTable creates and returns a new Table with optional column headers
 func NewTable(headers ...string) *Table {
 	return &Table{
 		HeaderCapitalize: HeaderCapitalize,
@@ -144,7 +150,7 @@ func NewTable(headers ...string) *Table {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SetHeaders sets headers
+// SetHeaders sets the column headers for the table
 func (t *Table) SetHeaders(headers ...string) *Table {
 	if t == nil {
 		return nil
@@ -155,7 +161,7 @@ func (t *Table) SetHeaders(headers ...string) *Table {
 	return t
 }
 
-// SetSizes sets size of columns
+// SetSizes sets fixed widths for each column in order
 func (t *Table) SetSizes(sizes ...int) *Table {
 	if t == nil {
 		return nil
@@ -166,7 +172,8 @@ func (t *Table) SetSizes(sizes ...int) *Table {
 	return t
 }
 
-// SetAlignments sets alignment of columns
+// SetAlignments sets the alignment for each column using [ALIGN_LEFT], [ALIGN_CENTER],
+// or [ALIGN_RIGHT]
 func (t *Table) SetAlignments(align ...uint8) *Table {
 	if t == nil {
 		return nil
@@ -177,7 +184,7 @@ func (t *Table) SetAlignments(align ...uint8) *Table {
 	return t
 }
 
-// Add adds given data to stack
+// Add appends a row of data to the table's internal buffer for deferred rendering
 func (t *Table) Add(data ...any) *Table {
 	if t == nil {
 		return nil
@@ -192,7 +199,7 @@ func (t *Table) Add(data ...any) *Table {
 	return t
 }
 
-// Print immediately prints given data
+// Print immediately renders a single row without buffering it
 func (t *Table) Print(data ...any) *Table {
 	if t == nil {
 		return nil
@@ -212,12 +219,13 @@ func (t *Table) Print(data ...any) *Table {
 	return t
 }
 
-// HasData returns true if table stack has some data
+// HasData reports whether the table's buffer contains any pending rows
 func (t *Table) HasData() bool {
 	return t != nil && len(t.data) != 0
 }
 
-// Separator renders separator
+// Separator adds a horizontal separator at the current position in the buffer,
+// or renders it immediately if no data is buffered
 func (t *Table) Separator() *Table {
 	if t == nil {
 		return nil
@@ -232,7 +240,7 @@ func (t *Table) Separator() *Table {
 	return t
 }
 
-// Border renders table border
+// Border immediately renders a single horizontal border line
 func (t *Table) Border() *Table {
 	if t == nil {
 		return nil
@@ -243,7 +251,7 @@ func (t *Table) Border() *Table {
 	return t
 }
 
-// RenderHeaders renders headers
+// RenderHeaders calculates column sizes and renders the header row with borders
 func (t *Table) RenderHeaders() {
 	if t == nil {
 		return
@@ -256,7 +264,8 @@ func (t *Table) RenderHeaders() {
 	renderHeaders(t)
 }
 
-// Render renders data
+// Render flushes the buffered data to output, rendering headers, rows, and borders,
+// then resets the table's internal state
 func (t *Table) Render() *Table {
 	if t == nil {
 		return nil
@@ -289,7 +298,7 @@ func (t *Table) Render() *Table {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// prepareRender prepares table for render
+// prepareRender calculates column sizes and renders the header if not yet shown
 func prepareRender(t *Table) {
 	if len(t.columnSizes) == 0 {
 		calculateColumnSizes(t)
@@ -300,7 +309,7 @@ func prepareRender(t *Table) {
 	}
 }
 
-// renderHeaders renders headers
+// renderHeaders renders the header row surrounded by border lines
 func renderHeaders(t *Table) {
 	t.headerShown = true
 
@@ -346,7 +355,7 @@ func renderHeaders(t *Table) {
 	renderBorder(t)
 }
 
-// renderData renders table data
+// renderData renders all buffered rows and the bottom border
 func renderData(t *Table) {
 	totalColumns := len(t.columnSizes)
 
@@ -368,7 +377,7 @@ func renderData(t *Table) {
 	}
 }
 
-// renderRowData renders data in row
+// renderRowData renders a single row, inserting automatic separators based on [Breaks]
 func renderRowData(t *Table, data []string, totalColumns int) {
 	if t.Breaks > 0 && t.cursor > 0 && t.cursor%t.Breaks == 0 {
 		renderSeparator(t)
@@ -404,7 +413,7 @@ func renderRowData(t *Table, data []string, totalColumns int) {
 	fmtc.NewLine()
 }
 
-// renderSeparator prints separator
+// renderSeparator prints a full-width separator line using [SeparatorSymbol]
 func renderSeparator(t *Table) {
 	if t.separator == "" {
 		t.separator = strings.Repeat(strutil.Q(t.SeparatorSymbol, SeparatorSymbol), getSeparatorSize(t))
@@ -413,14 +422,15 @@ func renderSeparator(t *Table) {
 	fmtc.Println(strutil.Q(t.SeparatorColorTag, SeparatorColorTag) + t.separator + "{!}")
 }
 
-// renderBorder renders table border
+// renderBorder prints a full-width border line using [BorderSymbol]
 func renderBorder(t *Table) {
 	border := strings.Repeat(strutil.Q(t.BorderSymbol, BorderSymbol), getSeparatorSize(t))
 
 	fmtc.Println(strutil.Q(t.BorderColorTag, BorderColorTag) + border + "{!}")
 }
 
-// convertSlice converts slice with any to slice with strings
+// convertSlice converts a slice of any values to a slice of their string
+// representations
 func convertSlice(data []any) []string {
 	result := make([]string, len(data))
 
@@ -431,7 +441,8 @@ func convertSlice(data []any) []string {
 	return result
 }
 
-// calculateColumnSizes calculates size for each column
+// calculateColumnSizes computes optimal column widths based on headers,
+// data content, and table width
 func calculateColumnSizes(t *Table) {
 	totalColumns := getColumnsNum(t)
 	t.columnSizes = make([]int, totalColumns)
@@ -485,7 +496,7 @@ func calculateColumnSizes(t *Table) {
 	}
 }
 
-// setColumnsSizes sets columns sizes by number of columns
+// setColumnsSizes distributes table width evenly across the given number of columns
 func setColumnsSizes(t *Table, columns int) {
 	tableWidth := getTableWidth(t)
 	t.columnSizes = make([]int, columns)
@@ -507,7 +518,8 @@ func setColumnsSizes(t *Table, columns int) {
 	}
 }
 
-// getColumnsNum returns number of columns
+// getColumnsNum returns the maximum number of columns across headers, sizes,
+// and data rows
 func getColumnsNum(t *Table) int {
 	var columns int
 
@@ -532,7 +544,8 @@ func getColumnsNum(t *Table) int {
 	return columns
 }
 
-// formatText aligns text with color tags
+// formatText pads or centers the given string to the target size according to
+// the alignment flag
 func formatText(data string, size int, align uint8) string {
 	dataLen := getDataLen(data)
 
@@ -553,7 +566,8 @@ func formatText(data string, size int, align uint8) string {
 	return data + strings.Repeat(" ", size-dataLen)
 }
 
-// getAlignment returns alignment for given column
+// getAlignment returns the alignment setting for the given column index, defaulting
+// to [ALIGN_LEFT]
 func getAlignment(t *Table, columnIndex int) uint8 {
 	l := len(t.Alignment)
 
@@ -564,7 +578,7 @@ func getAlignment(t *Table, columnIndex int) uint8 {
 	return t.Alignment[columnIndex]
 }
 
-// getSeparatorSize returns separator size based on size of all columns
+// getSeparatorSize returns the total rendered width for separators and borders
 func getSeparatorSize(t *Table) int {
 	tableWidth := getTableWidth(t)
 
@@ -581,7 +595,8 @@ func getSeparatorSize(t *Table) int {
 	return size + (len(t.columnSizes) * 3) - 1
 }
 
-// getTableWidth returns maximum width of table
+// getTableWidth returns the effective table width, clamped to [80, 9999], or 0 for
+// natural sizing
 func getTableWidth(t *Table) int {
 	if t.Width > 0 {
 		return mathutil.Between(t.Width, 80, 9999)
@@ -594,7 +609,8 @@ func getTableWidth(t *Table) int {
 	return 0
 }
 
-// getDataLen returns len of data excludinf ANSI escape codes and fmtc tags
+// getDataLen returns the visible character length of a string, stripping ANSI codes
+// and fmtc tags
 func getDataLen(data string) int {
 	return strutil.LenVisual(ansi.Remove(fmtc.Clean(data)))
 }
