@@ -23,30 +23,31 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UNKNOWN_VALUE contains string representation of unknown value
+// UNKNOWN_VALUE is the string returned when a data property is missing or unrecognised
 const UNKNOWN_VALUE = "???"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Text is a simple string
+// Text is a localisation string that supports fmt-style formatting and Go templates
 type Text string
 
-// Data can be used for storing data for templates
+// Data holds key-value pairs passed to a Text template during rendering
 type Data map[string]any
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilBundle is returned when one or more provided bundles is nil
+	// ErrNilBundle is returned when one or more bundles passed to [Fallback] is nil
 	ErrNilBundle = errors.New("one or more provided bundles is nil")
 
-	// ErrNilWriter is returned when given writes is nil
+	// ErrNilWriter is returned when a nil writer is passed to [Text.Write]
 	ErrNilWriter = errors.New("target writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Fallback copies values between bundles to use it as a fallback
+// Fallback merges a chain of bundles right-to-left, copying missing Text fields
+// from lower-priority bundles into the highest-priority one
 func Fallback[T any](bundles ...*T) (*T, error) {
 	switch {
 	case len(bundles) == 0,
@@ -85,13 +86,13 @@ func Fallback[T any](bundles ...*T) (*T, error) {
 	return bundles[len(bundles)-1], nil
 }
 
-// ValidateBundle validates bundle for problems
+// ValidateBundle returns an error if any pointer sub-bundle inside bundle is nil
 func ValidateBundle(bundle any) error {
 	return checkBundle(reflect.Indirect(reflect.ValueOf(bundle)), "")
 }
 
-// IsComplete checks if given bundle is complete and returns slice with
-// empty fields
+// IsComplete reports whether all Text fields in bundle are non-empty and returns
+// a slice of dot-separated field paths that are still unset
 func IsComplete(bundle any) (bool, []string) {
 	if bundle == nil {
 		return false, nil
@@ -102,7 +103,8 @@ func IsComplete(bundle any) (bool, []string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// With uses Text as a template and applies payload from given data to it
+// With renders [Text] as a Go template against data and returns the result as a string.
+// Optional extra[0] and extra[1] are prepended and appended to the output respectively.
 func (t Text) With(data any, extra ...string) string {
 	var buf bytes.Buffer
 
@@ -111,8 +113,8 @@ func (t Text) With(data any, extra ...string) string {
 	return buf.String()
 }
 
-// Write uses Text as a template, applies payload from given data to it and writes
-// resulting data into given writer
+// Write renders [Text] as a Go template against data and writes the result to wr.
+// Optional extra[0] and extra[1] are written before and after the rendered output.
 func (t Text) Write(wr io.Writer, data any, extra ...string) error {
 	if wr == nil {
 		return ErrNilWriter
@@ -150,49 +152,50 @@ func (t Text) Write(wr io.Writer, data any, extra ...string) error {
 	return nil
 }
 
-// Format formats string using given data
+// Format interpolates Text using fmt.Sprintf-style arguments
 func (t Text) Format(a ...any) string {
 	return fmt.Sprintf(string(t), a...)
 }
 
-// Error formats string using given data and returns it as error
+// Error interpolates Text using fmt.Sprintf-style arguments and returns it
+// as an error
 func (t Text) Error(a ...any) error {
 	return fmt.Errorf(string(t), a...)
 }
 
-// Add adds prefix and/or suffix to result string
+// Add returns the text with prefix prepended and suffix appended
 func (t Text) Add(prefix, suffix string) string {
 	return prefix + string(t) + suffix
 }
 
-// Start returns text as a string starting with given data
+// Start returns the text with s prepended
 func (t Text) Start(s string) string {
 	return s + string(t)
 }
 
-// End returns text as a string ending with given data
+// End returns the text with s appended
 func (t Text) End(s string) string {
 	return string(t) + s
 }
 
-// String converts Text into string type
+// String returns the underlying string value of [Text]
 func (t Text) String() string {
 	return string(t)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// S is shortcut for [String]
+// S is shortcut for [Text.String]
 func (t Text) S() string {
 	return string(t)
 }
 
-// F is shortcut for [Format]
+// F is shortcut for [Text.Format]
 func (t Text) F(a ...any) string {
 	return t.Format(a...)
 }
 
-// E is shortcut for [Error]
+// E is shortcut for [Text.Error]
 func (t Text) E(a ...any) error {
 	return t.Error(a...)
 }
@@ -210,9 +213,9 @@ func (d Data) Has(prop string) bool {
 	return ok
 }
 
-// Plural prints plural form of word based on language and value
-//
-// Note that this method only supports int, int64, uint, uint64, and float64
+// Plural returns the correct plural form of values based on the numeric property
+// prop and the rules of the given language code. Supports int, int64, uint, uint64,
+// and float64.
 func (d Data) Plural(lang, prop string, values ...string) string {
 	if len(values) == 0 || len(d) == 0 {
 		return ""
@@ -234,7 +237,8 @@ func (d Data) Plural(lang, prop string, values ...string) string {
 	return values[0]
 }
 
-// PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
+// PrettyNum formats the numeric property prop with thousands separators
+// (e.g. 1234567 → "1,234,567")
 func (d Data) PrettyNum(prop string) string {
 	if !d.Has(prop) {
 		return UNKNOWN_VALUE
@@ -243,9 +247,8 @@ func (d Data) PrettyNum(prop string) string {
 	return fmtutil.PrettyNum(d[prop])
 }
 
-// PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
-//
-// Note that this method only supports int, int64, uint, uint64, and float64
+// PrettySize formats the numeric property prop as a human-readable byte size
+// (e.g. 1478182 → "1.4 MB"). Supports int, int64, uint, uint64, and float64.
 func (d Data) PrettySize(prop string) string {
 	if !d.Has(prop) {
 		return UNKNOWN_VALUE
@@ -269,9 +272,8 @@ func (d Data) PrettySize(prop string) string {
 	return fmt.Sprintf("%v", d[prop])
 }
 
-// PrettyPerc formats a float64 value as a percentage string (e.g. 45.31 -> "45.3%")
-//
-// Note that this method only supports float64
+// PrettyPerc formats the float64 property prop as a percentage string
+// (e.g. 45.31 → "45.3%")
 func (d Data) PrettyPerc(prop string) string {
 	if !d.Has(prop) {
 		return UNKNOWN_VALUE
@@ -288,7 +290,7 @@ func (d Data) PrettyPerc(prop string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// writeWithExtra writes text into
+// writeWithExtra writes t to wr, appending extra[1] as a suffix when present
 func writeWithExtra(wr io.Writer, t Text, extra ...string) {
 	switch len(extra) {
 	case 0, 1:
@@ -298,7 +300,8 @@ func writeWithExtra(wr io.Writer, t Text, extra ...string) {
 	}
 }
 
-// copyFieldsData copy fields data between bundles
+// copyFieldsData fills empty Text fields in bundles[0] from the first bundle
+// further right in the slice that holds a non-zero value; recurses into pointer fields
 func copyFieldsData(bundles []reflect.Value) {
 	if len(bundles) == 0 {
 		return
@@ -330,7 +333,8 @@ func copyFieldsData(bundles []reflect.Value) {
 	}
 }
 
-// getFields returns slice with fields values
+// getFields returns the dereferenced field at index from each bundle,
+// allocating a new zero value for any bundle whose field is nil
 func getFields(bundles []reflect.Value, index int) []reflect.Value {
 	var result []reflect.Value
 
@@ -347,7 +351,7 @@ func getFields(bundles []reflect.Value, index int) []reflect.Value {
 	return result
 }
 
-// checkBundle checks bundle for nil structs
+// checkBundle returns an error if any pointer field inside v is nil
 func checkBundle(v reflect.Value, parentName string) error {
 	if !v.IsValid() {
 		return fmt.Errorf("Bundle struct %s is nil", strings.TrimRight(parentName, "."))
@@ -369,7 +373,8 @@ func checkBundle(v reflect.Value, parentName string) error {
 	return nil
 }
 
-// isCompleteBundle checks given object for empty fields
+// isCompleteBundle returns false and a list of dot-separated field paths
+// for every empty Text field found recursively inside v
 func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
 	if !v.IsValid() {
 		return false, []string{strings.TrimRight(parentName, ".")}
@@ -400,7 +405,9 @@ func isCompleteBundle(v reflect.Value, parentName string) (bool, []string) {
 	return len(incompleteFields) == 0, incompleteFields
 }
 
-// getPluralizerByLang returns pluralization function by language name
+// getPluralizerByLang returns the pluralisation function for the given
+// BCP 47-style language code (case-insensitive), falling back to
+// [DefaultPluralizer] if unknown
 func getPluralizerByLang(lang string) pluralize.Pluralizer {
 	switch strings.ToUpper(lang) {
 	case "ACH":
