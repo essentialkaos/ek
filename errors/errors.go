@@ -16,10 +16,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Errors is a slice with errors
+// Errors is a slice of errors
 type Errors []error
 
-// Bundle is a bundle of errors
+// Bundle is a capacity-bounded, nil-safe collection of errors.
+// Its zero value is ready to use without initialization.
 type Bundle struct {
 	capacity int
 	errors   Errors
@@ -57,7 +58,8 @@ func Unwrap(err error) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewBundle creates new errors bundle
+// NewBundle creates a new empty [Bundle] with an optional maximum capacity.
+// When capacity is exceeded, the oldest errors are dropped.
 func NewBundle(capacity ...int) *Bundle {
 	if len(capacity) == 0 {
 		return &Bundle{}
@@ -68,7 +70,7 @@ func NewBundle(capacity ...int) *Bundle {
 	return &Bundle{capacity: size}
 }
 
-// ToBundle wraps slice of errors into Bundle
+// ToBundle wraps an existing [Errors] slice into a [Bundle]
 func ToBundle(errs Errors) *Bundle {
 	b := &Bundle{}
 	b.Add(errs)
@@ -76,8 +78,8 @@ func ToBundle(errs Errors) *Bundle {
 	return b
 }
 
-// Chain executes functions in chain and if one of them returns an error, this function
-// stops the chain execution and returns that error
+// Chain calls each function in order and stops at the first non-nil error,
+// returning it
 func Chain(funcs ...func() error) error {
 	var err error
 
@@ -94,7 +96,7 @@ func Chain(funcs ...func() error) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// First returns the first error from the slice
+// First returns the first error in the slice, or nil if empty
 func (e Errors) First() error {
 	if e.IsEmpty() {
 		return nil
@@ -103,7 +105,7 @@ func (e Errors) First() error {
 	return e[0]
 }
 
-// Last returns the last error from the slice
+// Last returns the last error in the slice, or nil if empty
 func (e Errors) Last() error {
 	if e.IsEmpty() {
 		return nil
@@ -112,7 +114,7 @@ func (e Errors) Last() error {
 	return e[e.Num()-1]
 }
 
-// Get returns error with given index
+// Get returns the error at the given index, or nil if the index is out of range
 func (e Errors) Get(index int) error {
 	if index < 0 || index >= len(e) {
 		return nil
@@ -121,12 +123,12 @@ func (e Errors) Get(index int) error {
 	return e[index]
 }
 
-// IsEmpty returns true if slice is empty
+// IsEmpty returns true if the slice contains no errors
 func (e Errors) IsEmpty() bool {
 	return len(e) == 0
 }
 
-// Num returns size of the slice
+// Num returns the number of errors in the slice
 func (e Errors) Num() int {
 	return len(e)
 }
@@ -155,7 +157,8 @@ func (e Errors) Error() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add adds new error to slice
+// Add appends one or more errors to the bundle.
+// Accepts error, string, []error, []string, [Errors], [Bundle], and *Bundle values.
 func (b *Bundle) Add(errs ...any) *Bundle {
 	if len(errs) == 0 || b == nil {
 		return b
@@ -209,13 +212,13 @@ func (b *Bundle) Add(errs ...any) *Bundle {
 	return b
 }
 
-// Addf creates error and appends it to the bundle
+// Addf formats an error using [fmt.Errorf] and appends it to the bundle
 func (b *Bundle) Addf(format string, a ...any) *Bundle {
 	b.Add(fmt.Errorf(format, a...))
 	return b
 }
 
-// First returns the first error in bundle
+// First returns the first error in the bundle, or nil if empty
 func (b *Bundle) First() error {
 	if b == nil {
 		return nil
@@ -224,7 +227,7 @@ func (b *Bundle) First() error {
 	return b.errors.First()
 }
 
-// Last returns the last error in bundle
+// Last returns the last error in the bundle, or nil if empty
 func (b *Bundle) Last() error {
 	if b == nil {
 		return nil
@@ -233,7 +236,8 @@ func (b *Bundle) Last() error {
 	return b.errors.Last()
 }
 
-// Get returns error by its index
+// Get returns the error at the given index, or nil if the index is out
+// of range
 func (b *Bundle) Get(index int) error {
 	if b == nil {
 		return nil
@@ -242,7 +246,7 @@ func (b *Bundle) Get(index int) error {
 	return b.errors.Get(index)
 }
 
-// All returns all errors in slice
+// All returns the full slice of collected errors
 func (b *Bundle) All() Errors {
 	if b == nil {
 		return nil
@@ -251,7 +255,7 @@ func (b *Bundle) All() Errors {
 	return b.errors
 }
 
-// Num returns number of errors
+// Num returns the number of errors currently in the bundle
 func (b *Bundle) Num() int {
 	if b == nil {
 		return 0
@@ -260,7 +264,8 @@ func (b *Bundle) Num() int {
 	return b.errors.Num()
 }
 
-// Cap returns maximum bundle capacity
+// Cap returns the maximum number of errors the bundle will retain, or
+// 0 if unbounded
 func (b *Bundle) Cap() int {
 	if b == nil {
 		return 0
@@ -269,7 +274,7 @@ func (b *Bundle) Cap() int {
 	return b.capacity
 }
 
-// IsEmpty returns true if bundle is empty
+// IsEmpty returns true if the bundle contains no errors
 func (b *Bundle) IsEmpty() bool {
 	if b == nil {
 		return true
@@ -278,7 +283,8 @@ func (b *Bundle) IsEmpty() bool {
 	return b.errors.IsEmpty()
 }
 
-// ErrorWithPrefix returns text of all errors with prefix before every error
+// ErrorWithPrefix returns all error messages joined by newlines, each prefixed
+// with prefix
 func (b *Bundle) ErrorWithPrefix(prefix string) string {
 	if b == nil {
 		return ""
@@ -287,7 +293,7 @@ func (b *Bundle) ErrorWithPrefix(prefix string) string {
 	return b.errors.ErrorWithPrefix(prefix)
 }
 
-// Error returns text of all errors
+// Error returns all error messages joined by newlines
 func (b *Bundle) Error() string {
 	if b == nil {
 		return ""
@@ -296,7 +302,7 @@ func (b *Bundle) Error() string {
 	return b.errors.Error()
 }
 
-// Reset resets instance to be empty
+// Reset removes all errors from the bundle without changing its capacity
 func (b *Bundle) Reset() {
 	if b != nil {
 		b.errors = nil
