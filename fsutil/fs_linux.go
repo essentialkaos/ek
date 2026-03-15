@@ -25,7 +25,8 @@ const MIN_DIRENT_SIZE = 0x40
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTimes returns time of access, modification, and creation at once
+// GetTimes returns the access, modification, and creation times of the given path
+// at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
 		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
@@ -47,7 +48,8 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// GetTimestamps returns time of access, modification, and creation at once as unix timestamp
+// GetTimestamps returns the access, modification, and creation times of the given
+// path as Unix timestamps
 func GetTimestamps(path string) (int64, int64, int64, error) {
 	if path == "" {
 		return -1, -1, -1, ErrEmptyPath

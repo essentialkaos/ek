@@ -39,7 +39,8 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CopyFile copies file using bufio with given permissions
+// CopyFile copies a regular file from src to dst, optionally overriding the
+// destination permissions; if dst is a directory, the source filename is used
 func CopyFile(from, to string, perms ...os.FileMode) error {
 	targetExist := IsExist(to)
 
@@ -83,8 +84,7 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 	return copyFile(from, to, targetPerms)
 }
 
-// CopyAttr copies attributes (mode, ownership, timestamps) from one object
-// (file or directory) to another
+// CopyAttr copies the mode, ownership, and timestamps from src to dst
 func CopyAttr(from, to string) error {
 	switch {
 	case from == "":
@@ -105,7 +105,8 @@ func CopyAttr(from, to string) error {
 	return copyAttributes(from, to)
 }
 
-// MoveFile moves file
+// MoveFile moves a regular file from src to dst, optionally overriding the
+// destination permissions; if dst is a directory, the source filename is used
 func MoveFile(from, to string, perms ...os.FileMode) error {
 	targetExist := IsExist(to)
 
@@ -146,7 +147,8 @@ func MoveFile(from, to string, perms ...os.FileMode) error {
 	return moveFile(from, to, targetPerms)
 }
 
-// CopyDir copies directory content recursively to target directory
+// CopyDir recursively copies the contents of src into dst.
+// If dst does not exist it is created with the same mode as src.
 func CopyDir(from, to string) error {
 	switch {
 	case from == "":
@@ -178,7 +180,8 @@ func CopyDir(from, to string) error {
 	return copyDir(from, to)
 }
 
-// TouchFile creates empty file
+// TouchFile creates an empty file at path with the given permission bits.
+// If the file already exists its contents are not modified.
 func TouchFile(path string, perm os.FileMode) error {
 	fd, err := openFileFunc(path, os.O_CREATE, perm)
 
@@ -189,7 +192,7 @@ func TouchFile(path string, perm os.FileMode) error {
 	return fd.Close()
 }
 
-// CountLines returns number of lines in given file
+// CountLines returns the number of newline-delimited lines in the given file
 func CountLines(file string) (int, error) {
 	if file == "" {
 		return 0, ErrEmptyPath

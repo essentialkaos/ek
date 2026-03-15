@@ -46,13 +46,16 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrEmptyPath  = errors.New("path is empty")
+	// ErrEmptyPath is returned by methods when the given path is empty and cannot be used
+	ErrEmptyPath = errors.New("path is empty")
+
+	// ErrEmptyPerms is returned by methods when the given permissions is empty
 	ErrEmptyPerms = errors.New("permissions is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CheckPerms checks many permissions at once
+// CheckPerms checks multiple filesystem permissions for the given path at once
 //
 // Permissions:
 //
@@ -145,7 +148,8 @@ func CheckPerms(perms, path string) bool {
 	return true
 }
 
-// ValidatePerms validates permissions for file or directory
+// ValidatePerms validates filesystem permissions for the given path and returns
+// a descriptive error if any check fails
 //
 // Permissions:
 //
@@ -258,7 +262,8 @@ func ValidatePerms(perms, path string) error {
 	return nil
 }
 
-// ProperPath returns the first proper path from a given slice
+// ProperPath returns the first path from the slice that satisfies the given
+// permission checks, or an empty string if none match
 //
 // Permissions:
 //
@@ -287,7 +292,7 @@ func ProperPath(perms string, paths []string) string {
 	return ""
 }
 
-// IsExist returns true if the given object is exist
+// IsExist returns true if the given path exists on the filesystem
 func IsExist(path string) bool {
 	if path == "" {
 		return false
@@ -298,7 +303,7 @@ func IsExist(path string) bool {
 	return syscall.Access(path, syscall.F_OK) == nil
 }
 
-// IsRegular returns true if the given object is a regular file
+// IsRegular returns true if the given path is a regular file
 func IsRegular(path string) bool {
 	if path == "" {
 		return false
@@ -314,7 +319,7 @@ func IsRegular(path string) bool {
 	return mode&_IFMT == _IFREG
 }
 
-// IsSocket returns true if the given object is a socket
+// IsSocket returns true if the given path is a Unix domain socket
 func IsSocket(path string) bool {
 	if path == "" {
 		return false
@@ -330,7 +335,7 @@ func IsSocket(path string) bool {
 	return mode&_IFMT == _IFSOCK
 }
 
-// IsBlockDevice returns true if the given object is a device
+// IsBlockDevice returns true if the given path is a block device
 func IsBlockDevice(path string) bool {
 	if path == "" {
 		return false
@@ -346,7 +351,7 @@ func IsBlockDevice(path string) bool {
 	return mode&_IFMT == _IFBLK
 }
 
-// IsCharacterDevice returns true if the given object is a character device
+// IsCharacterDevice returns true if the given path is a character device
 func IsCharacterDevice(path string) bool {
 	if path == "" {
 		return false
@@ -362,7 +367,7 @@ func IsCharacterDevice(path string) bool {
 	return mode&_IFMT == _IFCHR
 }
 
-// IsDir returns true if the given object is a directory
+// IsDir returns true if the given path is a directory
 func IsDir(path string) bool {
 	if path == "" {
 		return false
@@ -378,7 +383,7 @@ func IsDir(path string) bool {
 	return mode&_IFMT == _IFDIR
 }
 
-// IsLink returns true if the given object is a link
+// IsLink returns true if the given path is a symbolic link
 func IsLink(path string) bool {
 	if path == "" {
 		return false
@@ -392,7 +397,7 @@ func IsLink(path string) bool {
 	return err == nil
 }
 
-// IsReadable returns true if given object is readable by current user
+// IsReadable returns true if the given path is readable by the current user
 func IsReadable(path string) bool {
 	if path == "" {
 		return false
@@ -417,7 +422,7 @@ func IsReadable(path string) bool {
 	return isReadableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsReadableByUser returns true if given object is readable by some user
+// IsReadableByUser returns true if the given path is readable by the named user
 func IsReadableByUser(path, userName string) bool {
 	if path == "" {
 		return false
@@ -442,7 +447,7 @@ func IsReadableByUser(path, userName string) bool {
 	return isReadableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsWritable returns true if given object is writable by current user
+// IsWritable returns true if the given path is writable by the current user
 func IsWritable(path string) bool {
 	if path == "" {
 		return false
@@ -467,7 +472,7 @@ func IsWritable(path string) bool {
 	return isWritableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsWritableByUser returns true if given object is writable by some user
+// IsWritableByUser returns true if the given path is writable by the named user
 func IsWritableByUser(path, userName string) bool {
 	if path == "" {
 		return false
@@ -492,7 +497,7 @@ func IsWritableByUser(path, userName string) bool {
 	return isWritableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsExecutable returns true if given object is executable by current user
+// IsExecutable returns true if the given path is executable by the current user
 func IsExecutable(path string) bool {
 	if path == "" {
 		return false
@@ -517,7 +522,7 @@ func IsExecutable(path string) bool {
 	return isExecutableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsExecutableByUser returns true if given object is executable by some user
+// IsExecutableByUser returns true if the given path is executable by the named user
 func IsExecutableByUser(path, userName string) bool {
 	if path == "" {
 		return false
@@ -542,7 +547,7 @@ func IsExecutableByUser(path, userName string) bool {
 	return isExecutableStat(stat, user.UID, getGIDList(user))
 }
 
-// IsEmpty returns true if given file is empty
+// IsEmpty returns true if the given file exists and has a size of zero bytes
 func IsEmpty(path string) bool {
 	if path == "" {
 		return false
@@ -553,7 +558,7 @@ func IsEmpty(path string) bool {
 	return GetSize(path) == 0
 }
 
-// IsEmptyDir returns true if given directory es empty
+// IsEmptyDir returns true if the given directory exists and contains no entries
 func IsEmptyDir(path string) bool {
 	if path == "" {
 		return false
@@ -578,7 +583,7 @@ func IsEmptyDir(path string) bool {
 	return false
 }
 
-// GetOwner returns object owner UID and GID
+// GetOwner returns the UID and GID of the given path's owner
 func GetOwner(path string) (int, int, error) {
 	if path == "" {
 		return -1, -1, ErrEmptyPath
@@ -597,7 +602,7 @@ func GetOwner(path string) (int, int, error) {
 	return int(stat.Uid), int(stat.Gid), nil
 }
 
-// GetATime returns time of last access
+// GetATime returns the time of last access for the given path
 func GetATime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -610,7 +615,7 @@ func GetATime(path string) (time.Time, error) {
 	return atime, err
 }
 
-// GetCTime returns time of creation
+// GetCTime returns the time of creation (inode change) for the given path
 func GetCTime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -623,7 +628,7 @@ func GetCTime(path string) (time.Time, error) {
 	return ctime, err
 }
 
-// GetMTime returns time of modification
+// GetMTime returns the time of last modification for the given path
 func GetMTime(path string) (time.Time, error) {
 	if path == "" {
 		return time.Time{}, ErrEmptyPath
@@ -636,7 +641,7 @@ func GetMTime(path string) (time.Time, error) {
 	return mtime, err
 }
 
-// GetSize returns file size in bytes
+// GetSize returns the size of the given file in bytes, or -1 on error
 func GetSize(path string) int64 {
 	if path == "" {
 		return -1
@@ -655,7 +660,7 @@ func GetSize(path string) int64 {
 	return stat.Size
 }
 
-// GetMode returns file mode bits
+// GetMode returns the permission bits of the given path as an [os.FileMode]
 func GetMode(path string) os.FileMode {
 	if path == "" {
 		return 0
@@ -666,7 +671,8 @@ func GetMode(path string) os.FileMode {
 	return getMode(path) & 0777
 }
 
-// GetModeOctal returns file mode bits in octal form (like 0644)
+// GetModeOctal returns the permission bits of the given path as an octal
+// string (e.g. "0644")
 func GetModeOctal(path string) string {
 	if path == "" {
 		return ""

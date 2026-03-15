@@ -19,23 +19,23 @@ import (
 
 // ListingFilter is struct with properties for filtering listing output
 type ListingFilter struct {
-	MatchPatterns    []string // Slice with shell file name patterns
-	NotMatchPatterns []string // Slice with shell file name patterns
+	MatchPatterns    []string // Shell patterns the entry name must match
+	NotMatchPatterns []string // Shell patterns the entry name must not match
 
-	ATimeOlder   int64 // Files with ATime less or equal to defined timestamp (BEFORE date)
-	ATimeYounger int64 // Files with ATime greater or equal to defined timestamp (AFTER date)
-	CTimeOlder   int64 // Files with CTime less or equal to defined timestamp (BEFORE date)
-	CTimeYounger int64 // Files with CTime greater or equal to defined timestamp (AFTER date)
-	MTimeOlder   int64 // Files with MTime less or equal to defined timestamp (BEFORE date)
-	MTimeYounger int64 // Files with MTime greater or equal to defined timestamp (AFTER date)
+	ATimeOlder   int64 // Entries with ATime ≤ this Unix timestamp (before date)
+	ATimeYounger int64 // Entries with ATime ≥ this Unix timestamp (after date)
+	CTimeOlder   int64 // Entries with CTime ≤ this Unix timestamp (before date)
+	CTimeYounger int64 // Entries with CTime ≥ this Unix timestamp (after date)
+	MTimeOlder   int64 // Entries with MTime ≤ this Unix timestamp (before date)
+	MTimeYounger int64 // Entries with MTime ≥ this Unix timestamp (after date)
 
-	SizeLess    int64 // Files with size less than defined
-	SizeGreater int64 // Files with size greater than defined
-	SizeEqual   int64 // Files with size equals to defined
-	SizeZero    bool  // Empty files
+	SizeLess    int64 // Entries with size strictly less than this value in bytes
+	SizeGreater int64 // Entries with size strictly greater than this value in bytes
+	SizeEqual   int64 // Entries with size exactly equal to this value in bytes
+	SizeZero    bool  // Entries with a size of zero bytes
 
-	Perms    string // Permission (see [fsutil.CheckPerms] for more info)
-	NotPerms string // Permission (see [fsutil.CheckPerms] for more info)
+	Perms    string // Entries that satisfy these permission checks (see [CheckPerms])
+	NotPerms string // Entries that do not satisfy these permission checks (see [CheckPerms])
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -77,7 +77,8 @@ func (lf ListingFilter) hasSize() bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// List is lightweight method for listing directory
+// List returns the names of all entries in dir.
+// Hidden entries (starting with '.') are excluded when ignoreHidden is true.
 func List(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	var names = readDir(dir)
 
@@ -92,7 +93,8 @@ func List(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return names
 }
 
-// ListAll is lightweight method for listing all files and directories
+// ListAll recursively returns the names of all files and directories under dir.
+// Hidden entries are excluded when ignoreHidden is true.
 func ListAll(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
 		return readDirRecAll(dir, "", ignoreHidden, ListingFilter{})
@@ -101,7 +103,8 @@ func ListAll(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	return readDirRecAll(dir, "", ignoreHidden, filters[0])
 }
 
-// ListAllDirs is lightweight method for listing all directories
+// ListAllDirs recursively returns the names of all directories under dir.
+// Hidden entries are excluded when ignoreHidden is true.
 func ListAllDirs(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
 		return readDirRecDirs(dir, "", ignoreHidden, ListingFilter{})
@@ -110,7 +113,8 @@ func ListAllDirs(dir string, ignoreHidden bool, filters ...ListingFilter) []stri
 	return readDirRecDirs(dir, "", ignoreHidden, filters[0])
 }
 
-// ListAllFiles is lightweight method for listing all files
+// ListAllFiles recursively returns the names of all files under dir.
+// Hidden entries are excluded when ignoreHidden is true.
 func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []string {
 	if len(filters) == 0 {
 		return readDirRecFiles(dir, "", ignoreHidden, ListingFilter{})
@@ -119,7 +123,8 @@ func ListAllFiles(dir string, ignoreHidden bool, filters ...ListingFilter) []str
 	return readDirRecFiles(dir, "", ignoreHidden, filters[0])
 }
 
-// ListToAbsolute updates slice with relative paths to slice with absolute paths
+// ListToAbsolute prepends basePath to every entry in list, converting relative
+// names to absolute paths in place
 func ListToAbsolute(root string, list []string) {
 	for i, t := range list {
 		list[i] = filepath.Join(root, t)
