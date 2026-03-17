@@ -31,7 +31,10 @@ func (s *MathUtilSuite) TestChecks(c *C) {
 	c.Assert(IsInt(""), Equals, false)
 	c.Assert(IsFloat(""), Equals, false)
 	c.Assert(IsInt("1234567890a"), Equals, false)
+	c.Assert(IsInt("-"), Equals, false)
+	c.Assert(IsFloat("-"), Equals, false)
 	c.Assert(IsFloat("1234567890.1a"), Equals, false)
+	c.Assert(IsFloat("1234567890.1."), Equals, false)
 }
 
 func (s *MathUtilSuite) TestBetween(c *C) {

@@ -16,12 +16,13 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path to file with routes info in procfs
+// procRouteFile is the path to the kernel routing table in procfs
 var procRouteFile = "/proc/net/route"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getDefaultRouteInterface returns the name of the default route interface
+// getDefaultRouteInterface returns the name of the interface assigned to the
+// default (0.0.0.0) route, parsed from procfs
 func getDefaultRouteInterface() string {
 	fd, err := os.OpenFile(procRouteFile, os.O_RDONLY, 0)
 

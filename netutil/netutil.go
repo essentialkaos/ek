@@ -17,29 +17,29 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP returns main IPv4 address
+// GetIP returns the primary IPv4 address of the host
 func GetIP() string {
 	return getMainIP(false)
 }
 
-// GetIP6 returns main IPv6 address
+// GetIP6 returns the primary IPv6 address of the host
 func GetIP6() string {
 	return getMainIP(true)
 }
 
-// GetAllIP returns all IPv4 addresses
+// GetAllIP returns all IPv4 addresses across all active network interfaces
 func GetAllIP() []string {
 	return getAllIP(false)
 }
 
-// GetAllIP6 returns all IPv6 addresses
+// GetAllIP6 returns all IPv6 addresses across all active network interfaces
 func GetAllIP6() []string {
 	return getAllIP(true)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getAllIP returns all IP addresses (IPv4 or IPv6)
+// getAllIP collects all IP addresses of the requested version across all interfaces
 func getAllIP(v6 bool) []string {
 	interfaces, err := net.Interfaces()
 
@@ -69,7 +69,8 @@ func getAllIP(v6 bool) []string {
 	return result
 }
 
-// getMainIP returns main IP address (IPv4 or IPv6)
+// getMainIP returns the primary IP address of the requested version,
+// preferring the default route interface and skipping loopback and TUN/TAP
 func getMainIP(v6 bool) string {
 	interfaces, err := net.Interfaces()
 
