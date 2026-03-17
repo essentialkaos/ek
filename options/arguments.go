@@ -19,15 +19,15 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Arguments is a slice with with command argument
+// Arguments is a slice of parsed non-option command-line arguments
 type Arguments []Argument
 
-// Argument is command argument
+// Argument is a single non-option command-line argument
 type Argument string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewArguments creates new arguments slice from given strings
+// NewArguments creates an [Arguments] slice from the given strings
 func NewArguments(args ...string) Arguments {
 	var result Arguments
 
@@ -40,12 +40,12 @@ func NewArguments(args ...string) Arguments {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Has returns true if arguments contains argument with given index
+// Has reports whether an argument exists at the given index and is non-empty
 func (a Arguments) Has(index int) bool {
 	return index >= 0 && index < len(a) && a[index] != ""
 }
 
-// Get returns argument with given index
+// Get returns the argument at the given index, or an empty [Argument] if out of range
 func (a Arguments) Get(index int) Argument {
 	if index < 0 || index >= len(a) {
 		return ""
@@ -54,7 +54,7 @@ func (a Arguments) Get(index int) Argument {
 	return a[index]
 }
 
-// Get returns the last argument
+// Last returns the last argument, or an empty Argument if the slice is empty
 func (a Arguments) Last() Argument {
 	if len(a) == 0 {
 		return ""
@@ -63,7 +63,7 @@ func (a Arguments) Last() Argument {
 	return a[len(a)-1]
 }
 
-// Append adds arguments to the end of the arguments slices
+// Append returns a new [Arguments] slice with the given strings appended
 func (a Arguments) Append(args ...string) Arguments {
 	result := slices.Clone(a)
 
@@ -74,7 +74,7 @@ func (a Arguments) Append(args ...string) Arguments {
 	return result
 }
 
-// Unshift adds arguments to the beginning of the arguments slices
+// Unshift returns a new Arguments slice with the given strings prepended
 func (a Arguments) Unshift(args ...string) Arguments {
 	var result Arguments
 
@@ -85,7 +85,7 @@ func (a Arguments) Unshift(args ...string) Arguments {
 	return append(result, a...)
 }
 
-// Flatten converts arguments to the string (useful for custom parsing logic)
+// Flatten joins all arguments into a single space-separated string
 func (a Arguments) Flatten() string {
 	if len(a) == 0 {
 		return ""
@@ -101,7 +101,7 @@ func (a Arguments) Flatten() string {
 	return result.String()[:result.Len()-1]
 }
 
-// Strings converts arguments to slice with strings
+// Strings converts the [Arguments] slice to a plain []string
 func (a Arguments) Strings() []string {
 	var result []string
 
@@ -112,9 +112,8 @@ func (a Arguments) Strings() []string {
 	return result
 }
 
-// Filter filters arguments by a given glob pattern. This method works only with
-// files. It means that for a given path only the last part will be checked for
-// pattern matching.
+// Filter returns arguments whose base filename matches the given glob pattern.
+// Arguments that are unexpanded globs themselves are skipped.
 func (a Arguments) Filter(pattern string) Arguments {
 	var result Arguments
 
@@ -136,24 +135,25 @@ func (a Arguments) Filter(pattern string) Arguments {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToLower returns argument converted to lower case
+// ToLower returns the argument converted to lower case
 func (a Argument) ToLower() Argument {
 	return Argument(strings.ToLower(string(a)))
 }
 
-// ToUpper returns argument converted to upper case
+// ToUpper returns the argument converted to upper case
 func (a Argument) ToUpper() Argument {
 	return Argument(strings.ToUpper(string(a)))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String converts argument to string
+// String returns the argument as a plain string
 func (a Argument) String() string {
 	return string(a)
 }
 
-// Is returns true if argument equals to given value
+// Is reports whether the argument equals the given value after type-appropriate
+// conversion
 func (a Argument) Is(value any) bool {
 	switch t := value.(type) {
 	case string:
@@ -181,33 +181,34 @@ func (a Argument) Is(value any) bool {
 	return false
 }
 
-// Int converts argument to int
+// Int converts the argument to int
 func (a Argument) Int() (int, error) {
 	return strconv.Atoi(string(a))
 }
 
-// Int64 converts argument to int64
+// Int64 converts the argument to int64
 func (a Argument) Int64() (int64, error) {
 	return strconv.ParseInt(string(a), 10, 64)
 }
 
-// Uint converts argument to uint
+// Uint converts the argument to uint
 func (a Argument) Uint() (uint, error) {
 	u, err := strconv.ParseUint(string(a), 10, 64)
 	return uint(min(u, math.MaxUint)), err
 }
 
-// Uint64 converts argument to uint64
+// Uint64 converts the argument to uint64
 func (a Argument) Uint64() (uint64, error) {
 	return strconv.ParseUint(string(a), 10, 64)
 }
 
-// Float converts argument to float64
+// Float converts the argument to float64
 func (a Argument) Float() (float64, error) {
 	return strconv.ParseFloat(string(a), 64)
 }
 
-// Bool converts argument to boolean
+// Bool converts the argument to bool, accepting "true/false", "yes/no", "y/n",
+// and "1/0"
 func (a Argument) Bool() (bool, error) {
 	switch strings.ToLower(string(a)) {
 	case "true", "yes", "y", "1":
@@ -221,32 +222,33 @@ func (a Argument) Bool() (bool, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Base is shorthand analog of path.Base
+// Base returns the last element of the argument's path; shorthand for [path.Base]
 func (a Argument) Base() Argument {
 	return Argument(path.Base(string(a)))
 }
 
-// Clean is shorthand analog of path.Clean
+// Clean returns the cleaned path form of the argument; shorthand for [path.Clean]
 func (a Argument) Clean() Argument {
 	return Argument(path.Clean(string(a)))
 }
 
-// Dir is shorthand analog of path.Dir
+// Dir returns the directory portion of the argument's path; shorthand for [path.Dir]
 func (a Argument) Dir() Argument {
 	return Argument(path.Dir(string(a)))
 }
 
-// Ext is shorthand analog of path.Ext
+// Ext returns the file extension of the argument; shorthand for [path.Ext]
 func (a Argument) Ext() Argument {
 	return Argument(path.Ext(string(a)))
 }
 
-// IsAbs is shorthand analog of path.IsAbs
+// IsAbs reports whether the argument is an absolute path
 func (a Argument) IsAbs() bool {
 	return path.IsAbs(string(a))
 }
 
-// Match is shorthand analog of path.Match
+// Match reports whether the argument matches the given glob pattern; shorthand
+// for [path.Match]
 func (a Argument) Match(pattern string) (bool, error) {
 	return path.Match(pattern, string(a))
 }

@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Options types
+// Option type constants define the expected value kind for a parsed option
 const (
 	STRING uint8 = iota // String option
 	INT                 // Int/Uint option
@@ -29,57 +29,57 @@ const (
 	MIXED               // String or boolean option
 )
 
-// Error codes
+// Error code constants identify the specific reason an option parsing error occurred
 const (
-	ERROR_UNSUPPORTED = iota
-	ERROR_DUPLICATE_LONGNAME
-	ERROR_DUPLICATE_SHORTNAME
-	ERROR_OPTION_IS_NIL
-	ERROR_EMPTY_VALUE
-	ERROR_WRONG_FORMAT
-	ERROR_CONFLICT
-	ERROR_BOUND_NOT_SET
-	ERROR_UNSUPPORTED_VALUE
-	ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT
-	ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT
-	ERROR_UNSUPPORTED_BOUND_LIST_FORMAT
+	ERROR_UNSUPPORTED                      = iota // Option is not registered
+	ERROR_DUPLICATE_LONGNAME                      // Long name is already defined
+	ERROR_DUPLICATE_SHORTNAME                     // Short name is already defined
+	ERROR_OPTION_IS_NIL                           // Option struct pointer is nil
+	ERROR_EMPTY_VALUE                             // Non-boolean option has no value
+	ERROR_WRONG_FORMAT                            // Option value has invalid format
+	ERROR_CONFLICT                                // Option conflicts with another option
+	ERROR_BOUND_NOT_SET                           // Required bound option is missing
+	ERROR_UNSUPPORTED_VALUE                       // Default value type is not supported
+	ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT           // Alias list has unsupported format
+	ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT        // Conflict list has unsupported format
+	ERROR_UNSUPPORTED_BOUND_LIST_FORMAT           // Bound list has unsupported format
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// V is an alias for Option
+// V is a shorthand alias for [Option]
 type V = Option
 
-// Option is basic option struct
+// Option holds the definition and current value of a single command-line option
 type Option struct {
-	Type      uint8   // option type
-	Max       float64 // maximum integer option value
-	Min       float64 // minimum integer option value
-	Alias     any     // string or slice of strings with aliases
-	Conflicts any     // string or slice of strings with conflicts options
-	Bound     any     // string or slice of strings with bound options
-	Mergeble  bool    // option supports options value merging
+	Type      uint8   // Option type ([STRING], [INT], [BOOL], [FLOAT], or [MIXED])
+	Max       float64 // Maximum allowed value for numeric options
+	Min       float64 // Minimum allowed value for numeric options
+	Alias     any     // Additional name(s) for the option; string or []string
+	Conflicts any     // Option name(s) that cannot be used together with this one; string or []string
+	Bound     any     // Option name(s) that must be set together with this one; string or []string
+	Mergeble  bool    // If true, repeated occurrences of the option are merged into one value
 
-	set bool // non-exported field
+	set bool // indicates whether the option was explicitly set during parsing
 
-	Value any // default value
+	Value any // Default value; overwritten by the parsed value
 }
 
-// Map is map with list of options
+// Map is a mapping of option name strings to their Option definitions
 type Map map[string]*Option
 
-// Options is options struct
+// Options holds all registered options and their parsed state
 type Options struct {
 	short       map[string]string
 	initialized bool
 	full        Map
 }
 
-// OptionError is argument parsing error
+// OptionError describes an error encountered while registering or parsing an option
 type OptionError struct {
-	Option      string
-	BoundOption string
-	Type        int
+	Option      string // Name of the option that caused the error
+	BoundOption string // Name of the related bound or conflicting option, if applicable
+	Type        int    // Error code (one of the ERROR_* constants)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -92,19 +92,19 @@ type optionName struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilOptions is returned if options struct is nil
+	// ErrNilOptions is returned when a method is called on a nil [Options] pointer
 	ErrNilOptions = errors.New("options struct is nil")
 
-	// ErrNilMap is returned if options map is nil
+	// ErrNilMap is returned when a nil [Map] is passed to [AddMap]
 	ErrNilMap = errors.New("options map is nil")
 
-	// ErrEmptyName is returned if option have no name
+	// ErrEmptyName is returned when an option is registered without a name
 	ErrEmptyName = errors.New("one or more options do not have a name")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MergeSymbol used for joining several mergeble options with string value
+// MergeSymbol is the separator used to join values of mergeable string options
 var MergeSymbol = " "
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -114,7 +114,8 @@ var global *Options
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add adds a new option
+// Add registers a new option under the given name in the options set.
+// The name may be in "short:long" format to register both a short and long form.
 func (o *Options) Add(name string, option *Option) error {
 	if o == nil {
 		return ErrNilOptions
@@ -162,7 +163,7 @@ func (o *Options) Add(name string, option *Option) error {
 	return nil
 }
 
-// AddMap adds map with supported options
+// AddMap registers all options from the provided Map, collecting any errors encountered
 func (o *Options) AddMap(optMap Map) errors.Errors {
 	if optMap == nil {
 		return errors.Errors{ErrNilMap}
@@ -181,7 +182,8 @@ func (o *Options) AddMap(optMap Map) errors.Errors {
 	return errs
 }
 
-// GetS returns option value as string
+// GetS returns the value of the named option as a string.
+// Returns an empty string if the option is unset or not found.
 func (o *Options) GetS(name string) string {
 	if o == nil || len(o.full) == 0 {
 		return ""
@@ -206,7 +208,8 @@ func (o *Options) GetS(name string) string {
 	}
 }
 
-// GetI returns option value as integer
+// GetI returns the value of the named option as an integer.
+// Returns 0 if the option is unset, not found, or cannot be converted.
 func (o *Options) GetI(name string) int {
 	if o == nil || len(o.full) == 0 {
 		return 0
@@ -243,7 +246,8 @@ func (o *Options) GetI(name string) int {
 	}
 }
 
-// GetB returns option value as boolean
+// GetB returns the value of the named option as a boolean.
+// Returns false if the option is unset, not found, or has an empty/zero value.
 func (o *Options) GetB(name string) bool {
 	if o == nil || len(o.full) == 0 {
 		return false
@@ -273,7 +277,8 @@ func (o *Options) GetB(name string) bool {
 	}
 }
 
-// GetF returns option value as floating number
+// GetF returns the value of the named option as a float64.
+// Returns 0.0 if the option is unset, not found, or cannot be converted.
 func (o *Options) GetF(name string) float64 {
 	if o == nil || len(o.full) == 0 {
 		return 0.0
@@ -310,7 +315,8 @@ func (o *Options) GetF(name string) float64 {
 	}
 }
 
-// Split splits mergeble option to it's values
+// Split splits the value of a mergeable option into its individual components.
+// Returns nil if the option is unset or empty.
 func (o *Options) Split(name string) []string {
 	value := o.GetS(name)
 
@@ -321,7 +327,7 @@ func (o *Options) Split(name string) []string {
 	return strings.Split(value, MergeSymbol)
 }
 
-// Is checks if option with given name has given value
+// Is reports whether the named option's current value equals the given value
 func (o *Options) Is(name string, value any) bool {
 	if o == nil || len(o.full) == 0 {
 		return false
@@ -345,7 +351,7 @@ func (o *Options) Is(name string, value any) bool {
 	return false
 }
 
-// Has checks if option with given name exists and set
+// Has reports whether the named option was explicitly set during parsing
 func (o *Options) Has(name string) bool {
 	if o == nil || len(o.full) == 0 {
 		return false
@@ -356,7 +362,7 @@ func (o *Options) Has(name string) bool {
 	return ok && opt.set
 }
 
-// Delete deletes option with given name
+// Delete removes the named option from the options set and returns true on success.
 //
 // You can use this method to remove options with private data such as passwords,
 // tokens, etc.
@@ -377,7 +383,8 @@ func (o *Options) Delete(name string) bool {
 	return true
 }
 
-// Parse parses slice with raw options
+// Parse parses the given raw argument slice, optionally registering additional
+// option maps first. Returns the non-option arguments and any errors encountered.
 func (o *Options) Parse(data []string, optMap ...Map) (Arguments, errors.Errors) {
 	if o == nil {
 		return nil, errors.Errors{ErrNilOptions}
@@ -400,8 +407,8 @@ func (o *Options) Parse(data []string, optMap ...Map) (Arguments, errors.Errors)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Set sets option in map
-// Note that if the option is already set, it will be replaced
+// Set stores the given option under the specified name, replacing any existing entry.
+// Panics if the map, name, or option is nil/empty.
 func (m Map) Set(name string, opt *Option) Map {
 	optName := parseName(name)
 
@@ -419,7 +426,7 @@ func (m Map) Set(name string, opt *Option) Map {
 	return m
 }
 
-// SetIf conditionally sets option in map
+// SetIf stores the option only when cond is true; it is a no-op otherwise
 func (m Map) SetIf(cond bool, name string, opt *Option) Map {
 	if cond {
 		m.Set(name, opt)
@@ -428,7 +435,7 @@ func (m Map) SetIf(cond bool, name string, opt *Option) Map {
 	return m
 }
 
-// Delete removes option from map
+// Delete removes the named option from the map and returns true if it was present
 func (m Map) Delete(name string) bool {
 	if m == nil || m[name] == nil {
 		return false
@@ -441,7 +448,7 @@ func (m Map) Delete(name string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewOptions creates new options struct
+// NewOptions creates and returns a new, initialized [Options] instance
 func NewOptions() *Options {
 	return &Options{
 		full:        make(Map),
@@ -450,7 +457,7 @@ func NewOptions() *Options {
 	}
 }
 
-// Add adds new supported option
+// Add registers a new option in the global options set
 func Add(name string, opt *Option) error {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -459,7 +466,7 @@ func Add(name string, opt *Option) error {
 	return global.Add(name, opt)
 }
 
-// AddMap adds map with supported options
+// AddMap registers all options from the provided Map in the global options set
 func AddMap(optMap Map) errors.Errors {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -468,7 +475,7 @@ func AddMap(optMap Map) errors.Errors {
 	return global.AddMap(optMap)
 }
 
-// GetS returns option value as string
+// GetS returns the value of the named global option as a string
 func GetS(name string) string {
 	if global == nil || !global.initialized {
 		return ""
@@ -477,7 +484,7 @@ func GetS(name string) string {
 	return global.GetS(name)
 }
 
-// GetI returns option value as integer
+// GetI returns the value of the named global option as an integer
 func GetI(name string) int {
 	if global == nil || !global.initialized {
 		return 0
@@ -486,7 +493,7 @@ func GetI(name string) int {
 	return global.GetI(name)
 }
 
-// GetB returns option value as boolean
+// GetB returns the value of the named global option as a boolean
 func GetB(name string) bool {
 	if global == nil || !global.initialized {
 		return false
@@ -495,7 +502,7 @@ func GetB(name string) bool {
 	return global.GetB(name)
 }
 
-// GetF returns option value as floating number
+// GetF returns the value of the named global option as a float64
 func GetF(name string) float64 {
 	if global == nil || !global.initialized {
 		return 0.0
@@ -504,7 +511,8 @@ func GetF(name string) float64 {
 	return global.GetF(name)
 }
 
-// Split splits mergeble option to it's values
+// Split splits the value of a mergeable global option into its individual
+// components
 func Split(name string) []string {
 	if global == nil || !global.initialized {
 		return nil
@@ -513,7 +521,7 @@ func Split(name string) []string {
 	return global.Split(name)
 }
 
-// Has checks if option with given name exists and set
+// Has reports whether the named global option was explicitly set during parsing
 func Has(name string) bool {
 	if global == nil || !global.initialized {
 		return false
@@ -522,7 +530,7 @@ func Has(name string) bool {
 	return global.Has(name)
 }
 
-// Is checks if option with given name has given value
+// Is reports whether the named global option's current value equals the given value
 func Is(name string, value any) bool {
 	if global == nil || !global.initialized {
 		return false
@@ -531,7 +539,8 @@ func Is(name string, value any) bool {
 	return global.Is(name, value)
 }
 
-// Delete deletes option with given name
+// Delete removes the named option from the global options set and returns true
+// on success.
 //
 // You can use this method to remove options with private data such as passwords,
 // tokens, etc.
@@ -543,7 +552,8 @@ func Delete(name string) bool {
 	return global.Delete(name)
 }
 
-// Parse parses slice with raw options
+// Parse parses os.Args[1:] using the global options set, registering any
+// provided maps first. Returns the non-option arguments and any errors encountered.
 func Parse(optMap ...Map) (Arguments, errors.Errors) {
 	if global == nil || !global.initialized {
 		global = NewOptions()
@@ -552,35 +562,37 @@ func Parse(optMap ...Map) (Arguments, errors.Errors) {
 	return global.Parse(os.Args[1:], optMap...)
 }
 
-// ParseOptionName parses combined name and returns long and short options
+// ParseOptionName parses a combined "short:long" option name and returns the long
+// and short parts
 func ParseOptionName(opt string) (string, string) {
 	a := parseName(opt)
 	return a.Long, a.Short
 }
 
-// Format formats option name
+// Format returns the canonical CLI representation of an option name (e.g.
+// "--verbose" or "-v/--verbose")
 func Format(opt string) string {
 	return parseName(opt).String()
 }
 
-// Merge merges several options into string
+// Merge joins multiple option values into a single space-separated string
 func Merge(opts ...string) string {
 	return strings.Join(opts, " ")
 }
 
-// Q merges several options into string (shortcut for [Merge])
+// Q joins multiple option values into a single string; shortcut for [Merge]
 func Q(opts ...string) string {
 	return Merge(opts...)
 }
 
-// F formats option name (shortcut for [Format])
+// F returns the canonical CLI representation of an option name; shortcut for [Format]
 func F(opt string) string {
 	return Format(opt)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns string representation of options map
+// String returns a human-readable representation of the options map
 func (m Map) String() string {
 	if m == nil {
 		return "options.Map[Nil]"
@@ -599,7 +611,8 @@ func (m Map) String() string {
 	return strings.TrimRight(result, " ") + "]"
 }
 
-// String returns string representation of option
+// String returns a human-readable representation of the option including its type
+// and value
 func (v *Option) String() string {
 	if v == nil {
 		return "Nil{}"
