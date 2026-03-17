@@ -31,8 +31,7 @@ func getDefaultRouteInterface() string {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	s := bufio.NewScanner(fd)
 
 	var header bool
 
@@ -42,8 +41,10 @@ func getDefaultRouteInterface() string {
 			continue
 		}
 
-		if strutil.ReadField(s.Text(), 1, true) == "00000000" {
-			return strutil.ReadField(s.Text(), 0, true)
+		line := s.Text()
+
+		if strutil.ReadField(line, 1, true) == "00000000" {
+			return strutil.ReadField(line, 0, true)
 		}
 	}
 

@@ -49,17 +49,18 @@ func getAllIP(v6 bool) []string {
 
 	var result []string
 
-	for _, i := range interfaces {
-		addr, err := i.Addrs()
+	for _, iface := range interfaces {
+		addrs, err := iface.Addrs()
 
 		if err != nil {
 			continue
 		}
 
-		for _, a := range addr {
-			ipnet, ok := a.(*net.IPNet)
+		for _, addr := range addrs {
+			ipnet, ok := addr.(*net.IPNet)
+			isV6 := ipnet.IP.To4() == nil
 
-			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
+			if ok && isV6 == v6 {
 				result = append(result, ipnet.IP.String())
 			}
 		}
@@ -90,20 +91,26 @@ func getMainIP(v6 bool) string {
 			continue
 		}
 
-		addr, err := interfaces[i].Addrs()
+		addrs, err := interfaces[i].Addrs()
 
-		if err != nil || len(addr) == 0 {
+		if err != nil || len(addrs) == 0 {
 			continue
 		}
 
-		for _, a := range addr {
-			ipnet, ok := a.(*net.IPNet)
+		for _, addr := range addrs {
+			ipnet, ok := addr.(*net.IPNet)
+
+			if !ok {
+				continue
+			}
 
 			if ipnet.IP.IsLoopback() {
 				continue
 			}
 
-			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
+			isV6 := ipnet.IP.To4() == nil
+
+			if ok && isV6 == v6 {
 				return ipnet.IP.String()
 			}
 		}

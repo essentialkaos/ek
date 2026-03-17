@@ -7,6 +7,7 @@ package netutil
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getDefaultRouteInterface returns the name of the default route interface
 func getDefaultRouteInterface() string {
 	return ""
 }

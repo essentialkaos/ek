@@ -13,23 +13,19 @@ package netutil
 // ❗ GetIP returns main IPv4 address
 func GetIP() string {
 	panic("UNSUPPORTED")
-	return ""
 }
 
 // ❗ GetIP6 returns main IPv6 address
 func GetIP6() string {
 	panic("UNSUPPORTED")
-	return ""
 }
 
 // ❗ GetAllIP returns all IPv4 addresses
 func GetAllIP() []string {
 	panic("UNSUPPORTED")
-	return nil
 }
 
 // ❗ GetAllIP6 returns all IPv6 addresses
 func GetAllIP6() []string {
 	panic("UNSUPPORTED")
-	return nil
 }
