@@ -42,12 +42,12 @@ func NewArguments(args ...string) Arguments {
 
 // Has returns true if arguments contains argument with given index
 func (a Arguments) Has(index int) bool {
-	return index < len(a) && a[index] != ""
+	return index >= 0 && index < len(a) && a[index] != ""
 }
 
 // Get returns argument with given index
 func (a Arguments) Get(index int) Argument {
-	if index >= len(a) {
+	if index < 0 || index >= len(a) {
 		return ""
 	}
 
@@ -65,9 +65,7 @@ func (a Arguments) Last() Argument {
 
 // Append adds arguments to the end of the arguments slices
 func (a Arguments) Append(args ...string) Arguments {
-	var result Arguments
-
-	result = slices.Clone(a)
+	result := slices.Clone(a)
 
 	for _, arg := range args {
 		result = append(result, Argument(arg))
@@ -199,17 +197,17 @@ func (a Argument) Uint() (uint, error) {
 	return uint(min(u, math.MaxUint)), err
 }
 
-// Uint converts argument to uint64
+// Uint64 converts argument to uint64
 func (a Argument) Uint64() (uint64, error) {
 	return strconv.ParseUint(string(a), 10, 64)
 }
 
-// Int converts argument to int
+// Float converts argument to float64
 func (a Argument) Float() (float64, error) {
 	return strconv.ParseFloat(string(a), 64)
 }
 
-// Int converts argument to int
+// Bool converts argument to boolean
 func (a Argument) Bool() (bool, error) {
 	switch strings.ToLower(string(a)) {
 	case "true", "yes", "y", "1":
@@ -218,7 +216,7 @@ func (a Argument) Bool() (bool, error) {
 		return false, nil
 	}
 
-	return false, fmt.Errorf("Unsupported boolean value %q", a)
+	return false, fmt.Errorf("unsupported boolean value %q", a)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -93,13 +93,13 @@ type optionName struct {
 
 var (
 	// ErrNilOptions is returned if options struct is nil
-	ErrNilOptions = fmt.Errorf("Options struct is nil")
+	ErrNilOptions = errors.New("options struct is nil")
 
 	// ErrNilMap is returned if options map is nil
-	ErrNilMap = fmt.Errorf("Options map is nil")
+	ErrNilMap = errors.New("options map is nil")
 
 	// ErrEmptyName is returned if option have no name
-	ErrEmptyName = fmt.Errorf("One or more options do not have a name")
+	ErrEmptyName = errors.New("one or more options do not have a name")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -260,22 +260,13 @@ func (o *Options) GetB(name string) bool {
 		return false
 
 	case opt.Type == STRING, opt.Type == MIXED:
-		if opt.Value.(string) == "" {
-			return false
-		}
-		return true
+		return opt.Value.(string) != ""
 
 	case opt.Type == FLOAT:
-		if opt.Value.(float64) > 0 {
-			return true
-		}
-		return false
+		return opt.Value.(float64) > 0
 
 	case opt.Type == INT:
-		if opt.Value.(int) > 0 {
-			return true
-		}
-		return false
+		return opt.Value.(int) > 0
 
 	default:
 		return opt.Value.(bool)
@@ -362,15 +353,7 @@ func (o *Options) Has(name string) bool {
 
 	opt, ok := o.full[parseName(name).Long]
 
-	if !ok {
-		return false
-	}
-
-	if !opt.set {
-		return false
-	}
-
-	return true
+	return ok && opt.set
 }
 
 // Delete deletes option with given name
@@ -709,7 +692,7 @@ LOOP:
 
 			switch {
 			case curOpt == "--":
-				arguments = append(arguments, sliceToArguments(data[index:])...)
+				arguments = append(arguments, NewArguments(data[index:]...)...)
 				break LOOP
 
 			case strings.TrimRight(curOpt, "-") == "":
@@ -783,7 +766,8 @@ LOOP:
 	errs = append(errs, o.validate()...)
 
 	if optName != "" {
-		if o.full[optName].Type == MIXED {
+		opt, ok := o.full[optName]
+		if ok && opt.Type == MIXED {
 			errs = appendError(errs,
 				updateOption(o.full[optName], optName, "true"),
 			)
@@ -962,6 +946,10 @@ func formatOptionsList(list any) string {
 
 // updateOption updates option value in options map
 func updateOption(opt *Option, name, value string) error {
+	if opt == nil {
+		return OptionError{"--" + name, "", ERROR_UNSUPPORTED}
+	}
+
 	switch opt.Type {
 	case STRING, MIXED:
 		return updateStringOption(opt, value)
@@ -976,7 +964,7 @@ func updateOption(opt *Option, name, value string) error {
 		return updateIntOption(name, opt, value)
 	}
 
-	return fmt.Errorf("Option %q has unsupported type", Format(name))
+	return fmt.Errorf("option %q has unsupported type", Format(name))
 }
 
 // updateStringOption updates string option value
@@ -1051,17 +1039,6 @@ func updateIntOption(name string, opt *Option, value string) error {
 	return nil
 }
 
-// sliceToArguments converts slice of strings to Arguments type
-func sliceToArguments(data []string) Arguments {
-	var result Arguments
-
-	for _, arg := range data {
-		result = append(result, Argument(arg))
-	}
-
-	return result
-}
-
 // appendError appends error to errors slice
 func appendError(errs errors.Errors, err error) errors.Errors {
 	if err == nil {
@@ -1103,27 +1080,27 @@ func guessType(v any) uint8 {
 func (e OptionError) Error() string {
 	switch e.Type {
 	default:
-		return fmt.Sprintf("Option %q is not supported", e.Option)
+		return fmt.Sprintf("option %q is not supported", e.Option)
 	case ERROR_EMPTY_VALUE:
-		return fmt.Sprintf("Non-boolean option %q is empty", e.Option)
+		return fmt.Sprintf("non-boolean option %q is empty", e.Option)
 	case ERROR_WRONG_FORMAT:
-		return fmt.Sprintf("Option %q has wrong format", e.Option)
+		return fmt.Sprintf("option %q has wrong format", e.Option)
 	case ERROR_OPTION_IS_NIL:
-		return fmt.Sprintf("Struct for option %q is nil", e.Option)
+		return fmt.Sprintf("struct for option %q is nil", e.Option)
 	case ERROR_DUPLICATE_LONGNAME, ERROR_DUPLICATE_SHORTNAME:
-		return fmt.Sprintf("Option %q defined 2 or more times", e.Option)
+		return fmt.Sprintf("option %q defined 2 or more times", e.Option)
 	case ERROR_CONFLICT:
-		return fmt.Sprintf("Option %q conflicts with option %q", e.Option, e.BoundOption)
+		return fmt.Sprintf("option %q conflicts with option %q", e.Option, e.BoundOption)
 	case ERROR_BOUND_NOT_SET:
-		return fmt.Sprintf("Option %q must be defined with option %q", e.BoundOption, e.Option)
+		return fmt.Sprintf("option %q must be defined with option %q", e.BoundOption, e.Option)
 	case ERROR_UNSUPPORTED_VALUE:
-		return fmt.Sprintf("Option %q contains unsupported default value", e.Option)
+		return fmt.Sprintf("option %q contains unsupported default value", e.Option)
 	case ERROR_UNSUPPORTED_ALIAS_LIST_FORMAT:
-		return fmt.Sprintf("Option %q contains unsupported list format of aliases", e.Option)
+		return fmt.Sprintf("option %q contains unsupported list format of aliases", e.Option)
 	case ERROR_UNSUPPORTED_CONFLICT_LIST_FORMAT:
-		return fmt.Sprintf("Option %q contains unsupported list format of conflicting options", e.Option)
+		return fmt.Sprintf("option %q contains unsupported list format of conflicting options", e.Option)
 	case ERROR_UNSUPPORTED_BOUND_LIST_FORMAT:
-		return fmt.Sprintf("Option %q contains unsupported list format of bound options", e.Option)
+		return fmt.Sprintf("option %q contains unsupported list format of bound options", e.Option)
 	}
 }
 
