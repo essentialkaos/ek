@@ -9,12 +9,14 @@ package pager
 
 func ExampleSetup() {
 	// Use pager from PAGER env var or default (more -f)
-	Setup()
+	err := Setup()
 
 	// Or provide specific command.
-	Setup("less -MQR")
+	err = Setup("less -MQR")
 
-	// Complete must be called at the end of the program work. You can call it with defer
-	// in your main function.
-	defer Complete()
+	if err == nil {
+		// Complete must be called at the end of the program work. You can call it with defer
+		// in your main function.
+		defer Complete()
+	}
 }

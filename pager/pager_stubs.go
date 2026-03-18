@@ -15,24 +15,36 @@ import "errors"
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrAlreadySet = errors.New("Pager already set")
-	ErrNoPager    = errors.New("There is no pager on the system")
-	ErrStdinPipe  = errors.New("Can't get pager stdin")
+	// ❗ ErrAlreadySet is returned by [Setup] if the pager has already been initialized
+	ErrAlreadySet = errors.New("pager already set")
+
+	// ❗ ErrNoPager is returned by [Setup] if no supported pager binary (less, more)
+	// was found on the system and no explicit pager was provided
+	ErrNoPager = errors.New("no pager found on the system")
+
+	// ❗ ErrStdinPipe is returned by [Setup] if the pager process stdin pipe could not
+	// be obtained as an *os.File, which is required for stdout redirection
+	ErrStdinPipe = errors.New("can't get pager stdin pipe")
+
+	// ❗ ErrPagerError is returned by [Complete] if the pager process exited with a
+	// non-zero exit code
+	ErrPagerError = errors.New("pager exited with an error")
 )
 
-// AllowEnv is a flag that allows to user to define pager binary using PAGER environment
+// ❗ AllowEnv allows the user to define the pager binary via the PAGER environment
 // variable
 var AllowEnv bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Setup set up pager for work. After calling this method, any data sent to Stdout and
-// Stderr (using fmt, fmtc, or terminal packages) will go to the pager.
+// ❗ Setup redirects os.Stdout and os.Stderr through the given pager process.
+// If no pager is provided, less or more is located automatically.
 func Setup(pager ...string) error {
 	return nil
 }
 
-// ❗ Complete finishes output redirect to pager
+// ❗ Complete closes the pager stdin pipe, waits for the pager process to exit,
+// and restores [os.Stdout] and [os.Stderr] to their original values
 func Complete() {
 	return
 }
