@@ -20,7 +20,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Reader is pass-thru Reader
+// Reader is a pass-through wrapper around io.Reader that tracks the number
+// of bytes read
 type Reader struct {
 	Calculator *Calculator
 	Update     func(n int)
@@ -30,7 +31,8 @@ type Reader struct {
 	total   int64
 }
 
-// Writer is pass-thru Writer
+// Writer is a pass-through wrapper around io.Writer that tracks the number
+// of bytes written
 type Writer struct {
 	Calculator *Calculator
 	Update     func(n int)
@@ -40,7 +42,8 @@ type Writer struct {
 	total   int64
 }
 
-// Calculator calculates pass-thru speed and remaining time
+// Calculator computes exponentially weighted moving average speed and estimated
+// time remaining
 type Calculator struct {
 	total      float64
 	prev       float64
@@ -55,37 +58,40 @@ type Calculator struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrNilReader = errors.New("Reader is nil")
-	ErrNilWriter = errors.New("Writer is nil")
+	// ErrNilReader is returned when Read is called on a nil [Reader]
+	ErrNilReader = errors.New("reader is nil")
+
+	// ErrNilWriter is returned when Write is called on a nil [Writer]
+	ErrNilWriter = errors.New("writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader creates new passthru reader
+// NewReader wraps the given io.Reader and tracks up to total bytes
 func NewReader(reader io.Reader, total int64) *Reader {
 	return &Reader{r: reader, total: total}
 }
 
-// NewWriter creates new passthru writer
+// NewWriter wraps the given io.Writer and tracks up to total bytes
 func NewWriter(writer io.Writer, total int64) *Writer {
 	return &Writer{w: writer, total: total}
 }
 
-// NewCalculator creates new Calculator struct
+// NewCalculator returns a Calculator for the given total size using an EWMA window
+// of winSizeSec seconds
 func NewCalculator(total int64, winSizeSec float64) *Calculator {
 	return &Calculator{
 		total: float64(total),
 		decay: 2 / (winSizeSec + 1),
-		mu:    sync.Mutex{},
 	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Read implements the standard Read interface
+// Read implements [io.Reader] and atomically accumulates the number of bytes read
 func (r *Reader) Read(p []byte) (int, error) {
 	if r == nil || r.r == nil {
-		return -1, ErrNilReader
+		return 0, ErrNilReader
 	}
 
 	n, err := r.r.Read(p)
@@ -99,7 +105,7 @@ func (r *Reader) Read(p []byte) (int, error) {
 	return n, err
 }
 
-// Current returns read amount of data
+// Current returns the total number of bytes read so far
 func (r *Reader) Current() int64 {
 	if r == nil {
 		return 0
@@ -108,7 +114,7 @@ func (r *Reader) Current() int64 {
 	return atomic.LoadInt64(&r.current)
 }
 
-// Total returns total amount of data
+// Total returns the expected total number of bytes to be read
 func (r *Reader) Total() int64 {
 	if r == nil {
 		return 0
@@ -117,16 +123,22 @@ func (r *Reader) Total() int64 {
 	return atomic.LoadInt64(&r.total)
 }
 
-// Progress returns percentage of data read
+// Progress returns the percentage of data read relative to the total
 func (r *Reader) Progress() float64 {
 	if r == nil {
 		return 0
 	}
 
-	return (float64(r.Current()) / float64(r.Total())) * 100.0
+	total := r.Total()
+
+	if total == 0 {
+		return 0
+	}
+
+	return (float64(r.Current()) / float64(total)) * 100.0
 }
 
-// SetTotal sets total amount of data
+// SetTotal updates the expected total number of bytes to be read
 func (r *Reader) SetTotal(total int64) {
 	if r == nil {
 		return
@@ -135,9 +147,9 @@ func (r *Reader) SetTotal(total int64) {
 	atomic.StoreInt64(&r.total, total)
 }
 
-// Speed calculates passthru speed and time remaining to process all data.
-// If Calculator was not set on the first call, a default calculator with
-// a 10 second window is created.
+// Speed returns the current read speed in bytes per second and the estimated
+// time remaining. A default [Calculator] with a 10-second window is created
+// automatically if one was not set.
 func (r *Reader) Speed() (float64, time.Duration) {
 	if r == nil {
 		return 0, 0
@@ -152,10 +164,10 @@ func (r *Reader) Speed() (float64, time.Duration) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Write implements the standard Write interface
+// Write implements [io.Writer] and atomically accumulates the number of bytes written
 func (w *Writer) Write(p []byte) (int, error) {
 	if w == nil || w.w == nil {
-		return -1, ErrNilWriter
+		return 0, ErrNilWriter
 	}
 
 	n, err := w.w.Write(p)
@@ -169,7 +181,7 @@ func (w *Writer) Write(p []byte) (int, error) {
 	return n, err
 }
 
-// Current returns written amount of data
+// Current returns the total number of bytes written so far
 func (w *Writer) Current() int64 {
 	if w == nil {
 		return 0
@@ -178,7 +190,7 @@ func (w *Writer) Current() int64 {
 	return atomic.LoadInt64(&w.current)
 }
 
-// Total returns total amount of data
+// Total returns the expected total number of bytes to be written
 func (w *Writer) Total() int64 {
 	if w == nil {
 		return 0
@@ -187,16 +199,22 @@ func (w *Writer) Total() int64 {
 	return atomic.LoadInt64(&w.total)
 }
 
-// Progress returns percentage of data written
+// Progress returns the percentage of data written relative to the total
 func (w *Writer) Progress() float64 {
 	if w == nil {
 		return 0
 	}
 
-	return (float64(w.Current()) / float64(w.Total())) * 100.0
+	total := w.Total()
+
+	if total == 0 {
+		return 0
+	}
+
+	return (float64(w.Current()) / float64(total)) * 100.0
 }
 
-// SetTotal sets total amount of data
+// SetTotal updates the expected total number of bytes to be written
 func (w *Writer) SetTotal(total int64) {
 	if w == nil {
 		return
@@ -205,9 +223,9 @@ func (w *Writer) SetTotal(total int64) {
 	atomic.StoreInt64(&w.total, total)
 }
 
-// Speed calculates passthru speed and time remaining to process all data.
-// If Calculator was not set on the first call, a default calculator with
-// a 10 second window is created.
+// Speed returns the current write speed in bytes per second and the estimated
+// time remaining. A default [Calculator] with a 10-second window is created automatically
+// if one was not set.
 func (w *Writer) Speed() (float64, time.Duration) {
 	if w == nil {
 		return 0, 0
@@ -222,7 +240,9 @@ func (w *Writer) Speed() (float64, time.Duration) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Calculate calculates speed and remaining time
+// Calculate updates the EWMA speed estimate using the current byte count and returns
+// speed and remaining time. Results are throttled: cached values are returned if called
+// within 500ms of the last update.
 func (c *Calculator) Calculate(current int64) (float64, time.Duration) {
 	if c == nil {
 		return 0, 0
@@ -233,6 +253,11 @@ func (c *Calculator) Calculate(current int64) (float64, time.Duration) {
 
 	cur := float64(current)
 	now := time.Now()
+
+	if c.lastUpdate.IsZero() {
+		c.prev, c.lastUpdate = cur, now
+		return 0, 0
+	}
 
 	if !c.lastUpdate.IsZero() && now.Sub(c.lastUpdate) < time.Second/2 {
 		return c.speed, c.remaining
@@ -249,13 +274,12 @@ func (c *Calculator) Calculate(current int64) (float64, time.Duration) {
 		c.remaining = time.Hour
 	}
 
-	c.prev = cur
-	c.lastUpdate = now
+	c.prev, c.lastUpdate = cur, now
 
 	return c.speed, c.remaining
 }
 
-// SetTotal sets total number of objects
+// SetTotal updates the total number of bytes used for remaining-time estimation
 func (c *Calculator) SetTotal(total int64) {
 	if c == nil {
 		return

@@ -79,7 +79,11 @@ func (s *PassthruSuite) TestNil(c *C) {
 }
 
 func (s *PassthruSuite) TestReader(c *C) {
-	r := NewReader(&DummyReader{}, 1000)
+	r := NewReader(&DummyReader{}, 0)
+
+	c.Assert(r.Progress(), Equals, 0.0)
+
+	r = NewReader(&DummyReader{}, 1000)
 
 	c.Assert(r, NotNil)
 
@@ -96,6 +100,9 @@ func (s *PassthruSuite) TestReader(c *C) {
 	r.SetTotal(2000)
 	c.Assert(r.Total(), Equals, int64(2000))
 
+	r.Speed()
+	r.Read([]byte{})
+	time.Sleep(time.Second)
 	rs, _ := r.Speed()
 
 	c.Assert(rs, Not(Equals), 0.0)
@@ -107,7 +114,11 @@ func (s *PassthruSuite) TestReader(c *C) {
 }
 
 func (s *PassthruSuite) TestWriter(c *C) {
-	w := NewWriter(&DummyWriter{}, 1000)
+	w := NewWriter(&DummyWriter{}, 0)
+
+	c.Assert(w.Progress(), Equals, 0.0)
+
+	w = NewWriter(&DummyWriter{}, 1000)
 
 	c.Assert(w, NotNil)
 
@@ -124,6 +135,9 @@ func (s *PassthruSuite) TestWriter(c *C) {
 	w.SetTotal(2000)
 	c.Assert(w.Total(), Equals, int64(2000))
 
+	w.Speed()
+	w.Write([]byte{})
+	time.Sleep(time.Second)
 	ws, _ := w.Speed()
 
 	c.Assert(ws, Not(Equals), 0.0)
