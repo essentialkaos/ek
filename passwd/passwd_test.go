@@ -85,6 +85,10 @@ func (s *PasswdSuite) TestHash(c *C) {
 
 	c.Assert(Check("TEST", "ABCD1234ABCD1234", "\n\n\n\n"), Equals, false)
 	c.Assert(Check("TEST", "ABCD1234ABCD1234", "0000000000000000000000"), Equals, false)
+
+	bb, ok := unpadData([]byte{})
+	c.Assert(bb, IsNil)
+	c.Assert(ok, Equals, false)
 }
 
 func (s *PasswdSuite) TestHashErrors(c *C) {
@@ -93,17 +97,17 @@ func (s *PasswdSuite) TestHashErrors(c *C) {
 	_, err = Hash("", "ABCD1234ABCD1234")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Password can't be empty")
+	c.Assert(err.Error(), Equals, "password can't be empty")
 
 	_, err = Hash("Test123", "")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Pepper can't be empty")
+	c.Assert(err.Error(), Equals, "pepper can't be empty")
 
 	_, err = Hash("Test123", "ABCD1234ABCD12")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Pepper has invalid size")
+	c.Assert(err.Error(), Equals, "pepper has invalid size")
 
 	_, ok := unpadData([]byte("-"))
 
