@@ -50,7 +50,7 @@ func DirN(path string, n int) string {
 		return dirNRight(path, n)
 	}
 
-	return dirNLeft(path, n*-1)
+	return dirNLeft(path, -n)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
