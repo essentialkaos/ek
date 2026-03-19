@@ -212,3 +212,19 @@ func (s *PluralizeSuite) TestSl(c *C) {
 	c.Assert(PluralizeSpecial(Sl, 3, data...), Equals, "D")
 	c.Assert(PluralizeSpecial(Sl, 4, data...), Equals, "A")
 }
+
+func (s *PluralizeSuite) TestPl(c *C) {
+	data := []string{"A", "B", "C"}
+
+	c.Assert(PluralizeSpecial(Pl, 1, data...), Equals, "A")
+	c.Assert(PluralizeSpecial(Pl, 3, data...), Equals, "B")
+	c.Assert(PluralizeSpecial(Pl, 0, data...), Equals, "C")
+}
+
+func (s *PluralizeSuite) TestLt(c *C) {
+	data := []string{"A", "B", "C"}
+
+	c.Assert(PluralizeSpecial(Lt, 1, data...), Equals, "A")
+	c.Assert(PluralizeSpecial(Lt, 3, data...), Equals, "B")
+	c.Assert(PluralizeSpecial(Lt, 0, data...), Equals, "C")
+}

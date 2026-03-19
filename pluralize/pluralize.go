@@ -17,17 +17,18 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DefaultPluralizer holds default pluralization function
+// DefaultPluralizer holds the default pluralization function used by [P]
+// and [Pluralize]
 var DefaultPluralizer = En
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// P pluralizes a word based on the passed number with custom format
+// P formats a string with a pluralized word using [DefaultPluralizer]
 func P[N mathutil.Numeric](format string, n N, data ...string) string {
 	return PS(DefaultPluralizer, format, n, data...)
 }
 
-// PS pluralizes a word based on the passed number with custom pluralizer and format
+// PS formats a string with a pluralized word using a custom pluralizer
 func PS[N mathutil.Numeric](p Pluralizer, format string, n N, data ...string) string {
 	if isNumberFirst(format) {
 		return fmt.Sprintf(format, n, PluralizeSpecial(p, convertNumber(n), data...))
@@ -36,12 +37,13 @@ func PS[N mathutil.Numeric](p Pluralizer, format string, n N, data ...string) st
 	return fmt.Sprintf(format, PluralizeSpecial(p, convertNumber(n), data...), n)
 }
 
-// Pluralize pluralizes a word based on the passed number
+// Pluralize returns a pluralized word from data based on n using [DefaultPluralizer]
 func Pluralize[N mathutil.Numeric](n N, data ...string) string {
 	return PluralizeSpecial(DefaultPluralizer, n, data...)
 }
 
-// PluralizeSpecial pluralizes a word based on the passed number with custom pluralizer
+// PluralizeSpecial returns a pluralized word from data based on n using a custom
+// pluralizer
 func PluralizeSpecial[N mathutil.Numeric](p Pluralizer, n N, data ...string) string {
 	return safeSliceGet(data, p(convertNumber(n)))
 }
@@ -50,7 +52,7 @@ func PluralizeSpecial[N mathutil.Numeric](p Pluralizer, n N, data ...string) str
 
 // safeSliceGet safely retrieves an element from a slice by index
 func safeSliceGet(data []string, index int) string {
-	if len(data) < index {
+	if index < 0 || index >= len(data) {
 		return ""
 	}
 
