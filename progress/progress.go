@@ -9,6 +9,7 @@ package progress
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -25,18 +26,19 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MIN_WIDTH is minimal progress bar width
+// MIN_WIDTH is the minimum allowed width of the progress bar in characters
 const MIN_WIDTH = 80
 
-// MIN_REFRESH_RATE is minimal refresh rate (1 ms)
+// MIN_REFRESH_RATE is the minimum allowed render refresh rate (1 ms)
 const MIN_REFRESH_RATE = time.Duration(time.Millisecond)
 
-// PROGRESS_BAR_SYMBOL is symbol for creating progress bar
+// PROGRESS_BAR_SYMBOL is the character used to draw the progress bar fill
 const PROGRESS_BAR_SYMBOL = "—"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Bar is progress bar struct
+// Bar represents a terminal progress bar with configurable rendering and
+// thread-safe state
 type Bar struct {
 	settings Settings
 
@@ -60,38 +62,70 @@ type Bar struct {
 	reader *passthru.Reader
 	writer *passthru.Writer
 
-	mu *sync.RWMutex
+	mu sync.RWMutex
 }
 
-// Settings contains progress bar settings
+// Settings holds all configuration options for a progress bar instance
 type Settings struct {
+	// RefreshRate is the interval between consecutive render frames; must
+	// be >= [MIN_REFRESH_RATE]
 	RefreshRate time.Duration
 
-	NameColorTag      string
-	BarFgColorTag     string
-	BarBgColorTag     string
-	PercentColorTag   string
-	ProgressColorTag  string
-	SpeedColorTag     string
+	// NameColorTag is the fmtc color tag applied to the bar name
+	NameColorTag string
+
+	// BarFgColorTag is the fmtc color tag for the filled portion of the bar
+	BarFgColorTag string
+
+	// BarBgColorTag is the fmtc color tag for the unfilled portion of the bar
+	BarBgColorTag string
+
+	// PercentColorTag is the fmtc color tag for the percentage value
+	PercentColorTag string
+
+	// ProgressColorTag is the fmtc color tag for the current/total progress text
+	ProgressColorTag string
+
+	// SpeedColorTag is the fmtc color tag for the transfer speed text
+	SpeedColorTag string
+
+	// RemainingColorTag is the fmtc color tag for the estimated remaining time
 	RemainingColorTag string
 
-	ShowSpeed      bool
-	ShowName       bool
-	ShowPercentage bool
-	ShowProgress   bool
-	ShowRemaining  bool
+	// ShowSpeed enables rendering of the current transfer speed
+	ShowSpeed bool
 
-	Width    int
+	// ShowName enables rendering of the bar name
+	ShowName bool
+
+	// ShowPercentage enables rendering of the completion percentage
+	ShowPercentage bool
+
+	// ShowProgress enables rendering of the current/total progress values
+	ShowProgress bool
+
+	// ShowRemaining enables rendering of the estimated time remaining
+	ShowRemaining bool
+
+	// Width is the total character width of the rendered bar line
+	Width int
+
+	// NameSize is the fixed column width reserved for the name; shorter names
+	// are right-padded. Zero disables fixed-width padding.
 	NameSize int
 
+	// WindowSizeSec is the sliding window duration in seconds used by the passthru
+	// speed calculator
 	WindowSizeSec int64 // Window size for passtru reader
 
+	// IsSize controls value formatting: true renders values as byte sizes (KB/MB/GB),
+	// false renders them as plain numbers (K/M/B)
 	IsSize bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DefaultSettings is default progress bar settings
+// DefaultSettings is the ready-to-use default configuration applied to every new Bar
 var DefaultSettings = Settings{
 	RefreshRate:       100 * time.Millisecond,
 	NameColorTag:      "{b}",
@@ -108,28 +142,30 @@ var DefaultSettings = Settings{
 	ShowRemaining:     true,
 	IsSize:            true,
 	Width:             88,
-	WindowSizeSec:     15.0,
+	WindowSizeSec:     15,
 }
 
 var (
-	ErrBarIsNil = fmt.Errorf("Progress bar struct is nil")
+	// ErrBarIsNil is returned by Bar methods when called on a nil receiver
+	ErrBarIsNil = errors.New("progress bar struct is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// New creates new progress bar struct
+// New creates a new Bar with the given total value and display name, using
+// [DefaultSettings]
 func New(total int64, name string) *Bar {
 	return &Bar{
 		settings: DefaultSettings,
 		name:     name,
 		total:    total,
-		mu:       &sync.RWMutex{},
 	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Start starts progress processing
+// Start initialises internal state and launches the async rendering goroutine.
+// It is a no-op if the bar is already running.
 func (b *Bar) Start() error {
 	if b == nil {
 		return ErrBarIsNil
@@ -159,7 +195,8 @@ func (b *Bar) Start() error {
 	return nil
 }
 
-// Finish finishes progress processing
+// Finish signals the rendering goroutine to stop and blocks until the final frame
+// is drawn
 func (b *Bar) Finish() error {
 	if b == nil {
 		return ErrBarIsNil
@@ -181,7 +218,8 @@ func (b *Bar) Finish() error {
 	return nil
 }
 
-// UpdateSettings updates progress settings
+// UpdateSettings validates and applies new settings to the bar.
+// RefreshRate changes take effect only after the next [Start] call.
 func (b *Bar) UpdateSettings(s Settings) error {
 	if b == nil {
 		return ErrBarIsNil
@@ -200,7 +238,7 @@ func (b *Bar) UpdateSettings(s Settings) error {
 	return nil
 }
 
-// SetName sets progress bar name
+// SetName updates the display name of the bar
 func (b *Bar) SetName(name string) {
 	if b == nil {
 		return
@@ -211,7 +249,7 @@ func (b *Bar) SetName(name string) {
 	b.mu.Unlock()
 }
 
-// Name returns progress bar name
+// Name returns the current display name of the bar
 func (b *Bar) Name() string {
 	if b == nil {
 		return ""
@@ -222,7 +260,8 @@ func (b *Bar) Name() string {
 	return b.name
 }
 
-// SetTotal sets total progress bar value
+// SetTotal updates the total value and reconfigures the passthru speed
+// calculator accordingly
 func (b *Bar) SetTotal(v int64) {
 	if b == nil {
 		return
@@ -243,7 +282,7 @@ func (b *Bar) SetTotal(v int64) {
 	atomic.StoreInt64(&b.total, v)
 }
 
-// Total returns total progress bar value
+// Total returns the current total value of the bar
 func (b *Bar) Total() int64 {
 	if b == nil {
 		return 0
@@ -252,7 +291,7 @@ func (b *Bar) Total() int64 {
 	return atomic.LoadInt64(&b.total)
 }
 
-// SetCurrent sets current progress bar value
+// SetCurrent atomically sets the current progress value
 func (b *Bar) SetCurrent(v int64) {
 	if b == nil {
 		return
@@ -261,7 +300,7 @@ func (b *Bar) SetCurrent(v int64) {
 	atomic.StoreInt64(&b.current, v)
 }
 
-// Current returns current progress bar value
+// Current atomically returns the current progress value
 func (b *Bar) Current() int64 {
 	if b == nil {
 		return 0
@@ -270,6 +309,7 @@ func (b *Bar) Current() int64 {
 	return atomic.LoadInt64(&b.current)
 }
 
+// Add atomically increments the current progress value by v
 func (b *Bar) Add(v int) {
 	if b == nil {
 		return
@@ -278,7 +318,7 @@ func (b *Bar) Add(v int) {
 	atomic.AddInt64(&b.current, int64(v))
 }
 
-// Add64 adds given value ti
+// Add64 atomically increments the current progress value by v
 func (b *Bar) Add64(v int64) {
 	if b == nil {
 		return
@@ -287,7 +327,8 @@ func (b *Bar) Add64(v int64) {
 	atomic.AddInt64(&b.current, v)
 }
 
-// IsFinished returns true if progress processing is finished
+// IsFinished returns true if the bar has completed rendering after a
+// Finish call
 func (b *Bar) IsFinished() bool {
 	if b == nil {
 		return false
@@ -298,7 +339,7 @@ func (b *Bar) IsFinished() bool {
 	return b.finished
 }
 
-// IsStarted returns true if progress processing is started
+// IsStarted returns true if the bar has been started and not yet reset
 func (b *Bar) IsStarted() bool {
 	if b == nil {
 		return false
@@ -309,7 +350,8 @@ func (b *Bar) IsStarted() bool {
 	return b.started
 }
 
-// Reader creates and returns pass thru-proxy reader
+// Reader wraps r in a passthru reader that automatically advances the bar
+// as data is read
 func (b *Bar) Reader(r io.Reader) io.Reader {
 	if b == nil {
 		return nil
@@ -322,7 +364,8 @@ func (b *Bar) Reader(r io.Reader) io.Reader {
 	return pr
 }
 
-// Writer creates and returns pass-thru proxy reader
+// Writer wraps w in a passthru writer that automatically advances the bar
+// as data is written
 func (b *Bar) Writer(w io.Writer) io.Writer {
 	if b == nil {
 		return nil
@@ -354,24 +397,32 @@ func (b *Bar) renderer() {
 // render renders current progress bar state
 func (b *Bar) render(isFinished bool) {
 	b.mu.RLock()
-	defer b.mu.RUnlock()
-
 	result := b.renderElements(isFinished)
+	changed := b.buffer != result
+	b.mu.RUnlock()
 
-	// render text only if changed or if finished
-	if b.buffer != result || isFinished {
+	if changed || isFinished {
 		fmtc.TPrint(result)
-	}
-
-	if b.total > 0 {
-		b.buffer = result
 	}
 
 	if isFinished {
 		fmtc.NewLine()
+
+		b.mu.Lock()
+		b.buffer = result
 		b.finished = true
+		b.mu.Unlock()
+
 		close(b.finishChan)
 		b.finishGroup.Done()
+
+		return
+	}
+
+	if changed && b.Total() > 0 {
+		b.mu.Lock()
+		b.buffer = result
+		b.mu.Unlock()
 	}
 }
 
@@ -383,11 +434,13 @@ func (b *Bar) renderElements(isFinished bool) string {
 	var statRemaining time.Duration
 
 	if b.passThruCalc != nil && (b.settings.ShowSpeed || b.settings.ShowRemaining) {
+		current := atomic.LoadInt64(&b.current)
+
 		if isFinished {
 			statRemaining = time.Since(b.startTime)
-			statSpeed = float64(b.current) / statRemaining.Seconds()
+			statSpeed = float64(current) / statRemaining.Seconds()
 		} else {
-			statSpeed, statRemaining = b.passThruCalc.Calculate(b.current)
+			statSpeed, statRemaining = b.passThruCalc.Calculate(current)
 		}
 	}
 
@@ -567,16 +620,18 @@ func (b *Bar) renderBar(dataSize int) string {
 		return b.renderPlaceholder(size)
 	}
 
-	if b.current >= b.total {
-		switch fmtc.DisableColors || b.settings.BarFgColorTag == "" {
-		case true:
+	current := atomic.LoadInt64(&b.current)
+	total := atomic.LoadInt64(&b.total)
+
+	if current >= total {
+		if fmtc.DisableColors || b.settings.BarFgColorTag == "" {
 			return strings.Repeat(PROGRESS_BAR_SYMBOL, size)
-		case false:
-			return b.settings.BarFgColorTag + strings.Repeat(PROGRESS_BAR_SYMBOL, size) + "{!}"
 		}
+
+		return b.settings.BarFgColorTag + strings.Repeat(PROGRESS_BAR_SYMBOL, size) + "{!}"
 	}
 
-	cur := int((float64(b.current) / float64(b.total)) * float64(size))
+	cur := int((float64(current) / float64(total)) * float64(size))
 
 	if fmtc.DisableColors || b.settings.BarFgColorTag == "" {
 		return strings.Repeat(PROGRESS_BAR_SYMBOL, cur) + strings.Repeat(" ", size-cur)
@@ -587,25 +642,27 @@ func (b *Bar) renderBar(dataSize int) string {
 
 // renderPlaceholder returns placeholder bar graphics
 func (b *Bar) renderPlaceholder(size int) string {
-	var result string
+	var result strings.Builder
+
+	result.Grow(size * 4)
 
 	disableColors := fmtc.DisableColors || b.settings.BarFgColorTag == ""
 
 	for i := range size {
 		if disableColors {
 			if i%3 == b.phCounter {
-				result += PROGRESS_BAR_SYMBOL
+				result.WriteString(PROGRESS_BAR_SYMBOL)
 			} else {
-				result += " "
+				result.WriteRune(' ')
 			}
 		} else {
 			if i%3 == b.phCounter {
-				result += b.settings.BarFgColorTag
+				result.WriteString(b.settings.BarFgColorTag)
 			} else {
-				result += b.settings.BarBgColorTag
+				result.WriteString(b.settings.BarBgColorTag)
 			}
 
-			result += PROGRESS_BAR_SYMBOL
+			result.WriteString(PROGRESS_BAR_SYMBOL)
 		}
 	}
 
@@ -616,15 +673,16 @@ func (b *Bar) renderPlaceholder(size int) string {
 	}
 
 	if disableColors {
-		return result
+		return result.String()
 	}
 
-	return result + "{!}"
+	return result.String() + "{!}"
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Validate validates settings struct
+// Validate checks that all color tags are valid fmtc tags and that RefreshRate is
+// within bounds
 func (s Settings) Validate() error {
 	switch {
 	case !fmtc.IsTag(s.NameColorTag):
