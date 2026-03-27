@@ -12,7 +12,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Tip contains basic tip content
+// Tip contains the content and display configuration for a single usage tip
 type Tip struct {
 	Title   string // Tip title (required)
 	Message string // Tip message (required)
@@ -21,7 +21,7 @@ type Tip struct {
 	Weight   float64 // Custom tip weight (optional)
 }
 
-// Tips contains tips data
+// Tips holds the registered tip collection and its precomputed weighted selector state
 type Tips struct {
 	data      []*Tip
 	selectors []int
@@ -30,13 +30,15 @@ type Tips struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Probability is showing probability coefficient (0 ← less | more → 1)
+// Probability is the chance (0.0–1.0) that [Show] will display a tip when force
+// is false
 var Probability = 0.25
 
-// ColorTag is default panel color tag
+// ColorTag is the default fmtc color tag applied to the panel border when a tip
+// has none set
 var ColorTag = "{#75}"
 
-// Options contains default panel options
+// Options holds the default panel rendering options applied to every displayed tip
 var Options = panel.Options{panel.TOP_LINE, panel.BOTTOM_LINE}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -47,20 +49,19 @@ var collection *Tips
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Add adds one or more tips to collection
+// Add appends one or more tips to the global collection, silently skipping nil entries,
+// tips with empty Title or Message, or tips with an invalid ColorTag
 func Add(tips ...*Tip) {
-	if collection == nil {
-		collection = &Tips{}
-	}
-
-	// Don't add if tips are disabled by env vars
 	if disabled {
 		return
 	}
 
+	if collection == nil {
+		collection = &Tips{}
+	}
+
 	for _, tip := range tips {
-		if tip == nil || tip.Title == "" ||
-			tip.Message == "" || !fmtc.IsTag(tip.ColorTag) {
+		if !isValidTip(tip) {
 			continue
 		}
 
@@ -72,7 +73,9 @@ func Add(tips ...*Tip) {
 	}
 }
 
-// Show shows random tip if required
+// Show displays a randomly selected tip from the global collection based on weighted
+// probability; if force is true the probability check is bypassed. Returns true if
+// a tip was shown
 func Show(force bool) bool {
 	if collection == nil || len(collection.data) == 0 || disabled {
 		return false
@@ -105,6 +108,19 @@ func Show(force bool) bool {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// isValidTip validats tip
+func isValidTip(tip *Tip) bool {
+	if tip == nil || tip.Title == "" || tip.Message == "" {
+		return false
+	}
+
+	if tip.ColorTag != "" && !fmtc.IsTag(tip.ColorTag) {
+		return false
+	}
+
+	return true
+}
 
 // searchInts improved sort.SearchInts version
 //

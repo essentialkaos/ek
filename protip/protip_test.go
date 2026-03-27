@@ -42,6 +42,11 @@ func (s *TipSuite) TestAdd(c *C) {
 	c.Assert(collection.data, HasLen, 0)
 
 	tip.Message = "Test message"
+	tip.ColorTag = "{SA}"
+	Add(tip)
+	c.Assert(collection.data, HasLen, 0)
+
+	tip.ColorTag = ""
 
 	disabled = true
 
