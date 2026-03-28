@@ -32,19 +32,19 @@ func (s *SecstrSuite) TestSlice(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
 	c.Assert(ss.IsEmpty(), Equals, false)
-	c.Assert(ss.Data, HasLen, 8)
+	c.Assert(ss.Bytes(), HasLen, 8)
 	c.Assert(k, DeepEquals, []byte{0, 0, 0, 0, 0, 0, 0, 0})
-	c.Assert(string(ss.Data), Equals, "Test1234")
+	c.Assert(ss.String(), Equals, "Test1234")
 
 	err = ss.Destroy()
 
 	c.Assert(err, IsNil)
-	c.Assert(ss.Data, IsNil)
+	c.Assert(ss.Bytes(), IsNil)
 
 	err = ss.Destroy()
 
 	c.Assert(err, IsNil)
-	c.Assert(ss.Data, IsNil)
+	c.Assert(ss.Bytes(), IsNil)
 }
 
 func (s *SecstrSuite) TestString(c *C) {
@@ -55,8 +55,8 @@ func (s *SecstrSuite) TestString(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
 	c.Assert(ss.IsEmpty(), Equals, false)
-	c.Assert(ss.Data, HasLen, 8)
-	c.Assert(string(ss.Data), Equals, "Test1234")
+	c.Assert(ss.Bytes(), HasLen, 8)
+	c.Assert(ss.String(), Equals, "Test1234")
 
 	k2 := "Test1234"
 
@@ -65,9 +65,9 @@ func (s *SecstrSuite) TestString(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(ss, NotNil)
 	c.Assert(ss.IsEmpty(), Equals, false)
-	c.Assert(ss.Data, HasLen, 8)
+	c.Assert(ss.Bytes(), HasLen, 8)
 	c.Assert(k2, Equals, "")
-	c.Assert(string(ss.Data), Equals, "Test1234")
+	c.Assert(ss.String(), Equals, "Test1234")
 }
 
 func (s *SecstrSuite) TestErrors(c *C) {
@@ -80,4 +80,6 @@ func (s *SecstrSuite) TestNil(c *C) {
 
 	c.Assert(k.IsEmpty(), Equals, true)
 	c.Assert(k.Destroy(), IsNil)
+	c.Assert(k.Bytes(), IsNil)
+	c.Assert(k.String(), Equals, "")
 }

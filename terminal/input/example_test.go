@@ -77,7 +77,7 @@ func ExampleReadPasswordSecure() {
 		return
 	}
 
-	fmt.Printf("User password: %s\n", string(password.Data))
+	fmt.Printf("User password: %s\n", password)
 
 	password.Destroy()
 }

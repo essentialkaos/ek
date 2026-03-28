@@ -14,19 +14,24 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/essentialkaos/ek/v13/errors"
+
 	"golang.org/x/sys/unix"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String contains protected data
+// String contains protected data backed by mlock'd, mprotect'd memory.
+// Use Bytes() to access the data. Writing to the returned slice will
+// cause a SIGSEGV — this is intentional and enforced by the kernel.
 type String struct {
-	Data []byte
+	data []byte
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewSecureString creates new secure string
+// NewSecureString creates a new secure string from a byte slice, string, or
+// string pointer. The source data is zeroed after the secure copy is made.
 func NewSecureString(data any) (*String, error) {
 	switch v := data.(type) {
 	case []byte:
@@ -36,18 +41,40 @@ func NewSecureString(data any) (*String, error) {
 	case string:
 		return secureStringFromString(v)
 	default:
-		return nil, fmt.Errorf("Unsupported data type for secure string: %t", data)
+		return nil, fmt.Errorf("unsupported data type for secure string: %T", data)
 	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsEmpty returns false if string is empty
+// IsEmpty returns true if the string is nil or contains no data
 func (s *String) IsEmpty() bool {
-	return s == nil || len(s.Data) == 0
+	return s == nil || len(s.data) == 0
 }
 
-// Destroy destroys data
+// Bytes returns the underlying protected byte slice directly.
+// The returned slice is read-only at the OS level (mprotect PROT_READ).
+// Any write attempt will panic with a SIGSEGV — do not copy unless
+// you accept that the copy loses memory protection guarantees.
+func (s *String) Bytes() []byte {
+	if s == nil {
+		return nil
+	}
+
+	return s.data
+}
+
+// String returns protected data as string
+func (s *String) String() string {
+	if s == nil {
+		return ""
+	}
+
+	return string(s.Bytes())
+}
+
+// Destroy zeroes and releases the protected memory region. It is safe to call multiple
+// times.
 func (s *String) Destroy() error {
 	if s == nil {
 		return nil
@@ -58,7 +85,8 @@ func (s *String) Destroy() error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// secureStringFromSlice creates secure string from byte slice
+// secureStringFromSlice allocates a protected memory region, copies data into it,
+// and zeroes the source slice
 func secureStringFromSlice(data []byte) (*String, error) {
 	var err error
 
@@ -67,7 +95,7 @@ func secureStringFromSlice(data []byte) (*String, error) {
 	// Destroy source data
 	defer clear(data)
 
-	s.Data, err = unix.Mmap(
+	s.data, err = unix.Mmap(
 		-1, 0, len(data),
 		unix.PROT_READ|unix.PROT_WRITE, // Pages may be read and written
 		unix.MAP_ANON|unix.MAP_PRIVATE, // The mapping is not backed by any file + private copy-on-write
@@ -78,26 +106,26 @@ func secureStringFromSlice(data []byte) (*String, error) {
 	}
 
 	// Lock memory with data
-	err = unix.Mlock(s.Data)
+	err = unix.Mlock(s.data)
 
 	if err != nil {
-		unix.Munmap(s.Data)
+		unix.Munmap(s.data)
 		return nil, err
 	}
 
 	// Copy data
-	copy(s.Data, data)
+	copy(s.data, data)
 
 	// Protect memory region with data
-	err = unix.Mprotect(s.Data, unix.PROT_READ) // The memory can be read
+	err = unix.Mprotect(s.data, unix.PROT_READ) // The memory can be read
 
 	if err != nil {
-		unix.Munmap(s.Data)
-		clear(s.Data) // Destroy data if memory cannot be protected
+		unix.Munmap(s.data)
+		clear(s.data) // Destroy data if memory cannot be protected
 		return nil, err
 	}
 
-	// Set finalizer
+	// SetFinalizer MUST remain as the last statement after all syscalls succeed
 	runtime.SetFinalizer(s, destroySecureString)
 
 	return s, nil
@@ -122,32 +150,34 @@ func secureStringFromStringPointer(data *string) (*String, error) {
 
 // destroySecureString destroys secure string data
 func destroySecureString(s *String) error {
-	if s.Data == nil {
+	if s.data == nil {
 		return nil
 	}
 
-	err := unix.Mprotect(s.Data, unix.PROT_READ|unix.PROT_WRITE)
+	var errs errors.Errors
+
+	err := unix.Mprotect(s.data, unix.PROT_READ|unix.PROT_WRITE)
 
 	if err != nil {
-		return err
+		errs = append(errs, fmt.Errorf("mprotect: %w", err))
 	}
 
-	clear(s.Data) // Clear data
+	clear(s.data) // Clear data
 
 	// Unlock memory
-	err = unix.Munlock(s.Data)
+	err = unix.Munlock(s.data)
 
 	if err != nil {
-		return err
+		errs = append(errs, fmt.Errorf("munlock: %w", err))
 	}
 
-	err = unix.Munmap(s.Data)
+	err = unix.Munmap(s.data)
 
 	if err != nil {
-		return err
+		errs = append(errs, fmt.Errorf("munmap: %w", err))
 	}
 
-	s.Data = nil // Mark as nil for GC
+	s.data = nil // Mark as nil for GC
 
-	return nil
+	return errs.Join()
 }

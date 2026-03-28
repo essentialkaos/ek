@@ -10,29 +10,36 @@ package secstr
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ String contains protected data
-type String struct {
-	Data []byte
-}
+// ❗ String contains protected data backed by mlock'd, mprotect'd memory.
+// Use Bytes() to access the data. Writing to the returned slice will
+// cause a SIGSEGV — this is intentional and enforced by the kernel.
+type String struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ NewSecureString creates new secure string
+// ❗ NewSecureString creates a new secure string from a byte slice, string, or
+// string pointer. The source data is zeroed after the secure copy is made.
 func NewSecureString(data any) (*String, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ IsEmpty returns false if string is empty
+// ❗ IsEmpty returns true if the string is nil or contains no data
 func (s *String) IsEmpty() bool {
 	panic("UNSUPPORTED")
-	return false
 }
 
-// ❗ Destroy destroys data
+// ❗ Destroy zeroes and releases the protected memory region. It is safe to call
+// multiple times.
 func (s *String) Destroy() error {
 	panic("UNSUPPORTED")
-	return nil
+}
+
+// ❗ Bytes returns the underlying protected byte slice directly.
+// The returned slice is read-only at the OS level (mprotect PROT_READ).
+// Any write attempt will panic with a SIGSEGV — do not copy unless
+// you accept that the copy loses memory protection guarantees.
+func (s *String) Bytes() []byte {
+	panic("UNSUPPORTED")
 }
