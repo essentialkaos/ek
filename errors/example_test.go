@@ -179,6 +179,22 @@ func ExampleErrors_ErrorWithPrefix() {
 	//  - Error 3
 }
 
+func ExampleErrors_Join() {
+	errs := Errors{
+		fmt.Errorf("Error 1"),
+		fmt.Errorf("Error 2"),
+		fmt.Errorf("Error 3"),
+	}
+
+	fmt.Printf("Errors:\n%v\n", errs.Join())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleBundle_Add() {
@@ -342,6 +358,22 @@ func ExampleBundle_ErrorWithPrefix() {
 	//  - Error 1
 	//  - Error 2
 	//  - Error 3
+}
+
+func ExampleBundle_Join() {
+	var errs Bundle
+
+	errs.Add(fmt.Errorf("Error 1"))
+	errs.Add(fmt.Errorf("Error 2"))
+	errs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors:\n%v\n", errs.Join())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
 }
 
 func ExampleBundle_Reset() {

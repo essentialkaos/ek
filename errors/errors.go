@@ -155,6 +155,11 @@ func (e Errors) Error() string {
 	return e.ErrorWithPrefix("")
 }
 
+// Join returns an error that wraps all errors in the Errors slice
+func (e Errors) Join() error {
+	return errors.Join(e...)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Add appends one or more errors to the bundle.
@@ -300,6 +305,15 @@ func (b *Bundle) Error() string {
 	}
 
 	return b.errors.Error()
+}
+
+// Join returns an error that wraps all errors in the Bundle
+func (b *Bundle) Join() error {
+	if b == nil {
+		return nil
+	}
+
+	return b.errors.Join()
 }
 
 // Reset removes all errors from the bundle without changing its capacity

@@ -70,6 +70,7 @@ func (s *ErrorsSuite) TestPositive(c *C) {
 		},
 	)
 	c.Assert(errs.Add(nil), NotNil)
+	c.Assert(errs.Join(), NotNil)
 	c.Assert(errs.ErrorWithPrefix("  "), Equals, "  1\n  2\n  3\n  4\n  5")
 	c.Assert(errs.Error(), Equals, "1\n2\n3\n4\n5")
 
@@ -157,6 +158,7 @@ func (s *ErrorsSuite) TestNil(c *C) {
 	c.Assert(errs.First(), IsNil)
 	c.Assert(errs.Last(), IsNil)
 	c.Assert(errs.Error(), Equals, "")
+	c.Assert(errs.Join(), IsNil)
 	c.Assert(errs.ErrorWithPrefix(""), Equals, "")
 	c.Assert(errs.Get(10), IsNil)
 }
