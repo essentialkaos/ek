@@ -44,24 +44,25 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Send send given signal to process
+// ❗ Send sends the given signal to the process with the specified pid
 func Send(pid int, signal int) error {
-	return nil
+	panic("UNSUPPORTED")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Handlers is map signal → handler
+// ❗ Handlers maps signals to their associated handler functions
 type Handlers map[int]func()
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Track catch signal and execute handler for this signal
+// ❗ Track starts synchronous handling of registered signals using the [Handlers] map
 func (h Handlers) Track() {
 	panic("UNSUPPORTED")
 }
 
-// ❗ TrackAsync catch signal and execute async handler for this signal
+// ❗ TrackAsync starts asynchronous handling of registered signals using the [Handlers]
+// map
 func (h Handlers) TrackAsync() {
 	panic("UNSUPPORTED")
 }
