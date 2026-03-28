@@ -23,8 +23,8 @@ func Versions(s []string) {
 	})
 }
 
-// VersionCompare compares 2 versions and returns true if v1 less v2. This function
-// can be used for version sorting with structs
+// VersionCompare returns true if version string v1 is less than v2.
+// It can be used as a comparator for sorting structs by version field.
 func VersionCompare(v1, v2 string) bool {
 	is := strings.Split(v1, ".")
 	js := strings.Split(v2, ".")
@@ -60,10 +60,11 @@ func VersionCompare(v1, v2 string) bool {
 		}
 	}
 
-	return true
+	return false
 }
 
-// Strings sorts strings slice and support case insensitive mode
+// Strings sorts a slice of strings in ascending order. If caseInsensitive
+// is true, the comparison ignores letter case.
 func Strings(s []string, caseInsensitive bool) {
 	if !caseInsensitive {
 		sort.Strings(s)
