@@ -22,7 +22,8 @@ var dispatcher *events.Dispatcher
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dispatcher returns event dispatcher for interactive update
+// Dispatcher returns a lazily initialized dispatcher configured with interactive
+// handlers
 func Dispatcher() *events.Dispatcher {
 	if dispatcher != nil {
 		return dispatcher

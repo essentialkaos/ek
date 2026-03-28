@@ -21,10 +21,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Storage is a storage for selfupdate that uses GitHub releases
+// Storage represents a GitHub-based storage using organization and repository releases
 type Storage struct {
-	Org        string // Organization name
-	Repository string // Repository name
+	Org        string // Org is the GitHub organization or user name
+	Repository string // Repository is the GitHub repository name
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,23 +35,23 @@ var _ storage.Storage = (*Storage)(nil)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrEmptyOrg is returned if organization name is empty
-	ErrEmptyOrg = fmt.Errorf("Organization name is empty")
+	// ErrEmptyOrg indicates that the GitHub organization name is empty
+	ErrEmptyOrg = fmt.Errorf("organization name is empty")
 
-	// ErrEmptyRepo is returned if repository name is empty
-	ErrEmptyRepo = fmt.Errorf("Repository name is empty")
+	// ErrEmptyRepo indicates that the GitHub repository name is empty
+	ErrEmptyRepo = fmt.Errorf("repository name is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewStorage creates a new Storage instance
+// NewStorage creates a new GitHub Storage using the given organization and repository
 func NewStorage(org, repo string) *Storage {
 	return &Storage{Org: org, Repository: repo}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Check checks for updates in the storage
+// Check queries GitHub releases for a newer version of the given application
 func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, error) {
 	switch {
 	case s == nil:
@@ -69,19 +69,19 @@ func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, er
 	curVersion, err := version.Parse(appVersion)
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't parse current version: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't parse current version: %w", err)
 	}
 
 	latestVersionStr, err := s.getLatestVersion()
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't get the latest version info: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't get the latest version info: %w", err)
 	}
 
 	latestVersion, err := version.Parse(latestVersionStr)
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't parse latest version: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't parse latest version: %w", err)
 	}
 
 	binaryURL := fmt.Sprintf(
@@ -103,12 +103,14 @@ func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, er
 func (s *Storage) getLatestVersion() (string, error) {
 	var auth req.Auth
 
-	if os.Getenv("GH_TOKEN") != "" {
-		auth = req.AuthBearer{os.Getenv("GH_TOKEN")}
+	ghToken := os.Getenv("GH_TOKEN")
+
+	if ghToken != "" {
+		auth = req.AuthBearer{ghToken}
 	}
 
 	resp, err := req.Request{
-		URL:         "https://api.github.com/repos/" + s.Org + "/" + s.Repository + "/releases/latest",
+		URL:         fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", s.Org, s.Repository),
 		Headers:     req.Headers{"X-GitHub-Api-Version": "2022-11-28"},
 		Timeout:     5 * time.Second,
 		Auth:        auth,
@@ -116,15 +118,15 @@ func (s *Storage) getLatestVersion() (string, error) {
 	}.Get()
 
 	if err != nil {
-		return "", fmt.Errorf("Can't send request to check the latest version: %w", err)
-	}
-
-	if resp.StatusCode != req.STATUS_OK {
-		return "", fmt.Errorf("Storage returned non-ok status code (%d)", resp.StatusCode)
+		return "", fmt.Errorf("can't send request to check the latest version: %w", err)
 	}
 
 	if resp.Header.Get("X-RateLimit-Remaining") == "0" {
-		return "", fmt.Errorf("Rate limit reached")
+		return "", fmt.Errorf("rate limit reached")
+	}
+
+	if resp.StatusCode != req.STATUS_OK {
+		return "", fmt.Errorf("storage returned non-ok status code (%d)", resp.StatusCode)
 	}
 
 	release := &struct {
@@ -134,7 +136,7 @@ func (s *Storage) getLatestVersion() (string, error) {
 	err = resp.JSON(release)
 
 	if err != nil {
-		return "", fmt.Errorf("Can't parse the latest version info: %w", err)
+		return "", fmt.Errorf("can't parse the latest version info: %w", err)
 	}
 
 	return strings.TrimLeft(release.Tag, "v"), nil

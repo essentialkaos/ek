@@ -31,35 +31,72 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	EV_UPDATE_START                = "update.start"
-	EV_UPDATE_COMPLETE             = "update.complete"
-	EV_UPDATE_ERROR                = "update.error"
-	EV_SIGNATURE_DOWNLOAD_START    = "signature.download.start"
-	EV_SIGNATURE_DOWNLOAD_ERROR    = "signature.download.error"
+	// EV_UPDATE_START is the event name for the start of the update process
+	EV_UPDATE_START = "update.start"
+
+	// EV_UPDATE_COMPLETE is the event name for successful completion of the update
+	EV_UPDATE_COMPLETE = "update.complete"
+
+	// EV_UPDATE_ERROR is the event name for any error during the update
+	EV_UPDATE_ERROR = "update.error"
+
+	// EV_SIGNATURE_DOWNLOAD_START is the event name for starting signature download
+	EV_SIGNATURE_DOWNLOAD_START = "signature.download.start"
+
+	// EV_SIGNATURE_DOWNLOAD_ERROR is the event name for signature download errors
+	EV_SIGNATURE_DOWNLOAD_ERROR = "signature.download.error"
+
+	// EV_SIGNATURE_DOWNLOAD_COMPLETE is the event name for completed signature download
 	EV_SIGNATURE_DOWNLOAD_COMPLETE = "signature.download.complete"
-	EV_SIGNATURE_PARSE_START       = "signature.parse.start"
-	EV_SIGNATURE_PARSE_ERROR       = "signature.parse.error"
-	EV_SIGNATURE_PARSE_COMPLETE    = "signature.parse.complete"
-	EV_BINARY_DOWNLOAD_START       = "binary.download.start"
-	EV_BINARY_DOWNLOAD_SIZE        = "binary.download.size"
-	EV_BINARY_DOWNLOAD_ERROR       = "binary.download.error"
-	EV_BINARY_DOWNLOAD_COMPLETE    = "binary.download.complete"
-	EV_BINARY_VERIFY_START         = "binary.verify.start"
-	EV_BINARY_VERIFY_ERROR         = "binary.verify.error"
-	EV_BINARY_VERIFY_OK            = "binary.verify.ok"
-	EV_BINARY_REPLACE_START        = "binary.replace.start"
-	EV_BINARY_REPLACE_ERROR        = "binary.replace.error"
-	EV_BINARY_REPLACE_COMPLETE     = "binary.replace.complete"
+
+	// EV_SIGNATURE_PARSE_START is the event name for starting signature parsing
+	EV_SIGNATURE_PARSE_START = "signature.parse.start"
+
+	// EV_SIGNATURE_PARSE_ERROR is the event name for signature parsing errors
+	EV_SIGNATURE_PARSE_ERROR = "signature.parse.error"
+
+	// EV_SIGNATURE_PARSE_COMPLETE is the event name for completed signature parsing
+	EV_SIGNATURE_PARSE_COMPLETE = "signature.parse.complete"
+
+	// EV_BINARY_DOWNLOAD_START is the event name for starting binary download
+	EV_BINARY_DOWNLOAD_START = "binary.download.start"
+
+	// EV_BINARY_DOWNLOAD_SIZE is the event name for reporting binary download size
+	EV_BINARY_DOWNLOAD_SIZE = "binary.download.size"
+
+	// EV_BINARY_DOWNLOAD_ERROR is the event name for binary download errors
+	EV_BINARY_DOWNLOAD_ERROR = "binary.download.error"
+
+	// EV_BINARY_DOWNLOAD_COMPLETE is the event name for completed binary download
+	EV_BINARY_DOWNLOAD_COMPLETE = "binary.download.complete"
+
+	// EV_BINARY_VERIFY_START is the event name for starting binary signature verification
+	EV_BINARY_VERIFY_START = "binary.verify.start"
+
+	// EV_BINARY_VERIFY_ERROR is the event name for binary signature verification errors
+	EV_BINARY_VERIFY_ERROR = "binary.verify.error"
+
+	// EV_BINARY_VERIFY_OK is the event name for successful binary signature verification
+	EV_BINARY_VERIFY_OK = "binary.verify.ok"
+
+	// EV_BINARY_REPLACE_START is the event name for starting binary replacement
+	EV_BINARY_REPLACE_START = "binary.replace.start"
+
+	// EV_BINARY_REPLACE_ERROR is the event name for binary replacement errors
+	EV_BINARY_REPLACE_ERROR = "binary.replace.error"
+
+	// EV_BINARY_REPLACE_COMPLETE is the event name for completed binary replacement
+	EV_BINARY_REPLACE_COMPLETE = "binary.replace.complete"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Update contains information about update
+// Update holds information about a pending update including URLs and signature
 type Update struct {
-	BinaryURL    string // URL of binary
-	SignatureURL string // URL of signature
-	Version      string // Version
-	Signature    []byte // Signature data
+	BinaryURL    string // BinaryURL is the URL of the new binary
+	SignatureURL string // SignatureURL is the URL of the signature file
+	Version      string // Version is the version of the new binary
+	Signature    []byte // Signature contains the raw signature data
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -73,22 +110,22 @@ type ecdsaSignature struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrEmptyPubKey is returned if public key is empty
-	ErrEmptyPubKey = fmt.Errorf("Public key is empty")
+	// ErrEmptyPubKey indicates that the provided public key data is empty
+	ErrEmptyPubKey = fmt.Errorf("public key is empty")
 
-	// ErrNoSignature is returned if update info has no signature
-	ErrNoSignature = fmt.Errorf("Update info has no signature")
+	// ErrNoSignature indicates that no signature data or URL was provided in update info
+	ErrNoSignature = fmt.Errorf("update info has no signature")
 
-	// ErrNoBinaryURL is returned if update info has no binary URL
-	ErrNoBinaryURL = fmt.Errorf("Update info has no binary URL")
+	// ErrNoBinaryURL indicates that the update info does not contain a binary URL
+	ErrNoBinaryURL = fmt.Errorf("update info has no binary URL")
 
-	// ErrNoVersion is returned if update info has no version
-	ErrNoVersion = fmt.Errorf("Update info has no version")
+	// ErrNoVersion indicates that the update info does not contain a version
+	ErrNoVersion = fmt.Errorf("update info has no version")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Run runs self-update process
+// Run executes the self-update process using the given update info and public key
 func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 	if pubKeyData == "" {
 		return dispatchError(dispatcher, ErrEmptyPubKey)
@@ -109,7 +146,7 @@ func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 	pubKey, err := parsePublicKey(formatPubKey(pubKeyData))
 
 	if err != nil {
-		return dispatchError(dispatcher, fmt.Errorf("Can't parse public key: %w", err))
+		return dispatchError(dispatcher, fmt.Errorf("can't parse public key: %w", err))
 	}
 
 	dispatcher.DispatchAndWait(EV_UPDATE_START, info)
@@ -118,7 +155,7 @@ func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 		signatureData, err := downloadSignature(info.SignatureURL, dispatcher)
 
 		if err != nil {
-			return dispatchError(dispatcher, fmt.Errorf("Can't download ECDSA signature: %w", err))
+			return dispatchError(dispatcher, fmt.Errorf("can't download ECDSA signature: %w", err))
 		}
 
 		info.Signature = signatureData
@@ -127,19 +164,19 @@ func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 	signature, err := parseSignature(info.Signature, dispatcher)
 
 	if err != nil {
-		return dispatchError(dispatcher, fmt.Errorf("Can't parse ECDSA signature: %w", err))
+		return dispatchError(dispatcher, fmt.Errorf("can't parse ECDSA signature: %w", err))
 	}
 
 	hash, err := downloadBinary(info.BinaryURL, updBinary, dispatcher)
 
 	if err != nil {
-		return dispatchError(dispatcher, fmt.Errorf("Can't download new binary: %w", err))
+		return dispatchError(dispatcher, fmt.Errorf("can't download new binary: %w", err))
 	}
 
 	isSignatureValid := validateSignature(pubKey, signature, hash, dispatcher)
 
 	if !isSignatureValid {
-		return dispatchError(dispatcher, fmt.Errorf("Binary signature is invalid"))
+		return dispatchError(dispatcher, fmt.Errorf("binary signature is invalid"))
 	}
 
 	err = replaceBinary(curBinary, updBinary, dispatcher)
@@ -155,7 +192,7 @@ func Run(info Update, pubKeyData string, dispatcher *events.Dispatcher) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Validate checks if update info is valid
+// Validate checks that the update struct contains all required fields
 func (i Update) Validate() error {
 	switch {
 	case len(i.Signature) == 0 && i.SignatureURL == "":
@@ -176,13 +213,13 @@ func getBinaryPaths() (string, string, error) {
 	curBinary, err := os.Executable()
 
 	if err != nil {
-		return "", "", fmt.Errorf("Can't get current binary name: %w", err)
+		return "", "", fmt.Errorf("can't get current binary name: %w", err)
 	}
 
 	curBinary, err = filepath.EvalSymlinks(curBinary)
 
 	if err != nil {
-		return "", "", fmt.Errorf("Can't get current binary path: %w", err)
+		return "", "", fmt.Errorf("can't get current binary path: %w", err)
 	}
 
 	curBinaryDir := filepath.Dir(curBinary)
@@ -190,11 +227,11 @@ func getBinaryPaths() (string, string, error) {
 	updBinary := filepath.Join(curBinaryDir, "_"+curBinaryFile)
 
 	if !fsutil.IsWritable(curBinaryDir) {
-		return "", "", fmt.Errorf("Binary directory %q is not writable", curBinaryDir)
+		return "", "", fmt.Errorf("binary directory %q is not writable", curBinaryDir)
 	}
 
 	if !fsutil.IsWritable(curBinary) {
-		return "", "", fmt.Errorf("Binary %q is not writable", curBinary)
+		return "", "", fmt.Errorf("binary %q is not writable", curBinary)
 	}
 
 	return curBinary, updBinary, nil
@@ -205,7 +242,7 @@ func parsePublicKey(data string) (*ecdsa.PublicKey, error) {
 	pubKeyBlock, _ := pem.Decode([]byte(data))
 
 	if pubKeyBlock == nil {
-		return nil, fmt.Errorf("Public key is invalid")
+		return nil, fmt.Errorf("public key is invalid")
 	}
 
 	key, err := x509.ParsePKIXPublicKey(pubKeyBlock.Bytes)
@@ -217,7 +254,7 @@ func parsePublicKey(data string) (*ecdsa.PublicKey, error) {
 	pubKey, ok := key.(*ecdsa.PublicKey)
 
 	if !ok {
-		return nil, fmt.Errorf("Key is not ECDSA public key (%T)", pubKey)
+		return nil, fmt.Errorf("key is not ECDSA public key (%T)", key)
 	}
 
 	return pubKey, nil
@@ -235,13 +272,13 @@ func downloadSignature(signatureURL string, dispatcher *events.Dispatcher) ([]by
 
 	if err != nil {
 		dispatcher.DispatchAndWait(EV_SIGNATURE_DOWNLOAD_ERROR, nil)
-		return nil, fmt.Errorf("Can't download signature: %w", err)
+		return nil, fmt.Errorf("can't download signature: %w", err)
 	}
 
 	if resp.StatusCode != req.STATUS_OK {
 		dispatcher.DispatchAndWait(EV_SIGNATURE_DOWNLOAD_ERROR, nil)
 		return nil, fmt.Errorf(
-			"Server returned non-ok status code (%d)",
+			"server returned non-ok status code (%d)",
 			resp.StatusCode,
 		)
 	}
@@ -250,7 +287,7 @@ func downloadSignature(signatureURL string, dispatcher *events.Dispatcher) ([]by
 
 	if err != nil {
 		dispatcher.DispatchAndWait(EV_SIGNATURE_DOWNLOAD_ERROR, nil)
-		return nil, fmt.Errorf("Can't read signature data: %w", err)
+		return nil, fmt.Errorf("can't read signature data: %w", err)
 	}
 
 	dispatcher.DispatchAndWait(EV_SIGNATURE_DOWNLOAD_COMPLETE, nil)
@@ -291,7 +328,7 @@ func downloadBinary(binaryURL, outputFile string, dispatcher *events.Dispatcher)
 	if resp.StatusCode != req.STATUS_OK {
 		dispatcher.DispatchAndWait(EV_BINARY_DOWNLOAD_ERROR, nil)
 		return nil, fmt.Errorf(
-			"Server returned non-ok status code (%d)",
+			"server returned non-ok status code (%d)",
 			resp.StatusCode,
 		)
 	}
@@ -332,7 +369,7 @@ func replaceBinary(curBinary, newBinary string, dispatcher *events.Dispatcher) e
 
 	if err != nil {
 		dispatcher.DispatchAndWait(EV_BINARY_REPLACE_ERROR, nil)
-		return fmt.Errorf("Can't copy attributes to new binary: %w", err)
+		return fmt.Errorf("can't copy attributes to new binary: %w", err)
 	}
 
 	tmpBinary := curBinary + "_old"
@@ -340,14 +377,14 @@ func replaceBinary(curBinary, newBinary string, dispatcher *events.Dispatcher) e
 
 	if err != nil {
 		dispatcher.DispatchAndWait(EV_BINARY_REPLACE_ERROR, nil)
-		return fmt.Errorf("Can't rename current binary: %w", err)
+		return fmt.Errorf("can't rename current binary: %w", err)
 	}
 
 	err = os.Rename(newBinary, curBinary)
 
 	if err != nil {
 		dispatcher.DispatchAndWait(EV_BINARY_REPLACE_ERROR, nil)
-		return fmt.Errorf("Can't rename new binary: %w", err)
+		return fmt.Errorf("can't rename new binary: %w", err)
 	}
 
 	os.Remove(tmpBinary)
@@ -363,7 +400,7 @@ func formatPubKey(key string) string {
 		key = strutil.Wrap(key, 64)
 	}
 
-	if !strings.Contains(key, "-----") {
+	if !strings.Contains(key, "-----BEGIN") {
 		key = "-----BEGIN PUBLIC KEY-----\n" + key + "\n-----END PUBLIC KEY-----"
 	}
 
