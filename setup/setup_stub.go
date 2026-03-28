@@ -1,6 +1,6 @@
 //go:build !linux
 
-// Package setup provides methods to install/unistall application as a service on the
+// Package setup provides methods to install/uninstall application as a service on the
 // system
 package setup
 
