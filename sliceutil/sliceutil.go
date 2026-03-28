@@ -1,4 +1,4 @@
-// Package sliceutil provides methods for working with slices
+// Package sliceutil provides utility functions for working with slices
 package sliceutil
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -9,16 +9,16 @@ package sliceutil
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"slices"
+	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToAny converts slice to slice with any type
+// ToAny converts a typed slice to a []any slice
 func ToAny[T any](data []T) []any {
 	if len(data) == 0 {
 		return nil
@@ -33,7 +33,8 @@ func ToAny[T any](data []T) []any {
 	return result
 }
 
-// StringToError converts slice with strings to slice with errors
+// StringToError converts a slice of strings to a slice of errors,
+// wrapping each string with [errors.New]
 func StringToError(data []string) []error {
 	if len(data) == 0 {
 		return nil
@@ -48,7 +49,8 @@ func StringToError(data []string) []error {
 	return result
 }
 
-// ErrorToString converts slice with errors to slice with strings
+// ErrorToString converts a slice of errors to a slice of strings
+// by calling Error() on each element
 func ErrorToString(data []error) []string {
 	if len(data) == 0 {
 		return nil
@@ -57,13 +59,15 @@ func ErrorToString(data []error) []string {
 	result := make([]string, len(data))
 
 	for i, e := range data {
-		result[i] = e.Error()
+		if e != nil {
+			result[i] = e.Error()
+		}
 	}
 
 	return result
 }
 
-// Exclude removes all items from the first slice that are present in the second slice
+// Exclude returns a copy of slice with all occurrences of items removed
 func Exclude[K comparable](slice []K, items ...K) []K {
 	var n int
 
@@ -88,10 +92,10 @@ LOOP:
 	return s[:n]
 }
 
-// Join concatenates the elements of its first argument to create a single string.
-// Unlike strings.Join, this method supports slices of any type.
+// Join concatenates slice elements into a single string separated by sep.
+// Unlike [strings.Join], it supports slices of any type via fmt's %v verb.
 func Join[T any](slice []T, sep string) string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 
 	for i, v := range slice {
 		fmt.Fprintf(&buf, "%v", v)
@@ -104,8 +108,7 @@ func Join[T any](slice []T, sep string) string {
 	return buf.String()
 }
 
-// Diff returns the difference (added, removed) between two slices.
-// Note that slices MUST be sorted.
+// Diff returns elements added to and removed from before to produce after
 func Diff[K comparable](before, after []K) ([]K, []K) {
 	switch {
 	case len(before) == 0:
@@ -141,15 +144,15 @@ L2:
 	return added, deleted
 }
 
-// Shuffle shuffles slice in place
+// Shuffle randomizes the order of elements in slice in place
 func Shuffle[T any](slice []T) {
 	rand.Shuffle(len(slice), func(i, j int) {
 		slice[i], slice[j] = slice[j], slice[i]
 	})
 }
 
-// Filter filters slice items using given filtering function and returns
-// a new slice with result
+// Filter returns a new slice containing only the elements for which
+// predicate returns true, preserving the original order
 func Filter[T any](slice []T, filter func(v T, index int) bool) []T {
 	if len(slice) == 0 || filter == nil {
 		return nil
