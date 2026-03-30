@@ -26,8 +26,8 @@ func Versions(s []string) {
 // VersionCompare returns true if version string v1 is less than v2.
 // It can be used as a comparator for sorting structs by version field.
 func VersionCompare(v1, v2 string) bool {
-	is := strings.Split(v1, ".")
-	js := strings.Split(v2, ".")
+	is := strings.Split(strings.ReplaceAll(v1, "-", "."), ".")
+	js := strings.Split(strings.ReplaceAll(v2, "-", "."), ".")
 
 	il, jl := len(is), len(js)
 
