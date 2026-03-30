@@ -9,6 +9,7 @@ package spellcheck
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"sort"
 	"strings"
 
@@ -52,12 +53,15 @@ func Train(words []string) *Model {
 		model.terms = append(model.terms, cw)
 	}
 
+	sort.Strings(model.terms)
+
 	return model
 }
 
 // Distance calculates Damerau–Levenshtein distance between two strings
 func Distance(source, target string) int {
-	sl, tl := len(source), len(target)
+	sr, tr := []rune(source), []rune(target)
+	sl, tl := len(sr), len(tr)
 
 	if sl == 0 {
 		if tl == 0 {
@@ -98,7 +102,7 @@ func Distance(source, target string) int {
 		d := 0
 
 		for j := 1; j <= tl; j++ {
-			i1 := sd[rune(target[j-1])]
+			i1 := sd[tr[j-1]]
 			j1 := d
 
 			if source[i-1] == target[j-1] {
@@ -111,7 +115,7 @@ func Distance(source, target string) int {
 			h[i+1][j+1] = min(h[i+1][j+1], h[i1][j1]+(i-i1-1)+1+(j-j1-1))
 		}
 
-		sd[rune(source[i-1])] = i
+		sd[sr[i-1]] = i
 	}
 
 	return h[sl+1][tl+1]
@@ -125,12 +129,11 @@ func (m *Model) Correct(word string) string {
 		return word
 	}
 
-	result := suggestItem{score: 99999999999}
+	result := suggestItem{score: math.MaxInt}
 
 	for _, si := range getSuggestSlice(m.terms, word) {
 		if si.score < result.score {
 			result = si
-			continue
 		}
 	}
 
@@ -145,10 +148,6 @@ func (m *Model) Correct(word string) string {
 func (m *Model) Suggest(word string, max int) []string {
 	if m == nil || len(m.terms) == 0 {
 		return []string{word}
-	}
-
-	if max == 1 {
-		return []string{m.Correct(word)}
 	}
 
 	sis := getSuggestSlice(m.terms, word)
@@ -170,10 +169,13 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // getSuggestSlice returns slice of suggestItem for given terms and word
 func getSuggestSlice(terms []string, word string) []suggestItem {
-	var result []suggestItem
+	result := make([]suggestItem, 0, len(terms))
 
-	for _, t := range terms {
-		result = append(result, suggestItem{t, Distance(strings.ToLower(t), strings.ToLower(word))})
+	for _, term := range terms {
+		result = append(result, suggestItem{
+			term:  term,
+			score: Distance(strings.ToLower(term), strings.ToLower(word)),
+		})
 	}
 
 	return result
