@@ -24,10 +24,11 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Duration format constants control how elapsed time is rendered in the spinner output
 const (
-	DURATION_SHORT  uint8 = iota // e.g. 1:34
-	DURATION_MINI                // e.g. 15ms
-	DURATION_SIMPLE              // e.g. 10 seconds
+	DURATION_SHORT  uint8 = iota // Short format, e.g. 1:34
+	DURATION_MINI                // Minimal format, e.g. 15ms
+	DURATION_SIMPLE              // Human-readable format, e.g. 10 seconds
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,34 +41,34 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SpinnerColorTag is spinner animation color tag (see fmtc package)
+// SpinnerColorTag is the fmtc color tag applied to the spinner animation frame
 var SpinnerColorTag = "{y}"
 
-// OkColorTag is check color tag (see fmtc package)
+// OkColorTag is the fmtc color tag applied to the success symbol
 var OkColorTag = "{g}"
 
-// ErrColorTag is cross color tag (see fmtc package)
+// ErrColorTag is the fmtc color tag applied to the error symbol
 var ErrColorTag = "{r}"
 
-// SkipColorTag is skipped action color tag (see fmtc package)
+// SkipColorTag is the fmtc color tag applied to the skip symbol
 var SkipColorTag = "{s-}"
 
-// TimeColorTag is time color tag (see fmtc package)
+// TimeColorTag is the fmtc color tag applied to the elapsed time value
 var TimeColorTag = "{s-}"
 
-// OkSymbol contains symbol for action with no problems
+// OkSymbol is the terminal symbol printed when an action completes successfully
 var OkSymbol = "✔ "
 
-// ErrSymbol contains symbol for action with problems
+// ErrSymbol is the terminal symbol printed when an action fails
 var ErrSymbol = "✖ "
 
-// SkipSymbol contains symbol for skipped action
+// SkipSymbol is the terminal symbol printed when an action is skipped
 var SkipSymbol = "✔ "
 
-// DisableAnimation is global animation off switch flag
+// DisableAnimation disables the animated spinner and runs in static output mode instead
 var DisableAnimation = false
 
-// DurationFormat is format used for printing result action duration
+// DurationFormat controls the format used for printing the elapsed duration on completion
 var DurationFormat = DURATION_SHORT
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -97,7 +98,8 @@ var mu = &sync.RWMutex{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Show starts spinner animation and shows task description
+// Show starts the spinner animation with the given task description.
+// Accepts fmt-style format arguments. No-op if the spinner is already active.
 func Show(message string, args ...any) {
 	if isActive.Load() {
 		return
@@ -118,7 +120,8 @@ func Show(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Update updates spinner description
+// Update replaces the spinner's description text while it is running.
+// Accepts fmt-style format arguments. No-op if the spinner is not active or is hidden.
 func Update(message string, args ...any) {
 	if !isActive.Load() || isHidden.Load() {
 		return
@@ -129,7 +132,8 @@ func Update(message string, args ...any) {
 	mu.Unlock()
 }
 
-// Done finishes spinner animation and marks it as done
+// Done stops the spinner and prints the final status line.
+// Pass true to mark the action as successful, false to mark it as failed.
 func Done(ok bool) {
 	if !isActive.Load() {
 		return
@@ -142,7 +146,7 @@ func Done(ok bool) {
 	}
 }
 
-// Skip finishes spinner animation and marks it as skipped
+// Skip stops the spinner and marks the current action as skipped
 func Skip() {
 	if !isActive.Load() {
 		return
@@ -153,7 +157,7 @@ func Skip() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// showSpinner starts spinner animation in a separate goroutine
+// showSpinner is the goroutine that renders spinner animation frames to the terminal
 func showSpinner() {
 	var dur time.Duration
 
@@ -188,6 +192,9 @@ func showSpinner() {
 
 		frame++
 
+		// Frames 0 and 1 are used only for the initial display and first loop iteration.
+		// After the first cycle, the spinner loops from frame 2 onward to maintain
+		// a consistent cadence.
 		if frame == 10 {
 			frame = 2
 		}
@@ -201,17 +208,21 @@ func showSpinner() {
 	}
 }
 
-// stopSpinner stops spinner animation and prints final message
+// stopSpinner signals the animation goroutine to stop and prints the final result line
 func stopSpinner(action uint8) {
 	isActive.Store(false)
 
-	for range time.NewTicker(time.Millisecond).C {
+	ticker := time.NewTicker(time.Millisecond)
+	defer ticker.Stop()
+
+	for range ticker.C {
 		if isHidden.Load() {
 			break
 		}
 	}
 
-	mu.RLock()
+	mu.Lock()
+	defer mu.Unlock()
 
 	timeColorTag := strutil.B(fmtc.IsTag(TimeColorTag), TimeColorTag, "{s-}")
 
@@ -232,14 +243,10 @@ func stopSpinner(action uint8) {
 	fmtc.Print(desc + " ")
 	fmtc.Printfn(timeColorTag+"(%s){!}\033[K", formatDuration(time.Since(start)))
 
-	mu.RUnlock()
-
-	mu.Lock()
 	desc, start = "", time.Time{}
-	mu.Unlock()
 }
 
-// formatDuration formats duration based on the global DurationFormat setting
+// formatDuration formats a duration value using the format selected by [DurationFormat]
 func formatDuration(d time.Duration) string {
 	switch DurationFormat {
 	case DURATION_MINI:
@@ -251,7 +258,7 @@ func formatDuration(d time.Duration) string {
 	return timeutil.Pretty(d).Short(true)
 }
 
-// getMaxDescSize returns size of the current line for the description
+// getMaxDescSize returns the maximum character width available for the description text
 func getMaxDescSize() int {
 	w := tty.GetWidth()
 	return mathutil.B(w < 20, 9999, w-14)
