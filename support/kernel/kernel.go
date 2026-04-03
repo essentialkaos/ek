@@ -20,7 +20,9 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects info from OS kernel
+// Collect returns kernel parameters matching the given names or prefix patterns.
+// Patterns ending with "*" are treated as prefix globs (e.g. "vm.*" matches all vm
+// parameters). Returns nil if no params match or if the kernel cannot be queried.
 func Collect(params ...string) []support.KernelParam {
 	kernelParams, err := sysctl.All()
 
@@ -30,9 +32,9 @@ func Collect(params ...string) []support.KernelParam {
 
 	var result []support.KernelParam
 
-	for _, param := range params {
-		isGlob := strings.HasSuffix(param, "*")
-		param = strings.TrimRight(param, "*")
+	for _, pattern := range params {
+		isGlob := strings.HasSuffix(pattern, "*")
+		param := strings.TrimRight(pattern, "*")
 
 		for k, v := range kernelParams {
 			if isGlob {
