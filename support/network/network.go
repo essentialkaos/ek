@@ -22,7 +22,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects network info
+// Collect gathers hostname, local IPv4/IPv6 addresses, and optionally the
+// public IP using the first provided resolver URL
 func Collect(ipResolverURL ...string) *support.NetworkInfo {
 	info := &support.NetworkInfo{
 		IPv4: cleanIPList(netutil.GetAllIP()),
