@@ -10,6 +10,7 @@ package pkgs
 
 import (
 	"os/exec"
+	"regexp"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fsutil"
@@ -34,7 +35,7 @@ var pkgManager uint8
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collect info about packages
+// Collect returns package information for each of the given package names
 func Collect(pkgs ...string) []support.Pkg {
 	var result []support.Pkg
 
@@ -42,7 +43,13 @@ func Collect(pkgs ...string) []support.Pkg {
 		pkgManager = getPackageManagerType()
 	}
 
+	safePkgName := regexp.MustCompile(`^[a-zA-Z0-9._+\-]+$`)
+
 	for _, pkg := range pkgs {
+		if !safePkgName.MatchString(pkg) {
+			continue // skip unsafe package names
+		}
+
 		result = append(result, getPackageInfo(pkg))
 	}
 
@@ -138,7 +145,7 @@ func getAPKPackageInfo(name string) support.Pkg {
 	return support.Pkg{name, ver + "." + arch}
 }
 
-// getTDNFPackageInfo returns info about package from tndf
+// getTDNFPackageInfo returns info about package from tdnf
 func getTDNFPackageInfo(name string) support.Pkg {
 	out := getCommandOutput("tdnf", "repoquery", "--installed", name)
 
