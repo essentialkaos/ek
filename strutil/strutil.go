@@ -11,11 +11,12 @@ package strutil
 import (
 	"bytes"
 	"strings"
+	"unicode/utf8"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// EllipsisSuffix is ellipsis suffix
+// EllipsisSuffix is the string appended when truncating with Ellipsis
 var EllipsisSuffix = "..."
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,7 +25,7 @@ var defaultFieldsSeparators = []rune{' ', '\t'}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Q returns first non-empty string from given slice
+// Q returns the first non-empty string from the given arguments
 func Q(v ...string) string {
 	for _, k := range v {
 		if k != "" {
@@ -35,7 +36,7 @@ func Q(v ...string) string {
 	return ""
 }
 
-// B returns positive string if condition is true, otherwise returns negative string
+// B returns positive if cond is true, otherwise returns negative
 func B(cond bool, positive, negative string) string {
 	if cond {
 		return positive
@@ -44,7 +45,7 @@ func B(cond bool, positive, negative string) string {
 	return negative
 }
 
-// Concat concatenates all strings into a single string
+// Concat concatenates all given strings into a single string
 func Concat(s ...string) string {
 	var buffer bytes.Buffer
 
@@ -55,8 +56,8 @@ func Concat(s ...string) string {
 	return buffer.String()
 }
 
-// Substr returns the part of a string between the start index and a number
-// of characters after it (unicode supported)
+// Substr returns the part of s starting at rune index start with the given
+// length. Negative start is treated as 0. Unicode is supported.
 func Substr(s string, start, length int) string {
 	if s == "" || length <= 0 || start >= Len(s) {
 		return ""
@@ -88,7 +89,8 @@ func Substr(s string, start, length int) string {
 	return s
 }
 
-// Substring returns the part of the string between the start and end (unicode supported)
+// Substring returns the part of s between rune indices start and end.
+// Negative end is counted from the end of the string. Unicode is supported.
 func Substring(s string, start, end int) string {
 	if s == "" || start == end || start >= Len(s) {
 		return ""
@@ -124,7 +126,8 @@ func Substring(s string, start, end int) string {
 	return s
 }
 
-// Extract extracts a substring safely (unicode NOT supported)
+// Extract returns a byte-indexed substring of s between start and end.
+// Unlike [Substr] and [Substring], Unicode is not supported.
 func Extract(s string, start, end int) string {
 	if s == "" || end < start {
 		return ""
@@ -141,23 +144,13 @@ func Extract(s string, start, end int) string {
 	return s[start:end]
 }
 
-// Len returns number of symbols in string (unicode supported)
+// Len returns the number of Unicode code points in s
 func Len(s string) int {
-	if s == "" {
-		return 0
-	}
-
-	var count int
-
-	for range s {
-		count++
-	}
-
-	return count
+	return utf8.RuneCountInString(s)
 }
 
-// LenVisual returns number of space required for rendering given string using
-// monospaced font.
+// LenVisual returns the number of columns required to render s using a
+// monospaced font, counting wide (CJK) characters as 2 columns each.
 //
 // Warning: This method can be inaccurate in some cases, use with care
 func LenVisual(s string) int {
@@ -178,7 +171,8 @@ func LenVisual(s string) int {
 	return count
 }
 
-// Ellipsis trims given string (unicode supported)
+// Ellipsis truncates s to maxSize runes, appending EllipsisSuffix if trimmed.
+// Unicode is supported.
 func Ellipsis(s string, maxSize int) string {
 	if Len(s) <= maxSize {
 		return s
@@ -187,7 +181,7 @@ func Ellipsis(s string, maxSize int) string {
 	return Substr(s, 0, maxSize-Len(EllipsisSuffix)) + EllipsisSuffix
 }
 
-// Head returns n first symbols from given string (unicode supported)
+// Head returns the first n runes of s. Unicode is supported.
 func Head(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -202,7 +196,7 @@ func Head(s string, n int) string {
 	return Substr(s, 0, n)
 }
 
-// Tail returns n last symbols from given string (unicode supported)
+// Tail returns the last n runes of s. Unicode is supported.
 func Tail(s string, n int) string {
 	if s == "" || n <= 0 {
 		return ""
@@ -217,7 +211,7 @@ func Tail(s string, n int) string {
 	return Substr(s, l-n, l)
 }
 
-// PrefixSize returns prefix size
+// PrefixSize returns the number of leading runes in str equal to prefix
 func PrefixSize(str string, prefix rune) int {
 	if str == "" {
 		return 0
@@ -225,8 +219,8 @@ func PrefixSize(str string, prefix rune) int {
 
 	var result int
 
-	for i := range len(str) {
-		if rune(str[i]) != prefix {
+	for _, r := range str {
+		if r != prefix {
 			return result
 		}
 
@@ -236,7 +230,7 @@ func PrefixSize(str string, prefix rune) int {
 	return result
 }
 
-// SuffixSize returns suffix size
+// SuffixSize returns the number of trailing runes in str equal to suffix
 func SuffixSize(str string, suffix rune) int {
 	if str == "" {
 		return 0
@@ -244,10 +238,14 @@ func SuffixSize(str string, suffix rune) int {
 
 	var result int
 
-	for i := len(str) - 1; i >= 0; i-- {
-		if rune(str[i]) != suffix {
+	for len(str) > 0 {
+		r, size := utf8.DecodeLastRuneInString(str)
+
+		if r != suffix {
 			return result
 		}
+
+		str = str[:len(str)-size]
 
 		result++
 	}
@@ -255,7 +253,7 @@ func SuffixSize(str string, suffix rune) int {
 	return result
 }
 
-// ReplaceAll replaces all symbols from replset in string
+// ReplaceAll replaces every rune found in replset with the string to
 func ReplaceAll(source, replset, to string) string {
 	if source == "" {
 		return ""
@@ -278,7 +276,7 @@ SOURCELOOP:
 	return result.String()
 }
 
-// ReplaceIgnoreCase replaces part of the string ignoring case
+// ReplaceIgnoreCase replaces all case-insensitive occurrences of from with to
 func ReplaceIgnoreCase(source, from, to string) string {
 	if source == "" || from == "" {
 		return source
@@ -307,7 +305,7 @@ func ReplaceIgnoreCase(source, from, to string) string {
 	return result.String()
 }
 
-// Exclude excludes substring from given string
+// Exclude removes all occurrences of substr from data
 func Exclude(data, substr string) string {
 	if len(data) == 0 || len(substr) == 0 {
 		return data
@@ -316,7 +314,9 @@ func Exclude(data, substr string) string {
 	return strings.ReplaceAll(data, substr, "")
 }
 
-// ReadField reads field with given index from data
+// ReadField returns the field at the given zero-based index from data,
+// splitting on separators (default: space and tab). If multiSep is true,
+// consecutive separators are treated as one.
 func ReadField(data string, index int, multiSep bool, separators ...rune) string {
 	if data == "" || index < 0 {
 		return ""
@@ -360,8 +360,8 @@ MAINLOOP:
 	return data[startPointer:]
 }
 
-// Fields splits the string data around each instance of one or more
-// consecutive white space or comma characters
+// Fields splits data on whitespace, commas, and semicolons, respecting
+// quoted substrings (", ', `, and Unicode quote pairs) and backslash escapes.
 func Fields(data string) []string {
 	var result []string
 	var buf bytes.Buffer
@@ -411,30 +411,41 @@ func Fields(data string) []string {
 	return result
 }
 
-// Copy is method for force string copying
+// Copy returns an independent copy of v, preventing retention of a larger
+// underlying array
 func Copy(v string) string {
-	return (v + " ")[:len(v)]
+	b := make([]byte, len(v))
+
+	copy(b, v)
+
+	return string(b)
 }
 
-// Before returns part of the string before given substring
+// Before returns the part of s before the first occurrence of substr.
+// Returns s unchanged if substr is not found.
 func Before(s, substr string) string {
-	if !strings.Contains(s, substr) {
+	i := strings.Index(s, substr)
+
+	if i == -1 {
 		return s
 	}
 
-	return s[:strings.Index(s, substr)]
+	return s[:i]
 }
 
-// After returns part of the string after given substring
+// After returns the part of s after the first occurrence of substr.
+// Returns s unchanged if substr is not found.
 func After(s, substr string) string {
-	if !strings.Contains(s, substr) {
+	i := strings.Index(s, substr)
+
+	if i == -1 {
 		return s
 	}
 
-	return s[strings.Index(s, substr)+len(substr):]
+	return s[i+len(substr):]
 }
 
-// HasPrefixAny tests whether the string s begins with one of given prefixes
+// HasPrefixAny reports whether s begins with any of the given prefixes
 func HasPrefixAny(s string, prefix ...string) bool {
 	for _, prf := range prefix {
 		if strings.HasPrefix(s, prf) {
@@ -445,7 +456,7 @@ func HasPrefixAny(s string, prefix ...string) bool {
 	return false
 }
 
-// HasSuffixAny tests whether the string s ends with one of given suffixes
+// HasSuffixAny reports whether s ends with any of the given suffixes
 func HasSuffixAny(s string, suffix ...string) bool {
 	for _, suf := range suffix {
 		if strings.HasSuffix(s, suf) {
@@ -456,8 +467,9 @@ func HasSuffixAny(s string, suffix ...string) bool {
 	return false
 }
 
-// IndexByteSkip returns the index of the given byte in the string after skipping
-// the first or the last N occurrences
+// IndexByteSkip returns the byte index of c in s after skipping the first
+// skip occurrences. A negative skip searches from the end, skipping the last
+// abs(skip) occurrences.
 func IndexByteSkip(s string, c byte, skip int) int {
 	if skip == 0 {
 		return strings.IndexByte(s, c)
@@ -478,7 +490,7 @@ func IndexByteSkip(s string, c byte, skip int) int {
 	} else {
 		skip *= -1
 
-		for i := len(s) - 1; i > 0; i-- {
+		for i := len(s) - 1; i >= 0; i-- {
 			if s[i] == c {
 				counter++
 			}
@@ -492,54 +504,56 @@ func IndexByteSkip(s string, c byte, skip int) int {
 	return -1
 }
 
-// SqueezeRepeats replaces each sequence of a repeated character that is listed in
-// the specified set
+// SqueezeRepeats replaces each run of a repeated character listed in set
+// with a single instance of that character
 func SqueezeRepeats(s string, set string) string {
 	if s == "" || set == "" {
 		return s
 	}
 
-	for _, r := range set {
-		l, rs := len(s), string(r)
+	var buf strings.Builder
+	buf.Grow(len(s))
 
-		for {
-			s = strings.ReplaceAll(s, rs+rs, rs)
+	runes := []rune(s)
 
-			if len(s) == l {
-				break
-			}
-
-			l = len(s)
+	for i, r := range runes {
+		if strings.ContainsRune(set, r) && i > 0 && runes[i-1] == r {
+			continue
 		}
+		buf.WriteRune(r)
 	}
 
-	return s
+	return buf.String()
 }
 
-// Mask masks part of the given string using given symbol
+// Mask replaces runes between byte positions start and end with maskingRune.
+// A negative end is counted from the end of s.
 //
 // start - the first masked symbol
 // end - the first non-masked symbol
 func Mask(s string, start, end int, maskingRune rune) string {
-	var buffer bytes.Buffer
+	runes := []rune(s)
+	n := len(runes)
 
 	if end < 0 {
-		end = len(s) + end
+		end = n + end
 	}
 
-	for i, r := range s {
+	var buf bytes.Buffer
+
+	for i, r := range runes {
 		if i >= start && i < end {
-			buffer.WriteRune(maskingRune)
+			buf.WriteRune(maskingRune)
 		} else {
-			buffer.WriteRune(r)
+			buf.WriteRune(r)
 		}
 	}
 
-	return buffer.String()
+	return buf.String()
 }
 
-// JoinFunc concatenates the elements of its first argument into a single string,
-// and modifies each element using the given function
+// JoinFunc concatenates elems into a single string separated by sep,
+// applying f to each element before joining.
 func JoinFunc(elems []string, sep string, f func(s string) string) string {
 	if len(elems) == 0 {
 		return ""
@@ -557,22 +571,25 @@ func JoinFunc(elems []string, sep string, f func(s string) string) string {
 	return buf.String()
 }
 
-// Wrap splits a string into lines of fixed width by inserting a newline character
-// ('\n') every n characters. It does not consider word boundaries or Unicode
-// characters; it simply slices the raw byte string.
+// Wrap splits s into lines of at most n runes by inserting newline characters.
+// Word boundaries are not considered; splitting is purely by rune count.
 func Wrap(s string, n int) string {
 	if s == "" || n <= 0 || len(s) <= n {
 		return s
 	}
 
-	var buf bytes.Buffer
+	var buf strings.Builder
+	var count int
 
-	for i := 0; i < len(s); i += n {
-		if i+n >= len(s) {
-			buf.WriteString(s[i:])
-		} else {
-			buf.WriteString(s[i:i+n] + "\n")
+	for _, r := range s {
+		if count == n {
+			buf.WriteByte('\n')
+			count = 0
 		}
+
+		buf.WriteRune(r)
+
+		count++
 	}
 
 	return buf.String()
