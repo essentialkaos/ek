@@ -21,13 +21,16 @@ import (
 
 // ExtractVersion extracts version info from given command
 func ExtractVersion(cmd string, line, field int) support.App {
-	if len(cmd) == 0 {
+	cmdSlice := strings.Fields(cmd)
+
+	if len(cmdSlice) == 0 {
 		return support.App{}
 	}
 
-	cmdSlice := strings.Fields(cmd)
-
-	return support.App{cmdSlice[0], extractField(execVersionCmd(cmdSlice...), line, field)}
+	return support.App{
+		Name:    cmdSlice[0],
+		Version: extractField(execVersionCmd(cmdSlice...), line, field),
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -66,7 +69,7 @@ func Java() support.App {
 		ver = extractField(ver, 0, 2)
 	}
 
-	return support.App{"java", ver}
+	return support.App{Name: "java", Version: ver}
 }
 
 // Groovy extracts version info from groovy command output
@@ -82,7 +85,7 @@ func Ruby() support.App {
 // NodeJS extracts version info from node command output
 func NodeJS() support.App {
 	info := ExtractVersion("node --version", 0, 2)
-	info.Version = strings.TrimLeft(info.Version, "v")
+	info.Version = strings.TrimPrefix(info.Version, "v")
 
 	return info
 }
