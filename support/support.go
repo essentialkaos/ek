@@ -83,6 +83,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CheckStatus represents the result status of a custom check
 type CheckStatus string
 
 const (
@@ -92,6 +93,7 @@ const (
 	CHECK_SKIP  CheckStatus = "skip"
 )
 
+// // ServiceStatus represents the current running state of a service
 type ServiceStatus string
 
 const (
@@ -102,7 +104,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Info contains all support information (can be encoded in JSON/GOB)
+// Info contains all collected support information and can be encoded to JSON or GOB
 type Info struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
@@ -123,7 +125,7 @@ type Info struct {
 	Env       EnvVars        `json:"env,omitempty"`
 }
 
-// BuildInfo contains information about binary
+// BuildInfo contains metadata about the binary and the Go toolchain used to build it
 type BuildInfo struct {
 	GoVersion string `json:"go_version"`
 	GoArch    string `json:"go_arch"`
@@ -134,7 +136,7 @@ type BuildInfo struct {
 	BinSHA string `json:"bin_sha,omitempty"`
 }
 
-// OSInfo contains extended information about OS
+// OSInfo contains extended OS identification fields parsed from the system release file
 type OSInfo struct {
 	Name        string `json:"name,omitempty"`
 	PrettyName  string `json:"pretty_name,omitempty"`
@@ -151,7 +153,8 @@ type OSInfo struct {
 	coloredPrettyName string
 }
 
-// SystemInfo contains basic information about system
+// SystemInfo contains basic host-level information such as hostname, arch, and kernel
+// version
 type SystemInfo struct {
 	Name            string `json:"name"`
 	ID              string `json:"id"`
@@ -160,7 +163,7 @@ type SystemInfo struct {
 	ContainerEngine string `json:"container_engine,omitempty"`
 }
 
-// NetworkInfo contains basic information about network
+// NetworkInfo contains basic network configuration including hostname and IP addresses
 type NetworkInfo struct {
 	Hostname string   `json:"hostname"`
 	PublicIP string   `json:"public_ip,omitempty"`
@@ -168,7 +171,7 @@ type NetworkInfo struct {
 	IPv6     []string `json:"ipv6,omitempty"`
 }
 
-// FSInfo contains basic information about file system mount
+// FSInfo contains usage statistics for a single mounted filesystem
 type FSInfo struct {
 	Path   string `json:"path,omitempty"`
 	Device string `json:"device,omitempty"`
@@ -177,10 +180,10 @@ type FSInfo struct {
 	Free   uint64 `json:"free,omitempty"`
 }
 
-// FSInfos is a slice with fs info
+// FSInfos is a slice of [FSInfo] entries
 type FSInfos []FSInfo
 
-// ResourcesInfo contains information about system resources
+// ResourcesInfo contains information about CPU, memory, and swap usage
 type ResourcesInfo struct {
 	CPU       []CPUInfo `json:"cpu"`
 	MemTotal  uint64    `json:"mem_total,omitempty"`
@@ -191,14 +194,14 @@ type ResourcesInfo struct {
 	SwapUsed  uint64    `json:"swap_used,omitempty"`
 }
 
-// CPUInfo contains info about CPU
+// CPUInfo contains the model name and topology of a single CPU
 type CPUInfo struct {
 	Model   string `json:"model"`
 	Threads int    `json:"threads"`
 	Cores   int    `json:"cores"`
 }
 
-// Service contains basic info about service
+// Service contains the name, status, and enablement state of a system service
 type Service struct {
 	Name      string        `json:"name"`
 	Status    ServiceStatus `json:"status"`
@@ -206,16 +209,16 @@ type Service struct {
 	IsEnabled bool          `json:"is_enabled"`
 }
 
-// Services is a slice with services info
+// Services is a slice of Service entries
 type Services []Service
 
-// App contains basic information about app
+// App contains the name and version of an installed application
 type App struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
-// Apps is a slice with apps info
+// Apps is a slice of [App] entries
 type Apps []App
 
 // Pkg contains basic information about package
@@ -224,23 +227,24 @@ type Pkg = App
 // Pkgs is a slice with packages info
 type Pkgs = Apps
 
-// Dep contains dependency information
+// Dep contains the import path, version, and optional extra metadata for a Go
+// dependency
 type Dep struct {
 	Path    string `json:"path"`
 	Version string `json:"version"`
 	Extra   string `json:"extra"`
 }
 
-// Deps is a slice with dependency information
+// Deps is a slice of [Dep] entries
 type Deps []Dep
 
-// EnvVar contains information about environment variable
+// EnvVar contains a single environment variable key-value pair
 type EnvVar struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
 
-// EnvVars is slice with env environment variables
+// EnvVars is a slice of [EnvVar] entries
 type EnvVars []EnvVar
 
 // KernelParam contains info about kernel parameter
@@ -249,7 +253,8 @@ type KernelParam = EnvVar
 // KernelParams is a slice with kernel parameters
 type KernelParams = EnvVars
 
-// Check contains info about custom check
+// Check contains the result of a custom application-defined health or availability
+// check
 type Check struct {
 	Status  CheckStatus `json:"status"`
 	Title   string      `json:"title"`
@@ -265,7 +270,8 @@ var buildInfoProvider = debug.ReadBuildInfo
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects basic info about system
+// Collect creates a new Info instance with the given application name and version,
+// and automatically populates build, OS, and system information
 func Collect(app, ver string) *Info {
 	bin, _ := os.Executable()
 
@@ -288,7 +294,7 @@ func Collect(app, ver string) *Info {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// WithDeps adds information about dependencies
+// WithDeps attaches the list of Go module dependencies to the support info
 func (i *Info) WithDeps(deps []Dep) *Info {
 	if i == nil {
 		return nil
@@ -301,21 +307,20 @@ func (i *Info) WithDeps(deps []Dep) *Info {
 	return i
 }
 
-// WithRevision adds git revision
+// WithRevision sets the Git commit SHA
 func (i *Info) WithRevision(rev string) *Info {
 	if i == nil {
 		return nil
 	}
 
-	if rev != "" {
+	if rev != "" && i.Build != nil {
 		i.Build.GitSHA = rev
-		return i
 	}
 
 	return i
 }
 
-// WithPackages adds information about packages
+// WithPackages attaches the list of installed system packages to the support info
 func (i *Info) WithPackages(pkgs []Pkg) *Info {
 	if i == nil {
 		return nil
@@ -326,7 +331,7 @@ func (i *Info) WithPackages(pkgs []Pkg) *Info {
 	return i
 }
 
-// WithServices adds information about services
+// WithServices attaches the list of system services to the support info
 func (i *Info) WithServices(services []Service) *Info {
 	if i == nil {
 		return nil
@@ -337,7 +342,7 @@ func (i *Info) WithServices(services []Service) *Info {
 	return i
 }
 
-// WithPackages adds information about system apps
+// WithApps attaches one or more external application entries to the support info
 func (i *Info) WithApps(apps ...App) *Info {
 	if i == nil {
 		return nil
@@ -348,7 +353,7 @@ func (i *Info) WithApps(apps ...App) *Info {
 	return i
 }
 
-// WithChecks adds information custom checks
+// WithChecks attaches one or more custom check results to the support info
 func (i *Info) WithChecks(check ...Check) *Info {
 	if i == nil {
 		return nil
@@ -359,7 +364,8 @@ func (i *Info) WithChecks(check ...Check) *Info {
 	return i
 }
 
-// WithEnvVars adds information with environment variables
+// WithEnvVars reads the named environment variables from the process environment
+// and attaches any non-empty ones to the support info
 func (i *Info) WithEnvVars(vars ...string) *Info {
 	if i == nil {
 		return nil
@@ -380,7 +386,7 @@ func (i *Info) WithEnvVars(vars ...string) *Info {
 	return i
 }
 
-// WithNetwork adds information about the network
+// WithNetwork attaches the collected network information to the support info
 func (i *Info) WithNetwork(info *NetworkInfo) *Info {
 	if i == nil {
 		return nil
@@ -391,7 +397,7 @@ func (i *Info) WithNetwork(info *NetworkInfo) *Info {
 	return i
 }
 
-// WithFS adds file system information
+// WithFS attaches the collected filesystem mount information to the support info
 func (i *Info) WithFS(info []FSInfo) *Info {
 	if i == nil {
 		return nil
@@ -402,7 +408,8 @@ func (i *Info) WithFS(info []FSInfo) *Info {
 	return i
 }
 
-// WithResources adds system resources information
+// WithResources attaches the collected CPU and memory resource information to the
+// support info
 func (i *Info) WithResources(info *ResourcesInfo) *Info {
 	if i == nil {
 		return nil
@@ -413,7 +420,7 @@ func (i *Info) WithResources(info *ResourcesInfo) *Info {
 	return i
 }
 
-// WithKernel adds kernel parameters info
+// WithKernel attaches the collected kernel parameter values to the support info
 func (i *Info) WithKernel(info []KernelParam) *Info {
 	if i == nil {
 		return nil
@@ -426,7 +433,7 @@ func (i *Info) WithKernel(info []KernelParam) *Info {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Print prints support info
+// Print renders all collected support information to stdout in a human-readable format
 func (i *Info) Print() {
 	if i == nil {
 		return
@@ -464,8 +471,7 @@ func (i *Info) appendBuildInfo() {
 		GoOS:      runtime.GOOS,
 	}
 
-	bin, _ := os.Executable()
-	binSHA := hashutil.File(bin, sha256.New()).String()
+	binSHA := hashutil.File(i.Binary, sha256.New()).String()
 	info, ok := buildInfoProvider()
 
 	if ok {
@@ -557,7 +563,7 @@ func (i *Info) printOSInfo() {
 
 	format(12, true, "Locale", os.Getenv("LANG"))
 
-	if i.System.ContainerEngine != "" {
+	if i.System != nil && i.System.ContainerEngine != "" {
 		fmtc.NewLine()
 		switch i.System.ContainerEngine {
 		case "docker":
@@ -587,10 +593,10 @@ func (i *Info) printResourcesInfo() {
 	if len(i.Resources.CPU) > 0 {
 		var procs, cores int
 
-		for i, p := range i.Resources.CPU {
+		for idx, p := range i.Resources.CPU {
 			fmtc.Printf(
 				"  {s-}%d.{!} %s {s}[ %dC × %dT → %d ]{!}\n",
-				i+1, p.Model, p.Cores, p.Threads, p.Cores*p.Threads,
+				idx+1, p.Model, p.Cores, p.Threads, p.Cores*p.Threads,
 			)
 			procs++
 			cores += p.Cores * p.Threads
