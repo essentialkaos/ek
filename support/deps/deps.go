@@ -19,13 +19,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Extract extracts dependencies info from gomod data
+// Extract extracts dependency info from go.mod data, optionally including indirect
+// dependencies
 func Extract(gomod []byte, withIndirect ...bool) []support.Dep {
-	if len(withIndirect) > 0 && withIndirect[0] {
-		return filterDeps(depsy.Extract(gomod, true))
-	}
-
-	return filterDeps(depsy.Extract(gomod, false))
+	return filterDeps(depsy.Extract(gomod, len(withIndirect) > 0 && withIndirect[0]))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
