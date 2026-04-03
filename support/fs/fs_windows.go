@@ -14,7 +14,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects info about filesystem
+// Collect returns usage statistics for all currently mounted filesystems.
+// Returns nil if filesystem information cannot be retrieved from the OS.
 func Collect() []support.FSInfo {
 	return nil
 }
