@@ -8,11 +8,16 @@ package terminal
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
 	. "github.com/essentialkaos/check"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type TestStringer struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -33,6 +38,8 @@ func (s *TerminalSuite) TestMessage(c *C) {
 
 	Error(fmt.Errorf("Error"))
 	Error([]string{"Error"})
+
+	c.Assert(formatMessage(TestStringer{}, "", nil), Equals, "TestStringer")
 }
 
 func (s *TerminalSuite) TestMessageWithPrefix(c *C) {
@@ -61,4 +68,45 @@ func (s *TerminalSuite) TestAction(c *C) {
 
 	PrintActionMessage("Testing")
 	PrintActionStatus(3)
+}
+
+func (s *TerminalSuite) TestInput(c *C) {
+	var buf bytes.Buffer
+
+	NewLine = true
+	dataInput = &buf
+
+	buf.WriteString("Test message ")
+	input := Read("Title")
+	c.Assert(input, Equals, "Test message ")
+
+	buf.WriteString("Y")
+	ok := ReadAnswer("Title")
+	c.Assert(ok, Equals, true)
+
+	buf.WriteString("n")
+	ok = ReadAnswer("Title")
+	c.Assert(ok, Equals, false)
+
+	AlwaysYes = true
+	buf.WriteString("n")
+	ok = ReadAnswer("Title")
+	c.Assert(ok, Equals, true)
+	AlwaysYes = false
+
+	buf.WriteString("f\ny")
+	ok = ReadAnswer("Title", "y")
+	c.Assert(ok, Equals, true)
+
+	buf.WriteString("f\nn")
+	ok = ReadAnswer("Title", "n")
+	c.Assert(ok, Equals, false)
+
+	c.Assert(getAnswerTitle("", ""), Equals, "")
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s TestStringer) String() string {
+	return "TestStringer"
 }
