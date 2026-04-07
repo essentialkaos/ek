@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects info about CPU and memory
+// Collect collects CPU and memory usage info
 func Collect() *support.ResourcesInfo {
 	result := &support.ResourcesInfo{}
 
@@ -26,10 +26,16 @@ func Collect() *support.ResourcesInfo {
 
 	if err1 == nil {
 		for _, p := range cpuInfo {
+			threads := uint64(0)
+
+			if p.Cores > 0 {
+				threads = p.Siblings / p.Cores
+			}
+
 			result.CPU = append(result.CPU, support.CPUInfo{
 				Model:   p.Model,
 				Cores:   p.Cores,
-				Threads: p.Siblings / p.Cores,
+				Threads: threads,
 			})
 		}
 	}
