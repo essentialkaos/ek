@@ -26,7 +26,7 @@ func Collect() *support.ResourcesInfo {
 
 	if err1 == nil {
 		for _, p := range cpuInfo {
-			threads := uint64(0)
+			threads := 0
 
 			if p.Cores > 0 {
 				threads = p.Siblings / p.Cores
