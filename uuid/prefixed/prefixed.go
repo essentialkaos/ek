@@ -32,7 +32,8 @@ var encoder = base64.StdEncoding.WithPadding(base64.NoPadding)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Encode creates base64-encoded prefixed UUID
+// Encode returns a base64-encoded UUID string prefixed with prefix and a dot
+// separator. An empty string is returned if prefix is empty or UUID is the zero value.
 func Encode(prefix string, uuid uuid.UUID) string {
 	if prefix == "" || uuid.IsZero() {
 		return ""
@@ -41,7 +42,8 @@ func Encode(prefix string, uuid uuid.UUID) string {
 	return prefix + "." + encoder.EncodeToString(uuid[:])
 }
 
-// Decode decodes base64-encoded prefixed UUID and returns prefix and UUID
+// Decode parses a prefixed UUID string and returns the prefix, UUID, and parsing
+// error
 func Decode(prefixedUUID string) (string, uuid.UUID, error) {
 	prefix, data, ok := strings.Cut(prefixedUUID, ".")
 
