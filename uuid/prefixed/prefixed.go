@@ -11,9 +11,18 @@ package prefixed
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/uuid"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+var (
+	ErrNoPrefix    = errors.New("prefixed UUID has no prefix")
+	ErrEmptyPrefix = errors.New("prefixed UUID has empty prefix")
+	ErrEmptyUUID   = errors.New("prefixed UUID has no UUID data")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -29,7 +38,7 @@ func Encode(prefix string, uuid uuid.UUID) string {
 		return ""
 	}
 
-	return prefix + "." + encoder.EncodeToString(uuid)
+	return prefix + "." + encoder.EncodeToString(uuid[:])
 }
 
 // Decode decodes base64-encoded prefixed UUID and returns prefix and UUID
@@ -38,17 +47,17 @@ func Decode(prefixedUUID string) (string, uuid.UUID, error) {
 
 	switch {
 	case !ok:
-		return "", nil, errors.New("Prefixed UUID has no prefix")
+		return "", uuid.UUID{}, ErrNoPrefix
 	case prefix == "":
-		return "", nil, errors.New("Prefixed UUID has empty prefix")
+		return "", uuid.UUID{}, ErrEmptyPrefix
 	case data == "":
-		return "", nil, errors.New("Prefixed UUID has no UUID data")
+		return "", uuid.UUID{}, ErrEmptyUUID
 	}
 
 	u, err := encoder.DecodeString(data)
 
 	if err != nil {
-		return "", nil, errors.New("Can't decode UUID data: " + err.Error())
+		return "", uuid.UUID{}, fmt.Errorf("can't decode UUID data: %w", err)
 	}
 
 	return prefix, uuid.UUID(u), nil

@@ -19,24 +19,33 @@ import (
 
 // Predefined namespace UUID's
 var (
-	NsDNS  = []byte{107, 167, 184, 16, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsURL  = []byte{107, 167, 184, 17, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsOID  = []byte{107, 167, 184, 18, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsX500 = []byte{107, 167, 184, 20, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+	NsDNS  = UUID{107, 167, 184, 16, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+	NsURL  = UUID{107, 167, 184, 17, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+	NsOID  = UUID{107, 167, 184, 18, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+	NsX500 = UUID{107, 167, 184, 20, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UUID contains UUID data
-type UUID []byte
+type UUID [16]byte
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// randGenerator is function to generate random data
+var randGenerator = rand.Read
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UUID4 generates random generated UUID v4
 func UUID4() UUID {
-	uuid := make(UUID, 16)
+	var uuid UUID
 
-	rand.Read(uuid)
+	_, err := randGenerator(uuid[:])
+
+	if err != nil {
+		return UUID{}
+	}
 
 	uuid[6] = (uuid[6] & 0x0F) | 0x40
 	uuid[8] = (uuid[8] & 0x3F) | 0x80
@@ -45,14 +54,14 @@ func UUID4() UUID {
 }
 
 // UUID5 generates UUID v5 based on SHA-1 hash of namespace UUID and name
-func UUID5(ns []byte, name string) UUID {
-	uuid := make(UUID, 16)
+func UUID5(ns UUID, name string) UUID {
+	var uuid UUID
 
 	hash := sha1.New()
-	hash.Write(ns)
+	hash.Write(ns[:])
 	hash.Write([]byte(name))
 
-	copy(uuid, hash.Sum(nil))
+	copy(uuid[:], hash.Sum(nil))
 
 	uuid[6] = (uuid[6] & 0x0F) | 0x50
 	uuid[8] = (uuid[8] & 0x3F) | 0x80
@@ -62,9 +71,13 @@ func UUID5(ns []byte, name string) UUID {
 
 // UUID7 generates UUID v7 based on timestamp
 func UUID7() UUID {
-	uuid := make(UUID, 16)
+	var uuid UUID
 
-	rand.Read(uuid)
+	_, err := randGenerator(uuid[:])
+
+	if err != nil {
+		return UUID{}
+	}
 
 	ts := uint64(time.Now().UnixNano() / 1_000_000)
 
@@ -85,7 +98,7 @@ func UUID7() UUID {
 
 // IsZero returns true if UUID is empty
 func (u UUID) IsZero() bool {
-	return len(u) == 0
+	return u == UUID{}
 }
 
 // String returns string representation of UUID
