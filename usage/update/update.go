@@ -36,7 +36,7 @@ func UpdateChecker(app, version, data string) (string, time.Time, bool) {
 		return "", time.Time{}, false
 	}
 
-	return release.Version, release.Date, release.Version != version
+	return release.Version, release.Date, true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

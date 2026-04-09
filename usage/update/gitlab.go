@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/req"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,8 +58,10 @@ func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 
 	repository = url.PathEscape(repository)
 
-	if os.Getenv("GL_TOKEN") != "" {
-		auth = req.AuthBearer{os.Getenv("GL_TOKEN")}
+	token := strutil.Q(os.Getenv("GL_TOKEN"), os.Getenv("GITLAB_TOKEN"))
+
+	if token != "" {
+		auth = req.AuthBearer{token}
 	}
 
 	resp, err := engine.Get(req.Request{

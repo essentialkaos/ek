@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v13/req"
+	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -54,8 +55,10 @@ func getLatestGitHubRelease(app, version, repository string) *githubRelease {
 	engine.SetDialTimeout(3)
 	engine.SetRequestTimeout(3)
 
-	if os.Getenv("GH_TOKEN") != "" {
-		auth = req.AuthBearer{os.Getenv("GH_TOKEN")}
+	token := strutil.Q(os.Getenv("GH_TOKEN"), os.Getenv("GITHUB_TOKEN"))
+
+	if token != "" {
+		auth = req.AuthBearer{token}
 	}
 
 	resp, err := engine.Get(req.Request{
