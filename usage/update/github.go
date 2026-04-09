@@ -41,7 +41,7 @@ func GitHubChecker(app, version, data string) (string, time.Time, bool) {
 		return "", time.Time{}, false
 	}
 
-	return strings.TrimLeft(release.Tag, "v"), release.Published, true
+	return strings.TrimPrefix(release.Tag, "v"), release.Published, true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

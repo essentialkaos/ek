@@ -9,6 +9,7 @@ package man
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"time"
@@ -22,28 +23,28 @@ import (
 
 // Generate generates man page content
 func Generate(info *usage.Info, about *usage.About) string {
-	var result string
+	var buf bytes.Buffer
 
-	result += genHeader(about)
-	result += genName(about)
-	result += genSynopsis(info)
-	result += genDescription(info)
-	result += genCommands(info)
-	result += genOptions(info)
-	result += genExamples(info)
-	result += genBugTrackerInfo(about)
-	result += genLicense(about)
-	result += genAuthor(about)
+	genHeader(&buf, about)
+	genName(&buf, about)
+	genSynopsis(&buf, info)
+	genDescription(&buf, info)
+	genCommands(&buf, info)
+	genOptions(&buf, info)
+	genExamples(&buf, info)
+	genBugTrackerInfo(&buf, about)
+	genLicense(&buf, about)
+	genAuthor(&buf, about)
 
-	return result
+	return buf.String()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // genHeader generates header part
-func genHeader(about *usage.About) string {
-	return fmt.Sprintf(
-		".TH %s 1 \"%s\" \"%s %s\" \"%s Manual\"\n\n",
+func genHeader(buf *bytes.Buffer, about *usage.About) {
+	fmt.Fprintf(
+		buf, ".TH %s 1 \"%s\" \"%s %s\" \"%s Manual\"\n\n",
 		strings.ToUpper(about.App),
 		timeutil.Format(time.Now(), "%d %b %Y"),
 		about.App,
@@ -53,176 +54,170 @@ func genHeader(about *usage.About) string {
 }
 
 // genName generates name part
-func genName(about *usage.About) string {
-	return fmt.Sprintf(
-		".SH NAME\n%s \\- %s\n",
+func genName(buf *bytes.Buffer, about *usage.About) {
+	fmt.Fprintf(
+		buf, ".SH NAME\n%s \\- %s\n",
 		about.App, about.Desc,
 	)
 }
 
 // genSynopsis generatest synopsis
-func genSynopsis(info *usage.Info) string {
-	result := ".SH SYNOPSIS\n.sp\n.nf\n"
-	result += ".B " + info.Name + " "
+func genSynopsis(buf *bytes.Buffer, info *usage.Info) {
+	buf.WriteString(".SH SYNOPSIS\n.sp\n.nf\n")
+	buf.WriteString(".B " + info.Name + " ")
 
 	for index, option := range info.Options {
-		result += genOptionShort(option)
+		genOptionShort(buf, option)
 
 		if index != 0 && index%4 == 0 && len(info.Options) != index+1 {
-			result += "\n" + strings.Repeat(" ", len(info.Name)+1)
+			buf.WriteString("\n" + strings.Repeat(" ", len(info.Name)+1))
 		}
 	}
 
 	if len(info.Commands) != 0 {
-		result += fmt.Sprintf("[\\fB%s\\fR] ", "COMMAND")
+		fmt.Fprintf(buf, "[\\fB%s\\fR] ", "COMMAND")
 	}
 
 	if len(info.Args) != 0 {
 		for _, arg := range info.Args {
-			result += fmt.Sprintf("\\fI%s\\fR\n", arg)
+			fmt.Fprintf(buf, "\\fI%s\\fR\n", arg)
 		}
 	} else {
-		result += "\n"
+		buf.WriteRune('\n')
 	}
 
-	return result + ".fi\n.sp\n"
+	buf.WriteString(".fi\n.sp\n")
 }
 
 // genOptions generates options part
-func genOptions(info *usage.Info) string {
+func genOptions(buf *bytes.Buffer, info *usage.Info) {
 	if len(info.Options) == 0 {
-		return ""
+		return
 	}
 
-	result := ".SH OPTIONS\n"
+	buf.WriteString(".SH OPTIONS\n")
 
 	for _, option := range info.Options {
-		result += genOptionLong(option)
+		genOptionLong(buf, option)
 	}
-
-	return result
 }
 
 // genCommands generates commands part
-func genCommands(info *usage.Info) string {
+func genCommands(buf *bytes.Buffer, info *usage.Info) {
 	if len(info.Commands) == 0 {
-		return ""
+		return
 	}
 
 	curGroup := ""
-	result := ".SH COMMANDS\n"
+
+	buf.WriteString(".SH COMMANDS\n")
 
 	for _, command := range info.Commands {
 		if command.Group != "" && curGroup != command.Group {
-			result += fmt.Sprintf(".SS %s\n", command.Group)
+			fmt.Fprintf(buf, ".SS %s\n", command.Group)
 			curGroup = command.Group
 		}
 
-		result += ".TP\n"
-		result += fmt.Sprintf(".B %s", command.Name)
+		buf.WriteString(".TP\n")
+		fmt.Fprintf(buf, ".B %s", command.Name)
 
 		if len(command.Args) != 0 {
-			result += formatCommandArgs(command.Args)
+			formatCommandArgs(buf, command.Args)
 		} else {
-			result += "\n"
+			buf.WriteRune('\n')
 		}
 
-		result += fmtc.Clean(command.Desc) + "\n"
+		buf.WriteString(fmtc.Clean(command.Desc))
+		buf.WriteRune('\n')
 	}
-
-	return result
 }
 
 // genOptionShort generates short info for option
-func genOptionShort(option *usage.Option) string {
+func genOptionShort(buf *bytes.Buffer, option *usage.Option) {
 	if option.Arg != "" {
-		return fmt.Sprintf(
-			"[\\fB\\-\\-%s\\fR=\\fI%s\\fR] ",
+		fmt.Fprintf(
+			buf, "[\\fB\\-\\-%s\\fR=\\fI%s\\fR] ",
 			option.Long, strings.ToUpper(option.Arg),
 		)
 	} else {
-		return fmt.Sprintf("[\\fB\\-\\-%s\\fR] ", option.Long)
+		fmt.Fprintf(buf, "[\\fB\\-\\-%s\\fR] ", option.Long)
 	}
 }
 
 // genOptionLong generates long info for option
-func genOptionLong(option *usage.Option) string {
-	result := ".TP\n"
-
-	result += ".BR "
+func genOptionLong(buf *bytes.Buffer, option *usage.Option) {
+	buf.WriteString(".TP\n.BR ")
 
 	if option.Short != "" {
-		result += fmt.Sprintf("\\-%s \", \" ", option.Short)
+		fmt.Fprintf(buf, "\\-%s \", \" ", option.Short)
 	}
 
-	result += fmt.Sprintf("\\-\\-%s", option.Long)
+	fmt.Fprintf(buf, "\\-\\-%s", option.Long)
 
 	if option.Arg != "" {
-		result += fmt.Sprintf("\\fR=\\fI%s\\fR\n", strings.ToUpper(option.Arg))
+		fmt.Fprintf(buf, "\\fR=\\fI%s\\fR\n", strings.ToUpper(option.Arg))
 	} else {
-		result += "\n"
+		buf.WriteRune('\n')
 	}
 
-	result += fmtc.Clean(option.Desc) + "\n"
-
-	return result
+	buf.WriteString(fmtc.Clean(option.Desc))
+	buf.WriteRune('\n')
 }
 
 // genDescription generates description part
-func genDescription(info *usage.Info) string {
+func genDescription(buf *bytes.Buffer, info *usage.Info) {
 	if info.Spoiler == "" {
-		return ""
+		return
 	}
 
-	return fmt.Sprintf(
-		".SH DESCRIPTION\n\n%s\n\n",
+	fmt.Fprintf(
+		buf, ".SH DESCRIPTION\n\n%s\n\n",
 		fmtc.Clean(info.Spoiler),
 	)
 }
 
 // genExamples generates examples part
-func genExamples(info *usage.Info) string {
+func genExamples(buf *bytes.Buffer, info *usage.Info) {
 	if len(info.Examples) == 0 {
-		return ""
+		return
 	}
 
-	result := ".SH EXAMPLES\n"
+	buf.WriteString(".SH EXAMPLES\n")
 
 	for index, example := range info.Examples {
-		result += ".TP\n"
+		buf.WriteString(".TP\n")
 
 		if example.Desc != "" {
-			result += ".B • " + example.Desc + "\n"
+			buf.WriteString(".B • " + example.Desc + "\n")
 		} else {
-			result += fmt.Sprintf(".B • Example %d\n", index+1)
+			fmt.Fprintf(buf, ".B • Example %d\n", index+1)
 		}
 
-		if !example.Raw {
-			result += fmt.Sprintf("%s %s\n", info.Name, example.Cmd)
+		if !example.IsRaw {
+			fmt.Fprintf(buf, "%s %s\n", info.Name, example.Cmd)
 		} else {
-			result += fmt.Sprintf("%s\n", example.Cmd)
+			fmt.Fprintf(buf, "%s\n", example.Cmd)
 		}
 	}
-
-	return result
 }
 
 // genBugTrackerInfo generates bugs part
-func genBugTrackerInfo(about *usage.About) string {
+func genBugTrackerInfo(buf *bytes.Buffer, about *usage.About) {
 	if about.BugTracker == "" {
-		return ""
+		return
 	}
 
-	return fmt.Sprintf(
+	fmt.Fprintf(
+		buf,
 		".SH BUGS\n.PD 0\n\nPlease send any comments or bug reports to <\\fB%s\\fP>.\n\n",
 		about.BugTracker,
 	)
 }
 
 // genLicense generates license part
-func genLicense(about *usage.About) string {
+func genLicense(buf *bytes.Buffer, about *usage.About) {
 	if about.License == "" {
-		return ""
+		return
 	}
 
 	license := about.License
@@ -230,39 +225,40 @@ func genLicense(about *usage.About) string {
 	license = strings.ReplaceAll(license, "<", `<\fB`)
 	license = strings.ReplaceAll(license, ">", `\fP>`)
 
-	return fmt.Sprintf(".SH LICENSE\n\n%s.\n\n", license)
+	fmt.Fprintf(buf, ".SH LICENSE\n\n%s.\n\n", license)
 }
 
 // genAuthor generates author part
-func genAuthor(about *usage.About) string {
+func genAuthor(buf *bytes.Buffer, about *usage.About) {
 	if about.Owner == "" {
-		return ""
+		return
 	}
 
+	year := time.Now().Year()
+
 	if about.Year == 0 {
-		return fmt.Sprintf(
-			".SH AUTHOR\n\nCopyright (C) %d \\fB%s\\fP\n\n",
-			time.Now().Year(), about.Owner,
+		fmt.Fprintf(
+			buf, ".SH AUTHOR\n\nCopyright (C) %d \\fB%s\\fP\n\n",
+			year, about.Owner,
+		)
+	} else {
+		fmt.Fprintf(
+			buf, ".SH AUTHOR\n\nCopyright (C) %d-%d \\fB%s\\fP\n\n",
+			about.Year, year, about.Owner,
 		)
 	}
 
-	return fmt.Sprintf(
-		".SH AUTHOR\n\nCopyright (C) %d-%d \\fB%s\\fP\n\n",
-		about.Year, time.Now().Year(), about.Owner,
-	)
 }
 
 // formatCommandArgs formats command arguments
-func formatCommandArgs(args []string) string {
-	result := ""
-
+func formatCommandArgs(buf *bytes.Buffer, args []string) {
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "?") {
-			result += fmt.Sprintf(" \\fR%s\\fP", strings.ReplaceAll(arg, "?", ""))
+			fmt.Fprintf(buf, " \\fR%s\\fP", strings.ReplaceAll(arg, "?", ""))
 		} else {
-			result += fmt.Sprintf(" \\fI%s\\fP", arg)
+			fmt.Fprintf(buf, " \\fI%s\\fP", arg)
 		}
 	}
 
-	return result + "\n"
+	buf.WriteRune('\n')
 }
