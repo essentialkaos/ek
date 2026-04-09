@@ -9,6 +9,7 @@ package bash
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
@@ -92,6 +93,8 @@ func Generate(info *usage.Info, name string, fileExt ...string) string {
 		result = strings.ReplaceAll(result, "{{COMP_OPTS}}", "-o filenames")
 		if len(fileExt) != 0 {
 			result = strings.ReplaceAll(result, "{{FILE_GLOB}}", fileExt[0])
+		} else {
+			result = strings.ReplaceAll(result, "{{FILE_GLOB}}", "")
 		}
 	} else {
 		result = strings.ReplaceAll(result, "{{SHOW_FILES}}", "")
@@ -136,22 +139,26 @@ func genCommandsHandlers(info *usage.Info) string {
 		return ""
 	}
 
-	result := "  case $prev in\n"
+	var buf bytes.Buffer
+
+	buf.WriteString("  case $prev in\n")
 
 	for _, cmd := range info.Commands {
 		if len(cmd.BoundOptions) != 0 {
-			result += genCommandHandler(cmd, info)
+			buf.WriteString(genCommandHandler(cmd, info))
 		}
 	}
 
-	result += "  esac"
+	buf.WriteString("  esac")
 
-	return result
+	return buf.String()
 }
 
 // genCommandHandler generates handler for given command
 func genCommandHandler(cmd *usage.Command, info *usage.Info) string {
-	result := fmt.Sprintf("    %s)\n", cmd.Name)
+	var buf bytes.Buffer
+
+	fmt.Fprintf(&buf, "    %s)\n", cmd.Name)
 
 	var options []string
 
@@ -165,12 +172,12 @@ func genCommandHandler(cmd *usage.Command, info *usage.Info) string {
 		options = append(options, "--"+opt.Long)
 	}
 
-	result += fmt.Sprintf("      opts=\"%s\"\n", strings.Join(options, " "))
-	result += "      COMPREPLY=($(compgen -W \"$opts\" -- \"$cur\"))\n"
-	result += "      return 0\n"
-	result += "      ;;\n\n"
+	fmt.Fprintf(&buf, "      opts=\"%s\"\n", strings.Join(options, " "))
+	buf.WriteString("      COMPREPLY=($(compgen -W \"$opts\" -- \"$cur\"))\n")
+	buf.WriteString("      return 0\n")
+	buf.WriteString("      ;;\n\n")
 
-	return result
+	return buf.String()
 }
 
 // getCommandsList returns slice with available commands
