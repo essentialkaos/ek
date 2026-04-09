@@ -9,6 +9,7 @@ package usage
 
 import (
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -222,4 +223,21 @@ func (s *UsageSuite) TestNils(c *C) {
 
 	var a *About
 	c.Assert(func() { a.Print() }, NotPanics)
+}
+
+func (s *UsageSuite) TestSeparator(c *C) {
+	c.Assert(getSeparator(5, 10, false), Equals, "       ")
+	c.Assert(getSeparator(5, 10, true), Equals, " {s-}.....{!} ")
+	c.Assert(getSeparator(100, 10, true), Equals, "  ")
+}
+
+func (s *UsageSuite) TestStringEval(c *C) {
+	var buf strings.Builder
+
+	buf.WriteString("test")
+
+	c.Assert(evalString("test"), Equals, "test")
+	c.Assert(evalString(nil), Equals, "")
+	c.Assert(evalString(3), Equals, "3")
+	c.Assert(evalString(&buf), Equals, "test")
 }
