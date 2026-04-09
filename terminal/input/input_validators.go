@@ -15,7 +15,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Validator is input validator type
+// Validator is the interface implemented by all input validators. Validators are
+// applied in order; the first failure stops the chain and re-prompts the user.
 type Validator interface {
 	Validate(input string) (string, error)
 }
@@ -31,39 +32,39 @@ type isURLValidator struct{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// NotEmpty returns an error if input is empty
+	// NotEmpty rejects an empty or whitespace-only input
 	NotEmpty = notEmptyValidator{}
 
-	// IsNumber returns an error if the input is not a valid number
+	// IsNumber rejects input that cannot be parsed as a 64-bit integer
 	IsNumber = isNumberValidator{}
 
-	// IsFloat returns an error if the input is not a valid floating number
+	// IsFloat rejects input that cannot be parsed as a 64-bit floating-point number
 	IsFloat = isFloatValidator{}
 
-	// IsEmail returns an error if the input is not a valid email
+	// IsEmail rejects input that does not resemble a valid email address
 	IsEmail = isEmailValidator{}
 
-	// IsURL returns an error if the input is not a valid URL
+	// IsURL rejects input that does not start with http://, https://, or ftp://
 	IsURL = isURLValidator{}
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrIsEmpty is error for empty input
-	ErrIsEmpty = errors.New("You must enter non-empty value")
+	// ErrIsEmpty is returned when input is empty or contains only whitespace
+	ErrIsEmpty = errors.New("value must be non-empty")
 
-	// ErrInvalidNumber is error for invalid number
-	ErrInvalidNumber = errors.New("Entered value is not a valid number")
+	// ErrInvalidNumber is returned when input cannot be parsed as an integer
+	ErrInvalidNumber = errors.New("value is not a valid number")
 
-	// ErrInvalidFloat is error for invalid floating number
-	ErrInvalidFloat = errors.New("Entered value is not a valid floating number")
+	// ErrInvalidFloat is returned when input cannot be parsed as a floating-point number
+	ErrInvalidFloat = errors.New("value is not a valid floating number")
 
-	// ErrInvalidEmail is error for invalid email
-	ErrInvalidEmail = errors.New("Entered value is not a valid e-mail")
+	// ErrInvalidEmail is returned when input does not match a basic email format
+	ErrInvalidEmail = errors.New("value is not a valid e-mail")
 
-	// ErrInvalidURL is error for invalid URL
-	ErrInvalidURL = errors.New("Entered value is not a valid URL")
+	// ErrInvalidURL is returned when input does not begin with a recognised URL scheme
+	ErrInvalidURL = errors.New("value is not a valid URL")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

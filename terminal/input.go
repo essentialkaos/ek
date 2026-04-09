@@ -9,6 +9,7 @@ package terminal
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -20,23 +21,23 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Prompt is a prompt string
+// Prompt is the string displayed before each user input line
 var Prompt = "> "
 
-// TitleColorTag is an fmtc color tag used for input titles
+// TitleColorTag is the fmtc color tag applied to input title lines
 var TitleColorTag = "{s}"
 
-// AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
-// with option for forced actions)
+// AlwaysYes causes [ReadAnswer] to return true without prompting the user,
+// useful for non-interactive or forced-action modes
 var AlwaysYes = false
 
-// NewLine is a flag for extra new line after inputs
+// NewLine controls whether an extra blank line is printed before and after each input
 var NewLine = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrInvalidAnswer is error for wrong answer for yes/no question
-var ErrInvalidAnswer = fmt.Errorf("Please enter Y or N")
+// InvalidAnswerMesssage is returned when the user's answer is neither Y nor N
+var InvalidAnswerMesssage = "Please enter Y or N"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -44,8 +45,8 @@ var dataInput io.Reader = os.Stdin
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Read reads user input
-func Read(title string) string {
+// Read prints an optional title and returns the raw text entered by the user
+func Read(title string) (string, error) {
 	if NewLine {
 		fmtc.NewLine()
 		defer fmtc.NewLine()
@@ -59,13 +60,19 @@ func Read(title string) string {
 
 	fmtc.Print(Prompt)
 
-	input, _ := r.ReadString('\n')
+	input, err := r.ReadString('\n')
 
-	return input
+	if err != nil && !errors.Is(err, io.EOF) {
+		return "", fmt.Errorf("can't read user input: %w", err)
+	}
+
+	return input, nil
 }
 
-// ReadAnswer reads user's answer to yes/no question
-func ReadAnswer(title string, defaultAnswers ...string) bool {
+// ReadAnswer prompts the user with a yes/no question and returns their answer
+// as a bool. An optional defaultAnswer ("Y" or "N") is used when the user submits
+// an empty response.
+func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	var defaultAnswer string
 
 	if len(defaultAnswers) != 0 {
@@ -88,7 +95,7 @@ func ReadAnswer(title string, defaultAnswers ...string) bool {
 			fmtc.NewLine()
 		}
 
-		return true
+		return true, nil
 	}
 
 	r := bufio.NewReader(dataInput)
@@ -96,18 +103,23 @@ func ReadAnswer(title string, defaultAnswers ...string) bool {
 	for {
 		fmtc.Print(Prompt)
 
-		answer, _ := r.ReadString('\n')
+		answer, err := r.ReadString('\n')
+
+		if err != nil && !errors.Is(err, io.EOF) {
+			return false, fmt.Errorf("can't read user input: %w", err)
+		}
+
 		answer = strings.TrimSpace(answer)
 		answer = strutil.Q(answer, defaultAnswer)
 
 		switch strings.ToUpper(answer) {
 		case "Y":
-			return true
+			return true, nil
 		case "N":
-			return false
+			return false, nil
 		default:
 			fmtc.NewLine()
-			Warn(ErrInvalidAnswer)
+			Warn(InvalidAnswerMesssage)
 			fmtc.NewLine()
 		}
 	}

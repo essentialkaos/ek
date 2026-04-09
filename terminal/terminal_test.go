@@ -17,7 +17,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type TestStringer struct{}
+type ErrorInput struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -39,7 +39,10 @@ func (s *TerminalSuite) TestMessage(c *C) {
 	Error(fmt.Errorf("Error"))
 	Error([]string{"Error"})
 
-	c.Assert(formatMessage(TestStringer{}, "", nil), Equals, "TestStringer")
+	var buf bytes.Buffer
+	buf.WriteString("TestStringer")
+
+	c.Assert(formatMessage(&buf, "", nil), Equals, "TestStringer")
 }
 
 func (s *TerminalSuite) TestMessageWithPrefix(c *C) {
@@ -77,36 +80,45 @@ func (s *TerminalSuite) TestInput(c *C) {
 	dataInput = &buf
 
 	buf.WriteString("Test message ")
-	input := Read("Title")
+	input, err := Read("Title")
+	c.Assert(err, IsNil)
 	c.Assert(input, Equals, "Test message ")
 
 	buf.WriteString("Y")
-	ok := ReadAnswer("Title")
+	ok, _ := ReadAnswer("Title")
 	c.Assert(ok, Equals, true)
 
 	buf.WriteString("n")
-	ok = ReadAnswer("Title")
+	ok, _ = ReadAnswer("Title")
 	c.Assert(ok, Equals, false)
 
 	AlwaysYes = true
 	buf.WriteString("n")
-	ok = ReadAnswer("Title")
+	ok, _ = ReadAnswer("Title")
 	c.Assert(ok, Equals, true)
 	AlwaysYes = false
 
 	buf.WriteString("f\ny")
-	ok = ReadAnswer("Title", "y")
+	ok, _ = ReadAnswer("Title", "y")
 	c.Assert(ok, Equals, true)
 
 	buf.WriteString("f\nn")
-	ok = ReadAnswer("Title", "n")
+	ok, _ = ReadAnswer("Title", "n")
 	c.Assert(ok, Equals, false)
+
+	dataInput = &ErrorInput{}
+
+	_, err = Read("Title")
+	c.Assert(err, NotNil)
+
+	_, err = ReadAnswer("Title")
+	c.Assert(err, NotNil)
 
 	c.Assert(getAnswerTitle("", ""), Equals, "")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s TestStringer) String() string {
-	return "TestStringer"
+func (e *ErrorInput) Read(p []byte) (int, error) {
+	return 0, fmt.Errorf("error")
 }
