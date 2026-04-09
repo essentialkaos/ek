@@ -50,13 +50,13 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	t, err := NewTemp("/")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Directory / is not writable`)
+	c.Assert(err, ErrorMatches, `directory / is not writable`)
 	c.Assert(t, IsNil)
 
 	t, err = NewTemp("/tmpz")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Directory /tmpz does not exist`)
+	c.Assert(err, ErrorMatches, `directory /tmpz does not exist`)
 	c.Assert(t, IsNil)
 
 	os.Create(ts.TempDir + "/test_")
@@ -93,12 +93,12 @@ func (ts *TmpSuite) TestErrors(c *C) {
 	_, err = nilTemp.MkDir()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Temp struct is nil`)
+	c.Assert(err, ErrorMatches, `temp struct is nil`)
 
 	_, _, err = nilTemp.MkFile()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Temp struct is nil`)
+	c.Assert(err, ErrorMatches, `temp struct is nil`)
 }
 
 func (ts *TmpSuite) TestMkDir(c *C) {
