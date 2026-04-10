@@ -50,7 +50,7 @@ func getUserInfo(name string) (*User, error) {
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
-		return nil, fmt.Errorf("User with name %s does not exist", name)
+		return nil, fmt.Errorf("user with name %q does not exist", name)
 	}
 
 	user := &User{Name: name, RealName: name}
@@ -92,7 +92,7 @@ func getGroupInfo(name string) (*Group, error) {
 	out, err := cmd.Output()
 
 	if err != nil || len(out) == 0 {
-		return nil, fmt.Errorf("Group with name %s does not exist", name)
+		return nil, fmt.Errorf("group with name %q does not exist", name)
 	}
 
 	group := &Group{Name: name}
@@ -101,7 +101,7 @@ func getGroupInfo(name string) (*Group, error) {
 	group.GID, err = strconv.Atoi(strings.TrimSpace(strutil.ReadField(data, 1, false, ':')))
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't parse PrimaryGroupID field value: %v", err)
+		return nil, fmt.Errorf("can't parse PrimaryGroupID field value: %w", err)
 	}
 
 	return group, nil

@@ -15,10 +15,10 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/env"
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
@@ -57,19 +57,19 @@ type SessionInfo struct {
 // Errors
 var (
 	// ErrEmptyPath is returned if given path is empty
-	ErrEmptyPath = errors.New("Path is empty")
+	ErrEmptyPath = errors.New("path is empty")
 
 	// ErrEmptyUserName is returned if given user name or uid is empty
-	ErrEmptyUserName = errors.New("User name/ID can't be blank")
+	ErrEmptyUserName = errors.New("user name/ID can't be blank")
 
 	// ErrEmptyGroupName is returned if given group name of gid is empty
-	ErrEmptyGroupName = errors.New("Group name/ID can't be blank")
+	ErrEmptyGroupName = errors.New("group name/ID can't be blank")
 
 	// ErrCantParseIdOutput is returned if id command output has unsupported format
-	ErrCantParseIdOutput = errors.New("Can't parse id command output")
+	ErrCantParseIdOutput = errors.New("can't parse id command output")
 
 	// ErrCantParseGetentOutput is returned if getent command output has unsupported format
-	ErrCantParseGetentOutput = errors.New("Can't parse getent command output")
+	ErrCantParseGetentOutput = errors.New("can't parse getent command output")
 )
 
 // CurrentUserCachePeriod is cache period for current user info
@@ -83,15 +83,23 @@ var curUser *User
 // curUserUpdateDate is date when user data was updated
 var curUserUpdateDate time.Time
 
+// curUserMu mutex to control access to current user data
+var curUserMu sync.RWMutex
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // CurrentUser returns struct with info about current user
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	if len(avoidCache) == 0 || !avoidCache[0] {
 		if curUser != nil && time.Since(curUserUpdateDate) < CurrentUserCachePeriod {
+			curUserMu.RLock()
+			defer curUserMu.RUnlock()
 			return curUser, nil
 		}
 	}
+
+	curUserMu.Lock()
+	defer curUserMu.Unlock()
 
 	username, err := getCurrentUserName()
 
@@ -257,17 +265,27 @@ func getRealUserByPTY() (string, int, int) {
 
 // getRealUserFromEnv try to find info about real user in environment variables
 func getRealUserFromEnv() (string, int, int) {
-	envMap := env.Get()
+	userName := os.Getenv("SUDO_USER")
+	userUID := os.Getenv("SUDO_UID")
+	userGID := os.Getenv("SUDO_GID")
 
-	if envMap["SUDO_USER"] == "" || envMap["SUDO_UID"] == "" || envMap["SUDO_GID"] == "" {
+	if userName == "" || userUID == "" || userGID == "" {
 		return "", -1, -1
 	}
 
-	user := envMap["SUDO_USER"]
-	uid, _ := strconv.Atoi(envMap["SUDO_UID"])
-	gid, _ := strconv.Atoi(envMap["SUDO_GID"])
+	uid, err := strconv.Atoi(userUID)
 
-	return user, uid, gid
+	if err != nil {
+		return "", -1, -1
+	}
+
+	gid, err := strconv.Atoi(userGID)
+
+	if err != nil {
+		return "", -1, -1
+	}
+
+	return userName, uid, gid
 }
 
 // getOwner returns file or directory owner UID

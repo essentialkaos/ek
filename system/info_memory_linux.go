@@ -9,7 +9,7 @@ package system
 
 import (
 	"bufio"
-	"errors"
+	"fmt"
 
 	"github.com/essentialkaos/ek/v13/strutil"
 )
@@ -44,12 +44,15 @@ func parseMemUsage(s *bufio.Scanner) (*MemUsage, error) {
 
 	for s.Scan() {
 		text := s.Text()
+		fieldName := strutil.ReadField(text, 0, true)
 
-		switch strutil.ReadField(text, 0, true) {
+		switch fieldName {
 		case "MemTotal:":
 			mem.MemTotal, err = parseSize(strutil.ReadField(text, 1, true))
 		case "MemFree:":
 			mem.MemFree, err = parseSize(strutil.ReadField(text, 1, true))
+		case "MemAvailable":
+			mem.MemAvailable, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Buffers:":
 			mem.Buffers, err = parseSize(strutil.ReadField(text, 1, true))
 		case "Cached:":
@@ -75,12 +78,11 @@ func parseMemUsage(s *bufio.Scanner) (*MemUsage, error) {
 		}
 
 		if err != nil {
-			return nil, errors.New("Can't parse file " + procMemInfoFile)
+			return nil, fmt.Errorf(
+				"can't parse field %q in procfs file %s",
+				fieldName, procMemInfoFile,
+			)
 		}
-	}
-
-	if mem.MemTotal == 0 {
-		return nil, errors.New("Can't parse file " + procMemInfoFile)
 	}
 
 	mem.MemFree += (mem.Cached + mem.Buffers + mem.SReclaimable) - mem.Shmem

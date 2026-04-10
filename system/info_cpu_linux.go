@@ -10,6 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -70,6 +71,12 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	idleDiff := float64(idle - prevIdle)
 	allTotalDiff := float64(c2.Total - c1.Total)
 
+	if totalDiff == 0 || allTotalDiff == 0 {
+		return &CPUUsage{
+			Count: c2.Count,
+		}
+	}
+
 	return &CPUUsage{
 		System:  (float64(c2.System-c1.System) / allTotalDiff) * 100,
 		User:    (float64(c2.User-c1.User) / allTotalDiff) * 100,
@@ -96,126 +103,104 @@ func GetCPUStats() (*CPUStats, error) {
 
 // GetCPUInfo returns slice with info about CPUs
 func GetCPUInfo() ([]*CPUInfo, error) {
-	s, closer, err := getFileScanner(cpuInfoFile)
+	s, closeFunc, err := getFileScanner(cpuInfoFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer closer()
+	defer closeFunc()
 
 	return parseCPUInfo(s)
 }
 
 // GetCPUCount returns info about CPU
 func GetCPUCount() (CPUCount, error) {
-	possible, err := os.ReadFile(cpuPossibleFile)
+	var err error
+
+	result := CPUCount{}
+
+	result.Possible, err = parseCPUCountInfo(cpuPossibleFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	present, err := os.ReadFile(cpuPresentFile)
+	result.Present, err = parseCPUCountInfo(cpuPresentFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	online, err := os.ReadFile(cpuOnlineFile)
+	result.Online, err = parseCPUCountInfo(cpuOnlineFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	offline, err := os.ReadFile(cpuOfflineFile)
+	result.Offline, err = parseCPUCountInfo(cpuOfflineFile)
 
 	if err != nil {
 		return CPUCount{}, err
 	}
 
-	return CPUCount{
-		Possible: parseCPUCountInfo(string(possible)),
-		Present:  parseCPUCountInfo(string(present)),
-		Online:   parseCPUCountInfo(string(online)),
-		Offline:  parseCPUCountInfo(string(offline)),
-	}, nil
+	return result, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // parseCPUStats parses cpu stats data
 func parseCPUStats(s *bufio.Scanner) (*CPUStats, error) {
-	var err error
-
 	stats := &CPUStats{}
 
 	for s.Scan() {
 		text := s.Text()
 
-		if len(text) < 4 || text[:3] != "cpu" {
+		if !strings.HasPrefix(text, "cpu") {
 			continue
 		}
 
-		if text[:4] != "cpu " {
+		if !strings.HasPrefix(text, "cpu ") {
 			stats.Count++
 			continue
 		}
 
-		stats.User, err = strconv.ParseUint(strutil.ReadField(text, 1, true), 10, 64)
+		for i := range 8 {
+			v, err := strconv.ParseUint(strutil.ReadField(text, i+1, true), 10, 64)
 
-		if err != nil {
-			return nil, errors.New("Can't parse field 1 as unsigned integer in " + procStatFile)
+			if err != nil {
+				return nil, fmt.Errorf(
+					"can't parse field %d as unsigned integer in %s: %w",
+					i+1, procStatFile, err,
+				)
+			}
+
+			switch i {
+			case 0:
+				stats.User = v
+			case 1:
+				stats.Nice = v
+			case 2:
+				stats.System = v
+			case 3:
+				stats.Idle = v
+			case 4:
+				stats.Wait = v
+			case 5:
+				stats.IRQ = v
+			case 6:
+				stats.SRQ = v
+			case 7:
+				stats.Steal = v
+			}
+
+			stats.Total += v
 		}
-
-		stats.Nice, err = strconv.ParseUint(strutil.ReadField(text, 2, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 2 as unsigned integer in " + procStatFile)
-		}
-
-		stats.System, err = strconv.ParseUint(strutil.ReadField(text, 3, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 3 as unsigned integer in " + procStatFile)
-		}
-
-		stats.Idle, err = strconv.ParseUint(strutil.ReadField(text, 4, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 4 as unsigned integer in " + procStatFile)
-		}
-
-		stats.Wait, err = strconv.ParseUint(strutil.ReadField(text, 5, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 5 as unsigned integer in " + procStatFile)
-		}
-
-		stats.IRQ, err = strconv.ParseUint(strutil.ReadField(text, 6, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 6 as unsigned integer in " + procStatFile)
-		}
-
-		stats.SRQ, err = strconv.ParseUint(strutil.ReadField(text, 7, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 7 as unsigned integer in " + procStatFile)
-		}
-
-		stats.Steal, err = strconv.ParseUint(strutil.ReadField(text, 8, true), 10, 64)
-
-		if err != nil {
-			return nil, errors.New("Can't parse field 8 as unsigned integer in " + procStatFile)
-		}
-
 	}
 
 	if stats.Count == 0 {
-		return nil, errors.New("Can't parse file " + procStatFile)
+		return nil, fmt.Errorf("procfs file %s has no valid data", procStatFile)
 	}
-
-	stats.Total = stats.User + stats.System + stats.Nice + stats.Idle + stats.Wait + stats.IRQ + stats.SRQ + stats.Steal
 
 	return stats, nil
 }
@@ -275,21 +260,63 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 	}
 
 	if vendor == "" && model == "" {
-		return nil, errors.New("Can't parse cpuinfo file")
+		return nil, errors.New("can't parse cpuinfo file")
 	}
 
 	return info, nil
 }
 
 // parseCPUCountInfo parses CPU count data
-func parseCPUCountInfo(data string) uint32 {
-	startNum := strings.Trim(strutil.ReadField(data, 0, false, '-'), "\n\r")
-	endNum := strings.Trim(strutil.ReadField(data, 1, false, '-'), "\n\r")
+func parseCPUCountInfo(sourceFile string) (uint32, error) {
+	var count uint32
 
-	start, _ := strconv.ParseUint(startNum, 10, 32)
-	end, _ := strconv.ParseUint(endNum, 10, 32)
+	data, err := os.ReadFile(sourceFile)
 
-	return uint32(end-start) + 1
+	if err != nil {
+		return 0, err
+	}
+
+	line := strings.Trim(string(data), " \n\r")
+
+	for i := range 100 {
+		token := strutil.ReadField(line, i, false, ',')
+
+		if token == "" {
+			break
+		}
+
+		if !strings.ContainsRune(token, '-') {
+			_, err := strconv.Atoi(token)
+
+			if err != nil {
+				return 0, fmt.Errorf("invalid cpu index %q: %w", token, err)
+			}
+
+			count++
+
+			continue
+		}
+
+		startNum, endNum, _ := strings.Cut(token, "-")
+
+		start, err := strconv.Atoi(startNum)
+
+		if err != nil {
+			return 0, fmt.Errorf("invalid cpu range start %q: %w", token, err)
+		}
+
+		end, err := strconv.Atoi(endNum)
+
+		if err != nil {
+			return 0, fmt.Errorf("invalid cpu range end %q: %w", token, err)
+		}
+
+		if end >= start {
+			count += uint32(end-start) + 1
+		}
+	}
+
+	return count, nil
 }
 
 // getCPUArchBits returns CPU architecture bits (32/64)

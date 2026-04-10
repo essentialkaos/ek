@@ -24,25 +24,25 @@ func GetSystemInfo() (*SystemInfo, error) {
 	hostname, err := syscall.Sysctl("kern.hostname")
 
 	if err != nil || hostname == "" {
-		return nil, errors.New("Can't read hostname info")
+		return nil, errors.New("can't read hostname info")
 	}
 
 	os, err := syscall.Sysctl("kern.ostype")
 
 	if err != nil || os == "" {
-		return nil, errors.New("Can't read os info")
+		return nil, errors.New("can't read os info")
 	}
 
 	kernel, err := syscall.Sysctl("kern.osrelease")
 
 	if err != nil || kernel == "" {
-		return nil, errors.New("Can't read kernel info")
+		return nil, errors.New("can't read kernel info")
 	}
 
 	arch, err := syscall.Sysctl("kern.version")
 
 	if err != nil || arch == "" {
-		return nil, errors.New("Can't read arch info")
+		return nil, errors.New("can't read arch info")
 	}
 
 	arch = getMacOSArch(arch)

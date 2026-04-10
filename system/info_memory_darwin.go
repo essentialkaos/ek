@@ -25,13 +25,13 @@ func GetMemUsage() (*MemUsage, error) {
 	params, err := sysctl.All()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters: %w", err)
+		return nil, fmt.Errorf("can't get kernel parameters: %w", err)
 	}
 
 	pagesize, err := params.GetI("hw.pagesize")
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't read page size: %w", err)
+		return nil, fmt.Errorf("can't read page size: %w", err)
 	}
 
 	totalMem, _ := params.GetI("hw.memsize_usable")
@@ -54,7 +54,7 @@ func calculateMemUsage(pageSize, totalMem uint64) (*MemUsage, error) {
 	output, err := exec.Command("vm_stat").Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get output from vm_stats")
+		return nil, fmt.Errorf("can't get output from vm_stats")
 	}
 
 	buf := bytes.NewBuffer(output)

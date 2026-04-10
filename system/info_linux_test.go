@@ -100,7 +100,7 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	la, err = GetLA()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
+	c.Assert(err, ErrorMatches, `file .* is not valid loadavg source`)
 	c.Assert(la, IsNil)
 
 	procLoadAvgFile = s.CreateTestFile(c, "1.15 2.25 3.35 5+234 16354")
@@ -108,7 +108,7 @@ func (s *SystemSuite) TestLoadAvg(c *C) {
 	la, err = GetLA()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field 3 in .*/test.file`)
+	c.Assert(err, ErrorMatches, `can't parse field 3 in .*/test.file`)
 	c.Assert(la, IsNil)
 
 	procLoadAvgFile = origProcLoadAvgFile
@@ -170,7 +170,7 @@ func (s *SystemSuite) TestCPUUsage(c *C) {
 	cpu, err = GetCPUStats()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
+	c.Assert(err, ErrorMatches, `procfs file .* has no valid data`)
 	c.Assert(cpu, IsNil)
 
 	procStatFile = origProcStatFile
@@ -187,7 +187,7 @@ func (s *SystemSuite) TestCPUInfoErrors(c *C) {
 		cpu, err := GetCPUStats()
 
 		c.Assert(err, NotNil)
-		c.Assert(err, ErrorMatches, `Can't parse field [0-9]+ as unsigned integer in .*/test.file`)
+		c.Assert(err, ErrorMatches, `can't parse field \d as unsigned integer in .*: strconv.ParseUint: parsing "AB": invalid syntax`)
 		c.Assert(cpu, IsNil)
 	}
 
@@ -222,7 +222,7 @@ func (s *SystemSuite) TestCPUInfo(c *C) {
 	info, err = GetCPUInfo()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse cpuinfo file`)
+	c.Assert(err, ErrorMatches, `can't parse cpuinfo file`)
 	c.Assert(info, IsNil)
 
 	cpuInfoFile = s.CreateTestFile(c, "cpu cores	: ABCD")
@@ -284,6 +284,18 @@ func (s *SystemSuite) TestCPUCount(c *C) {
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `open /_cpuPossibleFile: no such file or directory`)
 
+	cpuPossibleFile = s.CreateTestFile(c, "0-3,A,8-11\n")
+	_, err = parseCPUCountInfo(cpuPossibleFile)
+	c.Assert(err, NotNil)
+
+	cpuPossibleFile = s.CreateTestFile(c, "0-3,5,A-11\n")
+	_, err = parseCPUCountInfo(cpuPossibleFile)
+	c.Assert(err, NotNil)
+
+	cpuPossibleFile = s.CreateTestFile(c, "0-3,5,8-B\n")
+	_, err = parseCPUCountInfo(cpuPossibleFile)
+	c.Assert(err, NotNil)
+
 	cpuPossibleFile = origCpuPossibleFile
 	cpuPresentFile = origCpuPresentFile
 	cpuOnlineFile = origCpuOnlineFile
@@ -331,20 +343,12 @@ func (s *SystemSuite) TestMemUsage(c *C) {
 	c.Assert(err, ErrorMatches, `open /_unknown_: no such file or directory`)
 	c.Assert(mem, IsNil)
 
-	procMemInfoFile = s.CreateTestFile(c, "")
-
-	mem, err = GetMemUsage()
-
-	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
-	c.Assert(mem, IsNil)
-
 	procMemInfoFile = s.CreateTestFile(c, "MemTotal: ABC! kB")
 
 	mem, err = GetMemUsage()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
+	c.Assert(err, ErrorMatches, `can't parse field "MemTotal:" in procfs file .*`)
 	c.Assert(mem, IsNil)
 
 	procMemInfoFile = origProcMemInfoFile
@@ -396,13 +400,13 @@ func (s *SystemSuite) TestNet(c *C) {
 	net, err = GetInterfacesStats()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
+	c.Assert(err, ErrorMatches, `procfs file .* has no valid data`)
 	c.Assert(net, IsNil)
 
 	_, _, err = GetNetworkSpeed(time.Second)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse file .*/test.file`)
+	c.Assert(err, ErrorMatches, `procfs file .* has no valid data`)
 
 	procNetFile = origProcNetFile
 }
@@ -435,7 +439,7 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `no such file or directory`)
+	c.Assert(err, ErrorMatches, `mtab file .* has no valid data`)
 	c.Assert(fs, IsNil)
 
 	mtabFile = s.CreateTestFile(c, "/CORRUPTED 0 0 0")
@@ -443,7 +447,7 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `no such file or directory`)
+	c.Assert(err, ErrorMatches, `mtab file .* has no valid data`)
 	c.Assert(fs, IsNil)
 
 	procDiskStatsFile = "/_unknown_"
@@ -459,19 +463,19 @@ func (s *SystemSuite) TestFSUsage(c *C) {
 	stats, err = GetIOStats()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field 3 as unsigned integer in .*/test.file`)
+	c.Assert(err, ErrorMatches, `can't parse field 3 as unsigned integer in .*/test.file`)
 	c.Assert(stats, IsNil)
 
 	fs, err = GetFSUsage()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `no such file or directory`)
+	c.Assert(err, ErrorMatches, `mtab file .* has no valid data`)
 	c.Assert(fs, IsNil)
 
 	util, err = GetIOUtil(time.Millisecond)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field 3 as unsigned integer in .*/test.file`)
+	c.Assert(err, ErrorMatches, `can't parse field 3 as unsigned integer in .*/test.file`)
 	c.Assert(util, IsNil)
 
 	procStatFile = "/_unknown_"
@@ -520,7 +524,7 @@ func (s *SystemSuite) TestDiskStatsParsingErrors(c *C) {
 		stats, err := GetIOStats()
 
 		c.Assert(err, NotNil)
-		c.Assert(err, ErrorMatches, `Can't parse field [0-9]+ as unsigned integer in .*/test.file`)
+		c.Assert(err, ErrorMatches, `can't parse field [0-9]+ as unsigned integer in .*/test.file`)
 		c.Assert(stats, IsNil)
 	}
 
@@ -556,7 +560,7 @@ func (s *SystemSuite) TestUser(c *C) {
 	user, err = LookupUser("")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `User name/ID can't be blank`)
+	c.Assert(err, ErrorMatches, `user name/ID can't be blank`)
 	c.Assert(user, IsNil)
 
 	group, err := LookupGroup("root")
@@ -567,7 +571,7 @@ func (s *SystemSuite) TestUser(c *C) {
 	group, err = LookupGroup("")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Group name/ID can't be blank`)
+	c.Assert(err, ErrorMatches, `group name/ID can't be blank`)
 	c.Assert(group, IsNil)
 
 	c.Assert(IsUserExist("root"), Equals, true)
@@ -625,7 +629,7 @@ func (s *SystemSuite) TestUser(c *C) {
 	_, err = getOwner("")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, "Path is empty")
+	c.Assert(err, ErrorMatches, "path is empty")
 
 	utmpDir := c.MkDir()
 	ptsDevDir := c.MkDir()
@@ -762,7 +766,7 @@ func (s *SystemSuite) CreateTestFile(c *C, data string) string {
 	tmpFile := tmpDir + "/test.file"
 
 	if os.WriteFile(tmpFile, []byte(data), 0644) != nil {
-		c.Fatal("Can't create temporary file")
+		c.Fatal("can't create temporary file")
 	}
 
 	return tmpFile

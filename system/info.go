@@ -9,8 +9,6 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bufio"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -31,6 +29,7 @@ type MemUsage struct {
 	MemTotal     uint64 `json:"total"`                  // Total usable ram (i.e. physical ram minus a few reserved bits and the kernel binary code)
 	MemFree      uint64 `json:"free"`                   // The sum of MemFree - (Buffers + Cached)
 	MemUsed      uint64 `json:"used"`                   // MemTotal - MemFree
+	MemAvailable uint64 `json:"available"`              // Available memory
 	SwapTotal    uint64 `json:"swap_total"`             // Total amount of swap space available
 	SwapFree     uint64 `json:"swap_free"`              // Memory which has been evicted from RAM, and is temporarily on the disk still also is in the swapfile
 	SwapUsed     uint64 `json:"swap_used"`              // SwapTotal - SwapFree
@@ -200,20 +199,6 @@ func (m *MemUsage) SwapUsedPerc() float64 {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// getFileScanner opens file and creates scanner for reading text files line by line
-func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
-
-	return s, fd.Close, nil
-}
 
 // parseSize parse size in kB
 func parseSize(v string) (uint64, error) {

@@ -13,6 +13,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -76,8 +77,12 @@ func Who() ([]*SessionInfo, error) {
 
 		err = binary.Read(fd, binary.LittleEndian, &rec)
 
-		if err != nil {
+		if err == io.EOF {
 			break
+		}
+
+		if err != nil {
+			return sessions, fmt.Errorf("can't read utmp record: %w", err)
 		}
 
 		if rec.Type != 0x7 {
@@ -115,7 +120,7 @@ func getUserInfo(nameOrID string) (*User, error) {
 	data, err := exec.Command("getent", "passwd", nameOrID).Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("User with name/ID %s does not exist", nameOrID)
+		return nil, fmt.Errorf("user with name/ID %q does not exist", nameOrID)
 	}
 
 	return parseGetentPasswdOutput(string(data))
@@ -126,7 +131,7 @@ func getGroupInfo(nameOrID string) (*Group, error) {
 	data, err := exec.Command("getent", "group", nameOrID).Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
+		return nil, fmt.Errorf("group with name/ID %q does not exist", nameOrID)
 	}
 
 	return parseGetentGroupOutput(string(data))

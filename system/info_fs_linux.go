@@ -10,6 +10,7 @@ package system
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strconv"
 	"syscall"
@@ -127,67 +128,67 @@ func parseIOStats(s *bufio.Scanner) (map[string]*IOStats, error) {
 		ios.ReadComplete, err = strconv.ParseUint(strutil.ReadField(text, 3, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 3 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 3 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.ReadMerged, err = strconv.ParseUint(strutil.ReadField(text, 4, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 4 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 4 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.ReadSectors, err = strconv.ParseUint(strutil.ReadField(text, 5, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 5 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 5 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.ReadMs, err = strconv.ParseUint(strutil.ReadField(text, 6, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 6 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 6 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.WriteComplete, err = strconv.ParseUint(strutil.ReadField(text, 7, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 7 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 7 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.WriteMerged, err = strconv.ParseUint(strutil.ReadField(text, 8, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 8 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 8 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.WriteSectors, err = strconv.ParseUint(strutil.ReadField(text, 9, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 9 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 9 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.WriteMs, err = strconv.ParseUint(strutil.ReadField(text, 10, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 10 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 10 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.IOPending, err = strconv.ParseUint(strutil.ReadField(text, 11, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 11 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 11 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.IOMs, err = strconv.ParseUint(strutil.ReadField(text, 12, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 12 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 12 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		ios.IOQueueMs, err = strconv.ParseUint(strutil.ReadField(text, 13, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 13 as unsigned integer in " + procDiskStatsFile)
+			return nil, errors.New("can't parse field 13 as unsigned integer in " + procDiskStatsFile)
 		}
 
 		iostats["/dev/"+device] = ios
@@ -222,7 +223,7 @@ func parseFSInfo(s *bufio.Scanner, calculateStats bool) (map[string]*FSUsage, er
 		err = syscall.Statfs(path, stats)
 
 		if err != nil {
-			return nil, err
+			continue
 		}
 
 		fsDevice, err := filepath.EvalSymlinks(device)
@@ -241,7 +242,7 @@ func parseFSInfo(s *bufio.Scanner, calculateStats bool) (map[string]*FSUsage, er
 	}
 
 	if len(info) == 0 {
-		return nil, errors.New("Can't parse file " + mtabFile)
+		return nil, fmt.Errorf("mtab file %s has no valid data", mtabFile)
 	}
 
 	return info, nil

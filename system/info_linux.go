@@ -10,6 +10,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"os"
 	"strings"
 	"syscall"
@@ -81,6 +82,19 @@ func ParseOSInfo(file string) (*OSInfo, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// getFileScanner opens file and creates scanner for reading text files line by line
+func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s := bufio.NewScanner(fd)
+
+	return s, fd.Close, nil
+}
 
 // applyOSInfo applies record from os-release
 func applyOSInfo(info *OSInfo, name, value string) {
