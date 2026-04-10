@@ -11,6 +11,7 @@ package container
 import (
 	"os"
 	"strings"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -34,41 +35,40 @@ var dockerEnv = "/.dockerenv"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// engineChecked set to true if engine was checked
-var engineChecked bool
-
 // engineCache cached engine info
 var engineCache string
+
+// once used to get engine once
+var once sync.Once
 
 // isK8s is set to true if we inside K8s pod container
 var isK8s bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetEngine returns container engine name if used
+// GetEngine returns the name of the container engine if the process is running
+// inside a container, or an empty string otherwise. The result is cached after
+// the first call.
 func GetEngine() string {
-	if engineChecked {
-		return engineCache
-	}
+	once.Do(func() {
+		mountsData, err := os.ReadFile(mountsFile)
 
-	mountsData, err := os.ReadFile(mountsFile)
+		if err != nil {
+			return
+		}
 
-	if err != nil {
-		return ""
-	}
-
-	engineChecked = true
-	engineCache = guessEngine(string(mountsData))
+		engineCache = guessEngine(string(mountsData))
+	})
 
 	return engineCache
 }
 
-// IsContainer returns true if we are inside container
+// IsContainer returns true if the process is running inside a container
 func IsContainer() bool {
 	return GetEngine() != ""
 }
 
-// IsK8s returns true if we are inside K8s pod container
+// IsK8s returns true if the process is running inside a Kubernetes pod container
 func IsK8s() bool {
 	return GetEngine() != "" && isK8s
 }
