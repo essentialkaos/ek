@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUptime returns system uptime in seconds
+// GetUptime returns system uptime in seconds since boot
 func GetUptime() (uint64, error) {
 	info := &syscall.Sysinfo_t{}
 	err := syscall.Sysinfo(info)

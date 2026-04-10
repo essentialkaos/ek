@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetLA returns loadavg
+// GetLA returns current system load averages
 //
 // Implementation borrowed from https://github.com/prometheus/node_exporter/blob/master/collector/loadavg_bsd.go
 func GetLA() (*LoadAvg, error) {

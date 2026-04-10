@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMemUsage returns memory usage info
+// GetMemUsage returns current physical and swap memory usage
 func GetMemUsage() (*MemUsage, error) {
 	params, err := sysctl.All()
 

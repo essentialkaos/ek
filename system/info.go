@@ -15,7 +15,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// LoadAvg contains information about average system load
+// LoadAvg contains average system load over 1, 5, and 15 minute intervals
 type LoadAvg struct {
 	Min1  float64 `json:"min1"`  // LA in last 1 minute
 	Min5  float64 `json:"min5"`  // LA in last 5 minutes
@@ -24,7 +24,7 @@ type LoadAvg struct {
 	TProc int     `json:"tproc"` // Number of kernel scheduling entities that currently exist on the system
 }
 
-// MemUsage contains info about system memory usage
+// MemUsage contains information about physical and swap memory usage
 type MemUsage struct {
 	MemTotal     uint64 `json:"total"`                  // Total usable ram (i.e. physical ram minus a few reserved bits and the kernel binary code)
 	MemFree      uint64 `json:"free"`                   // The sum of MemFree - (Buffers + Cached)
@@ -41,78 +41,78 @@ type MemUsage struct {
 	Dirty        uint64 `json:"dirty,omitempty"`        // Memory which is waiting to get written back to the disk
 	Shmem        uint64 `json:"shmem,omitempty"`        // Total used shared memory
 	Slab         uint64 `json:"slab,omitempty"`         // In-kernel data structures cache
-	SReclaimable uint64 `json:"sreclaimable,omitempty"` // The part of the Slab that might be reclaimed (such as caches)
+	SReclaimable uint64 `json:"sreclaimable,omitempty"` // Reclaimable portion of Slab (e.g. caches)
 }
 
-// CPUUsage contains info about CPU usage
+// CPUUsage contains percentage-based CPU usage breakdown for a measured interval
 type CPUUsage struct {
-	User    float64 `json:"user"`    // Normal processes executing in user mode
-	System  float64 `json:"system"`  // Processes executing in kernel mode
-	Nice    float64 `json:"nice"`    // Niced processes executing in user mode
-	Idle    float64 `json:"idle"`    // Twiddling thumbs
-	Wait    float64 `json:"wait"`    // Waiting for I/O to complete
-	Average float64 `json:"average"` // Average CPU usage
-	Count   int     `json:"count"`   // Number of CPU cores
+	User    float64 `json:"user"`    // Time spent running user-space processes
+	System  float64 `json:"system"`  // Time spent running kernel-space processes
+	Nice    float64 `json:"nice"`    // Time spent running niced user-space processes
+	Idle    float64 `json:"idle"`    // Time spent idle
+	Wait    float64 `json:"wait"`    // Time spent waiting for I/O to complete
+	Average float64 `json:"average"` // Overall average CPU usage across all states
+	Count   int     `json:"count"`   // Number of logical CPU cores
 }
 
-// CPUInfo contains info about CPU
+// CPUInfo contains static information about a physical CPU package
 type CPUInfo struct {
-	Vendor    string    `json:"vendor"`          // Processor vendor name
-	Model     string    `json:"model"`           // Common name of the processor
-	Cores     int       `json:"cores"`           // Number of cores
-	Siblings  int       `json:"siblings"`        // Total number of sibling CPUs on the same physical CPU
-	CacheSize uint64    `json:"cache_size"`      // Amount of level 2 memory cache available to the processor
-	Speed     []float64 `json:"speed,omitempty"` // Speed in megahertz for the processor
+	Vendor    string    `json:"vendor"`          // Processor vendor identifier (e.g. GenuineIntel)
+	Model     string    `json:"model"`           // Full model name of the processor
+	Cores     int       `json:"cores"`           // Number of physical cores
+	Siblings  int       `json:"siblings"`        // Total logical CPUs on the same physical package
+	CacheSize uint64    `json:"cache_size"`      // L2 cache size in bytes
+	Speed     []float64 `json:"speed,omitempty"` // Per-core speed in MHz
 }
 
-// CPUStats contains basic CPU stats
+// CPUStats contains raw cumulative CPU time counters read from /proc/stat
 type CPUStats struct {
-	User   uint64 `json:"user"`
-	Nice   uint64 `json:"nice"`
-	System uint64 `json:"system"`
-	Idle   uint64 `json:"idle"`
-	Wait   uint64 `json:"wait"`
-	IRQ    uint64 `json:"irq"`
-	SRQ    uint64 `json:"srq"`
-	Steal  uint64 `json:"steal"`
-	Total  uint64 `json:"total"`
-	Count  int    `json:"count"`
+	User   uint64 `json:"user"`   // Time in user mode
+	Nice   uint64 `json:"nice"`   // Time in user mode with low priority
+	System uint64 `json:"system"` // Time in system (kernel) mode
+	Idle   uint64 `json:"idle"`   // Time spent idle
+	Wait   uint64 `json:"wait"`   // Time waiting for I/O
+	IRQ    uint64 `json:"irq"`    // Time servicing hardware interrupts
+	SRQ    uint64 `json:"srq"`    // Time servicing software interrupts
+	Steal  uint64 `json:"steal"`  // Time stolen by a hypervisor for other guests
+	Total  uint64 `json:"total"`  // Sum of all CPU time fields
+	Count  int    `json:"count"`  // Number of logical CPU cores seen in /proc/stat
 }
 
-// CPUCount contains info about number of CPU
+// CPUCount contains the number of CPUs in each availability state
 type CPUCount struct {
-	Possible uint32 `json:"possible"`
-	Present  uint32 `json:"present"`
-	Online   uint32 `json:"online"`
-	Offline  uint32 `json:"offline"`
+	Possible uint32 `json:"possible"` // CPUs that can ever be online on this system
+	Present  uint32 `json:"present"`  // CPUs currently present (plugged in)
+	Online   uint32 `json:"online"`   // CPUs currently online and schedulable
+	Offline  uint32 `json:"offline"`  // CPUs present but currently offline
 }
 
 // FSUsage contains info about FS usage
 type FSUsage struct {
-	Type    string   `json:"type"`    // FS type (ext4/ntfs/etc...)
-	Device  string   `json:"device"`  // Device spec
-	Used    uint64   `json:"used"`    // Used space
-	Free    uint64   `json:"free"`    // Free space
-	Total   uint64   `json:"total"`   // Total space
-	IOStats *IOStats `json:"iostats"` // IO statistics
+	Type    string   `json:"type"`    // Filesystem type (ext4, xfs, tmpfs, etc.)
+	Device  string   `json:"device"`  // Block device or remote spec
+	Used    uint64   `json:"used"`    // Used space in bytes
+	Free    uint64   `json:"free"`    // Available space in bytes
+	Total   uint64   `json:"total"`   // Total capacity in bytes
+	IOStats *IOStats `json:"iostats"` // I/O statistics for the backing device
 }
 
-// IOStats contains information about I/O
+// IOStats contains raw I/O counters for a block device from /proc/diskstats
 type IOStats struct {
-	ReadComplete  uint64 `json:"read_complete"`  // Reads completed successfully
-	ReadMerged    uint64 `json:"read_merged"`    // Reads merged
-	ReadSectors   uint64 `json:"read_sectors"`   // Sectors read
-	ReadMs        uint64 `json:"read_ms"`        // Time spent reading (ms)
-	WriteComplete uint64 `json:"write_complete"` // Writes completed
-	WriteMerged   uint64 `json:"write_merged"`   // Writes merged
-	WriteSectors  uint64 `json:"write_sectors"`  // Sectors written
-	WriteMs       uint64 `json:"write_ms"`       // Time spent writing (ms)
-	IOPending     uint64 `json:"io_pending"`     // I/Os currently in progress
-	IOMs          uint64 `json:"io_ms"`          // Time spent doing I/Os (ms)
-	IOQueueMs     uint64 `json:"io_queue_ms"`    // Weighted time spent doing I/Os (ms)
+	ReadComplete  uint64 `json:"read_complete"`  // Total reads completed successfully
+	ReadMerged    uint64 `json:"read_merged"`    // Adjacent reads merged by the I/O scheduler
+	ReadSectors   uint64 `json:"read_sectors"`   // Total sectors read
+	ReadMs        uint64 `json:"read_ms"`        // Total time spent reading in milliseconds
+	WriteComplete uint64 `json:"write_complete"` // Total writes completed successfully
+	WriteMerged   uint64 `json:"write_merged"`   // Adjacent writes merged by the I/O scheduler
+	WriteSectors  uint64 `json:"write_sectors"`  // Total sectors written
+	WriteMs       uint64 `json:"write_ms"`       // Total time spent writing in milliseconds
+	IOPending     uint64 `json:"io_pending"`     // Number of I/Os currently in flight
+	IOMs          uint64 `json:"io_ms"`          // Total time spent on I/Os in milliseconds
+	IOQueueMs     uint64 `json:"io_queue_ms"`    // Weighted time spent on I/Os (reflects queue depth)
 }
 
-// InterfaceStats contains stats about network interfaces usage
+// InterfaceStats contains cumulative traffic counters for a network interface
 type InterfaceStats struct {
 	ReceivedBytes      uint64 `json:"received_bytes"`
 	ReceivedPackets    uint64 `json:"received_packets"`
@@ -120,19 +120,19 @@ type InterfaceStats struct {
 	TransmittedPackets uint64 `json:"transmitted_packets"`
 }
 
-// SystemInfo contains info about a system (hostname, OS, arch...)
+// SystemInfo contains general information about the host system
 type SystemInfo struct {
-	Hostname        string `json:"hostname"`         // Hostname
-	ID              string `json:"id"`               // ID
+	Hostname        string `json:"hostname"`         // System hostname
+	ID              string `json:"id"`               // Unique machine ID
 	OS              string `json:"os"`               // OS name
-	Kernel          string `json:"kernel"`           // Kernel version
-	Arch            string `json:"arch"`             // System architecture (i386/i686/x86_64/etc…)
-	ArchName        string `json:"arch_name"`        // System architecture (386/686/amd64/etc…)
-	ContainerEngine string `json:"container_engine"` // Container engine name (docker/podman)
-	ArchBits        int    `json:"arch_bits"`        // Architecture bits (32/64)
+	Kernel          string `json:"kernel"`           // Kernel version string
+	Arch            string `json:"arch"`             // Raw architecture identifier (x86_64, aarch64, etc.)
+	ArchName        string `json:"arch_name"`        // Normalised architecture name (amd64, 386, etc.)
+	ContainerEngine string `json:"container_engine"` // Detected container engine
+	ArchBits        int    `json:"arch_bits"`        // Pointer width of the architecture (32 or 64)
 }
 
-// OSInfo contains info about OS
+// OSInfo contains information parsed from /etc/os-release
 type OSInfo struct {
 	Name                  string `json:"name"`
 	PrettyName            string `json:"pretty_name"`
@@ -158,7 +158,7 @@ type OSInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ColoredPrettyName returns pretty name with applied color
+// ColoredPrettyName returns the pretty OS name wrapped with its ANSI color code
 func (i *OSInfo) ColoredPrettyName() string {
 	if !isValidANSIColor(i.ANSIColor) {
 		return i.PrettyName
@@ -167,7 +167,7 @@ func (i *OSInfo) ColoredPrettyName() string {
 	return "\033[" + i.ANSIColor + "m" + i.PrettyName + "\033[0m"
 }
 
-// ColoredName returns name with applied color
+// ColoredName returns the OS name wrapped with its ANSI color code
 func (i *OSInfo) ColoredName() string {
 	if !isValidANSIColor(i.ANSIColor) {
 		return i.Name
@@ -178,8 +178,7 @@ func (i *OSInfo) ColoredName() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MemUsedPerc returns memory usage as a percentage of the total amount of physical
-// memory
+// MemUsedPerc returns used physical memory as a percentage of total RAM
 func (m *MemUsage) MemUsedPerc() float64 {
 	if m == nil {
 		return 0
@@ -188,8 +187,7 @@ func (m *MemUsage) MemUsedPerc() float64 {
 	return (float64(m.MemUsed) / float64(m.MemTotal)) * 100.0
 }
 
-// SwapUsedPerc returns swap usage as a percentage of the total amount of swap
-// memory
+// SwapUsedPerc returns used swap space as a percentage of total swap
 func (m *MemUsage) SwapUsedPerc() float64 {
 	if m == nil || m.SwapTotal == 0 {
 		return 0

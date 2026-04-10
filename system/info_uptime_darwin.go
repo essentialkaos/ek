@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetUptime returns uptime in seconds from 1/1/1970
+// GetUptime returns system uptime in seconds since boot
 func GetUptime() (uint64, error) {
 	tv, err := unix.SysctlTimeval("kern.boottime")
 

@@ -17,19 +17,21 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetCPUUsage returns info about CPU usage
+// ❗ GetCPUUsage measures CPU usage over the given duration and returns a usage
+// breakdown
 func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// ❗ CalculateCPUUsage calculates CPU usage based on CPUStats
+// ❗ CalculateCPUUsage calculates CPU usage percentages from two consecutive
+// CPUStats snapshots
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	panic("UNSUPPORTED")
 	return nil
 }
 
-// ❗ GetCPUStats returns basic CPU stats
+// ❗ GetCPUStats returns a snapshot of raw cumulative CPU time counters
 func GetCPUStats() (*CPUStats, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
@@ -37,7 +39,7 @@ func GetCPUStats() (*CPUStats, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetCPUInfo returns slice with info about CPUs
+// GetCPUInfo returns static information about each physical CPU package
 func GetCPUInfo() ([]*CPUInfo, error) {
 	params, err := sysctl.All()
 

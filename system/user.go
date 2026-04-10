@@ -24,7 +24,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// User contains information about user
+// User contains information about a system user account
 type User struct {
 	UID      int      `json:"uid"`
 	GID      int      `json:"gid"`
@@ -33,18 +33,18 @@ type User struct {
 	Comment  string   `json:"comment"`
 	Shell    string   `json:"shell"`
 	HomeDir  string   `json:"home_dir"`
-	RealUID  int      `json:"real_uid"`
-	RealGID  int      `json:"real_gid"`
-	RealName string   `json:"real_name"`
+	RealUID  int      `json:"real_uid"`  // UID of the original user before sudo elevation
+	RealGID  int      `json:"real_gid"`  // GID of the original user before sudo elevation
+	RealName string   `json:"real_name"` // Name of the original user before sudo elevation
 }
 
-// Group contains information about group
+// Group contains information about a system group
 type Group struct {
 	Name string `json:"name"`
 	GID  int    `json:"gid"`
 }
 
-// SessionInfo contains information about all sessions
+// SessionInfo contains information about an active login session
 type SessionInfo struct {
 	Username         string    `json:"username"`
 	Host             string    `json:"host"`
@@ -54,25 +54,24 @@ type SessionInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Errors
 var (
-	// ErrEmptyPath is returned if given path is empty
+	// ErrEmptyPath is returned when a required path argument is empty
 	ErrEmptyPath = errors.New("path is empty")
 
-	// ErrEmptyUserName is returned if given user name or uid is empty
+	// ErrEmptyUserName is returned when a required user name or UID is empty
 	ErrEmptyUserName = errors.New("user name/ID can't be blank")
 
-	// ErrEmptyGroupName is returned if given group name of gid is empty
+	// ErrEmptyGroupName is returned when a required group name or GID is empty
 	ErrEmptyGroupName = errors.New("group name/ID can't be blank")
 
-	// ErrCantParseIdOutput is returned if id command output has unsupported format
+	// ErrCantParseIdOutput is returned when the output of the id command has an unexpected format
 	ErrCantParseIdOutput = errors.New("can't parse id command output")
 
-	// ErrCantParseGetentOutput is returned if getent command output has unsupported format
+	// ErrCantParseGetentOutput is returned when the output of getent has an unexpected format
 	ErrCantParseGetentOutput = errors.New("can't parse getent command output")
 )
 
-// CurrentUserCachePeriod is cache period for current user info
+// CurrentUserCachePeriod is the duration for which the current user info is cached
 var CurrentUserCachePeriod = 5 * time.Minute
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -88,7 +87,8 @@ var curUserMu sync.RWMutex
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CurrentUser returns struct with info about current user
+// CurrentUser returns information about the user running the current process.
+// Results are cached for CurrentUserCachePeriod; pass true to bypass the cache.
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	if len(avoidCache) == 0 || !avoidCache[0] {
 		if curUser != nil && time.Since(curUserUpdateDate) < CurrentUserCachePeriod {
@@ -123,7 +123,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	return user, nil
 }
 
-// LookupUser searches user info by given name
+// LookupUser returns user information for the given username or UID string
 func LookupUser(nameOrID string) (*User, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyUserName
@@ -144,7 +144,7 @@ func LookupUser(nameOrID string) (*User, error) {
 	return user, nil
 }
 
-// LookupGroup searches group info by given name
+// LookupGroup returns group information for the given group name or GID string
 func LookupGroup(nameOrID string) (*Group, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyGroupName
@@ -153,7 +153,8 @@ func LookupGroup(nameOrID string) (*Group, error) {
 	return getGroupInfo(nameOrID)
 }
 
-// CurrentTTY returns current tty or empty string if error occurred
+// CurrentTTY returns the path of the TTY attached to the current process, or an empty
+// string if none
 func CurrentTTY() string {
 	pid := strconv.Itoa(os.Getpid())
 	fdLink, err := os.Readlink("/proc/" + pid + "/fd/0")
@@ -167,17 +168,17 @@ func CurrentTTY() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsRoot checks if current user is root
+// IsRoot returns true if the user is root (UID 0 and GID 0)
 func (u *User) IsRoot() bool {
 	return u.UID == 0 && u.GID == 0
 }
 
-// IsSudo checks if it user over sudo command
+// IsSudo returns true if the process is running under sudo elevation
 func (u *User) IsSudo() bool {
 	return u.IsRoot() && u.RealUID != 0 && u.RealGID != 0
 }
 
-// GroupList returns slice with user groups names
+// GroupList returns the names of all groups the user belongs to
 func (u *User) GroupList() []string {
 	var result []string
 

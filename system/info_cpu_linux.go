@@ -37,7 +37,7 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetCPUUsage returns info about CPU usage
+// GetCPUUsage measures CPU usage over the given duration and returns a usage breakdown
 func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	c1, err := GetCPUStats()
 
@@ -56,7 +56,8 @@ func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	return CalculateCPUUsage(c1, c2), nil
 }
 
-// CalculateCPUUsage calculates CPU usage based on CPUStats
+// CalculateCPUUsage calculates CPU usage percentages from two consecutive
+// CPUStats snapshots
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	prevIdle := c1.Idle + c1.Wait
 	idle := c2.Idle + c2.Wait
@@ -88,7 +89,7 @@ func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	}
 }
 
-// GetCPUStats returns basic CPU stats
+// GetCPUStats returns a snapshot of raw cumulative CPU time counters
 func GetCPUStats() (*CPUStats, error) {
 	s, closer, err := getFileScanner(procStatFile)
 
@@ -101,7 +102,7 @@ func GetCPUStats() (*CPUStats, error) {
 	return parseCPUStats(s)
 }
 
-// GetCPUInfo returns slice with info about CPUs
+// GetCPUInfo returns static information about each physical CPU package
 func GetCPUInfo() ([]*CPUInfo, error) {
 	s, closeFunc, err := getFileScanner(cpuInfoFile)
 
@@ -114,7 +115,7 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 	return parseCPUInfo(s)
 }
 
-// GetCPUCount returns info about CPU
+// GetCPUCount returns the number of CPUs in each availability state
 func GetCPUCount() (CPUCount, error) {
 	var err error
 

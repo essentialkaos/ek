@@ -13,25 +13,27 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ GetFSUsage returns info about mounted filesystems
+// ❗ GetFSUsage returns usage statistics for all currently mounted filesystems
 func GetFSUsage() (map[string]*FSUsage, error) {
 	panic("UNSUPPORTED")
 	return map[string]*FSUsage{"/": {}}, nil
 }
 
-// ❗ GetIOStats returns I/O stats
+// ❗ GetIOStats returns current I/O counters keyed by block device name
 func GetIOStats() (map[string]*IOStats, error) {
 	panic("UNSUPPORTED")
 	return map[string]*IOStats{"/dev/sda1": {}}, nil
 }
 
-// ❗ GetIOUtil returns IO utilization
+// ❗ GetIOUtil measures I/O utilization per device over the given duration and returns
+// values as percentages
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	panic("UNSUPPORTED")
 	return map[string]float64{"/": 0}, nil
 }
 
-// ❗ CalculateIOUtil calculates IO utilization for all devices
+// ❗ CalculateIOUtil calculates I/O utilization percentages from two IOStats
+// snapshots
 func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
 	panic("UNSUPPORTED")
 	return map[string]float64{"/": 0}

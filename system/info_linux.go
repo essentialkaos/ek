@@ -29,7 +29,7 @@ var machineIDFile = "/etc/machine-id"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo returns system info
+// GetSystemInfo returns general information about the host system
 func GetSystemInfo() (*SystemInfo, error) {
 	info := &syscall.Utsname{}
 	err := syscall.Uname(info)
@@ -52,12 +52,12 @@ func GetSystemInfo() (*SystemInfo, error) {
 	}, nil
 }
 
-// GetOSInfo returns info about OS
+// GetOSInfo returns information parsed from the default os-release file
 func GetOSInfo() (*OSInfo, error) {
 	return ParseOSInfo(osReleaseFile)
 }
 
-// ParseOSInfo parses data in given os-release file
+// ParseOSInfo parses OS release information from the given os-release file path
 func ParseOSInfo(file string) (*OSInfo, error) {
 	data, err := os.ReadFile(file)
 

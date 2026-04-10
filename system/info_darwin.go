@@ -19,7 +19,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo returns system info
+// GetSystemInfo returns general information about the host system
 func GetSystemInfo() (*SystemInfo, error) {
 	hostname, err := syscall.Sysctl("kern.hostname")
 
@@ -58,7 +58,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 	}, nil
 }
 
-// GetOSInfo returns info about OS
+// GetOSInfo returns information parsed from the default os-release file
 func GetOSInfo() (*OSInfo, error) {
 	versionData, err := exec.Command("sw_vers").Output()
 

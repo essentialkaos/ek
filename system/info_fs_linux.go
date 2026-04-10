@@ -29,7 +29,7 @@ var mtabFile = "/etc/mtab"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetFSUsage returns info about mounted filesystems
+// GetFSUsage returns usage statistics for all currently mounted filesystems
 func GetFSUsage() (map[string]*FSUsage, error) {
 	s, closer, err := getFileScanner(mtabFile)
 
@@ -42,7 +42,7 @@ func GetFSUsage() (map[string]*FSUsage, error) {
 	return parseFSInfo(s, true)
 }
 
-// GetIOStats returns IO statistics as map device -> statistics
+// GetIOStats returns current I/O counters keyed by block device name
 func GetIOStats() (map[string]*IOStats, error) {
 	s, closer, err := getFileScanner(procDiskStatsFile)
 
@@ -55,7 +55,8 @@ func GetIOStats() (map[string]*IOStats, error) {
 	return parseIOStats(s)
 }
 
-// GetIOUtil returns slice (device -> utilization) with IO utilization
+// GetIOUtil measures I/O utilization per device over the given duration and returns
+// values as percentages
 func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	io1, err := GetIOStats()
 
@@ -74,7 +75,7 @@ func GetIOUtil(duration time.Duration) (map[string]float64, error) {
 	return CalculateIOUtil(io1, io2, duration), nil
 }
 
-// CalculateIOUtil calculates IO utilization for all devices
+// CalculateIOUtil calculates I/O utilization percentages from two IOStats snapshots
 func CalculateIOUtil(io1, io2 map[string]*IOStats, duration time.Duration) map[string]float64 {
 	if io1 == nil || io2 == nil {
 		return nil

@@ -36,7 +36,7 @@ var skipInterfacePrefixes = []string{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInterfacesStats returns info about network interfaces
+// // GetInterfacesStats returns current traffic counters keyed by interface name
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	s, closer, err := getFileScanner(procNetFile)
 
@@ -49,8 +49,8 @@ func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	return parseInterfacesStats(s)
 }
 
-// GetNetworkSpeed returns network input/output speed in bytes per second for
-// all network interfaces
+// GetNetworkSpeed measures inbound and outbound throughput in bytes per second
+// over the given duration
 func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	ii1, err := GetInterfacesStats()
 
@@ -71,8 +71,8 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	return in, out, nil
 }
 
-// CalculateNetworkSpeed calculates network input/output speed in bytes per second for
-// all network interfaces
+// CalculateNetworkSpeed calculates inbound and outbound bytes per second from two
+// interface snapshots
 func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Duration) (uint64, uint64) {
 	if ii1 == nil || ii2 == nil {
 		return 0, 0
