@@ -61,7 +61,7 @@ func (s *ProcessSuite) TestGetTreeAux(c *C) {
 	_, err = getProcessUser(9999, map[int]string{})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `User with name/ID 9999 does not exist`)
+	c.Assert(err, ErrorMatches, `user with name/ID "9999" does not exist`)
 
 	p1, p2 := getParentPIDs("/_unknown_")
 
