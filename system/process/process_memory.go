@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMemInfo returns info about process memory usage
+// GetMemInfo returns memory usage statistics for the given process
 func GetMemInfo(pid int) (*MemInfo, error) {
 	statusFile := path.Join(procFS, strconv.Itoa(pid), "status")
 	s, closeFunc, err := getFileScanner(statusFile)

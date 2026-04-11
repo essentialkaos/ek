@@ -8,7 +8,7 @@ package process
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Process state flags
+// // Process state flags reported in /proc/[pid]/stat field 3
 const (
 	STATE_RUNNING   = "R"
 	STATE_SLEEPING  = "S"
@@ -30,42 +30,43 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ProcessInfo contains basic info about process
+// ProcessInfo contains basic information about a process read from procfs
 type ProcessInfo struct {
-	Command  string         // Full command
-	User     string         // Username
-	PID      int            // PID
-	Parent   int            // Parent process PID
-	Children []*ProcessInfo // Slice with child processes
-	IsThread bool           // True if process is thread
+	Command  string         // Full command line with arguments
+	User     string         // Name of the user owning the process
+	PID      int            // Process ID
+	Parent   int            // Parent process ID
+	Children []*ProcessInfo // Child processes and threads
+	IsThread bool           // True if this entry represents a kernel thread
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ProcInfo contains partial info from /proc/[PID]/stat
+// ProcInfo contains a partial view of /proc/[pid]/stat fields
 type ProcInfo struct {
-	PID        int    `json:"pid"`         // The process ID
-	Comm       string `json:"comm"`        // The filename of the executable, in parentheses
-	State      string `json:"state"`       // Process state
-	PPID       int    `json:"ppid"`        // The PID of the parent of this process
-	Session    int    `json:"session"`     // The session ID of the process
-	TTYNR      int    `json:"tty_nr"`      // The controlling terminal of the process
-	TPGid      int    `json:"tpgid"`       // The ID of the foreground process group of the controlling terminal of the process
-	UTime      uint64 `json:"utime"`       // Amount of time that this process has been scheduled in user mode, measured in clock ticks
-	STime      uint64 `json:"stime"`       // Amount of time that this process has been scheduled in kernel mode, measured in clock ticks
-	CUTime     uint64 `json:"cutime"`      // Amount of time that this process's waited-for children have been scheduled in user mode, measured in clock ticks
-	CSTime     uint64 `json:"cstime"`      // Amount of time that this process's waited-for children have been scheduled in kernel mode, measured in clock ticks
-	Priority   int    `json:"priority"`    // Priority
-	Nice       int    `json:"nice"`        // The nice value
-	NumThreads int    `json:"num_threads"` // Number of threads in this process
+	PID        int    `json:"pid"`         // Process ID
+	Comm       string `json:"comm"`        // Executable filename (without path, without parentheses)
+	State      string `json:"state"`       // Single-character process state
+	PPID       int    `json:"ppid"`        // Parent process ID
+	Session    int    `json:"session"`     // Session ID
+	TTYNR      int    `json:"tty_nr"`      // Controlling terminal device number
+	TPGid      int    `json:"tpgid"`       // Foreground process group ID of the controlling terminal
+	UTime      uint64 `json:"utime"`       // User-mode CPU time, in clock ticks
+	STime      uint64 `json:"stime"`       // Kernel-mode CPU time, in clock ticks
+	CUTime     uint64 `json:"cutime"`      // Waited-for children user-mode CPU time, in clock ticks
+	CSTime     uint64 `json:"cstime"`      // Waited-for children kernel-mode CPU time, in clock ticks
+	Priority   int    `json:"priority"`    // Kernel scheduling priority value
+	Nice       int    `json:"nice"`        // Nice value in the range [-20, 19]
+	NumThreads int    `json:"num_threads"` // Number of threads in the process
 }
 
-// ProcSample contains value for usage calculation
+// ProcSample is a single CPU-time snapshot used to compute usage between two samples
 type ProcSample uint
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MemInfo contains process memory usage stats
+// MemInfo contains virtual and physical memory usage counters from /proc/[pid]/status.
+// All size values are in bytes.
 type MemInfo struct {
 	VmPeak uint64 `json:"peak"` // Peak virtual memory size
 	VmSize uint64 `json:"size"` // Virtual memory size
@@ -83,27 +84,25 @@ type MemInfo struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// MountInfo contains information about mount
-// https://www.kernel.org/doc/Documentation/filesystems/proc.txt
+// MountInfo contains a single parsed entry from /proc/[pid]/mountinfo. See
+// https://www.kernel.org/doc/Documentation/filesystems/proc.txt for field semantics.
 type MountInfo struct {
-	ID             uint16   `json:"mount_id"`        // Unique identifier of the mount (may be reused after umount)
-	ParentID       uint16   `json:"parent_id"`       // ID of parent (or of self for the top of the mount tree)
-	StDevMajor     uint16   `json:"stdev_major"`     // Major value of st_dev for files on filesystem
-	StDevMinor     uint16   `json:"stdev_minor"`     // Minor value of st_dev for files on filesystem
-	Root           string   `json:"root"`            // Root of the mount within the filesystem
-	MountPoint     string   `json:"mount_point"`     // Mount point relative to the process's root
-	MountOptions   []string `json:"mount_options"`   // Per mount options
-	OptionalFields []string `json:"optional_fields"` // Zero or more fields of the form "tag[:value]"
-	FSType         string   `json:"fs_type"`         // Name of filesystem of the form "type[.subtype]"
-	MountSource    string   `json:"mount_source"`    // Filesystem specific information or "none"
-	SuperOptions   []string `json:"super_options"`   // Per super block options
+	ID             uint16   `json:"mount_id"`        // Unique mount identifier (may be reused after umount)
+	ParentID       uint16   `json:"parent_id"`       // ID of the parent mount (self for the tree root)
+	StDevMajor     uint16   `json:"stdev_major"`     // Major component of st_dev for this filesystem
+	StDevMinor     uint16   `json:"stdev_minor"`     // Minor component of st_dev for this filesystem
+	Root           string   `json:"root"`            // Pathname of the directory in the filesystem that forms the root of this mount
+	MountPoint     string   `json:"mount_point"`     // Pathname of the mount point relative to the process root
+	MountOptions   []string `json:"mount_options"`   // Per-mount options (e.g. "rw", "relatime")
+	OptionalFields []string `json:"optional_fields"` // Zero or more tagged fields of the form "tag[:value]"
+	FSType         string   `json:"fs_type"`         // Filesystem type, optionally with a subtype ("type[.subtype]")
+	MountSource    string   `json:"mount_source"`    // Filesystem-specific source information, or "none"
+	SuperOptions   []string `json:"super_options"`   // Per-superblock options (e.g. "rw", "errors=remount-ro")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToSample converts ProcInfo to ProcSample for CPU usage calculation
+// ToSample converts ProcInfo to a ProcSample for CPU usage calculation
 func (pi *ProcInfo) ToSample() ProcSample {
 	return ProcSample(pi.UTime + pi.STime + pi.CUTime + pi.CSTime)
 }

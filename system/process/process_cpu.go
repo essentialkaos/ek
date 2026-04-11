@@ -22,7 +22,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInfo returns process info from procfs
+// GetInfo returns the parsed /proc/[pid]/stat fields for the given process
 func GetInfo(pid int) (*ProcInfo, error) {
 	text, err := readStatData(pid)
 
@@ -33,7 +33,8 @@ func GetInfo(pid int) (*ProcInfo, error) {
 	return parseStatData(text)
 }
 
-// GetSample returns ProcSample for CPU usage calculation
+// GetSample returns a CPU-time snapshot of the given process for use with
+// [CalculateCPUUsage]
 func GetSample(pid int) (ProcSample, error) {
 	text, err := readStatData(pid)
 
@@ -44,7 +45,8 @@ func GetSample(pid int) (ProcSample, error) {
 	return parseSampleData(text)
 }
 
-// CalculateCPUUsage calculates CPU usage
+// CalculateCPUUsage returns the percentage of CPU used between two samples over
+// the given duration
 func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	total := float64(s2 - s1)
 	seconds := float64(duration) / float64(time.Second)

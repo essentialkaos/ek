@@ -20,7 +20,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMountInfo returns info about process mounts
+// GetMountInfo returns the list of active mounts for the given process,
+// parsed from /proc/[pid]/mountinfo
 func GetMountInfo(pid int) ([]*MountInfo, error) {
 	mountFile := path.Join(procFS, strconv.Itoa(pid), "mountinfo")
 	s, closeFunc, err := getFileScanner(mountFile)
