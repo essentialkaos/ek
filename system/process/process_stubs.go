@@ -15,13 +15,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ ToSample converts ProcInfo to ProcSample for CPU usage calculation
-func (pi *ProcInfo) ToSample() ProcSample {
-	panic("UNSUPPORTED")
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // ❗ GetInfo returns process info from procfs
 func GetInfo(pid int) (*ProcInfo, error) {
 	panic("UNSUPPORTED")
