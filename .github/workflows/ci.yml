@@ -139,7 +139,7 @@ jobs:
           --partial
 
   Windows:
-    name: Windows (Stubs)
+    name: Windows
     runs-on: windows-latest
 
     strategy:
