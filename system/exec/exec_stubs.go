@@ -1,4 +1,4 @@
-//go:build !linux && !darwin && !freebsd
+//go:build !linux
 
 // Package exec provides methods for executing commands
 package exec
@@ -10,22 +10,20 @@ package exec
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Sudo executes command with sudo
+// ❗ Sudo runs the given command as the specified user via sudo
 func Sudo(user string, args ...string) error {
 	panic("UNSUPPORTED")
-	return nil
 }
 
-// ❗ Run executes command
+// ❗ Run executes the given command with optional arguments
 func Run(command string, args ...string) error {
 	panic("UNSUPPORTED")
-	return nil
 }
 
-// ❗ RunAsUser runs command as a given user
+// ❗ RunAsUser runs the given command as the specified user via runuser,
+// optionally redirecting stdout and stderr to logFile
 func RunAsUser(user, logFile string, command string, args ...string) error {
 	panic("UNSUPPORTED")
-	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
