@@ -85,7 +85,7 @@ func ParseOSInfo(file string) (*OSInfo, error) {
 
 // getFileScanner opens file and creates scanner for reading text files line by line
 func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+	fd, err := os.Open(file)
 
 	if err != nil {
 		return nil, nil, err

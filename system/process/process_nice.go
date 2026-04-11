@@ -17,15 +17,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const (
-	PRIO_CLASS_NONE        = 0
-	PRIO_CLASS_REAL_TIME   = 1
-	PRIO_CLASS_BEST_EFFORT = 2
-	PRIO_CLASS_IDLE        = 3
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // GetCPUPriority returns process CPU scheduling priority (PR, NI, error)
 func GetCPUPriority(pid int) (int, int, error) {
 	pr, err := syscall.Getpriority(syscall.PRIO_PROCESS, pid)

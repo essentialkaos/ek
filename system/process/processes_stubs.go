@@ -1,4 +1,4 @@
-//go:build !linux && !darwin
+//go:build !linux
 
 package process
 
@@ -9,26 +9,12 @@ package process
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ ProcessInfo contains basic info about process
-type ProcessInfo struct {
-	Command  string         // ❗ Full command
-	User     string         // ❗ Username
-	PID      int            // ❗ PID
-	IsThread bool           // ❗ True if process is thread
-	Parent   int            // ❗ Parent process PID
-	Children []*ProcessInfo // ❗ Slice with child processes
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // ❗ GetTree returns root process with all subprocesses on the system
 func GetTree(pid ...int) (*ProcessInfo, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }
 
 // ❗ GetList returns slice with all active processes on the system
 func GetList() ([]*ProcessInfo, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }

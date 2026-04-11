@@ -1,6 +1,5 @@
 //go:build linux
 
-// Package process provides methods for gathering information about active processes
 package process
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,26 +10,17 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
 	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v13/mathutil"
 	"github.com/essentialkaos/ek/v13/system"
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ProcessInfo contains basic info about process
-type ProcessInfo struct {
-	Command  string         // Full command
-	User     string         // Username
-	PID      int            // PID
-	Parent   int            // Parent process PID
-	Children []*ProcessInfo // Slice with child processes
-	IsThread bool           // True if process is thread
-}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -47,8 +37,10 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 		root = pid[0]
 	}
 
-	if !fsutil.IsExist(procFS + "/" + strconv.Itoa(root)) {
-		return nil, fmt.Errorf("Process with PID %d doesn't exist", pid)
+	rootDir := path.Join(procFS, strconv.Itoa(root))
+
+	if !fsutil.IsExist(rootDir) {
+		return nil, fmt.Errorf("process with PID %d doesn't exist", root)
 	}
 
 	list, err := findInfo(procFS, make(map[int]string))
@@ -58,7 +50,7 @@ func GetTree(pid ...int) (*ProcessInfo, error) {
 	}
 
 	if len(list) == 0 {
-		return nil, fmt.Errorf("Can't find any processes")
+		return nil, fmt.Errorf("can't find any processes")
 	}
 
 	return processListToTree(list, root), nil
@@ -71,6 +63,19 @@ func GetList() ([]*ProcessInfo, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getFileScanner opens file and creates scanner for reading text files line by line
+func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
+	fd, err := os.Open(file)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s := bufio.NewScanner(fd)
+
+	return s, fd.Close, nil
+}
+
 // findInfo recursively searches for process info in the specified directory
 func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 	var result []*ProcessInfo
@@ -82,7 +87,7 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 			continue
 		}
 
-		taskDir := dir + "/" + pid + "/task"
+		taskDir := path.Join(dir, pid, "task")
 
 		if fsutil.IsExist(taskDir) {
 			threads, err := findInfo(taskDir, userMap)
@@ -100,7 +105,7 @@ func findInfo(dir string, userMap map[int]string) ([]*ProcessInfo, error) {
 			continue
 		}
 
-		info, err := readProcessInfo(dir+"/"+pid, pid, userMap)
+		info, err := readProcessInfo(path.Join(dir, pid), pid, userMap)
 
 		if err != nil {
 			return nil, err
@@ -124,12 +129,14 @@ func readProcessInfo(dir, pid string, userMap map[int]string) (*ProcessInfo, err
 		return nil, err
 	}
 
+	cmdlineFile := path.Join(dir, "cmdline")
+
 	// The process had died after the moment when we have created a list of processes
-	if !fsutil.IsExist(dir + "/cmdline") {
+	if !fsutil.IsExist(cmdlineFile) {
 		return nil, nil
 	}
 
-	cmd, err := os.ReadFile(dir + "/cmdline")
+	cmd, err := os.ReadFile(cmdlineFile)
 
 	if err != nil {
 		return nil, err
@@ -196,7 +203,8 @@ func getProcessParent(pidDir string, pid int) (int, bool) {
 
 // getParentPIDs reads /proc/[pid]/status file and returns Tgid and PPid
 func getParentPIDs(pidDir string) (int, int) {
-	data, err := os.ReadFile(pidDir + "/status")
+	statusFile := path.Join(pidDir, "status")
+	data, err := os.ReadFile(statusFile)
 
 	if err != nil {
 		return -1, -1
@@ -204,7 +212,7 @@ func getParentPIDs(pidDir string) (int, int) {
 
 	var ppid, tgid string
 
-	for _, line := range strings.Split(string(data), "\n") {
+	for line := range strings.SplitSeq(string(data), "\n") {
 		if strings.HasPrefix(line, "Tgid:") {
 			tgid = strings.TrimSpace(line[5:])
 		}
@@ -270,15 +278,5 @@ func processListToTree(processes []*ProcessInfo, root int) *ProcessInfo {
 
 // isPID checks if the given string is a valid PID
 func isPID(pid string) bool {
-	if pid == "" {
-		return false
-	}
-
-	// Pid must start from number
-	switch pid[0] {
-	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		return true
-	}
-
-	return false
+	return pid != "" && mathutil.IsInt(pid)
 }

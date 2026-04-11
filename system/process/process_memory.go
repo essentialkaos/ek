@@ -10,57 +10,39 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bufio"
-	"errors"
-	"os"
+	"fmt"
+	"path"
 	"strconv"
+	"strings"
 
 	"github.com/essentialkaos/ek/v13/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MemInfo contains process memory usage stats
-type MemInfo struct {
-	VmPeak uint64 `json:"peak"` // Peak virtual memory size
-	VmSize uint64 `json:"size"` // Virtual memory size
-	VmLck  uint64 `json:"lck"`  // Locked memory size
-	VmPin  uint64 `json:"pin"`  // Pinned memory size (since Linux 3.2)
-	VmHWM  uint64 `json:"hwm"`  // Peak resident set size ("high water mark")
-	VmRSS  uint64 `json:"rss"`  // Resident set size
-	VmData uint64 `json:"data"` // Size of data
-	VmStk  uint64 `json:"stk"`  // Size of stack
-	VmExe  uint64 `json:"exe"`  // Size of text segments
-	VmLib  uint64 `json:"lib"`  // Shared library code size
-	VmPTE  uint64 `json:"pte"`  // Page table entries size (since Linux 2.6.10)
-	VmSwap uint64 `json:"swap"` // Swap size
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // GetMemInfo returns info about process memory usage
 func GetMemInfo(pid int) (*MemInfo, error) {
-	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/status", os.O_RDONLY, 0)
+	statusFile := path.Join(procFS, strconv.Itoa(pid), "status")
+	s, closeFunc, err := getFileScanner(statusFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
-
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	defer closeFunc()
 
 	info := &MemInfo{}
 
 	for s.Scan() {
 		text := s.Text()
 
-		if len(text) < 2 || text[:2] != "Vm" {
+		if !strings.HasPrefix(text, "Vm") {
 			continue
 		}
 
-		switch strutil.ReadField(text, 0, true) {
+		field := strutil.ReadField(text, 0, true)
+
+		switch field {
 		case "VmPeak:":
 			info.VmPeak, err = parseSize(strutil.ReadField(text, 1, true))
 		case "VmSize:":
@@ -88,15 +70,15 @@ func GetMemInfo(pid int) (*MemInfo, error) {
 		}
 
 		if err != nil {
-			return nil, errors.New("Can't parse status file for given process")
+			return nil, fmt.Errorf("can't parse field %q from stats file %s", field, statusFile)
 		}
 	}
 
 	if info.VmPeak+info.VmSize == 0 {
-		return nil, errors.New("Can't parse status file for given process")
+		return nil, fmt.Errorf("invalid status data: VmPeak+VmSize is equals to 0")
 	}
 
-	return info, nil
+	return info, s.Err()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
