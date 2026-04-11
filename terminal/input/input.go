@@ -72,8 +72,8 @@ var NewLine = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// InvalidAnswerMesssage is returned when the user's answer is neither Y nor N
-var InvalidAnswerMesssage = "Please enter Y or N"
+// InvalidAnswerMessage is returned when the user's answer is neither Y nor N
+var InvalidAnswerMessage = "Please enter Y or N"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -132,7 +132,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 		case "N":
 			return false, nil
 		default:
-			terminal.Warn(InvalidAnswerMesssage)
+			terminal.Warn(InvalidAnswerMessage)
 			fmtc.NewLine()
 		}
 	}
