@@ -61,6 +61,10 @@ var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+var spaces string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // PrettyNum formats any numeric value with thousands separators
 // (e.g. 1234567 → "1,234,567").
 // An optional separator overrides OrderSeparator for this call only.
@@ -166,7 +170,7 @@ func ParseSize(size string) (uint64, error) {
 	v := strings.ToLower(strings.ReplaceAll(size, " ", ""))
 	mod, suf := extractSizeInfo(v)
 
-	v = strings.TrimRight(v, suf)
+	v = strings.TrimSuffix(v, suf)
 
 	if v == "" {
 		return 0, fmt.Errorf("size has no digits")
@@ -383,7 +387,11 @@ func padding(n int) string {
 		return ""
 	}
 
-	return strings.Repeat(" ", n)
+	if spaces == "" {
+		spaces = strings.Repeat(" ", 256)
+	}
+
+	return spaces[:min(n, 256)]
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
