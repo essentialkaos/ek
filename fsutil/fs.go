@@ -276,7 +276,7 @@ func ValidatePerms(perms, path string) error {
 //   - B: is block device
 //   - C: is character device
 //   - S: not empty (only for files)
-func ProperPath(perms string, paths []string) string {
+func ProperPath(perms string, paths ...string) string {
 	for _, path := range paths {
 		if strings.TrimSpace(path) == "" {
 			continue
