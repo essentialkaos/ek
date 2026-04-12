@@ -24,36 +24,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// User contains information about a system user account
-type User struct {
-	UID      int      `json:"uid"`
-	GID      int      `json:"gid"`
-	Name     string   `json:"name"`
-	Groups   []*Group `json:"groups"`
-	Comment  string   `json:"comment"`
-	Shell    string   `json:"shell"`
-	HomeDir  string   `json:"home_dir"`
-	RealUID  int      `json:"real_uid"`  // UID of the original user before sudo elevation
-	RealGID  int      `json:"real_gid"`  // GID of the original user before sudo elevation
-	RealName string   `json:"real_name"` // Name of the original user before sudo elevation
-}
-
-// Group contains information about a system group
-type Group struct {
-	Name string `json:"name"`
-	GID  int    `json:"gid"`
-}
-
-// SessionInfo contains information about an active login session
-type SessionInfo struct {
-	Username         string    `json:"username"`
-	Host             string    `json:"host"`
-	LoginTime        time.Time `json:"login_time"`
-	LastActivityTime time.Time `json:"last_activity_time"`
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 var (
 	// ErrEmptyPath is returned when a required path argument is empty
 	ErrEmptyPath = errors.New("path is empty")
