@@ -14,7 +14,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// HasCodes returns true if given string contains ANSI/VT100 control sequences
+// Has returns true if given string contains ANSI/VT100 control sequences
 func Has(s string) bool {
 	for _, r := range s {
 		if r == 0x1B {
@@ -25,12 +25,12 @@ func Has(s string) bool {
 	return false
 }
 
-// RemoveCodesBytes returns string without all ANSI/VT100 control sequences
+// HasBytes returns true if given byte slice contains ANSI/VT100 control sequences
 func HasBytes(b []byte) bool {
 	return slices.Contains(b, 0x1B)
 }
 
-// HasCodes returns true if given byte slice contains ANSI/VT100 control sequences
+// Remove returns string without all ANSI/VT100 control sequences
 func Remove(s string) string {
 	if s == "" || !Has(s) {
 		return s
@@ -39,15 +39,14 @@ func Remove(s string) string {
 	return string(removeCodesBytes([]byte(s)))
 }
 
-// RemoveCodesBytes returns a byte slice with all ANSI/VT100 SGR control
-// sequences removed.
+// RemoveBytes returns a byte slice with all ANSI/VT100 SGR control sequences removed.
 //
 // Aliasing: if the input contains no escape sequences, the original slice is
 // returned as-is without any allocation. Mutating the result in that case will
 // silently mutate the source buffer. If an independent copy is required
 // regardless of content, use [bytes.Clone]:
 //
-//	safe := bytes.Clone(RemoveCodesBytes(b))
+//	safe := bytes.Clone(RemoveBytes(b))
 func RemoveBytes(b []byte) []byte {
 	if len(b) == 0 || !HasBytes(b) {
 		return b
