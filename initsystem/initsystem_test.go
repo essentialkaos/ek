@@ -28,6 +28,14 @@ var _ = Suite(&InitSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *InitSuite) TestServiceName(c *C) {
+	c.Assert(validateServiceName("").Error(), Equals, `service name is empty`)
+	c.Assert(validateServiceName("test/123").Error(), Equals, `service name "test/123" is invalid`)
+	c.Assert(validateServiceName("test"), IsNil)
+
+	c.Assert(isValidServiceName(""), Equals, false)
+}
+
 func (s *InitSuite) TestSystemdEnabled(c *C) {
 	c.Assert(parseSystemdEnabledOutput("enabled\r\n"), Equals, true)
 	c.Assert(parseSystemdEnabledOutput("enabled"), Equals, true)

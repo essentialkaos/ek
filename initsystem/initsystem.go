@@ -172,18 +172,10 @@ func IsEnabled(serviceName string) (bool, error) {
 
 // hasSysVService checks if service exists in SysV init system
 func hasSysVService(serviceName string) bool {
-	return fsutil.CheckPerms("FXS",
-		path.Join("/etc/rc.d/init.d", serviceName),
-		path.Join("/usr/local/etc/rc.d", serviceName),
-	)
-
-	// Check default path on linux
-	if fsutil.CheckPerms("FXS") {
-		return true
-	}
-
-	// Check default path on bsd
-	return fsutil.CheckPerms("FXS", path.Join("/usr/local/etc/rc.d", serviceName))
+	return fsutil.ProperPath("FXS",
+		path.Join("/etc/rc.d/init.d", serviceName),    // Linux
+		path.Join("/usr/local/etc/rc.d", serviceName), // BSD
+	) != ""
 }
 
 // hasUpstartService checks if service exists in Upstart init system
@@ -192,7 +184,7 @@ func hasUpstartService(serviceName string) bool {
 		serviceName += ".conf"
 	}
 
-	return fsutil.IsExist("/etc/init/" + serviceName)
+	return fsutil.IsExist(path.Join("/etc/init", serviceName))
 }
 
 // hasSystemdService checks if service exists in Systemd init system
@@ -201,15 +193,11 @@ func hasSystemdService(serviceName string) bool {
 		serviceName += ".service"
 	}
 
-	if fsutil.IsExist("/etc/systemd/system/" + serviceName) {
-		return true
-	}
-
-	if fsutil.IsExist("/etc/systemd/user/" + serviceName) {
-		return true
-	}
-
-	return fsutil.IsExist("/usr/lib/systemd/system/" + serviceName)
+	return fsutil.ProperPath("FR",
+		path.Join("/etc/systemd/system", serviceName),
+		path.Join("/etc/systemd/user", serviceName),
+		path.Join("/usr/lib/systemd/system", serviceName),
+	) != ""
 }
 
 // getSysVServiceState returns service state from SysV init system
@@ -283,7 +271,9 @@ func getSystemdServiceState(serviceName string) (bool, error) {
 
 // isSysVEnabled checks if service is enabled in SysV init system
 func isSysVEnabled(serviceName string) (bool, error) {
-	output, err := exec.Command("/sbin/chkconfig", "--list", serviceName).CombinedOutput()
+	output, err := exec.Command(
+		"/sbin/chkconfig", "--list", serviceName,
+	).CombinedOutput()
 
 	if err != nil {
 		return false, wrapCommandOutputToError("chkconfig returned error", output)
@@ -298,7 +288,7 @@ func isUpstartEnabled(serviceName string) (bool, error) {
 		serviceName += ".conf"
 	}
 
-	return parseUpstartEnabledData(serviceName, "/etc/init/"+serviceName)
+	return parseUpstartEnabledData(serviceName, path.Join("/etc/init", serviceName))
 }
 
 // isSystemdEnabled checks if service is enabled in Systemd init system
