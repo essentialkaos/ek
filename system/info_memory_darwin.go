@@ -28,15 +28,31 @@ func GetMemUsage() (*MemUsage, error) {
 		return nil, fmt.Errorf("can't get kernel parameters: %w", err)
 	}
 
-	pagesize, err := params.GetI("hw.pagesize")
+	pagesize, err := params.Get("hw.pagesize")
 
 	if err != nil {
-		return nil, fmt.Errorf("can't read page size: %w", err)
+		return nil, fmt.Errorf("can't read page size from sysctl: %w", err)
 	}
 
-	totalMem, _ := params.GetI("hw.memsize_usable")
+	totalMem, err := params.Get("hw.memsize_usable")
 
-	info, err := calculateMemUsage(uint64(pagesize), uint64(totalMem))
+	if err != nil {
+		return nil, fmt.Errorf("can't read total memory from sysctl: %w", err)
+	}
+
+	pagesizeInt, err := pagesize.Int()
+
+	if err != nil {
+		return nil, fmt.Errorf("can't parse page size: %w", err)
+	}
+
+	totalMemInt, err := totalMem.Int()
+
+	if err != nil {
+		return nil, fmt.Errorf("can't parse page size: %w", err)
+	}
+
+	info, err := calculateMemUsage(uint64(pagesizeInt), uint64(totalMemInt))
 
 	if err != nil {
 		return nil, err
@@ -95,13 +111,13 @@ func calculateMemUsage(pageSize, totalMem uint64) (*MemUsage, error) {
 
 // appendSwapUsage appends swap usage info
 func appendSwapUsage(info *MemUsage, params sysctl.Params) {
-	swap := params["vm.swapusage"]
+	param := params.Get("vm.swapusage")
 
-	if swap == "" {
+	if param.IsEmpty() {
 		return
 	}
 
-	swap = strutil.SqueezeRepeats(swap, " ")
+	swap := strutil.SqueezeRepeats(param.Value, " ")
 	swap = strings.ReplaceAll(swap, " = ", "=")
 	swap = strings.ReplaceAll(swap, "M", "")
 
