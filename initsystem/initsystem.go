@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"syscall"
 
@@ -98,6 +99,10 @@ func Launchd() bool {
 
 // IsPresent returns true if service is present in any init system
 func IsPresent(serviceName string) bool {
+	if !isValidServiceName(serviceName) {
+		return false
+	}
+
 	if hasSystemdService(serviceName) {
 		return true
 	}
@@ -115,6 +120,12 @@ func IsPresent(serviceName string) bool {
 
 // IsWorks returns service state
 func IsWorks(serviceName string) (bool, error) {
+	err := validateServiceName(serviceName)
+
+	if err != nil {
+		return false, err
+	}
+
 	if hasSystemdService(serviceName) {
 		return getSystemdServiceState(serviceName)
 	}
@@ -132,6 +143,12 @@ func IsWorks(serviceName string) (bool, error) {
 
 // IsEnabled returns true if auto start enabled for given service
 func IsEnabled(serviceName string) (bool, error) {
+	err := validateServiceName(serviceName)
+
+	if err != nil {
+		return false, err
+	}
+
 	if !IsPresent(serviceName) {
 		return false, fmt.Errorf("service %q doesn't exist on this system", serviceName)
 	}
@@ -155,17 +172,18 @@ func IsEnabled(serviceName string) (bool, error) {
 
 // hasSysVService checks if service exists in SysV init system
 func hasSysVService(serviceName string) bool {
-	// Default path for linux
-	initDir := "/etc/rc.d/init.d"
+	return fsutil.CheckPerms("FXS",
+		path.Join("/etc/rc.d/init.d", serviceName),
+		path.Join("/usr/local/etc/rc.d", serviceName),
+	)
 
-	if fsutil.CheckPerms("FXS", initDir+"/"+serviceName) {
+	// Check default path on linux
+	if fsutil.CheckPerms("FXS") {
 		return true
 	}
 
-	// Default path for BSD
-	initDir = "/usr/local/etc/rc.d"
-
-	return fsutil.CheckPerms("FXS", initDir+"/"+serviceName)
+	// Check default path on bsd
+	return fsutil.CheckPerms("FXS", path.Join("/usr/local/etc/rc.d", serviceName))
 }
 
 // hasUpstartService checks if service exists in Upstart init system
@@ -295,6 +313,39 @@ func isSystemdEnabled(serviceName string) (bool, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func validateServiceName(serviceName string) error {
+	switch {
+	case serviceName == "":
+		return errors.New("service name is empty")
+	case !isValidServiceName(serviceName):
+		return fmt.Errorf("service name %q is invalid", serviceName)
+	}
+
+	return nil
+}
+
+// isValidServiceName returns false is given service name is invalid
+func isValidServiceName(serviceName string) bool {
+	if serviceName == "" {
+		return false
+	}
+
+	for _, r := range serviceName {
+		switch {
+		case r >= 'a' && r <= 'z',
+			r >= 'A' && r <= 'Z',
+			r >= '0' && r <= '9',
+			r == '-', r == '_',
+			r == '.', r == '@':
+			// okay
+		default:
+			return false
+		}
+	}
+
+	return true
+}
 
 // parseSystemdEnabledOutput parses output of 'systemctl is-enabled' command output
 func parseSystemdEnabledOutput(data string) bool {
