@@ -11,8 +11,10 @@ package lock
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/fsutil"
@@ -28,6 +30,10 @@ func Create(name string) error {
 		return err
 	}
 
+	if !isValidLockName(name) {
+		return fmt.Errorf("invalid lock name %q", name)
+	}
+
 	return fsutil.TouchFile(getLockPath(name), 0644)
 }
 
@@ -39,16 +45,25 @@ func Remove(name string) error {
 		return err
 	}
 
+	if !isValidLockName(name) {
+		return fmt.Errorf("invalid lock name %q", name)
+	}
+
 	return os.Remove(getLockPath(name))
 }
 
 // Has reports whether a lock file with the given name currently exists
 func Has(name string) bool {
+	if !isValidLockName(name) {
+		return false
+	}
+
 	return fsutil.IsExist(getLockPath(name))
 }
 
 // Wait blocks until the named lock file is removed or the deadline is exceeded.
 // Returns true if the lock was released, false if the deadline was reached.
+// Pass a zero time.Time{} deadline to wait indefinitely.
 func Wait(name string, deadline time.Time) bool {
 	if !Has(name) {
 		return true
@@ -58,12 +73,12 @@ func Wait(name string, deadline time.Time) bool {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		if !deadline.IsZero() && time.Now().After(deadline) {
-			return false
-		}
-
 		if !Has(name) {
 			break
+		}
+
+		if !deadline.IsZero() && time.Now().After(deadline) {
+			return false
 		}
 	}
 
@@ -83,7 +98,17 @@ func IsExpired(name string, ttl time.Duration) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isValidLockName returns false if given lock name is invalid
+func isValidLockName(name string) bool {
+	switch {
+	case name == "..", name == ".", strings.ContainsAny(name, "/\\"):
+		return false
+	}
+
+	return true
+}
+
 // getLockPath returns the full filesystem path for the named lock file
 func getLockPath(name string) string {
-	return filepath.Join(Dir, name+".lock")
+	return filepath.Join(Dir, filepath.Base(name)+".lock")
 }
