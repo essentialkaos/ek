@@ -83,7 +83,11 @@ func ToBundle(errs Errors) *Bundle {
 func Chain(funcs ...func() error) error {
 	var err error
 
-	for _, chainFunc := range funcs {
+	for index, chainFunc := range funcs {
+		if chainFunc == nil {
+			return fmt.Errorf("function #%d in chain is nil", index)
+		}
+
 		err = chainFunc()
 
 		if err != nil {

@@ -194,6 +194,7 @@ func (s *ErrorsSuite) TestChain(c *C) {
 
 	c.Assert(Chain(f1, f2, f3), NotNil)
 	c.Assert(Chain(f1, f3), IsNil)
+	c.Assert(Chain(f1, nil, f3), NotNil)
 }
 
 func (s *ErrorsSuite) TestToBundle(c *C) {
