@@ -21,20 +21,17 @@ import (
 // breakdown
 func GetCPUUsage(duration time.Duration) (*CPUUsage, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }
 
 // ❗ CalculateCPUUsage calculates CPU usage percentages from two consecutive
 // CPUStats snapshots
 func CalculateCPUUsage(c1, c2 *CPUStats) *CPUUsage {
 	panic("UNSUPPORTED")
-	return nil
 }
 
 // ❗ GetCPUStats returns a snapshot of raw cumulative CPU time counters
 func GetCPUStats() (*CPUStats, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -44,19 +41,18 @@ func GetCPUInfo() ([]*CPUInfo, error) {
 	params, err := sysctl.All()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters: %w", err)
+		return nil, fmt.Errorf("can't get kernel parameters: %w", err)
 	}
 
-	p0cache, _ := params.GetI("hw.perflevel0.l2cachesize")
-	p1cache, _ := params.GetI("hw.perflevel1.l2cachesize")
-
-	cores, _ := params.GetI("machdep.cpu.core_count")
-	threads, _ := params.GetI("machdep.cpu.thread_count")
+	p0cache, _ := params.Get("hw.perflevel0.l2cachesize").Int()
+	p1cache, _ := params.Get("hw.perflevel1.l2cachesize").Int()
+	cores, _ := params.Get("machdep.cpu.core_count").Int()
+	threads, _ := params.Get("machdep.cpu.thread_count").Int()
 
 	return []*CPUInfo{
 		{
-			Vendor:    strutil.Q(params.Get("machdep.cpu.vendor"), "Apple"),
-			Model:     params.Get("machdep.cpu.brand_string"),
+			Vendor:    strutil.Q(params.Get("machdep.cpu.vendor").String(), "Apple"),
+			Model:     params.Get("machdep.cpu.brand_string").String(),
 			Cores:     cores,
 			Siblings:  threads,
 			CacheSize: uint64(p0cache + p1cache),
