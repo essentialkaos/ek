@@ -13,7 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const HALF_PI = math.Pi / 2
+const _HALF_PI = math.Pi / 2
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -27,7 +27,7 @@ func SineIn(t, b, c, d float64) float64 {
 		return b + c
 	}
 
-	return -c*math.Cos(t/d*HALF_PI) + c + b
+	return -c*math.Cos(t/d*_HALF_PI) + c + b
 }
 
 // SineOut decelerating to zero velocity
@@ -40,7 +40,7 @@ func SineOut(t, b, c, d float64) float64 {
 		return b + c
 	}
 
-	return c*math.Sin(t/d*HALF_PI) + b
+	return c*math.Sin(t/d*_HALF_PI) + b
 }
 
 // SineInOut acceleration until halfway, then deceleration
