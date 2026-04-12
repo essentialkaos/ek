@@ -66,7 +66,7 @@ func (s *SensorsSuite) TestParsingErrors(c *C) {
 	_, err := Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't read sensors information`)
+	c.Assert(err, ErrorMatches, `can't read sensors information: directory .* doesn't exist or not accessible`)
 
 	d := &Device{}
 	t1, t2, t3 := d.Temperature()
@@ -84,46 +84,46 @@ func (s *SensorsSuite) TestParsingErrors(c *C) {
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_crit: strconv.ParseFloat: parsing "AAA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse sensor data from .*/hwmon1/temp1_crit: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
 	os.WriteFile(tmpDir+"/hwmon1/temp1_max", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_max: strconv.ParseFloat: parsing "AAA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse sensor data from .*/hwmon1/temp1_max: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
 	os.WriteFile(tmpDir+"/hwmon1/temp1_min", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_min: strconv.ParseFloat: parsing "AAA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse sensor data from .*/hwmon1/temp1_min: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
 	os.WriteFile(tmpDir+"/hwmon1/temp1_input", []byte("AAA"), 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse sensor data from .*/hwmon1/temp1_input: strconv.ParseFloat: parsing "AAA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse sensor data from .*/hwmon1/temp1_input: strconv.ParseFloat: parsing "AAA": invalid syntax`)
 
 	os.Remove(tmpDir + "/hwmon1/temp1_input")
 	os.Mkdir(tmpDir+"/hwmon1/temp1_input", 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't read sensor data from .*/hwmon1/temp1_input: read .*/hwmon1/temp1_input: is a directory`)
+	c.Assert(err, ErrorMatches, `can't read sensor data from .*/hwmon1/temp1_input: read .*/hwmon1/temp1_input: is a directory`)
 
 	os.Remove(tmpDir + "/hwmon1/temp1_label")
 	os.Mkdir(tmpDir+"/hwmon1/temp1_label", 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't read data from .*/hwmon1/temp1_label: read .*/hwmon1/temp1_label: is a directory`)
+	c.Assert(err, ErrorMatches, `can't read data from .*/hwmon1/temp1_label: read .*/hwmon1/temp1_label: is a directory`)
 
 	os.Remove(tmpDir + "/hwmon1/name")
 	os.Mkdir(tmpDir+"/hwmon1/name", 0644)
 	_, err = Collect()
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't read data from .*/hwmon1/name: read .*/hwmon1/name: is a directory`)
+	c.Assert(err, ErrorMatches, `can't read data from .*/hwmon1/name: read .*/hwmon1/name: is a directory`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

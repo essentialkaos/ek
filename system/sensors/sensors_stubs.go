@@ -1,4 +1,4 @@
-//go:build !linux && !darwin
+//go:build !linux
 
 // Package sensors provide methods for collecting sensors information
 package sensors
@@ -10,41 +10,24 @@ package sensors
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Device contains info from different device sensors
-type Device struct {
-	Name        string
-	TempSensors []TempSensor
-}
-
-// ❗ TempSensor contains info from temperature sensor
-type TempSensor struct {
-	Name string
-	Cur  float64
-	Min  float64
-	Max  float64
-	Crit float64
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Collect collects sensors information
+// ❗ Collect reads sensor data from all hwmon devices and returns the collected results.
+// See https://www.kernel.org/doc/Documentation/hwmon/sysfs-interface for the sysfs
+// layout.
 func Collect() ([]*Device, error) {
 	panic("UNSUPPORTED")
-	return nil, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Temperature returns min, max and average temperature
+// ❗ Temperature returns the minimum, maximum, and average current temperature across
+// all temperature sensors of the device
 func (d *Device) Temperature() (float64, float64, float64) {
 	panic("UNSUPPORTED")
-	return 0.0, 0.0, 0.0
 }
 
-// ❗ String formats sensor data as a string
+// ❗ String returns a human-readable representation of the sensor readings
 func (s TempSensor) String() string {
 	panic("UNSUPPORTED")
-	return ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -1,4 +1,4 @@
-// Package sensors provide methods for collecting sensors information
+// Package sensors provides methods for collecting hardware sensor information
 package sensors
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -8,41 +8,19 @@ package sensors
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Device contains info from different device sensors
+// Device contains sensor information collected from a single hwmon device
 type Device struct {
 	Name        string
 	TempSensors []TempSensor
 }
 
-// ❗ TempSensor contains info from temperature sensor
+// TempSensor contains temperature readings from a single hwmon sensor input
 type TempSensor struct {
 	Name string
 	Cur  float64
 	Min  float64
 	Max  float64
 	Crit float64
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Collect collects sensors information
-func Collect() ([]*Device, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ❗ Temperature returns min, max and average temperature
-func (d *Device) Temperature() (float64, float64, float64) {
-	panic("UNSUPPORTED")
-	return 0.0, 0.0, 0.0
-}
-
-// ❗ String formats sensor data as a string
-func (s TempSensor) String() string {
-	panic("UNSUPPORTED")
-	return ""
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
