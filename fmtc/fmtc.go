@@ -101,13 +101,13 @@ func AddColor(name, tag string) error {
 
 	switch {
 	case name == "":
-		return errors.New("Can't add named color: name can't be empty")
+		return errors.New("can't add named color: name can't be empty")
 	case tag == "":
-		return errors.New("Can't add named color: tag can't be empty")
+		return errors.New("can't add named color: tag can't be empty")
 	case !IsTag(tag):
-		return fmt.Errorf("Can't add named color: %q is not valid color tag", tag)
+		return fmt.Errorf("can't add named color: %q is not valid color tag", tag)
 	case !isValidNamedTag("?" + name):
-		return fmt.Errorf("Can't add named color: %q is not valid name", name)
+		return fmt.Errorf("can't add named color: %q is not valid name", name)
 	}
 
 	colorsMap.Store(name, searchColors(tag, -1, false, false))

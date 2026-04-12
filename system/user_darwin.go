@@ -75,7 +75,7 @@ func getUserInfo(name string) (*User, error) {
 		}
 
 		if err != nil {
-			return nil, fmt.Errorf("Can't parse field %s value: %v", field, err)
+			return nil, fmt.Errorf("can't parse field %s value: %v", field, err)
 		}
 	}
 

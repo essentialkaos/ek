@@ -217,10 +217,10 @@ func (s *FormatSuite) TestNamedColors(c *C) {
 	RemoveColor("myTest_1")
 	parseNamedColor("?myTest_1", false)
 
-	c.Assert(AddColor("", "{r}"), ErrorMatches, `Can't add named color: name can't be empty`)
-	c.Assert(AddColor("test", ""), ErrorMatches, `Can't add named color: tag can't be empty`)
-	c.Assert(AddColor("test", "{H}"), ErrorMatches, `Can't add named color: "{H}" is not valid color tag`)
-	c.Assert(AddColor("test%", "{r}"), ErrorMatches, `Can't add named color: "test%" is not valid name`)
+	c.Assert(AddColor("", "{r}"), ErrorMatches, `can't add named color: name can't be empty`)
+	c.Assert(AddColor("test", ""), ErrorMatches, `can't add named color: tag can't be empty`)
+	c.Assert(AddColor("test", "{H}"), ErrorMatches, `can't add named color: "{H}" is not valid color tag`)
+	c.Assert(AddColor("test%", "{r}"), ErrorMatches, `can't add named color: "test%" is not valid name`)
 
 	AddColor("myTest_1", "{r}")
 	c.Assert(Sprint("{?myTest_1}o{!}"), Equals, "\x1b[31mo\x1b[0m")

@@ -52,7 +52,7 @@ func getParams() (Params, error) {
 	output, err := exec.Command(binary, "-a").Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters from sysctl")
+		return nil, fmt.Errorf("can't get kernel parameters from sysctl")
 	}
 
 	var result Params
