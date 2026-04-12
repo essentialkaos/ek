@@ -1,5 +1,3 @@
-//go:build linux || darwin
-
 // Package sysctl provides methods for reading kernel parameters
 package sysctl
 
@@ -10,107 +8,50 @@ package sysctl
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"fmt"
-	"strconv"
-	"strings"
-)
+import "strconv"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// binary is sysctl binary name
-var binary = "sysctl"
-
-// procFS is path to procfs
-var procFS = "/proc/sys"
-
-// ////////////////////////////////////////////////////////////////////////////////// //
+// Param represents single kernel parameter
+type Param struct {
+	Name  string
+	Value string
+}
 
 // Params contains all kernel parameters
-type Params map[string]string
+type Params []Param
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// All returns all kernel parameters
-func All() (Params, error) {
-	return getParams()
+// IsEmpty returns true if parameter value is empty
+func (p Param) IsEmpty() bool {
+	return p.Name == "" || p.Value == ""
 }
 
-// Get returns kernel parameter value as a string
-func Get(param string) (string, error) {
-	switch {
-	case param == "":
-		return "", fmt.Errorf("Kernel parameter name cannot be empty")
-	case !strings.Contains(param, ".") || strings.ContainsAny(param, " /\n\t"):
-		return "", fmt.Errorf("Invalid parameter name %q", param)
-	}
-
-	return getParam(param)
+// String returns parameter value as string
+func (p Param) String() string {
+	return p.Value
 }
 
-// GetI returns kernel parameter value as an int
-func GetI(param string) (int, error) {
-	p, err := Get(param)
-
-	if err != nil {
-		return 0, err
-	}
-
-	i, err := strconv.Atoi(p)
-
-	if err != nil {
-		return 0, fmt.Errorf("Can't parse %q parameter as int: %w", param, err)
-	}
-
-	return i, nil
+// Int returns parameter value as int
+func (p Param) Int() (int, error) {
+	return strconv.Atoi(p.Value)
 }
 
-// GetI64 returns kernel parameter value as an int64
-func GetI64(param string) (int64, error) {
-	p, err := Get(param)
-
-	if err != nil {
-		return 0, err
-	}
-
-	i, err := strconv.ParseInt(p, 10, 64)
-
-	if err != nil {
-		return 0, fmt.Errorf("Can't parse %q parameter as int64: %w", param, err)
-	}
-
-	return i, nil
+// Int returns parameter value as int
+func (p Param) Int64() (int64, error) {
+	return strconv.ParseInt(p.Value, 10, 64)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Get returns kernel parameter value as a string
-func (p Params) Get(name string) string {
-	if len(p) == 0 {
-		return ""
+// Get returns kernel parameter with given name
+func (p Params) Get(name string) Param {
+	for _, pp := range p {
+		if pp.Name == name {
+			return pp
+		}
 	}
 
-	return p[name]
-}
-
-// GetI returns kernel parameter value as an int
-func (p Params) GetI(param string) (int, error) {
-	i, err := strconv.Atoi(p.Get(param))
-
-	if err != nil {
-		return 0, fmt.Errorf("Can't parse %q parameter as int: %w", param, err)
-	}
-
-	return i, nil
-}
-
-// GetI64 returns kernel parameter value as an int64
-func (p Params) GetI64(param string) (int64, error) {
-	i, err := strconv.ParseInt(p.Get(param), 10, 64)
-
-	if err != nil {
-		return 0, fmt.Errorf("Can't parse %q parameter as int64: %w", param, err)
-	}
-
-	return i, nil
+	return Param{}
 }

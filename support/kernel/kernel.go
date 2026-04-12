@@ -11,8 +11,10 @@ package kernel
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"sort"
 	"strings"
 
+	"github.com/essentialkaos/ek/v13/sortutil"
 	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/support"
 	"github.com/essentialkaos/ek/v13/system/sysctl"
@@ -30,28 +32,32 @@ func Collect(params ...string) []support.KernelParam {
 		return nil
 	}
 
+	sort.Slice(kernelParams, func(i, j int) bool {
+		return sortutil.NaturalLess(kernelParams[i].Name, kernelParams[j].Name)
+	})
+
 	var result []support.KernelParam
 
 	for _, pattern := range params {
 		isGlob := strings.HasSuffix(pattern, "*")
 		param := strings.TrimRight(pattern, "*")
 
-		for k, v := range kernelParams {
+		for _, p := range kernelParams {
 			if isGlob {
-				if !strings.HasPrefix(k, param) {
+				if !strings.HasPrefix(p.Name, param) {
 					continue
 				}
 			} else {
-				if k != param {
+				if p.Name != param {
 					continue
 				}
 			}
 
-			value := strings.ReplaceAll(v, "\t", " ")
+			value := strings.ReplaceAll(p.Value, "\t", " ")
 			value = strutil.SqueezeRepeats(value, " ")
 
 			result = append(result, support.KernelParam{
-				Key:   k,
+				Key:   p.Name,
 				Value: value,
 			})
 		}

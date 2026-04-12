@@ -29,63 +29,36 @@ var _ = Suite(&SysctlSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *SysctlSuite) TestOne(c *C) {
+	var p Param
+	var err error
+
 	if runtime.GOOS == "darwin" {
-		vs, err := Get("kern.job_control")
-		c.Assert(err, IsNil)
-		c.Assert(vs, Equals, "1")
-		vi, err := GetI("kern.job_control")
-		c.Assert(err, IsNil)
-		c.Assert(vi, Equals, int(1))
-		vi64, err := GetI64("kern.job_control")
-		c.Assert(err, IsNil)
-		c.Assert(vi64, Equals, int64(1))
+		p, err = Get("kern.maxproc")
 	} else {
-		vs, err := Get("vm.swappiness")
-		c.Assert(err, IsNil)
-		c.Assert(vs, Not(Equals), "0")
-		vi, err := GetI("vm.swappiness")
-		c.Assert(err, IsNil)
-		c.Assert(vi, Not(Equals), int(0))
-		vi64, err := GetI64("vm.swappiness")
-		c.Assert(err, IsNil)
-		c.Assert(vi64, Not(Equals), int64(0))
+		p, err = Get("kernel.pid_max")
 	}
+
+	c.Assert(err, IsNil)
+	c.Assert(p.IsEmpty(), Equals, false)
+	c.Assert(p, Not(Equals), "0")
+
+	vi, err := p.Int()
+	c.Assert(err, IsNil)
+	c.Assert(vi, Not(Equals), int(0))
+
+	vi64, err := p.Int()
+	c.Assert(err, IsNil)
+	c.Assert(vi64, Not(Equals), int64(0))
 }
 
 func (s *SysctlSuite) TestOneErrors(c *C) {
 	_, err := Get("")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Kernel parameter name cannot be empty`)
+	c.Assert(err, ErrorMatches, `parameter name is empty`)
 
 	_, err = Get("test")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Invalid parameter name "test"`)
-
-	_, err = GetI("test")
-	c.Assert(err, NotNil)
-	_, err = GetI64("test")
-	c.Assert(err, NotNil)
-
-	_, err = Get("te st")
-	c.Assert(err, NotNil)
-	_, err = Get("te/st")
-	c.Assert(err, NotNil)
-	_, err = Get("te\tst")
-	c.Assert(err, NotNil)
-	_, err = Get("te\nst")
-	c.Assert(err, NotNil)
-
-	if runtime.GOOS == "darwin" {
-		_, err = GetI("kern.bootuuid")
-		c.Assert(err, NotNil)
-		_, err = GetI64("kern.bootuuid")
-		c.Assert(err, NotNil)
-	} else {
-		_, err = GetI("kernel.random.boot_id")
-		c.Assert(err, NotNil)
-		_, err = GetI64("kernel.random.boot_id")
-		c.Assert(err, NotNil)
-	}
+	c.Assert(err, ErrorMatches, `invalid parameter name "test"`)
 
 	if runtime.GOOS == "darwin" {
 		binary = "_unknown_"
@@ -101,54 +74,42 @@ func (s *SysctlSuite) TestOneErrors(c *C) {
 }
 
 func (s *SysctlSuite) TestAll(c *C) {
-	p, err := All()
+	var p Param
+
+	pp, err := All()
 
 	c.Assert(err, IsNil)
-	c.Assert(p, Not(HasLen), 0)
+	c.Assert(pp, Not(HasLen), 0)
 
 	if runtime.GOOS == "darwin" {
-		c.Assert(p.Get("kern.job_control"), Equals, "1")
-		vi, err := p.GetI("kern.job_control")
-		c.Assert(err, IsNil)
-		c.Assert(vi, Equals, int(1))
-		vi64, err := p.GetI64("kern.job_control")
-		c.Assert(err, IsNil)
-		c.Assert(vi64, Equals, int64(1))
+		p = pp.Get("kern.maxproc")
 	} else {
-		c.Assert(p.Get("vm.swappiness"), Not(Equals), "")
-		vi, err := p.GetI("vm.swappiness")
-		c.Assert(err, IsNil)
-		c.Assert(vi, Not(Equals), int(0))
-		vi64, err := p.GetI64("vm.swappiness")
-		c.Assert(err, IsNil)
-		c.Assert(vi64, Not(Equals), int64(0))
+		p = pp.Get("kernel.pid_max")
 	}
+
+	c.Assert(p.IsEmpty(), Equals, false)
+	c.Assert(p.String(), Not(Equals), "")
+
+	vi, err := p.Int()
+	c.Assert(err, IsNil)
+	c.Assert(vi, Not(Equals), int(0))
+
+	vi64, err := p.Int64()
+	c.Assert(err, IsNil)
+	c.Assert(vi64, Not(Equals), int64(0))
+
+	if runtime.GOOS == "darwin" {
+		p = pp.Get("_test_")
+	} else {
+		p = pp.Get("_test_")
+	}
+
+	c.Assert(p.IsEmpty(), Equals, true)
 }
 
 func (s *SysctlSuite) TestAllErrors(c *C) {
-	var p Params
-
-	c.Assert(p.Get("test"), Equals, "")
-
-	p, err := All()
-
-	c.Assert(err, IsNil)
-	c.Assert(p, Not(HasLen), 0)
-
-	if runtime.GOOS == "darwin" {
-		_, err = p.GetI("kern.bootuuid")
-		c.Assert(err, NotNil)
-		_, err = p.GetI64("kern.bootuuid")
-		c.Assert(err, NotNil)
-	} else {
-		_, err = p.GetI("kernel.random.boot_id")
-		c.Assert(err, NotNil)
-		_, err = p.GetI64("kernel.random.boot_id")
-		c.Assert(err, NotNil)
-	}
-
 	binary = "_unknown_"
-	_, err = All()
+	_, err := All()
 	c.Assert(err, NotNil)
 	binary = "sysctl"
 }
