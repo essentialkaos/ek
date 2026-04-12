@@ -25,7 +25,7 @@ func getParam(name string) (Param, error) {
 
 	return Param{
 		Name:  name,
-		Value: strings.Trim(string(p), "\n\r"),
+		Value: strings.Trim(string(output), "\n\r"),
 	}, nil
 }
 

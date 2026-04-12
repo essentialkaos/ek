@@ -27,12 +27,13 @@ var procFS = "/proc/sys"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// All returns all kernel parameters
+// All returns all kernel parameters available on the current system
 func All() (Params, error) {
 	return getParams()
 }
 
-// Get returns kernel parameter value as a string
+// Get returns the kernel parameter with the given name. The name must be dot-separated
+// (e.g. "kernel.pid_max") and must not contain spaces or slashes.
 func Get(name string) (Param, error) {
 	switch {
 	case name == "":
