@@ -146,15 +146,19 @@ func (d *Dispatcher) DispatchAndWait(ev string, payload any) error {
 	}
 
 	d.mx.RLock()
-	defer d.mx.RUnlock()
 
 	if d.handlers[ev] == nil {
+		d.mx.RUnlock()
 		return fmt.Errorf("no handlers for event %q", ev)
 	}
 
+	handlers := append([]Handler(nil), d.handlers[ev]...)
+
+	d.mx.RUnlock()
+
 	var wg sync.WaitGroup
 
-	for _, h := range d.handlers[ev] {
+	for _, h := range handlers {
 		wg.Add(1)
 
 		go func(h Handler) {
