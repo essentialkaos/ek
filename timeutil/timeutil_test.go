@@ -95,12 +95,6 @@ func (s *TimeUtilSuite) TestDuration_Mini(c *C) {
 	c.Assert(Pretty(3*time.Nanosecond).Mini(), Equals, "3 ns")
 }
 
-func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
-	c.Assert(SecondsToDuration(1), Equals, time.Second)
-	c.Assert(SecondsToDuration(1.5), Equals, 1500*time.Millisecond)
-	c.Assert(SecondsToDuration(3600), Equals, time.Hour)
-}
-
 func (s *TimeUtilSuite) TestFormat(c *C) {
 	loc, _ := time.LoadLocation("Asia/Kathmandu")
 

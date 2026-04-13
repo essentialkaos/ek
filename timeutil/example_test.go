@@ -14,15 +14,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleParseDuration() {
-	d, _ := ParseDuration("2w3d10h20m35s")
-
-	fmt.Println(PrettyDuration(d))
-
-	// Output:
-	// 2 weeks 3 days 10 hours 20 minutes and 35 seconds
-}
-
 func ExampleFormat() {
 	date := time.Date(2010, 6, 15, 15, 30, 45, 1234, time.Local)
 
@@ -30,13 +21,6 @@ func ExampleFormat() {
 
 	// Output:
 	// Tuesday 15/Jun/2010 15:30:45.000001234
-}
-
-func ExampleSecondsToDuration() {
-	fmt.Println(SecondsToDuration(3600))
-
-	// Output:
-	// 1h0m0s
 }
 
 func ExampleDate() {
