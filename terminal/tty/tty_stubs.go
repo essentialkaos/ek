@@ -9,37 +9,37 @@ package tty
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ IsTTY returns true if current output device is TTY
+// ❗ IsTTY returns true if the current output device is a TTY
 func IsTTY() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsFakeTTY returns true is fake TTY is used
+// ❗ IsFakeTTY returns true if a fake TTY is in use via the FAKETTY environment variable
 func IsFakeTTY() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsTMUX returns true if we are currently working in tmux
+// ❗ IsTMUX returns true if the process is running inside a tmux session
 func IsTMUX() (bool, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ IsSystemd returns true if process started by systemd
+// ❗ IsSystemd returns true if the current process was started by systemd
 func IsSystemd() bool {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetSize returns window width (columns) and height (rows)
+// ❗ GetSize returns the terminal width (columns) and height (rows)
 func GetSize() (int, int) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetWidth returns window width (columns)
+// ❗ GetWidth returns the terminal width in columns
 func GetWidth() int {
 	panic("UNSUPPORTED")
 }
 
-// ❗ GetHeight returns window height (rows)
+// ❗ GetHeight returns the terminal height in rows
 func GetHeight() int {
 	panic("UNSUPPORTED")
 }

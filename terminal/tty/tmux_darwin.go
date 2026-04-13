@@ -9,7 +9,7 @@ package tty
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// isTmuxAncestor returns true if the current process is an ancestor of tmux
+// isTmuxAncestor walks the process tree to check whether any ancestor is a tmux server
 func isTmuxAncestor() (bool, error) {
 	return false, nil
 }

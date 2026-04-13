@@ -20,11 +20,12 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// procFS is the path to the proc filesystem
 var procFS = "/proc"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// isTmuxAncestor returns true if the current process is an ancestor of tmux
+// isTmuxAncestor walks the process tree to check whether any ancestor is a tmux server
 func isTmuxAncestor() (bool, error) {
 	pid := strconv.Itoa(os.Getppid())
 
@@ -45,7 +46,7 @@ func isTmuxAncestor() (bool, error) {
 
 		parentPID := strutil.ReadField(statString, 3, false, ' ')
 
-		if parentPID == "1" || parentPID == "0" {
+		if parentPID == "1" || parentPID == "0" || parentPID == pid {
 			break
 		}
 

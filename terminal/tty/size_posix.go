@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build linux || darwin
 
 package tty
 
@@ -17,6 +17,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// winsize mirrors the kernel's struct winsize from <sys/ioctl.h>.
+// Field order is ABI-critical — do not reorder.
 type winsize struct {
 	rows    uint16
 	cols    uint16
@@ -26,15 +28,16 @@ type winsize struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// tty is a path to TTY device file
+// tty is the path to the TTY device file
 var tty = "/dev/tty"
 
-// ttyFile is a tty file descriptor
+// ttyFile is the open file descriptor for the TTY device
 var ttyFile *os.File
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSize returns window width (columns) and height (rows)
+// GetSize returns the terminal width (columns) and height (rows).
+// Returns (-1, -1) if the terminal size cannot be determined.
 func GetSize() (int, int) {
 	var err error
 
@@ -57,13 +60,15 @@ func GetSize() (int, int) {
 	return int(sz.cols), int(sz.rows)
 }
 
-// GetWidth returns window width (columns)
+// GetWidth returns the terminal width in columns.
+// Returns -1 if the width cannot be determined.
 func GetWidth() int {
 	w, _ := GetSize()
 	return w
 }
 
-// GetHeight returns window height (rows)
+// GetHeight returns the terminal height in rows.
+// Returns -1 if the height cannot be determined.
 func GetHeight() int {
 	_, h := GetSize()
 	return h

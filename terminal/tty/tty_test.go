@@ -11,6 +11,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 
@@ -41,8 +42,11 @@ func (s *TTYSuite) TestIsTTY(c *C) {
 	stdout = &FakeInfo{false}
 	c.Assert(IsTTY(), Equals, false)
 
+	initOnce = sync.Once{}
 	os.Setenv("FAKETTY", "1")
 	c.Assert(IsFakeTTY(), Equals, true)
+
+	initOnce = sync.Once{}
 	os.Setenv("FAKETTY", "")
 	c.Assert(IsFakeTTY(), Equals, false)
 }
@@ -52,6 +56,7 @@ func (s *TTYSuite) TestIsSystemd(c *C) {
 }
 
 func (s *TTYSuite) TestIsTMUX(c *C) {
+	initOnce = sync.Once{}
 	os.Setenv("TMUX", "/tmp/tmux-1000/default,3739,0")
 
 	isTmux, err := IsTMUX()
@@ -62,6 +67,7 @@ func (s *TTYSuite) TestIsTMUX(c *C) {
 		return
 	}
 
+	initOnce = sync.Once{}
 	os.Setenv("TMUX", "")
 
 	IsTMUX()
@@ -77,6 +83,7 @@ func (s *TTYSuite) TestIsTMUX(c *C) {
 	os.MkdirAll(statDir, 0755)
 	os.WriteFile(statDir+"/stat", []byte(`1 (systemd) S 0 1 1 0`), 0644)
 
+	initOnce = sync.Once{}
 	isTmux, err = IsTMUX()
 	c.Assert(isTmux, Equals, false)
 	c.Assert(err, IsNil)

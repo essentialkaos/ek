@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build linux || darwin
 
 // Package tty provides methods for working with TTY
 package tty
@@ -12,40 +12,67 @@ package tty
 
 import (
 	"os"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var stdout, _ = os.Stdout.Stat()
+var stdout os.FileInfo
+var isFakeTTY bool
+var isSystemd bool
+var isTMUX bool
+
+var initOnce sync.Once
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsTTY returns true if current output device is TTY
+// IsTTY returns true if the current output device is a TTY
 func IsTTY() bool {
-	if stdout.Mode()&os.ModeCharDevice == 0 && !IsFakeTTY() {
+	checkSystem()
+
+	if stdout.Mode()&os.ModeCharDevice == 0 && !isFakeTTY {
 		return false
 	}
 
 	return true
 }
 
-// IsTMUX returns true if we are currently working in tmux
+// IsTMUX returns true if the process is running inside a tmux session
 func IsTMUX() (bool, error) {
-	if os.Getenv("TMUX") != "" {
+	checkSystem()
+
+	if isTMUX {
 		return true, nil
 	}
 
 	return isTmuxAncestor()
 }
 
-// IsFakeTTY returns true is fake TTY is used
+// IsFakeTTY returns true if a fake TTY is in use via the FAKETTY environment variable
 func IsFakeTTY() bool {
-	return os.Getenv("FAKETTY") != ""
+	checkSystem()
+	return isFakeTTY
 }
 
-// IsSystemd returns true if process started by systemd
+// IsSystemd returns true if the current process was started by systemd
 func IsSystemd() bool {
-	return os.Getppid() == 1
+	checkSystem()
+	return isSystemd
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// checkSystem checks system for tmux/faketty
+func checkSystem() {
+	initOnce.Do(func() {
+		stat, err := os.Stdout.Stat()
+
+		if err != nil {
+			stdout = stat
+		}
+
+		isTMUX = os.Getenv("TMUX") != ""
+		isFakeTTY = os.Getenv("FAKETTY") != ""
+		isSystemd = os.Getppid() == 1
+	})
+}
