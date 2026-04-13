@@ -15,6 +15,7 @@
 - **`[req]`** Added request context support (`Request.Ctx`)
 - **`[secstr]`** Added methods `String.Bytes` and `String.String`
 - **`[secstr]`** The underlying byte slice becomes private
+- **`[terminal]`** Added methods `Read` and `ReadAnswer`
 - **`[color]`** Improved relative luminance calculation
 - **`[lock]`** Added lock name validation
 - **`[ansi]`** Removed `Codes` from all methods names
