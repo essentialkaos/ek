@@ -257,6 +257,8 @@ func Sprintln(a ...any) string {
 
 // Errorf formats according to a format specifier and returns the string as a
 // value that satisfies error.
+//
+// Warning: This method DO NOT evaluate any of fmtc tags
 func Errorf(f string, a ...any) error {
 	return fmt.Errorf(f, a...)
 }
