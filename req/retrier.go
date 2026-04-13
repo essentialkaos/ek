@@ -145,7 +145,7 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 		retryPause := getRetryPause(rr, resp)
 
 		if retryPause > 0 {
-			time.Sleep(rr.Pause)
+			time.Sleep(retryPause)
 		}
 	}
 
