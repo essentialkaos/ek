@@ -14,10 +14,10 @@ import (
 	"os"
 	"slices"
 
-	"github.com/essentialkaos/ek/v13/netutil"
-	"github.com/essentialkaos/ek/v13/sortutil"
+	"github.com/essentialkaos/ek/v14/netutil"
+	"github.com/essentialkaos/ek/v14/sortutil"
 
-	"github.com/essentialkaos/ek/v13/support"
+	"github.com/essentialkaos/ek/v14/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -17,8 +17,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/pluralize"
+	"github.com/essentialkaos/ek/v14/fmtutil"
+	"github.com/essentialkaos/ek/v14/pluralize"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

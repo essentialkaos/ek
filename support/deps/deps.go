@@ -12,7 +12,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/support"
+	"github.com/essentialkaos/ek/v14/support"
 
 	"github.com/essentialkaos/depsy"
 )

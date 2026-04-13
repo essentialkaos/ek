@@ -13,7 +13,7 @@ package hash
 import (
 	"crypto/sha256"
 
-	"github.com/essentialkaos/ek/v13/hashutil"
+	"github.com/essentialkaos/ek/v14/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

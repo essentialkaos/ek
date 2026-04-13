@@ -12,8 +12,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/req"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/req"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -21,7 +21,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/path"
+	"github.com/essentialkaos/ek/v14/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

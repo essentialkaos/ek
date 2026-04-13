@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/fsutil"
 
 	. "github.com/essentialkaos/check"
 )
@@ -942,11 +942,11 @@ func (ls *LogSuite) TestPanicPathExtractor(c *C) {
 	stackTrace := `goroutine 43 [running]:
 runtime/debug.Stack()
 	/usr/lib/golang/src/runtime/debug/stack.go:26 +0x5e
-github.com/essentialkaos/ek/v13/log.(*Logger).PanicHandler(0xc000130880, {0x6dcb3d, 0xc})
+github.com/essentialkaos/ek/v14/log.(*Logger).PanicHandler(0xc000130880, {0x6dcb3d, 0xc})
 	/home/user/src/github.com/essentialkaos/ek/log/log.go:502 +0xca
 panic({0x684a00?, 0x73d2a0?})
 	/usr/lib/golang/src/runtime/panic.go:792 +0x132
-github.com/essentialkaos/ek/v13/log.(*LogSuite).TestPanicHandler.func4()
+github.com/essentialkaos/ek/v14/log.(*LogSuite).TestPanicHandler.func4()
 	/home/user/src/github.com/essentialkaos/ek/log/log_test.go:889 +0x54
 reflect.Value.call({0x680960?, 0xc000184ed0?, 0x0?}, {0x6da3fc, 0x4}, {0x0, 0x0, 0xc000135568?})
 	/usr/lib/golang/src/reflect/value.go:584 +0xca6

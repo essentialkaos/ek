@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/req"
-	"github.com/essentialkaos/ek/v13/selfupdate"
-	"github.com/essentialkaos/ek/v13/selfupdate/storage"
-	"github.com/essentialkaos/ek/v13/version"
+	"github.com/essentialkaos/ek/v14/req"
+	"github.com/essentialkaos/ek/v14/selfupdate"
+	"github.com/essentialkaos/ek/v14/selfupdate/storage"
+	"github.com/essentialkaos/ek/v14/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

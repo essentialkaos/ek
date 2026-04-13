@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	PATH "github.com/essentialkaos/ek/v13/path"
+	PATH "github.com/essentialkaos/ek/v14/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -11,7 +11,7 @@ import (
 	"errors"
 	"runtime"
 
-	"github.com/essentialkaos/ek/v13/selfupdate"
+	"github.com/essentialkaos/ek/v14/selfupdate"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

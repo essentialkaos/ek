@@ -9,7 +9,7 @@ package network
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek/v13/support"
+	"github.com/essentialkaos/ek/v14/support"
 
 	"golang.org/x/sys/windows"
 )

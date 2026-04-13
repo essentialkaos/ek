@@ -10,7 +10,7 @@ package prefixed
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/uuid"
+	"github.com/essentialkaos/ek/v14/uuid"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

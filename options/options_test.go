@@ -13,7 +13,7 @@ import (
 
 	. "github.com/essentialkaos/check"
 
-	"github.com/essentialkaos/ek/v13/errors"
+	"github.com/essentialkaos/ek/v14/errors"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

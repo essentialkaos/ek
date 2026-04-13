@@ -18,9 +18,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/essentialkaos/ek/v13/color"
-	"github.com/essentialkaos/ek/v13/env"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/color"
+	"github.com/essentialkaos/ek/v14/env"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

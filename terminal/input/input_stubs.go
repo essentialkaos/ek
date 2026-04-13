@@ -13,7 +13,7 @@ package input
 import (
 	"errors"
 
-	"github.com/essentialkaos/ek/v13/secstr"
+	"github.com/essentialkaos/ek/v14/secstr"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

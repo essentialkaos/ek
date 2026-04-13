@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/essentialkaos/ek/v13/errors"
+	"github.com/essentialkaos/ek/v14/errors"
 
 	"golang.org/x/sys/unix"
 )

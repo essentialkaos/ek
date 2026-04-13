@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/system/sysctl"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/system/sysctl"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

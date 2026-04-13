@@ -10,7 +10,7 @@ package fs
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/cache"
+	"github.com/essentialkaos/ek/v14/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
