@@ -15,8 +15,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	BLOCK_SIZE = 4096 // Minimal block size
-	ALIGN_SIZE = 4096 // Align size
+	BLOCK_SIZE = 4096 // BLOCK_SIZE is the minimum aligned block size required for O_DIRECT I/O
+	ALIGN_SIZE = 4096 // ALIGN_SIZE is the memory alignment boundary required for O_DIRECT buffers
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

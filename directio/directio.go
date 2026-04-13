@@ -18,7 +18,8 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ReadFile read file with Direct IO without buffering data in page cache
+// ReadFile reads the file at the given path using Direct IO, bypassing the OS page
+// cache
 func ReadFile(file string) ([]byte, error) {
 	fd, err := openFile(file, os.O_RDONLY, 0)
 
@@ -37,7 +38,8 @@ func ReadFile(file string) ([]byte, error) {
 	return readData(fd, info)
 }
 
-// WriteFile write file with Direct IO without buffering data in page cache
+// WriteFile writes data to the file at the given path using Direct IO, bypassing the OS
+// page cache. The file is created with the given permissions if it does not exist.
 func WriteFile(file string, data []byte, perms os.FileMode) error {
 	fd, err := openFile(file, os.O_CREATE|os.O_WRONLY, perms)
 
@@ -54,8 +56,7 @@ func WriteFile(file string, data []byte, perms os.FileMode) error {
 
 // readData reads data from the file using Direct IO
 func readData(fd *os.File, info os.FileInfo) ([]byte, error) {
-	var buf []byte
-
+	buf := make([]byte, 0, info.Size())
 	block := allocateBlock()
 	blockSize := len(block)
 	chunks := (int(info.Size()) / blockSize) + 1

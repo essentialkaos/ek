@@ -39,6 +39,7 @@
 - **`[color]`** Code refactoring
 - **`[cron]`** Code refactoring
 - **`[csv]`** Code refactoring
+- **`[directio]`** Code refactoring
 - **`[ease]`** Code refactoring
 - **`[emoji]`** Code refactoring
 - **`[env]`** Code refactoring
