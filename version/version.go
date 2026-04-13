@@ -39,9 +39,6 @@ var (
 // prerelRE is used to parse prerelease version
 var prerelRE = regexp.MustCompile(`^([a-zA-Z-.]{1,})([0-9]{0,})$`)
 
-// semVerRE is regexp to parse version on semver notation
-var semVerRE = regexp.MustCompile(`^(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-([a-zA-Z0-9._-]+))?(?:\+([a-zA-Z0-9._:+/-]+))?$`)
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parse parses version string and return version struct
