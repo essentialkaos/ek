@@ -17,6 +17,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sync"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/cache"
@@ -45,6 +46,7 @@ type Cache struct {
 	expiration      cache.Duration
 	validationRegex *regexp.Regexp
 	doneChan        chan struct{}
+	stopOnce        sync.Once
 	isJanitorWorks  bool
 }
 
@@ -300,9 +302,9 @@ func (c *Cache) Stop() {
 		return
 	}
 
-	close(c.doneChan)
-
-	c.doneChan = nil
+	c.stopOnce.Do(func() {
+		close(c.doneChan)
+	})
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

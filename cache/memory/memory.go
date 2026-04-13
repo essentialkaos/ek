@@ -42,6 +42,7 @@ type Cache struct {
 	mu             sync.RWMutex
 	expiration     cache.Duration
 	doneChan       chan struct{}
+	stopOnce       sync.Once
 	isJanitorWorks bool
 }
 
@@ -352,9 +353,9 @@ func (c *Cache) Stop() {
 		return
 	}
 
-	close(c.doneChan)
-
-	c.doneChan = nil
+	c.stopOnce.Do(func() {
+		close(c.doneChan)
+	})
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
