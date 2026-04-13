@@ -16,6 +16,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/essentialkaos/ek/v13/errors"
@@ -120,8 +121,8 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	global   *Config    // global is global configuration file
-	globalMu sync.Mutex // globalMu is global config mutex
+	global   atomic.Pointer[Config] // global is global configuration file
+	globalMu sync.Mutex             // globalMu is global config mutex
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -129,15 +130,13 @@ var (
 // Global reads and parses configuration file
 // Global instance is accessible from any part of the code
 func Global(file string) error {
-	config, err := Read(file)
+	cfg, err := Read(file)
 
 	if err != nil {
 		return err
 	}
 
-	globalMu.Lock()
-	global = config
-	globalMu.Unlock()
+	global.Store(cfg)
 
 	return nil
 }
@@ -170,11 +169,13 @@ func Parse(data []byte) (*Config, error) {
 
 // Reload reloads global configuration file
 func Reload() (map[string]bool, error) {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return nil, ErrNilConfig
 	}
 
-	return global.Reload()
+	return cfg.Reload()
 }
 
 // Alias creates alias for configuration property
@@ -182,16 +183,20 @@ func Reload() (map[string]bool, error) {
 // It's useful for refactoring the configuration or for providing support for
 // renamed properties
 func Alias(oldProp, newProp string) error {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return ErrNilConfig
 	}
 
-	return global.Alias(oldProp, newProp)
+	return cfg.Alias(oldProp, newProp)
 }
 
 // GetS returns configuration value as string
 func GetS(name string, defvals ...string) string {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return ""
 		}
@@ -199,12 +204,14 @@ func GetS(name string, defvals ...string) string {
 		return defvals[0]
 	}
 
-	return global.GetS(name, defvals...)
+	return cfg.GetS(name, defvals...)
 }
 
 // GetI returns configuration value as int
 func GetI(name string, defvals ...int) int {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -212,12 +219,14 @@ func GetI(name string, defvals ...int) int {
 		return defvals[0]
 	}
 
-	return global.GetI(name, defvals...)
+	return cfg.GetI(name, defvals...)
 }
 
 // GetI64 returns configuration value as int64
 func GetI64(name string, defvals ...int64) int64 {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -225,12 +234,14 @@ func GetI64(name string, defvals ...int64) int64 {
 		return defvals[0]
 	}
 
-	return global.GetI64(name, defvals...)
+	return cfg.GetI64(name, defvals...)
 }
 
 // GetU returns configuration value as uint
 func GetU(name string, defvals ...uint) uint {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -238,12 +249,14 @@ func GetU(name string, defvals ...uint) uint {
 		return defvals[0]
 	}
 
-	return global.GetU(name, defvals...)
+	return cfg.GetU(name, defvals...)
 }
 
 // GetU64 returns configuration value as uint64
 func GetU64(name string, defvals ...uint64) uint64 {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -251,12 +264,14 @@ func GetU64(name string, defvals ...uint64) uint64 {
 		return defvals[0]
 	}
 
-	return global.GetU64(name, defvals...)
+	return cfg.GetU64(name, defvals...)
 }
 
 // GetF returns configuration value as floating number
 func GetF(name string, defvals ...float64) float64 {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0.0
 		}
@@ -264,12 +279,14 @@ func GetF(name string, defvals ...float64) float64 {
 		return defvals[0]
 	}
 
-	return global.GetF(name, defvals...)
+	return cfg.GetF(name, defvals...)
 }
 
 // GetB returns configuration value as boolean
 func GetB(name string, defvals ...bool) bool {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return false
 		}
@@ -277,12 +294,14 @@ func GetB(name string, defvals ...bool) bool {
 		return defvals[0]
 	}
 
-	return global.GetB(name, defvals...)
+	return cfg.GetB(name, defvals...)
 }
 
 // GetM returns configuration value as file mode
 func GetM(name string, defvals ...os.FileMode) os.FileMode {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return os.FileMode(0)
 		}
@@ -290,12 +309,14 @@ func GetM(name string, defvals ...os.FileMode) os.FileMode {
 		return defvals[0]
 	}
 
-	return global.GetM(name, defvals...)
+	return cfg.GetM(name, defvals...)
 }
 
 // GetD returns configuration values as duration
 func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -303,12 +324,14 @@ func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration 
 		return defvals[0]
 	}
 
-	return global.GetD(name, mod, defvals...)
+	return cfg.GetD(name, mod, defvals...)
 }
 
 // GetSZ returns configuration value as a size in bytes
 func GetSZ(name string, defvals ...uint64) uint64 {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return 0
 		}
@@ -316,12 +339,14 @@ func GetSZ(name string, defvals ...uint64) uint64 {
 		return defvals[0]
 	}
 
-	return global.GetSZ(name, defvals...)
+	return cfg.GetSZ(name, defvals...)
 }
 
 // GetTD returns configuration value as time duration
 func GetTD(name string, defvals ...time.Duration) time.Duration {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return time.Duration(0)
 		}
@@ -329,12 +354,14 @@ func GetTD(name string, defvals ...time.Duration) time.Duration {
 		return defvals[0]
 	}
 
-	return global.GetTD(name, defvals...)
+	return cfg.GetTD(name, defvals...)
 }
 
 // GetTS returns configuration timestamp value as time
 func GetTS(name string, defvals ...time.Time) time.Time {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return time.Time{}
 		}
@@ -342,12 +369,14 @@ func GetTS(name string, defvals ...time.Time) time.Time {
 		return defvals[0]
 	}
 
-	return global.GetTS(name, defvals...)
+	return cfg.GetTS(name, defvals...)
 }
 
 // GetTZ returns configuration value as timezone
 func GetTZ(name string, defvals ...*time.Location) *time.Location {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -355,12 +384,14 @@ func GetTZ(name string, defvals ...*time.Location) *time.Location {
 		return defvals[0]
 	}
 
-	return global.GetTZ(name, defvals...)
+	return cfg.GetTZ(name, defvals...)
 }
 
 // GetL returns configuration value as list
 func GetL(name string, defvals ...[]string) []string {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		if len(defvals) == 0 {
 			return nil
 		}
@@ -368,62 +399,74 @@ func GetL(name string, defvals ...[]string) []string {
 		return defvals[0]
 	}
 
-	return global.GetL(name, defvals...)
+	return cfg.GetL(name, defvals...)
 }
 
 // Is checks if given property contains given value
 func Is(name string, value any) bool {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return false
 	}
 
-	return global.Is(name, value)
+	return cfg.Is(name, value)
 }
 
 // HasSection checks if the section exists
 func HasSection(section string) bool {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return false
 	}
 
-	return global.HasSection(section)
+	return cfg.HasSection(section)
 }
 
 // Has checks if the property is defined and set
 func Has(name string) bool {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return false
 	}
 
-	return global.Has(name)
+	return cfg.Has(name)
 }
 
 // Sections returns slice with section names
 func Sections() []string {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return nil
 	}
 
-	return global.Sections()
+	return cfg.Sections()
 }
 
 // Props returns slice with properties names in some section
 func Props(section string) []string {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return nil
 	}
 
-	return global.Props(section)
+	return cfg.Props(section)
 }
 
 // Validate executes all given validators and
 // returns slice with validation errors
 func Validate(validators Validators) errors.Errors {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return errors.Errors{ErrNilConfig}
 	}
 
-	return global.Validate(validators)
+	return cfg.Validate(validators)
 }
 
 // Q is a helper to create a valid full property name (section + delimiter

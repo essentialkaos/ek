@@ -187,7 +187,7 @@ func (s *KNFSuite) SetUpSuite(c *check.C) {
 }
 
 func (s *KNFSuite) TestErrors(c *check.C) {
-	global = nil
+	global.Store(nil)
 
 	err := Global("/_not_exists_")
 	c.Assert(err, check.NotNil)
@@ -234,7 +234,7 @@ func (s *KNFSuite) TestErrors(c *check.C) {
 	c.Assert(Props("test"), check.HasLen, 0)
 	c.Assert(Validate(Validators{}), check.DeepEquals, errors.Errors{ErrNilConfig})
 	c.Assert(Alias("test:test", "test:test"), check.NotNil)
-	c.Assert(global.Merge(nil), check.NotNil)
+	c.Assert(global.Load().Merge(nil), check.NotNil)
 
 	config := &Config{}
 
@@ -290,12 +290,12 @@ func (s *KNFSuite) TestParsing(c *check.C) {
 	err := Global(s.ConfigPath)
 
 	c.Assert(err, check.IsNil)
-	c.Assert(global.File(), check.Equals, s.ConfigPath)
+	c.Assert(global.Load().File(), check.Equals, s.ConfigPath)
 
 	_, err = Reload()
 
 	c.Assert(err, check.IsNil)
-	c.Assert(global.File(), check.Equals, s.ConfigPath)
+	c.Assert(global.Load().File(), check.Equals, s.ConfigPath)
 
 	config, err := Parse([]byte(_CONFIG_DATA))
 
@@ -628,7 +628,7 @@ func (s *KNFSuite) TestNil(c *check.C) {
 }
 
 func (s *KNFSuite) TestDefault(c *check.C) {
-	global = nil
+	global.Store(nil)
 
 	l, _ := time.LoadLocation("Asia/Yerevan")
 
