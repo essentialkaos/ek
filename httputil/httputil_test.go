@@ -75,10 +75,6 @@ func (s *HTTPUtilSuite) TestRemoteParsing(c *C) {
 	c.Assert(GetRemotePort(req2), Equals, "12345")
 }
 
-func (s *HTTPUtilSuite) TestGetDescCode(c *C) {
-	c.Assert(GetDescByCode(999), Equals, "")
-}
-
 func (s *HTTPUtilSuite) TestURLCheck(c *C) {
 	c.Assert(IsURL("127.0.0.1"), Equals, false)
 	c.Assert(IsURL("127.0.0.1:80"), Equals, false)

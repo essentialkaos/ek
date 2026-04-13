@@ -477,14 +477,6 @@ func (s *TimeUtilSuite) TestUnixIn(c *C) {
 	c.Assert(ToUnixNanoIn(d1), Equals, int64(1718452800000000000))
 }
 
-func (s *TimeUtilSuite) TestDeprecated(c *C) {
-	c.Assert(PrettyDuration(time.Minute), Equals, "1 minute")
-	c.Assert(PrettyDurationSimple(time.Minute), Equals, "1 minute")
-	c.Assert(PrettyDurationInDays(time.Minute), Equals, "1 day")
-	c.Assert(ShortDuration(time.Minute), Equals, "1:00")
-	c.Assert(MiniDuration(time.Minute), Equals, "1 m")
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *TimeUtilSuite) BenchmarkParseDuration(c *C) {

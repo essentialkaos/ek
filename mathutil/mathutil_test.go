@@ -44,15 +44,6 @@ func (s *MathUtilSuite) TestBetween(c *C) {
 	c.Assert(Between(5, 10, 10), Equals, 10)
 }
 
-func (s *MathUtilSuite) TestMinMax(c *C) {
-	c.Assert(Min(1, 10), Equals, 1)
-	c.Assert(Min(-10, 10), Equals, -10)
-	c.Assert(Min(10, -10), Equals, -10)
-	c.Assert(Max(1, 10), Equals, 10)
-	c.Assert(Max(-10, 10), Equals, 10)
-	c.Assert(Max(10, -10), Equals, 10)
-}
-
 func (s *MathUtilSuite) TestAbs(c *C) {
 	c.Assert(Abs(-10), Equals, 10)
 	c.Assert(Abs(10), Equals, 10)

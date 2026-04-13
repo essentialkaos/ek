@@ -168,21 +168,3 @@ func Filter[T any](slice []T, filter func(v T, index int) bool) []T {
 
 	return result
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// IntToInterface converts slice with ints to slice with any
-//
-// Deprecated: Use [ToAny] instead
-func IntToInterface(data []int) []any {
-	return ToAny(data)
-}
-
-// StringToInterface converts slice with strings to slice with any
-//
-// Deprecated: Use [ToAny] instead
-func StringToInterface(data []string) []any {
-	return ToAny(data)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //

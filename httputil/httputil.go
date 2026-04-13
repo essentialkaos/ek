@@ -105,12 +105,3 @@ func IsHTTPS(s string) bool {
 func IsFTP(s string) bool {
 	return strings.HasPrefix(s, "ftp://")
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// GetDescByCode returns response code description
-//
-// Deprecated: Use [http.StatusText] instead
-func GetDescByCode(code int) string {
-	return http.StatusText(code)
-}

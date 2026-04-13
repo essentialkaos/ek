@@ -188,19 +188,3 @@ func Round(v float64, p int) float64 {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// Min returns a smaller value
-//
-// Deprecated: Use built-in function `min` instead
-func Min[N Numeric](val1, val2 N) N {
-	return min(val1, val2)
-}
-
-// Max returns a greater value
-//
-// Deprecated: Use built-in function `max` instead
-func Max[N Numeric](val1, val2 N) N {
-	return max(val1, val2)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //

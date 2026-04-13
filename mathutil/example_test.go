@@ -63,22 +63,6 @@ func ExampleBetween() {
 	// 4
 }
 
-func ExampleMin() {
-	fmt.Println(Min(1, 10))
-	fmt.Println(Min(3, -3))
-	// Output:
-	// 1
-	// -3
-}
-
-func ExampleMax() {
-	fmt.Println(Max(1, 10))
-	fmt.Println(Max(3, -3))
-	// Output:
-	// 10
-	// 3
-}
-
 func ExampleAbs() {
 	fmt.Println(Abs(10))
 	fmt.Println(Abs(-10))
