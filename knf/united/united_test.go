@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/options"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/options"
 
-	knfv "github.com/essentialkaos/ek/v13/knf/validators"
+	knfv "github.com/essentialkaos/ek/v14/knf/validators"
 
 	. "github.com/essentialkaos/check"
 )

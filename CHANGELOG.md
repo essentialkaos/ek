@@ -1,6 +1,6 @@
 ## Changelog
 
-### [13.39.0](https://kaos.sh/ek/13.39.0)
+### [14.0.0](https://kaos.sh/ek/14.0.0)
 
 - **`[cache/fs]`** Added method `Stop`
 - **`[cache/memory]`** Added method `Stop`
@@ -12,16 +12,27 @@
 - **`[hashutil]`** Added method `Hash.EqualConstantTime`
 - **`[initsystem/sdnotify]`** Added method `Disconnect`
 - **`[jsonutil]`** Added methods to set/get GZip compression level
+- **`[req]`** Added request context support (`Request.Ctx`)
+- **`[secstr]`** Added methods `String.Bytes` and `String.String`
+- **`[secstr]`** The underlying byte slice becomes private
 - **`[color]`** Improved relative luminance calculation
+- **`[lock]`** Added lock name validation
 - **`[ansi]`** Removed `Codes` from all methods names
 - **`[ease]`** Fixed `SineIn` and `SineOut` calculation
 - **`[ease]`** Fixed overshoot constant for `BackIn`, `BackOut`, and `BackInOut`
 - **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
 - **`[fmtutil]`** Method `ParseSize` now returns parsing error
+- **`[httputil]`** Method `GetDescByCode` marked as deprecated
+- **`[knf]`** Fixed minor bug with parsing section
+- **`[lock]`** Fixed ticker leak
+- **`[pluralize]`** Fixed pluralizers `Lt` and `Pl`
+- **`[req]`** Fixed bug in `Retrier` to use pause value from headers
+- **`[spinner]`** Fixed ticker leak
+- **`[support]`** Improved Windows support
 - **`[timeutil]`** Fixed `%c` output in `Format`
 - **`[timeutil]`** Fixed bug with formatting timezone offset
 - **`[timeutil]`** Fixed ISO week calculation
-- **`[httputil]`** Method `GetDescByCode` marked as deprecated
+- **`[timeutil]`** Fixed possible panic with `%C`, `%g`, `%D`, `%y` in `Format`
 - **`[ansi]`** Code refactoring
 - **`[cache]`** Code refactoring
 - **`[color]`** Code refactoring
@@ -51,7 +62,60 @@
 - **`[knf/value]`** Code refactoring
 - **`[knf]`** Code refactoring
 - **`[log]`** Code refactoring
+- **`[lscolors]`** Code refactoring
+- **`[mathutil]`** Code refactoring
+- **`[netutil]`** Code refactoring
+- **`[options]`** Code refactoring
+- **`[pager]`** Code refactoring
+- **`[passthru]`** Code refactoring
+- **`[passwd]`** Code refactoring
+- **`[path]`** Code refactoring
+- **`[pid]`** Code refactoring
+- **`[pluralize]`** Code refactoring
+- **`[progress]`** Code refactoring
+- **`[protip]`** Code refactoring
+- **`[rand]`** Code refactoring
 - **`[req]`** Code refactoring
+- **`[reutil]`** Code refactoring
+- **`[secstr]`** Code refactoring
+- **`[selfupdate]`** Code refactoring
+- **`[setup]`** Code refactoring
+- **`[signal]`** Code refactoring
+- **`[sliceutil]`** Code refactoring
+- **`[sortutil]`** Code refactoring
+- **`[spellcheck]`** Code refactoring
+- **`[spinner]`** Code refactoring
+- **`[strutil]`** Code refactoring
+- **`[support]`** Code refactoring
+- **`[support/apps]`** Code refactoring
+- **`[support/deps]`** Code refactoring
+- **`[support/fs]`** Code refactoring
+- **`[support/kernel]`** Code refactoring
+- **`[support/network]`** Code refactoring
+- **`[support/pkgs]`** Code refactoring
+- **`[support/resources]`** Code refactoring
+- **`[system]`** Code refactoring
+- **`[system/container]`** Code refactoring
+- **`[system/exec]`** Code refactoring
+- **`[system/process]`** Code refactoring
+- **`[system/procname]`** Code refactoring
+- **`[system/sensors]`** Code refactoring
+- **`[system/sysctl]`** Code refactoring
+- **`[terminal]`** Code refactoring
+- **`[terminal/input]`** Code refactoring
+- **`[terminal/tty]`** Code refactoring
+- **`[timeutil]`** Code refactoring
+- **`[usage]`** Code refactoring
+- **`[usage/completion/bash]`** Code refactoring
+- **`[usage/completion/fish]`** Code refactoring
+- **`[usage/completion/zsh]`** Code refactoring
+- **`[usage/man]`** Code refactoring
+- **`[usage/update]`** Code refactoring
+- **`[uuid]`** Code refactoring
+- **`[uuid/prefixed]`** Code refactoring
+- **`[version]`** Code refactoring
+
+---
 
 ### [13.38.7](https://kaos.sh/ek/13.38.7)
 

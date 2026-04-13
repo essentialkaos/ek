@@ -19,8 +19,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/errors"
-	"github.com/essentialkaos/ek/v13/knf/value"
+	"github.com/essentialkaos/ek/v14/errors"
+	"github.com/essentialkaos/ek/v14/knf/value"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

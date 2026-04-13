@@ -15,7 +15,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

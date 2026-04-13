@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 
 	check "github.com/essentialkaos/check"
 )

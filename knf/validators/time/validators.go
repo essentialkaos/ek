@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/timeutil"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
