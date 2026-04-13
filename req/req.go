@@ -200,6 +200,8 @@ type Request struct {
 	AutoDiscard    bool          // Automatically discard all responses with status code > 299
 	FollowRedirect bool          // Follow redirect
 	Close          bool          // Close indicates whether to close the connection after sending request
+
+	Ctx context.Context // Request context
 }
 
 // Response is struct contains response data and properties
@@ -755,21 +757,25 @@ func checkEngine(e *Engine) error {
 func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, context.CancelFunc, error) {
 	var err error
 	var req *http.Request
+	var ctx context.Context
 	var cancel context.CancelFunc
 
-	if r.Timeout != 0 {
-		var ctx context.Context
-		ctx, cancel = context.WithTimeout(context.TODO(), r.Timeout)
-		req, err = http.NewRequestWithContext(ctx, r.Method, r.URL, bodyReader)
-	} else {
-		req, err = http.NewRequest(r.Method, r.URL, bodyReader)
+	parent := r.Ctx
+
+	if r.Ctx == nil {
+		parent = context.Background()
 	}
 
-	if err != nil {
-		if cancel != nil {
-			cancel()
-		}
+	if r.Timeout != 0 {
+		ctx, cancel = context.WithTimeout(parent, r.Timeout)
+	} else {
+		ctx, cancel = context.WithCancel(parent)
+	}
 
+	req, err = http.NewRequestWithContext(ctx, r.Method, r.URL, bodyReader)
+
+	if err != nil {
+		cancel()
 		return nil, nil, fmt.Errorf("can't create request: %w", err)
 	}
 
