@@ -24,7 +24,7 @@ func getParam(name string) (Param, error) {
 	)))
 
 	if err != nil {
-		return Param{}, fmt.Errorf("Can't read parameter %q: %w", name, err)
+		return Param{}, fmt.Errorf("can't read parameter %q: %w", name, err)
 	}
 
 	return Param{

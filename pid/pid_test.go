@@ -150,7 +150,7 @@ func (s *PidSuite) TestPidFuncs(c *C) {
 
 	c.Assert(err, IsNil)
 
-	pid, err := Get("test")
+	pid, _ := Get("test")
 
 	c.Assert(pid, Not(Equals), 0)
 	c.Assert(os.Getpid(), Equals, pid)

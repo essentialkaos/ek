@@ -34,7 +34,7 @@ func isTmuxAncestor() (bool, error) {
 		statData, err := os.ReadFile(statFile)
 
 		if err != nil {
-			return false, errors.New("Can't check process tree for tmux server")
+			return false, errors.New("can't check process tree for tmux server")
 		}
 
 		statString := string(statData)

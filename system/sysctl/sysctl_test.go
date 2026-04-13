@@ -98,12 +98,7 @@ func (s *SysctlSuite) TestAll(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(vi64, Not(Equals), int64(0))
 
-	if runtime.GOOS == "darwin" {
-		p = pp.Get("_test_")
-	} else {
-		p = pp.Get("_test_")
-	}
-
+	p = pp.Get("_test_")
 	c.Assert(p.IsEmpty(), Equals, true)
 }
 

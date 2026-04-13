@@ -326,7 +326,7 @@ func (s *KNFSuite) TestMerging(c *check.C) {
 func (s *KNFSuite) TestAlias(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(Alias("string:test1", "string:testX"), check.IsNil)
@@ -337,7 +337,7 @@ func (s *KNFSuite) TestAlias(c *check.C) {
 func (s *KNFSuite) TestSections(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	sections := Sections()
@@ -368,7 +368,7 @@ func (s *KNFSuite) TestSections(c *check.C) {
 func (s *KNFSuite) TestProps(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	props := Props("file-mode")
@@ -384,7 +384,7 @@ func (s *KNFSuite) TestProps(c *check.C) {
 func (s *KNFSuite) TestCheckers(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(HasSection("string"), check.Equals, true)
@@ -398,7 +398,7 @@ func (s *KNFSuite) TestCheckers(c *check.C) {
 func (s *KNFSuite) TestFormatting(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetI("formatting:test1"), check.Equals, 1)
@@ -409,7 +409,7 @@ func (s *KNFSuite) TestFormatting(c *check.C) {
 func (s *KNFSuite) TestStrings(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetS("string:test1"), check.Equals, "test")
@@ -422,7 +422,7 @@ func (s *KNFSuite) TestStrings(c *check.C) {
 func (s *KNFSuite) TestBoolean(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetB("boolean:test1"), check.Equals, true)
@@ -437,7 +437,7 @@ func (s *KNFSuite) TestBoolean(c *check.C) {
 func (s *KNFSuite) TestInteger(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetI("integer:test1"), check.Equals, 1)
@@ -459,7 +459,7 @@ func (s *KNFSuite) TestInteger(c *check.C) {
 func (s *KNFSuite) TestFileMode(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetM("file-mode:test1"), check.Equals, os.FileMode(0644))
@@ -472,7 +472,7 @@ func (s *KNFSuite) TestFileMode(c *check.C) {
 func (s *KNFSuite) TestDuration(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetD("duration:test1", SECOND), check.Equals, time.Duration(0))
@@ -484,7 +484,7 @@ func (s *KNFSuite) TestDuration(c *check.C) {
 func (s *KNFSuite) TestTimeDuration(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetTD("time-duration:test1"), check.Equals, time.Duration(0))
@@ -497,7 +497,7 @@ func (s *KNFSuite) TestTimeDuration(c *check.C) {
 func (s *KNFSuite) TestTimestamp(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetTS("timestamp:test1"), check.DeepEquals, time.Unix(0, 0))
@@ -508,7 +508,7 @@ func (s *KNFSuite) TestTimestamp(c *check.C) {
 func (s *KNFSuite) TestTimezone(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	l, _ := time.LoadLocation("Europe/Zurich")
@@ -520,7 +520,7 @@ func (s *KNFSuite) TestTimezone(c *check.C) {
 func (s *KNFSuite) TestList(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetL("list:test1"), check.HasLen, 0)
@@ -530,7 +530,7 @@ func (s *KNFSuite) TestList(c *check.C) {
 func (s *KNFSuite) TestSize(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetSZ("size:test1"), check.Equals, uint64(100))
@@ -541,7 +541,7 @@ func (s *KNFSuite) TestSize(c *check.C) {
 func (s *KNFSuite) TestIs(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(Is("string:test1", "test"), check.Equals, true)
@@ -566,7 +566,7 @@ func (s *KNFSuite) TestIs(c *check.C) {
 func (s *KNFSuite) TestComments(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetI("comment:test1"), check.Equals, 100)
@@ -577,7 +577,7 @@ func (s *KNFSuite) TestComments(c *check.C) {
 func (s *KNFSuite) TestMacro(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetS("macro:test1"), check.Equals, "100")
@@ -650,7 +650,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	c.Assert(GetS("string:test100", "fail"), check.Equals, "fail")
@@ -691,7 +691,7 @@ func (s *KNFSuite) TestDefault(c *check.C) {
 func (s *KNFSuite) TestSimpleValidator(c *check.C) {
 	err := Global(s.ConfigPath)
 
-	c.Assert(global, check.NotNil)
+	c.Assert(global.Load(), check.NotNil)
 	c.Assert(err, check.IsNil)
 
 	var simpleValidator = func(config IConfig, prop string, value any) error {

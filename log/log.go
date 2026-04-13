@@ -933,7 +933,7 @@ func convertMinLevelValue(level any) (uint8, error) {
 		code, ok := logLevelsNames[strings.ToLower(t)]
 
 		if !ok {
-			return 255, errors.New("Unknown level " + t)
+			return 255, fmt.Errorf("unknown level %q", t)
 		}
 
 		return code, nil
