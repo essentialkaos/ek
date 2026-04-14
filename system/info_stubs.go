@@ -70,18 +70,6 @@ func GetIOStats() (map[string]*IOStats, error) {
 	return map[string]*IOStats{"/dev/sda1": {}}, nil
 }
 
-// ❗ GetSystemInfo returns system info
-func GetSystemInfo() (*SystemInfo, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
-}
-
-// ❗ GetOSInfo returns info about OS
-func GetOSInfo() (*OSInfo, error) {
-	panic("UNSUPPORTED")
-	return nil, nil
-}
-
 // ❗ GetInterfacesStats returns info about network interfaces
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	panic("UNSUPPORTED")

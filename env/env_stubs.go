@@ -1,4 +1,4 @@
-//go:build !linux && !darwin && !freebsd
+//go:build windows
 
 // Package env provides methods for working with environment variables
 package env

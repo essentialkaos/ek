@@ -70,7 +70,9 @@ func (s *ErrorsSuite) TestPositive(c *C) {
 		},
 	)
 	c.Assert(errs.Add(nil), NotNil)
-	c.Assert(errs.Error("  "), Equals, "  1\n  2\n  3\n  4\n  5")
+	c.Assert(errs.Join(), NotNil)
+	c.Assert(errs.ErrorWithPrefix("  "), Equals, "  1\n  2\n  3\n  4\n  5")
+	c.Assert(errs.Error(), Equals, "1\n2\n3\n4\n5")
 
 	errs.Reset()
 
@@ -142,7 +144,8 @@ func (s *ErrorsSuite) TestNegative(c *C) {
 	c.Assert(errs.All(), HasLen, 0)
 	c.Assert(errs.IsEmpty(), Equals, true)
 	c.Assert(errs.Last(), IsNil)
-	c.Assert(errs.Error(""), Equals, "")
+	c.Assert(errs.Error(), Equals, "")
+	c.Assert(errs.ErrorWithPrefix(""), Equals, "")
 }
 
 func (s *ErrorsSuite) TestNil(c *C) {
@@ -154,7 +157,9 @@ func (s *ErrorsSuite) TestNil(c *C) {
 	c.Assert(errs.IsEmpty(), Equals, true)
 	c.Assert(errs.First(), IsNil)
 	c.Assert(errs.Last(), IsNil)
-	c.Assert(errs.Error(""), Equals, "")
+	c.Assert(errs.Error(), Equals, "")
+	c.Assert(errs.Join(), IsNil)
+	c.Assert(errs.ErrorWithPrefix(""), Equals, "")
 	c.Assert(errs.Get(10), IsNil)
 }
 
@@ -167,7 +172,8 @@ func (s *ErrorsSuite) TestNoInit(c *C) {
 	c.Assert(errs.IsEmpty(), Equals, true)
 	c.Assert(errs.First(), IsNil)
 	c.Assert(errs.Last(), IsNil)
-	c.Assert(errs.Error(""), Equals, "")
+	c.Assert(errs.Error(), Equals, "")
+	c.Assert(errs.ErrorWithPrefix(""), Equals, "")
 
 	c.Assert(errs.Add(errors.New("1")), NotNil)
 	c.Assert(errs.Last(), DeepEquals, errors.New("1"))
@@ -188,6 +194,7 @@ func (s *ErrorsSuite) TestChain(c *C) {
 
 	c.Assert(Chain(f1, f2, f3), NotNil)
 	c.Assert(Chain(f1, f3), IsNil)
+	c.Assert(Chain(f1, nil, f3), NotNil)
 }
 
 func (s *ErrorsSuite) TestToBundle(c *C) {

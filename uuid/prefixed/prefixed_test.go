@@ -12,7 +12,7 @@ import (
 
 	. "github.com/essentialkaos/check"
 
-	"github.com/essentialkaos/ek/v13/uuid"
+	"github.com/essentialkaos/ek/v14/uuid"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,15 +40,15 @@ func (s *PrefixedSuite) TestEncode(c *C) {
 
 func (s *PrefixedSuite) TestDecode(c *C) {
 	_, _, err := Decode("")
-	c.Assert(err, ErrorMatches, `Prefixed UUID has no prefix`)
+	c.Assert(err, Equals, ErrNoPrefix)
 	_, _, err = Decode("test")
-	c.Assert(err, ErrorMatches, `Prefixed UUID has no prefix`)
+	c.Assert(err, Equals, ErrNoPrefix)
 	_, _, err = Decode(".ABCD")
-	c.Assert(err, ErrorMatches, `Prefixed UUID has empty prefix`)
+	c.Assert(err, Equals, ErrEmptyPrefix)
 	_, _, err = Decode("test.")
-	c.Assert(err, ErrorMatches, `Prefixed UUID has no UUID data`)
+	c.Assert(err, Equals, ErrEmptyUUID)
 	_, _, err = Decode("test.####")
-	c.Assert(err, ErrorMatches, `Can't decode UUID data: illegal base64 data at input byte 0`)
+	c.Assert(err, ErrorMatches, `can't decode UUID data: illegal base64 data at input byte 0`)
 
 	uu := uuid.UUID7()
 	pu := Encode("test", uu)

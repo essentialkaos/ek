@@ -10,6 +10,7 @@ package version
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -29,80 +30,61 @@ type Version struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrEmpty is returned is given version is empty
-	ErrEmpty = errors.New("Version can't be empty")
-	
-	// ErrEmptyBuild is returned if build number is empty
-	ErrEmptyBuild = errors.New("Build number is empty")
-	
-	// ErrEmptyPrerelease is returned is prerelease number is empty
-	ErrEmptyPrerelease = errors.New("Prerelease number is empty")
+	// ErrEmptyVersion is returned is given version is empty
+	ErrEmptyVersion = errors.New("version data is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// preRegExp is used to parse prerelease version
-var preRegExp = regexp.MustCompile(`([a-zA-Z-.]{1,})([0-9]{0,})`)
+// prerelRE is used to parse prerelease version
+var prerelRE = regexp.MustCompile(`^([a-zA-Z-.]{1,})([0-9]{0,})$`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parse parses version string and return version struct
 func Parse(v string) (Version, error) {
 	if v == "" {
-		return Version{}, ErrEmpty
+		return Version{}, ErrEmptyVersion
 	}
 
-	var slice = [3]int{0, 0, 0}
-	var raw = v
+	var err error
+	var ok bool
 
-	var (
-		preRelease string
-		build      string
-		size       int
-	)
+	vv := Version{raw: v}
 
-	if strings.Contains(v, "+") {
-		bs := strings.Split(v, "+")
+	v, vv.build, ok = strings.Cut(v, "+")
 
-		if bs[1] == "" {
-			return Version{}, ErrEmptyBuild
+	if ok && vv.build == "" {
+		return Version{}, fmt.Errorf("%q is not valid semver version", vv.raw)
+	}
+
+	v, vv.preRelease, ok = strings.Cut(v, "-")
+
+	if ok && vv.preRelease == "" {
+		return Version{}, fmt.Errorf("%q is not valid semver version", vv.raw)
+	}
+
+	var k string
+
+	vv.slice = [3]int{0, 0, 0}
+
+	for i := range 3 {
+		k, v, ok = strings.Cut(v, ".")
+
+		vv.slice[i], err = strconv.Atoi(k)
+
+		if err != nil {
+			return Version{}, fmt.Errorf("%q is not valid semver version", vv.raw)
 		}
 
-		v = bs[0]
-		build = bs[1]
-	}
+		vv.size = i + 1
 
-	if strings.Contains(v, "-") {
-		ps := strings.Split(v, "-")
-
-		if ps[1] == "" {
-			return Version{}, ErrEmptyPrerelease
-		}
-
-		v = ps[0]
-		preRelease = ps[1]
-	}
-
-	for index, version := range strings.Split(v, ".") {
-		if index < 3 {
-			iv, err := strconv.Atoi(version)
-
-			if err != nil {
-				return Version{}, err
-			}
-
-			slice[index] = iv
-			size = index + 1
+		if !ok {
+			break
 		}
 	}
 
-	return Version{
-		raw:        raw,
-		slice:      slice,
-		preRelease: preRelease,
-		build:      build,
-		size:       size,
-	}, nil
+	return vv, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -276,9 +258,8 @@ func prereleaseLess(pr1, pr2 string) bool {
 		return true
 	}
 
-	// Parse prerelease
-	pr1Re := preRegExp.FindStringSubmatch(pr1)
-	pr2Re := preRegExp.FindStringSubmatch(pr2)
+	pr1Re := prerelRE.FindStringSubmatch(pr1)
+	pr2Re := prerelRE.FindStringSubmatch(pr2)
 
 	pr1Name := pr1Re[1]
 	pr2Name := pr2Re[1]

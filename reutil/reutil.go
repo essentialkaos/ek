@@ -17,16 +17,17 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilRegex is returned if regex pattern struct is nil
-	ErrNilRegex = errors.New("Given regexp is nil")
+	// ErrNilRegex is returned when the provided regexp pattern is nil
+	ErrNilRegex = errors.New("given regexp is nil")
 
-	// ErrNilFunc is returned if replacement function is nil
-	ErrNilFunc = errors.New("Replacement function is nil")
+	// ErrNilFunc is returned when the provided replacement function is nil
+	ErrNilFunc = errors.New("replacement function is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Replace replaces parts of found strings using given method
+// Replace finds all matches of regex in source and calls replFunc for each match,
+// passing the full match and any captured subgroups, then returns the rebuilt string
 func Replace(regex *regexp.Regexp, source string, replFunc func(found string, submatch []string) string) (string, error) {
 	switch {
 	case regex == nil:
@@ -44,14 +45,16 @@ func Replace(regex *regexp.Regexp, source string, replFunc func(found string, su
 	}
 
 	index := regex.FindAllStringIndex(source, -1)
+
 	buf := &bytes.Buffer{}
+	buf.Grow(len(source))
 
 	var lastChunkIndex int
 
-	for n := 0; n < len(found); n++ {
-		f, s, e := found[n], index[n][0], index[n][1]
+	for i, f := range found {
+		s, e := index[i][0], index[i][1]
 
-		if s > 0 {
+		if s > lastChunkIndex {
 			buf.WriteString(source[lastChunkIndex:s])
 		}
 

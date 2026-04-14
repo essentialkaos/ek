@@ -47,12 +47,12 @@ func ExampleStrings() {
 		"Dotty",
 	}
 
-	// Case insensitive sorting
+	// Case-sensitive sorting (caseInsensitive=false)
 	Strings(stringSlice, false)
 
 	fmt.Println(stringSlice)
 
-	// Case sensitive sorting
+	// Case-insensitive sorting (caseInsensitive=true)
 	Strings(stringSlice, true)
 
 	fmt.Println(stringSlice)

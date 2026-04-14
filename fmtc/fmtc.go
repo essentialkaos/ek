@@ -18,9 +18,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/essentialkaos/ek/v13/color"
-	"github.com/essentialkaos/ek/v13/env"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/color"
+	"github.com/essentialkaos/ek/v14/env"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -101,13 +101,13 @@ func AddColor(name, tag string) error {
 
 	switch {
 	case name == "":
-		return errors.New("Can't add named color: name can't be empty")
+		return errors.New("can't add named color: name can't be empty")
 	case tag == "":
-		return errors.New("Can't add named color: tag can't be empty")
+		return errors.New("can't add named color: tag can't be empty")
 	case !IsTag(tag):
-		return fmt.Errorf("Can't add named color: %q is not valid color tag", tag)
+		return fmt.Errorf("can't add named color: %q is not valid color tag", tag)
 	case !isValidNamedTag("?" + name):
-		return fmt.Errorf("Can't add named color: %q is not valid name", name)
+		return fmt.Errorf("can't add named color: %q is not valid name", name)
 	}
 
 	colorsMap.Store(name, searchColors(tag, -1, false, false))
@@ -257,8 +257,10 @@ func Sprintln(a ...any) string {
 
 // Errorf formats according to a format specifier and returns the string as a
 // value that satisfies error.
+//
+// Warning: This method DO NOT evaluate any of fmtc tags
 func Errorf(f string, a ...any) error {
-	return errors.New(Sprintf(f, a...))
+	return fmt.Errorf(f, a...)
 }
 
 // TPrint removes all content on the current line and prints the new message
@@ -413,8 +415,8 @@ func tag2ANSI(tag string, clean bool) string {
 		return parseNamedColor(tag, clean)
 	}
 
-	light := strings.Contains(tag, "-")
-	reset := strings.Contains(tag, "!")
+	light := strings.ContainsRune(tag, '-')
+	reset := strings.ContainsRune(tag, '!')
 
 	var chars string
 
@@ -533,7 +535,7 @@ LOOP:
 			tag.WriteRune(i)
 		case '{':
 			output.WriteString("{" + tag.String())
-			tag = bytes.NewBufferString("")
+			tag.Reset()
 		case '}':
 			break LOOP
 		}
@@ -662,7 +664,7 @@ func isValidExtendedTag(tag string) bool {
 		}
 	default:
 		code, err := strconv.Atoi(tag)
-		if err != nil || code < 0 || code > 256 {
+		if err != nil || code < 0 || code >= 256 {
 			return false
 		}
 	}
@@ -715,7 +717,7 @@ func checkForColorsSupport() {
 	if term == "iterm" || colorTerm == "truecolor" ||
 		strings.Contains(term, "truecolor") ||
 		strings.HasPrefix(term, "vte") {
-		isColors256Supported, isColorsTCSupported = true, true
+		isColorsSupported, isColors256Supported, isColorsTCSupported = true, true, true
 	}
 
 	isColorsSupportChecked = true

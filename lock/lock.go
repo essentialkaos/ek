@@ -11,15 +11,18 @@ package lock
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Create creates new lock file
+// Create creates a new lock file with the given name in [Dir]
 func Create(name string) error {
 	err := fsutil.ValidatePerms("DW", Dir)
 
@@ -27,10 +30,14 @@ func Create(name string) error {
 		return err
 	}
 
+	if !isValidLockName(name) {
+		return fmt.Errorf("invalid lock name %q", name)
+	}
+
 	return fsutil.TouchFile(getLockPath(name), 0644)
 }
 
-// Remove deletes lock file
+// Remove deletes the lock file with the given name from [Dir]
 func Remove(name string) error {
 	err := fsutil.ValidatePerms("DW", Dir)
 
@@ -38,34 +45,47 @@ func Remove(name string) error {
 		return err
 	}
 
+	if !isValidLockName(name) {
+		return fmt.Errorf("invalid lock name %q", name)
+	}
+
 	return os.Remove(getLockPath(name))
 }
 
-// Has returns true if lock file exists
+// Has reports whether a lock file with the given name currently exists
 func Has(name string) bool {
+	if !isValidLockName(name) {
+		return false
+	}
+
 	return fsutil.IsExist(getLockPath(name))
 }
 
-// Wait waits until lock file being deleted
+// Wait blocks until the named lock file is removed or the deadline is exceeded.
+// Returns true if the lock was released, false if the deadline was reached.
+// Pass a zero time.Time{} deadline to wait indefinitely.
 func Wait(name string, deadline time.Time) bool {
 	if !Has(name) {
 		return true
 	}
 
-	for range time.NewTicker(time.Second / 4).C {
-		if !deadline.IsZero() && time.Now().After(deadline) {
-			return false
-		}
+	ticker := time.NewTicker(time.Second / 4)
+	defer ticker.Stop()
 
+	for range ticker.C {
 		if !Has(name) {
 			break
+		}
+
+		if !deadline.IsZero() && time.Now().After(deadline) {
+			return false
 		}
 	}
 
 	return true
 }
 
-// IsExpired returns true if lock file reached TTL
+// IsExpired reports whether the named lock file has existed longer than TTL
 func IsExpired(name string, ttl time.Duration) bool {
 	ct, err := fsutil.GetCTime(getLockPath(name))
 
@@ -78,7 +98,17 @@ func IsExpired(name string, ttl time.Duration) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getLockPath returns path to lock file
+// isValidLockName returns false if given lock name is invalid
+func isValidLockName(name string) bool {
+	switch {
+	case name == "..", name == ".", strings.ContainsAny(name, "/\\"):
+		return false
+	}
+
+	return true
+}
+
+// getLockPath returns the full filesystem path for the named lock file
 func getLockPath(name string) string {
-	return Dir + "/" + name + ".lock"
+	return filepath.Join(Dir, filepath.Base(name)+".lock")
 }

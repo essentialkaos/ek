@@ -10,44 +10,47 @@ package hashutil
 
 import (
 	"bytes"
+	"crypto/subtle"
+	"errors"
 	"fmt"
 	"hash"
 	"io"
 	"os"
-	"strconv"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilHasher is returned if given hasher is nil
-	ErrNilHasher = fmt.Errorf("Hasher is nil")
+	// ErrNilHasher is returned when the provided hasher is nil
+	ErrNilHasher = errors.New("hasher is nil")
 
-	// ErrNilSource is returned if given source is nil
-	ErrNilSource = fmt.Errorf("Source is nil")
+	// ErrNilSource is returned when the provided source reader is nil
+	ErrNilSource = errors.New("source is nil")
 
-	// ErrNilDest is returned if given destination is nil
-	ErrNilDest = fmt.Errorf("Destination is nil")
+	// ErrNilDest is returned when the provided destination writer is nil
+	ErrNilDest = errors.New("destination is nil")
 
-	// ErrNilReader is returned if given reader is nil
-	ErrNilReader = fmt.Errorf("Reader is nil")
+	// ErrNilReader is returned when the provided reader is nil
+	ErrNilReader = errors.New("reader is nil")
 
-	// ErrNilWriter is returned if given writer is nil
-	ErrNilWriter = fmt.Errorf("Writer is nil")
+	// ErrNilWriter is returned when the provided writer is nil
+	ErrNilWriter = errors.New("writer is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Hash is bytes slice with hash data
+// Hash is a byte slice holding raw hash digest data
 type Hash []byte
 
-// Reader is transparent hashing reader
+// Reader is a transparent hashing wrapper around [io.Reader].
+// Every byte read is simultaneously fed into the underlying hasher.
 type Reader struct {
 	hasher hash.Hash
 	r      io.Reader
 }
 
-// Writer is transparent hashing writer
+// Writer is a transparent hashing wrapper around [io.Writer].
+// Every byte written is simultaneously fed into the underlying hasher.
 type Writer struct {
 	hasher hash.Hash
 	w      io.Writer
@@ -55,7 +58,8 @@ type Writer struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Copy is io.Copy like function with transparent hash calculation
+// Copy copies data from src to dst and simultaneously computes a hash,
+// returning the number of bytes copied, the resulting hash, and any error.
 func Copy(dst io.Writer, src io.Reader, hasher hash.Hash) (int64, Hash, error) {
 	switch {
 	case src == nil:
@@ -74,7 +78,8 @@ func Copy(dst io.Writer, src io.Reader, hasher hash.Hash) (int64, Hash, error) {
 	return n, Sum(hasher), err
 }
 
-// File calculates hash of the file using given hasher
+// File computes the hash of the named file using the given hasher.
+// Returns nil if the file cannot be opened, read, or the hasher is nil.
 func File(file string, hasher hash.Hash) Hash {
 	if hasher == nil {
 		return nil
@@ -89,12 +94,17 @@ func File(file string, hasher hash.Hash) Hash {
 	defer fd.Close()
 
 	hasher.Reset()
-	io.Copy(hasher, fd)
+
+	_, err = io.Copy(hasher, fd)
+
+	if err != nil {
+		return nil
+	}
 
 	return Sum(hasher)
 }
 
-// Bytes calculates data hash using given hasher
+// Bytes computes the hash of the given byte slice using the provided hasher
 func Bytes(data []byte, hasher hash.Hash) Hash {
 	if len(data) == 0 || hasher == nil {
 		return nil
@@ -106,19 +116,19 @@ func Bytes(data []byte, hasher hash.Hash) Hash {
 	return Sum(hasher)
 }
 
-// String calculates string hash using given hasher
+// String computes the hash of the given string using the provided hasher
 func String(data string, hasher hash.Hash) Hash {
 	if len(data) == 0 || hasher == nil {
 		return nil
 	}
 
 	hasher.Reset()
-	fmt.Fprint(hasher, data)
+	io.WriteString(hasher, data)
 
 	return Sum(hasher)
 }
 
-// Sum prints checksum
+// Sum returns the current digest of the hasher as a Hash value
 func Sum(hasher hash.Hash) Hash {
 	if hasher == nil {
 		return nil
@@ -129,38 +139,45 @@ func Sum(hasher hash.Hash) Hash {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns hash as hex string
+// String returns the hash encoded as a lowercase hexadecimal string
 func (h Hash) String() string {
 	if len(h) == 0 {
 		return ""
 	}
 
-	return fmt.Sprintf("%0"+strconv.Itoa(len(h)/2)+"x", h.Bytes())
+	return fmt.Sprintf("%x", h.Bytes())
 }
 
-// Bytes returns hash as byte slice
+// Bytes returns the raw hash digest as a plain byte slice
 func (h Hash) Bytes() []byte {
 	return []byte(h)
 }
 
-// Equal returns true if both hashes are equal
+// Equal reports whether h and hh contain identical digest bytes
 func (h Hash) Equal(hh Hash) bool {
 	return bytes.Equal(h, hh)
 }
 
-// EqualString returns true if hash is equal to given string representation of hash
+// EqualString reports whether the hex string representation of h equals hh
 func (h Hash) EqualString(hh string) bool {
 	return h.String() == hh
 }
 
-// IsEmpty returns true if hash has no data
+// EqualConstantTime returns true if both hashes are equal using a
+// constant-time comparison, safe for use with security-sensitive digests.
+func (h Hash) EqualConstantTime(hh Hash) bool {
+	return subtle.ConstantTimeCompare(h, hh) == 1
+}
+
+// IsEmpty reports whether the hash contains no data
 func (h Hash) IsEmpty() bool {
 	return len(h) == 0
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader creates new reader with transparent hash calculation
+// NewReader creates a Reader that wraps r and feeds all read bytes into hasher.
+// Returns an error if either argument is nil.
 func NewReader(r io.Reader, hasher hash.Hash) (*Reader, error) {
 	switch {
 	case r == nil:
@@ -174,7 +191,8 @@ func NewReader(r io.Reader, hasher hash.Hash) (*Reader, error) {
 	return &Reader{r: r, hasher: hasher}, nil
 }
 
-// Read reads data and simultaneously writes it into hasher
+// Read reads from the underlying reader and feeds the bytes into the hasher.
+// Implements [io.Reader].
 func (r *Reader) Read(p []byte) (int, error) {
 	switch {
 	case r == nil || r.r == nil:
@@ -192,9 +210,9 @@ func (r *Reader) Read(p []byte) (int, error) {
 	return n, err
 }
 
-// Sum returns hash of read data
+// Sum returns the hash of all bytes read so far
 func (r *Reader) Sum() Hash {
-	if r == nil || r.r == nil || r.hasher == nil {
+	if r == nil || r.hasher == nil {
 		return nil
 	}
 
@@ -203,7 +221,8 @@ func (r *Reader) Sum() Hash {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewWriter creates new writer with transparent hash calculation
+// NewWriter creates a Writer that wraps w and feeds all written bytes into hasher.
+// Returns an error if either argument is nil.
 func NewWriter(w io.Writer, hasher hash.Hash) (*Writer, error) {
 	switch {
 	case w == nil:
@@ -217,7 +236,8 @@ func NewWriter(w io.Writer, hasher hash.Hash) (*Writer, error) {
 	return &Writer{w: w, hasher: hasher}, nil
 }
 
-// Write simultaneously writes data to underlying writer and hasher
+// Write writes p to the underlying writer and simultaneously updates the hasher.
+// Implements [io.Writer].
 func (w *Writer) Write(p []byte) (int, error) {
 	switch {
 	case w == nil || w.w == nil:
@@ -228,14 +248,16 @@ func (w *Writer) Write(p []byte) (int, error) {
 
 	n, err := w.w.Write(p)
 
-	w.hasher.Write(p)
+	if n > 0 {
+		w.hasher.Write(p[:n])
+	}
 
 	return n, err
 }
 
-// Sum returns hash of written data
+// Sum returns the hash of all bytes written so far
 func (w *Writer) Sum() Hash {
-	if w == nil || w.w == nil || w.hasher == nil {
+	if w == nil || w.hasher == nil {
 		return nil
 	}
 

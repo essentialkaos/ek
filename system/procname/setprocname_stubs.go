@@ -17,10 +17,13 @@ import (
 
 var (
 	// ❗ ErrWrongSize is returned if given slice have the wrong size
-	ErrWrongSize = errors.New("Given slice must have same size as os.Arg")
+	ErrWrongSize = errors.New("invalid args length (must have the same length as os.Arg)")
 
-	// ❗ ErrWrongArguments is returned if one of given arguments is empty
-	ErrWrongArguments = errors.New("Arguments can't be empty")
+	// ❗ ErrEmptyFrom is returned if the "from" argument is empty
+	ErrEmptyFrom = errors.New("from value is empty")
+
+	// ❗ ErrEmptyTo is returned if the "to" argument is empty
+	ErrEmptyTo = errors.New("to value is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

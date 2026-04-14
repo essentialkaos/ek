@@ -13,13 +13,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -59,7 +60,7 @@ var utmpFile = "/var/run/utmp"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Who returns info about all active sessions sorted by login time
+// Who returns information about all active login sessions
 func Who() ([]*SessionInfo, error) {
 	fd, err := os.Open(utmpFile)
 
@@ -76,8 +77,12 @@ func Who() ([]*SessionInfo, error) {
 
 		err = binary.Read(fd, binary.LittleEndian, &rec)
 
-		if err != nil {
+		if err == io.EOF {
 			break
+		}
+
+		if err != nil {
+			return sessions, fmt.Errorf("can't read utmp record: %w", err)
 		}
 
 		if rec.Type != 0x7 {
@@ -98,12 +103,12 @@ func Who() ([]*SessionInfo, error) {
 	return sessions, nil
 }
 
-// IsUserExist checks if user exist on system or not
+// IsUserExist returns true if a user with the given name or UID exists on the system
 func IsUserExist(name string) bool {
 	return exec.Command("getent", "passwd", name).Run() == nil
 }
 
-// IsGroupExist checks if group exist on system or not
+// IsGroupExist returns true if a group with the given name or GID exists on the system
 func IsGroupExist(name string) bool {
 	return exec.Command("getent", "group", name).Run() == nil
 }
@@ -115,7 +120,7 @@ func getUserInfo(nameOrID string) (*User, error) {
 	data, err := exec.Command("getent", "passwd", nameOrID).Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("User with name/ID %s does not exist", nameOrID)
+		return nil, fmt.Errorf("user with name/ID %q does not exist", nameOrID)
 	}
 
 	return parseGetentPasswdOutput(string(data))
@@ -126,7 +131,7 @@ func getGroupInfo(nameOrID string) (*Group, error) {
 	data, err := exec.Command("getent", "group", nameOrID).Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("Group with name/ID %s does not exist", nameOrID)
+		return nil, fmt.Errorf("group with name/ID %q does not exist", nameOrID)
 	}
 
 	return parseGetentGroupOutput(string(data))

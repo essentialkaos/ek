@@ -65,14 +65,12 @@ func ExampleFallback() {
 		GREETING: "Сәлеметсіз бе!",
 	}
 
-	loc, err := Fallback(en, ru, kz)
+	l, err := Fallback(en, ru, kz)
 
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-
-	l := loc.(*Bundle)
 
 	err = ValidateBundle(l)
 

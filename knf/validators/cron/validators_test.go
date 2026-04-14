@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 
 	check "github.com/essentialkaos/check"
 )
@@ -66,7 +66,7 @@ func (s *ValidatorSuite) TestCronValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 1)
 
-	c.Assert(errs[0].Error(), check.Equals, `Property cron:test5 contains invalid cron expression: Can't parse token "0,456": strconv.ParseUint: parsing "456": value out of range`)
+	c.Assert(errs[0].Error(), check.Equals, `property cron:test5 contains invalid cron expression: can't parse token "0,456": strconv.ParseUint: parsing "456": value out of range`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

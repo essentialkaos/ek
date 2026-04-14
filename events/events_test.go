@@ -42,8 +42,8 @@ func (s *EventsSuite) TestBasicErrors(c *C) {
 	c.Assert(d.Dispatch("unknown", basicTestHandler), NotNil)
 	c.Assert(d.DispatchAndWait("unknown", basicTestHandler), NotNil)
 
-	c.Assert(validateArguments(d, "", basicTestHandler, true), NotNil)
-	c.Assert(validateArguments(d, "test", nil, true), NotNil)
+	c.Assert(d.validateArguments("", basicTestHandler, true), NotNil)
+	c.Assert(d.validateArguments("test", nil, true), NotNil)
 }
 
 func (s *EventsSuite) TestDispatch(c *C) {
@@ -87,7 +87,7 @@ func (s *EventsSuite) TestNil(c *C) {
 	c.Assert(d.HasHandler("test", nil), Equals, false)
 	c.Assert(d.DispatchAndWait("test", nil), NotNil)
 
-	c.Assert(validateArguments(d, "test", basicTestHandler, true), NotNil)
+	c.Assert(d.validateArguments("test", basicTestHandler, true), NotNil)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

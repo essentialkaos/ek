@@ -15,7 +15,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -60,15 +61,11 @@ type Numeric interface {
 //	'%R' 24-hour hour and minute; same as %H:%M
 //	'%s' seconds since 1970-01-01 00:00:00 UTC
 //	'%S' second (00..60)
-//	'%t' a tab
 //	'%T' time; same as %H:%M:%S
 //	'%u' day of week (1..7); 1 is Monday
-//	'%U' week number of year, with Sunday as first day of week (00..53)
 //	'%V' ISO week number, with Monday as first day of week (01..53)
 //	'%w' day of week (0..6); 0 is Sunday
 //	'%W' week number of year, with Monday as first day of week (00..53)
-//	'%x' locale's date representation (e.g., 12/31/99)
-//	'%X' locale's time representation (e.g., 23:13:48)
 //	'%y' last two digits of year (00..99)
 //	'%Y' year
 //	'%z' +hhmm numeric timezone (e.g., -0400)
@@ -122,7 +119,7 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 		case 's', 'S':
 			result, err = appendDur(result, buf, _SECOND)
 		default:
-			return 0, fmt.Errorf("Unsupported symbol %q", string(sym))
+			return 0, fmt.Errorf("unsupported symbol %q", string(sym))
 		}
 
 		if err != nil {
@@ -132,7 +129,7 @@ func ParseDuration(dur string, defMod ...rune) (time.Duration, error) {
 
 	if buf.Len() != 0 {
 		if result != 0 {
-			return 0, fmt.Errorf("Misformatted duration %q", dur)
+			return 0, fmt.Errorf("misformatted duration %q", dur)
 		}
 
 		mod := 's'
@@ -315,7 +312,7 @@ func NextYear(t time.Time) time.Time {
 	return StartOfYear(t.AddDate(1, 0, 0))
 }
 
-// NextWorkday returns previous workday
+// PrevWorkday returns previous workday
 func PrevWorkday(t time.Time) time.Time {
 	for {
 		t = t.AddDate(0, 0, -1)
@@ -398,7 +395,7 @@ func IsWeekend(t time.Time) bool {
 // IsToday returns true if given date is today
 func IsToday(t time.Time) bool {
 	today := time.Now()
-	return !t.IsZero() && t.After(StartOfDay(today)) && t.Before(EndOfDay(today))
+	return !t.IsZero() && !t.Before(StartOfDay(today)) && t.Before(EndOfDay(today))
 }
 
 // Until returns time until given moment in given units
@@ -426,13 +423,16 @@ func FromISOWeek(week, year int, loc *time.Location) time.Time {
 		year = time.Now().In(loc).Year()
 	}
 
-	return time.Date(year, 1, 1, 0, 0, 0, 0, loc).AddDate(0, 0, 7*(week-1))
+	jan4 := time.Date(year, 1, 4, 0, 0, 0, 0, loc)
+	startOfWeek := jan4.AddDate(0, 0, -int(jan4.Weekday()-time.Monday))
+
+	return startOfWeek.AddDate(0, 0, (week-1)*7)
 }
 
 // ParseWithAny tries to parse value using given layouts
 func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 	if len(layouts) == 0 {
-		return time.Time{}, fmt.Errorf("No layouts provided")
+		return time.Time{}, fmt.Errorf("no layouts provided")
 	}
 
 	for _, l := range layouts {
@@ -443,7 +443,7 @@ func ParseWithAny(value string, layouts ...string) (time.Time, error) {
 		}
 	}
 
-	return time.Time{}, fmt.Errorf("Value cannot be parsed using any of the provided layouts")
+	return time.Time{}, fmt.Errorf("value cannot be parsed using any of the provided layouts")
 }
 
 // UnixIn returns the time corresponding to the given Unix timestamp interpreted
@@ -521,50 +521,6 @@ func ToDays[N Numeric](days N) time.Duration {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SecondsToDuration converts float64 to time.Duration
-//
-// Deprecated: Use [ToSeconds] instead
-func SecondsToDuration(d float64) time.Duration {
-	return ToSeconds(d)
-}
-
-// PrettyDuration returns pretty duration (e.g. 1 hour 45 seconds)
-//
-// Deprecated: Use [Duration.String] instead
-func PrettyDuration(d any) string {
-	return Pretty(d).String()
-}
-
-// PrettyDurationSimple returns simple pretty duration (seconds → minutes → hours → days)
-//
-// Deprecated: Use [Duration.Simple] instead
-func PrettyDurationSimple(d any) string {
-	return Pretty(d).Simple()
-}
-
-// PrettyDurationInDays returns pretty duration in days (e.g. 15 days)
-//
-// Deprecated: Use [Duration.InDays] instead
-func PrettyDurationInDays(d any) string {
-	return Pretty(d).InDays()
-}
-
-// ShortDuration returns pretty short duration (e.g. 1:37)
-//
-// Deprecated: Use [Duration.Short] instead
-func ShortDuration(d any, highPrecision ...bool) string {
-	return Pretty(d).Short(highPrecision...)
-}
-
-// MiniDuration returns formatted value of duration (d/hr/m/s/ms/us/ns)
-//
-// Deprecated: Use [Duration.Mini] instead
-func MiniDuration(d time.Duration, separator ...string) string {
-	return Pretty(d).Mini(separator...)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // replaceDateTag replaces date tag in format string
 func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	r, _, err := input.ReadRune()
@@ -585,24 +541,21 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'B':
 		output.WriteString(getLongMonth(d.Month()))
 	case 'c':
-		zn, _ := d.Zone()
-		fmt.Fprintf(output, "%s %02d %s %d %02d:%02d:%02d %s %s",
+		fmt.Fprintf(output, "%s %s %d %02d:%02d:%02d %d",
 			getShortWeekday(d.Weekday()),
-			d.Day(),
 			getShortMonth(d.Month()),
-			d.Year(),
-			getAMPMHour(d),
+			d.Day(),
+			d.Hour(),
 			d.Minute(),
 			d.Second(),
-			getAMPM(d, true),
-			zn,
+			d.Year(),
 		)
 	case 'C', 'g':
-		output.WriteString(strconv.Itoa(d.Year())[0:2])
+		output.WriteString(strutil.Head(strconv.Itoa(d.Year()), 2))
 	case 'd':
 		fmt.Fprintf(output, "%02d", d.Day())
 	case 'D':
-		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strconv.Itoa(d.Year())[2:4])
+		fmt.Fprintf(output, "%02d/%02d/%s", d.Month(), d.Day(), strutil.Tail(strconv.Itoa(d.Year()), 2))
 	case 'e':
 		fmt.Fprintf(output, "%2d", d.Day())
 	case 'F':
@@ -618,7 +571,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'k':
 		fmt.Fprintf(output, "%2d", d.Hour())
 	case 'K':
-		output.WriteString(fmt.Sprintf("%03d", d.Nanosecond())[:3])
+		fmt.Fprintf(output, "%03d", d.Nanosecond()/1_000_000)
 	case 'l':
 		output.WriteString(strconv.Itoa(getAMPMHour(d)))
 	case 'm':
@@ -630,9 +583,9 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'N':
 		fmt.Fprintf(output, "%09d", d.Nanosecond())
 	case 'p':
-		output.WriteString(getAMPM(d, false))
-	case 'P':
 		output.WriteString(getAMPM(d, true))
+	case 'P':
+		output.WriteString(getAMPM(d, false))
 	case 'r':
 		fmt.Fprintf(output, "%02d:%02d:%02d %s", getAMPMHour(d), d.Minute(), d.Second(), getAMPM(d, true))
 	case 'R':
@@ -651,7 +604,7 @@ func replaceDateTag(d time.Time, input, output *bytes.Buffer) {
 	case 'w':
 		fmt.Fprintf(output, "%d", d.Weekday())
 	case 'y':
-		output.WriteString(strconv.Itoa(d.Year())[2:4])
+		output.WriteString(strutil.Tail(strconv.Itoa(d.Year()), 2))
 	case 'Y':
 		output.WriteString(strconv.Itoa(d.Year()))
 	case 'z':
@@ -681,7 +634,7 @@ func getShortWeekday(d time.Weekday) string {
 
 // getLongWeekday returns long weekday name (e.g. Sunday)
 func getLongWeekday(d time.Weekday) string {
-	switch int(d) {
+	switch d {
 	case 0:
 		return "Sunday"
 	case 1:
@@ -714,7 +667,7 @@ func getShortMonth(m time.Month) string {
 
 // getLongMonth returns long month name (e.g. January)
 func getLongMonth(m time.Month) string {
-	switch int(m) {
+	switch m {
 	case 1:
 		return "January"
 	case 2:
@@ -763,20 +716,18 @@ func getAMPMHour(d time.Time) int {
 // getAMPM returns AM or PM depending on the time and caps flag
 func getAMPM(d time.Time, caps bool) string {
 	if d.Hour() < 12 {
-		switch caps {
-		case true:
+		if caps {
 			return "AM"
-		default:
-			return "am"
 		}
-	} else {
-		switch caps {
-		case true:
-			return "PM"
-		default:
-			return "pm"
-		}
+
+		return "am"
 	}
+
+	if caps {
+		return "PM"
+	}
+
+	return "pm"
 }
 
 // getWeekdayNum returns weekday number (1..7) where 1 is Monday and 7 is Sunday
@@ -801,27 +752,29 @@ func getTimezone(d time.Time, separator bool) string {
 	}
 
 	hours := int64(tzofs) / _HOUR
-	minutes := int64(tzofs) % _HOUR
+	minutes := (int64(tzofs) % _HOUR) / _MINUTE
 
-	switch negative {
-	case true:
+	if negative {
 		if separator {
 			return fmt.Sprintf("-%02d:%02d", hours, minutes)
 		}
 
 		return fmt.Sprintf("-%02d%02d", hours, minutes)
-
-	default:
-		if separator {
-			return fmt.Sprintf("+%02d:%02d", hours, minutes)
-		}
-
-		return fmt.Sprintf("+%02d%02d", hours, minutes)
 	}
+
+	if separator {
+		return fmt.Sprintf("+%02d:%02d", hours, minutes)
+	}
+
+	return fmt.Sprintf("+%02d%02d", hours, minutes)
 }
 
 // appendDur appends duration value to the buffer and returns new value
 func appendDur(value int64, buf *bytes.Buffer, mod int64) (int64, error) {
+	if buf.Len() == 0 {
+		return 0, fmt.Errorf("missing number before modifier")
+	}
+
 	v, err := strconv.ParseInt(buf.String(), 10, 64)
 
 	if err != nil {

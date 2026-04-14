@@ -11,16 +11,20 @@ package kernel
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"sort"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/support"
-	"github.com/essentialkaos/ek/v13/system/sysctl"
+	"github.com/essentialkaos/ek/v14/sortutil"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/support"
+	"github.com/essentialkaos/ek/v14/system/sysctl"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects info from OS kernel
+// Collect returns kernel parameters matching the given names or prefix patterns.
+// Patterns ending with "*" are treated as prefix globs (e.g. "vm.*" matches all vm
+// parameters). Returns nil if no params match or if the kernel cannot be queried.
 func Collect(params ...string) []support.KernelParam {
 	kernelParams, err := sysctl.All()
 
@@ -28,28 +32,32 @@ func Collect(params ...string) []support.KernelParam {
 		return nil
 	}
 
+	sort.Slice(kernelParams, func(i, j int) bool {
+		return sortutil.NaturalLess(kernelParams[i].Name, kernelParams[j].Name)
+	})
+
 	var result []support.KernelParam
 
-	for _, param := range params {
-		isGlob := strings.HasSuffix(param, "*")
-		param = strings.TrimRight(param, "*")
+	for _, pattern := range params {
+		isGlob := strings.HasSuffix(pattern, "*")
+		param := strings.TrimRight(pattern, "*")
 
-		for k, v := range kernelParams {
+		for _, p := range kernelParams {
 			if isGlob {
-				if !strings.HasPrefix(k, param) {
+				if !strings.HasPrefix(p.Name, param) {
 					continue
 				}
 			} else {
-				if k != param {
+				if p.Name != param {
 					continue
 				}
 			}
 
-			value := strings.ReplaceAll(v, "\t", " ")
+			value := strings.ReplaceAll(p.Value, "\t", " ")
 			value = strutil.SqueezeRepeats(value, " ")
 
 			result = append(result, support.KernelParam{
-				Key:   k,
+				Key:   p.Name,
 				Value: value,
 			})
 		}

@@ -154,13 +154,45 @@ func ExampleErrors_Error() {
 		fmt.Errorf("Error 3"),
 	}
 
-	fmt.Printf("Errors:\n%s\n", errs.Error(" - "))
+	fmt.Printf("Errors:\n%s\n", errs.Error())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
+}
+
+func ExampleErrors_ErrorWithPrefix() {
+	errs := Errors{
+		fmt.Errorf("Error 1"),
+		fmt.Errorf("Error 2"),
+		fmt.Errorf("Error 3"),
+	}
+
+	fmt.Printf("Errors:\n%s\n", errs.ErrorWithPrefix(" - "))
 
 	// Output:
 	// Errors:
 	//  - Error 1
 	//  - Error 2
 	//  - Error 3
+}
+
+func ExampleErrors_Join() {
+	errs := Errors{
+		fmt.Errorf("Error 1"),
+		fmt.Errorf("Error 2"),
+		fmt.Errorf("Error 3"),
+	}
+
+	fmt.Printf("Errors:\n%v\n", errs.Join())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -243,10 +275,13 @@ func ExampleBundle_All() {
 	errs.Add(fmt.Errorf("Error 2"))
 	errs.Add(fmt.Errorf("Error 3"))
 
-	fmt.Printf("Errors: %v\n", errs.All())
+	fmt.Printf("Errors:\n%v\n", errs.All())
 
 	// Output:
-	// Errors: [Error 1 Error 2 Error 3]
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
 }
 
 func ExampleBundle_IsEmpty() {
@@ -300,13 +335,45 @@ func ExampleBundle_Error() {
 	errs.Add(fmt.Errorf("Error 2"))
 	errs.Add(fmt.Errorf("Error 3"))
 
-	fmt.Printf("Errors:\n%s\n", errs.Error(" - "))
+	fmt.Printf("Errors:\n%s\n", errs.Error())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
+}
+
+func ExampleBundle_ErrorWithPrefix() {
+	var errs Bundle
+
+	errs.Add(fmt.Errorf("Error 1"))
+	errs.Add(fmt.Errorf("Error 2"))
+	errs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors:\n%s\n", errs.ErrorWithPrefix(" - "))
 
 	// Output:
 	// Errors:
 	//  - Error 1
 	//  - Error 2
 	//  - Error 3
+}
+
+func ExampleBundle_Join() {
+	var errs Bundle
+
+	errs.Add(fmt.Errorf("Error 1"))
+	errs.Add(fmt.Errorf("Error 2"))
+	errs.Add(fmt.Errorf("Error 3"))
+
+	fmt.Printf("Errors:\n%v\n", errs.Join())
+
+	// Output:
+	// Errors:
+	// Error 1
+	// Error 2
+	// Error 3
 }
 
 func ExampleBundle_Reset() {

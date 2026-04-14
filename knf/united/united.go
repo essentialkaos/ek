@@ -13,13 +13,15 @@ import (
 	"os"
 	"slices"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/errors"
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/knf/value"
-	"github.com/essentialkaos/ek/v13/options"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/errors"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/knf/value"
+	"github.com/essentialkaos/ek/v14/options"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -54,14 +56,17 @@ type united struct {
 	knf      *knf.Config
 	mappings map[string]Mapping
 	env      map[string]string
+	mx       sync.RWMutex
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var global *united
+var global atomic.Pointer[united]
 
-var optionHasFunc = options.Has
-var optionGetFunc = options.GetS
+var (
+	optionHasFunc = options.Has
+	optionGetFunc = options.GetS
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -75,20 +80,22 @@ func Combine(config *knf.Config, mappings ...Mapping) error {
 		return knf.ErrNilConfig
 	}
 
-	global = &united{
+	cfg := &united{
 		knf:      config,
 		mappings: make(map[string]Mapping),
 		env:      make(map[string]string),
 	}
 
 	for _, m := range mappings {
-		global.mappings[m.Property] = m
+		cfg.mappings[m.Property] = m
 
 		if m.Variable != "" {
-			global.env[m.Variable] = os.Getenv(m.Variable)
-			os.Setenv(m.Variable, "")
+			cfg.env[m.Variable] = os.Getenv(m.Variable)
+			os.Unsetenv(m.Variable)
 		}
 	}
+
+	global.Store(cfg)
 
 	return nil
 }
@@ -103,7 +110,7 @@ func CombineSimple(config *knf.Config, props ...string) error {
 		return knf.ErrNilConfig
 	}
 
-	global = &united{
+	cfg := &united{
 		knf:      config,
 		mappings: make(map[string]Mapping),
 		env:      make(map[string]string),
@@ -112,11 +119,13 @@ func CombineSimple(config *knf.Config, props ...string) error {
 	for _, p := range props {
 		m := Simple(p)
 
-		global.mappings[m.Property] = m
-		global.env[m.Variable] = os.Getenv(m.Variable)
+		cfg.mappings[m.Property] = m
+		cfg.env[m.Variable] = os.Getenv(m.Variable)
 
-		os.Setenv(m.Variable, "")
+		os.Unsetenv(m.Variable)
 	}
+
+	global.Store(cfg)
 
 	return nil
 }
@@ -134,11 +143,13 @@ func AddOptions(m options.Map, names ...string) {
 
 // GetMapping returns mapping info for given property
 func GetMapping(prop string) Mapping {
-	if global == nil || global.mappings == nil {
+	cfg := global.Load()
+
+	if cfg == nil || cfg.mappings == nil {
 		return Mapping{}
 	}
 
-	return global.mappings[prop]
+	return cfg.mappings[prop]
 }
 
 // Simple creates simple mapping for knf property
@@ -171,88 +182,242 @@ func E(name string) string {
 
 // GetS returns configuration value as string
 func GetS(name string, defvals ...string) string {
-	return global.GetS(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return ""
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetS(name, defvals...)
 }
 
 // GetI returns configuration value as int
 func GetI(name string, defvals ...int) int {
-	return global.GetI(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetI(name, defvals...)
 }
 
 // GetI64 returns configuration value as int64
 func GetI64(name string, defvals ...int64) int64 {
-	return global.GetI64(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetI64(name, defvals...)
 }
 
 // GetU returns configuration value as uint
 func GetU(name string, defvals ...uint) uint {
-	return global.GetU(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetU(name, defvals...)
 }
 
 // GetU64 returns configuration value as uint64
 func GetU64(name string, defvals ...uint64) uint64 {
-	return global.GetU64(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetU64(name, defvals...)
 }
 
 // GetF returns configuration value as floating number
 func GetF(name string, defvals ...float64) float64 {
-	return global.GetF(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0.0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetF(name, defvals...)
 }
 
 // GetB returns configuration value as boolean
 func GetB(name string, defvals ...bool) bool {
-	return global.GetB(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return false
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetB(name, defvals...)
 }
 
 // GetM returns configuration value as file mode
 func GetM(name string, defvals ...os.FileMode) os.FileMode {
-	return global.GetM(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return os.FileMode(0)
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetM(name, defvals...)
 }
 
 // GetD returns configuration values as duration
 func GetD(name string, mod DurationMod, defvals ...time.Duration) time.Duration {
-	return global.GetD(name, mod, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetD(name, mod, defvals...)
 }
 
 // GetSZ returns configuration value as a size in bytes
 func GetSZ(name string, defvals ...uint64) uint64 {
-	return global.GetSZ(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return 0
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetSZ(name, defvals...)
 }
 
 // GetTD returns configuration value as time duration
 func GetTD(name string, defvals ...time.Duration) time.Duration {
-	return global.GetTD(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return time.Duration(0)
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetTD(name, defvals...)
 }
 
 // GetTS returns configuration timestamp value as time
 func GetTS(name string, defvals ...time.Time) time.Time {
-	return global.GetTS(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return time.Time{}
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetTS(name, defvals...)
 }
 
-// GetTS returns configuration value as timezone
+// GetTZ returns configuration value as timezone
 func GetTZ(name string, defvals ...*time.Location) *time.Location {
-	return global.GetTZ(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetTZ(name, defvals...)
 }
 
 // GetL returns configuration value as list
 func GetL(name string, defvals ...[]string) []string {
-	return global.GetL(name, defvals...)
+	cfg := global.Load()
+
+	if cfg == nil {
+		if len(defvals) == 0 {
+			return nil
+		}
+
+		return defvals[0]
+	}
+
+	return cfg.GetL(name, defvals...)
 }
 
 // Is checks if given property contains given value
 func Is(name string, value any) bool {
-	return global.Is(name, value)
+	cfg := global.Load()
+
+	if cfg == nil {
+		return false
+	}
+
+	return cfg.Is(name, value)
 }
 
 // Has checks if the property is defined and set
 func Has(name string) bool {
-	return global.Has(name)
+	cfg := global.Load()
+
+	if cfg == nil {
+		return false
+	}
+
+	return cfg.Has(name)
 }
 
 // Validate executes all given validators and
 // returns slice with validation errors
 func Validate(validators knf.Validators) errors.Errors {
-	if global == nil {
+	cfg := global.Load()
+
+	if cfg == nil {
 		return errors.Errors{knf.ErrNilConfig}
 	}
 
@@ -430,7 +595,7 @@ func (c *united) GetTS(name string, defvals ...time.Time) time.Time {
 	return value.ParseTimestamp(c.getProp(name), defvals...)
 }
 
-// GetTS returns configuration value as timezone
+// GetTZ returns configuration value as timezone
 func (c *united) GetTZ(name string, defvals ...*time.Location) *time.Location {
 	if c == nil {
 		if len(defvals) == 0 {
@@ -505,6 +670,9 @@ func (c *united) Has(name string) bool {
 
 // getProp returns property value for knf configuration, env vars, or options
 func (c *united) getProp(name string) string {
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+
 	m := c.mappings[name]
 
 	if m.IsEmpty() {
@@ -525,8 +693,10 @@ func (c *united) getProp(name string) string {
 func validate(validators knf.Validators) errors.Errors {
 	var result errors.Errors
 
+	cfg := global.Load()
+
 	for _, v := range validators {
-		err := v.Func(global, v.Property, v.Value)
+		err := v.Func(cfg, v.Property, v.Value)
 
 		if err != nil {
 			result = append(result, err)

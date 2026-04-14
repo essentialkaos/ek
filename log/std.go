@@ -27,65 +27,117 @@ var exitFunc = os.Exit
 
 // Fatal is analog of Fatal from stdlib
 func (l *StdLogger) Fatal(v ...any) {
+	if l == nil || l.Logger == nil {
+		exitFunc(1)
+		return
+	}
+
 	l.Logger.Print(CRIT, fmt.Sprint(v...))
 	l.Logger.Flush()
+
 	exitFunc(1)
 }
 
 // Fatalf is analog of Fatalf from stdlib
 func (l *StdLogger) Fatalf(format string, v ...any) {
+	if l == nil || l.Logger == nil {
+		exitFunc(1)
+		return
+	}
+
 	l.Logger.Print(CRIT, fmt.Sprintf(format, v...))
 	l.Logger.Flush()
+
 	exitFunc(1)
 }
 
 // Fatalln is analog of Fatalln from stdlib
 func (l *StdLogger) Fatalln(v ...any) {
+	if l == nil || l.Logger == nil {
+		exitFunc(1)
+		return
+	}
+
 	l.Logger.Print(CRIT, fmt.Sprintln(v...))
 	l.Logger.Flush()
+
 	exitFunc(1)
 }
 
 // Output is analog of Output from stdlib
 func (l *StdLogger) Output(calldepth int, s string) error {
+	if l == nil || l.Logger == nil {
+		return ErrNilLogger
+	}
+
 	return l.Logger.Print(INFO, s)
 }
 
 // Panic is analog of Panic from stdlib
 func (l *StdLogger) Panic(v ...any) {
 	s := fmt.Sprint(v...)
+
+	if l == nil || l.Logger == nil {
+		panic(s)
+	}
+
 	l.Logger.Print(CRIT, s)
 	l.Logger.Flush()
+
 	panic(s)
 }
 
 // Panicf is analog of Panicf from stdlib
 func (l *StdLogger) Panicf(format string, v ...any) {
 	s := fmt.Sprintf(format, v...)
+
+	if l == nil || l.Logger == nil {
+		panic(s)
+	}
+
 	l.Logger.Print(CRIT, s)
 	l.Logger.Flush()
+
 	panic(s)
 }
 
 // Panicln is analog of Panicln from stdlib
 func (l *StdLogger) Panicln(v ...any) {
 	s := fmt.Sprintln(v...)
+
+	if l == nil || l.Logger == nil {
+		panic(s)
+	}
+
 	l.Logger.Print(CRIT, s)
 	l.Logger.Flush()
+
 	panic(s)
 }
 
 // Print is analog of Print from stdlib
 func (l *StdLogger) Print(v ...any) {
+	if l == nil || l.Logger == nil {
+		return
+	}
+
 	l.Logger.Print(INFO, fmt.Sprint(v...))
 }
 
 // Printf is analog of Printf from stdlib
 func (l *StdLogger) Printf(format string, v ...any) {
+	if l == nil || l.Logger == nil {
+		return
+	}
+
 	l.Logger.Print(INFO, fmt.Sprintf(format, v...))
 }
 
 // Println is analog of Println from stdlib
 func (l *StdLogger) Println(v ...any) {
+	if l == nil || l.Logger == nil {
+		return
+	}
+
 	l.Logger.Print(INFO, fmt.Sprintln(v...))
 }

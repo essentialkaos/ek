@@ -13,8 +13,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// StringsNatural sorts a slice of strings in natural order
-// Limitation: only ASCII digits (0-9) are considered.
+// StringsNatural sorts a slice of strings using natural (human-friendly) order
 func StringsNatural(s []string) {
 	if len(s) <= 1 {
 		return
@@ -25,8 +24,8 @@ func StringsNatural(s []string) {
 	})
 }
 
-// NaturalLess compares two strings using natural ordering. This means that e.g.
-// "abc2" < "abc12"
+// NaturalLess returns true if s1 is naturally less than s2, so that e.g.
+// "abc2" < "abc12". Only ASCII digits (0–9) are considered numeric.
 // This code based on sortorder package created by @fvbommel
 func NaturalLess(s1, s2 string) bool {
 	i1, i2 := 0, 0
@@ -38,7 +37,9 @@ func NaturalLess(s1, s2 string) bool {
 
 		if d1 != d2 {
 			return d1
-		} else if !d1 {
+		}
+
+		if !d1 {
 			if c1 != c2 {
 				return c1 < c2
 			}
@@ -87,10 +88,5 @@ func NaturalLess(s1, s2 string) bool {
 
 // isDigit checks if a byte is a digit (0-9)
 func isDigit(b byte) bool {
-	switch b {
-	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		return true
-	default:
-		return false
-	}
+	return b >= '0' && b <= '9'
 }

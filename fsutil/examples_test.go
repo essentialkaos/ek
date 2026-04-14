@@ -47,13 +47,11 @@ func ExampleValidatePerms() {
 }
 
 func ExampleProperPath() {
-	paths := []string{
+	config := ProperPath("FRS",
 		"/home/john/.config/myapp/config",
 		"/home/john/.myappconfig",
 		"/etc/myapp.conf",
-	}
-
-	config := ProperPath("FRS", paths)
+	)
 
 	if config != "" {
 		fmt.Printf("Used configuration file: %s\n", config)

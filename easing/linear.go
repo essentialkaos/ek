@@ -9,8 +9,11 @@ package easing
 
 // Linear no easing and no acceleration
 func Linear(t, b, c, d float64) float64 {
-	if t > d {
-		return c
+	switch {
+	case t <= 0:
+		return b
+	case t >= d:
+		return b + c
 	}
 
 	return c*t/d + b

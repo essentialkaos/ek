@@ -9,13 +9,13 @@ package ansi
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bytes"
+	"slices"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// HasCodes returns true if given string contains ANSI/VT100 control sequences
-func HasCodes(s string) bool {
+// Has returns true if given string contains ANSI/VT100 control sequences
+func Has(s string) bool {
 	for _, r := range s {
 		if r == 0x1B {
 			return true
@@ -25,34 +25,43 @@ func HasCodes(s string) bool {
 	return false
 }
 
-// HasCodes returns true if given byte slice contains ANSI/VT100 control sequences
-func HasCodesBytes(b []byte) bool {
-	for _, r := range b {
-		if r == 0x1B {
-			return true
-		}
-	}
-
-	return false
+// HasBytes returns true if given byte slice contains ANSI/VT100 control sequences
+func HasBytes(b []byte) bool {
+	return slices.Contains(b, 0x1B)
 }
 
-// RemoveCodesBytes returns string without all ANSI/VT100 control sequences
-func RemoveCodes(s string) string {
-	if s == "" || !HasCodes(s) {
+// Remove returns string without all ANSI/VT100 control sequences
+func Remove(s string) string {
+	if s == "" || !Has(s) {
 		return s
 	}
 
-	return string(RemoveCodesBytes([]byte(s)))
+	return string(removeCodesBytes([]byte(s)))
 }
 
-// RemoveCodesBytes returns byte slice without all ANSI/VT100 control sequences
-func RemoveCodesBytes(b []byte) []byte {
-	if len(b) == 0 || !HasCodesBytes(b) {
+// RemoveBytes returns a byte slice with all ANSI/VT100 SGR control sequences removed.
+//
+// Aliasing: if the input contains no escape sequences, the original slice is
+// returned as-is without any allocation. Mutating the result in that case will
+// silently mutate the source buffer. If an independent copy is required
+// regardless of content, use [bytes.Clone]:
+//
+//	safe := bytes.Clone(RemoveBytes(b))
+func RemoveBytes(b []byte) []byte {
+	if len(b) == 0 || !HasBytes(b) {
 		return b
 	}
 
-	var buf bytes.Buffer
+	return removeCodesBytes(b)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// removeCodesBytes removes all ANSI/VT100 control sequences from given byte slice
+func removeCodesBytes(b []byte) []byte {
 	var skip bool
+
+	result := make([]byte, 0, len(b))
 
 	for _, r := range b {
 		if r == 0x1B {
@@ -69,10 +78,8 @@ func RemoveCodesBytes(b []byte) []byte {
 			continue
 		}
 
-		buf.WriteByte(r)
+		result = append(result, r)
 	}
 
-	return buf.Bytes()
+	return result
 }
-
-// ////////////////////////////////////////////////////////////////////////////////// //

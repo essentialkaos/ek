@@ -7,46 +7,55 @@ package easing
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"math"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// BackIn Accelerating from zero velocity
+// BackIn accelerating from zero velocity
 // https://easings.net/#easeInBack
 func BackIn(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 
-	s := math.SqrtPi
+	s := 1.70158
 	t /= d
 
 	return c*t*t*((s+1)*t-s) + b
 }
 
-// BackOut Decelerating to zero velocity
+// BackOut decelerating to zero velocity
 // https://easings.net/#easeOutBack
 func BackOut(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 
-	s := math.SqrtPi
+	s := 1.70158
 	t = t/d - 1
 
 	return c*(t*t*((s+1)*t+s)+1) + b
 }
 
-// BackInOut Acceleration until halfway, then deceleration
+// BackInOut acceleration until halfway, then deceleration
 // https://easings.net/#easeInOutBack
 func BackInOut(t, b, c, d float64) float64 {
-	if t > d {
+	switch {
+	case t > d:
+		return c
+	case t <= 0:
+		return b
+	case t == d:
 		return c
 	}
 
-	s := math.SqrtPi * 1.525
+	s := 1.70158
 	t /= d / 2
 
 	if t < 1 {

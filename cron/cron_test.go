@@ -27,7 +27,6 @@ var _ = Suite(&CronSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *CronSuite) TestParsing(c *C) {
-
 	e0, err := Parse("* * * *")
 
 	c.Assert(err, NotNil)
@@ -67,14 +66,14 @@ func (s *CronSuite) TestParsing(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(e3, NotNil)
 	c.Assert(e3.IsDue(time.Date(2015, 1, 1, 12, 45, 0, 0, time.Local)), Equals, true)
-	c.Assert(e3.IsDue(time.Date(2015, 2, 1, 0, 0, 0, 0, time.Local)), Equals, false)
+	c.Assert(e3.IsDue(time.Date(2015, 2, 21, 0, 0, 0, 0, time.Local)), Equals, false)
 
 	e4, err := Parse("*/15 */6 1,15,31 * 1-5")
 
 	c.Assert(err, IsNil)
 	c.Assert(e4, NotNil)
 	c.Assert(e4.IsDue(time.Date(2015, 1, 15, 18, 15, 0, 0, time.Local)), Equals, true)
-	c.Assert(e4.IsDue(time.Date(2015, 2, 15, 18, 15, 0, 0, time.Local)), Equals, false)
+	c.Assert(e4.IsDue(time.Date(2015, 2, 21, 18, 15, 0, 0, time.Local)), Equals, false)
 
 	e5, err := Parse("* * * 1,3,5,7,9,11 *")
 
@@ -112,8 +111,7 @@ func (s *CronSuite) TestParsing(c *C) {
 
 	c.Assert(
 		e9.Prev(time.Date(2015, 1, 1, 0, 0, 0, 0, time.Local)),
-		Equals,
-		time.Unix(0, 0),
+		DeepEquals, time.Time{},
 	)
 
 	e10, err := Parse("0 12 1 1 Wed")
@@ -123,14 +121,40 @@ func (s *CronSuite) TestParsing(c *C) {
 
 	c.Assert(
 		e10.Next(time.Date(2015, 6, 1, 0, 0, 0, 0, time.Local)),
-		Equals,
-		time.Unix(0, 0),
+		DeepEquals, time.Time{},
 	)
 
 	e11, err := Parse("45 17 7 0-5 1")
 
 	c.Assert(err, IsNil)
 	c.Assert(e11, NotNil)
+
+	e12, err := Parse("0 12 1 * Mon")
+
+	c.Assert(err, IsNil)
+	c.Assert(e12, NotNil)
+
+	// DOM hit only: Feb 1 2026 is a Sunday — DOM=1 matches, DOW=Mon does NOT.
+	c.Assert(
+		e12.IsDue(time.Date(2026, 2, 1, 12, 0, 0, 0, time.Local)),
+		Equals, true,
+	)
+
+	// DOW hit only: Feb 2 2026 is a Monday — DOM=2≠1, DOW=Mon matches.
+	c.Assert(
+		e12.IsDue(time.Date(2026, 2, 2, 12, 0, 0, 0, time.Local)),
+		Equals, true,
+	)
+
+	e13, err := Parse("* * * * Mon")
+
+	c.Assert(err, IsNil)
+	c.Assert(e12, NotNil)
+
+	c.Assert(
+		e13.IsDue(time.Date(2026, 2, 1, 12, 0, 0, 0, time.Local)),
+		Equals, false,
+	)
 }
 
 func (s *CronSuite) TestAliases(c *C) {
@@ -224,43 +248,43 @@ func (s *CronSuite) TestErrors(c *C) {
 	e, err := Parse("0-A * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "0-A": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "0-A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("A-1 * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "A-1": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "A-1": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("*/A * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "\*/A": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "\*/A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("*/0 * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "\*/0": Interval can't be less or equals 0`)
+	c.Assert(err, ErrorMatches, `can't parse token "\*/0": interval can't be less or equals 0`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("A * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "A": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,A * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "0,1,A": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "0,1,A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 
 	e, err = Parse("0,1,2-A * * * *")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse token "0,1,2-A": strconv.ParseUint: parsing "A": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse token "0,1,2-A": strconv.ParseUint: parsing "A": invalid syntax`)
 	c.Assert(e, IsNil)
 }
 

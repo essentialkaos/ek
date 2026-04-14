@@ -18,7 +18,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetLA returns loadavg
+// GetLA returns current system load averages
 //
 // Implementation borrowed from https://github.com/prometheus/node_exporter/blob/master/collector/loadavg_bsd.go
 func GetLA() (*LoadAvg, error) {
@@ -58,7 +58,7 @@ func getProcStats() (int, int, error) {
 	output, err := cmd.Output()
 
 	if err != nil {
-		return 0, 0, errors.New("Can't run ps command for collecting information about processes")
+		return 0, 0, errors.New("can't run ps command for collecting information about processes")
 	}
 
 	outputStr := string(output)

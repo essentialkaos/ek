@@ -65,12 +65,12 @@ func ExampleQuintInOut() {
 
 func ExampleSineIn() {
 	fmt.Println(SineIn(5, 0, 10, 10))
-	// Output: 3.0978992192751917
+	// Output: 2.9289321881345245
 }
 
 func ExampleSineOut() {
 	fmt.Println(SineOut(5, 0, 10, 10))
-	// Output: 7.236090437019012
+	// Output: 7.071067811865475
 }
 
 func ExampleSineInOut() {
@@ -125,17 +125,17 @@ func ExampleElasticInOut() {
 
 func ExampleBackIn() {
 	fmt.Println(BackIn(5, 0, 10, 10))
-	// Output: -0.9655673136318949
+	// Output: -0.8769750000000004
 }
 
 func ExampleBackOut() {
 	fmt.Println(BackOut(5, 0, 10, 10))
-	// Output: 10.965567313631894
+	// Output: 10.876975
 }
 
 func ExampleBackInOut() {
 	fmt.Println(BackInOut(5, 0, 10, 10))
-	// Output: 5
+	// Output: 5.000000000000001
 }
 
 func ExampleBounceIn() {

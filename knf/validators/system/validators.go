@@ -12,8 +12,8 @@ package system
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/system"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -35,7 +35,7 @@ func validateUser(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
 	if v != "" && !system.IsUserExist(v) {
-		return fmt.Errorf("User %q is not present on the system", v)
+		return fmt.Errorf("user %q is not present on the system", v)
 	}
 
 	return nil
@@ -46,7 +46,7 @@ func validateGroup(config knf.IConfig, prop string, value any) error {
 	v := config.GetS(prop)
 
 	if v != "" && !system.IsGroupExist(v) {
-		return fmt.Errorf("Group %q is not present on the system", v)
+		return fmt.Errorf("group %q is not present on the system", v)
 	}
 
 	return nil

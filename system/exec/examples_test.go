@@ -14,7 +14,7 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func ExampleRun() {
-	err := Run("/bin/echo", "abc", "123")
+	err := Run("echo", "abc", "123")
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)
@@ -22,7 +22,7 @@ func ExampleRun() {
 }
 
 func ExampleSudo() {
-	err := Sudo("/bin/echo", "abc", "123")
+	err := Sudo("john", "/bin/echo", "abc", "123")
 
 	if err != nil {
 		fmt.Printf("Error: %v", err)

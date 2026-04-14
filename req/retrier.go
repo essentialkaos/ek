@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/timeutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,7 +36,7 @@ type Retry struct {
 
 var (
 	// ErrNilEngine is returned if retrier struct is nil
-	ErrNilRetrier = fmt.Errorf("Retrier is nil")
+	ErrNilRetrier = fmt.Errorf("retrier is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -95,11 +95,11 @@ func (rt *Retrier) Delete(r Request, rr Retry) (*Response, error) {
 func (r Retry) Validate() error {
 	switch {
 	case r.Num < 1:
-		return fmt.Errorf("Number of tries must be equal or greater that 1 (%d < 1)", r.Num)
+		return fmt.Errorf("number of tries must be equal or greater that 1 (%d < 1)", r.Num)
 	case r.Status != 0 && (r.Status < 100 || r.Status > 599):
-		return fmt.Errorf("Invalid HTTP status code %d", r.Status)
+		return fmt.Errorf("invalid HTTP status code %d", r.Status)
 	case r.MinStatus != 0 && (r.MinStatus < 100 || r.MinStatus > 599):
-		return fmt.Errorf("Invalid minimal HTTP status code %d", r.MinStatus)
+		return fmt.Errorf("invalid minimal HTTP status code %d", r.MinStatus)
 	}
 
 	return nil
@@ -127,12 +127,12 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 			switch {
 			case rr.Status != 0 && resp.StatusCode != rr.Status:
 				lastErr = fmt.Errorf(
-					"All requests completed with non-ok status code (%d is required)",
+					"all requests completed with non-ok status code (%d is required)",
 					rr.Status,
 				)
 			case rr.MinStatus != 0 && resp.StatusCode > rr.MinStatus:
 				lastErr = fmt.Errorf(
-					"All requests completed with non-ok status code (status code must be greater than %d)",
+					"all requests completed with non-ok status code (status code must be greater than %d)",
 					rr.Status,
 				)
 			}
@@ -145,7 +145,7 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 		retryPause := getRetryPause(rr, resp)
 
 		if retryPause > 0 {
-			time.Sleep(rr.Pause)
+			time.Sleep(retryPause)
 		}
 	}
 
@@ -177,7 +177,7 @@ func getRetryPause(rr Retry, resp *Response) time.Duration {
 			return 0
 		}
 
-		pause = timeutil.SecondsToDuration(pauseFloat)
+		pause = timeutil.ToSeconds(pauseFloat)
 	} else {
 		pauseUntil, err := time.Parse(time.RFC1123, retryAfter)
 

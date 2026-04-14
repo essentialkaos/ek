@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/timeutil"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/timeutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,7 +40,7 @@ func validateFormat(config knf.IConfig, prop string, value any) error {
 		return nil
 	}
 
-	str := timeutil.Format(time.Now(), v)
+	str := timeutil.Format(time.Unix(0, 0), v)
 
 	if !strings.ContainsRune(str, '%') {
 		return nil
@@ -49,7 +49,7 @@ func validateFormat(config knf.IConfig, prop string, value any) error {
 	seq := strutil.Substr(str, strings.IndexRune(str, '%'), 2)
 
 	return fmt.Errorf(
-		"Property %s contains invalid time format: Invalid control sequence %q",
+		"property %s contains invalid time format: Invalid control sequence %q",
 		prop, seq,
 	)
 }
@@ -68,5 +68,5 @@ func validateTimezone(config knf.IConfig, prop string, value any) error {
 		return nil
 	}
 
-	return fmt.Errorf("Property %s contains invalid time zone name: %v", prop, err)
+	return fmt.Errorf("property %s contains invalid time zone name: %v", prop, err)
 }

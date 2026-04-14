@@ -60,7 +60,7 @@ func (s *CSVSuite) TestRead(c *C) {
 	defer fd.Close()
 
 	line := 0
-	r := NewReader(fd, ',').WithHeader(true)
+	r := NewReader(fd, ',').WithHeader(true).WithBufferSize(1024)
 	m := map[string]string{}
 
 	for {
@@ -191,16 +191,23 @@ func (s *CSVSuite) TestReadErrors(c *C) {
 }
 
 func (s *CSVSuite) TestLineParser(c *C) {
-	data := make(Row, 2)
+	row := make(Row, 2)
 
-	parseAndFill("ABCD", data, ";")
-	c.Assert(data, DeepEquals, Row{"ABCD", ""})
+	parseAndFill("ABCD", row, ";")
+	c.Assert(row, DeepEquals, Row{"ABCD", ""})
 
-	parseAndFill("", data, ";")
-	c.Assert(data, DeepEquals, Row{"", ""})
+	parseAndFill("", row, ";")
+	c.Assert(row, DeepEquals, Row{"", ""})
 
-	parseAndFill("A;B;C;D;E", data, ";")
-	c.Assert(data, DeepEquals, Row{"A", "B"})
+	parseAndFill("A;B;C;D;E", row, ";")
+	c.Assert(row, DeepEquals, Row{"A", "B"})
+
+	row = make(Row, 5)
+
+	parseAndFill("A;B;X;Y;Z", row, ";")
+	c.Assert(row, DeepEquals, Row{"A", "B", "X", "Y", "Z"})
+	parseAndFill("A;B;", row, ";")
+	c.Assert(row, DeepEquals, Row{"A", "B", "", "", ""})
 }
 
 func (s *CSVSuite) TestNil(c *C) {
@@ -214,6 +221,10 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r.WithHeader(false), IsNil)
 	c.Assert(r.Line(), Equals, 0)
 	c.Assert(r.Error(), IsNil)
+	c.Assert(r.WithBufferSize(100), IsNil)
+
+	r = NewReader(nil, ',')
+	c.Assert(r, IsNil)
 
 	r.Seq(nil)
 

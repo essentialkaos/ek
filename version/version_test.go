@@ -166,27 +166,27 @@ func (s *VersionSuite) TestErrors(c *C) {
 
 	_, err = Parse("A")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "A": invalid syntax`)
+	c.Assert(err.Error(), Equals, `"A" is not valid semver version`)
 
 	_, err = Parse(" ")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing " ": invalid syntax`)
+	c.Assert(err.Error(), Equals, `" " is not valid semver version`)
 
 	_, err = Parse("")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Version can't be empty`)
+	c.Assert(err.Error(), Equals, `version data is empty`)
 
 	_, err = Parse("1.2.B")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `strconv.Atoi: parsing "B": invalid syntax`)
+	c.Assert(err.Error(), Equals, `"1.2.B" is not valid semver version`)
 
 	_, err = Parse("1.2.8-")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Prerelease number is empty`)
+	c.Assert(err.Error(), Equals, `"1.2.8-" is not valid semver version`)
 
 	_, err = Parse("1.2.8-1+")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Build number is empty`)
+	c.Assert(err.Error(), Equals, `"1.2.8-1+" is not valid semver version`)
 
 	c.Assert(v1.Major(), Equals, -1)
 	c.Assert(v1.Minor(), Equals, -1)
@@ -266,4 +266,12 @@ func (s *VersionSuite) TestComparison(c *C) {
 
 	c.Assert(P("0.10.8").Greater(P("1.0.0")), Equals, false)
 	c.Assert(P("1.0.0").Less(P("0.10.8")), Equals, false)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (s *VersionSuite) BenchmarkParse(c *C) {
+	for range c.N {
+		Parse("6.12.1-beta2+sha:5114f85")
+	}
 }

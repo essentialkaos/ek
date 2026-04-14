@@ -54,6 +54,9 @@ type Cache interface {
 
 	// Flush removes all data from cache
 	Flush() bool
+
+	// Stop stops janitor goroutine
+	Stop()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

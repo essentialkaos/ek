@@ -18,10 +18,10 @@ import (
 	"errors"
 	"io"
 	"math/rand"
-	"strings"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/essentialkaos/ek/v14/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -32,10 +32,18 @@ type Strength uint8
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	STRENGTH_WEAK   Strength = 0 // Only lowercase English alphabet characters
-	STRENGTH_MEDIUM Strength = 1 // Lowercase and uppercase English alphabet characters, digits
-	STRENGTH_STRONG Strength = 2 // Lowercase and uppercase English alphabet characters, digits, special symbols
+	// STRENGTH_WEAK indicates a password composed only of lowercase ASCII letters
+	STRENGTH_WEAK Strength = 0
+
+	// STRENGTH_MEDIUM indicates a password with mixed-case letters and digits
+	STRENGTH_MEDIUM Strength = 1
+
+	// STRENGTH_STRONG indicates a password with mixed-case letters, digits, and special symbols
+	STRENGTH_STRONG Strength = 2
 )
+
+// MIN_PASSWORD_LEN is the minimal password length
+const MIN_PASSWORD_LEN = 6
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -45,20 +53,25 @@ const (
 	_SYMBOLS_STRONG = "!\";%:?*()_+=-~/\\<>,.[]{}"
 )
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var (
-	// ErrEmptyPassword is returned when password is empty
-	ErrEmptyPassword = errors.New("Password can't be empty")
+	// ErrEmptyPassword is returned by [Hash] and [HashBytes] when the password
+	// argument is empty
+	ErrEmptyPassword = errors.New("password can't be empty")
 
-	// ErrEmptyPepper is returned when pepper is empty
-	ErrEmptyPepper   = errors.New("Pepper can't be empty")
+	// ErrEmptyPepper is returned by [Hash] and [HashBytes] when the pepper argument
+	// is empty
+	ErrEmptyPepper = errors.New("pepper can't be empty")
 
-	// ErrInvalidPepper is returned when pepper has invalid size
-	ErrInvalidPepper = errors.New("Pepper has invalid size")
+	// ErrInvalidPepper is returned when the pepper length is not 16, 24, or 32 bytes
+	ErrInvalidPepper = errors.New("pepper has invalid size")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Hash creates hash and encrypts it with salt and pepper
+// Hash bcrypt-hashes the password, encrypts the result with the pepper using AES-CFB,
+// and returns a URL-safe base64-encoded string
 func Hash(password, pepper string) (string, error) {
 	hash, err := HashBytes([]byte(password), []byte(pepper))
 
@@ -69,7 +82,7 @@ func Hash(password, pepper string) (string, error) {
 	return string(hash), nil
 }
 
-// HashBytes creates hash and encrypts it with salt and pepper
+// HashBytes is the byte-slice variant of [Hash]
 func HashBytes(password, pepper []byte) ([]byte, error) {
 	switch {
 	case len(password) == 0:
@@ -112,12 +125,13 @@ func HashBytes(password, pepper []byte) ([]byte, error) {
 	return removeBase64Padding(buf), nil
 }
 
-// Check compares password with encrypted hash
+// Check reports whether password matches the hash produced by [Hash] using
+// the given pepper
 func Check(password, pepper, hash string) bool {
 	return CheckBytes([]byte(password), []byte(pepper), []byte(hash))
 }
 
-// CheckBytes compares password with encrypted hash
+// CheckBytes is the byte-slice variant of [Check]
 func CheckBytes(password, pepper, hash []byte) bool {
 	if len(password) == 0 || len(hash) == 0 || !isValidPepper(pepper) {
 		return false
@@ -133,9 +147,9 @@ func CheckBytes(password, pepper, hash []byte) bool {
 	}
 
 	hpd = hpd[:n]
-	hdpl := len(hpd)
+	hdpLen := len(hpd)
 
-	if hdpl < aes.BlockSize || (hdpl%aes.BlockSize) != 0 {
+	if hdpLen < aes.BlockSize || (hdpLen%aes.BlockSize) != 0 {
 		return false
 	}
 
@@ -161,103 +175,79 @@ func CheckBytes(password, pepper, hash []byte) bool {
 	return bcrypt.CompareHashAndPassword(h, hasher.Sum(nil)) == nil
 }
 
-// GenPassword generates random password
+// GenPassword returns a random password of the given length and strength level
 func GenPassword(length int, strength Strength) string {
 	return string(GenPasswordBytes(length, strength))
 }
 
-// GenPassword generates random password
+// GenPasswordBytes returns a random password as a byte slice of the given length
+// and strength level
 func GenPasswordBytes(length int, strength Strength) []byte {
-	return getRandomPasswordBytes(length, getStrength(strength))
+	return getRandomPasswordBytes(
+		length, mathutil.Between(strength, STRENGTH_WEAK, STRENGTH_STRONG),
+	)
 }
 
-// GetPasswordStrength returns password strength
+// GetPasswordStrength evaluates and returns the strength of the given password
+// string
 func GetPasswordStrength(password string) Strength {
 	return GetPasswordBytesStrength([]byte(password))
 }
 
-// GetPasswordBytesStrength returns password strength
+// GetPasswordBytesStrength evaluates and returns the strength of the given password
+// byte slice
 func GetPasswordBytesStrength(password []byte) Strength {
 	if len(password) == 0 {
 		return STRENGTH_WEAK
 	}
 
-	var conditions int
+	hasLower := bytes.ContainsAny(password, "abcdefghijklmnopqrstuvwxyz")
+	hasUpper := bytes.ContainsAny(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	hasDigit := bytes.ContainsAny(password, "1234567890")
+	hasSymbol := bytes.ContainsAny(password, _SYMBOLS_STRONG)
+	longEnough := len(password) >= MIN_PASSWORD_LEN
 
-	if bytes.ContainsAny(password, "abcdefghijklmnopqrstuvwxyz") &&
-		bytes.ContainsAny(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
-		conditions++
-	}
-
-	if bytes.ContainsAny(password, "1234567890") {
-		conditions++
-	}
-
-	if bytes.ContainsAny(password, _SYMBOLS_STRONG) {
-		conditions++
-	}
-
-	if len(password) < 6 {
-		conditions = 1
-	} else {
-		conditions++
-	}
-
-	switch conditions {
-	case 4:
+	switch {
+	case longEnough && hasLower && hasUpper && hasDigit && hasSymbol:
 		return STRENGTH_STRONG
-	case 3:
+	case longEnough && hasDigit && (hasLower || hasUpper):
 		return STRENGTH_MEDIUM
 	}
 
 	return STRENGTH_WEAK
 }
 
-// GenPasswordVariations generates password variants with possible
-// typos fixes (case swap for all letters, first leter swap, password
-// without last symbol)
+// GenPasswordVariations returns up to three variants of the password with common
+// typo corrections applied: full case-flip, first-character case-flip, and last
+// character removed
 func GenPasswordVariations(password string) []string {
-	if len(password) < 6 {
+	if len(password) < MIN_PASSWORD_LEN {
 		return nil
 	}
-
-	var result []string
 
 	passwordBytes := []byte(password)
 
-	result = append(result, string(genVariantFlipAll(passwordBytes)))
-	result = append(result, string(genVariantFlipFirst(passwordBytes)))
-	result = append(result, string(genVariantTrimLast(passwordBytes)))
-
-	return result
+	return []string{
+		string(genVariantFlipAll(passwordBytes)),
+		string(genVariantFlipFirst(passwordBytes)),
+		string(genVariantTrimLast(passwordBytes)),
+	}
 }
 
-// GenPasswordBytesVariations generates password variants with possible
-// typos fixes (case swap for all letters, first leter swap, password
-// without last symbol)
+// GenPasswordBytesVariations is the byte-slice variant of [GenPasswordVariations]
 func GenPasswordBytesVariations(password []byte) [][]byte {
-	if len(password) < 6 {
+	if len(password) < MIN_PASSWORD_LEN {
 		return nil
 	}
 
-	var result [][]byte
-
-	result = append(result, genVariantFlipAll(password))
-	result = append(result, genVariantFlipFirst(password))
-	result = append(result, genVariantTrimLast(password))
-
-	return result
+	return [][]byte{
+		genVariantFlipAll(password),
+		genVariantFlipFirst(password),
+		genVariantTrimLast(password),
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func getStrength(s Strength) Strength {
-	if s > STRENGTH_STRONG {
-		return STRENGTH_STRONG
-	}
-
-	return s
-}
 
 // padData adds padding to data to make its length a multiple of the AES block size
 func padData(src []byte) []byte {
@@ -270,6 +260,11 @@ func padData(src []byte) []byte {
 // unpadData removes padding from data
 func unpadData(src []byte) ([]byte, bool) {
 	length := len(src)
+
+	if length == 0 {
+		return nil, false
+	}
+
 	unpadding := int(src[length-1])
 
 	if unpadding > length {
@@ -287,7 +282,8 @@ func addBase64Padding(src []byte) []byte {
 		return src
 	}
 
-	buf := make([]byte, len(src)+(4-len(src)%4))
+	buf := make([]byte, len(src)+(4-m))
+
 	copy(buf, src)
 
 	for i := len(src); i < len(buf); i++ {
@@ -308,8 +304,8 @@ func getRandomPasswordBytes(length int, strength Strength) []byte {
 		return nil
 	}
 
-	if strength == STRENGTH_STRONG && length < 6 {
-		length = 6
+	if strength == STRENGTH_STRONG && length < MIN_PASSWORD_LEN {
+		length = MIN_PASSWORD_LEN
 	}
 
 	var symbols = _SYMBOLS_WEAK
@@ -325,8 +321,6 @@ func getRandomPasswordBytes(length int, strength Strength) []byte {
 	buf := make([]byte, length)
 
 	for {
-		rand.Seed(time.Now().UTC().UnixNano())
-
 		for i := range length {
 			buf[i] = symbols[rand.Intn(ls)]
 		}
@@ -373,17 +367,18 @@ func genVariantFlipFirst(password []byte) []byte {
 
 // genVariantTrimLast generates a password variant with the last symbol trimmed
 func genVariantTrimLast(password []byte) []byte {
-	return append(password[:0:0], password[:len(password)-1]...)
+	return bytes.Clone(password[:len(password)-1])
 }
 
 // flipCase flips the case of a single byte
 func flipCase(b byte) byte {
-	s := string(b)
-	sc := strings.ToLower(s)
-
-	if s != sc {
-		return byte(sc[0])
+	if b >= 'a' && b <= 'z' {
+		return b - 32
 	}
 
-	return byte(strings.ToUpper(s)[0])
+	if b >= 'A' && b <= 'Z' {
+		return b + 32
+	}
+
+	return b
 }

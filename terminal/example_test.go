@@ -9,9 +9,35 @@ package terminal
 
 import (
 	"errors"
+	"fmt"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+func ExampleRead() {
+	userName, err := Read("Please enter user name")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("User name: %s\n", userName)
+}
+
+func ExampleReadAnswer() {
+	// If the user doesn't enter any value, we will use the default
+	// value (Y in this case)
+	ok, err := ReadAnswer("Remove this file?", "Y")
+
+	if !ok || err != nil {
+		return
+	}
+
+	if ok {
+		fmt.Println("File removed")
+	}
+}
 
 func ExamplePrintActionMessage() {
 	statusOk := true

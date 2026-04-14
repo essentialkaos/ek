@@ -25,49 +25,49 @@ var _ = Suite(&ANSISuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func (s *ANSISuite) TestHasCodes(c *C) {
-	c.Assert(HasCodes(""), Equals, false)
-	c.Assert(HasCodes("ABCD^]"), Equals, false)
-	c.Assert(HasCodes("\033ABCD"), Equals, true)
-	c.Assert(HasCodes("\x1bABCD"), Equals, true)
-	c.Assert(HasCodes("\x1BABCD"), Equals, true)
+func (s *ANSISuite) TestHas(c *C) {
+	c.Assert(Has(""), Equals, false)
+	c.Assert(Has("ABCD^]"), Equals, false)
+	c.Assert(Has("\033ABCD"), Equals, true)
+	c.Assert(Has("\x1bABCD"), Equals, true)
+	c.Assert(Has("\x1BABCD"), Equals, true)
 }
 
-func (s *ANSISuite) TestHasCodesBytes(c *C) {
-	c.Assert(HasCodesBytes([]byte{}), Equals, false)
-	c.Assert(HasCodesBytes([]byte("ABCD^]")), Equals, false)
-	c.Assert(HasCodesBytes([]byte("\033ABCD")), Equals, true)
-	c.Assert(HasCodesBytes([]byte("\x1bABCD")), Equals, true)
-	c.Assert(HasCodesBytes([]byte("\x1BABCD")), Equals, true)
+func (s *ANSISuite) TestHasBytes(c *C) {
+	c.Assert(HasBytes([]byte{}), Equals, false)
+	c.Assert(HasBytes([]byte("ABCD^]")), Equals, false)
+	c.Assert(HasBytes([]byte("\033ABCD")), Equals, true)
+	c.Assert(HasBytes([]byte("\x1bABCD")), Equals, true)
+	c.Assert(HasBytes([]byte("\x1BABCD")), Equals, true)
 }
 
-func (s *ANSISuite) TestRemoveCodes(c *C) {
-	c.Assert(RemoveCodes(""), Equals, "")
-	c.Assert(RemoveCodes("ABCD"), Equals, "ABCD")
-	c.Assert(RemoveCodes("\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m"), Equals, "Hello World!")
+func (s *ANSISuite) TestRemove(c *C) {
+	c.Assert(Remove(""), Equals, "")
+	c.Assert(Remove("ABCD"), Equals, "ABCD")
+	c.Assert(Remove("\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m"), Equals, "Hello World!")
 }
 
-func (s *ANSISuite) TestRemoveCodesBytes(c *C) {
-	c.Assert(RemoveCodesBytes([]byte{}), DeepEquals, []byte{})
-	c.Assert(RemoveCodesBytes([]byte("ABCD")), DeepEquals, []byte("ABCD"))
-	c.Assert(RemoveCodesBytes(
+func (s *ANSISuite) TestRemoveBytes(c *C) {
+	c.Assert(RemoveBytes([]byte{}), DeepEquals, []byte{})
+	c.Assert(RemoveBytes([]byte("ABCD")), DeepEquals, []byte("ABCD"))
+	c.Assert(RemoveBytes(
 		[]byte("\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m")),
 		DeepEquals, []byte("Hello World!"),
 	)
 }
 
-func (s *ANSISuite) BenchmarkRemoveCodes(c *C) {
+func (s *ANSISuite) BenchmarkRemove(c *C) {
 	data := "\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m"
 
 	for range c.N {
-		RemoveCodes(data)
+		Remove(data)
 	}
 }
 
-func (s *ANSISuite) BenchmarkRemoveCodesBytes(c *C) {
+func (s *ANSISuite) BenchmarkRemoveBytes(c *C) {
 	data := []byte("\033[40;38;5;82mHello \x1b[30;48;5;82mWorld!\x1B[0m")
 
 	for range c.N {
-		RemoveCodesBytes(data)
+		RemoveBytes(data)
 	}
 }

@@ -107,28 +107,7 @@ func (s *SliceSuite) TestFilter(c *C) {
 	c.Assert(Filter(k, func(v int, _ int) bool { return v > 5 }), DeepEquals, []int{6, 7, 8, 9})
 }
 
-func (s *SliceSuite) TestDeprecated(c *C) {
-	c.Assert(IntToInterface([]int{1, 2, 3}), DeepEquals, []any{1, 2, 3})
-	c.Assert(StringToInterface([]string{"A", "B", "C"}), DeepEquals, []any{"A", "B", "C"})
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-func (s *SliceSuite) BenchmarkStringToInterface(c *C) {
-	source := []string{"1", "2", "3"}
-
-	for range c.N {
-		StringToInterface(source)
-	}
-}
-
-func (s *SliceSuite) BenchmarkIntToInterface(c *C) {
-	source := []int{1, 2, 3}
-
-	for range c.N {
-		IntToInterface(source)
-	}
-}
 
 func (s *SliceSuite) BenchmarkStringToError(c *C) {
 	source := []string{"A", "B", "C"}

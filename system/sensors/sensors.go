@@ -1,7 +1,5 @@
-// Package hash contains different hash algorithms and utilities
-//
-// Deprecated: Use package hashutil instead
-package hash
+// Package sensors provides methods for collecting hardware sensor information
+package sensors
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -10,17 +8,19 @@ package hash
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import (
-	"crypto/sha256"
+// Device contains sensor information collected from a single hwmon device
+type Device struct {
+	Name        string
+	TempSensors []TempSensor
+}
 
-	"github.com/essentialkaos/ek/v13/hashutil"
-)
+// TempSensor contains temperature readings from a single hwmon sensor input
+type TempSensor struct {
+	Name string
+	Cur  float64
+	Min  float64
+	Max  float64
+	Crit float64
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-// FileHash generates an SHA-256 hash for a given file
-//
-// Deprecated: Use package [hashutil] instead
-func FileHash(file string) string {
-	return hashutil.File(file, sha256.New()).String()
-}

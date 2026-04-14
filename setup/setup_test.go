@@ -143,8 +143,8 @@ func (s *SetupSuite) TestAux(c *C) {
 		{"abcd/test1.knf", []byte("[main]\n  test: 1\n\n"), 0},
 	}
 
-	c.Assert(checkForInstall(app, bin), DeepEquals, errors.New("Configuration file name \"abcd/test1.knf\" is invalid"))
-	c.Assert(checkForUninstall(app, bin), DeepEquals, errors.New("Configuration file name \"abcd/test1.knf\" is invalid"))
+	c.Assert(checkForInstall(app, bin), DeepEquals, errors.New("configuration file name \"abcd/test1.knf\" is invalid"))
+	c.Assert(checkForUninstall(app, bin), DeepEquals, errors.New("configuration file name \"abcd/test1.knf\" is invalid"))
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -23,7 +23,7 @@ import (
 	"time"
 
 	. "github.com/essentialkaos/check"
-	"github.com/essentialkaos/ek/v13/hashutil"
+	"github.com/essentialkaos/ek/v14/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -506,7 +506,7 @@ func (s *ReqSuite) TestEncoding(c *C) {
 	}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Can't encode request body: json: unsupported type: func()")
+	c.Assert(err.Error(), Equals, "can't encode request body: json: unsupported type: func()")
 	c.Assert(resp, IsNil)
 }
 
@@ -520,25 +520,25 @@ func (s *ReqSuite) TestRequestErrors(c *C) {
 	resp, err = Request{URL: "ABCD"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Unsupported scheme in URL")
+	c.Assert(err.Error(), Equals, "unsupported scheme in URL")
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{URL: "http://127.0.0.1:60000"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, `Can't send request: Get "http://127.0.0.1:60000": dial tcp 127.0.0.1:60000: connect: connection refused`)
+	c.Assert(err.Error(), Equals, `can't send request: Get "http://127.0.0.1:60000": dial tcp 127.0.0.1:60000: connect: connection refused`)
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{URL: "%gh&%ij"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Unsupported scheme in URL")
+	c.Assert(err.Error(), Equals, "unsupported scheme in URL")
 	c.Assert(resp, IsNil)
 
 	resp, err = Request{Method: "ЩУП", URL: "http://127.0.0.1"}.Do()
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, `Can't create request: net/http: invalid method "ЩУП"`)
+	c.Assert(err.Error(), Equals, `can't create request: net/http: invalid method "ЩУП"`)
 	c.Assert(resp, IsNil)
 
 	eng := &Engine{}

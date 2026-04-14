@@ -11,33 +11,34 @@ import (
 	"errors"
 	"runtime"
 
-	"github.com/essentialkaos/ek/v13/selfupdate"
+	"github.com/essentialkaos/ek/v14/selfupdate"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrNilStorage is returned if storage is nil
-	ErrNilStorage = errors.New("Storage is nil")
+	// ErrNilStorage indicates that a nil storage implementation was provided
+	ErrNilStorage = errors.New("storage is nil")
 
-	// ErrEmptyName is returned if app name is empty
-	ErrEmptyName = errors.New("App name is empty")
+	// ErrEmptyName indicates that the application name is empty
+	ErrEmptyName = errors.New("app name is empty")
 
-	// ErrEmptyVersion is returned if app version is empty
-	ErrEmptyVersion = errors.New("App name is empty")
+	// ErrEmptyVersion indicates that the application version is empty
+	ErrEmptyVersion = errors.New("app version is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Storage is an interface for storage
+// Storage describes a backend capable of checking for application updates
 type Storage interface {
-	// Check checks for updates in the storage
+	// Check queries the storage for updates and returns update info and whether update
+	// is available
 	Check(app, version string) (selfupdate.Update, bool, error)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// OSName returns OS name
+// OSName returns a normalized name of the current operating system
 func OSName() string {
 	if runtime.GOOS == "darwin" {
 		return "macos"
@@ -46,7 +47,7 @@ func OSName() string {
 	return runtime.GOOS
 }
 
-// ArchName returns arch name
+// ArchName returns a normalized name of the current CPU architecture
 func ArchName() string {
 	switch runtime.GOARCH {
 	case "amd64":

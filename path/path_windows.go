@@ -41,17 +41,18 @@ func DirN(path string, n int) string {
 		return disk + dirNRight(p, n)
 	}
 
-	return disk + dirNLeft(p, n*-1)
+	return disk + dirNLeft(p, -n)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// isSafePath checks if path is safe to use
 func isSafePath(path string) bool {
-	for _, p := range unsafePaths {
-		if strings.ContainsRune(path, ':') {
-			_, path, _ = strings.Cut(path, ":")
-		}
+	if _, p, ok := strings.Cut(path, ":"); ok {
+		path = p
+	}
 
+	for _, p := range unsafePaths {
 		if strings.HasPrefix(path, p) {
 			return false
 		}

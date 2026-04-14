@@ -1,6 +1,7 @@
-//go:build linux || darwin || freebsd
+//go:build linux
 
 // Package exec provides methods for executing commands
+
 package exec
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -13,12 +14,16 @@ package exec
 import (
 	"os"
 	"os/exec"
-	"strings"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Sudo executes command with sudo
+// DefaultLogMode default mode for log files
+var DefaultLogMode os.FileMode = 0600
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Sudo runs the given command as the specified user via sudo
 func Sudo(user string, args ...string) error {
 	var cmdArgs []string
 
@@ -28,36 +33,30 @@ func Sudo(user string, args ...string) error {
 	return Run("sudo", cmdArgs...)
 }
 
-// Run executes command with arguments
+// Run executes the given command with optional arguments
 func Run(command string, args ...string) error {
-	var cmd = exec.Command(command)
-
-	cmd.Args = append(cmd.Args, args...)
-
-	return cmd.Run()
+	return exec.Command(command, args...).Run()
 }
 
-// RunAsUser executes command as specified user
+// RunAsUser runs the given command as the specified user via runuser,
+// optionally redirecting stdout and stderr to logFile
 func RunAsUser(user, logFile, command string, args ...string) error {
 	var logFd *os.File
 	var err error
 
 	if logFile != "" {
-		logFd, err = os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+		logFd, err = os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, DefaultLogMode)
 
 		if err != nil {
 			return err
 		}
+
+		defer logFd.Close()
 	}
 
-	defer logFd.Close()
+	cmd := exec.Command("/sbin/runuser", "-s", "/bin/bash", user, "--", command)
 
-	cmd := exec.Command(
-		"/sbin/runuser",
-		"-s", "/bin/bash",
-		user, "-c",
-		command, strings.Join(args, " "),
-	)
+	cmd.Args = append(cmd.Args, args...)
 
 	if logFd != nil {
 		cmd.Stderr = logFd

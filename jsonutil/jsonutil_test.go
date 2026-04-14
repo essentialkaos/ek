@@ -14,7 +14,7 @@ import (
 
 	. "github.com/essentialkaos/check"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -84,6 +84,10 @@ func (s *JSONSuite) TestDecoding(c *C) {
 	c.Assert(testStruct.String, Equals, "test")
 	c.Assert(testStruct.Integer, Equals, 912)
 	c.Assert(testStruct.Boolean, Equals, true)
+
+	err = readFile(s.TmpDir+"/file1.json", nil, true)
+	c.Assert(err, NotNil)
+
 }
 
 func (s *JSONSuite) TestEncoding(c *C) {
@@ -150,8 +154,9 @@ func (s *JSONSuite) TestAux(c *C) {
 	err := readData(erw, nil, true)
 	c.Assert(err, NotNil)
 
-	GzipLevel = -15
+	SetGzipLevel(-15)
+	c.Assert(GzipLevel(), Equals, 0)
 	err = writeData(erw, nil, true)
 	c.Assert(err, NotNil)
-	GzipLevel = 1
+	SetGzipLevel(1)
 }

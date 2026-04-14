@@ -10,6 +10,7 @@ package path
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"os"
 
 	. "github.com/essentialkaos/check"
@@ -152,4 +153,12 @@ func (s *PathUtilSuite) TestCompact(c *C) {
 	c.Assert(Compact("test"), Equals, "test")
 	c.Assert(Compact("/a/b/c/d"), Equals, "/a/b/c/d")
 	c.Assert(Compact("/my/random/directory/test.txt"), Equals, "/m/r/d/test.txt")
+}
+
+func (s *PathUtilSuite) TestHome(c *C) {
+	homeDirFunc = func() (string, error) { return "", errors.New("test") }
+
+	c.Assert(evalHome("~/test"), Equals, "~/test")
+
+	homeDirFunc = os.UserHomeDir
 }

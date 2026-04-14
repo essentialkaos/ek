@@ -10,11 +10,12 @@ package system
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -22,9 +23,20 @@ import (
 // Path to file with net info in procfs
 var procNetFile = "/proc/net/dev"
 
+// skipInterfacePrefixes list of interfaces prefixes to ignore
+var skipInterfacePrefixes = []string{
+	"lo",
+	"bond",
+	"veth",
+	"tun",
+	"virbr",
+	"docker",
+	"br-",
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetInterfacesStats returns info about network interfaces
+// // GetInterfacesStats returns current traffic counters keyed by interface name
 func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	s, closer, err := getFileScanner(procNetFile)
 
@@ -37,8 +49,8 @@ func GetInterfacesStats() (map[string]*InterfaceStats, error) {
 	return parseInterfacesStats(s)
 }
 
-// GetNetworkSpeed returns network input/output speed in bytes per second for
-// all network interfaces
+// GetNetworkSpeed measures inbound and outbound throughput in bytes per second
+// over the given duration
 func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	ii1, err := GetInterfacesStats()
 
@@ -59,8 +71,8 @@ func GetNetworkSpeed(duration time.Duration) (uint64, uint64, error) {
 	return in, out, nil
 }
 
-// CalculateNetworkSpeed calculates network input/output speed in bytes per second for
-// all network interfaces
+// CalculateNetworkSpeed calculates inbound and outbound bytes per second from two
+// interface snapshots
 func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Duration) (uint64, uint64) {
 	if ii1 == nil || ii2 == nil {
 		return 0, 0
@@ -69,11 +81,15 @@ func CalculateNetworkSpeed(ii1, ii2 map[string]*InterfaceStats, duration time.Du
 	rb1, tb1 := getActiveInterfacesBytes(ii1)
 	rb2, tb2 := getActiveInterfacesBytes(ii2)
 
-	if rb1+tb1 == 0 || rb2+tb2 == 0 {
+	if rb1+tb1 == 0 || rb2+tb2 == 0 || rb2 < rb1 || tb2 < tb1 {
 		return 0, 0
 	}
 
 	durationSec := uint64(duration / time.Second)
+
+	if durationSec <= 0 {
+		return 0, 0
+	}
 
 	return (rb2 - rb1) / durationSec, (tb2 - tb1) / durationSec
 }
@@ -100,32 +116,32 @@ func parseInterfacesStats(s *bufio.Scanner) (map[string]*InterfaceStats, error) 
 		ii.ReceivedBytes, err = strconv.ParseUint(strutil.ReadField(text, 1, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 1 as unsigned integer in " + procNetFile)
+			return nil, errors.New("can't parse field 1 as unsigned integer in " + procNetFile)
 		}
 
 		ii.ReceivedPackets, err = strconv.ParseUint(strutil.ReadField(text, 2, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 2 as unsigned integer in " + procNetFile)
+			return nil, errors.New("can't parse field 2 as unsigned integer in " + procNetFile)
 		}
 
 		ii.TransmittedBytes, err = strconv.ParseUint(strutil.ReadField(text, 9, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 9 as unsigned integer in " + procNetFile)
+			return nil, errors.New("can't parse field 9 as unsigned integer in " + procNetFile)
 		}
 
 		ii.TransmittedPackets, err = strconv.ParseUint(strutil.ReadField(text, 10, true), 10, 64)
 
 		if err != nil {
-			return nil, errors.New("Can't parse field 10 as unsigned integer in " + procNetFile)
+			return nil, errors.New("can't parse field 10 as unsigned integer in " + procNetFile)
 		}
 
 		stats[name] = ii
 	}
 
 	if len(stats) == 0 {
-		return nil, errors.New("Can't parse file " + procNetFile)
+		return nil, fmt.Errorf("procfs file %s has no valid data", procNetFile)
 	}
 
 	return stats, nil
@@ -133,13 +149,10 @@ func parseInterfacesStats(s *bufio.Scanner) (map[string]*InterfaceStats, error) 
 
 // getActiveInterfacesBytes calculate received and transmitted bytes on all interfaces
 func getActiveInterfacesBytes(is map[string]*InterfaceStats) (uint64, uint64) {
-	var (
-		received    uint64
-		transmitted uint64
-	)
+	var received, transmitted uint64
 
 	for name, info := range is {
-		if strings.HasPrefix(name, "lo") || strings.HasPrefix(name, "bond") {
+		if strutil.HasPrefixAny(name, skipInterfacePrefixes...) {
 			continue
 		}
 

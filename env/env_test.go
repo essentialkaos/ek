@@ -37,17 +37,32 @@ func (s *ENVSuite) TestEnv(c *C) {
 
 	c.Assert(envs["EK_TEST_PORT"], Equals, "8080")
 
-	c.Assert(envs.GetS("EK_TEST_PORT"), Equals, "8080")
+	c.Assert(envs.Has("EK_TEST_PORT"), Equals, true)
+	c.Assert(envs.Get("EK_TEST_PORT"), Equals, "8080")
 	c.Assert(envs.GetI("EK_TEST_PORT"), Equals, 8080)
 	c.Assert(envs.GetF("EK_TEST_PORT"), Equals, 8080.0)
+	c.Assert(envs.Path(), Not(HasLen), 0)
 
-	c.Assert(envs.GetS("UNKNOWN_VARIABLE"), Equals, "")
-	c.Assert(envs.GetI("UNKNOWN_VARIABLE"), Equals, -1)
-	c.Assert(envs.GetF("UNKNOWN_VARIABLE"), Equals, -1.0)
+	c.Assert(envs.Has("UNKNOWN_VARIABLE"), Equals, false)
+	c.Assert(envs.Get("UNKNOWN_VARIABLE"), Equals, "")
+	c.Assert(envs.GetI("UNKNOWN_VARIABLE"), Equals, 0)
+	c.Assert(envs.GetF("UNKNOWN_VARIABLE"), Equals, 0.0)
 
 	c.Assert(Which("cat"), Not(Equals), "")
 	c.Assert(Which("catABCD1234"), Equals, "")
+}
 
+func (s *ENVSuite) TestEnvNil(c *C) {
+	var e Env
+
+	c.Assert(e.Path(), IsNil)
+	c.Assert(e.Has("123"), Equals, false)
+	c.Assert(e.Get("123"), Equals, "")
+	c.Assert(e.GetI("123"), Equals, 0)
+	c.Assert(e.GetF("123"), Equals, 0.0)
+}
+
+func (s *ENVSuite) TestVariable(c *C) {
 	var v *Variable
 
 	c.Assert(v.Get(), Equals, "")

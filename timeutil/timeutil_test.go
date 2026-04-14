@@ -95,22 +95,19 @@ func (s *TimeUtilSuite) TestDuration_Mini(c *C) {
 	c.Assert(Pretty(3*time.Nanosecond).Mini(), Equals, "3 ns")
 }
 
-func (s *TimeUtilSuite) TestDurationToSeconds(c *C) {
-	c.Assert(SecondsToDuration(1), Equals, time.Second)
-	c.Assert(SecondsToDuration(1.5), Equals, 1500*time.Millisecond)
-	c.Assert(SecondsToDuration(3600), Equals, time.Hour)
-}
-
 func (s *TimeUtilSuite) TestFormat(c *C) {
+	loc, _ := time.LoadLocation("Asia/Kathmandu")
+
 	d := time.Unix(1388535309, 123456789).UTC()
 	d1 := time.Unix(1389744909, 123456789).UTC()
+	d2 := time.Unix(1388535309, 123456789).In(loc)
 
 	c.Assert(Format(d, "%%"), Equals, "%")
 	c.Assert(Format(d, "%a"), Equals, "Wed")
 	c.Assert(Format(d, "%A"), Equals, "Wednesday")
 	c.Assert(Format(d, "%b"), Equals, "Jan")
 	c.Assert(Format(d, "%B"), Equals, "January")
-	c.Assert(Format(d, "%c"), Equals, "Wed 01 Jan 2014 12:15:09 AM UTC")
+	c.Assert(Format(d, "%c"), Equals, "Wed Jan 1 00:15:09 2014")
 	c.Assert(Format(d, "%C"), Equals, "20")
 	c.Assert(Format(d, "%d"), Equals, "01")
 	c.Assert(Format(d, "%D"), Equals, "01/01/14")
@@ -127,8 +124,8 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%M"), Equals, "15")
 	c.Assert(Format(d, "%N"), Equals, "123456789")
 	c.Assert(Format(d, "%n"), Equals, "\n")
-	c.Assert(Format(d, "%p"), Equals, "am")
-	c.Assert(Format(d, "%P"), Equals, "AM")
+	c.Assert(Format(d, "%p"), Equals, "AM")
+	c.Assert(Format(d, "%P"), Equals, "am")
 	c.Assert(Format(d, "%r"), Equals, "12:15:09 AM")
 	c.Assert(Format(d, "%R"), Equals, "00:15")
 	c.Assert(Format(d, "%s"), Equals, "1388535309")
@@ -146,6 +143,47 @@ func (s *TimeUtilSuite) TestFormat(c *C) {
 	c.Assert(Format(d, "%1234"), Equals, "%1234")
 	c.Assert(Format(d, "%SSec"), Equals, "09Sec")
 	c.Assert(Format(d1, "%e"), Equals, "15")
+	c.Assert(Format(d2, "%:"), Equals, "+05:45")
+
+	c.Assert(Format(time.Time{}, "%a"), Equals, "Mon")
+	c.Assert(Format(time.Time{}, "%A"), Equals, "Monday")
+	c.Assert(Format(time.Time{}, "%b"), Equals, "Jan")
+	c.Assert(Format(time.Time{}, "%B"), Equals, "January")
+	c.Assert(Format(time.Time{}, "%c"), Equals, "Mon Jan 1 00:00:00 1")
+	c.Assert(Format(time.Time{}, "%C"), Equals, "1")
+	c.Assert(Format(time.Time{}, "%d"), Equals, "01")
+	c.Assert(Format(time.Time{}, "%D"), Equals, "01/01/1")
+	c.Assert(Format(time.Time{}, "%e"), Equals, " 1")
+	c.Assert(Format(time.Time{}, "%F"), Equals, "1-01-01")
+	c.Assert(Format(time.Time{}, "%G"), Equals, "01")
+	c.Assert(Format(time.Time{}, "%H"), Equals, "00")
+	c.Assert(Format(time.Time{}, "%I"), Equals, "12")
+	c.Assert(Format(time.Time{}, "%j"), Equals, "001")
+	c.Assert(Format(time.Time{}, "%k"), Equals, " 0")
+	c.Assert(Format(time.Time{}, "%K"), Equals, "000")
+	c.Assert(Format(time.Time{}, "%l"), Equals, "12")
+	c.Assert(Format(time.Time{}, "%m"), Equals, "01")
+	c.Assert(Format(time.Time{}, "%M"), Equals, "00")
+	c.Assert(Format(time.Time{}, "%N"), Equals, "000000000")
+	c.Assert(Format(time.Time{}, "%n"), Equals, "\n")
+	c.Assert(Format(time.Time{}, "%p"), Equals, "AM")
+	c.Assert(Format(time.Time{}, "%P"), Equals, "am")
+	c.Assert(Format(time.Time{}, "%r"), Equals, "12:00:00 AM")
+	c.Assert(Format(time.Time{}, "%R"), Equals, "00:00")
+	c.Assert(Format(time.Time{}, "%s"), Equals, "-62135596800")
+	c.Assert(Format(time.Time{}, "%S"), Equals, "00")
+	c.Assert(Format(time.Time{}, "%T"), Equals, "00:00:00")
+	c.Assert(Format(time.Time{}, "%u"), Equals, "1")
+	c.Assert(Format(time.Time{}, "%V"), Equals, "01")
+	c.Assert(Format(time.Time{}, "%w"), Equals, "1")
+	c.Assert(Format(time.Time{}, "%y"), Equals, "1")
+	c.Assert(Format(time.Time{}, "%Y"), Equals, "1")
+	c.Assert(Format(time.Time{}, "%z"), Equals, "+0000")
+	c.Assert(Format(time.Time{}, "%Z"), Equals, "UTC")
+	c.Assert(Format(time.Time{}, "%:"), Equals, "+00:00")
+	c.Assert(Format(time.Time{}, "%Q"), Equals, "%Q")
+	c.Assert(Format(time.Time{}, "%1234"), Equals, "%1234")
+	c.Assert(Format(time.Time{}, "%SSec"), Equals, "00Sec")
 
 	replaceDateTag(time.Now(), bytes.NewBufferString(""), bytes.NewBufferString(""))
 }
@@ -156,6 +194,9 @@ func (s *TimeUtilSuite) TestTinyDate(c *C) {
 
 	c.Assert(td.Unix(), Equals, dt.Unix())
 	c.Assert(td.Time().Unix(), Equals, dt.Unix())
+	c.Assert(td.IsZero(), Equals, false)
+
+	c.Assert(TinyDate(1000).IsZero(), Equals, true)
 }
 
 func (s *TimeUtilSuite) TestDateNames(c *C) {
@@ -231,6 +272,9 @@ func (s *TimeUtilSuite) TestTimezone(c *C) {
 
 func (s *TimeUtilSuite) TestDurationParsing(c *C) {
 	d, _ := ParseDuration("")
+	c.Assert(d, Equals, time.Duration(0))
+
+	d, _ = ParseDuration("w1")
 	c.Assert(d, Equals, time.Duration(0))
 
 	d, _ = ParseDuration("25s")
@@ -364,10 +408,9 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 	c.Assert(EndOfMonth(d), DeepEquals, time.Date(2021, 8, 31, 23, 59, 59, 999999999, time.Local))
 	c.Assert(EndOfYear(d), DeepEquals, time.Date(2021, 12, 31, 23, 59, 59, 999999999, time.Local))
 
-	y := time.Now().In(time.Local).Year()
-	c.Assert(FromISOWeek(0, 0, time.Local), DeepEquals, time.Date(y, 1, 1, 0, 0, 0, 0, time.Local))
-	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2021, 12, 31, 0, 0, 0, 0, time.Local))
-	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 4, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(0, 0, time.Local), Not(DeepEquals), time.Time{})
+	c.Assert(FromISOWeek(100, 2021, time.Local), DeepEquals, time.Date(2022, 1, 3, 0, 0, 0, 0, time.Local))
+	c.Assert(FromISOWeek(23, 2021, time.Local), DeepEquals, time.Date(2021, 6, 7, 0, 0, 0, 0, time.Local))
 
 	d = time.Date(2021, 8, 1, 12, 30, 15, 0, time.Local)
 	c.Assert(IsWeekend(d), Equals, true)
@@ -400,11 +443,11 @@ func (s *TimeUtilSuite) TestHelpers(c *C) {
 func (s *TimeUtilSuite) TestParseWithAny(c *C) {
 	_, err := ParseWithAny("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "No layouts provided")
+	c.Assert(err.Error(), Equals, "no layouts provided")
 
 	_, err = ParseWithAny("1.02", "02.Jan")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Value cannot be parsed using any of the provided layouts")
+	c.Assert(err.Error(), Equals, "value cannot be parsed using any of the provided layouts")
 
 	t, err := ParseWithAny("06 Dec 1988", "02.01.2006", "2.01.2006", "2.1.2006", "02 Jan 06", "02 Jan 2006", "2 Jan 2006")
 	c.Assert(err, IsNil)
@@ -426,14 +469,6 @@ func (s *TimeUtilSuite) TestUnixIn(c *C) {
 	c.Assert(ToUnixMilliIn(d1), Equals, int64(1718452800000))
 	c.Assert(ToUnixMicroIn(d1), Equals, int64(1718452800000000))
 	c.Assert(ToUnixNanoIn(d1), Equals, int64(1718452800000000000))
-}
-
-func (s *TimeUtilSuite) TestDeprecated(c *C) {
-	c.Assert(PrettyDuration(time.Minute), Equals, "1 minute")
-	c.Assert(PrettyDurationSimple(time.Minute), Equals, "1 minute")
-	c.Assert(PrettyDurationInDays(time.Minute), Equals, "1 day")
-	c.Assert(ShortDuration(time.Minute), Equals, "1:00")
-	c.Assert(MiniDuration(time.Minute), Equals, "1 m")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

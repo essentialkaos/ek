@@ -12,7 +12,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -24,9 +24,9 @@ var procfsDir = "/proc"
 
 // IsWorks returns true if process with PID from PID file is works
 func IsWorks(name string) bool {
-	pid := Get(name)
+	pid, err := Get(name)
 
-	if pid == -1 {
+	if err != nil {
 		return false
 	}
 

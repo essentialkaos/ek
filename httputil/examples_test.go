@@ -65,15 +65,6 @@ func ExampleGetRemotePort() {
 	// Output: 19371
 }
 
-func ExampleGetDescByCode() {
-	fmt.Println("200:", GetDescByCode(200))
-	fmt.Println("404:", GetDescByCode(404))
-
-	// Output:
-	// 200: OK
-	// 404: Not Found
-}
-
 func ExampleIsURL() {
 	url1 := "https://domain.com"
 	url2 := "httpj://domain.com"

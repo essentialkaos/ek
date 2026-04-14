@@ -10,7 +10,7 @@ package fs
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/cache"
+	"github.com/essentialkaos/ek/v14/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -132,4 +132,16 @@ func ExampleCache_Flush() {
 	c.Flush()
 
 	fmt.Println(c.Get("test"))
+}
+
+func ExampleCache_Stop() {
+	c, _ := New(Config{
+		Dir:               "/path/to/cache",
+		DefaultExpiration: cache.DAY,
+		CleanupInterval:   cache.MINUTE,
+	})
+
+	c.Set("test", "ABCD")
+
+	defer c.Stop()
 }

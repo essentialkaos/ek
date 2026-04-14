@@ -35,11 +35,11 @@ func LocalTimezone() string {
 		return "Local"
 	}
 
-	index := strings.Index(zoneFile, "zoneinfo/")
+	_, after, ok := strings.Cut(zoneFile, "zoneinfo/")
 
-	if index == -1 {
+	if !ok {
 		return "Local"
 	}
 
-	return zoneFile[index+9:]
+	return after
 }

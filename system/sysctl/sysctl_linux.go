@@ -8,54 +8,32 @@ package sysctl
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/path"
+	"github.com/essentialkaos/ek/v14/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getParam reads kernel parameter from /proc/sys
-func getParam(param string) (string, error) {
+func getParam(name string) (Param, error) {
 	p, err := os.ReadFile(path.Clean(path.Join(
-		procFS, strings.ReplaceAll(param, ".", "/"),
+		procFS, strings.ReplaceAll(name, ".", "/"),
 	)))
 
 	if err != nil {
-		return "", fmt.Errorf("Can't read parameter %q: %w", param, err)
+		return Param{}, fmt.Errorf("can't read parameter %q: %w", name, err)
 	}
 
-	return strings.Trim(string(p), "\n\r"), nil
+	return Param{
+		Name:  name,
+		Value: strings.Trim(string(p), "\n\r"),
+	}, nil
 }
 
-// getParams reads all kernel parameters from sysctl binary output
-func getParams() (Params, error) {
-	output, err := exec.Command(binary, "-a").Output()
-
-	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters from sysctl")
-	}
-
-	params := make(Params)
-	buf := bytes.NewBuffer(output)
-
-	for {
-		line, err := buf.ReadString('\n')
-
-		if err != nil {
-			break
-		}
-
-		name, value, ok := strings.Cut(strings.Trim(line, "\n\r"), " = ")
-
-		if ok {
-			params[name] = value
-		}
-	}
-
-	return params, nil
+// readParam returns parameter name and value from sysctl output
+func readParam(text string) (string, string, bool) {
+	return strings.Cut(strings.Trim(text, "\n\r"), " = ")
 }

@@ -10,8 +10,11 @@ package easing
 // QuadIn accelerating from zero velocity
 // https://easings.net/#easeInQuad
 func QuadIn(t, b, c, d float64) float64 {
-	if t > d {
-		return c
+	switch {
+	case t <= 0:
+		return b
+	case t >= d:
+		return b + c
 	}
 
 	t /= d
@@ -22,8 +25,11 @@ func QuadIn(t, b, c, d float64) float64 {
 // QuadOut decelerating to zero velocity
 // https://easings.net/#easeOutQuad
 func QuadOut(t, b, c, d float64) float64 {
-	if t > d {
-		return c
+	switch {
+	case t <= 0:
+		return b
+	case t >= d:
+		return b + c
 	}
 
 	t /= d
@@ -34,8 +40,11 @@ func QuadOut(t, b, c, d float64) float64 {
 // QuadInOut acceleration until halfway, then deceleration
 // https://easings.net/#easeInOutQuad
 func QuadInOut(t, b, c, d float64) float64 {
-	if t > d {
-		return c
+	switch {
+	case t <= 0:
+		return b
+	case t >= d:
+		return b + c
 	}
 
 	t /= d / 2

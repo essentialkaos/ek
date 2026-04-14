@@ -13,15 +13,17 @@ package initsystem
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"syscall"
 
-	"github.com/essentialkaos/ek/v13/env"
-	"github.com/essentialkaos/ek/v13/fsutil"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/env"
+	"github.com/essentialkaos/ek/v14/fsutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -96,16 +98,20 @@ func Launchd() bool {
 }
 
 // IsPresent returns true if service is present in any init system
-func IsPresent(name string) bool {
-	if hasSystemdService(name) {
+func IsPresent(serviceName string) bool {
+	if !isValidServiceName(serviceName) {
+		return false
+	}
+
+	if hasSystemdService(serviceName) {
 		return true
 	}
 
-	if hasSysVService(name) {
+	if hasSysVService(serviceName) {
 		return true
 	}
 
-	if hasUpstartService(name) {
+	if hasUpstartService(serviceName) {
 		return true
 	}
 
@@ -113,110 +119,114 @@ func IsPresent(name string) bool {
 }
 
 // IsWorks returns service state
-func IsWorks(name string) (bool, error) {
-	if hasSystemdService(name) {
-		return getSystemdServiceState(name)
+func IsWorks(serviceName string) (bool, error) {
+	err := validateServiceName(serviceName)
+
+	if err != nil {
+		return false, err
 	}
 
-	if hasUpstartService(name) {
-		return getUpstartServiceState(name)
+	if hasSystemdService(serviceName) {
+		return getSystemdServiceState(serviceName)
 	}
 
-	if hasSysVService(name) {
-		return getSysVServiceState(name)
+	if hasUpstartService(serviceName) {
+		return getUpstartServiceState(serviceName)
 	}
 
-	return false, fmt.Errorf("Can't find service state")
+	if hasSysVService(serviceName) {
+		return getSysVServiceState(serviceName)
+	}
+
+	return false, fmt.Errorf("can't find service %q state", serviceName)
 }
 
 // IsEnabled returns true if auto start enabled for given service
-func IsEnabled(name string) (bool, error) {
-	if !IsPresent(name) {
-		return false, fmt.Errorf("Service doesn't exist on this system")
+func IsEnabled(serviceName string) (bool, error) {
+	err := validateServiceName(serviceName)
+
+	if err != nil {
+		return false, err
 	}
 
-	if hasSystemdService(name) {
-		return isSystemdEnabled(name)
+	if !IsPresent(serviceName) {
+		return false, fmt.Errorf("service %q doesn't exist on this system", serviceName)
 	}
 
-	if hasUpstartService(name) {
-		return isUpstartEnabled(name)
+	if hasSystemdService(serviceName) {
+		return isSystemdEnabled(serviceName)
 	}
 
-	if hasSysVService(name) {
-		return isSysVEnabled(name)
+	if hasUpstartService(serviceName) {
+		return isUpstartEnabled(serviceName)
 	}
 
-	return false, fmt.Errorf("Can't find service state")
+	if hasSysVService(serviceName) {
+		return isSysVEnabled(serviceName)
+	}
+
+	return false, fmt.Errorf("can't find service %q state", serviceName)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // hasSysVService checks if service exists in SysV init system
-func hasSysVService(name string) bool {
-	// Default path for linux
-	initDir := "/etc/rc.d/init.d"
-
-	if fsutil.CheckPerms("FXS", initDir+"/"+name) {
-		return true
-	}
-
-	// Default path for BSD
-	initDir = "/usr/local/etc/rc.d"
-
-	return fsutil.CheckPerms("FXS", initDir+"/"+name)
+func hasSysVService(serviceName string) bool {
+	return fsutil.ProperPath("FXS",
+		path.Join("/etc/rc.d/init.d", serviceName),    // Linux
+		path.Join("/usr/local/etc/rc.d", serviceName), // BSD
+	) != ""
 }
 
 // hasUpstartService checks if service exists in Upstart init system
-func hasUpstartService(name string) bool {
-	if !strings.HasSuffix(name, ".conf") {
-		name += ".conf"
+func hasUpstartService(serviceName string) bool {
+	if !strings.HasSuffix(serviceName, ".conf") {
+		serviceName += ".conf"
 	}
 
-	return fsutil.IsExist("/etc/init/" + name)
+	return fsutil.IsExist(path.Join("/etc/init", serviceName))
 }
 
 // hasSystemdService checks if service exists in Systemd init system
-func hasSystemdService(name string) bool {
-	if !strings.Contains(name, ".") {
-		name += ".service"
+func hasSystemdService(serviceName string) bool {
+	if !strings.Contains(serviceName, ".") {
+		serviceName += ".service"
 	}
 
-	if fsutil.IsExist("/etc/systemd/system/" + name) {
-		return true
-	}
-
-	if fsutil.IsExist("/etc/systemd/user/" + name) {
-		return true
-	}
-
-	return fsutil.IsExist("/usr/lib/systemd/system/" + name)
+	return fsutil.ProperPath("FR",
+		path.Join("/etc/systemd/system", serviceName),
+		path.Join("/etc/systemd/user", serviceName),
+		path.Join("/usr/lib/systemd/system", serviceName),
+	) != ""
 }
 
 // getSysVServiceState returns service state from SysV init system
-func getSysVServiceState(name string) (bool, error) {
-	cmd := exec.Command("/sbin/service", name, "status")
+func getSysVServiceState(serviceName string) (bool, error) {
+	cmd := exec.Command("/sbin/service", serviceName, "status")
+	output, err := cmd.Output()
 
-	output, _ := cmd.Output()
+	if err != nil {
+		return false, fmt.Errorf("can't execute 'service' command to get current service status")
+	}
 
 	if bytes.Contains(output, []byte("ExecStart")) {
-		return getSystemdServiceState(name)
+		return getSystemdServiceState(serviceName)
 	}
 
 	if cmd.ProcessState == nil {
-		return false, fmt.Errorf("Can't get service command process state")
+		return false, fmt.Errorf("can't get service %q command process state", serviceName)
 	}
 
 	waitStatus := cmd.ProcessState.Sys()
 
 	if waitStatus == nil {
-		return false, fmt.Errorf("Can't get service command process state")
+		return false, fmt.Errorf("can't get service %q command process wait status", serviceName)
 	}
 
 	status, ok := waitStatus.(syscall.WaitStatus)
 
 	if !ok {
-		return false, fmt.Errorf("Can't get service command exit code")
+		return false, fmt.Errorf("can't get service %q command exit code", serviceName)
 	}
 
 	exitStatus := status.ExitStatus()
@@ -228,59 +238,65 @@ func getSysVServiceState(name string) (bool, error) {
 		return false, nil
 	}
 
-	return false, fmt.Errorf("service command return unsupported exit code (%d)", exitStatus)
+	return false, fmt.Errorf("'service' command returned unsupported exit code (%d)", exitStatus)
 }
 
 // getUpstartServiceState returns service state from Upstart init system
-func getUpstartServiceState(name string) (bool, error) {
-	name = strings.TrimSuffix(name, ".conf")
+func getUpstartServiceState(serviceName string) (bool, error) {
+	serviceName = strings.TrimSuffix(serviceName, ".conf")
 
-	output, err := exec.Command("/sbin/status", name).Output()
+	output, err := exec.Command("/sbin/status", serviceName).CombinedOutput()
 
 	if err != nil {
-		return false, fmt.Errorf("upstart returned an error")
+		return false, wrapCommandOutputToError("upstart returned error", output)
 	}
 
 	return parseUpstartStatusOutput(string(output))
 }
 
 // getSystemdServiceState returns service state from Systemd init system
-func getSystemdServiceState(name string) (bool, error) {
-	output, err := exec.Command("/usr/bin/systemctl", "show", name, "-p", "ActiveState", "-p", "LoadState").Output()
+func getSystemdServiceState(serviceName string) (bool, error) {
+	output, err := exec.Command(
+		"/usr/bin/systemctl", "show", serviceName,
+		"-p", "ActiveState",
+		"-p", "LoadState",
+	).CombinedOutput()
 
 	if err != nil {
-		return false, fmt.Errorf("systemd return an error")
+		return false, wrapCommandOutputToError("systemd returned error", output)
 	}
 
-	return parseSystemdStatusOutput(name, string(output))
+	return parseSystemdStatusOutput(serviceName, string(output))
 }
 
 // isSysVEnabled checks if service is enabled in SysV init system
-func isSysVEnabled(name string) (bool, error) {
-	output, err := exec.Command("/sbin/chkconfig", "--list", name).Output()
+func isSysVEnabled(serviceName string) (bool, error) {
+	output, err := exec.Command(
+		"/sbin/chkconfig", "--list", serviceName,
+	).CombinedOutput()
 
 	if err != nil {
-		return false, fmt.Errorf("chkconfig returned an error")
+		return false, wrapCommandOutputToError("chkconfig returned error", output)
 	}
 
 	return parseSysvEnabledOutput(string(output))
 }
 
 // isUpstartEnabled checks if service is enabled in Upstart init system
-func isUpstartEnabled(name string) (bool, error) {
-	if !strings.HasSuffix(name, ".conf") {
-		name += ".conf"
+func isUpstartEnabled(serviceName string) (bool, error) {
+	if !strings.HasSuffix(serviceName, ".conf") {
+		serviceName += ".conf"
 	}
 
-	return parseUpstartEnabledData("/etc/init/" + name)
+	return parseUpstartEnabledData(serviceName, path.Join("/etc/init", serviceName))
 }
 
 // isSystemdEnabled checks if service is enabled in Systemd init system
-func isSystemdEnabled(name string) (bool, error) {
-	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", name).Output()
+func isSystemdEnabled(serviceName string) (bool, error) {
+	output, err := exec.Command("/usr/bin/systemctl", "is-enabled", serviceName).CombinedOutput()
 
 	if err != nil {
-		return false, fmt.Errorf("systemd return error: %v", err)
+		return false, wrapCommandOutputToError("systemd returned error", output)
 	}
 
 	return parseSystemdEnabledOutput(string(output)), nil
@@ -288,25 +304,59 @@ func isSystemdEnabled(name string) (bool, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func validateServiceName(serviceName string) error {
+	switch {
+	case serviceName == "":
+		return errors.New("service name is empty")
+	case !isValidServiceName(serviceName):
+		return fmt.Errorf("service name %q is invalid", serviceName)
+	}
+
+	return nil
+}
+
+// isValidServiceName returns false is given service name is invalid
+func isValidServiceName(serviceName string) bool {
+	if serviceName == "" {
+		return false
+	}
+
+	for _, r := range serviceName {
+		switch {
+		case r >= 'a' && r <= 'z',
+			r >= 'A' && r <= 'Z',
+			r >= '0' && r <= '9',
+			r == '-', r == '_',
+			r == '.', r == '@':
+			// okay
+		default:
+			return false
+		}
+	}
+
+	return true
+}
+
 // parseSystemdEnabledOutput parses output of 'systemctl is-enabled' command output
 func parseSystemdEnabledOutput(data string) bool {
 	return strings.TrimRight(data, "\n\r") == "enabled"
 }
 
-func parseUpstartEnabledData(file string) (bool, error) {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+// parseUpstartEnabledData parses upstart configuration and extracts if service
+// is enabled to start on system startup
+func parseUpstartEnabledData(serviceName, file string) (bool, error) {
+	fd, err := os.Open(file)
 
 	if err != nil {
-		return false, fmt.Errorf("Can't read service unit file")
+		return false, fmt.Errorf("can't read service %q unit file", serviceName)
 	}
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	s := bufio.NewScanner(fd)
 
 	for s.Scan() {
-		text := strings.TrimLeft(s.Text(), " ")
+		text := strings.TrimLeft(s.Text(), " \t")
 
 		if strings.HasPrefix(text, "#") {
 			continue
@@ -330,17 +380,17 @@ func parseSysvEnabledOutput(data string) (bool, error) {
 		return false, nil
 
 	default:
-		return false, fmt.Errorf("Can't parse chkconfig output")
+		return false, fmt.Errorf("can't parse chkconfig output")
 	}
 }
 
 // parseSystemdStatusOutput parses output of 'systemctl show' command output
-func parseSystemdStatusOutput(name, data string) (bool, error) {
+func parseSystemdStatusOutput(serviceName, data string) (bool, error) {
 	loadState := strutil.ReadField(data, 0, false, '\n')
 	loadStateValue := strutil.ReadField(loadState, 1, false, '=')
 
 	if strings.Trim(loadStateValue, "\r\n") == "not-found" {
-		return false, fmt.Errorf("Unit %s could not be found", name)
+		return false, fmt.Errorf("unit %q could not be found", serviceName)
 	}
 
 	activeState := strutil.ReadField(data, 1, false, '\n')
@@ -354,7 +404,7 @@ func parseSystemdStatusOutput(name, data string) (bool, error) {
 		return false, nil
 	}
 
-	return false, fmt.Errorf("Can't parse systemd output")
+	return false, fmt.Errorf("can't parse systemd output")
 }
 
 // parseUpstartStatusOutput parses output of 'initctl status' command output
@@ -370,6 +420,15 @@ func parseUpstartStatusOutput(data string) (bool, error) {
 		return false, nil
 
 	default:
-		return false, fmt.Errorf("Can't parse upstart output")
+		return false, fmt.Errorf("can't parse upstart output")
 	}
+}
+
+// wrapCommandOutputToError wraps command stderr output into error
+func wrapCommandOutputToError(msg string, output []byte) error {
+	if len(output) == 0 {
+		return errors.New(msg + ": (no output)")
+	}
+
+	return fmt.Errorf("%s: %s", msg, strings.ReplaceAll(string(output), "\n", " "))
 }

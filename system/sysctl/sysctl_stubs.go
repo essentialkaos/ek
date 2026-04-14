@@ -1,6 +1,5 @@
 //go:build !linux && !darwin
 
-// Package sysctl provides methods for reading kernel parameters
 package sysctl
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -10,44 +9,13 @@ package sysctl
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Params contains all kernel parameters
-type Params map[string]string
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// All returns all kernel parameters
+// ❗ All returns all kernel parameters available on the current system
 func All() (Params, error) {
-	return nil, nil
+	panic("UNSUPPORTED")
 }
 
-// Get returns kernel parameter value as a string
-func Get(param string) (string, error) {
-	return "", nil
-}
-
-// GetI returns kernel parameter value as an int
-func GetI(param string) (int, error) {
-	return 0, nil
-}
-
-// GetI64 returns kernel parameter value as an int64
-func GetI64(param string) (int64, error) {
-	return 0, nil
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Get returns kernel parameter value as a string
-func (p Params) Get(name string) string {
-	return ""
-}
-
-// GetI returns kernel parameter value as an int
-func (p Params) GetI(param string) (int, error) {
-	return 0, nil
-}
-
-// GetI64 returns kernel parameter value as an int64
-func (p Params) GetI64(param string) (int64, error) {
-	return 0, nil
+// ❗ Get returns the kernel parameter with the given name. The name must be dot-separated
+// (e.g. "kernel.pid_max") and must not contain spaces or slashes.
+func Get(name string) (Param, error) {
+	panic("UNSUPPORTED")
 }

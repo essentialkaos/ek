@@ -25,7 +25,16 @@ var StartDate = uint32(1322611200)
 
 // TinyDate creates tiny date struct by timestamp
 func TinyDate(t int64) Date {
+	if t < int64(StartDate) {
+		return 0
+	}
+
 	return Date(uint32(t) - StartDate)
+}
+
+// IsZero returns true if date is zero
+func (d Date) IsZero() bool {
+	return d == 0
 }
 
 // Unix returns unix timestamp

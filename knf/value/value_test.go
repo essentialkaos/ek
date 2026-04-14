@@ -95,9 +95,11 @@ func (s *ValuesSuite) TestParseBool(c *C) {
 	c.Assert(ParseBool("0"), Equals, false)
 	c.Assert(ParseBool("No"), Equals, false)
 	c.Assert(ParseBool("False"), Equals, false)
+	c.Assert(ParseBool("abcd"), Equals, false)
 
 	c.Assert(ParseBool("true"), Equals, true)
-	c.Assert(ParseBool("abcd"), Equals, true)
+	c.Assert(ParseBool("Yes"), Equals, true)
+	c.Assert(ParseBool("1"), Equals, true)
 }
 
 func (s *ValuesSuite) TestParseMode(c *C) {

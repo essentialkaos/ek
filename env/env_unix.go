@@ -10,17 +10,21 @@ package env
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-import "syscall"
+import (
+	"os"
+	"path/filepath"
+	"syscall"
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Which find full path to some app
 func Which(name string) string {
-	paths := Get().Path()
+	for _, path := range filepath.SplitList(os.Getenv("PATH")) {
+		full := filepath.Join(path, name)
 
-	for _, path := range paths {
-		if syscall.Access(path+"/"+name, syscall.F_OK) == nil {
-			return path + "/" + name
+		if syscall.Access(full, syscall.F_OK) == nil {
+			return full
 		}
 	}
 

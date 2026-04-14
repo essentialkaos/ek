@@ -33,11 +33,11 @@ func (s *LockSuite) TestErrors(c *C) {
 
 	err := Create("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	err = Remove("test")
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	c.Assert(IsExpired("test", time.Second), Equals, false)
 }
@@ -78,4 +78,18 @@ func (s *LockSuite) TestWait(c *C) {
 
 	c.Assert(Wait("test", time.Now().Add(time.Microsecond)), Equals, false)
 	c.Assert(Wait("test", time.Now().Add(3*time.Second)), Equals, true)
+}
+
+func (s *LockSuite) TestLockName(c *C) {
+	Dir = c.MkDir()
+
+	err := Create("../test")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, `invalid lock name "../test"`)
+
+	err = Remove("../test")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, `invalid lock name "../test"`)
+
+	c.Assert(Has("../test"), Equals, false)
 }

@@ -91,6 +91,10 @@ func (s *CacheSuite) TestCache(c *C) {
 
 	c.Assert(cache.Flush(), Equals, true)
 	c.Assert(cache.Invalidate(), Equals, false)
+
+	cache.Stop()
+
+	time.Sleep(time.Second)
 }
 
 func (s *CacheSuite) TestIterators(c *C) {
@@ -135,6 +139,8 @@ func (s *CacheSuite) TestNil(c *C) {
 	c.Assert(cache.GetExpiration("1").IsZero(), Equals, true)
 	c.Assert(cache.Invalidate(), Equals, false)
 
+	cache.Stop()
+
 	item, exp := cache.GetWithExpiration("1")
 	c.Assert(item, Equals, nil)
 	c.Assert(exp.IsZero(), Equals, true)
@@ -166,13 +172,13 @@ func (s *CacheSuite) TestErrors(c *C) {
 func (s *CacheSuite) TestConfig(c *C) {
 	_, err := New(Config{DefaultExpiration: 1})
 
-	c.Assert(err.Error(), Equals, "Invalid configuration: Expiration is too short (< 1s)")
+	c.Assert(err.Error(), Equals, "invalid configuration: expiration is too short (< 1s)")
 
 	_, err = New(Config{DefaultExpiration: time.Minute, CleanupInterval: 1})
 
-	c.Assert(err.Error(), Equals, "Invalid configuration: Cleanup interval is too short (< 1s)")
+	c.Assert(err.Error(), Equals, "invalid configuration: cleanup interval is too short (< 1s)")
 
 	_, err = New(Config{DefaultExpiration: time.Minute, CleanupInterval: time.Minute, Dir: "_unknown_"})
 
-	c.Assert(err.Error(), Equals, "Invalid configuration: Can't use given directory for cache: Directory _unknown_ doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "invalid configuration: can't use given directory for cache: directory _unknown_ doesn't exist or not accessible")
 }

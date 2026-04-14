@@ -92,23 +92,58 @@ func (s *FmtUtilSuite) TestPrettyBool(c *C) {
 }
 
 func (s *FmtUtilSuite) TestParseSize(c *C) {
-	c.Assert(ParseSize("1 MB"), Equals, uint64(1024*1024))
-	c.Assert(ParseSize("1 M"), Equals, uint64(1000*1000))
-	c.Assert(ParseSize("2tb"), Equals, uint64(2*1024*1024*1024*1024))
-	c.Assert(ParseSize("2t"), Equals, uint64(2*1000*1000*1000*1000))
-	c.Assert(ParseSize("5gB"), Equals, uint64(5*1024*1024*1024))
-	c.Assert(ParseSize("5g"), Equals, uint64(5*1000*1000*1000))
-	c.Assert(ParseSize("13kb"), Equals, uint64(13*1024))
-	c.Assert(ParseSize("13k"), Equals, uint64(13*1000))
-	c.Assert(ParseSize("13kk"), Equals, uint64(13*1000*1000))
-	c.Assert(ParseSize("13kkk"), Equals, uint64(13*1000*1000*1000))
-	c.Assert(ParseSize("512"), Equals, uint64(512))
-	c.Assert(ParseSize("kb"), Equals, uint64(0))
-	c.Assert(ParseSize("123!"), Equals, uint64(0))
+	size, err := ParseSize("1 MB")
+	c.Assert(err, IsNil)
+	c.Assert(size, Equals, uint64(1024*1024))
 
-	c.Assert(ParseSize(PrettySize(345)), Equals, uint64(345))
-	c.Assert(ParseSize(PrettySize(1025)), Equals, uint64(1024))
-	c.Assert(ParseSize(PrettySize(1024*1024)), Equals, uint64(1024*1024))
+	size, _ = ParseSize("2tb")
+	c.Assert(size, Equals, uint64(2*1024*1024*1024*1024))
+
+	size, _ = ParseSize("5gB")
+	c.Assert(size, Equals, uint64(5*1024*1024*1024))
+
+	size, _ = ParseSize("13kb")
+	c.Assert(size, Equals, uint64(13*1024))
+
+	size, _ = ParseSize("1 M")
+	c.Assert(size, Equals, uint64(1000*1000))
+
+	size, _ = ParseSize("2t")
+	c.Assert(size, Equals, uint64(2*1000*1000*1000*1000))
+
+	size, _ = ParseSize("5g")
+	c.Assert(size, Equals, uint64(5*1000*1000*1000))
+
+	size, _ = ParseSize("13k")
+	c.Assert(size, Equals, uint64(13*1000))
+
+	size, _ = ParseSize("13kk")
+	c.Assert(size, Equals, uint64(13*1000*1000))
+
+	size, _ = ParseSize("13kkk")
+	c.Assert(size, Equals, uint64(13*1000*1000*1000))
+
+	size, _ = ParseSize("512")
+	c.Assert(size, Equals, uint64(512))
+
+	size, _ = ParseSize(PrettySize(345))
+	c.Assert(size, Equals, uint64(345))
+
+	size, _ = ParseSize(PrettySize(1025))
+	c.Assert(size, Equals, uint64(1024))
+
+	size, _ = ParseSize(PrettySize(1024 * 1024))
+	c.Assert(size, Equals, uint64(1024*1024))
+
+	size, err = ParseSize("kb")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, `size has no digits`)
+	c.Assert(size, Equals, uint64(0))
+
+	size, err = ParseSize("123!")
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, `strconv.ParseFloat: parsing "123!": invalid syntax`)
+	c.Assert(size, Equals, uint64(0))
 }
 
 func (s *FmtUtilSuite) TestFloat(c *C) {
@@ -188,6 +223,7 @@ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
 		"  1234 1234"
 
 	c.Assert(Wrap(input, "  ", 20), Equals, result)
+	c.Assert(padding(0), Equals, "")
 }
 
 func (s *FmtUtilSuite) TestSeparator(c *C) {
@@ -199,13 +235,13 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 	Separator(false, "test")
 	Separator(false, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
-	SeparatorTitleAlign = "l"
+	SeparatorTitleAlign = LEFT
 	Separator(true, "test1")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
-	SeparatorTitleAlign = "c"
+	SeparatorTitleAlign = CENTER
 	Separator(true, "test2")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
-	SeparatorTitleAlign = "r"
+	SeparatorTitleAlign = RIGHT
 	Separator(true, "test3")
 	Separator(true, "TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234TEST1234")
 
@@ -215,6 +251,7 @@ func (s *FmtUtilSuite) TestSeparator(c *C) {
 }
 
 func (s *FmtUtilSuite) TestCountDigits(c *C) {
+	c.Assert(CountDigits(0), Equals, 1)
 	c.Assert(CountDigits(1), Equals, 1)
 	c.Assert(CountDigits(999), Equals, 3)
 	c.Assert(CountDigits(45999), Equals, 5)

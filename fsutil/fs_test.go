@@ -12,10 +12,11 @@ import (
 	"io"
 	"os"
 	"sort"
+	"syscall"
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/system"
+	"github.com/essentialkaos/ek/v14/system"
 
 	check "github.com/essentialkaos/check"
 )
@@ -225,11 +226,11 @@ func (s *FSSuite) TestProperPath(c *check.C) {
 
 	paths := []string{"", "/etc/passwd", tmpFile, "/etc"}
 
-	c.Assert(ProperPath("DR", paths), check.Equals, "/etc")
-	c.Assert(ProperPath("FR", paths), check.Equals, "/etc/passwd")
-	c.Assert(ProperPath("FRW", paths), check.Equals, tmpFile)
-	c.Assert(ProperPath("FRWS", paths), check.Equals, "")
-	c.Assert(ProperPath("F", paths), check.Equals, "/etc/passwd")
+	c.Assert(ProperPath("DR", paths...), check.Equals, "/etc")
+	c.Assert(ProperPath("FR", paths...), check.Equals, "/etc/passwd")
+	c.Assert(ProperPath("FRW", paths...), check.Equals, tmpFile)
+	c.Assert(ProperPath("FRWS", paths...), check.Equals, "")
+	c.Assert(ProperPath("F", paths...), check.Equals, "/etc/passwd")
 
 	os.Remove(tmpFile)
 }
@@ -322,7 +323,7 @@ func (s *FSSuite) TestGetTime(c *check.C) {
 	ats, mts, cts, err = GetTimestamps("/not_exist")
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.ErrorMatches, `Can't get file info for "/not_exist": no such file or directory`)
+	c.Assert(err, check.ErrorMatches, `can't get file info for "/not_exist": no such file or directory`)
 	c.Assert(ats, check.Equals, int64(-1))
 	c.Assert(mts, check.Equals, int64(-1))
 	c.Assert(cts, check.Equals, int64(-1))
@@ -383,7 +384,7 @@ func (s *FSSuite) TestGetOwner(c *check.C) {
 	uid, gid, err = GetOwner("/not_exist")
 
 	c.Assert(err, check.NotNil)
-	c.Assert(err, check.ErrorMatches, `Can't get owner info for "/not_exist": no such file or directory`)
+	c.Assert(err, check.ErrorMatches, `can't get owner info for "/not_exist": no such file or directory`)
 	c.Assert(uid, check.Equals, -1)
 	c.Assert(gid, check.Equals, -1)
 }
@@ -583,24 +584,24 @@ func (s *FSSuite) TestCheckPerms(c *check.C) {
 	c.Assert(CheckPerms("W", tmpFile), check.Equals, true)
 	c.Assert(CheckPerms("R", tmpFile), check.Equals, true)
 
-	c.Assert(ValidatePerms("", tmpFile), check.ErrorMatches, "Props is empty")
-	c.Assert(ValidatePerms("FR", ""), check.ErrorMatches, "Path is empty")
-	c.Assert(ValidatePerms("FR", "/not_exist"), check.ErrorMatches, "File /not_exist doesn't exist or not accessible")
+	c.Assert(ValidatePerms("", tmpFile), check.Equals, ErrEmptyPerms)
+	c.Assert(ValidatePerms("FR", ""), check.Equals, ErrEmptyPath)
+	c.Assert(ValidatePerms("FR", "/not_exist"), check.ErrorMatches, "file /not_exist doesn't exist or not accessible")
 
 	c.Assert(ValidatePerms("F", tmpDir), check.ErrorMatches, ".* is not a file")
 	c.Assert(ValidatePerms("D", tmpFile), check.ErrorMatches, ".* is not a directory")
 	c.Assert(ValidatePerms("L", tmpFile), check.ErrorMatches, ".* is not a link")
-	c.Assert(ValidatePerms("X", tmpFile), check.ErrorMatches, "File .* is not executable")
-	c.Assert(ValidatePerms("S", tmpFile), check.ErrorMatches, "File .* is empty")
+	c.Assert(ValidatePerms("X", tmpFile), check.ErrorMatches, "file .* is not executable")
+	c.Assert(ValidatePerms("S", tmpFile), check.ErrorMatches, "file .* is empty")
 	c.Assert(ValidatePerms("B", tmpFile), check.ErrorMatches, ".* is not a block device")
 	c.Assert(ValidatePerms("C", tmpFile), check.ErrorMatches, ".* is not a character device")
 
-	c.Assert(ValidatePerms("XFR", "/_unknown_").Error(), check.Equals, "File /_unknown_ doesn't exist or not accessible")
-	c.Assert(ValidatePerms("XDR", "/_unknown_").Error(), check.Equals, "Directory /_unknown_ doesn't exist or not accessible")
-	c.Assert(ValidatePerms("XBR", "/_unknown_").Error(), check.Equals, "Block device /_unknown_ doesn't exist or not accessible")
-	c.Assert(ValidatePerms("XCR", "/_unknown_").Error(), check.Equals, "Character device /_unknown_ doesn't exist or not accessible")
-	c.Assert(ValidatePerms("XLR", "/_unknown_").Error(), check.Equals, "Link /_unknown_ doesn't exist or not accessible")
-	c.Assert(ValidatePerms("XR", "/_unknown_").Error(), check.Equals, "Object /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XFR", "/_unknown_").Error(), check.Equals, "file /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XDR", "/_unknown_").Error(), check.Equals, "directory /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XBR", "/_unknown_").Error(), check.Equals, "block device /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XCR", "/_unknown_").Error(), check.Equals, "character device /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XLR", "/_unknown_").Error(), check.Equals, "link /_unknown_ doesn't exist or not accessible")
+	c.Assert(ValidatePerms("XR", "/_unknown_").Error(), check.Equals, "object /_unknown_ doesn't exist or not accessible")
 
 	c.Assert(ValidatePerms("W", tmpFile), check.IsNil)
 	c.Assert(ValidatePerms("R", tmpFile), check.IsNil)
@@ -676,14 +677,14 @@ func (s *FSSuite) TestCopyFile(c *check.C) {
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir3, 0500)
 
-	c.Assert(CopyFile("", tmpFile2), check.ErrorMatches, `Can't copy file: Source file can't be blank`)
-	c.Assert(CopyFile(tmpFile1, ""), check.ErrorMatches, `Can't copy file: Target file can't be blank`)
-	c.Assert(CopyFile("/not_exist", tmpFile2), check.ErrorMatches, `Can't copy file: File "/not_exist" does not exists`)
-	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy file: File ".*" is not a regular file`)
-	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy file: File ".*/test3.file" is not readable`)
-	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.ErrorMatches, `Can't copy file: Directory "/not_exist" does not exists`)
-	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `Can't copy file: Directory ".*" is not writable`)
-	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy file: Target file ".*/test3.file" is not writable`)
+	c.Assert(CopyFile("", tmpFile2), check.ErrorMatches, `can't copy file: source file can't be blank`)
+	c.Assert(CopyFile(tmpFile1, ""), check.ErrorMatches, `can't copy file: target file can't be blank`)
+	c.Assert(CopyFile("/not_exist", tmpFile2), check.ErrorMatches, `can't copy file: file "/not_exist" does not exists`)
+	c.Assert(CopyFile(tmpDir1, tmpFile2), check.ErrorMatches, `can't copy file: file ".*" is not a regular file`)
+	c.Assert(CopyFile(tmpFile3, tmpFile2), check.ErrorMatches, `can't copy file: file ".*/test3.file" is not readable`)
+	c.Assert(CopyFile(tmpFile1, "/not_exist/test.file"), check.ErrorMatches, `can't copy file: directory "/not_exist" does not exists`)
+	c.Assert(CopyFile(tmpFile1, tmpDir3+"/test.file"), check.ErrorMatches, `can't copy file: directory ".*" is not writable`)
+	c.Assert(CopyFile(tmpFile1, tmpFile3), check.ErrorMatches, `can't copy file: target file ".*/test3.file" is not writable`)
 
 	c.Assert(CopyFile(tmpFile1, tmpFile2, 0600), check.IsNil)
 	c.Assert(GetSize(tmpFile2), check.Equals, int64(5))
@@ -731,23 +732,23 @@ func (s *FSSuite) TestCopyAttr(c *check.C) {
 	os.Chtimes(tmpFile1, time.Unix(946674000, 0), time.Unix(946674000, 0))
 	os.Chmod(tmpFile3, 0111)
 
-	c.Assert(CopyAttr("", tmpFile2), check.ErrorMatches, `Can't copy attributes: Source object can't be blank`)
-	c.Assert(CopyAttr(tmpFile1, ""), check.ErrorMatches, `Can't copy attributes: Target object can't be blank`)
-	c.Assert(CopyAttr("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't copy attributes: "/not_exist_source" does not exists`)
-	c.Assert(CopyAttr(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't copy attributes: "/not_exist_target" does not exists`)
-	c.Assert(CopyAttr(tmpFile3, tmpFile2), check.ErrorMatches, `Can't copy attributes: ".*/test3.file" is not readable`)
-	c.Assert(CopyAttr(tmpFile1, tmpFile3), check.ErrorMatches, `Can't copy attributes: ".*/test3.file" is not writable`)
+	c.Assert(CopyAttr("", tmpFile2), check.ErrorMatches, `can't copy attributes: source object can't be blank`)
+	c.Assert(CopyAttr(tmpFile1, ""), check.ErrorMatches, `can't copy attributes: target object can't be blank`)
+	c.Assert(CopyAttr("/not_exist_source", tmpFile2), check.ErrorMatches, `can't copy attributes: "/not_exist_source" does not exists`)
+	c.Assert(CopyAttr(tmpFile1, "/not_exist_target"), check.ErrorMatches, `can't copy attributes: "/not_exist_target" does not exists`)
+	c.Assert(CopyAttr(tmpFile3, tmpFile2), check.ErrorMatches, `can't copy attributes: ".*/test3.file" is not readable`)
+	c.Assert(CopyAttr(tmpFile1, tmpFile3), check.ErrorMatches, `can't copy attributes: ".*/test3.file" is not writable`)
 
 	c.Assert(CopyAttr(tmpFile1, tmpFile2), check.IsNil)
 
-	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Error while reading source object mode`)
-	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Error while reading target object mode`)
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `error while reading source object mode`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `error while reading target object mode`)
 	modeFunc = func(f string) os.FileMode { return 0644 }
-	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't get owner info for "/not_exist_source": no such file or directory`)
-	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't get owner info for "/not_exist_target": no such file or directory`)
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `can't get owner info for "/not_exist_source": no such file or directory`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `can't get owner info for "/not_exist_target": no such file or directory`)
 	ownerFunc = func(f string) (int, int, error) { return 1, 1, nil }
-	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't get file info for "/not_exist_source": no such file or directory`)
-	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `Can't get file info for "/not_exist_target": no such file or directory`)
+	c.Assert(copyAttributes("/not_exist_source", tmpFile2), check.ErrorMatches, `can't get file info for "/not_exist_source": no such file or directory`)
+	c.Assert(copyAttributes(tmpFile1, "/not_exist_target"), check.ErrorMatches, `can't get file info for "/not_exist_target": no such file or directory`)
 
 	modeFunc = GetMode
 	ownerFunc = GetOwner
@@ -817,13 +818,13 @@ func (s *FSSuite) TestMoveFile(c *check.C) {
 	os.Chmod(tmpFile3, 0111)
 	os.Chmod(tmpDir2, 0500)
 
-	c.Assert(MoveFile("", tmpFile2), check.ErrorMatches, `Can't move file: Source file can't be blank`)
-	c.Assert(MoveFile(tmpFile1, ""), check.ErrorMatches, `Can't move file: Target file can't be blank`)
-	c.Assert(MoveFile("/not_exist_source", tmpFile2), check.ErrorMatches, `Can't move file: File "/not_exist_source" does not exists`)
-	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `Can't move file: File ".*" is not a regular file`)
-	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `Can't move file: File ".*/test3.file" is not readable`)
-	c.Assert(MoveFile(tmpFile1, "/not_exist/file.test"), check.ErrorMatches, `Can't move file: Directory "/not_exist" does not exists`)
-	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `Can't move file: Directory ".*" is not writable`)
+	c.Assert(MoveFile("", tmpFile2), check.ErrorMatches, `can't move file: source file can't be blank`)
+	c.Assert(MoveFile(tmpFile1, ""), check.ErrorMatches, `can't move file: target file can't be blank`)
+	c.Assert(MoveFile("/not_exist_source", tmpFile2), check.ErrorMatches, `can't move file: file "/not_exist_source" does not exists`)
+	c.Assert(MoveFile(tmpDir, tmpFile2), check.ErrorMatches, `can't move file: file ".*" is not a regular file`)
+	c.Assert(MoveFile(tmpFile3, tmpFile2), check.ErrorMatches, `can't move file: file ".*/test3.file" is not readable`)
+	c.Assert(MoveFile(tmpFile1, "/not_exist/file.test"), check.ErrorMatches, `can't move file: directory "/not_exist" does not exists`)
+	c.Assert(MoveFile(tmpFile1, tmpDir2+"/file.test"), check.ErrorMatches, `can't move file: directory ".*" is not writable`)
 
 	c.Assert(MoveFile(tmpFile1, tmpFile2), check.IsNil)
 	c.Assert(MoveFile(tmpFile2, tmpFile1, 0600), check.IsNil)
@@ -869,13 +870,13 @@ func (s *FSSuite) TestCopyDir(c *check.C) {
 
 	c.Assert(list1, check.DeepEquals, list2)
 
-	c.Assert(CopyDir("", targetDir), check.ErrorMatches, `Can't copy directory: Source directory can't be blank`)
-	c.Assert(CopyDir(sourceDir, ""), check.ErrorMatches, `Can't copy directory: Target directory can't be blank`)
-	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `Can't copy directory: Directory ".*" does not exists`)
-	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `Can't copy directory: Target ".*/test1.file" is not a directory`)
-	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `Can't copy directory: Directory ".*/test5" is not readable`)
-	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `Can't copy directory: Target ".*/test2/test2.file" is not a directory`)
-	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `Can't copy directory: Directory ".*/test6" is not writable`)
+	c.Assert(CopyDir("", targetDir), check.ErrorMatches, `can't copy directory: source directory can't be blank`)
+	c.Assert(CopyDir(sourceDir, ""), check.ErrorMatches, `can't copy directory: target directory can't be blank`)
+	c.Assert(CopyDir(sourceDir+"1", targetDir), check.ErrorMatches, `can't copy directory: directory ".*" does not exists`)
+	c.Assert(CopyDir(tmpFile1, targetDir), check.ErrorMatches, `can't copy directory: target ".*/test1.file" is not a directory`)
+	c.Assert(CopyDir(tmpDir5, targetDir), check.ErrorMatches, `can't copy directory: directory ".*/test5" is not readable`)
+	c.Assert(CopyDir(tmpDir1, tmpFile2), check.ErrorMatches, `can't copy directory: target ".*/test2/test2.file" is not a directory`)
+	c.Assert(CopyDir(tmpDir1, tmpDir6), check.ErrorMatches, `can't copy directory: directory ".*/test6" is not writable`)
 
 	c.Assert(CopyDir(tmpDir1, "/root/abcd"), check.NotNil)
 
@@ -906,11 +907,29 @@ func (s *FSSuite) TestTouchFile(c *check.C) {
 func (s *FSSuite) TestInternal(c *check.C) {
 	c.Assert(getGIDList(nil), check.IsNil)
 
-	c.Assert(isReadableStat(nil, 0, nil), check.Equals, true)
-	c.Assert(isWritableStat(nil, 0, nil), check.Equals, true)
-	c.Assert(isExecutableStat(nil, 0, nil), check.Equals, true)
+	c.Assert(isReadableStat(nil, 0, nil), check.Equals, false)
+	c.Assert(isWritableStat(nil, 0, nil), check.Equals, false)
+	c.Assert(isExecutableStat(nil, 0, nil), check.Equals, false)
 
 	n, _ := fixCount(-100, nil)
 
 	c.Assert(n, check.Equals, 0)
+}
+
+func (s *FSSuite) TestObjectTypeToString(c *check.C) {
+	stat := &syscall.Stat_t{}
+
+	c.Assert(getObjectType(stat), check.Equals, "object")
+
+	stat.Mode = _IFREG
+	c.Assert(getObjectType(stat), check.Equals, "file")
+
+	stat.Mode = _IFDIR
+	c.Assert(getObjectType(stat), check.Equals, "directory")
+
+	stat.Mode = _IFCHR
+	c.Assert(getObjectType(stat), check.Equals, "character device")
+
+	stat.Mode = _IFBLK
+	c.Assert(getObjectType(stat), check.Equals, "block device")
 }

@@ -13,13 +13,15 @@ package fs
 import (
 	"encoding/gob"
 	"fmt"
+	"math/rand/v2"
 	"os"
-	"path"
+	"path/filepath"
 	"regexp"
+	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/cache"
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/cache"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -43,6 +45,8 @@ type Cache struct {
 	dir             string
 	expiration      cache.Duration
 	validationRegex *regexp.Regexp
+	doneChan        chan struct{}
+	stopOnce        sync.Once
 	isJanitorWorks  bool
 }
 
@@ -73,7 +77,7 @@ func New(config Config) (*Cache, error) {
 	err := config.Validate()
 
 	if err != nil {
-		return nil, fmt.Errorf("Invalid configuration: %w", err)
+		return nil, fmt.Errorf("invalid configuration: %w", err)
 	}
 
 	c := &Cache{
@@ -93,6 +97,7 @@ func New(config Config) (*Cache, error) {
 
 	if config.CleanupInterval != 0 {
 		c.isJanitorWorks = true
+		c.doneChan = make(chan struct{})
 		go c.janitor(config.CleanupInterval)
 	}
 
@@ -116,7 +121,7 @@ func (c *Cache) Expired() int {
 		return 0
 	}
 
-	expired := 0
+	counter := 0
 	now := time.Now()
 	items := fsutil.List(c.dir, true)
 
@@ -125,12 +130,12 @@ func (c *Cache) Expired() int {
 	for _, item := range items {
 		mtime, _ := fsutil.GetMTime(item)
 
-		if mtime.Before(now) {
-			expired++
+		if mtime.IsZero() || mtime.Before(now) {
+			counter++
 		}
 	}
 
-	return expired
+	return counter
 }
 
 // Has returns true if cache contains data for given key
@@ -139,7 +144,11 @@ func (c *Cache) Has(key string) bool {
 		return false
 	}
 
-	return fsutil.IsExist(c.getItemPath(key, false))
+	if fsutil.IsExist(c.getItemPath(key, false)) {
+		return !c.isExpired(key)
+	}
+
+	return false
 }
 
 // Set adds or updates item in cache
@@ -161,24 +170,26 @@ func (c *Cache) Set(key string, data any, expiration ...cache.Duration) bool {
 		return false
 	}
 
-	expr := c.expiration
+	exp := c.expiration
 
 	if len(expiration) > 0 && expiration[0] >= MIN_EXPIRATION {
-		expr = expiration[0]
+		exp = expiration[0]
 	}
 
-	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(expr)) == nil
+	return os.Chtimes(itemFile, time.Time{}, time.Now().Add(exp)) == nil
 }
 
-// GetWithExpiration returns item from cache
+// Get returns item from cache
 func (c *Cache) Get(key string) any {
-	if c == nil || !c.isValidKey(key) || !c.Has(key) {
+	if c == nil || !c.isValidKey(key) {
 		return nil
 	}
 
-	expr := c.GetExpiration(key)
+	if !fsutil.IsExist(c.getItemPath(key, false)) {
+		return nil
+	}
 
-	if !expr.IsZero() && expr.Before(time.Now()) {
+	if c.isExpired(key) {
 		c.Delete(key)
 		return nil
 	}
@@ -186,15 +197,15 @@ func (c *Cache) Get(key string) any {
 	return readItem(c.getItemPath(key, false))
 }
 
-// GetWithExpiration returns item expiration date
+// GetExpiration returns item expiration date
 func (c *Cache) GetExpiration(key string) time.Time {
 	if c == nil || !c.isValidKey(key) || !c.Has(key) {
 		return time.Time{}
 	}
 
-	mt, _ := fsutil.GetMTime(c.getItemPath(key, false))
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
 
-	return mt
+	return exp
 }
 
 // GetWithExpiration returns item from cache and expiration date or nil
@@ -203,13 +214,9 @@ func (c *Cache) GetWithExpiration(key string) (any, time.Time) {
 		return nil, time.Time{}
 	}
 
-	data := c.Get(key)
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
 
-	if data != nil {
-		return data, c.GetExpiration(key)
-	}
-
-	return nil, time.Time{}
+	return readItem(c.getItemPath(key, false)), exp
 }
 
 // Keys is an iterator over cache keys
@@ -289,22 +296,33 @@ func (c *Cache) Flush() bool {
 	return true
 }
 
+// Stop stops janitor goroutine
+func (c *Cache) Stop() {
+	if c == nil || !c.isJanitorWorks || c.doneChan == nil {
+		return
+	}
+
+	c.stopOnce.Do(func() {
+		close(c.doneChan)
+	})
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Validate validates cache configuration
 func (c Config) Validate() error {
 	if c.DefaultExpiration != 0 && c.DefaultExpiration < MIN_EXPIRATION {
-		return fmt.Errorf("Expiration is too short (< 1s)")
+		return fmt.Errorf("expiration is too short (< 1s)")
 	}
 
 	if c.CleanupInterval != 0 && c.CleanupInterval < MIN_CLEANUP_INTERVAL {
-		return fmt.Errorf("Cleanup interval is too short (< 1s)")
+		return fmt.Errorf("cleanup interval is too short (< 1s)")
 	}
 
 	err := fsutil.ValidatePerms("DRWX", c.Dir)
 
 	if err != nil {
-		return fmt.Errorf("Can't use given directory for cache: %w", err)
+		return fmt.Errorf("can't use given directory for cache: %w", err)
 	}
 
 	return nil
@@ -317,20 +335,36 @@ func (c *Cache) isValidKey(key string) bool {
 	return key != "" && c.validationRegex.MatchString(key)
 }
 
+// isExpired returns true if cache item is expired
+func (c *Cache) isExpired(key string) bool {
+	exp, _ := fsutil.GetMTime(c.getItemPath(key, false))
+	return exp.IsZero() || exp.Before(time.Now())
+}
+
 // getItemPath returns path to cache item
 func (c *Cache) getItemPath(key string, temporary bool) string {
 	if temporary {
-		return path.Join(c.dir, "."+key)
+		return filepath.Join(c.dir, fmt.Sprintf(".%s-%x", key, rand.Uint64()))
 	}
 
-	return path.Join(c.dir, key)
+	return filepath.Join(c.dir, key)
 }
 
 // janitor is cache cleanup job
 func (c *Cache) janitor(interval time.Duration) {
-	for range time.NewTicker(interval).C {
-		c.Invalidate()
+	ticker := time.NewTicker(interval)
+
+MAIN:
+	for {
+		select {
+		case <-ticker.C:
+			c.Invalidate()
+		case <-c.doneChan:
+			break MAIN
+		}
 	}
+
+	ticker.Stop()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -343,9 +377,9 @@ func writeItem(file string, data any) bool {
 		return false
 	}
 
-	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
+	defer fd.Close()
 
-	fd.Close()
+	err = gob.NewEncoder(fd).Encode(&cacheItem{data})
 
 	if err != nil {
 		os.Remove(file)

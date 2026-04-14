@@ -2,7 +2,7 @@ package pluralize
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Pluralizer is pluralization rule function
+// Pluralizer is a function that returns the plural form index for a given number
 type Pluralizer func(num uint64) int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -352,7 +352,17 @@ var Ln = Ach
 var Lo = Ay
 
 // Lt is pluralization rule for Lithuanian language
-var Lt = Be
+var Lt = func(n uint64) int {
+	if n%10 == 1 && n%100 != 11 {
+		return 0
+	}
+
+	if n%10 >= 2 && n%10 <= 9 && (n%100 < 10 || n%100 >= 20) {
+		return 1
+	}
+
+	return 2
+}
 
 // Lv is pluralization rule for Latvian language
 var Lv = func(n uint64) int {
@@ -472,7 +482,17 @@ var Pa = Af
 var Pap = Af
 
 // Pl is pluralization rule for Polish language
-var Pl = Be
+var Pl = func(n uint64) int {
+	if n == 1 {
+		return 0
+	}
+
+	if n%10 >= 2 && n%10 <= 4 && (n%100 < 10 || n%100 >= 20) {
+		return 1
+	}
+
+	return 2
+}
 
 // Pms is pluralization rule for Piemontese language
 var Pms = Af
@@ -540,6 +560,8 @@ var Sk = func(n uint64) int {
 }
 
 // Sl is pluralization rule for Slovenian language
+// NOTE: Unlike most pluralizers, index 0 is the "other/plural" form.
+// Indices 1–3 correspond to the singular, dual, and trial forms respectively.
 var Sl = func(n uint64) int {
 	switch n % 100 {
 	case 1:

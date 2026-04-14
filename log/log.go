@@ -22,29 +22,32 @@ import (
 	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DEBUG uint8 = 0  // DEBUG debug messages
-	INFO  uint8 = 1  // INFO info messages
-	WARN  uint8 = 2  // WARN warning messages
-	ERROR uint8 = 3  // ERROR error messages
-	CRIT  uint8 = 4  // CRIT critical error messages
-	AUX   uint8 = 99 // AUX unskipable messages (separators, headers, etc...)
+	DEBUG uint8 = 0  // DEBUG represents the debug log level
+	INFO  uint8 = 1  // INFO represents the informational log level
+	WARN  uint8 = 2  // WARN represents the warning log level
+	ERROR uint8 = 3  // ERROR represents the error log level
+	CRIT  uint8 = 4  // CRIT represents the critical (fatal) log level
+	AUX   uint8 = 99 // AUX represents an unskippable log level used for separators and headers
 )
 
 const (
-	DATE_LAYOUT_TEXT = "2006/01/02 15:04:05.000" // Datetime layout for text logs
-	DATE_LAYOUT_JSON = time.RFC3339              // Datetime layout for JSON logs
+	// DATE_LAYOUT_TEXT is the datetime format used when rendering plain-text log entries
+	DATE_LAYOUT_TEXT = "2006/01/02 15:04:05.000"
+
+	// DATE_LAYOUT_JSON is the datetime format used when rendering JSON log entries
+	DATE_LAYOUT_JSON = time.RFC3339
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ILogger is interface for compatible loggers
+// ILogger defines the interface for loggers compatible with this package
 type ILogger interface {
 	Aux(f string, a ...any) error
 	Debug(f string, a ...any) error
@@ -57,7 +60,7 @@ type ILogger interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Logger is a basic logger struct
+// Logger is the core logging struct supporting both plain-text and JSON output
 type Logger struct {
 	PrefixDebug bool // Show prefix for debug messages
 	PrefixInfo  bool // Show prefix for info messages
@@ -72,33 +75,34 @@ type Logger struct {
 	WithFullCallerPath bool   // Show full path of caller
 	DiscardFields      bool   // Don't write fields to log
 
-	file     string
-	buf      bytes.Buffer
-	fd       *os.File
-	w        *bufio.Writer
-	mu       *sync.Mutex
-	minLevel uint8
-	perms    os.FileMode
-	useBufIO bool
+	file          string
+	buf           bytes.Buffer
+	fd            *os.File
+	w             *bufio.Writer
+	mu            *sync.Mutex
+	minLevel      uint8
+	perms         os.FileMode
+	useBufIO      bool
+	bufIOStopChan chan struct{}
 }
 
-// F is an alias for [Field] struct
+// F is an alias for [Field]
 type F = Field
 
-// Field contains key and value for JSON log
+// Field holds a key-value pair attached to a structured log entry
 type Field struct {
 	Key   string
 	Value any
 }
 
-// Fields is a field collection
+// Fields is an ordered collection of Field values for structured logging
 type Fields struct {
 	data []Field
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Global is global logger struct
+// Global is the package-level default logger instance
 var Global = &Logger{
 	PrefixWarn:  true,
 	PrefixError: true,
@@ -110,7 +114,7 @@ var Global = &Logger{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrefixMap is map with messages prefixes
+// PrefixMap maps log levels to their human-readable string prefixes
 var PrefixMap = map[uint8]string{
 	DEBUG: "[DEBUG]",
 	INFO:  "[INFO]",
@@ -119,7 +123,7 @@ var PrefixMap = map[uint8]string{
 	CRIT:  "[CRITICAL]",
 }
 
-// Colors colors is map with fmtc color tags for every level
+// Colors maps log levels to fmtc color tags used in colorized output
 var Colors = map[uint8]string{
 	DEBUG: "{s-}",
 	INFO:  "",
@@ -130,16 +134,16 @@ var Colors = map[uint8]string{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Errors
 var (
-	// ErrNilLogger is returned by Logger struct methods if struct is nil
-	ErrNilLogger = errors.New("Logger is nil")
+	// ErrNilLogger is returned when a method is called on a nil logger
+	ErrNilLogger = errors.New("logger is nil")
 
-	// ErrUnexpectedLevel is returned by the MinLevel method if given level is unknown
-	ErrUnexpectedLevel = errors.New("Unexpected level type")
+	// ErrUnexpectedLevel is returned when an unrecognized level value is passed
+	// to [MinLevel]
+	ErrUnexpectedLevel = errors.New("unexpected level type")
 
-	// ErrOutputNotSet is returned by the Reopen method if output file is not set
-	ErrOutputNotSet = errors.New("Output file is not set")
+	// ErrOutputNotSet is returned by [Reopen] when no output file has been configured
+	ErrOutputNotSet = errors.New("output file is not set")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -167,7 +171,8 @@ var logLevels = []string{
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// New creates new logger struct
+// New creates and returns a new Logger writing to the given file with the
+// specified permissions
 func New(file string, perms os.FileMode) (*Logger, error) {
 	logger := &Logger{
 		PrefixWarn:  true,
@@ -187,86 +192,87 @@ func New(file string, perms os.FileMode) (*Logger, error) {
 	return logger, nil
 }
 
-// Reopen close file descriptor for global logger and open it again
-// Useful for log rotation
+// Reopen closes and reopens the global logger's file descriptor, useful for log
+// rotation
 func Reopen() error {
 	return Global.Reopen()
 }
 
-// MinLevel defines minimal logging level
+// MinLevel sets the minimum log level for the global logger
 func MinLevel(level any) error {
 	return Global.MinLevel(level)
 }
 
-// Set changes global logger output target
+// Set changes the output target of the global logger to the given file
 func Set(file string, perms os.FileMode) error {
 	return Global.Set(file, perms)
 }
 
-// EnableBufIO enables buffered I/O
+// EnableBufIO enables buffered I/O on the global logger with the given
+// flush interval
 func EnableBufIO(interval time.Duration) {
 	Global.EnableBufIO(interval)
 }
 
-// Flush writes buffered data to file
+// Flush writes any buffered data to the global logger's output file
 func Flush() error {
 	return Global.Flush()
 }
 
-// Print writes message to global logger output
+// Print writes a message at the given level to the global logger
 func Print(level uint8, f string, a ...any) error {
 	return Global.Print(level, f, a...)
 }
 
-// Debug writes debug message to global logger output
+// Debug writes a debug-level message to the global logger
 func Debug(f string, a ...any) error {
 	return Global.Debug(f, a...)
 }
 
-// Info writes info message to global logger output
+// Info writes an info-level message to the global logger
 func Info(f string, a ...any) error {
 	return Global.Info(f, a...)
 }
 
-// Warn writes warning message to global logger output
+// Warn writes a warning-level message to the global logger
 func Warn(f string, a ...any) error {
 	return Global.Warn(f, a...)
 }
 
-// Error writes error message to global logger output
+// Error writes an error-level message to the global logger
 func Error(f string, a ...any) error {
 	return Global.Error(f, a...)
 }
 
-// Crit writes critical message to global logger output
+// Crit writes a critical-level message to the global logger
 func Crit(f string, a ...any) error {
 	return Global.Crit(f, a...)
 }
 
-// Aux writes unskippable message (for separators/headers)
+// Aux writes an unskippable message (e.g. separator or header) to the
+// global logger
 func Aux(f string, a ...any) error {
 	return Global.Aux(f, a...)
 }
 
-// Divider writes simple divider to logger output
+// Divider writes an 80-character horizontal rule to the global logger
 func Divider() error {
 	return Global.Divider()
 }
 
-// Is returns true if current minimal logging level is equal or greater than
-// given
+// Is reports whether the global logger's minimum level is at or below
+// the given level
 func Is(level uint8) bool {
 	return Global.Is(level)
 }
 
-// Levels returns slice with all supported log levels
+// Levels returns a slice of all supported log level name strings
 func Levels() []string {
 	return logLevels
 }
 
-// PanicHandler is a handler that logs panic info with crit level.
-//
-// Note that you must defer this function rather than calling it directly.
+// PanicHandler recovers from a panic and logs it at the critical level.
+// It must be called via defer, not directly.
 func PanicHandler(msg string) {
 	r := recover()
 
@@ -279,19 +285,17 @@ func PanicHandler(msg string) {
 		return
 	}
 
-	if r != nil {
-		if Global.UseJSON {
-			Global.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
-		} else {
-			Global.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
-		}
+	if Global.UseJSON {
+		Global.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
+	} else {
+		Global.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
 	}
+
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Reopen closes file descriptor and opens it again
-// Useful for log rotation
+// Reopen closes and reopens the logger's file descriptor, useful for log rotation
 func (l *Logger) Reopen() error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -304,17 +308,14 @@ func (l *Logger) Reopen() error {
 		return ErrOutputNotSet
 	}
 
-	if l.w != nil {
-		l.w.Flush()
-	}
+	file, perms := l.file, l.perms
 
-	l.fd.Close()
 	l.mu.Unlock()
 
-	return l.Set(l.file, l.perms)
+	return l.Set(file, perms)
 }
 
-// MinLevel defines minimal logging level
+// MinLevel sets the minimum level below which messages are not written
 func (l *Logger) MinLevel(level any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -338,7 +339,7 @@ func (l *Logger) MinLevel(level any) error {
 	return nil
 }
 
-// EnableBufIO enables buffered I/O support
+// EnableBufIO enables buffered I/O with the given periodic flush interval
 func (l *Logger) EnableBufIO(flushInterval time.Duration) {
 	if l == nil || l.mu == nil {
 		return
@@ -353,10 +354,16 @@ func (l *Logger) EnableBufIO(flushInterval time.Duration) {
 		l.w = bufio.NewWriter(l.fd)
 	}
 
-	go l.flushDaemon(flushInterval)
+	if l.bufIOStopChan != nil {
+		close(l.bufIOStopChan)
+	}
+
+	l.bufIOStopChan = make(chan struct{})
+
+	go l.flushDaemon(flushInterval, l.bufIOStopChan)
 }
 
-// Set changes logger output target
+// Set changes the logger's output to the given file path and permission mode
 func (l *Logger) Set(file string, perms os.FileMode) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -391,7 +398,7 @@ func (l *Logger) Set(file string, perms os.FileMode) error {
 	return nil
 }
 
-// Print writes message to logger output
+// Print writes a formatted message at the specified level to the logger output
 func (l *Logger) Print(level uint8, f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -411,7 +418,7 @@ func (l *Logger) Print(level uint8, f string, a ...any) error {
 	return l.writeText(level, f, a...)
 }
 
-// Flush writes buffered data to file
+// Flush writes any pending buffered data to the underlying file
 func (l *Logger) Flush() error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -431,7 +438,7 @@ func (l *Logger) Flush() error {
 	return err
 }
 
-// Debug writes debug message to logger output
+// Debug writes a debug-level message to the logger
 func (l *Logger) Debug(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -440,7 +447,7 @@ func (l *Logger) Debug(f string, a ...any) error {
 	return l.Print(DEBUG, f, a...)
 }
 
-// Info writes info message to logger output
+// Info writes an info-level message to the logger
 func (l *Logger) Info(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -449,7 +456,7 @@ func (l *Logger) Info(f string, a ...any) error {
 	return l.Print(INFO, f, a...)
 }
 
-// Warn writes warning message to logger output
+// Warn writes a warning-level message to the logger
 func (l *Logger) Warn(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -458,7 +465,7 @@ func (l *Logger) Warn(f string, a ...any) error {
 	return l.Print(WARN, f, a...)
 }
 
-// Error writes error message to logger output
+// Error writes an error-level message to the logger
 func (l *Logger) Error(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -467,7 +474,7 @@ func (l *Logger) Error(f string, a ...any) error {
 	return l.Print(ERROR, f, a...)
 }
 
-// Crit writes critical message to logger output
+// Crit writes a critical-level message to the logger
 func (l *Logger) Crit(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -476,7 +483,7 @@ func (l *Logger) Crit(f string, a ...any) error {
 	return l.Print(CRIT, f, a...)
 }
 
-// Aux writes unfiltered message (for separators/headers) to logger output
+// Aux writes an unskippable message (e.g. separator or header) to the logger
 func (l *Logger) Aux(f string, a ...any) error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -485,7 +492,7 @@ func (l *Logger) Aux(f string, a ...any) error {
 	return l.Print(AUX, f, a...)
 }
 
-// Divider writes simple divider to logger output
+// Divider writes an 80-character horizontal rule to the logger output
 func (l *Logger) Divider() error {
 	if l == nil || l.mu == nil {
 		return ErrNilLogger
@@ -498,15 +505,13 @@ func (l *Logger) Divider() error {
 	return l.Print(AUX, strings.Repeat("-", 80))
 }
 
-// Is returns true if current minimal logging level is equal or greater than
-// given
+// Is reports whether the given level meets or exceeds the logger's minimum level
 func (l *Logger) Is(level uint8) bool {
 	return l != nil && level >= l.minLevel
 }
 
-// PanicHandler is a handler that logs panic info with crit level.
-//
-// Note that you must defer this function rather than calling it directly.
+// PanicHandler recovers from a panic and logs it at the critical level.
+// It must be called via defer, not directly.
 func (l *Logger) PanicHandler(msg string) {
 	if l == nil || l.mu == nil {
 		return
@@ -515,43 +520,46 @@ func (l *Logger) PanicHandler(msg string) {
 	r := recover()
 
 	if r != nil {
+		stack := debug.Stack()
+
 		if l.UseJSON {
-			l.Crit("%s: %v", msg, r, F{"panic-stack", string(debug.Stack())})
+			l.Crit("%s: %v", msg, r, F{"panic-stack", string(stack)})
 		} else {
-			l.Crit("%s: %v (%s)", msg, r, extractPanicPath(debug.Stack()))
+			l.Crit("%s: %v (%s)", msg, r, extractPanicPath(stack))
 		}
 	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns string representation of field
+// String returns the field formatted as "key:value"
 func (f Field) String() string {
 	return fmt.Sprintf("%s:%v", f.Key, f.Value)
 }
 
-// Mask masks part of the field value
+// Mask returns a copy of the field with the middle portion of its value obscured
 func (f Field) Mask() Field {
 	v := fmt.Sprintf("%v", f.Value)
 	f.Value = strutil.Mask(v, len(v)/3, 999999, '*')
 	return f
 }
 
-// Head trims the last part of field value
+// Head returns a copy of the field with its value truncated to the first size bytes
 func (f Field) Head(size int) Field {
 	v := fmt.Sprintf("%v", f.Value)
 	f.Value = strutil.Head(v, size)
 	return f
 }
 
-// Tail trims the first part of field value
+// Tail returns a copy of the field with its value truncated to the last size bytes
 func (f Field) Tail(size int) Field {
 	v := fmt.Sprintf("%v", f.Value)
 	f.Value = strutil.Tail(v, size)
 	return f
 }
 
-// Compact shrinks field value to given size
+// Compact returns a copy of the field with its value shortened to size bytes,
+// using an ellipsis in the middle
 func (f Field) Compact(size int) Field {
 	v := fmt.Sprintf("%v", f.Value)
 
@@ -573,14 +581,14 @@ func (f Field) Compact(size int) Field {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewFields creates new fields collection
+// NewFields creates a new Fields collection pre-populated with the given fields
 func NewFields(fields ...Field) *Fields {
 	result := &Fields{}
 	result.Add(fields...)
 	return result
 }
 
-// Add adds given fields to collection
+// Add appends one or more fields to the collection, skipping any with empty keys
 func (f *Fields) Add(fields ...Field) *Fields {
 	if f == nil || len(fields) == 0 {
 		return f
@@ -595,7 +603,8 @@ func (f *Fields) Add(fields ...Field) *Fields {
 	return f
 }
 
-// AddF creates and adds field to collection
+// AddF creates a new field from the given key and value and appends it to the
+// collection
 func (f *Fields) AddF(key string, value any) *Fields {
 	if f == nil || key == "" {
 		return f
@@ -606,7 +615,7 @@ func (f *Fields) AddF(key string, value any) *Fields {
 	return f
 }
 
-// Reset removes all fields from collection
+// Reset removes all fields from the collection
 func (f *Fields) Reset() *Fields {
 	if f == nil {
 		return f
@@ -733,28 +742,19 @@ func (l *Logger) writeJSON(level uint8, msg string, a ...any) error {
 
 // getWriter returns writer based on logger configuration
 func (l *Logger) getWriter(level uint8) io.Writer {
-	var w io.Writer
-
-	if l.fd == nil {
-		if l.UseJSON {
-			w = os.Stdout
-		} else {
-			switch level {
-			case ERROR, CRIT:
-				w = os.Stderr
-			default:
-				w = os.Stdout
-			}
-		}
-	} else {
+	if l.fd != nil {
 		if l.w != nil {
-			w = l.w
-		} else {
-			w = l.fd
+			return l.w
 		}
+
+		return l.fd
 	}
 
-	return w
+	if l.UseJSON || (level != ERROR && level != CRIT) {
+		return os.Stdout
+	}
+
+	return os.Stderr
 }
 
 // formatDateTime applies logger datetime layout for given date
@@ -784,9 +784,17 @@ func (l *Logger) isPrefixRequired(level uint8) bool {
 }
 
 // flushDaemon periodically flashes buffered data
-func (l *Logger) flushDaemon(interval time.Duration) {
-	for range time.NewTicker(interval).C {
-		l.Flush()
+func (l *Logger) flushDaemon(interval time.Duration, stopChan <-chan struct{}) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			l.Flush()
+		case <-stopChan:
+			return
+		}
 	}
 }
 
@@ -829,15 +837,21 @@ func (l *Logger) writeJSONFields(fields []any) {
 		return
 	}
 
-	for i, f := range fields {
+	first := true
+
+	for _, f := range fields {
 		t, ok := f.(Field)
 
-		if ok {
-			l.writeJSONField(t)
-			if i+1 != len(fields) {
-				l.buf.WriteRune(',')
-			}
+		if !ok {
+			continue
 		}
+
+		if !first {
+			l.buf.WriteRune(',')
+		}
+
+		l.writeJSONField(t)
+		first = false
 	}
 }
 
@@ -919,7 +933,7 @@ func convertMinLevelValue(level any) (uint8, error) {
 		code, ok := logLevelsNames[strings.ToLower(t)]
 
 		if !ok {
-			return 255, errors.New("Unknown level " + t)
+			return 255, fmt.Errorf("unknown level %q", t)
 		}
 
 		return code, nil

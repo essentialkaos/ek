@@ -9,15 +9,22 @@ package spellcheck
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"sort"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Model is spellcheck model struct
+// DEFAULT_THRESHOLD is default threshold
+const DEFAULT_THRESHOLD = 2
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Model holds a trained set of terms and the score threshold used for candidate
+// filtering during correction and suggestion
 type Model struct {
 	Threshold int // Score threshold (default: 2)
 
@@ -26,7 +33,7 @@ type Model struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// suggestItem is struct for storing suggestion item
+// suggestItem holds a candidate term together with its edit-distance score
 type suggestItem struct {
 	term  string
 	score int
@@ -34,9 +41,11 @@ type suggestItem struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Train trains spellcheck model with given words
+// Train builds and returns a new Model trained on the given words.
+// Duplicate words are deduplicated automatically; an empty slice returns a
+// zero-term model with the default threshold of 2.
 func Train(words []string) *Model {
-	model := &Model{Threshold: 2}
+	model := &Model{Threshold: DEFAULT_THRESHOLD}
 
 	if len(words) == 0 {
 		return model
@@ -52,12 +61,17 @@ func Train(words []string) *Model {
 		model.terms = append(model.terms, cw)
 	}
 
+	sort.Strings(model.terms)
+
 	return model
 }
 
-// Distance calculates Damerau–Levenshtein distance between two strings
+// Distance calculates the Damerau–Levenshtein edit distance between two
+// Unicode strings, counting insertions, deletions, substitutions, and
+// adjacent transpositions
 func Distance(source, target string) int {
-	sl, tl := len(source), len(target)
+	sr, tr := []rune(source), []rune(target)
+	sl, tl := len(sr), len(tr)
 
 	if sl == 0 {
 		if tl == 0 {
@@ -98,7 +112,7 @@ func Distance(source, target string) int {
 		d := 0
 
 		for j := 1; j <= tl; j++ {
-			i1 := sd[rune(target[j-1])]
+			i1 := sd[tr[j-1]]
 			j1 := d
 
 			if source[i-1] == target[j-1] {
@@ -111,7 +125,7 @@ func Distance(source, target string) int {
 			h[i+1][j+1] = min(h[i+1][j+1], h[i1][j1]+(i-i1-1)+1+(j-j1-1))
 		}
 
-		sd[rune(source[i-1])] = i
+		sd[sr[i-1]] = i
 	}
 
 	return h[sl+1][tl+1]
@@ -119,18 +133,18 @@ func Distance(source, target string) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Correct returns corrected word for given word
+// Correct returns the closest matching term from the model for the given word.
+// If no candidate scores within the threshold, the original word is returned unchanged.
 func (m *Model) Correct(word string) string {
 	if m == nil || len(m.terms) == 0 {
 		return word
 	}
 
-	result := suggestItem{score: 99999999999}
+	result := suggestItem{score: math.MaxInt}
 
 	for _, si := range getSuggestSlice(m.terms, word) {
 		if si.score < result.score {
 			result = si
-			continue
 		}
 	}
 
@@ -141,14 +155,11 @@ func (m *Model) Correct(word string) string {
 	return result.term
 }
 
-// Suggest returns suggestions for given word
+// Suggest returns up to max candidate terms ranked by edit distance to word.
+// If the model is empty, a slice containing the original word is returned.
 func (m *Model) Suggest(word string, max int) []string {
 	if m == nil || len(m.terms) == 0 {
 		return []string{word}
-	}
-
-	if max == 1 {
-		return []string{m.Correct(word)}
 	}
 
 	sis := getSuggestSlice(m.terms, word)
@@ -170,10 +181,13 @@ func (m *Model) Suggest(word string, max int) []string {
 
 // getSuggestSlice returns slice of suggestItem for given terms and word
 func getSuggestSlice(terms []string, word string) []suggestItem {
-	var result []suggestItem
+	result := make([]suggestItem, 0, len(terms))
 
-	for _, t := range terms {
-		result = append(result, suggestItem{t, Distance(strings.ToLower(t), strings.ToLower(word))})
+	for _, term := range terms {
+		result = append(result, suggestItem{
+			term:  term,
+			score: Distance(strings.ToLower(term), strings.ToLower(word)),
+		})
 	}
 
 	return result

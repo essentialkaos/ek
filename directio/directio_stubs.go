@@ -23,13 +23,16 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ ReadFile read file with Direct IO without buffering data in page cache
+// ❗ ReadFile reads the file at the given path using Direct IO, bypassing the OS page
+// cache
 func ReadFile(file string) ([]byte, error) {
 	panic("UNSUPPORTED")
 	return nil, nil
 }
 
-// ❗ WriteFile write file with Direct IO without buffering data in page cache
+// ❗ WriteFile writes data to the file at the given path using Direct IO, bypassing
+// the OS page cache. The file is created with the given permissions if it does
+// not exist.
 func WriteFile(file string, data []byte, perms os.FileMode) error {
 	panic("UNSUPPORTED")
 	return nil

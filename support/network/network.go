@@ -14,15 +14,16 @@ import (
 	"os"
 	"slices"
 
-	"github.com/essentialkaos/ek/v13/netutil"
-	"github.com/essentialkaos/ek/v13/sortutil"
+	"github.com/essentialkaos/ek/v14/netutil"
+	"github.com/essentialkaos/ek/v14/sortutil"
 
-	"github.com/essentialkaos/ek/v13/support"
+	"github.com/essentialkaos/ek/v14/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects network info
+// Collect gathers hostname, local IPv4/IPv6 addresses, and optionally the
+// public IP using the first provided resolver URL
 func Collect(ipResolverURL ...string) *support.NetworkInfo {
 	info := &support.NetworkInfo{
 		IPv4: cleanIPList(netutil.GetAllIP()),
@@ -38,7 +39,13 @@ func Collect(ipResolverURL ...string) *support.NetworkInfo {
 	info.Hostname, _ = os.Hostname()
 
 	if len(ipResolverURL) != 0 {
-		info.PublicIP = resolvePublicIP(ipResolverURL[0])
+		for _, resolver := range ipResolverURL {
+			info.PublicIP = resolvePublicIP(resolver)
+
+			if info.PublicIP != "" {
+				break
+			}
+		}
 	}
 
 	return info
@@ -48,16 +55,7 @@ func Collect(ipResolverURL ...string) *support.NetworkInfo {
 
 // cleanIPList returns IP slice without local IP's
 func cleanIPList(ips []string) []string {
-	var result []string
-
-	for _, ip := range ips {
-		switch ip {
-		case "127.0.0.1", "::1":
-			continue
-		default:
-			result = append(result, ip)
-		}
-	}
-
-	return result
+	return slices.DeleteFunc(ips, func(ip string) bool {
+		return ip == "127.0.0.1" || ip == "::1"
+	})
 }

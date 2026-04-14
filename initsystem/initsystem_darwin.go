@@ -14,7 +14,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -63,7 +63,7 @@ func getLaunchdStatus(name string) (bool, bool, error) {
 	output, err := exec.Command("launchctl", "list").Output()
 
 	if err != nil {
-		return false, false, fmt.Errorf("launchd returned error")
+		return false, false, fmt.Errorf("launchd returned an error")
 	}
 
 	isExist, isWorks := parseLaunchdOutput(output, name)

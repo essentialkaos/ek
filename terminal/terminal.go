@@ -13,17 +13,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrorColorTag is fmtc color tag used for error messages
+	// ErrorColorTag is the fmtc color tag applied to error messages
 	ErrorColorTag = "{r}"
 
-	// WarnColorTag is fmtc color tag used for warning messages
+	// WarnColorTag is the fmtc color tag applied to warning messages
 	WarnColorTag = "{y}"
 
 	// InfoColorTag is fmtc color tag used for info messages
@@ -31,24 +31,26 @@ var (
 )
 
 var (
-	// ErrorPrefix is prefix for error messages
+	// ErrorPrefix is the string prepended to every error message
 	ErrorPrefix = ""
 
-	// WarnPrefix is prefix for warning messages
+	// WarnPrefix is the string prepended to every warning message
 	WarnPrefix = ""
 
-	// InfoPrefix is prefix for info messages
+	// InfoPrefix is the string prepended to every info message
 	InfoPrefix = ""
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrintActionMessage prints message about action currently in progress
+// PrintActionMessage prints a bold action description followed by a space,
+// intended to be paired with a subsequent PrintActionStatus call
 func PrintActionMessage(message string) {
 	fmtc.Printf("{*}%s:{!} ", message)
 }
 
-// PrintActionStatus prints message with action execution status
+// PrintActionStatus prints a colored status label (OK, ERROR, WARNING, or UNKNOWN)
+// corresponding to the given numeric status code
 func PrintActionStatus(status int) {
 	switch status {
 	case 0:
@@ -62,7 +64,7 @@ func PrintActionStatus(status int) {
 	}
 }
 
-// Error prints error message
+// Error prints a formatted error message in red to stderr
 func Error(message any, args ...any) {
 	fmtc.Fprintf(
 		os.Stderr, ErrorColorTag+ErrorPrefix+"%s{!}\n",
@@ -70,7 +72,7 @@ func Error(message any, args ...any) {
 	)
 }
 
-// Warn prints warning message
+// Warn prints a formatted warning message in yellow to stderr
 func Warn(message any, args ...any) {
 	fmtc.Fprintf(
 		os.Stderr, WarnColorTag+WarnPrefix+"%s{!}\n",
@@ -78,7 +80,7 @@ func Warn(message any, args ...any) {
 	)
 }
 
-// Info prints info message
+// Info prints a formatted informational message in cyan to stdout
 func Info(message any, args ...any) {
 	fmtc.Fprintf(
 		os.Stdout, InfoColorTag+InfoPrefix+"%s{!}\n",

@@ -11,6 +11,8 @@ import "io"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CondWrapper is a boolean wrapper that conditionally executes print operations.
+// Use the [If] constructor to create one
 type CondWrapper bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -235,7 +237,7 @@ func (cw CondWrapper) TLPrintf(maxSize int, f string, a ...any) (int, error) {
 	return TLPrintf(maxSize, f, a...)
 }
 
-// TPrintln removes all content on the current line and prints the new message
+// TLPrintln removes all content on the current line and prints the new message
 // limited by the text size with a new line symbol at the end
 func (cw CondWrapper) TLPrintln(maxSize int, a ...any) (int, error) {
 	if !cw {
@@ -246,12 +248,12 @@ func (cw CondWrapper) TLPrintln(maxSize int, a ...any) (int, error) {
 }
 
 // NewLine prints a newline to standard output
-func (cw CondWrapper) NewLine() (int, error) {
+func (cw CondWrapper) NewLine(n ...int) (int, error) {
 	if !cw {
 		return 0, nil
 	}
 
-	return NewLine()
+	return NewLine(n...)
 }
 
 // Bell prints alert (bell) symbol

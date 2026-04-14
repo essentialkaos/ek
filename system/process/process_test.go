@@ -33,7 +33,7 @@ func (s *ProcessSuite) TestGetTree(c *C) {
 	tree, err := GetTree(66000)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Process with PID \[66000\] doesn't exist`)
+	c.Assert(err, ErrorMatches, `process with PID \d+ doesn't exist`)
 	c.Assert(tree, IsNil)
 
 	tree, err = GetTree(os.Getpid())
@@ -61,7 +61,7 @@ func (s *ProcessSuite) TestGetTreeAux(c *C) {
 	_, err = getProcessUser(9999, map[int]string{})
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `User with name/ID 9999 does not exist`)
+	c.Assert(err, ErrorMatches, `user with name/ID "9999" does not exist`)
 
 	p1, p2 := getParentPIDs("/_unknown_")
 
@@ -114,7 +114,7 @@ func (s *ProcessSuite) TestGetInfo(c *C) {
 	info, err = GetInfo(10000)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse stat file for given process`)
+	c.Assert(err, ErrorMatches, `stat file .* has not valid data`)
 	c.Assert(info, IsNil)
 
 	procFS = "/proc"
@@ -167,7 +167,7 @@ func (s *ProcessSuite) TestGetMemInfo(c *C) {
 	info, err = GetMemInfo(10000)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse status file for given process`)
+	c.Assert(err, ErrorMatches, `can't parse field "VmPeak:" from stats file .*/10000/status`)
 	c.Assert(info, IsNil)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "status", "VmPeak:         0 kB\nVmSize:         0 kB\n")
@@ -175,7 +175,7 @@ func (s *ProcessSuite) TestGetMemInfo(c *C) {
 	info, err = GetMemInfo(10000)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse status file for given process`)
+	c.Assert(err.Error(), Equals, `invalid status data: VmPeak+VmSize is equals to 0`)
 	c.Assert(info, IsNil)
 
 	procFS = "/proc"
@@ -195,22 +195,22 @@ func (s *ProcessSuite) TestGetMountInfo(c *C) {
 
 	_, _, err = parseStDevValue("AA:11")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field StDevMajor: strconv.ParseUint: parsing "AA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse field StDevMajor: strconv.ParseUint: parsing "AA": invalid syntax`)
 
 	_, _, err = parseStDevValue("11:AA")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field StDevMinor: strconv.ParseUint: parsing "AA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse field StDevMinor: strconv.ParseUint: parsing "AA": invalid syntax`)
 
 	_, err = parseMountInfoLine("AA AA")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field MountID: strconv.ParseUint: parsing "AA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse field MountID: strconv.ParseUint: parsing "AA": invalid syntax`)
 
 	procFS = s.CreateFakeProcFS(c, "10000", "mountinfo", "AA AA AA")
 
 	info, err = GetMountInfo(10000)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse field MountID: strconv.ParseUint: parsing "AA": invalid syntax`)
+	c.Assert(err, ErrorMatches, `can't parse field MountID: strconv.ParseUint: parsing "AA": invalid syntax`)
 	c.Assert(info, IsNil)
 
 	procFS = "/proc"

@@ -11,14 +11,15 @@ package fs
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek/v13/system"
+	"github.com/essentialkaos/ek/v14/system"
 
-	"github.com/essentialkaos/ek/v13/support"
+	"github.com/essentialkaos/ek/v14/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Collect collects info about filesystem
+// Collect returns usage statistics for all currently mounted filesystems.
+// Returns nil if filesystem information cannot be retrieved from the OS.
 func Collect() []support.FSInfo {
 	fsInfo, err := system.GetFSUsage()
 
@@ -26,7 +27,7 @@ func Collect() []support.FSInfo {
 		return nil
 	}
 
-	var info []support.FSInfo
+	info := make([]support.FSInfo, len(fsInfo))
 
 	for mPath, mInfo := range fsInfo {
 		info = append(info, support.FSInfo{

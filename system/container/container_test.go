@@ -9,6 +9,7 @@ package container
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -66,43 +67,43 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = "/__unknown__"
 	c.Assert(GetEngine(), Equals, "")
 
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/default"
 	c.Assert(GetEngine(), Equals, "")
 	c.Assert(IsContainer(), Equals, false)
 
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/yandex"
 	c.Assert(GetEngine(), Equals, YANDEX)
 	c.Assert(IsK8s(), Equals, false)
 
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/lxc"
 	c.Assert(GetEngine(), Equals, LXC)
 
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/containerd"
 	c.Assert(GetEngine(), Equals, CONTAINERD)
 	c.Assert(IsK8s(), Equals, true)
 
 	isK8s = false
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/docker"
 	c.Assert(GetEngine(), Equals, DOCKER)
 
-	engineChecked = false
+	once = sync.Once{}
 	dockerEnv = s.DataDir + "/.dockerenv"
 
 	mountsFile = s.DataDir + "/docker-runsc"
 	c.Assert(GetEngine(), Equals, DOCKER_RUNSC)
 
 	dockerEnv = "/.dockerenv"
-	engineChecked = false
+	once = sync.Once{}
 
 	mountsFile = s.DataDir + "/podman"
 	c.Assert(GetEngine(), Equals, PODMAN)

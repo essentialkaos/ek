@@ -13,7 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/req"
+	"github.com/essentialkaos/ek/v14/req"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -41,7 +42,7 @@ func GitLabChecker(app, version, data string) (string, time.Time, bool) {
 		return "", time.Time{}, false
 	}
 
-	return strings.TrimLeft(release.Tag, "v"), release.Released, true
+	return strings.TrimPrefix(release.Tag, "v"), release.Released, true
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,8 +58,10 @@ func getLatestGitLabRelease(app, version, repository string) *gitlabRelease {
 
 	repository = url.PathEscape(repository)
 
-	if os.Getenv("GL_TOKEN") != "" {
-		auth = req.AuthBearer{os.Getenv("GL_TOKEN")}
+	token := strutil.Q(os.Getenv("GL_TOKEN"), os.Getenv("GITLAB_TOKEN"))
+
+	if token != "" {
+		auth = req.AuthBearer{token}
 	}
 
 	resp, err := engine.Get(req.Request{

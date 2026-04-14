@@ -14,12 +14,15 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GzipLevel is default Gzip compression level
-var GzipLevel = gzip.BestSpeed
+var (
+	gzipLevel   = gzip.BestSpeed
+	gzipLevelMu sync.RWMutex
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -45,6 +48,22 @@ func WriteGz(file string, v any, perms ...os.FileMode) error {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// SetGzipLevel sets the compression level (0-9) used by [WriteGz]
+func SetGzipLevel(level int) {
+	gzipLevelMu.Lock()
+	gzipLevel = min(max(0, level), 9)
+	gzipLevelMu.Unlock()
+}
+
+// GzipLevel returns the current compression level
+func GzipLevel() int {
+	gzipLevelMu.RLock()
+	defer gzipLevelMu.RUnlock()
+	return gzipLevel
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // readFile reads and decode JSON file
 func readFile(file string, v any, compress bool) error {
 	fd, err := os.Open(file)
@@ -53,26 +72,32 @@ func readFile(file string, v any, compress bool) error {
 		return err
 	}
 
-	defer fd.Close()
+	err = readData(fd, v, compress)
 
-	return readData(fd, v, compress)
+	if err != nil {
+		return err
+	}
+
+	return fd.Close()
 }
 
 // readData reads and decode JSON data from io.ReadWriter
-func readData(rw io.ReadWriter, v any, compress bool) error {
+func readData(r io.Reader, v any, compress bool) error {
 	var err error
 	var dr io.Reader
 
-	r := bufio.NewReader(rw)
+	rr := bufio.NewReader(r)
 
 	if compress {
-		dr, err = gzip.NewReader(r)
+		dr, err = gzip.NewReader(rr)
 
 		if err != nil {
 			return err
 		}
+
+		defer dr.(*gzip.Reader).Close()
 	} else {
-		dr = r
+		dr = rr
 	}
 
 	return json.NewDecoder(dr).Decode(v)
@@ -92,29 +117,37 @@ func writeFile(file string, v any, perms []os.FileMode, compressed bool) error {
 		return err
 	}
 
-	defer fd.Close()
+	err = writeData(fd, v, compressed)
 
-	return writeData(fd, v, compressed)
+	if err != nil {
+		return err
+	}
+
+	return fd.Close()
 }
 
 // writeData encodes data to JSON and writes it to io.ReadWriter
-func writeData(rw io.ReadWriter, v any, compressed bool) error {
+func writeData(w io.Writer, v any, compressed bool) error {
 	var err error
 	var je *json.Encoder
 	var gw *gzip.Writer
 
-	w := bufio.NewWriter(rw)
+	ww := bufio.NewWriter(w)
+
+	defer ww.Flush()
 
 	if compressed {
-		gw, err = gzip.NewWriterLevel(w, GzipLevel)
+		gw, err = gzip.NewWriterLevel(ww, gzipLevel)
 
 		if err != nil {
 			return err
 		}
 
 		je = json.NewEncoder(gw)
+
+		defer gw.Close()
 	} else {
-		je = json.NewEncoder(w)
+		je = json.NewEncoder(ww)
 	}
 
 	je.SetIndent("", "  ")
@@ -133,5 +166,5 @@ func writeData(rw io.ReadWriter, v any, compressed bool) error {
 		}
 	}
 
-	return w.Flush()
+	return ww.Flush()
 }

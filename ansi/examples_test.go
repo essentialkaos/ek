@@ -13,40 +13,40 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func ExampleHasCodes() {
+func ExampleHas() {
 	input := "Hello"
-	fmt.Println(HasCodes(input))
+	fmt.Println(Has(input))
 
 	input = "\033[40;38;5;82mHello\x1B[0m"
-	fmt.Println(HasCodes(input))
+	fmt.Println(Has(input))
 
 	// Output:
 	// false
 	// true
 }
 
-func ExampleHasCodesBytes() {
+func ExampleHasBytes() {
 	input := []byte("Hello")
-	fmt.Println(HasCodesBytes(input))
+	fmt.Println(HasBytes(input))
 
 	input = []byte("\033[40;38;5;82mHello\x1B[0m")
-	fmt.Println(HasCodesBytes(input))
+	fmt.Println(HasBytes(input))
 
 	// Output:
 	// false
 	// true
 }
 
-func ExampleRemoveCodes() {
+func ExampleRemove() {
 	input := "\033[40;38;5;82mHello\x1B[0m"
-	fmt.Println(RemoveCodes(input))
+	fmt.Println(Remove(input))
 	// Output:
 	// Hello
 }
 
-func ExampleRemoveCodesBytes() {
+func ExampleRemoveBytes() {
 	input := []byte("\033[40;38;5;82mHello\x1B[0m")
-	fmt.Println(string(RemoveCodesBytes(input)))
+	fmt.Println(string(RemoveBytes(input)))
 	// Output:
 	// Hello
 }

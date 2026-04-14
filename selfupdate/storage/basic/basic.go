@@ -11,15 +11,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/req"
-	"github.com/essentialkaos/ek/v13/selfupdate"
-	"github.com/essentialkaos/ek/v13/selfupdate/storage"
-	"github.com/essentialkaos/ek/v13/version"
+	"github.com/essentialkaos/ek/v14/req"
+	"github.com/essentialkaos/ek/v14/selfupdate"
+	"github.com/essentialkaos/ek/v14/selfupdate/storage"
+	"github.com/essentialkaos/ek/v14/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Storage is basic storage client
+// Storage is a basic HTTP storage client that checks for updates on a given base URL
 type Storage struct {
 	URL string
 }
@@ -32,20 +32,20 @@ var _ storage.Storage = (*Storage)(nil)
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	// ErrEmptyURL is returned if storage URL is empty
-	ErrEmptyURL = fmt.Errorf("Storage URL is empty")
+	// ErrEmptyURL indicates that the storage URL is empty
+	ErrEmptyURL = fmt.Errorf("storage URL is empty")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewStorage creates a new Storage instance
+// NewStorage creates a new basic Storage with the given base URL
 func NewStorage(url string) *Storage {
 	return &Storage{URL: url}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Check checks for updates in the storage
+// Check queries the storage for available updates for the given application and version
 func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, error) {
 	switch {
 	case s == nil:
@@ -61,19 +61,19 @@ func (s *Storage) Check(appName, appVersion string) (selfupdate.Update, bool, er
 	curVersion, err := version.Parse(appVersion)
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't parse current version: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't parse current version: %w", err)
 	}
 
 	latestVersionStr, err := s.getLatestVersion(appName, appVersion)
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't get the latest version info: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't get the latest version info: %w", err)
 	}
 
 	latestVersion, err := version.Parse(latestVersionStr)
 
 	if err != nil {
-		return selfupdate.Update{}, false, fmt.Errorf("Can't parse latest version: %w", err)
+		return selfupdate.Update{}, false, fmt.Errorf("can't parse latest version: %w", err)
 	}
 
 	binaryURL := fmt.Sprintf(
@@ -101,11 +101,11 @@ func (s *Storage) getLatestVersion(appName, appVersion string) (string, error) {
 	}.Get()
 
 	if err != nil {
-		return "", fmt.Errorf("Can't send request to check the latest version: %w", err)
+		return "", fmt.Errorf("can't send request to check the latest version: %w", err)
 	}
 
 	if resp.StatusCode != req.STATUS_OK {
-		return "", fmt.Errorf("Storage returned non-ok status code (%d)", resp.StatusCode)
+		return "", fmt.Errorf("storage returned non-ok status code (%d)", resp.StatusCode)
 	}
 
 	versionInfo := &struct {
@@ -115,7 +115,7 @@ func (s *Storage) getLatestVersion(appName, appVersion string) (string, error) {
 	err = resp.JSON(versionInfo)
 
 	if err != nil {
-		return "", fmt.Errorf("Can't parse the latest version info: %w", err)
+		return "", fmt.Errorf("can't parse the latest version info: %w", err)
 	}
 
 	return versionInfo.Version, nil

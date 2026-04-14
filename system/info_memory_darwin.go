@@ -14,27 +14,31 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/system/sysctl"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/system/sysctl"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetMemUsage returns memory usage info
+// GetMemUsage returns current physical and swap memory usage
 func GetMemUsage() (*MemUsage, error) {
 	params, err := sysctl.All()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters: %w", err)
+		return nil, fmt.Errorf("can't get kernel parameters: %w", err)
 	}
 
-	pagesize, err := params.GetI("hw.pagesize")
+	pagesize, err := params.Get("hw.pagesize").Int()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't read page size: %w", err)
+		return nil, fmt.Errorf("can't read page size from sysctl: %w", err)
 	}
 
-	totalMem, _ := params.GetI("hw.memsize_usable")
+	totalMem, err := params.Get("hw.memsize_usable").Int()
+
+	if err != nil {
+		return nil, fmt.Errorf("can't read total memory from sysctl: %w", err)
+	}
 
 	info, err := calculateMemUsage(uint64(pagesize), uint64(totalMem))
 
@@ -54,7 +58,7 @@ func calculateMemUsage(pageSize, totalMem uint64) (*MemUsage, error) {
 	output, err := exec.Command("vm_stat").Output()
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't get output from vm_stats")
+		return nil, fmt.Errorf("can't get output from vm_stats")
 	}
 
 	buf := bytes.NewBuffer(output)
@@ -95,13 +99,13 @@ func calculateMemUsage(pageSize, totalMem uint64) (*MemUsage, error) {
 
 // appendSwapUsage appends swap usage info
 func appendSwapUsage(info *MemUsage, params sysctl.Params) {
-	swap := params["vm.swapusage"]
+	param := params.Get("vm.swapusage")
 
-	if swap == "" {
+	if param.IsEmpty() {
 		return
 	}
 
-	swap = strutil.SqueezeRepeats(swap, " ")
+	swap := strutil.SqueezeRepeats(param.Value, " ")
 	swap = strings.ReplaceAll(swap, " = ", "=")
 	swap = strings.ReplaceAll(swap, "M", "")
 

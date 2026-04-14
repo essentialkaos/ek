@@ -108,14 +108,6 @@ func ExampleHSL2RGB() {
 	// Output: 127,25,74
 }
 
-func ExampleHUE2RGB() {
-	hue := HUE2RGB(0.3, 0.12, 0.56)
-
-	fmt.Printf("Hue: %.4f\n", hue)
-
-	// Output: Hue: 0.1848
-}
-
 func ExampleLuminance() {
 	fmt.Printf("Lum: %.7f\n", Luminance(RGB{135, 85, 189}))
 

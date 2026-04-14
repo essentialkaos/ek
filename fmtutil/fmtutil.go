@@ -15,19 +15,20 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/ansi"
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/ansi"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Alignment defines the horizontal text alignment strategy
 type Alignment uint8
 
 const (
-	LEFT   Alignment = 0
-	CENTER Alignment = 1
-	RIGHT  Alignment = 2
+	LEFT   Alignment = 0 // Align text to the left, padding on the right
+	CENTER Alignment = 1 // Center text, distributing padding on both sides
+	RIGHT  Alignment = 2 // Align text to the right, padding on the left
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -52,19 +53,21 @@ type wrapper struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// OrderSeparator is a default order separator
+// OrderSeparator is the thousands separator used by [PrettyNum] and [PrettyPerc]
 var OrderSeparator = ","
 
-// SizeSeparator is a default size separator
+// SizeSeparator is placed between the numeric value and unit in [PrettySize]
 var SizeSeparator = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var spaces = strings.Repeat(" ", 256)
+var spaces string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// PrettyNum formats number to "pretty" form (e.g 1234567 -> 1,234,567)
+// PrettyNum formats any numeric value with thousands separators
+// (e.g. 1234567 → "1,234,567").
+// An optional separator overrides OrderSeparator for this call only.
 func PrettyNum(i any, separator ...string) string {
 	var str string
 
@@ -94,7 +97,7 @@ func PrettyNum(i any, separator ...string) string {
 	return fmt.Sprintf("%v", i)
 }
 
-// PrettyDiff formats number to "pretty" form with + or - symbol at the beginning
+// PrettyDiff formats an integer like [PrettyNum] but prepends "+" for positive values
 func PrettyDiff(i int, separator ...string) string {
 	if i > 0 {
 		return "+" + PrettyNum(i, separator...)
@@ -103,7 +106,8 @@ func PrettyDiff(i int, separator ...string) string {
 	return PrettyNum(i, separator...)
 }
 
-// PrettyNum formats float value to "pretty" percent form (e.g 12.3423 -> 12.3%)
+// PrettyPerc formats a float value as a human-readable percentage
+// (e.g. 12.3423 → "12.3%"). Values below 0.01 are rendered as "< 0.01%".
 func PrettyPerc(i float64) string {
 	i = Float(i)
 
@@ -114,7 +118,9 @@ func PrettyPerc(i float64) string {
 	return PrettyNum(i) + "%"
 }
 
-// PrettySize formats value to "pretty" size (e.g 1478182 -> 1.34 Mb)
+// PrettySize formats a numeric byte count as a human-readable size string
+// (e.g. 184713 → "180.4KB"). An optional separator overrides SizeSeparator for
+// this call.
 func PrettySize[N mathutil.Numeric](i N, separator ...string) string {
 	sep := SizeSeparator
 
@@ -142,7 +148,9 @@ func PrettySize[N mathutil.Numeric](i N, separator ...string) string {
 	}
 }
 
-// PrettyBool formats boolean to "pretty" form (e.g true/false -> Y/N)
+// PrettyBool formats a boolean as "Y"/"N" by default.
+// Provide two optional strings to use custom true/false labels (e.g. "Yep",
+// "Nope").
 func PrettyBool(b bool, vals ...string) string {
 	switch {
 	case b && len(vals) >= 1:
@@ -156,32 +164,29 @@ func PrettyBool(b bool, vals ...string) string {
 	return "N"
 }
 
-// ParseSize parses size and return it in bytes (e.g 1.34 Mb -> 1478182)
-func ParseSize(size string) uint64 {
+// ParseSize parses a human-readable size string and returns the equivalent byte count
+// (e.g. "2.2 GB" → 2362232012).
+func ParseSize(size string) (uint64, error) {
 	v := strings.ToLower(strings.ReplaceAll(size, " ", ""))
 	mod, suf := extractSizeInfo(v)
 
-	if suf == "" {
-		num, err := strconv.ParseUint(size, 10, 64)
+	v = strings.TrimSuffix(v, suf)
 
-		if err != nil {
-			return 0
-		}
-
-		return num
+	if v == "" {
+		return 0, fmt.Errorf("size has no digits")
 	}
 
-	v = strings.TrimRight(v, suf)
 	numFlt, err := strconv.ParseFloat(v, 64)
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
-	return uint64(numFlt * mod)
+	return uint64(numFlt * mod), nil
 }
 
-// Float formats float numbers more nicely
+// Float rounds f to 2 decimal places below 10, or 1 decimal place above. Returns 0.0
+// for NaN.
 func Float(f float64) float64 {
 	if math.IsNaN(f) {
 		return 0.0
@@ -194,27 +199,28 @@ func Float(f float64) float64 {
 	return mathutil.Round(f, 1)
 }
 
-// Align can align text with ANSI control sequences (for example colors)
+// Align pads text to size columns, respecting ANSI escape codes in width calculation
 func Align(text string, alignment Alignment, size int) string {
-	len := strutil.Len(ansi.RemoveCodes(text))
+	vlen := strutil.Len(ansi.Remove(text))
 
-	if len >= size {
+	if vlen >= size {
 		return text
 	}
 
 	switch alignment {
 	case RIGHT:
-		return spaces[:size-len] + text
+		return padding(size-vlen) + text
 	case CENTER:
-		pad := (size - len) / 2
-		return spaces[:pad] +
-			text + spaces[:size-(len+pad)]
+		pad := (size - vlen) / 2
+		return padding(pad) +
+			text + padding(size-(vlen+pad))
 	default:
-		return text + spaces[:size-len]
+		return text + padding(size-vlen)
 	}
 }
 
-// Wrap wraps text using max line length
+// Wrap breaks text into lines no longer than maxLineLength columns, prefixing each
+// line with indent. Existing newlines are preserved; double newlines become blank lines.
 func Wrap(text, indent string, maxLineLength int) string {
 	var word bytes.Buffer
 	var isNewLine bool
@@ -224,14 +230,12 @@ func Wrap(text, indent string, maxLineLength int) string {
 		MaxLineLength: maxLineLength,
 	}
 
-	reader := strings.NewReader(text)
-
-	for i := int64(0); i < reader.Size(); i++ {
-		r, _, _ := reader.ReadRune()
-
+	for _, r := range text {
 		switch r {
 		case ' ':
-			// break
+			w.AddWord(word)
+			word.Reset()
+
 		case '\n', '\r':
 			if !isNewLine {
 				isNewLine = true
@@ -240,14 +244,11 @@ func Wrap(text, indent string, maxLineLength int) string {
 			} else {
 				w.NewLine()
 			}
+
 		default:
 			isNewLine = false
 			word.WriteRune(r)
-			continue
 		}
-
-		w.AddWord(word)
-		word.Reset()
 	}
 
 	w.AddWord(word)
@@ -256,19 +257,23 @@ func Wrap(text, indent string, maxLineLength int) string {
 	return w.Result()
 }
 
-// ColorizePassword adds different fmtc color tags for numbers and letters
+// ColorizePassword wraps character groups in fmtc colour tags. letterTag is applied
+// to letters, numTag to digits, and specialTag to everything else.
 func ColorizePassword(password, letterTag, numTag, specialTag string) string {
-	var result, curTag, prevTag string
+	var curTag string
 
-	prevTag = "-"
+	prevTag := "-"
+
+	var b strings.Builder
+	b.Grow(len(password) * 2)
 
 	for _, r := range password {
 		switch {
-		case r >= 48 && r <= 57:
+		case r >= '0' && r <= '9':
 			curTag = numTag
-		case r >= 91 && r <= 96:
+		case r >= '[' && r <= '`': // punctuation between upper/lower ASCII
 			curTag = specialTag
-		case r >= 65 && r <= 122:
+		case r >= 'A' && r <= 'z':
 			curTag = letterTag
 		default:
 			curTag = specialTag
@@ -276,22 +281,28 @@ func ColorizePassword(password, letterTag, numTag, specialTag string) string {
 
 		if curTag != prevTag {
 			if curTag == "" {
-				result += "{!}" + string(r)
+				b.WriteString("{!}")
+				b.WriteRune(r)
 			} else {
-				result += curTag + string(r)
+				b.WriteString(curTag)
+				b.WriteRune(r)
 			}
 			prevTag = curTag
 		} else {
-			result += string(r)
+			b.WriteRune(r)
 		}
 	}
 
-	return result + "{!}"
+	return b.String() + "{!}"
 }
 
-// CountDigits returns number of digits in integer
+// CountDigits returns the number of decimal digits in i, including the minus sign
+// for negatives.
 func CountDigits(i int) int {
-	if i < 0 {
+	switch {
+	case i == 0:
+		return 1
+	case i < 0:
 		return int(math.Log10(math.Abs(float64(i)))) + 2
 	}
 
@@ -300,6 +311,8 @@ func CountDigits(i int) int {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// formatPrettyFloat inserts thousands separators into the integer part of a decimal
+// string and strips trailing fractional zeros
 func formatPrettyFloat(str, sep string) string {
 	flt := strings.TrimRight(strutil.ReadField(str, 1, false, '.'), "0")
 
@@ -310,6 +323,8 @@ func formatPrettyFloat(str, sep string) string {
 	return appendPrettySymbol(strutil.ReadField(str, 0, false, '.'), sep) + "." + flt
 }
 
+// appendPrettySymbol inserts sep every three digits from the right
+// (e.g. "1234567" → "1,234,567")
 func appendPrettySymbol(str, sep string) string {
 	if len(str) < 3 {
 		return str
@@ -322,28 +337,22 @@ func appendPrettySymbol(str, sep string) string {
 		str = str[1:]
 	}
 
-	if len(str)%3 == 0 {
-		b.Grow(len(str) + (len(str) / 3) - 1)
-	} else {
-		b.Grow(len(str) + len(str)/3)
-		b.WriteString(str[:(len(str) % 3)])
-		b.WriteString(sep)
-	}
+	offset := len(str) % 3
 
-	for i := len(str) % 3; i < len(str); i++ {
-		b.WriteByte(str[i])
-		if (1+i-len(str)%3)%3 == 0 && i+1 != len(str) {
+	for i, ch := range str {
+		if i > 0 && (i-offset)%3 == 0 {
 			b.WriteString(sep)
 		}
+
+		b.WriteRune(ch)
 	}
 
 	return b.String()
 }
 
-// extractSizeInfo extracts size info
+// extractSizeInfo returns the byte multiplier and suffix for a size string
 func extractSizeInfo(s string) (float64, string) {
-	var mod float64
-
+	mod := 1.0
 	suf := strings.TrimLeft(s, "0123456789. ")
 
 	switch suf {
@@ -364,12 +373,25 @@ func extractSizeInfo(s string) (float64, string) {
 	case "k":
 		mod = 1000
 	case "b":
-		mod = 1
+		// okay
 	default:
 		suf = ""
 	}
 
 	return mod, suf
+}
+
+// padding generates string with spaces
+func padding(n int) string {
+	if n <= 0 {
+		return ""
+	}
+
+	if spaces == "" {
+		spaces = strings.Repeat(" ", 256)
+	}
+
+	return spaces[:min(n, 256)]
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -382,8 +404,8 @@ func (w *wrapper) AddWord(word bytes.Buffer) {
 
 	var wordLen int
 
-	if ansi.HasCodesBytes(word.Bytes()) {
-		wordLen = len(ansi.RemoveCodesBytes(word.Bytes()))
+	if ansi.HasBytes(word.Bytes()) {
+		wordLen = len(ansi.RemoveBytes(word.Bytes()))
 	} else {
 		wordLen = len(word.String())
 	}

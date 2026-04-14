@@ -10,12 +10,13 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"bufio"
 	"os"
 	"strings"
 	"syscall"
 
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/system/container"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/system/container"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -28,7 +29,7 @@ var machineIDFile = "/etc/machine-id"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo returns system info
+// GetSystemInfo returns general information about the host system
 func GetSystemInfo() (*SystemInfo, error) {
 	info := &syscall.Utsname{}
 	err := syscall.Uname(info)
@@ -51,12 +52,12 @@ func GetSystemInfo() (*SystemInfo, error) {
 	}, nil
 }
 
-// GetOSInfo returns info about OS
+// GetOSInfo returns information parsed from the default os-release file
 func GetOSInfo() (*OSInfo, error) {
 	return ParseOSInfo(osReleaseFile)
 }
 
-// ParseOSInfo parses data in given os-release file
+// ParseOSInfo parses OS release information from the given os-release file path
 func ParseOSInfo(file string) (*OSInfo, error) {
 	data, err := os.ReadFile(file)
 
@@ -81,6 +82,19 @@ func ParseOSInfo(file string) (*OSInfo, error) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// getFileScanner opens file and creates scanner for reading text files line by line
+func getFileScanner(file string) (*bufio.Scanner, func() error, error) {
+	fd, err := os.Open(file)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s := bufio.NewScanner(fd)
+
+	return s, fd.Close, nil
+}
 
 // applyOSInfo applies record from os-release
 func applyOSInfo(info *OSInfo, name, value string) {
@@ -127,22 +141,6 @@ func applyOSInfo(info *OSInfo, name, value string) {
 	case strings.HasSuffix(name, "SUPPORT_PRODUCT_VERSION"):
 		info.SupportProductVersion = value
 	}
-}
-
-// getArchName returns name for given arch
-func getArchName(arch string) string {
-	switch arch {
-	case "i386":
-		return "386"
-	case "i586":
-		return "586"
-	case "i686":
-		return "686"
-	case "x86_64":
-		return "amd64"
-	}
-
-	return arch
 }
 
 // getSystemID returns unique system ID

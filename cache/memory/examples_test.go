@@ -10,7 +10,7 @@ package memory
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/cache"
+	"github.com/essentialkaos/ek/v14/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -155,4 +155,15 @@ func ExampleCache_Flush() {
 
 	fmt.Println(c.Get("test"))
 	// Output: <nil>
+}
+
+func ExampleCache_Stop() {
+	c, _ := New(Config{
+		DefaultExpiration: cache.SECOND,
+		CleanupInterval:   cache.MINUTE,
+	})
+
+	c.Set("test", "ABCD")
+
+	defer c.Stop()
 }

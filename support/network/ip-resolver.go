@@ -12,33 +12,43 @@ import (
 	"net"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/req"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/req"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // resolvePublicIP resolves public IP using IP resolver
-func resolvePublicIP(resolverURL string) string {
-	resp, err := req.Request{
-		URL:         resolverURL,
-		AutoDiscard: true,
-	}.Get()
+//
+// Possible resolvers:
+// - https://www.cloudflare.com/cdn-cgi/trace
+// - https://1.1.1.1/cdn-cgi/trace
+// - http://eth0.me
+// - http://checkip.amazonaws.com
+// - http://api.ipify.org
+// - https://ipv4-internet.yandex.net/api/v0/ip
+func resolvePublicIP(resolvers ...string) string {
+	for _, resolverURL := range resolvers {
+		resp, err := req.Request{
+			URL:         resolverURL,
+			AutoDiscard: true,
+		}.Get()
 
-	if err != nil {
-		return ""
-	}
+		if err != nil || resp.StatusCode != 200 {
+			continue
+		}
 
-	var ip string
+		var ip string
 
-	if strings.HasSuffix(resolverURL, "/cdn-cgi/trace") {
-		ip = extractIPFromCloudflareTrace(resp.String())
-	} else {
-		ip = resp.String()
-	}
+		if strings.HasSuffix(resolverURL, "/cdn-cgi/trace") {
+			ip = extractIPFromCloudflareTrace(resp.String())
+		} else {
+			ip = strutil.Exclude(resp.String(), `"`)
+		}
 
-	if isValidIP(ip) {
-		return ip
+		if isValidIP(ip) {
+			return ip
+		}
 	}
 
 	return ""

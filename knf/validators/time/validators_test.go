@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 
 	check "github.com/essentialkaos/check"
 )
@@ -73,7 +73,7 @@ func (s *ValidatorSuite) TestFormatValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 1)
 
-	c.Assert(errs[0].Error(), check.Equals, `Property format:test4 contains invalid time format: Invalid control sequence "%i"`)
+	c.Assert(errs[0].Error(), check.Equals, `property format:test4 contains invalid time format: Invalid control sequence "%i"`)
 }
 
 func (s *ValidatorSuite) TestTimezoneValidator(c *check.C) {
@@ -101,7 +101,7 @@ func (s *ValidatorSuite) TestTimezoneValidator(c *check.C) {
 
 	c.Assert(errs, check.HasLen, 1)
 
-	c.Assert(errs[0].Error(), check.Equals, `Property timezone:test7 contains invalid time zone name: unknown time zone Europe/Hogwarts`)
+	c.Assert(errs[0].Error(), check.Equals, `property timezone:test7 contains invalid time zone name: unknown time zone Europe/Hogwarts`)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

@@ -10,8 +10,10 @@ package env
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -21,27 +23,28 @@ type Env map[string]string
 
 // Variable is environment variable for lazy reading
 type Variable struct {
-	key    string
-	value  string
-	isRead bool
+	key   string
+	value string
+	once  sync.Once
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Var creates new environment variable struct
+// Var creates new environment variable for lazy reading
 func Var(name string) *Variable {
 	return &Variable{key: name}
 }
 
-// Get return key-value map with environment values
+// Get returns key-value map with environment values
 func Get() Env {
 	env := make(Env)
 
 	for _, ev := range os.Environ() {
-		evs := strings.Split(ev, "=")
-		k, v := evs[0], evs[1]
+		k, v, ok := strings.Cut(ev, "=")
 
-		env[k] = v
+		if ok {
+			env[k] = v
+		}
 	}
 
 	return env
@@ -51,19 +54,18 @@ func Get() Env {
 
 // Get returns environment variable value
 func (v *Variable) Get() string {
-	if v == nil {
+	if v == nil || v.key == "" {
 		return ""
 	}
 
-	if !v.isRead {
+	v.once.Do(func() {
 		v.value = os.Getenv(v.key)
-		v.isRead = true
-	}
+	})
 
 	return v.value
 }
 
-// Is returns true if environment variable value is equal to given one
+// Is returns true if environment variable value is equal to the given one
 func (v *Variable) Is(value string) bool {
 	return v.Get() == value
 }
@@ -79,41 +81,60 @@ func (v *Variable) Reset() *Variable {
 		return nil
 	}
 
-	v.value, v.isRead = "", false
+	v.value, v.once = "", sync.Once{}
 
 	return v
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path return path as string slice
+// Path returns the PATH variable as a string slice
 func (e Env) Path() []string {
-	return strings.Split(e["PATH"], ":")
+	if e == nil || e["PATH"] == "" {
+		return nil
+	}
+
+	return filepath.SplitList(e["PATH"])
 }
 
-// GetS return environment variable value as string
-func (e Env) GetS(name string) string {
+// Has checks if value with given name is present in env
+func (e Env) Has(name string) bool {
+	if e == nil || name == "" {
+		return false
+	}
+
+	_, ok := e[name]
+
+	return ok
+}
+
+// Get returns environment variable value as a string
+func (e Env) Get(name string) string {
+	if e == nil || name == "" {
+		return ""
+	}
+
 	return e[name]
 }
 
-// GetI return environment variable value as int
+// GetI returns environment variable value as an int
 func (e Env) GetI(name string) int {
-	value, err := strconv.Atoi(e[name])
-
-	if err != nil {
-		return -1
+	if e == nil || name == "" {
+		return 0
 	}
+
+	value, _ := strconv.Atoi(e[name])
 
 	return value
 }
 
-// GetF return environment variable value as float
+// GetF returns environment variable value as a float
 func (e Env) GetF(name string) float64 {
-	value, err := strconv.ParseFloat(e[name], 64)
-
-	if err != nil {
-		return -1.0
+	if e == nil || name == "" {
+		return 0.0
 	}
+
+	value, _ := strconv.ParseFloat(e[name], 64)
 
 	return value
 }

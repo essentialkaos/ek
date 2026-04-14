@@ -8,7 +8,6 @@ package sysctl
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bytes"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -17,40 +16,20 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // getParam reads kernel parameter by name
-func getParam(param string) (string, error) {
-	output, err := exec.Command(binary, "-n", param).Output()
+func getParam(name string) (Param, error) {
+	output, err := exec.Command(binary, "-n", name).Output()
 
 	if err != nil {
-		return "", fmt.Errorf("Can't get kernel parameters from sysctl")
+		return Param{}, fmt.Errorf("can't get kernel parameters from sysctl")
 	}
 
-	return strings.Trim(string(output), "\n\r"), err
+	return Param{
+		Name:  name,
+		Value: strings.Trim(string(output), "\n\r"),
+	}, nil
 }
 
-// getParams reads all kernel parameters
-func getParams() (Params, error) {
-	output, err := exec.Command(binary, "-a").Output()
-
-	if err != nil {
-		return nil, fmt.Errorf("Can't get kernel parameters from sysctl")
-	}
-
-	params := make(Params)
-	buf := bytes.NewBuffer(output)
-
-	for {
-		line, err := buf.ReadString('\n')
-
-		if err != nil {
-			break
-		}
-
-		name, value, ok := strings.Cut(strings.Trim(line, "\n\r"), ": ")
-
-		if ok {
-			params[name] = value
-		}
-	}
-
-	return params, nil
+// readParam returns parameter name and value from sysctl output
+func readParam(text string) (string, string, bool) {
+	return strings.Cut(strings.Trim(text, "\n\r"), ": ")
 }

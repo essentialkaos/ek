@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -33,21 +34,21 @@ const (
 // colorMap is map ext -> ANSI color code
 var colorMap map[string]string
 
-// initialized is initialization flag
-var initialized bool
+// once is object for lazy colors initialization
+var once sync.Once
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// DisableColors disables all colors in output
+// DisableColors controls whether ANSI color sequences are emitted.
+// Defaults to true when the NO_COLOR environment variable is set.
 var DisableColors = os.Getenv("NO_COLOR") != ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetColor returns ANSI control sequence with color for given file
+// GetColor returns the ANSI escape sequence for the given filename or
+// file-type key, or an empty string if no matching color is found
 func GetColor(file string) string {
-	if !initialized {
-		initialize()
-	}
+	once.Do(initialize)
 
 	if DisableColors || len(colorMap) == 0 {
 		return ""
@@ -68,7 +69,8 @@ func GetColor(file string) string {
 	return ""
 }
 
-// Colorize return file name with ANSI control sequences
+// Colorize returns the filename wrapped in its ANSI color sequence,
+// or the plain filename if no color is configured
 func Colorize(file string) string {
 	colorSeq := GetColor(file)
 
@@ -79,7 +81,8 @@ func Colorize(file string) string {
 	return colorSeq + file + "\033[0m"
 }
 
-// Colorize return path with ANSI control sequences
+// ColorizePath returns the full path wrapped in the ANSI color sequence
+// of its basename, or the plain path if no color is configured
 func ColorizePath(fullPath string) string {
 	file := path.Base(fullPath)
 	colorSeq := GetColor(file)
@@ -93,10 +96,8 @@ func ColorizePath(fullPath string) string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// initialize builds color map
+// initialize parses the LS_COLORS environment variable and populates colorMap
 func initialize() {
-	initialized = true
-
 	if DisableColors {
 		return
 	}
@@ -109,7 +110,7 @@ func initialize() {
 
 	colorMap = map[string]string{RESET: "0"}
 
-	for _, key := range strings.Split(lsColors, ":") {
+	for key := range strings.SplitSeq(lsColors, ":") {
 		if !strings.ContainsRune(key, '=') || !strings.ContainsRune(key, ';') {
 			continue
 		}

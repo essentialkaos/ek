@@ -8,7 +8,7 @@ package system
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 
 	. "github.com/essentialkaos/check"
 )
@@ -33,5 +33,5 @@ func (s *ValidatorSuite) TestInterfaceValidator(c *C) {
 	})
 
 	c.Assert(errs, HasLen, 1)
-	c.Assert(errs[0].Error(), Equals, `Interface "abc" is not present on the system`)
+	c.Assert(errs[0].Error(), Equals, `interface "abc" is not present on the system`)
 }

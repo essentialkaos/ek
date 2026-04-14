@@ -10,6 +10,8 @@ package easing
 import (
 	"testing"
 
+	"github.com/essentialkaos/ek/v14/mathutil"
+
 	. "github.com/essentialkaos/check"
 )
 
@@ -30,6 +32,9 @@ func (s *EaseSuite) TestLinear(c *C) {
 }
 
 func (s *EaseSuite) TestQuad(c *C) {
+	c.Assert(QuadIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(QuadOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(QuadInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(QuadIn(5, 0, 10, 10), Equals, 2.5)
 	c.Assert(QuadOut(5, 0, 10, 10), Equals, 7.5)
 	c.Assert(QuadInOut(5, 0, 10, 10), Equals, 5.0)
@@ -40,16 +45,22 @@ func (s *EaseSuite) TestQuad(c *C) {
 }
 
 func (s *EaseSuite) TestCubic(c *C) {
+	c.Assert(CubicIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(CubicOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(CubicInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(CubicIn(5, 0, 10, 10), Equals, 1.25)
 	c.Assert(CubicOut(5, 0, 10, 10), Equals, 8.75)
 	c.Assert(CubicInOut(5, 0, 10, 10), Equals, 5.0)
-	c.Assert(CubicInOut(0.5, 0, 10, 10), Equals, 0.005000000000000001)
+	c.Assert(mathutil.Round(CubicInOut(0.5, 0, 10, 10), 5), Equals, 0.005)
 	c.Assert(CubicIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(CubicOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(CubicInOut(20, 0, 10, 10), Equals, 10.0)
 }
 
 func (s *EaseSuite) TestQuint(c *C) {
+	c.Assert(QuintIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(QuintOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(QuintInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(QuintIn(5, 0, 10, 10), Equals, 0.3125)
 	c.Assert(QuintOut(5, 0, 10, 10), Equals, 9.6875)
 	c.Assert(QuintInOut(5, 0, 10, 10), Equals, 5.0)
@@ -60,8 +71,11 @@ func (s *EaseSuite) TestQuint(c *C) {
 }
 
 func (s *EaseSuite) TestSine(c *C) {
-	c.Assert(SineIn(5, 0, 10, 10), Equals, 3.0978992192751917)
-	c.Assert(SineOut(5, 0, 10, 10), Equals, 7.236090437019012)
+	c.Assert(SineIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(SineOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(SineInOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(SineIn(5, 0, 10, 10), Equals, 2.9289321881345245)
+	c.Assert(SineOut(5, 0, 10, 10), Equals, 7.071067811865475)
 	c.Assert(SineInOut(5, 0, 10, 10), Equals, 4.999999999999999)
 	c.Assert(SineIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(SineOut(20, 0, 10, 10), Equals, 10.0)
@@ -73,12 +87,20 @@ func (s *EaseSuite) TestExpo(c *C) {
 	c.Assert(ExpoOut(5, 0, 10, 10), Equals, 9.6875)
 	c.Assert(ExpoInOut(5, 0, 10, 10), Equals, 5.0)
 	c.Assert(ExpoInOut(0.5, 0, 10, 10), Equals, 0.009765625)
+	c.Assert(ExpoIn(0, 0, 10, 10), Equals, 0.0)
+	c.Assert(ExpoIn(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(ExpoIn(20, 0, 10, 10), Equals, 10.0)
+	c.Assert(ExpoOut(0, 0, 10, 10), Equals, 0.0)
+	c.Assert(ExpoOut(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(ExpoOut(20, 0, 10, 10), Equals, 10.0)
+	c.Assert(ExpoInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(ExpoInOut(20, 0, 10, 10), Equals, 10.0)
 }
 
 func (s *EaseSuite) TestCirc(c *C) {
+	c.Assert(CircIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(CircOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(CircInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(CircIn(5, 0, 10, 10), Equals, 1.339745962155614)
 	c.Assert(CircOut(5, 0, 10, 10), Equals, 8.660254037844386)
 	c.Assert(CircInOut(5, 0, 10, 10), Equals, 5.0)
@@ -89,6 +111,9 @@ func (s *EaseSuite) TestCirc(c *C) {
 }
 
 func (s *EaseSuite) TestElastic(c *C) {
+	c.Assert(ElasticIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(ElasticOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(ElasticInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(ElasticIn(1, 0, 10, 10), Equals, 0.01953125)
 	c.Assert(ElasticIn(0, 0, 10, 10), Equals, 0.0)
 	c.Assert(ElasticIn(10, 0, 10, 10), Equals, 10.0)
@@ -102,7 +127,7 @@ func (s *EaseSuite) TestElastic(c *C) {
 	c.Assert(ElasticInOut(10, 0, 10, 10), Equals, 10.0)
 	c.Assert(ElasticInOut(10, 0, -10, 10), Equals, -10.0)
 	c.Assert(ElasticInOut(2, 0, 10, 10), Equals, -0.03906249999999994)
-	c.Assert(ElasticInOut(-2, 0, 10, 10), Equals, 0.00023377821140105527)
+	c.Assert(ElasticInOut(-2, 0, 10, 10), Equals, 0.0)
 	c.Assert(ElasticIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(ElasticOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(ElasticInOut(20, 0, 10, 10), Equals, 10.0)
@@ -112,16 +137,26 @@ func (s *EaseSuite) TestElastic(c *C) {
 }
 
 func (s *EaseSuite) TestBack(c *C) {
-	c.Assert(BackIn(5, 0, 10, 10), Equals, -0.9655673136318949)
-	c.Assert(BackOut(5, 0, 10, 10), Equals, 10.965567313631894)
-	c.Assert(BackInOut(5, 0, 10, 10), Equals, 5.0)
+	c.Assert(BackIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(BackOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(BackInOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(BackIn(10, 0, 10, 10), Equals, 10.0)
+	c.Assert(BackOut(10, 0, 10, 10), Equals, 10.0)
+	c.Assert(BackInOut(10, 0, 10, 10), Equals, 10.0)
+	c.Assert(BackIn(5, 0, 10, 10), Equals, -0.8769750000000004)
+	c.Assert(BackOut(5, 0, 10, 10), Equals, 10.876975)
+	c.Assert(mathutil.Round(BackInOut(5, 0, 10, 10), 5), Equals, 5.0)
 	c.Assert(BackIn(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackOut(20, 0, 10, 10), Equals, 10.0)
 	c.Assert(BackInOut(20, 0, 10, 10), Equals, 10.0)
-	c.Assert(BackInOut(0.5, 0, 10, 10), Equals, -0.11663464551839108)
+	c.Assert(mathutil.Round(BackInOut(0.5, 0, 10, 10), 5), Equals, -0.07158)
+
 }
 
 func (s *EaseSuite) TestBounce(c *C) {
+	c.Assert(BounceIn(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(BounceOut(-10, 0, 10, 10), Equals, 0.0)
+	c.Assert(BounceInOut(-10, 0, 10, 10), Equals, 0.0)
 	c.Assert(BounceIn(5, 0, 10, 10), Equals, 2.34375)
 	c.Assert(BounceOut(5, 0, 10, 10), Equals, 7.65625)
 	c.Assert(BounceInOut(5, 0, 10, 10), Equals, 5.0)

@@ -10,10 +10,11 @@ package memory
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/cache"
+	"github.com/essentialkaos/ek/v14/cache"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,8 +39,10 @@ var _ cache.Cache = (*Cache)(nil)
 type Cache struct {
 	data           map[string]any
 	expiry         map[string]int64
-	mu             *sync.RWMutex
+	mu             sync.RWMutex
 	expiration     cache.Duration
+	doneChan       chan struct{}
+	stopOnce       sync.Once
 	isJanitorWorks bool
 }
 
@@ -56,14 +59,13 @@ func New(config Config) (*Cache, error) {
 	err := config.Validate()
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid configuration: %w", err)
 	}
 
 	c := &Cache{
 		expiration: DEFAULT_EXPIRATION,
 		data:       make(map[string]any),
 		expiry:     make(map[string]int64),
-		mu:         &sync.RWMutex{},
 	}
 
 	if config.DefaultExpiration != 0 {
@@ -72,6 +74,7 @@ func New(config Config) (*Cache, error) {
 
 	if config.CleanupInterval != 0 {
 		c.isJanitorWorks = true
+		c.doneChan = make(chan struct{})
 		go c.janitor(config.CleanupInterval)
 	}
 
@@ -131,7 +134,7 @@ func (c *Cache) Expired() int {
 	items := 0
 	now := time.Now().UnixNano()
 
-	c.mu.Lock()
+	c.mu.RLock()
 
 	for _, expiration := range c.expiry {
 		if now > expiration {
@@ -139,7 +142,7 @@ func (c *Cache) Expired() int {
 		}
 	}
 
-	c.mu.Unlock()
+	c.mu.RUnlock()
 
 	return items
 }
@@ -152,7 +155,7 @@ func (c *Cache) Set(key string, data any, expiration ...time.Duration) bool {
 
 	c.mu.Lock()
 
-	if len(expiration) > 0 && expiration[0] > MIN_EXPIRATION {
+	if len(expiration) > 0 && expiration[0] >= MIN_EXPIRATION {
 		c.expiry[key] = time.Now().Add(expiration[0]).UnixNano()
 	} else {
 		c.expiry[key] = time.Now().Add(c.expiration).UnixNano()
@@ -303,13 +306,18 @@ func (c *Cache) Delete(key string) bool {
 
 // Invalidate deletes all expired records
 func (c *Cache) Invalidate() bool {
-	if c == nil || len(c.data) == 0 {
+	if c == nil {
 		return false
 	}
 
 	now := time.Now().UnixNano()
 
 	c.mu.Lock()
+
+	if len(c.data) == 0 {
+		c.mu.Unlock()
+		return false
+	}
 
 	for key, expiration := range c.expiry {
 		if now >= expiration {
@@ -339,16 +347,27 @@ func (c *Cache) Flush() bool {
 	return true
 }
 
+// Stop stops janitor goroutine
+func (c *Cache) Stop() {
+	if c == nil || !c.isJanitorWorks || c.doneChan == nil {
+		return
+	}
+
+	c.stopOnce.Do(func() {
+		close(c.doneChan)
+	})
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Validate validates cache configuration
 func (c Config) Validate() error {
 	if c.DefaultExpiration != 0 && c.DefaultExpiration < MIN_EXPIRATION {
-		return errors.New("Invalid configuration: Expiration is too short (< 1ms)")
+		return errors.New("expiration is too short (< 1ms)")
 	}
 
 	if c.CleanupInterval != 0 && c.CleanupInterval < MIN_CLEANUP_INTERVAL {
-		return errors.New("Invalid configuration: Cleanup interval is too short (< 1ms)")
+		return errors.New("cleanup interval is too short (< 1ms)")
 	}
 
 	return nil
@@ -358,7 +377,17 @@ func (c Config) Validate() error {
 
 // janitor is cache cleanup job
 func (c *Cache) janitor(interval time.Duration) {
-	for range time.NewTicker(interval).C {
-		c.Invalidate()
+	ticker := time.NewTicker(interval)
+
+MAIN:
+	for {
+		select {
+		case <-ticker.C:
+			c.Invalidate()
+		case <-c.doneChan:
+			break MAIN
+		}
 	}
+
+	ticker.Stop()
 }

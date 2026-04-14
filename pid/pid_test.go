@@ -8,13 +8,12 @@ package pid
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	. "github.com/essentialkaos/check"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -40,10 +39,17 @@ func (s *PidSuite) SetUpSuite(c *C) {
 func (s *PidSuite) TestErrors(c *C) {
 	Dir = "/_NOT_EXIST"
 
-	err := Create("test")
+	c.Assert(Create(""), Equals, ErrEmptyName)
+	c.Assert(Remove(""), Equals, ErrEmptyName)
+
+	_, err := Get("")
+
+	c.Assert(err, Equals, ErrEmptyName)
+
+	err = Create("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory /_NOT_EXIST doesn't exist or not accessible")
+	c.Assert(err.Error(), Equals, "directory /_NOT_EXIST doesn't exist or not accessible")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -61,20 +67,21 @@ func (s *PidSuite) TestErrors(c *C) {
 	err = Create("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory / is not writable")
+	c.Assert(err.Error(), Equals, "directory / is not writable")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	err = Remove("test")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Directory / is not writable")
+	c.Assert(err.Error(), Equals, "directory / is not writable")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	pidNum := Get("test")
+	pidNum, err := Get("test")
 
-	c.Assert(pidNum, Equals, -1)
+	c.Assert(pidNum, Equals, 0)
+	c.Assert(err.Error(), Equals, "can't read PID file: open /test.pid: no such file or directory")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -87,17 +94,26 @@ func (s *PidSuite) TestErrors(c *C) {
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
-	pidNum = Get("_test_")
+	pidNum, err = Get("_test_")
 
-	c.Assert(pidNum, Equals, -1)
+	c.Assert(pidNum, Equals, 0)
+	c.Assert(err, ErrorMatches, "can't read PID file: open .*/_test_.pid: no such file or directory")
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
 	os.WriteFile(s.Dir+"/bad.pid", []byte("ABCDE\n"), 0644)
 
-	pidNum = Get("bad.pid")
+	pidNum, err = Get("bad.pid")
 
-	c.Assert(pidNum, Equals, -1)
+	c.Assert(pidNum, Equals, 0)
+	c.Assert(err.Error(), Equals, "can't parse PID: strconv.Atoi: parsing \"ABCDE\": invalid syntax")
+
+	os.WriteFile(s.Dir+"/bad.pid", []byte("0\n"), 0644)
+
+	pidNum, err = Get("bad.pid")
+
+	c.Assert(pidNum, Equals, 0)
+	c.Assert(err, Equals, ErrInvalidPID)
 
 	// //////////////////////////////////////////////////////////////////////////////// //
 
@@ -110,8 +126,12 @@ func (s *PidSuite) TestErrors(c *C) {
 	err = Create("test.pid")
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, fmt.Sprintf("Directory %s is not readable", nonReadableDir))
-	c.Assert(Get("test.pid"), Equals, -1)
+	c.Assert(err, ErrorMatches, `directory .*/non-readable is not readable`)
+
+	pidNum, err = Get("test.pid")
+
+	c.Assert(pidNum, Equals, 0)
+	c.Assert(err, ErrorMatches, "directory .*/non-readable is not readable")
 }
 
 func (s *PidSuite) TestPidFuncs(c *C) {
@@ -130,9 +150,9 @@ func (s *PidSuite) TestPidFuncs(c *C) {
 
 	c.Assert(err, IsNil)
 
-	pid := Get("test")
+	pid, _ := Get("test")
 
-	c.Assert(pid, Not(Equals), -1)
+	c.Assert(pid, Not(Equals), 0)
 	c.Assert(os.Getpid(), Equals, pid)
 
 	Remove("test")

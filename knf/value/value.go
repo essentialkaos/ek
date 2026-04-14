@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -134,7 +134,7 @@ func ParseFloat(v string, defvals ...float64) float64 {
 	return f
 }
 
-// ParseFloat parses value as boolean
+// ParseBool parses value as boolean
 func ParseBool(v string, defvals ...bool) bool {
 	if v == "" {
 		if len(defvals) == 0 {
@@ -145,10 +145,10 @@ func ParseBool(v string, defvals ...bool) bool {
 	}
 
 	switch strings.ToLower(v) {
-	case "", "0", "false", "no":
-		return false
-	default:
+	case "1", "true", "yes":
 		return true
+	default:
+		return false
 	}
 }
 

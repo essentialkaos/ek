@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/hashutil"
+	"github.com/essentialkaos/ek/v14/hashutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,72 +48,73 @@ const (
 
 // Content types
 const (
-	CONTENT_TYPE_ATOM         = "application/atom+xml"
-	CONTENT_TYPE_EDI          = "application/EDI-X12"
-	CONTENT_TYPE_EDIFACT      = "application/EDIFACT"
-	CONTENT_TYPE_JSON         = "application/json"
-	CONTENT_TYPE_JAVASCRIPT   = "application/javascript"
-	CONTENT_TYPE_OCTET_STREAM = "application/octet-stream"
-	CONTENT_TYPE_PDF          = "application/pdf"
-	CONTENT_TYPE_POSTSCRIPT   = "application/postscript"
-	CONTENT_TYPE_SOAP         = "application/soap+xml"
-	CONTENT_TYPE_WOFF         = "application/font-woff"
-	CONTENT_TYPE_XHTML        = "application/xhtml+xml"
-	CONTENT_TYPE_DTD          = "application/xml-dtd"
-	CONTENT_TYPE_XOP          = "application/xop+xml"
-	CONTENT_TYPE_ZIP          = "application/zip"
-	CONTENT_TYPE_GZIP         = "application/gzip"
-	CONTENT_TYPE_BITTORRENT   = "application/x-bittorrent"
-	CONTENT_TYPE_TEX          = "application/x-tex"
-	CONTENT_TYPE_BASIC        = "audio/basic"
-	CONTENT_TYPE_L24          = "audio/L24"
-	CONTENT_TYPE_MP4_AUDIO    = "audio/mp4"
-	CONTENT_TYPE_AAC          = "audio/aac"
-	CONTENT_TYPE_MPEG_AUDIO   = "audio/mpeg"
-	CONTENT_TYPE_OGG_AUDIO    = "audio/ogg"
-	CONTENT_TYPE_VORBIS       = "audio/vorbis"
-	CONTENT_TYPE_WMA          = "audio/x-ms-wma"
-	CONTENT_TYPE_WAX          = "audio/x-ms-wax"
-	CONTENT_TYPE_REALAUDIO    = "audio/vnd.rn-realaudio"
-	CONTENT_TYPE_WAV          = "audio/vnd.wave"
-	CONTENT_TYPE_WEBM_AUDIO   = "audio/webm"
-	CONTENT_TYPE_GIF          = "image/gif"
-	CONTENT_TYPE_JPEG         = "image/jpeg"
-	CONTENT_TYPE_PJPEG        = "image/pjpeg"
-	CONTENT_TYPE_PNG          = "image/png"
-	CONTENT_TYPE_SVG          = "image/svg+xml"
-	CONTENT_TYPE_TIFF         = "image/tiff"
-	CONTENT_TYPE_ICON         = "image/vnd.microsoft.icon"
-	CONTENT_TYPE_WBMP         = "image/vnd.wap.wbmp"
-	CONTENT_TYPE_HTTP         = "message/http"
-	CONTENT_TYPE_IMDN         = "message/imdn+xml"
-	CONTENT_TYPE_PARTIAL      = "message/partial"
-	CONTENT_TYPE_RFC822       = "message/rfc822"
-	CONTENT_TYPE_EXAMPLE      = "model/example"
-	CONTENT_TYPE_IGES         = "model/iges"
-	CONTENT_TYPE_MESH         = "model/mesh"
-	CONTENT_TYPE_VRML         = "model/vrml"
-	CONTENT_TYPE_MIXED        = "multipart/mixed"
-	CONTENT_TYPE_ALTERNATIVE  = "multipart/alternative"
-	CONTENT_TYPE_RELATED      = "multipart/related"
-	CONTENT_TYPE_FORM_DATA    = "multipart/form-data"
-	CONTENT_TYPE_SIGNED       = "multipart/signed"
-	CONTENT_TYPE_ENCRYPTED    = "multipart/encrypted"
-	CONTENT_TYPE_CSS          = "text/css"
-	CONTENT_TYPE_CSV          = "text/csv"
-	CONTENT_TYPE_HTML         = "text/html"
-	CONTENT_TYPE_PLAIN        = "text/plain"
-	CONTENT_TYPE_PHP          = "text/php"
-	CONTENT_TYPE_XML          = "text/xml"
-	CONTENT_TYPE_MPEG_VIDEO   = "video/mpeg"
-	CONTENT_TYPE_MP4_VIDEO    = "video/mp4"
-	CONTENT_TYPE_OGG_VIDEO    = "video/ogg"
-	CONTENT_TYPE_QUICKTIME    = "video/quicktime"
-	CONTENT_TYPE_WEBM_VIDEO   = "video/webm"
-	CONTENT_TYPE_WMV          = "video/x-ms-wmv"
-	CONTENT_TYPE_FLV          = "video/x-flv"
-	CONTENT_TYPE_3GPP         = "video/3gpp"
-	CONTENT_TYPE_3GPP2        = "video/3gpp2"
+	CONTENT_TYPE_ATOM            = "application/atom+xml"
+	CONTENT_TYPE_EDI             = "application/EDI-X12"
+	CONTENT_TYPE_EDIFACT         = "application/EDIFACT"
+	CONTENT_TYPE_JSON            = "application/json"
+	CONTENT_TYPE_JAVASCRIPT      = "application/javascript"
+	CONTENT_TYPE_OCTET_STREAM    = "application/octet-stream"
+	CONTENT_TYPE_PDF             = "application/pdf"
+	CONTENT_TYPE_POSTSCRIPT      = "application/postscript"
+	CONTENT_TYPE_SOAP            = "application/soap+xml"
+	CONTENT_TYPE_WOFF            = "application/font-woff"
+	CONTENT_TYPE_XHTML           = "application/xhtml+xml"
+	CONTENT_TYPE_DTD             = "application/xml-dtd"
+	CONTENT_TYPE_XOP             = "application/xop+xml"
+	CONTENT_TYPE_ZIP             = "application/zip"
+	CONTENT_TYPE_GZIP            = "application/gzip"
+	CONTENT_TYPE_BITTORRENT      = "application/x-bittorrent"
+	CONTENT_TYPE_TEX             = "application/x-tex"
+	CONTENT_TYPE_FORM_URLENCODED = "application/x-www-form-urlencoded"
+	CONTENT_TYPE_BASIC           = "audio/basic"
+	CONTENT_TYPE_L24             = "audio/L24"
+	CONTENT_TYPE_MP4_AUDIO       = "audio/mp4"
+	CONTENT_TYPE_AAC             = "audio/aac"
+	CONTENT_TYPE_MPEG_AUDIO      = "audio/mpeg"
+	CONTENT_TYPE_OGG_AUDIO       = "audio/ogg"
+	CONTENT_TYPE_VORBIS          = "audio/vorbis"
+	CONTENT_TYPE_WMA             = "audio/x-ms-wma"
+	CONTENT_TYPE_WAX             = "audio/x-ms-wax"
+	CONTENT_TYPE_REALAUDIO       = "audio/vnd.rn-realaudio"
+	CONTENT_TYPE_WAV             = "audio/vnd.wave"
+	CONTENT_TYPE_WEBM_AUDIO      = "audio/webm"
+	CONTENT_TYPE_GIF             = "image/gif"
+	CONTENT_TYPE_JPEG            = "image/jpeg"
+	CONTENT_TYPE_PJPEG           = "image/pjpeg"
+	CONTENT_TYPE_PNG             = "image/png"
+	CONTENT_TYPE_SVG             = "image/svg+xml"
+	CONTENT_TYPE_TIFF            = "image/tiff"
+	CONTENT_TYPE_ICON            = "image/vnd.microsoft.icon"
+	CONTENT_TYPE_WBMP            = "image/vnd.wap.wbmp"
+	CONTENT_TYPE_HTTP            = "message/http"
+	CONTENT_TYPE_IMDN            = "message/imdn+xml"
+	CONTENT_TYPE_PARTIAL         = "message/partial"
+	CONTENT_TYPE_RFC822          = "message/rfc822"
+	CONTENT_TYPE_EXAMPLE         = "model/example"
+	CONTENT_TYPE_IGES            = "model/iges"
+	CONTENT_TYPE_MESH            = "model/mesh"
+	CONTENT_TYPE_VRML            = "model/vrml"
+	CONTENT_TYPE_MIXED           = "multipart/mixed"
+	CONTENT_TYPE_ALTERNATIVE     = "multipart/alternative"
+	CONTENT_TYPE_RELATED         = "multipart/related"
+	CONTENT_TYPE_FORM_DATA       = "multipart/form-data"
+	CONTENT_TYPE_SIGNED          = "multipart/signed"
+	CONTENT_TYPE_ENCRYPTED       = "multipart/encrypted"
+	CONTENT_TYPE_CSS             = "text/css"
+	CONTENT_TYPE_CSV             = "text/csv"
+	CONTENT_TYPE_HTML            = "text/html"
+	CONTENT_TYPE_PLAIN           = "text/plain"
+	CONTENT_TYPE_PHP             = "text/php"
+	CONTENT_TYPE_XML             = "text/xml"
+	CONTENT_TYPE_MPEG_VIDEO      = "video/mpeg"
+	CONTENT_TYPE_MP4_VIDEO       = "video/mp4"
+	CONTENT_TYPE_OGG_VIDEO       = "video/ogg"
+	CONTENT_TYPE_QUICKTIME       = "video/quicktime"
+	CONTENT_TYPE_WEBM_VIDEO      = "video/webm"
+	CONTENT_TYPE_WMV             = "video/x-ms-wmv"
+	CONTENT_TYPE_FLV             = "video/x-flv"
+	CONTENT_TYPE_3GPP            = "video/3gpp"
+	CONTENT_TYPE_3GPP2           = "video/3gpp2"
 )
 
 // Status codes
@@ -199,6 +200,8 @@ type Request struct {
 	AutoDiscard    bool          // Automatically discard all responses with status code > 299
 	FollowRedirect bool          // Follow redirect
 	Close          bool          // Close indicates whether to close the connection after sending request
+
+	Ctx context.Context // Request context
 }
 
 // Response is struct contains response data and properties
@@ -226,28 +229,28 @@ type Engine struct {
 
 var (
 	// ErrNilEngine is returned if engine struct is nil
-	ErrNilEngine = fmt.Errorf("Engine is nil")
+	ErrNilEngine = fmt.Errorf("engine is nil")
 
 	// ErrNilClient is returned if client struct is nil
-	ErrNilClient = fmt.Errorf("Engine.Client is nil")
+	ErrNilClient = fmt.Errorf("client is nil")
 
 	// ErrNilTransport is returned if transport is nil
-	ErrNilTransport = fmt.Errorf("Engine.Transport is nil")
+	ErrNilTransport = fmt.Errorf("transport is nil")
 
 	// ErrNilDialer is returned if dialer is nil
-	ErrNilDialer = fmt.Errorf("Engine.Dialer is nil")
+	ErrNilDialer = fmt.Errorf("dialer is nil")
 
 	// ErrNilResponse is returned if response is nil
-	ErrNilResponse = fmt.Errorf("Response is nil")
+	ErrNilResponse = fmt.Errorf("response is nil")
 
 	// ErrEmptyBody is returned if response body has no data
-	ErrEmptyBody = fmt.Errorf("Response body is empty")
+	ErrEmptyBody = fmt.Errorf("response body is empty")
 
 	// ErrEmptyURL is returned if given URL is empty
 	ErrEmptyURL = fmt.Errorf("URL property can't be empty and must be set")
 
 	// ErrUnsupportedScheme is returned if given URL contains unsupported scheme
-	ErrUnsupportedScheme = fmt.Errorf("Unsupported scheme in URL")
+	ErrUnsupportedScheme = fmt.Errorf("unsupported scheme in URL")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -376,11 +379,43 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 
 // PostFile sends multipart POST request with file data
 func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
-	err := configureMultipartRequest(&r, file, fieldName, extraFields)
+	fd, err := os.Open(file)
 
 	if err != nil {
 		return nil, err
 	}
+
+	defer fd.Close()
+
+	pr, pw := io.Pipe()
+	mw := multipart.NewWriter(pw)
+	contentType := mw.FormDataContentType()
+
+	go func() {
+		defer pw.Close()
+		defer mw.Close()
+
+		for k, v := range extraFields {
+			mw.WriteField(k, v)
+		}
+
+		fw, err := createFormFile(mw, fieldName, file)
+
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+
+		_, err = ioCopyFunc(fw, fd)
+
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+	}()
+
+	r.ContentType = contentType
+	r.Body = pr
 
 	return e.doRequest(r, POST)
 }
@@ -561,7 +596,7 @@ func (r *Response) Save(filename string, mode os.FileMode) error {
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 
 	if err != nil {
-		return fmt.Errorf("Can't open file to write: %v", err)
+		return fmt.Errorf("can't open file to write: %v", err)
 	}
 
 	defer fd.Close()
@@ -584,7 +619,7 @@ func (r *Response) SaveWithHash(filename string, mode os.FileMode, hasher hash.H
 	fd, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't open file to write: %v", err)
+		return nil, fmt.Errorf("can't open file to write: %v", err)
 	}
 
 	defer fd.Close()
@@ -646,7 +681,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	bodyReader, contentType, err := getBodyReader(r.Body)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't encode request body: %w", err)
+		return nil, fmt.Errorf("can't encode request body: %w", err)
 	}
 
 	if r.ContentType == "" {
@@ -666,7 +701,7 @@ func (e *Engine) doRequest(r Request, method string) (*Response, error) {
 	resp, err := e.Client.Do(req)
 
 	if err != nil {
-		return nil, fmt.Errorf("Can't send request: %w", err)
+		return nil, fmt.Errorf("can't send request: %w", err)
 	}
 
 	result := &Response{resp, r.URL}
@@ -722,22 +757,26 @@ func checkEngine(e *Engine) error {
 func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, context.CancelFunc, error) {
 	var err error
 	var req *http.Request
+	var ctx context.Context
 	var cancel context.CancelFunc
 
-	if r.Timeout != 0 {
-		var ctx context.Context
-		ctx, cancel = context.WithTimeout(context.TODO(), r.Timeout)
-		req, err = http.NewRequestWithContext(ctx, r.Method, r.URL, bodyReader)
-	} else {
-		req, err = http.NewRequest(r.Method, r.URL, bodyReader)
+	parent := r.Ctx
+
+	if r.Ctx == nil {
+		parent = context.Background()
 	}
 
-	if err != nil {
-		if cancel != nil {
-			cancel()
-		}
+	if r.Timeout != 0 {
+		ctx, cancel = context.WithTimeout(parent, r.Timeout)
+	} else {
+		ctx, cancel = context.WithCancel(parent)
+	}
 
-		return nil, nil, fmt.Errorf("Can't create request: %w", err)
+	req, err = http.NewRequestWithContext(ctx, r.Method, r.URL, bodyReader)
+
+	if err != nil {
+		cancel()
+		return nil, nil, fmt.Errorf("can't create request: %w", err)
 	}
 
 	if len(r.Headers) != 0 {
@@ -773,42 +812,6 @@ func createRequest(e *Engine, r Request, bodyReader io.Reader) (*http.Request, c
 	return req, cancel, nil
 }
 
-// configureMultipartRequest configures request for sending multipart data
-func configureMultipartRequest(r *Request, file, fieldName string, extraFields map[string]string) error {
-	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
-
-	if err != nil {
-		return err
-	}
-
-	defer fd.Close()
-
-	buf := &bytes.Buffer{}
-	w := multipart.NewWriter(buf)
-	part, err := createFormFile(w, fieldName, file)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = ioCopyFunc(part, fd)
-
-	if err != nil {
-		return err
-	}
-
-	for k, v := range extraFields {
-		w.WriteField(k, v)
-	}
-
-	w.Close()
-
-	r.ContentType = w.FormDataContentType()
-	r.Body = buf
-
-	return nil
-}
-
 // createFormFile creates request from file
 func createFormFile(w *multipart.Writer, fieldName, file string) (io.Writer, error) {
 	if useFakeFormGenerator {
@@ -831,7 +834,7 @@ func getBodyReader(body any) (io.Reader, string, error) {
 		return bytes.NewReader(u), CONTENT_TYPE_OCTET_STREAM, nil
 	}
 
-	jsonBody, err := json.MarshalIndent(body, "", "  ")
+	jsonBody, err := json.Marshal(body)
 
 	if err == nil {
 		return bytes.NewReader(jsonBody), CONTENT_TYPE_JSON, nil

@@ -16,8 +16,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	BLOCK_SIZE = 4096 // Minimal block size
-	ALIGN_SIZE = 0    // Align size
+	BLOCK_SIZE = 4096 // BLOCK_SIZE is the minimum block size used for Direct IO reads and writes
+	ALIGN_SIZE = 0    // ALIGN_SIZE is zero on macOS because F_NOCACHE does not require aligned buffers
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -33,7 +33,7 @@ func openFile(file string, flag int, perm os.FileMode) (*os.File, error) {
 
 	if e != 0 {
 		fd.Close()
-		return nil, errors.New("Can't set F_NOCACHE for given file")
+		return nil, errors.New("can't set F_NOCACHE for given file")
 	}
 
 	return fd, nil

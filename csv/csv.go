@@ -42,22 +42,27 @@ type Header []string
 
 var (
 	// ErrEmptyDest is returned by the ReadTo method if empty destination slice was given
-	ErrEmptyDest = errors.New("Destination slice length must be greater than 1")
+	ErrEmptyDest = errors.New("destination slice must not be empty")
 
 	// ErrNilReader is returned when reader struct is nil
-	ErrNilReader = errors.New("Reader is nil")
+	ErrNilReader = errors.New("reader is nil")
 
 	// ErrEmptyHeader is returned when header has no data
-	ErrEmptyHeader = errors.New("Header is empty")
+	ErrEmptyHeader = errors.New("header is empty")
 
 	// ErrNilMap is returned when map is nil
-	ErrNilMap = errors.New("Map is nil")
+	ErrNilMap = errors.New("map is nil")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewReader creates new CSV reader
+// NewReader creates a new CSV reader that reads from r, using comma as the
+// field delimiter
 func NewReader(r io.Reader, comma rune) *Reader {
+	if r == nil {
+		return nil
+	}
+
 	return &Reader{
 		comma:     string(comma),
 		hasHeader: false,
@@ -135,13 +140,24 @@ func (r *Reader) Seq(yield func(line int, row Row) bool) {
 	}
 }
 
-// WithHeader sets header skip flag
+// WithHeader configures the reader to treat the first row as a header
 func (r *Reader) WithHeader(flag bool) *Reader {
 	if r == nil || r.s == nil {
 		return nil
 	}
 
 	r.hasHeader = flag
+
+	return r
+}
+
+// WithBufferSize sets the maximum token size for the underlying scanner
+func (r *Reader) WithBufferSize(n int) *Reader {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	r.s.Buffer(make([]byte, n), n)
 
 	return r
 }
@@ -280,7 +296,7 @@ func (r Row) GetF32(index int) (float32, error) {
 
 // GetU returns cell value as uint
 func (r Row) GetU(index int) (uint, error) {
-	u, err := strconv.ParseUint(r.Get(index), 10, 32)
+	u, err := strconv.ParseUint(r.Get(index), 10, strconv.IntSize)
 
 	if err != nil {
 		return 0, err
@@ -348,31 +364,13 @@ func (r Row) ForEach(fn func(index int, value string) error) error {
 
 // ToString returns string representation of row
 func (r Row) ToString(comma rune) string {
-	var buf bytes.Buffer
-
-	for i, c := range r {
-		buf.WriteString(c)
-
-		if i+1 != len(r) {
-			buf.WriteRune(comma)
-		}
-	}
-
+	buf := r.writeRow(comma)
 	return buf.String()
 }
 
 // ToBytes returns representation of row as a byte slice
 func (r Row) ToBytes(comma rune) []byte {
-	var buf bytes.Buffer
-
-	for i, c := range r {
-		buf.WriteString(c)
-
-		if i+1 != len(r) {
-			buf.WriteRune(comma)
-		}
-	}
-
+	buf := r.writeRow(comma)
 	return buf.Bytes()
 }
 
@@ -441,6 +439,25 @@ func (r *Reader) readHeader() error {
 	return nil
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// writeRow returns buffer with row data
+func (r Row) writeRow(comma rune) bytes.Buffer {
+	var buf bytes.Buffer
+
+	for i, c := range r {
+		buf.WriteString(c)
+
+		if i+1 != len(r) {
+			buf.WriteRune(comma)
+		}
+	}
+
+	return buf
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // parseAndFill parses CSV row and fills slice with data
 func parseAndFill(src string, dst Row, sep string) {
 	if src == "" {
@@ -463,12 +480,13 @@ func parseAndFill(src string, dst Row, sep string) {
 		i++
 	}
 
-	if src != "" && i != l {
+	if src != "" && i < l {
 		dst[i] = src
+		i++
 	}
 
-	if i < l-1 {
-		clean(dst, i+1)
+	if i < l {
+		clean(dst, i)
 	}
 }
 

@@ -28,6 +28,14 @@ var _ = Suite(&InitSuite{})
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+func (s *InitSuite) TestServiceName(c *C) {
+	c.Assert(validateServiceName("").Error(), Equals, `service name is empty`)
+	c.Assert(validateServiceName("test/123").Error(), Equals, `service name "test/123" is invalid`)
+	c.Assert(validateServiceName("test"), IsNil)
+
+	c.Assert(isValidServiceName(""), Equals, false)
+}
+
 func (s *InitSuite) TestSystemdEnabled(c *C) {
 	c.Assert(parseSystemdEnabledOutput("enabled\r\n"), Equals, true)
 	c.Assert(parseSystemdEnabledOutput("enabled"), Equals, true)
@@ -63,18 +71,18 @@ end script`
 	os.WriteFile(tmpDir+"/1.conf", []byte(data1), 0644)
 	os.WriteFile(tmpDir+"/2.conf", []byte(data2), 0644)
 
-	ok, err := parseUpstartEnabledData(tmpDir + "/0.conf")
+	ok, err := parseUpstartEnabledData("test", tmpDir+"/0.conf")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't read service unit file`)
+	c.Assert(err, ErrorMatches, `can't read service "test" unit file`)
 	c.Assert(ok, Equals, false)
 
-	ok, err = parseUpstartEnabledData(tmpDir + "/1.conf")
+	ok, err = parseUpstartEnabledData("test", tmpDir+"/1.conf")
 
 	c.Assert(err, IsNil)
 	c.Assert(ok, Equals, true)
 
-	ok, err = parseUpstartEnabledData(tmpDir + "/2.conf")
+	ok, err = parseUpstartEnabledData("test", tmpDir+"/2.conf")
 
 	c.Assert(err, IsNil)
 	c.Assert(ok, Equals, false)
@@ -98,13 +106,13 @@ func (s *InitSuite) TestSysvEnabled(c *C) {
 	ok, err = parseSysvEnabledOutput(d3)
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse chkconfig output`)
+	c.Assert(err, ErrorMatches, `can't parse chkconfig output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseSysvEnabledOutput("")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse chkconfig output`)
+	c.Assert(err, ErrorMatches, `can't parse chkconfig output`)
 	c.Assert(ok, Equals, false)
 }
 
@@ -113,14 +121,14 @@ func (s *InitSuite) TestSystemdStatus(c *C) {
 	ok, err := parseSystemdStatusOutput("myapp", d)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Can't parse systemd output")
+	c.Assert(err.Error(), Equals, "can't parse systemd output")
 	c.Assert(ok, Equals, false)
 
 	d = "LoadState=not-found\nActiveState=inactive\n"
 	ok, err = parseSystemdStatusOutput("myapp", d)
 
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Equals, "Unit myapp could not be found")
+	c.Assert(err.Error(), Equals, `unit "myapp" could not be found`)
 	c.Assert(ok, Equals, false)
 
 	d = "LoadState=loaded\nActiveState=failed\n"
@@ -152,13 +160,13 @@ func (s *InitSuite) TestUpstartStatus(c *C) {
 	ok, err := parseUpstartStatusOutput("\r\n")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse upstart output`)
+	c.Assert(err, ErrorMatches, `can't parse upstart output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("assdas ad asd asd\r\n")
 
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, `Can't parse upstart output`)
+	c.Assert(err, ErrorMatches, `can't parse upstart output`)
 	c.Assert(ok, Equals, false)
 
 	ok, err = parseUpstartStatusOutput("myapp stop/waiting\r\n")
@@ -170,4 +178,11 @@ func (s *InitSuite) TestUpstartStatus(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(ok, Equals, true)
+}
+
+func (s *InitSuite) TestAux(c *C) {
+	err := wrapCommandOutputToError("test", nil)
+	c.Assert(err.Error(), Equals, "test: (no output)")
+	err = wrapCommandOutputToError("test", []byte(`message`))
+	c.Assert(err.Error(), Equals, "test: message")
 }

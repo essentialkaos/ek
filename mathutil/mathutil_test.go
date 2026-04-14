@@ -31,7 +31,10 @@ func (s *MathUtilSuite) TestChecks(c *C) {
 	c.Assert(IsInt(""), Equals, false)
 	c.Assert(IsFloat(""), Equals, false)
 	c.Assert(IsInt("1234567890a"), Equals, false)
+	c.Assert(IsInt("-"), Equals, false)
+	c.Assert(IsFloat("-"), Equals, false)
 	c.Assert(IsFloat("1234567890.1a"), Equals, false)
+	c.Assert(IsFloat("1234567890.1."), Equals, false)
 }
 
 func (s *MathUtilSuite) TestBetween(c *C) {
@@ -39,15 +42,6 @@ func (s *MathUtilSuite) TestBetween(c *C) {
 	c.Assert(Between(10, 0, 5), Equals, 5)
 	c.Assert(Between(-5, -10, 0), Equals, -5)
 	c.Assert(Between(5, 10, 10), Equals, 10)
-}
-
-func (s *MathUtilSuite) TestMinMax(c *C) {
-	c.Assert(Min(1, 10), Equals, 1)
-	c.Assert(Min(-10, 10), Equals, -10)
-	c.Assert(Min(10, -10), Equals, -10)
-	c.Assert(Max(1, 10), Equals, 10)
-	c.Assert(Max(-10, 10), Equals, 10)
-	c.Assert(Max(10, -10), Equals, 10)
 }
 
 func (s *MathUtilSuite) TestAbs(c *C) {

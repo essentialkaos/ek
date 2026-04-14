@@ -10,7 +10,7 @@ package color
 import (
 	"testing"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
 
 	. "github.com/essentialkaos/check"
 )
@@ -32,6 +32,10 @@ func (s *ColorSuite) TestParse(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xEE82EE))
 
+	color, err = Parse("black")
+	c.Assert(err, IsNil)
+	c.Assert(color.v, Equals, uint32(0x0))
+
 	color, err = Parse("#ff6347")
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xFF6347))
@@ -52,17 +56,25 @@ func (s *ColorSuite) TestParse(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xFF6347AA))
 
+	color, err = Parse("#00000000")
+	c.Assert(err, IsNil)
+	c.Assert(color.v, Equals, uint32(0x00000000))
+
 	color, err = Parse("#b3fa")
 	c.Assert(err, IsNil)
 	c.Assert(color.v, Equals, uint32(0xBB33FFAA))
 
 	_, err = Parse("")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, "Color is empty")
+	c.Assert(err, ErrorMatches, "color is empty")
 
-	_, err = Parse("TEST")
+	_, err = Parse("qwerty1234")
 	c.Assert(err, NotNil)
-	c.Assert(err, ErrorMatches, "strconv.ParseUint: parsing \"TTEESSTT\": invalid syntax")
+	c.Assert(err, ErrorMatches, `color "qwerty1234" is invalid`)
+
+	_, err = Parse("TEST12")
+	c.Assert(err, NotNil)
+	c.Assert(err, ErrorMatches, `strconv.ParseUint: parsing "TEST12": invalid syntax`)
 }
 
 func (s *ColorSuite) TestRGB(c *C) {
@@ -109,7 +121,7 @@ func (s *ColorSuite) TestRGBA(c *C) {
 
 	clr := RGBA{23, 182, 89, 0}
 	c.Assert(clr.String(), Equals, "23,182,89,0.00")
-	c.Assert(clr.GoString(), Equals, "RGBA{R:23, G:182, B:89}")
+	c.Assert(clr.GoString(), Equals, "RGBA{R:23, G:182, B:89, A:0}")
 	c.Assert(clr.WithAlpha(0.23).String(), Equals, "23,182,89,0.23")
 	c.Assert(clr.WithAlpha(0.23).GoString(), Equals, "RGBA{R:23, G:182, B:89, A:58}")
 }
@@ -148,7 +160,7 @@ func (s *ColorSuite) TestHSV(c *C) {
 	c.Assert(HSV{0.32, 0.12, 0.76, 0.5}.ToRGBA(), DeepEquals, RGBA{172, 193, 170, 127})
 
 	c.Assert(RGB{73, 158, 105}.ToHSV().String(), Equals, "143°,54%,62%,0%")
-	c.Assert(RGB{73, 158, 105}.ToHSV().GoString(), Equals, "HSV{H:0.396078431372549, S:0.5379746835443039, V:0.6196078431372549}")
+	c.Assert(RGB{73, 158, 105}.ToHSV().GoString(), Equals, "HSV{H:0.396078431372549, S:0.5379746835443039, V:0.6196078431372549, A:0}")
 	c.Assert(RGBA{73, 158, 105, 127}.ToHSV().String(), Equals, "143°,54%,62%,50%")
 	c.Assert(RGBA{73, 158, 105, 127}.ToHSV().GoString(), Equals, "HSV{H:0.396078431372549, S:0.5379746835443039, V:0.6196078431372549, A:0.4980392156862745}")
 }
@@ -167,16 +179,16 @@ func (s *ColorSuite) TestHSL(c *C) {
 	c.Assert(HSL{0.6833333333333332, 0.7079646017699115, 0.5568627450980392, 0.50}.ToRGBA(), DeepEquals, RGBA{77, 62, 222, 127})
 
 	c.Assert(RGB{146, 93, 176}.ToHSL().String(), Equals, "278°,34%,53%,0%")
-	c.Assert(RGB{146, 93, 176}.ToHSL().GoString(), Equals, "HSL{H:0.7730923694779116, S:0.34439834024896265, L:0.5274509803921569}")
+	c.Assert(RGB{146, 93, 176}.ToHSL().GoString(), Equals, "HSL{H:0.7730923694779116, S:0.34439834024896265, L:0.5274509803921569, A:0}")
 	c.Assert(RGBA{146, 93, 176, 80}.ToHSL().String(), Equals, "278°,34%,53%,31%")
 	c.Assert(RGBA{146, 93, 176, 80}.ToHSL().GoString(), Equals, "HSL{H:0.7730923694779116, S:0.34439834024896265, L:0.5274509803921569, A:0.3137254901960784}")
 }
 
 func (s *ColorSuite) TestHUE(c *C) {
-	c.Assert(HUE2RGB(0.6, 0.3, 0.12), Equals, 0.384)
-	c.Assert(HUE2RGB(0.6, 0.3, 0.35), Equals, 0.3)
-	c.Assert(HUE2RGB(0.6, 0.3, 0.584), Equals, 0.4512)
-	c.Assert(HUE2RGB(0.6, 0.3, 0.85), Equals, 0.6)
+	c.Assert(hueToRgb(0.6, 0.3, 0.12), Equals, 0.384)
+	c.Assert(hueToRgb(0.6, 0.3, 0.35), Equals, 0.3)
+	c.Assert(hueToRgb(0.6, 0.3, 0.584), Equals, 0.4512)
+	c.Assert(hueToRgb(0.6, 0.3, 0.85), Equals, 0.6)
 }
 
 func (s *ColorSuite) TestTerm(c *C) {
@@ -207,7 +219,24 @@ func (s *ColorSuite) TestTerm(c *C) {
 
 	c.Assert(Term2RGB(238), DeepEquals, RGB{68, 68, 68})
 	c.Assert(Term2RGB(153), DeepEquals, RGB{175, 215, 255})
+}
 
+func (s *ColorSuite) TestEncodeDecode(c *C) {
+	h, _ := Parse("#FF6347")
+	b, err := h.MarshalText()
+
+	c.Assert(err, IsNil)
+	c.Assert(string(b), Equals, `#FF6347`)
+
+	hh := &Hex{}
+	err = hh.UnmarshalText(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(hh.String(), Equals, `#FF6347`)
+
+	hh = &Hex{}
+	err = hh.UnmarshalText([]byte(`#TEST12`))
+	c.Assert(err, NotNil)
 }
 
 func (s *ColorSuite) TestLuminance(c *C) {

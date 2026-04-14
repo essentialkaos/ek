@@ -17,9 +17,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/version"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,151 +36,188 @@ const _DEFAULT_WRAP_LEN = 88
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	DEFAULT_COMMANDS_COLOR_TAG     = "{y}"
-	DEFAULT_OPTIONS_COLOR_TAG      = "{g}"
-	DEFAULT_ENV_VAR_COLOR_TAG      = "{m}"
+	// DEFAULT_COMMANDS_COLOR_TAG is the default fmtc color tag for command names
+	DEFAULT_COMMANDS_COLOR_TAG = "{y}"
+
+	// DEFAULT_OPTIONS_COLOR_TAG is the default fmtc color tag for option names
+	DEFAULT_OPTIONS_COLOR_TAG = "{g}"
+
+	// DEFAULT_ENV_VAR_COLOR_TAG is the default fmtc color tag for environment variable
+	// names
+	DEFAULT_ENV_VAR_COLOR_TAG = "{m}"
+
+	// DEFAULT_EXAMPLE_DESC_COLOR_TAG is the default fmtc color tag for example
+	// descriptions
 	DEFAULT_EXAMPLE_DESC_COLOR_TAG = "{&}{s-}"
-	DEFAULT_APP_NAME_COLOR_TAG     = "{c*}"
-	DEFAULT_APP_VER_COLOR_TAG      = "{c}"
-	DEFAULT_APP_REL_COLOR_TAG      = "{s}"
-	DEFAULT_APP_BUILD_COLOR_TAG    = "{s-}"
+
+	// DEFAULT_APP_NAME_COLOR_TAG is the default fmtc color tag for the application name
+	DEFAULT_APP_NAME_COLOR_TAG = "{c*}"
+
+	// DEFAULT_APP_VER_COLOR_TAG is the default fmtc color tag for the application
+	// version
+	DEFAULT_APP_VER_COLOR_TAG = "{c}"
+
+	// DEFAULT_APP_REL_COLOR_TAG is the default fmtc color tag for the application
+	// release
+	DEFAULT_APP_REL_COLOR_TAG = "{s}"
+
+	// DEFAULT_APP_BUILD_COLOR_TAG is the default fmtc color tag for the application
+	// build
+	DEFAULT_APP_BUILD_COLOR_TAG = "{s-}"
 )
 
 const (
-	VERSION_FULL    = "full"
-	VERSION_SIMPLE  = "simple"
-	VERSION_MAJOR   = "major"
-	VERSION_MINOR   = "minor"
-	VERSION_PATCH   = "patch"
+	// VERSION_FULL returns the full version string including release and build
+	VERSION_FULL = "full"
+
+	// VERSION_SIMPLE returns only the version number (e.g. "1.2.3")
+	VERSION_SIMPLE = "simple"
+
+	// VERSION_MAJOR returns only the major version number
+	VERSION_MAJOR = "major"
+
+	// VERSION_MINOR returns only the minor version number
+	VERSION_MINOR = "minor"
+
+	// VERSION_PATCH returns only the patch version number
+	VERSION_PATCH = "patch"
+
+	// VERSION_RELEASE returns only the release label
 	VERSION_RELEASE = "release"
-	VERSION_BUILD   = "build"
+
+	// VERSION_BUILD returns only the build metadata
+	VERSION_BUILD = "build"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Environment is a slice with environment variables
+// Environment is a list of environment variables shown in the application about section
 type Environment []EnvironmentInfo
 
-// EnvironmentInfo contains info about environment variable
+// EnvironmentInfo holds the name and version of a runtime environment dependency
 type EnvironmentInfo struct {
 	Name    string
 	Version string
 }
 
-// About contains info about application
+// About holds application metadata printed by the version/about command
 type About struct {
-	App        string // App is app name
-	Version    string // Version is current app version in semver notation
-	Release    string // Release is current app release
-	Build      string // Build is current app build
-	Desc       string // Desc is short info about app
-	Year       int    // Year is year when owner company was founded
-	License    string // License is name of license
-	Owner      string // Owner is name of owner (company/developer)
-	BugTracker string // BugTracker is URL of bug tracker
+	App        string // Application name
+	Version    string // Application version in semver notation
+	Release    string // Release label (e.g. "β4")
+	Build      string // Build metadata (e.g. a commit hash)
+	Desc       string // Short one-line description of the application
+	Year       int    // Year the owner company or project was founded
+	License    string // License name (e.g. "Apache 2.0")
+	Owner      string // Name of the owner company or developer
+	BugTracker string // URL of the issue tracker
 
-	AppNameColorTag string // AppNameColorTag contains default app name color tag
-	VersionColorTag string // VersionColorTag contains default app version color tag
-	ReleaseColorTag string // ReleaseColorTag contains default app release color tag
-	BuildColorTag   string // BuildColorTag contains default app build color tag
+	AppNameColorTag string // fmtc color tag for the app name; defaults to [DEFAULT_APP_NAME_COLOR_TAG]
+	VersionColorTag string // fmtc color tag for the version; defaults to [DEFAULT_APP_VER_COLOR_TAG]
+	ReleaseColorTag string // fmtc color tag for the release label; defaults to [DEFAULT_APP_REL_COLOR_TAG]
+	BuildColorTag   string // fmtc color tag for the build metadata; defaults to [DEFAULT_APP_BUILD_COLOR_TAG]
 
-	Copyright string // Copyright contains custom copyright prefix
+	Copyright string // Custom copyright prefix; defaults to "Copyright (C)"
 
-	ReleaseSeparator string // ReleaseSeparator contains symbol for version and release separation (default: -)
-	DescSeparator    string // DescSeparator contains symbol for version and description separation (default: -)
+	ReleaseSeparator string // Separator between version and release (default: "-"
+	DescSeparator    string // Separator between version and description (default: "-")
 
-	Environment Environment // Environment contains info about environment
+	Environment Environment // Runtime environment dependencies shown below the version line
 
-	// Function for checking app updates
-	UpdateChecker UpdateChecker
+	UpdateChecker UpdateChecker // Optional checker for announcing newer releases
 }
 
-// Info contains info about commands, options, and examples
+// Info holds the full usage information for a command-line application,
+// including its commands, options, environment variables, and examples
 type Info struct {
-	AppNameColorTag     string // AppNameColorTag contains default app name color tag
-	CommandsColorTag    string // CommandsColorTag contains default commands color tag
-	CommandsHeader      string // CommandsHeader contains custom commands header
-	OptionsColorTag     string // OptionsColorTag contains default options color tag
-	OptionsHeader       string // OptionsHeader contains custom options header
-	EnvVarsColorTag     string // EnvVarsColorTag contains default environment variable color tag
-	EnvVarsHeader       string // EnvVarsHeader contains custom env vars header
-	ExamplesHeader      string // ExamplesHeader contains custom examples header
-	ExampleDescColorTag string // ExampleDescColorTag contains default example description color tag
-	UsageHeader         string // UsageHeader is custom usage header
+	AppNameColorTag     string // fmtc color tag for the app name; defaults to [DEFAULT_APP_NAME_COLOR_TAG]
+	CommandsColorTag    string // fmtc color tag for command names; defaults to DEFAULT_COMMANDS_COLOR_TAG
+	CommandsHeader      string // Custom header label for the commands section (default: "Commands")
+	OptionsColorTag     string // fmtc color tag for option names; defaults to [DEFAULT_OPTIONS_COLOR_TAG]
+	OptionsHeader       string // Custom header label for the options section (default: "Options")
+	EnvVarsColorTag     string // fmtc color tag for env var names; defaults to [DEFAULT_ENV_VAR_COLOR_TAG]
+	EnvVarsHeader       string // Custom header label for the env vars section (default: "Environment variables")
+	ExamplesHeader      string // Custom header label for the examples section (default: "Examples")
+	ExampleDescColorTag string // fmtc color tag for example descriptions; defaults to [DEFAULT_EXAMPLE_DESC_COLOR_TAG]
+	UsageHeader         string // Custom header label for the usage line (default: "Usage")
 
-	CommandPlaceholder string // CommandPlaceholder is custom command placeholder
-	OptionsPlaceholder string // OptionsPlaceholder is custom options placeholder
+	CommandPlaceholder string // Placeholder text for the command token in the usage line (default: "{command}")
+	OptionsPlaceholder string // Placeholder text for the options token in the usage line (default: "{options}")
 
-	Breadcrumbs bool // Breadcrumbs is flag for using bread crumbs for commands and options output
-	WrapLen     int  // Wrap text if it longer than specified value
+	Breadcrumbs bool // When true, dots are used to align descriptions; enabled by default
+	WrapLen     int  // Column at which long descriptions are wrapped; defaults to 88
 
-	Name    string   // Name is app name
-	Args    []string // Args is a slice with app arguments
-	Spoiler string   // Spoiler contains additional info
+	Name    string   // Application name shown in the usage line
+	Args    []string // Positional argument placeholders shown after options and commands
+	Spoiler string   // Optional free-form text printed below the usage line
 
-	Commands []*Command // Commands is a slice of supported commands
-	Options  []*Option  // Options is a slice of supported options
-	EnvVars  []*Env     // EnvVars is a slice of supported environment variables
-	Examples []*Example // Examples is a slice of usage examples
+	Commands []*Command // Registered commands
+	Options  []*Option  // Registered options
+	EnvVars  []*Env     // Registered environment variables
+	Examples []*Example // Registered usage examples
 
 	curGroup string
 }
 
-// UpdateChecker is a base for all update checkers
+// UpdateChecker carries the data and logic needed to check for a newer release
 type UpdateChecker struct {
-	Payload   string
+	// Arbitrary data passed to CheckFunc (e.g. a repo slug or API key)
+	Payload string
+
+	// Returns the latest version, its release date, and whether an update is available
 	CheckFunc func(app, version, data string) (string, time.Time, bool)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Command contains info about supported command
+// Command describes a single CLI command with its arguments and related options
 type Command struct {
-	Name         string   // Name is command name
-	Desc         string   // Desc is command description
-	Group        string   // Group is command group name
-	Args         []string // Args is slice with arguments
-	BoundOptions []string // BoundOptions is slice with long names of related options
+	Name         string   // Command name as typed by the user
+	Desc         string   // Short description shown in the commands list
+	Group        string   // Section header this command belongs to
+	Args         []string // Argument placeholders; prefix with "?" to mark as optional
+	BoundOptions []string // Long option names shown as related when this command is printed
 
-	ColorTag string // ColorTag contains default color tag
+	ColorTag string // fmtc color tag override; falls back to Info.CommandsColorTag
 
 	info *Info
 }
 
-// Option contains info about supported option
+// Option describes a single CLI option with its short and long forms
 type Option struct {
-	Short string // Short is short option name (with one minus prefix)
-	Long  string // Long is long option name (with two minuses prefix)
-	Desc  string // Desc is option description
-	Arg   string // Arg is option argument
+	Short string // Short form without the leading dash (e.g. "v" for -v)
+	Long  string // Long form without the leading dashes (e.g. "verbose" for --verbose)
+	Desc  string // Short description shown in the options list
+	Arg   string // Argument placeholder; prefix with "?" to mark as optional
 
-	ColorTag string // ColorTag contains default color tag
+	ColorTag string // fmtc color tag override; falls back to Info.OptionsColorTag
 
 	info *Info
 }
 
-// Env contains info about environment variable
+// Env describes a single environment variable recognised by the application
 type Env struct {
-	Name string // Name is environment variable name
-	Desc string // Desc is environment variable description
+	Name string // Environment variable name (e.g. "GOMAXPROCS")
+	Desc string // Short description shown in the env vars list
 
-	ColorTag string // ColorTag contains default color tag
+	ColorTag string // fmtc color tag override; falls back to Info.EnvVarsColorTag
 
 	info *Info
 }
 
-// Example contains usage example
+// Example holds a single usage example shown in the examples section
 type Example struct {
-	Cmd  string // Cmd is command usage example
-	Desc string // Desc is usage description
-	Raw  bool   // Raw is raw example flag (without automatic binary name appending)
+	Cmd   string // Command string appended to the app name (or the full line when Raw is true)
+	Desc  string // Optional description printed below the example command
+	IsRaw bool   // Raw disables automatic prepending of the application name to Cmd
 
 	info *Info
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewInfo creates new info struct
+// NewInfo creates an Info struct for the current application. The first optional
+// argument is the app name; remaining arguments are positional argument placeholders
 func NewInfo(args ...any) *Info {
 	var name string
 
@@ -200,16 +237,19 @@ func NewInfo(args ...any) *Info {
 	return info
 }
 
-// AddGroup adds new command group
+// AddGroup sets the group label applied to all subsequently added commands
 func (i *Info) AddGroup(group any) {
-	if i == nil || group == "" {
+	groupName := evalString(group)
+
+	if i == nil || groupName == "" {
 		return
 	}
 
-	i.curGroup = evalString(group)
+	i.curGroup = evalString(groupName)
 }
 
-// AddCommand adds command
+// AddCommand registers a new command under the current group. Optional args are
+// positional argument placeholders; prefix with "?" to mark as optional
 func (i *Info) AddCommand(name, desc any, args ...any) *Command {
 	if i == nil || name == "" || desc == "" {
 		return nil
@@ -234,7 +274,9 @@ func (i *Info) AddCommand(name, desc any, args ...any) *Command {
 	return cmd
 }
 
-// AddOption adds option
+// AddOption registers a new option. Name must be in "short:long" or "long" format.
+// Optional args define the option's argument placeholder; prefix with "?" to mark
+// as optional.
 func (i *Info) AddOption(name, desc any, args ...any) *Option {
 	if i == nil || name == "" || desc == "" {
 		return nil
@@ -255,7 +297,7 @@ func (i *Info) AddOption(name, desc any, args ...any) *Option {
 	return opt
 }
 
-// AddEnv adds environment variable
+// AddEnv registers an environment variable with its description
 func (i *Info) AddEnv(name, desc any) *Env {
 	if i == nil || name == "" || desc == "" {
 		return nil
@@ -272,7 +314,7 @@ func (i *Info) AddEnv(name, desc any) *Env {
 	return env
 }
 
-// AddExample adds example of application usage
+// AddExample registers a usage example, automatically prepending the application name
 func (i *Info) AddExample(cmd any, desc ...any) {
 	if i == nil || cmd == "" {
 		return
@@ -287,7 +329,8 @@ func (i *Info) AddExample(cmd any, desc ...any) {
 	i.Examples = append(i.Examples, &Example{evalString(cmd), cmdDesc, false, i})
 }
 
-// AddRawExample adds example of application usage without command prefix
+// AddRawExample registers a usage example printed exactly as given, without the
+// application name prefix
 func (i *Info) AddRawExample(cmd any, desc ...any) {
 	if i == nil || cmd == "" {
 		return
@@ -302,7 +345,7 @@ func (i *Info) AddRawExample(cmd any, desc ...any) {
 	i.Examples = append(i.Examples, &Example{evalString(cmd), cmdDesc, true, i})
 }
 
-// AddSpoiler adds spoiler
+// AddSpoiler sets the free-form text printed below the usage line
 func (i *Info) AddSpoiler(spoiler any) {
 	if i == nil {
 		return
@@ -311,7 +354,9 @@ func (i *Info) AddSpoiler(spoiler any) {
 	i.Spoiler = evalString(spoiler)
 }
 
-// BoundOptions bounds command with options
+// BoundOptions associates the named options with a command so they are shown as
+// related. Option names follow the same "short:long" or "long" format used in
+// AddOption.
 func (i *Info) BoundOptions(cmd any, options ...any) {
 	if i == nil || cmd == "" {
 		return
@@ -329,7 +374,7 @@ func (i *Info) BoundOptions(cmd any, options ...any) {
 	}
 }
 
-// GetCommand tries to find command with given name
+// GetCommand returns the registered command with the given name, or nil if not found
 func (i *Info) GetCommand(name any) *Command {
 	if i == nil {
 		return nil
@@ -346,7 +391,7 @@ func (i *Info) GetCommand(name any) *Command {
 	return nil
 }
 
-// GetOption tries to find option with given name
+// GetOption returns the registered option with the given long name, or nil if not found
 func (i *Info) GetOption(name any) *Option {
 	if i == nil {
 		return nil
@@ -363,7 +408,7 @@ func (i *Info) GetOption(name any) *Option {
 	return nil
 }
 
-// Print prints usage info
+// Print renders the full usage information to stdout
 func (i *Info) Print() {
 	if i == nil {
 		return
@@ -427,7 +472,7 @@ func (i *Info) Print() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns a string representation of the command
+// String returns the command name, satisfying fmt.Stringer
 func (c *Command) String() string {
 	if c == nil {
 		return ""
@@ -436,7 +481,7 @@ func (c *Command) String() string {
 	return c.Name
 }
 
-// String returns a string representation of the option
+// String returns the option in "--long" form, satisfying fmt.Stringer
 func (o *Option) String() string {
 	if o == nil {
 		return ""
@@ -447,7 +492,7 @@ func (o *Option) String() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Print prints command info
+// Print renders this command as a single formatted line aligned with its group peers
 func (c *Command) Print() {
 	if c == nil {
 		return
@@ -482,7 +527,7 @@ func (c *Command) Print() {
 	fmtc.NewLine()
 }
 
-// Print prints option info
+// Print renders this option as a single formatted line aligned with its section peers
 func (o *Option) Print() {
 	if o == nil {
 		return
@@ -517,7 +562,8 @@ func (o *Option) Print() {
 	fmtc.NewLine()
 }
 
-// Print prints environment variable info
+// Print renders this environment variable as a single formatted line. The name is
+// shown in bold when the variable is currently set in the process environment.
 func (e *Env) Print() {
 	if e == nil {
 		return
@@ -552,7 +598,8 @@ func (e *Env) Print() {
 	fmtc.NewLine()
 }
 
-// Print prints usage example
+// Print renders this example, optionally prefixed with the application name.
+// If Desc is set, it is printed on a second line below the command.
 func (e *Example) Print() {
 	if e == nil {
 		return
@@ -566,26 +613,30 @@ func (e *Example) Print() {
 		wrapLen = e.info.WrapLen
 	}
 
-	if e.Raw {
+	if e.IsRaw {
 		fmtc.Printfn("  %s", e.Cmd)
 	} else {
 		fmtc.Printfn("  %s %s", appName, e.Cmd)
 	}
 
 	if e.Desc != "" {
-		descColor := strutil.Q(
-			strutil.B(
+		descColor := DEFAULT_EXAMPLE_DESC_COLOR_TAG
+
+		if e.info != nil {
+			descColor = strutil.B(
 				e.info.ExampleDescColorTag != "" && fmtc.IsTag(e.info.ExampleDescColorTag),
 				e.info.ExampleDescColorTag, "",
-			), DEFAULT_EXAMPLE_DESC_COLOR_TAG,
-		)
+			)
+		}
+
 		fmtc.Printfn("  "+descColor+"%s{!}", wrapText(e.Desc, 2, wrapLen))
 	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Print prints version info
+// Print renders the application about/version block to stdout. An optional infoType
+// argument (VERSION_FULL, VERSION_MAJOR, etc.) prints only that version component.
 func (a *About) Print(infoType ...string) {
 	if a == nil {
 		return
@@ -724,17 +775,17 @@ func printExamples(info *Info) {
 
 // printArgs prints arguments with colors
 func printArgs(args ...string) string {
-	var result string
+	var result strings.Builder
 
 	for _, a := range args {
 		if strings.HasPrefix(a, "?") {
-			result += "{s-}" + a[1:] + "{!} "
+			result.WriteString("{s-}" + a[1:] + "{!} ")
 		} else {
-			result += "{s}" + a + "{!} "
+			result.WriteString("{s}" + a + "{!} ")
 		}
 	}
 
-	return fmtc.Sprint(strings.TrimRight(result, " "))
+	return fmtc.Sprint(strings.TrimRight(result.String(), " "))
 }
 
 // getRawVersion prints raw (just numbers) version info
@@ -795,6 +846,10 @@ func parseOptionName(name string) (string, string) {
 // getSeparator return bread crumbs (or spaces if colors are disabled) for
 // item name aligning
 func getSeparator(size, maxSize int, breadcrumbs bool) string {
+	if size >= maxSize {
+		return "  "
+	}
+
 	if breadcrumbs && !fmtc.DisableColors && maxSize > _BREADCRUMBS_MIN_SIZE {
 		return " {s-}" + _DOTS[:maxSize-size] + "{!} "
 	}
@@ -980,5 +1035,14 @@ func evalStrings(data []any) []string {
 
 // evalString converts any into string
 func evalString(v any) string {
+	switch vv := v.(type) {
+	case string:
+		return vv
+	case fmt.Stringer:
+		return vv.String()
+	case nil:
+		return ""
+	}
+
 	return fmt.Sprintf("%v", v)
 }

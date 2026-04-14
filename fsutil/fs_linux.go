@@ -14,12 +14,19 @@ import (
 	"syscall"
 	"time"
 
-	PATH "github.com/essentialkaos/ek/v13/path"
+	PATH "github.com/essentialkaos/ek/v14/path"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetTimes returns time of access, modification, and creation at once
+// MIN_DIRENT_SIZE is the minimum ReadDirent byte count indicating a non-empty
+// directory on Linux (covers the '.' and '..' entries at 32 bytes each).
+const MIN_DIRENT_SIZE = 0x40
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetTimes returns the access, modification, and creation times of the given path
+// at once
 func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	if path == "" {
 		return time.Time{}, time.Time{}, time.Time{}, ErrEmptyPath
@@ -32,7 +39,7 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return time.Time{}, time.Time{}, time.Time{}, fmt.Errorf("Can't get file info for %q: %w", path, err)
+		return time.Time{}, time.Time{}, time.Time{}, fmt.Errorf("can't get file info for %q: %w", path, err)
 	}
 
 	return time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec)),
@@ -41,7 +48,8 @@ func GetTimes(path string) (time.Time, time.Time, time.Time, error) {
 		nil
 }
 
-// GetTimestamps returns time of access, modification, and creation at once as unix timestamp
+// GetTimestamps returns the access, modification, and creation times of the given
+// path as Unix timestamps
 func GetTimestamps(path string) (int64, int64, int64, error) {
 	if path == "" {
 		return -1, -1, -1, ErrEmptyPath
@@ -54,7 +62,7 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 	err := syscall.Stat(path, stat)
 
 	if err != nil {
-		return -1, -1, -1, fmt.Errorf("Can't get file info for %q: %w", path, err)
+		return -1, -1, -1, fmt.Errorf("can't get file info for %q: %w", path, err)
 	}
 
 	return int64(stat.Atim.Sec),
@@ -67,5 +75,5 @@ func GetTimestamps(path string) (int64, int64, int64, error) {
 
 // isEmptyDirent checks if the dirent shows that the directory is empty
 func isEmptyDirent(n int) bool {
-	return n <= 0x40
+	return n <= MIN_DIRENT_SIZE
 }

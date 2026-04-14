@@ -9,6 +9,7 @@ package sdnotify
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -17,8 +18,8 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	ErrNoSocket     = fmt.Errorf("NOTIFY_SOCKET is empty")
-	ErrNotConnected = fmt.Errorf("Not connected to socket")
+	ErrNoSocket     = errors.New("NOTIFY_SOCKET environment variable is empty")
+	ErrNotConnected = errors.New("not connected to socket")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -27,20 +28,39 @@ var conn net.Conn
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Connect connects systemd to socket
+// Connect establishes a connection to the systemd notification socket
 func Connect() error {
+	if conn != nil {
+		return nil // Already connected
+	}
+
 	var err error
 
 	socket := os.Getenv("NOTIFY_SOCKET")
 
-	if err != nil {
+	if socket == "" {
 		return ErrNoSocket
 	}
 
 	conn, err = net.Dial("unixgram", socket)
 
 	if err != nil {
-		return fmt.Errorf("Can't connect to socket: %w", err)
+		return fmt.Errorf("can't connect to systemd notifications socket: %w", err)
+	}
+
+	return nil
+}
+
+// Disconnect closes connection to the systemd notification socket
+func Disconnect() error {
+	if conn == nil {
+		return ErrNotConnected
+	}
+
+	err := conn.Close()
+
+	if err != nil {
+		return fmt.Errorf("can't close connection to systemd notifications socket: %w", err)
 	}
 
 	return nil
@@ -54,7 +74,11 @@ func Notify(msg string) error {
 
 	_, err := fmt.Fprint(conn, msg)
 
-	return err
+	if err != nil {
+		return fmt.Errorf("can't send notification to socket: %w", err)
+	}
+
+	return nil
 }
 
 // Ready sends READY message to systemd
@@ -73,17 +97,21 @@ func Stopping() error {
 }
 
 // MainPID sends MAINPID message with PID to systemd
-func MainPID(pid int) error {
-	return Notify(fmt.Sprintf("MAINPID=%d", pid))
+func MainPID() error {
+	return Notify(fmt.Sprintf("MAINPID=%d", os.Getpid()))
 }
 
-// ExtendTimeout sends EXTEND_TIMEOUT_USEC message to systemd
+// ExtendTimeout sends EXTEND_TIMEOUT_USEC to systemd with the given duration
+// in seconds
 func ExtendTimeout(sec float64) error {
-	usec := uint(sec * 1_000_000)
-	return Notify(fmt.Sprintf("EXTEND_TIMEOUT_USEC=%d", usec))
+	if sec <= 0 {
+		return fmt.Errorf("invalid timeout %g", sec)
+	}
+
+	return Notify(fmt.Sprintf("EXTEND_TIMEOUT_USEC=%d", uint64(sec*1_000_000)))
 }
 
-// Status sends status message to systemd
+// Status sends a printf-formatted status message to systemd
 func Status(format string, a ...any) error {
 	return Notify(fmt.Sprintf(format, a...))
 }

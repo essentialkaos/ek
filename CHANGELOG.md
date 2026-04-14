@@ -1,5 +1,124 @@
 ## Changelog
 
+### [14.0.0](https://kaos.sh/ek/14.0.0)
+
+- **`[cache/fs]`** Added method `Stop`
+- **`[cache/memory]`** Added method `Stop`
+- **`[color]`** Added methods to encode/decode `Hex`
+- **`[csv]`** Added method `WithBufferSize` to set underlying scanner token size
+- **`[env]`** Added method `Env.Has`
+- **`[timeutil]`** Added method `TinyDate.IsZero`
+- **`[support/network]`** Added support of multiple resolvers
+- **`[hashutil]`** Added method `Hash.EqualConstantTime`
+- **`[initsystem/sdnotify]`** Added method `Disconnect`
+- **`[jsonutil]`** Added methods to set/get GZip compression level
+- **`[req]`** Added request context support (`Request.Ctx`)
+- **`[secstr]`** Added methods `String.Bytes` and `String.String`
+- **`[secstr]`** The underlying byte slice becomes private
+- **`[terminal]`** Added methods `Read` and `ReadAnswer`
+- **`[color]`** Improved relative luminance calculation
+- **`[lock]`** Added lock name validation
+- **`[ansi]`** Removed `Codes` from all methods names
+- **`[ease]`** Fixed `SineIn` and `SineOut` calculation
+- **`[ease]`** Fixed overshoot constant for `BackIn`, `BackOut`, and `BackInOut`
+- **`[fmtc]`** Fixed Off-by-One bug in 256-Color range validation
+- **`[fmtutil]`** Method `ParseSize` now returns parsing error
+- **`[httputil]`** Method `GetDescByCode` marked as deprecated
+- **`[knf]`** Fixed minor bug with parsing section
+- **`[lock]`** Fixed ticker leak
+- **`[pluralize]`** Fixed pluralizers `Lt` and `Pl`
+- **`[req]`** Fixed bug in `Retrier` to use pause value from headers
+- **`[spinner]`** Fixed ticker leak
+- **`[support]`** Improved Windows support
+- **`[timeutil]`** Fixed `%c` output in `Format`
+- **`[timeutil]`** Fixed bug with formatting timezone offset
+- **`[timeutil]`** Fixed ISO week calculation
+- **`[timeutil]`** Fixed possible panic with `%C`, `%g`, `%D`, `%y` in `Format`
+- **`[ansi]`** Code refactoring
+- **`[cache]`** Code refactoring
+- **`[color]`** Code refactoring
+- **`[cron]`** Code refactoring
+- **`[csv]`** Code refactoring
+- **`[directio]`** Code refactoring
+- **`[ease]`** Code refactoring
+- **`[emoji]`** Code refactoring
+- **`[env]`** Code refactoring
+- **`[errors]`** Code refactoring
+- **`[events]`** Code refactoring
+- **`[fmtc]`** Code refactoring
+- **`[fmtutil/barcode]`** Code refactoring
+- **`[fmtutil/filetree]`** Code refactoring
+- **`[fmtutil/panel]`** Code refactoring
+- **`[fmtutil/table]`** Code refactoring
+- **`[fmtutil]`** Code refactoring
+- **`[fsutil]`** Code refactoring
+- **`[hashutil]`** Code refactoring
+- **`[httputil]`** Code refactoring
+- **`[i18n]`** Code refactoring
+- **`[initsystem/sdnotify]`** Code refactoring
+- **`[initsystem]`** Code refactoring
+- **`[jsonutil]`** Code refactoring
+- **`[jsonutil]`** Code refactoring
+- **`[knf/united]`** Code refactoring
+- **`[knf/validators]`** Code refactoring
+- **`[knf/value]`** Code refactoring
+- **`[knf]`** Code refactoring
+- **`[log]`** Code refactoring
+- **`[lscolors]`** Code refactoring
+- **`[mathutil]`** Code refactoring
+- **`[netutil]`** Code refactoring
+- **`[options]`** Code refactoring
+- **`[pager]`** Code refactoring
+- **`[passthru]`** Code refactoring
+- **`[passwd]`** Code refactoring
+- **`[path]`** Code refactoring
+- **`[pid]`** Code refactoring
+- **`[pluralize]`** Code refactoring
+- **`[progress]`** Code refactoring
+- **`[protip]`** Code refactoring
+- **`[rand]`** Code refactoring
+- **`[req]`** Code refactoring
+- **`[reutil]`** Code refactoring
+- **`[secstr]`** Code refactoring
+- **`[selfupdate]`** Code refactoring
+- **`[setup]`** Code refactoring
+- **`[signal]`** Code refactoring
+- **`[sliceutil]`** Code refactoring
+- **`[sortutil]`** Code refactoring
+- **`[spellcheck]`** Code refactoring
+- **`[spinner]`** Code refactoring
+- **`[strutil]`** Code refactoring
+- **`[support]`** Code refactoring
+- **`[support/apps]`** Code refactoring
+- **`[support/deps]`** Code refactoring
+- **`[support/fs]`** Code refactoring
+- **`[support/kernel]`** Code refactoring
+- **`[support/network]`** Code refactoring
+- **`[support/pkgs]`** Code refactoring
+- **`[support/resources]`** Code refactoring
+- **`[system]`** Code refactoring
+- **`[system/container]`** Code refactoring
+- **`[system/exec]`** Code refactoring
+- **`[system/process]`** Code refactoring
+- **`[system/procname]`** Code refactoring
+- **`[system/sensors]`** Code refactoring
+- **`[system/sysctl]`** Code refactoring
+- **`[terminal]`** Code refactoring
+- **`[terminal/input]`** Code refactoring
+- **`[terminal/tty]`** Code refactoring
+- **`[timeutil]`** Code refactoring
+- **`[usage]`** Code refactoring
+- **`[usage/completion/bash]`** Code refactoring
+- **`[usage/completion/fish]`** Code refactoring
+- **`[usage/completion/zsh]`** Code refactoring
+- **`[usage/man]`** Code refactoring
+- **`[usage/update]`** Code refactoring
+- **`[uuid]`** Code refactoring
+- **`[uuid/prefixed]`** Code refactoring
+- **`[version]`** Code refactoring
+
+---
+
 ### [13.38.7](https://kaos.sh/ek/13.38.7)
 
 - **`[log]`** Log panic to stderr with `PanicHandler` if global logger is nil

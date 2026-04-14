@@ -19,24 +19,40 @@ import (
 
 // Predefined namespace UUID's
 var (
-	NsDNS  = []byte{107, 167, 184, 16, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsURL  = []byte{107, 167, 184, 17, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsOID  = []byte{107, 167, 184, 18, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
-	NsX500 = []byte{107, 167, 184, 20, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+	// NsDNS is the predefined UUID namespace for fully qualified domain names
+	NsDNS = UUID{107, 167, 184, 16, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+
+	// NsURL is the predefined UUID namespace for URLs
+	NsURL = UUID{107, 167, 184, 17, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+
+	// NsOID is the predefined UUID namespace for ISO OIDs
+	NsOID = UUID{107, 167, 184, 18, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
+
+	// NsX500 is the predefined UUID namespace for X.500 distinguished names
+	NsX500 = UUID{107, 167, 184, 20, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200}
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UUID contains UUID data
-type UUID []byte
+// UUID is a 16-byte RFC 4122 universally unique identifier
+type UUID [16]byte
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// UUID4 generates random generated UUID v4
-func UUID4() UUID {
-	uuid := make(UUID, 16)
+// randGenerator is function to generate random data
+var randGenerator = rand.Read
 
-	rand.Read(uuid)
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// UUID4 returns a randomly generated UUID (version 4)
+func UUID4() UUID {
+	var uuid UUID
+
+	_, err := randGenerator(uuid[:])
+
+	if err != nil {
+		return UUID{}
+	}
 
 	uuid[6] = (uuid[6] & 0x0F) | 0x40
 	uuid[8] = (uuid[8] & 0x3F) | 0x80
@@ -44,15 +60,15 @@ func UUID4() UUID {
 	return UUID(uuid)
 }
 
-// UUID5 generates UUID v5 based on SHA-1 hash of namespace UUID and name
-func UUID5(ns []byte, name string) UUID {
-	uuid := make(UUID, 16)
+// UUID5 returns a UUID (version 5) derived from the SHA-1 hash of ns and name
+func UUID5(ns UUID, name string) UUID {
+	var uuid UUID
 
 	hash := sha1.New()
-	hash.Write(ns)
+	hash.Write(ns[:])
 	hash.Write([]byte(name))
 
-	copy(uuid, hash.Sum(nil))
+	copy(uuid[:], hash.Sum(nil))
 
 	uuid[6] = (uuid[6] & 0x0F) | 0x50
 	uuid[8] = (uuid[8] & 0x3F) | 0x80
@@ -60,11 +76,16 @@ func UUID5(ns []byte, name string) UUID {
 	return UUID(uuid)
 }
 
-// UUID7 generates UUID v7 based on timestamp
+// UUID7 returns a UUID (version 7) with a millisecond-precision Unix timestamp in
+// the high bits
 func UUID7() UUID {
-	uuid := make(UUID, 16)
+	var uuid UUID
 
-	rand.Read(uuid)
+	_, err := randGenerator(uuid[:])
+
+	if err != nil {
+		return UUID{}
+	}
 
 	ts := uint64(time.Now().UnixNano() / 1_000_000)
 
@@ -83,12 +104,12 @@ func UUID7() UUID {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsZero returns true if UUID is empty
+// IsZero reports whether the UUID is the all-zero value
 func (u UUID) IsZero() bool {
-	return len(u) == 0
+	return u == UUID{}
 }
 
-// String returns string representation of UUID
+// String returns the standard hyphenated lowercase hex representation of the UUID
 func (u UUID) String() string {
 	buf := make([]byte, 36)
 

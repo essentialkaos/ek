@@ -1,4 +1,4 @@
-// Package panel provides methods for rendering panels with text
+// Package panel provides methods for rendering panels with text in terminal
 package panel
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -13,92 +13,93 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/fmtutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-type Option uint8
-
-type Options []Option
-
 const (
-	// WRAP is panel rendering option for automatic text wrapping
+	// WRAP enables automatic text wrapping based on panel width
 	WRAP Option = iota + 1
 
-	// INDENT_OUTER is panel rendering option for indent using new lines
-	// before and after panel
+	// INDENT_OUTER adds empty lines before and after the panel
 	INDENT_OUTER
 
-	// INDENT_INNER is panel rendering option for indent using new lines
-	// before and after panel data
+	// INDENT_INNER adds empty lines before and after the panel content
 	INDENT_INNER
 
-	// TOP_LINE is panel rendering option for drawing top line of panel
+	// TOP_LINE draws a horizontal line after the panel label row
 	TOP_LINE
 
-	// BOTTOM_LINE is panel rendering option for drawing bottom line of panel
+	// BOTTOM_LINE draws a horizontal line at the bottom of the panel
 	BOTTOM_LINE
 
-	// LABEL_POWERLINE is panel rendering option for using powerline symbols
+	// LABEL_POWERLINE uses powerline symbols for the label rendering
 	LABEL_POWERLINE
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Option represents a single panel rendering option
+type Option uint8
+
+// Options is a slice of panel rendering options
+type Options []Option
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 var (
-	// ErrorColorTag is fmtc color tag used for error messages
+	// ErrorColorTag is the fmtc color tag used for error panels
 	ErrorColorTag = "{r}"
 
-	// WarnColorTag is fmtc color tag used for warning messages
+	// WarnColorTag is the fmtc color tag used for warning panels
 	WarnColorTag = "{y}"
 
-	// InfoColorTag is fmtc color tag used for info messages
+	// InfoColorTag is the fmtc color tag used for info panels
 	InfoColorTag = "{c-}"
 )
 
-// Width is panel width (≥ 40) if option WRAP is set
+// Width is the panel content width in characters (≥ 40), applied when WRAP is set
 var Width = 88
 
-// Indent is indent from the left side of terminal
+// Indent is the number of spaces prepended to each panel line as left-side padding
 var Indent = 0
 
-// DefaultOptions is the default options used for rendering the panel if
-// no options are passed
+// DefaultOptions holds the options applied when no options are passed to [Panel]
 var DefaultOptions Options
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// minWidth is the minimal panel width
+// minWidth is the minimum allowed panel width
 var minWidth = 38
 
-// maxWidth is the maximum panel width
+// maxWidth is the maximum allowed panel width
 var maxWidth = 256
 
-// maxIndent is the maximum indent value
+// maxIndent is the maximum allowed indent size
 var maxIndent = 24
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Error shows panel with error message
+// Error renders a panel with the ERROR label using [ErrorColorTag]
 func Error(title, message string, options ...Option) {
 	Panel("ERROR", ErrorColorTag, title, message, options...)
 }
 
-// Warn shows panel with warning message
+// Warn renders a panel with the WARNING label using [WarnColorTag]
 func Warn(title, message string, options ...Option) {
 	Panel("WARNING", WarnColorTag, title, message, options...)
 }
 
-// Info shows panel with warning message
+// Info renders a panel with the INFO label using [InfoColorTag]
 func Info(title, message string, options ...Option) {
 	Panel("INFO", InfoColorTag, title, message, options...)
 }
 
-// Panel shows panel with given label, title, and message
+// Panel renders a panel with the given label, color tag, title, and message
 func Panel(label, colorTag, title, message string, options ...Option) {
 	label = strutil.Q(label, "•••")
 
@@ -113,7 +114,7 @@ func Panel(label, colorTag, title, message string, options ...Option) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Has returns true if options slice contains given option
+// Has returns true if the options slice contains the given option
 func (o Options) Has(option Option) bool {
 	if len(o) == 0 {
 		return false
@@ -124,7 +125,7 @@ func (o Options) Has(option Option) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// renderPanel renders panel with given label, color tag, title, and message
+// renderPanel writes the formatted panel to the terminal using fmtc primitives
 func renderPanel(label, colorTag, title, message string, options Options) {
 	var buf *bytes.Buffer
 
@@ -171,12 +172,11 @@ func renderPanel(label, colorTag, title, message string, options Options) {
 		fmtc.Println(colorTag + indent + "┃{!}")
 	}
 
-	switch {
-	case options.Has(WRAP):
+	if options.Has(WRAP) {
 		buf = bytes.NewBufferString(
 			fmtutil.Wrap(fmtc.Sprint(message), "", width-2) + "\n",
 		)
-	default:
+	} else {
 		buf = bytes.NewBufferString(message)
 		buf.WriteRune('\n')
 	}

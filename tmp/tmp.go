@@ -12,43 +12,47 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
-	"github.com/essentialkaos/ek/v13/rand"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
+	"github.com/essentialkaos/ek/v14/rand"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Temp is a structure for working with temporary files and directories
+// Temp holds the configuration and the list of temporary objects created during
+// the session, allowing them to be removed all at once via Clean
 type Temp struct {
 	Dir       string
 	DirPerms  os.FileMode
 	FilePerms os.FileMode
 
+	mu      sync.Mutex
 	objects []string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrNilTemp is returned if temp struct is nil
-var ErrNilTemp = fmt.Errorf("Temp struct is nil")
+// ErrNilTemp is returned when a method is called on a nil Temp pointer
+var ErrNilTemp = fmt.Errorf("temp struct is nil")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is path to temporary directory
+// Dir is the default path used as the root for new Temp instances
 var Dir = os.TempDir()
 
-// DefaultDirPerms is default permissions for directories
+// DefaultDirPerms is the default permission mode applied to temporary directories
 var DefaultDirPerms = os.FileMode(0750)
 
-// DefaultFilePerms is default permissions for files
+// DefaultFilePerms is the default permission mode applied to temporary files
 var DefaultFilePerms = os.FileMode(0640)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NewTemp creates new Temp structure
+// NewTemp creates a new [Temp] instance rooted at the given directory, or at the
+// package-level Dir if no argument is provided
 func NewTemp(dir ...string) (*Temp, error) {
 	tempDir := filepath.Clean(Dir)
 
@@ -57,7 +61,7 @@ func NewTemp(dir ...string) (*Temp, error) {
 	}
 
 	if !fsutil.IsExist(tempDir) {
-		return nil, fmt.Errorf("Directory %s does not exist", tempDir)
+		return nil, fmt.Errorf("directory %s does not exist", tempDir)
 	}
 
 	if !fsutil.IsDir(tempDir) {
@@ -65,7 +69,7 @@ func NewTemp(dir ...string) (*Temp, error) {
 	}
 
 	if !fsutil.IsWritable(tempDir) {
-		return nil, fmt.Errorf("Directory %s is not writable", tempDir)
+		return nil, fmt.Errorf("directory %s is not writable", tempDir)
 	}
 
 	return &Temp{
@@ -77,7 +81,8 @@ func NewTemp(dir ...string) (*Temp, error) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// MkDir creates temporary directory
+// MkDir creates a temporary directory inside t.Dir and registers it for cleanup.
+// An optional nameSuffix is appended to the auto-generated name.
 func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 	if t == nil {
 		return "", ErrNilTemp
@@ -91,12 +96,13 @@ func (t *Temp) MkDir(nameSuffix ...string) (string, error) {
 		return "", err
 	}
 
-	t.objects = append(t.objects, tmpDir)
+	t.addObject(tmpDir)
 
-	return tmpDir, err
+	return tmpDir, nil
 }
 
-// MkFile creates temporary file
+// MkFile creates a temporary file inside t.Dir and registers it for cleanup.
+// An optional nameSuffix is appended to the auto-generated name.
 func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 	if t == nil {
 		return nil, "", ErrNilTemp
@@ -110,12 +116,13 @@ func (t *Temp) MkFile(nameSuffix ...string) (*os.File, string, error) {
 		return nil, "", err
 	}
 
-	t.objects = append(t.objects, tmpFile)
+	t.addObject(tmpFile)
 
 	return fd, tmpFile, nil
 }
 
-// MkName returns name for temporary object (file or directory)
+// MkName generates and registers a unique name for a temporary object inside
+// t.Dir without creating the object itself. An optional nameSuffix is appended.
 func (t *Temp) MkName(nameSuffix ...string) string {
 	if t == nil {
 		return ""
@@ -123,20 +130,36 @@ func (t *Temp) MkName(nameSuffix ...string) string {
 
 	name := strutil.Q(nameSuffix...)
 	tmpObj := getTempName(t.Dir, name)
-	t.objects = append(t.objects, tmpObj)
+
+	t.addObject(tmpObj)
 
 	return tmpObj
 }
 
-// Clean removes all temporary objects (files and directories)
+// Clean removes all temporary objects (files and directories) registered in
+// this [Temp] instance
 func (t *Temp) Clean() {
-	if t == nil || t.objects == nil || len(t.objects) == 0 {
+	if t == nil || len(t.objects) == 0 {
 		return
 	}
 
-	for _, object := range t.objects {
-		os.RemoveAll(object)
+	t.mu.Lock()
+	objects := t.objects
+	t.objects = nil
+	t.mu.Unlock()
+
+	for _, object := range objects {
+		os.RemoveAll(object) //nolint:errcheck
 	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// addObject adds object to temp objects list
+func (t *Temp) addObject(path string) {
+	t.mu.Lock()
+	t.objects = append(t.objects, path)
+	t.mu.Unlock()
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

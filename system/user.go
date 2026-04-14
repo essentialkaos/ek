@@ -15,64 +15,33 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/env"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// User contains information about user
-type User struct {
-	UID      int      `json:"uid"`
-	GID      int      `json:"gid"`
-	Name     string   `json:"name"`
-	Groups   []*Group `json:"groups"`
-	Comment  string   `json:"comment"`
-	Shell    string   `json:"shell"`
-	HomeDir  string   `json:"home_dir"`
-	RealUID  int      `json:"real_uid"`
-	RealGID  int      `json:"real_gid"`
-	RealName string   `json:"real_name"`
-}
-
-// Group contains information about group
-type Group struct {
-	Name string `json:"name"`
-	GID  int    `json:"gid"`
-}
-
-// SessionInfo contains information about all sessions
-type SessionInfo struct {
-	Username         string    `json:"username"`
-	Host             string    `json:"host"`
-	LoginTime        time.Time `json:"login_time"`
-	LastActivityTime time.Time `json:"last_activity_time"`
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// Errors
 var (
-	// ErrEmptyPath is returned if given path is empty
-	ErrEmptyPath = errors.New("Path is empty")
+	// ErrEmptyPath is returned when a required path argument is empty
+	ErrEmptyPath = errors.New("path is empty")
 
-	// ErrEmptyUserName is returned if given user name or uid is empty
-	ErrEmptyUserName = errors.New("User name/ID can't be blank")
+	// ErrEmptyUserName is returned when a required user name or UID is empty
+	ErrEmptyUserName = errors.New("user name/ID can't be blank")
 
-	// ErrEmptyGroupName is returned if given group name of gid is empty
-	ErrEmptyGroupName = errors.New("Group name/ID can't be blank")
+	// ErrEmptyGroupName is returned when a required group name or GID is empty
+	ErrEmptyGroupName = errors.New("group name/ID can't be blank")
 
-	// ErrCantParseIdOutput is returned if id command output has unsupported format
-	ErrCantParseIdOutput = errors.New("Can't parse id command output")
+	// ErrCantParseIdOutput is returned when the output of the id command has an unexpected format
+	ErrCantParseIdOutput = errors.New("can't parse id command output")
 
-	// ErrCantParseGetentOutput is returned if getent command output has unsupported format
-	ErrCantParseGetentOutput = errors.New("Can't parse getent command output")
+	// ErrCantParseGetentOutput is returned when the output of getent has an unexpected format
+	ErrCantParseGetentOutput = errors.New("can't parse getent command output")
 )
 
-// CurrentUserCachePeriod is cache period for current user info
+// CurrentUserCachePeriod is the duration for which the current user info is cached
 var CurrentUserCachePeriod = 5 * time.Minute
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -83,15 +52,24 @@ var curUser *User
 // curUserUpdateDate is date when user data was updated
 var curUserUpdateDate time.Time
 
+// curUserMu mutex to control access to current user data
+var curUserMu sync.RWMutex
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CurrentUser returns struct with info about current user
+// CurrentUser returns information about the user running the current process.
+// Results are cached for CurrentUserCachePeriod; pass true to bypass the cache.
 func CurrentUser(avoidCache ...bool) (*User, error) {
 	if len(avoidCache) == 0 || !avoidCache[0] {
 		if curUser != nil && time.Since(curUserUpdateDate) < CurrentUserCachePeriod {
+			curUserMu.RLock()
+			defer curUserMu.RUnlock()
 			return curUser, nil
 		}
 	}
+
+	curUserMu.Lock()
+	defer curUserMu.Unlock()
 
 	username, err := getCurrentUserName()
 
@@ -115,7 +93,7 @@ func CurrentUser(avoidCache ...bool) (*User, error) {
 	return user, nil
 }
 
-// LookupUser searches user info by given name
+// LookupUser returns user information for the given username or UID string
 func LookupUser(nameOrID string) (*User, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyUserName
@@ -136,7 +114,7 @@ func LookupUser(nameOrID string) (*User, error) {
 	return user, nil
 }
 
-// LookupGroup searches group info by given name
+// LookupGroup returns group information for the given group name or GID string
 func LookupGroup(nameOrID string) (*Group, error) {
 	if nameOrID == "" {
 		return nil, ErrEmptyGroupName
@@ -145,7 +123,8 @@ func LookupGroup(nameOrID string) (*Group, error) {
 	return getGroupInfo(nameOrID)
 }
 
-// CurrentTTY returns current tty or empty string if error occurred
+// CurrentTTY returns the path of the TTY attached to the current process, or an empty
+// string if none
 func CurrentTTY() string {
 	pid := strconv.Itoa(os.Getpid())
 	fdLink, err := os.Readlink("/proc/" + pid + "/fd/0")
@@ -159,17 +138,17 @@ func CurrentTTY() string {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// IsRoot checks if current user is root
+// IsRoot returns true if the user is root (UID 0 and GID 0)
 func (u *User) IsRoot() bool {
 	return u.UID == 0 && u.GID == 0
 }
 
-// IsSudo checks if it user over sudo command
+// IsSudo returns true if the process is running under sudo elevation
 func (u *User) IsSudo() bool {
 	return u.IsRoot() && u.RealUID != 0 && u.RealGID != 0
 }
 
-// GroupList returns slice with user groups names
+// GroupList returns the names of all groups the user belongs to
 func (u *User) GroupList() []string {
 	var result []string
 
@@ -257,17 +236,27 @@ func getRealUserByPTY() (string, int, int) {
 
 // getRealUserFromEnv try to find info about real user in environment variables
 func getRealUserFromEnv() (string, int, int) {
-	envMap := env.Get()
+	userName := os.Getenv("SUDO_USER")
+	userUID := os.Getenv("SUDO_UID")
+	userGID := os.Getenv("SUDO_GID")
 
-	if envMap["SUDO_USER"] == "" || envMap["SUDO_UID"] == "" || envMap["SUDO_GID"] == "" {
+	if userName == "" || userUID == "" || userGID == "" {
 		return "", -1, -1
 	}
 
-	user := envMap["SUDO_USER"]
-	uid, _ := strconv.Atoi(envMap["SUDO_UID"])
-	gid, _ := strconv.Atoi(envMap["SUDO_GID"])
+	uid, err := strconv.Atoi(userUID)
 
-	return user, uid, gid
+	if err != nil {
+		return "", -1, -1
+	}
+
+	gid, err := strconv.Atoi(userGID)
+
+	if err != nil {
+		return "", -1, -1
+	}
+
+	return userName, uid, gid
 }
 
 // getOwner returns file or directory owner UID

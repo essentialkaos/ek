@@ -16,33 +16,35 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is a path to directory with lock files
+// ❗ Dir is the directory where lock files are created and looked up
 var Dir = ""
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Create creates new lock file
+// ❗ Create creates a new lock file with the given name in [Dir]
 func Create(name string) error {
 	panic("UNSUPPORTED")
-	return nil
 }
 
-// ❗ Remove deletes lock file
+// ❗ Remove deletes the lock file with the given name from [Dir]
 func Remove(name string) error {
 	panic("UNSUPPORTED")
-	return nil
 }
 
-// ❗ Has returns true if lock file exists
+// ❗ Has reports whether a lock file with the given name currently exists
 func Has(name string) bool {
 	panic("UNSUPPORTED")
-	return false
 }
 
-// ❗ Expired returns true if lock file reached TTL
-func Expired(name string, ttl time.Duration) bool {
+// ❗ Wait blocks until the named lock file is removed or the deadline is exceeded.
+// Returns true if the lock was released, false if the deadline was reached.
+func Wait(name string, deadline time.Time) bool {
 	panic("UNSUPPORTED")
-	return false
+}
+
+// ❗ IsExpired reports whether the named lock file has existed longer than TTL
+func IsExpired(name string, ttl time.Duration) bool {
+	panic("UNSUPPORTED")
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

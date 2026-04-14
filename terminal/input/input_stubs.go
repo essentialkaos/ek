@@ -13,15 +13,15 @@ package input
 import (
 	"errors"
 
-	"github.com/essentialkaos/ek/v13/secstr"
+	"github.com/essentialkaos/ek/v14/secstr"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CompletionHandler is completion handler
+// ❗ CompletionHandler is the function signature for Tab-completion callbacks
 type CompletionHandler = func(input string) []string
 
-// HintHandler is hint handler
+// ❗ HintHandler is the function signature for inline input hint callbacks
 type HintHandler = func(input string) string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -31,73 +31,86 @@ var ErrKillSignal = errors.New("")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Prompt is prompt string
+// ❗ Prompt is the string displayed before each user input line
 var Prompt = "> "
 
-// ❗ MaskSymbol is symbol used for masking passwords
+// ❗ MaskSymbol is the character used to replace each typed character when masking
+// passwords
 var MaskSymbol = "*"
 
-// ❗ HideLength is flag for hiding password length
+// ❗ HideLength conceals the password length by replacing the mask with a fixed
+// "[hidden]" label
 var HideLength = false
 
-// ❗ MaskSymbolColorTag is fmtc color tag used for MaskSymbol output
-var MaskSymbolColorTag = ""
-
-// ❗ TitleColorTag is fmtc color tag used for input titles
-var TitleColorTag = "{s}"
-
-// ❗ HidePassword is flag for hiding password while typing
-// Because of using the low-level linenoise method for this feature, we can not use a
-// custom masking symbol, so it always will be an asterisk (*).
+// ❗ HidePassword hides typed characters in real time using linenoise's built-in
+// mask mode. When enabled, the masking symbol is always an asterisk regardless
+// of [MaskSymbol].
 var HidePassword = false
 
-// ❗ AlwaysYes is a flag, if set ReadAnswer will always return true (useful for working
-// with option for forced actions)
+// ❗ MaskSymbolColorTag is the fmtc color tag applied when rendering the mask symbol
+var MaskSymbolColorTag = ""
+
+// ❗ TitleColorTag is the fmtc color tag applied to input title lines
+var TitleColorTag = "{s}"
+
+// ❗ AlwaysYes causes [ReadAnswer] to return true without prompting the user,
+// useful for non-interactive or forced-action modes
 var AlwaysYes = false
 
-// ❗ NewLine is a flag for extra new line after inputs
+// ❗ NewLine controls whether an extra blank line is printed before and after each
+// input
 var NewLine = false
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrInvalidAnswer is error for wrong answer for Y/N question
-var ErrInvalidAnswer = errors.New("")
+// InvalidAnswerMessage is returned when the user's answer is neither Y nor N
+var InvalidAnswerMessage = "Please enter Y or N"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ❗ Read reads user input
+// ❗ Read displays an optional title, prompts for a line of text, and applies
+// any provided validators before returning the input
 func Read(title string, validators ...Validator) (string, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ ReadAnswer reads user's answer to yes/no question
+// ❗ ReadAnswer prompts the user with a yes/no question and returns their answer
+// as a bool. An optional defaultAnswer ("Y" or "N") is used when the user submits an
+// empty response.
 func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ ReadPassword reads password or some private input that will be hidden
-// after pressing Enter
+// ❗ ReadPassword prompts for a line of text that is masked on screen after entry
 func ReadPassword(title string, validators ...Validator) (string, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ ReadPasswordSecure reads password or some private input that will be hidden
-// after pressing Enter
+// ❗ ReadPasswordSecure works like ReadPassword but returns the value wrapped in a
+// secstr.String to prevent the secret from lingering in plain memory
 func ReadPasswordSecure(title string, validators ...Validator) (*secstr.String, error) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ AddHistory adds line to input history
+// ❗ AddHistory appends a line to the linenoise input history
 func AddHistory(data string) {
 	panic("UNSUPPORTED")
 }
 
-// ❗ SetCompletionHandler adds autocompletion function (using Tab key)
-func SetCompletionHandler(h func(input string) []string) {
+// ❗ SetHistoryCapacity sets the maximum number of entries retained in input history.
+// Returns an error if capacity is less than 1.
+func SetHistoryCapacity(capacity int) error {
 	panic("UNSUPPORTED")
 }
 
-// ❗ SetHintHandler adds function for input hints
-func SetHintHandler(h func(input string) string) {
+// ❗ SetCompletionHandler registers a callback invoked on Tab key press to provide
+// completions
+func SetCompletionHandler(h CompletionHandler) {
+	panic("UNSUPPORTED")
+}
+
+// ❗ SetHintHandler registers a callback that provides an inline hint shown while the
+// user types
+func SetHintHandler(h HintHandler) {
 	panic("UNSUPPORTED")
 }

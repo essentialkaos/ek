@@ -10,8 +10,8 @@ package zsh
 import (
 	"testing"
 
-	"github.com/essentialkaos/ek/v13/options"
-	"github.com/essentialkaos/ek/v13/usage"
+	"github.com/essentialkaos/ek/v14/options"
+	"github.com/essentialkaos/ek/v14/usage"
 
 	. "github.com/essentialkaos/check"
 )

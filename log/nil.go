@@ -7,7 +7,7 @@ package log
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// NilLogger is Logger (ILogger) compatible logger that doesn't print anything
+// // NilLogger is an ILogger-compatible logger that silently discards all messages
 type NilLogger struct{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //

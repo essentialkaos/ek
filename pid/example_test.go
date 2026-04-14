@@ -37,20 +37,22 @@ func ExampleRemove() {
 }
 
 func ExampleGet() {
-	pid := Get("servicename")
+	pid, err := Get("servicename")
 
-	if pid == -1 {
-		fmt.Println("Can't read PID from PID file")
+	if err != nil {
+		fmt.Printf("Can't read PID from PID file: %v\n", err)
+		return
 	}
 
 	fmt.Printf("PID is %d\n", pid)
 }
 
 func ExampleRead() {
-	pid := Read("/var/run/httpd.pid")
+	pid, err := Read("/var/run/httpd.pid")
 
-	if pid == -1 {
-		fmt.Println("Can't read PID from PID file")
+	if err != nil {
+		fmt.Printf("Can't read PID from PID file: %v\n", err)
+		return
 	}
 
 	fmt.Printf("PID is %d\n", pid)

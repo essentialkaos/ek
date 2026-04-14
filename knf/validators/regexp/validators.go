@@ -10,9 +10,9 @@ package regexp
 
 import (
 	"fmt"
-	"regexp"
+	re "regexp"
 
-	"github.com/essentialkaos/ek/v13/knf"
+	"github.com/essentialkaos/ek/v14/knf"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -38,14 +38,14 @@ func validateRegexp(config knf.IConfig, prop string, value any) error {
 			return getValidatorEmptyInputError("Regexp", prop)
 		}
 
-		re, err := regexp.Compile(t)
+		re, err := re.Compile(t)
 
 		if err != nil {
-			return fmt.Errorf("Invalid input for regexp.Regexp validator: %w", err)
+			return fmt.Errorf("invalid input for regexp.Regexp validator: %w", err)
 		}
 
 		if !re.MatchString(v) {
-			return fmt.Errorf("Property %s must match regexp pattern %q", prop, t)
+			return fmt.Errorf("property %s must match regexp pattern %q", prop, t)
 		}
 
 	default:
@@ -61,7 +61,7 @@ func validateRegexp(config knf.IConfig, prop string, value any) error {
 // validator
 func getValidatorInputError(validator, prop string, value any) error {
 	return fmt.Errorf(
-		"Validator regexp.%s doesn't support input with type <%T> for checking %s property",
+		"validator regexp.%s doesn't support input with type <%T> for checking %s property",
 		validator, value, prop,
 	)
 }
@@ -69,7 +69,7 @@ func getValidatorInputError(validator, prop string, value any) error {
 // getValidatorEmptyInputError returns an error for empty input in regexp validator
 func getValidatorEmptyInputError(validator, prop string) error {
 	return fmt.Errorf(
-		"Validator regexp.%s requires non-empty input for checking %s property",
+		"validator regexp.%s requires non-empty input for checking %s property",
 		validator, prop,
 	)
 }

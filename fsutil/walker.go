@@ -11,17 +11,24 @@ package fsutil
 
 import (
 	"os"
+	"sync"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// dirStack is a stack of directories used by Push/Pop functions
-var dirStack []string
+var (
+	dirStack   []string   // current stack
+	dirStackMu sync.Mutex // protection mutex
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Push changes current working directory and add previous working directory to stack
+// best-effort; failure yields empty string
 func Push(dir string) string {
+	dirStackMu.Lock()
+	defer dirStackMu.Unlock()
+
 	var wd string
 
 	if dirStack == nil {
@@ -43,7 +50,11 @@ func Push(dir string) string {
 }
 
 // Pop changes current working directory to previous in stack
+// best-effort; failure yields empty string
 func Pop() string {
+	dirStackMu.Lock()
+	defer dirStackMu.Unlock()
+
 	var wd string
 
 	if dirStack == nil {

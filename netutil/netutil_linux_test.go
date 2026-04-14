@@ -36,6 +36,10 @@ func (s *NetUtilSuite) TestCommon(c *C) {
 	procRouteFile = s.CreateTestFile(c, "Iface   Destination     Gateway         Flags   RefCnt  Use     Metric  Mask            MTU     Window  IRTT\neth0    0070652E        00000000        0001    0       0       0       00F0FFFF        0       0       0")
 
 	c.Assert(getDefaultRouteInterface(), Equals, "")
+
+	procRouteFile = s.CreateTestFile(c, "Iface   Destination     Gateway         Flags   RefCnt  Use     Metric  Mask            MTU     Window  IRTT\neth0    00000000        00000000        0001    0       0       0       00F0FFFF        0       0       0")
+
+	c.Assert(getDefaultRouteInterface(), Equals, "eth0")
 }
 
 func (s *NetUtilSuite) TestGetIP(c *C) {

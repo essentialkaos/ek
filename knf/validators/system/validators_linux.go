@@ -12,8 +12,8 @@ package system
 import (
 	"fmt"
 
-	"github.com/essentialkaos/ek/v13/knf"
-	"github.com/essentialkaos/ek/v13/system"
+	"github.com/essentialkaos/ek/v14/knf"
+	"github.com/essentialkaos/ek/v14/system"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -36,13 +36,13 @@ func validateInterface(config knf.IConfig, prop string, value any) error {
 	stats, err := system.GetInterfacesStats()
 
 	if err != nil {
-		return fmt.Errorf("Can't get interfaces info: %v", err)
+		return fmt.Errorf("can't get interfaces info: %v", err)
 	}
 
 	_, isPresent := stats[v]
 
 	if !isPresent {
-		return fmt.Errorf("Interface %q is not present on the system", v)
+		return fmt.Errorf("interface %q is not present on the system", v)
 	}
 
 	return nil

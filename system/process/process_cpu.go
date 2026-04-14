@@ -10,104 +10,43 @@ package process
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"bufio"
-	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Process state flags
-const (
-	STATE_RUNNING   = "R"
-	STATE_SLEEPING  = "S"
-	STATE_DISK_WAIT = "D"
-	STATE_ZOMBIE    = "Z"
-	STATE_STOPPED   = "T"
-	STATE_DEAD      = "X"
-	STATE_WAKEKILL  = "K"
-	STATE_WAKING    = "W"
-	STATE_PARKED    = "P"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ProcInfo contains partial info from /proc/[PID]/stat
-type ProcInfo struct {
-	PID        int    `json:"pid"`         // The process ID
-	Comm       string `json:"comm"`        // The filename of the executable, in parentheses
-	State      string `json:"state"`       // Process state
-	PPID       int    `json:"ppid"`        // The PID of the parent of this process
-	Session    int    `json:"session"`     // The session ID of the process
-	TTYNR      int    `json:"tty_nr"`      // The controlling terminal of the process
-	TPGid      int    `json:"tpgid"`       // The ID of the foreground process group of the controlling terminal of the process
-	UTime      uint64 `json:"utime"`       // Amount of time that this process has been scheduled in user mode, measured in clock ticks
-	STime      uint64 `json:"stime"`       // Amount of time that this process has been scheduled in kernel mode, measured in clock ticks
-	CUTime     uint64 `json:"cutime"`      // Amount of time that this process's waited-for children have been scheduled in user mode, measured in clock ticks
-	CSTime     uint64 `json:"cstime"`      // Amount of time that this process's waited-for children have been scheduled in kernel mode, measured in clock ticks
-	Priority   int    `json:"priority"`    // Priority
-	Nice       int    `json:"nice"`        // The nice value
-	NumThreads int    `json:"num_threads"` // Number of threads in this process
-}
-
-// ProcSample contains value for usage calculation
-type ProcSample uint
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// ToSample converts ProcInfo to ProcSample for CPU usage calculation
-func (pi *ProcInfo) ToSample() ProcSample {
-	return ProcSample(pi.UTime + pi.STime + pi.CUTime + pi.CSTime)
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// GetInfo returns process info from procfs
+// GetInfo returns the parsed /proc/[pid]/stat fields for the given process
 func GetInfo(pid int) (*ProcInfo, error) {
-	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	text, err := readStatData(pid)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer fd.Close()
-
-	r := bufio.NewReader(fd)
-	text, _ := r.ReadString('\n')
-
-	if len(text) < 20 {
-		return nil, errors.New("Can't parse stat file for given process")
-	}
-
 	return parseStatData(text)
 }
 
-// GetSample returns ProcSample for CPU usage calculation
+// GetSample returns a CPU-time snapshot of the given process for use with
+// [CalculateCPUUsage]
 func GetSample(pid int) (ProcSample, error) {
-	fd, err := os.OpenFile(procFS+"/"+strconv.Itoa(pid)+"/stat", os.O_RDONLY, 0)
+	text, err := readStatData(pid)
 
 	if err != nil {
 		return 0, err
 	}
 
-	defer fd.Close()
-
-	r := bufio.NewReader(fd)
-	text, _ := r.ReadString('\n')
-
-	if len(text) < 20 {
-		return 0, errors.New("Can't parse stat file for given process")
-	}
-
 	return parseSampleData(text)
 }
 
-// CalculateCPUUsage calculates CPU usage
+// CalculateCPUUsage returns the percentage of CPU used between two samples over
+// the given duration
 func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 	total := float64(s2 - s1)
 	seconds := float64(duration) / float64(time.Second)
@@ -116,6 +55,22 @@ func CalculateCPUUsage(s1, s2 ProcSample, duration time.Duration) float64 {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// readStatData reads stat file data and returns it as a string
+func readStatData(pid int) (string, error) {
+	statFile := path.Join(procFS, strconv.Itoa(pid), "stat")
+	data, err := os.ReadFile(statFile)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(data) < 20 {
+		return "", fmt.Errorf("stat file %s has not valid data", statFile)
+	}
+
+	return strings.Trim(string(data), "\n\r"), nil
+}
 
 // parseStatData parses CPU stats data
 func parseStatData(text string) (*ProcInfo, error) {
@@ -183,7 +138,7 @@ func parseSampleData(text string) (ProcSample, error) {
 		}
 
 		if err != nil {
-			return ProcSample(0), err
+			return 0, err
 		}
 	}
 
@@ -195,7 +150,7 @@ func parseIntField(s string, field int) (int, error) {
 	v, err := strconv.Atoi(s)
 
 	if err != nil {
-		return 0, fmt.Errorf("Can't parse stat field %d: %w", field, err)
+		return 0, fmt.Errorf("can't parse stat field %d: %w", field, err)
 	}
 
 	return v, nil
@@ -206,7 +161,7 @@ func parseUint64Field(s string, field int) (uint64, error) {
 	v, err := strconv.ParseUint(s, 10, 64)
 
 	if err != nil {
-		return 0, fmt.Errorf("Can't parse stat field %d: %w", field, err)
+		return 0, fmt.Errorf("can't parse stat field %d: %w", field, err)
 	}
 
 	return v, nil

@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -52,7 +52,7 @@ type CMYK struct {
 type HSV struct {
 	H float64 // Hue
 	S float64 // Saturation
-	V float64 // Lightness
+	V float64 // Value
 	A float64 // Alpha
 }
 
@@ -60,7 +60,7 @@ type HSV struct {
 type HSL struct {
 	H float64 // Hue
 	S float64 // Saturation
-	L float64 // Value
+	L float64 // Lightness
 	A float64 // Alpha
 }
 
@@ -302,12 +302,13 @@ func (c Hex) ToRGB() RGB {
 	return Hex2RGB(c)
 }
 
-// ToRGB converts hex color to RGBA
+// ToRGBA converts hex color to RGBA
 func (c Hex) ToRGBA() RGBA {
 	return Hex2RGBA(c)
 }
 
-// WithAlpha returns color with given alpha value
+// WithAlpha returns a copy of the color with the given alpha value.
+// The alpha parameter is clamped to the range 0.0 — 1.0.
 func (c RGBA) WithAlpha(alpha float64) RGBA {
 	c.A = uint8(255.0 * mathutil.Between(alpha, 0, 1))
 	return c
@@ -365,10 +366,6 @@ func (c RGBA) String() string {
 
 // GoString returns Go representation of RGBA color
 func (c RGBA) GoString() string {
-	if c.A == 0 {
-		return fmt.Sprintf("RGBA{R:%d, G:%d, B:%d}", c.R, c.G, c.B)
-	}
-
 	return fmt.Sprintf("RGBA{R:%d, G:%d, B:%d, A:%d}", c.R, c.G, c.B, c.A)
 }
 
@@ -395,10 +392,6 @@ func (c HSV) String() string {
 
 // GoString returns Go representation of HSV color
 func (c HSV) GoString() string {
-	if c.A == 0 {
-		return fmt.Sprintf("HSV{H:%g, S:%g, V:%g}", c.H, c.S, c.V)
-	}
-
 	return fmt.Sprintf("HSV{H:%g, S:%g, V:%g, A:%g}", c.H, c.S, c.V, c.A)
 }
 
@@ -412,19 +405,37 @@ func (c HSL) String() string {
 
 // GoString returns Go representation of HSL color
 func (c HSL) GoString() string {
-	if c.A == 0 {
-		return fmt.Sprintf("HSL{H:%g, S:%g, L:%g}", c.H, c.S, c.L)
+	return fmt.Sprintf("HSL{H:%g, S:%g, L:%g, A:%g}", c.H, c.S, c.L, c.A)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// MarshalText used to encode HEX color for JSON/YAML/TOML
+func (c Hex) MarshalText() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
+// UnmarshalText used to decode HEX color from JSON/YAML/TOML
+func (c *Hex) UnmarshalText(b []byte) error {
+	h, err := Parse(string(b))
+
+	if err != nil {
+		return err
 	}
 
-	return fmt.Sprintf("HSL{H:%g, S:%g, L:%g, A:%g}", c.H, c.S, c.L, c.A)
+	*c = h
+
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parse parses color
 func Parse(c string) (Hex, error) {
-	if named[strings.ToLower(c)] != 0 {
-		return Hex{v: named[strings.ToLower(c)]}, nil
+	h, ok := named[strings.ToLower(c)]
+
+	if ok {
+		return Hex{v: h}, nil
 	}
 
 	if c != "" && c[0] == '#' {
@@ -435,7 +446,7 @@ func Parse(c string) (Hex, error) {
 
 	switch len(c) {
 	case 0:
-		return Hex{}, fmt.Errorf("Color is empty")
+		return Hex{}, fmt.Errorf("color is empty")
 
 	// Shorthand #RGB
 	case 3:
@@ -445,9 +456,22 @@ func Parse(c string) (Hex, error) {
 	case 4:
 		hasAlpha = true
 		c = c[0:1] + c[0:1] + c[1:2] + c[1:2] + c[2:3] + c[2:3] + c[3:4] + c[3:4]
+
+	case 6:
+		// RGB Hex
+
+	case 8:
+		hasAlpha = true
+
+	default:
+		return Hex{}, fmt.Errorf("color %q is invalid", c)
 	}
 
 	k, err := strconv.ParseUint(c, 16, 32)
+
+	if err != nil {
+		return Hex{}, err
+	}
 
 	return Hex{v: uint32(k), a: k > 0xFFFFFF || hasAlpha}, err
 }
@@ -481,7 +505,8 @@ func Hex2RGBA(h Hex) RGBA {
 func RGB2Term(c RGB) int {
 	R, G, B := int(c.R), int(c.G), int(c.B)
 
-	// Grayscale
+	// R=175 is a 256-color cube boundary; the grayscale formula gives
+	// 249 which is wrong — the correct code-cube index is 145.
 	if R == G && G == B {
 		if R == 175 {
 			return 145
@@ -624,36 +649,14 @@ func RGBA2HSL(c RGBA) HSL {
 
 // HSL2RGB converts HSL color to RGB
 func HSL2RGB(c HSL) RGB {
-	r, g, b := hsl2Rgb(c.H, c.S, c.L)
+	r, g, b := hslToRgb(c.H, c.S, c.L)
 	return RGB{r, g, b}
 }
 
 // HSL2RGBA converts HSL color to RGBA
 func HSL2RGBA(c HSL) RGBA {
-	r, g, b := hsl2Rgb(c.H, c.S, c.L)
+	r, g, b := hslToRgb(c.H, c.S, c.L)
 	return RGBA{r, g, b, uint8(255.0 * mathutil.Between(c.A, 0, 1))}
-}
-
-// HUE2RGB calculates HUE value for given RGB color
-func HUE2RGB(p, q, t float64) float64 {
-	if t < 0 {
-		t += 1
-	}
-
-	if t > 1 {
-		t -= 1
-	}
-
-	switch {
-	case t < 1.0/6.0:
-		return p + (q-p)*6.0*t
-	case t < 1.0/2.0:
-		return q
-	case t < 2.0/3.0:
-		return p + (q-p)*(2.0/3.0-t)*6.0
-	}
-
-	return p
 }
 
 // Luminance returns relative luminance for RGB color
@@ -750,8 +753,30 @@ func rgbToHsl(r, g, b uint8) (float64, float64, float64) {
 	return h, s, l
 }
 
-// hsl2Rgb converts HSL color to RGB color
-func hsl2Rgb(h, s, l float64) (uint8, uint8, uint8) {
+// hueToRgb  calculates HUE value for given RGB color
+func hueToRgb(p, q, t float64) float64 {
+	if t < 0 {
+		t += 1
+	}
+
+	if t > 1 {
+		t -= 1
+	}
+
+	switch {
+	case t < 1.0/6.0:
+		return p + (q-p)*6.0*t
+	case t < 1.0/2.0:
+		return q
+	case t < 2.0/3.0:
+		return p + (q-p)*(2.0/3.0-t)*6.0
+	}
+
+	return p
+}
+
+// hslToRgb converts HSL color to RGB color
+func hslToRgb(h, s, l float64) (uint8, uint8, uint8) {
 	R, G, B := l, l, l
 
 	if s != 0 {
@@ -765,9 +790,9 @@ func hsl2Rgb(h, s, l float64) (uint8, uint8, uint8) {
 
 		p := (2.0 * l) - q
 
-		R = HUE2RGB(p, q, h+1.0/3.0)
-		G = HUE2RGB(p, q, h)
-		B = HUE2RGB(p, q, h-1.0/3.0)
+		R = hueToRgb(p, q, h+1.0/3.0)
+		G = hueToRgb(p, q, h)
+		B = hueToRgb(p, q, h-1.0/3.0)
 	}
 
 	return uint8(R * 255), uint8(G * 255), uint8(B * 255)
@@ -784,7 +809,7 @@ func calcCMYKColor(c, k float64) float64 {
 
 // calcLumColor calculates relative luminance for given color component
 func calcLumColor(c float64) float64 {
-	if c <= 0.03928 {
+	if c <= 0.04045 {
 		return c / 12.92
 	}
 

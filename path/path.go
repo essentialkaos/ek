@@ -18,13 +18,16 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrBadPattern indicates a globbing pattern was malformed
-var ErrBadPattern = errors.New("Syntax error in pattern")
+// ErrBadPattern indicates that a globbing pattern is malformed
+var ErrBadPattern = errors.New("syntax error in pattern")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // pathSeparator is a string representation of the filepath separator
 var pathSeparator = string(filepath.Separator)
+
+// homeDirFunc is function to get user home dir
+var homeDirFunc = os.UserHomeDir
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -33,7 +36,8 @@ func Base(path string) string {
 	return filepath.Base(path)
 }
 
-// Clean returns the shortest path name equivalent to path by purely lexical processing
+// Clean returns the shortest path name equivalent to path by purely lexical
+// processing, expanding a leading ~ to the user's home directory
 func Clean(path string) string {
 	path = evalHome(path)
 	return filepath.Clean(path)
@@ -54,21 +58,22 @@ func IsAbs(path string) bool {
 	return filepath.IsAbs(path)
 }
 
-// Join joins any number of path elements into a single path, adding a separating slash if necessary
+// Join joins any number of path elements into a single path, adding a
+// separating slash if necessary
 func Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
-// JoinSecure joins all elements of path, makes lexical processing, and evaluating all symlinks.
-// Method returns error if final destination is not a child path of root.
+// JoinSecure joins all path elements under root, resolving symlinks at each
+// step and returning an error if the final path escapes the root directory
 func JoinSecure(root string, elem ...string) (string, error) {
-	result, err := filepath.EvalSymlinks(root)
+	resolved, err := filepath.EvalSymlinks(root)
 
-	if err != nil {
-		result = root
-	} else {
-		root = result
+	if err == nil {
+		root = resolved
 	}
+
+	result := root
 
 	for _, e := range elem {
 		result = Clean(result + pathSeparator + e)
@@ -78,15 +83,21 @@ func JoinSecure(root string, elem ...string) (string, error) {
 			if errors.Is(err, os.ErrNotExist) {
 				resultSym = result
 			} else {
-				return "", fmt.Errorf("Can't eval symlinks: %w", err)
+				return "", fmt.Errorf("can't eval symlinks: %w", err)
 			}
 		}
 
 		result = resultSym
 	}
 
-	if !strings.HasPrefix(result, root) {
-		return "", fmt.Errorf("Final destination (%s) is outside root (%s)", result, root)
+	rootWithSep := root
+
+	if !strings.HasSuffix(rootWithSep, pathSeparator) {
+		rootWithSep += pathSeparator
+	}
+
+	if result != root && !strings.HasPrefix(result, rootWithSep) {
+		return "", fmt.Errorf("final destination (%s) is outside root (%s)", result, root)
 	}
 
 	return result, nil
@@ -97,12 +108,14 @@ func Match(pattern, name string) (matched bool, err error) {
 	return filepath.Match(pattern, name)
 }
 
-// Split splits path immediately following the final slash, separating it into a directory and file name component
+// Split splits path immediately following the final slash, separating it into
+// a directory and file name component
 func Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
-// Compact converts path to compact representation (e.g /some/random/directory/file.txt → /s/r/d/file.txt)
+// Compact converts path to compact representation (e.g /some/random/directory/file.txt
+// → /s/r/d/file.txt)
 func Compact(path string) string {
 	if !strings.ContainsRune(path, filepath.Separator) {
 		return path
@@ -112,14 +125,15 @@ func Compact(path string) string {
 
 	for i := range len(pathSlice) - 1 {
 		if len(pathSlice[i]) > 1 && !strings.HasSuffix(pathSlice[i], ":") {
-			pathSlice[i] = pathSlice[i][0:1]
+			pathSlice[i] = pathSlice[i][:1]
 		}
 	}
 
 	return strings.Join(pathSlice, pathSeparator)
 }
 
-// IsSafe returns true is given path is safe to use (not points to system dirs)
+// IsSafe reports whether the given path is safe to use and does not point to
+// a protected system directory
 func IsSafe(path string) bool {
 	if path == "" {
 		return false
@@ -134,7 +148,7 @@ func IsSafe(path string) bool {
 	return isSafePath(absPath)
 }
 
-// IsDotfile returns true if file name begins with a full stop
+// IsDotfile reports whether the base name of the given path begins with a dot
 func IsDotfile(path string) bool {
 	if path == "" {
 		return false
@@ -149,22 +163,23 @@ func IsDotfile(path string) bool {
 	return strings.HasPrefix(pathBase, ".")
 }
 
-// IsGlob returns true if given pattern is Unix-like glob
+// IsGlob reports whether the given pattern contains Unix-style glob
+// metacharacters
 func IsGlob(pattern string) bool {
 	if pattern == "" {
 		return false
 	}
 
-	var rs bool
+	var openBracket bool
 
 	for _, r := range pattern {
 		switch r {
 		case '?', '*':
 			return true
 		case '[':
-			rs = true
+			openBracket = true
 		case ']':
-			if rs {
+			if openBracket {
 				return true
 			}
 		}
@@ -219,11 +234,11 @@ func dirNLeft(path string, n int) string {
 
 // evalHome evaluates the home directory in the given path
 func evalHome(path string) string {
-	if path == "" || path[0:1] != "~" {
+	if path == "" || path[:1] != "~" {
 		return path
 	}
 
-	homeDir, err := os.UserHomeDir()
+	homeDir, err := homeDirFunc()
 
 	if err != nil {
 		return path

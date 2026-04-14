@@ -17,29 +17,29 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetIP returns main IPv4 address
+// GetIP returns the primary IPv4 address of the host
 func GetIP() string {
 	return getMainIP(false)
 }
 
-// GetIP6 returns main IPv6 address
+// GetIP6 returns the primary IPv6 address of the host
 func GetIP6() string {
 	return getMainIP(true)
 }
 
-// GetAllIP returns all IPv4 addresses
+// GetAllIP returns all IPv4 addresses across all active network interfaces
 func GetAllIP() []string {
 	return getAllIP(false)
 }
 
-// GetAllIP6 returns all IPv6 addresses
+// GetAllIP6 returns all IPv6 addresses across all active network interfaces
 func GetAllIP6() []string {
 	return getAllIP(true)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getAllIP returns all IP addresses (IPv4 or IPv6)
+// getAllIP collects all IP addresses of the requested version across all interfaces
 func getAllIP(v6 bool) []string {
 	interfaces, err := net.Interfaces()
 
@@ -49,17 +49,18 @@ func getAllIP(v6 bool) []string {
 
 	var result []string
 
-	for _, i := range interfaces {
-		addr, err := i.Addrs()
+	for _, iface := range interfaces {
+		addrs, err := iface.Addrs()
 
 		if err != nil {
 			continue
 		}
 
-		for _, a := range addr {
-			ipnet, ok := a.(*net.IPNet)
+		for _, addr := range addrs {
+			ipnet, ok := addr.(*net.IPNet)
+			isV6 := ipnet.IP.To4() == nil
 
-			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
+			if ok && isV6 == v6 {
 				result = append(result, ipnet.IP.String())
 			}
 		}
@@ -68,7 +69,8 @@ func getAllIP(v6 bool) []string {
 	return result
 }
 
-// getMainIP returns main IP address (IPv4 or IPv6)
+// getMainIP returns the primary IP address of the requested version,
+// preferring the default route interface and skipping loopback and TUN/TAP
 func getMainIP(v6 bool) string {
 	interfaces, err := net.Interfaces()
 
@@ -90,20 +92,26 @@ func getMainIP(v6 bool) string {
 			continue
 		}
 
-		addr, err := interfaces[i].Addrs()
+		addrs, err := interfaces[i].Addrs()
 
-		if err != nil || len(addr) == 0 {
+		if err != nil || len(addrs) == 0 {
 			continue
 		}
 
-		for _, a := range addr {
-			ipnet, ok := a.(*net.IPNet)
+		for _, addr := range addrs {
+			ipnet, ok := addr.(*net.IPNet)
+
+			if !ok {
+				continue
+			}
 
 			if ipnet.IP.IsLoopback() {
 				continue
 			}
 
-			if ok && strings.Contains(ipnet.IP.String(), "::") == v6 {
+			isV6 := ipnet.IP.To4() == nil
+
+			if ok && isV6 == v6 {
 				return ipnet.IP.String()
 			}
 		}

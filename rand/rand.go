@@ -10,44 +10,46 @@ package rand
 
 import (
 	"math/rand"
-	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var symbols = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890"
+// alphabet is the set of characters used for random string generation
+var alphabet = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// String returns string with random chars
+// String returns a randomly generated string of the given length.
+// Returns an empty string if length is less than or equal to zero.
 func String(length int) string {
 	if length <= 0 {
 		return ""
 	}
 
-	rnd := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
-	symbolsLength := len(symbols)
+	rnd := rand.New(rand.NewSource(rand.Int63()))
+	alphabetLen := len(alphabet)
 	result := make([]byte, length)
 
 	for i := range length {
-		result[i] = symbols[rnd.Intn(symbolsLength)]
+		result[i] = alphabet[rnd.Intn(alphabetLen)]
 	}
 
 	return string(result)
 }
 
-// Slice returns slice with random chars
+// Slice returns a slice of randomly selected single characters of the given length.
+// Returns an empty slice if length is less than or equal to zero.
 func Slice(length int) []string {
-	if length == 0 {
+	if length <= 0 {
 		return []string{}
 	}
 
-	rnd := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
-	symbolsLength := len(symbols)
+	rnd := rand.New(rand.NewSource(rand.Int63()))
+	alphabetLen := len(alphabet)
 	result := make([]string, length)
 
 	for i := range length {
-		result[i] = string(symbols[rnd.Intn(symbolsLength)])
+		result[i] = string(alphabet[rnd.Intn(alphabetLen)])
 	}
 
 	return result

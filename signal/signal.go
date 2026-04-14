@@ -56,19 +56,19 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Handlers is map signal → handler
+// Handlers maps signals to their associated handler functions
 type Handlers map[os.Signal]func()
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Send sends given signal to process
+// Send sends the given signal to the process with the specified pid
 func Send(pid int, signal syscall.Signal) error {
 	return syscall.Kill(pid, signal)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Track catches signal and executes handler for this signal
+// Track starts synchronous handling of registered signals using the [Handlers] map
 func (h Handlers) Track() {
 	c := make(chan os.Signal, 2)
 
@@ -89,7 +89,8 @@ func (h Handlers) Track() {
 	}()
 }
 
-// TrackAsync catches signal and executes async handler for this signal
+// TrackAsync starts asynchronous handling of registered signals using the [Handlers]
+// map
 func (h Handlers) TrackAsync() {
 	c := make(chan os.Signal, 2)
 
@@ -112,7 +113,7 @@ func (h Handlers) TrackAsync() {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetByName returns signal with given name
+// GetByName returns the signal matching the given name or an error if it is unknown
 func GetByName(name string) (syscall.Signal, error) {
 	switch strings.ToUpper(name) {
 	case "SIGABRT", "ABRT":
@@ -177,69 +178,25 @@ func GetByName(name string) (syscall.Signal, error) {
 		return XFSZ, nil
 	}
 
-	return syscall.Signal(-1), fmt.Errorf("Unknown signal name %s", name)
+	return syscall.Signal(-1), fmt.Errorf("unknown signal name %s", name)
 }
 
-// GetByCode returns signal with given code
+// GetByCode returns the signal matching the given numeric code or an error if it
+// is unknown
 func GetByCode(code int) (syscall.Signal, error) {
-	switch code {
-	case 1:
-		return HUP, nil
-	case 2:
-		return INT, nil
-	case 3:
-		return QUIT, nil
-	case 4:
-		return ILL, nil
-	case 5:
-		return TRAP, nil
-	case 6:
-		return ABRT, nil
-	case 8:
-		return FPE, nil
-	case 9:
-		return KILL, nil
-	case 10:
-		return BUS, nil
-	case 11:
-		return SEGV, nil
-	case 12:
-		return SYS, nil
-	case 13:
-		return PIPE, nil
-	case 14:
-		return ALRM, nil
-	case 15:
-		return TERM, nil
-	case 16:
-		return USR1, nil
-	case 17:
-		return USR2, nil
-	case 18:
-		return CHLD, nil
-	case 20:
-		return TSTP, nil
-	case 21:
-		return URG, nil
-	case 23:
-		return STOP, nil
-	case 25:
-		return CONT, nil
-	case 26:
-		return TTIN, nil
-	case 27:
-		return TTOU, nil
-	case 28:
-		return VTALRM, nil
-	case 29:
-		return PROF, nil
-	case 30:
-		return XCPU, nil
-	case 31:
-		return XFSZ, nil
+	var signals = []syscall.Signal{
+		ABRT, ALRM, BUS, CHLD, CONT, FPE, HUP, ILL, INT, IO, IOT,
+		KILL, PIPE, PROF, QUIT, SEGV, STOP, SYS, TERM, TRAP, TSTP,
+		TTIN, TTOU, URG, USR1, USR2, VTALRM, WINCH, XCPU, XFSZ,
 	}
 
-	return syscall.Signal(-1), fmt.Errorf("Unknown signal code %d", code)
+	for _, s := range signals {
+		if int(s) == code {
+			return s, nil
+		}
+	}
+
+	return syscall.Signal(-1), fmt.Errorf("unknown signal code %d", code)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

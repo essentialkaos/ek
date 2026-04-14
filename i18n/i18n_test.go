@@ -60,26 +60,21 @@ func (s *I18NSuite) TestFallback(c *C) {
 		GREETING: "Сәлеметсіз бе!",
 	}
 
-	_, err := Fallback()
+	_, err := Fallback[testBundle]()
 	c.Assert(err, NotNil)
 
-	_, err = Fallback(nil)
+	_, err = Fallback[testBundle](nil)
 	c.Assert(err, NotNil)
 
 	_, err = Fallback(en, nil)
 	c.Assert(err, NotNil)
 
-	_, err = Fallback(en, en.ERRORS)
-	c.Assert(err, NotNil)
-
-	loc, err := Fallback(en)
+	l, err := Fallback(en)
 	c.Assert(err, IsNil)
-	c.Assert(loc, Equals, en)
+	c.Assert(l, Equals, en)
 
-	loc, err = Fallback(en, ru, kz)
+	l, err = Fallback(en, ru, kz)
 	c.Assert(err, IsNil)
-
-	l := loc.(*testBundle)
 
 	data := Data{
 		"Username": "johndoe",
@@ -171,7 +166,7 @@ func (s *I18NSuite) TestValidateBundle(c *C) {
 
 	b, err := Fallback(en, ru)
 	c.Assert(err, IsNil)
-	c.Assert(b.(*testBundle).ERRORS, NotNil)
+	c.Assert(b.ERRORS, NotNil)
 }
 
 func (s *I18NSuite) TestWith(c *C) {
@@ -295,4 +290,8 @@ func (s *I18NSuite) TestPlurLang(c *C) {
 	for _, l := range langs {
 		c.Assert(getPluralizerByLang(l), NotNil)
 	}
+}
+
+func (s *I18NSuite) TestAux(c *C) {
+	copyFieldsData(nil)
 }

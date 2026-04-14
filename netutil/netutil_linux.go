@@ -11,17 +11,18 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Path to file with routes info in procfs
+// procRouteFile is the path to the kernel routing table in procfs
 var procRouteFile = "/proc/net/route"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// getDefaultRouteInterface returns the name of the default route interface
+// getDefaultRouteInterface returns the name of the interface assigned to the
+// default (0.0.0.0) route, parsed from procfs
 func getDefaultRouteInterface() string {
 	fd, err := os.OpenFile(procRouteFile, os.O_RDONLY, 0)
 
@@ -31,8 +32,7 @@ func getDefaultRouteInterface() string {
 
 	defer fd.Close()
 
-	r := bufio.NewReader(fd)
-	s := bufio.NewScanner(r)
+	s := bufio.NewScanner(fd)
 
 	var header bool
 
@@ -42,8 +42,10 @@ func getDefaultRouteInterface() string {
 			continue
 		}
 
-		if strutil.ReadField(s.Text(), 1, true) == "00000000" {
-			return strutil.ReadField(s.Text(), 0, true)
+		line := s.Text()
+
+		if strutil.ReadField(line, 1, true) == "00000000" {
+			return strutil.ReadField(line, 0, true)
 		}
 	}
 

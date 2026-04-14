@@ -14,35 +14,35 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetSystemInfo returns system info
+// GetSystemInfo returns general information about the host system
 func GetSystemInfo() (*SystemInfo, error) {
 	hostname, err := syscall.Sysctl("kern.hostname")
 
 	if err != nil || hostname == "" {
-		return nil, errors.New("Can't read hostname info")
+		return nil, errors.New("can't read hostname info")
 	}
 
 	os, err := syscall.Sysctl("kern.ostype")
 
 	if err != nil || os == "" {
-		return nil, errors.New("Can't read os info")
+		return nil, errors.New("can't read os info")
 	}
 
 	kernel, err := syscall.Sysctl("kern.osrelease")
 
 	if err != nil || kernel == "" {
-		return nil, errors.New("Can't read kernel info")
+		return nil, errors.New("can't read kernel info")
 	}
 
 	arch, err := syscall.Sysctl("kern.version")
 
 	if err != nil || arch == "" {
-		return nil, errors.New("Can't read arch info")
+		return nil, errors.New("can't read arch info")
 	}
 
 	arch = getMacOSArch(arch)
@@ -58,7 +58,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 	}, nil
 }
 
-// GetOSInfo returns info about OS
+// GetOSInfo returns information parsed from the default os-release file
 func GetOSInfo() (*OSInfo, error) {
 	versionData, err := exec.Command("sw_vers").Output()
 
@@ -98,15 +98,6 @@ func getMacOSArch(archInfo string) string {
 	}
 
 	return "unknown"
-}
-
-// getArchName returns name for given arch
-func getArchName(arch string) string {
-	if arch == "x86_64" {
-		return "amd64"
-	}
-
-	return arch
 }
 
 // getSystemID returns unique system ID

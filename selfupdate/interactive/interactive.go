@@ -8,12 +8,12 @@ package interactive
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
-	"github.com/essentialkaos/ek/v13/events"
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/selfupdate"
-	"github.com/essentialkaos/ek/v13/spinner"
-	"github.com/essentialkaos/ek/v13/terminal"
+	"github.com/essentialkaos/ek/v14/events"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/fmtutil"
+	"github.com/essentialkaos/ek/v14/selfupdate"
+	"github.com/essentialkaos/ek/v14/spinner"
+	"github.com/essentialkaos/ek/v14/terminal"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -22,7 +22,8 @@ var dispatcher *events.Dispatcher
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dispatcher returns event dispatcher for interactive update
+// Dispatcher returns a lazily initialized dispatcher configured with interactive
+// handlers
 func Dispatcher() *events.Dispatcher {
 	if dispatcher != nil {
 		return dispatcher

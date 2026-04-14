@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/strutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -51,12 +51,14 @@ const (
 
 // Expr cron expression struct
 type Expr struct {
-	expression string
-	minutes    []uint8
-	hours      []uint8
-	doms       []uint8
-	months     []uint8
-	dows       []uint8
+	expression  string
+	minutes     []uint8
+	hours       []uint8
+	doms        []uint8
+	months      []uint8
+	dows        []uint8
+	domExplicit bool
+	dowExplicit bool
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -72,10 +74,10 @@ type exprInfo struct {
 var (
 	// ErrMalformedExpression is returned by the Parse method if given cron expression has
 	// wrong or unsupported format
-	ErrMalformedExpression = errors.New("Expression must have 5 tokens")
+	ErrMalformedExpression = errors.New("expression must have 5 tokens")
 
 	// ErrZeroInterval is returned if interval part of expression is empty
-	ErrZeroInterval = errors.New("Interval can't be less or equals 0")
+	ErrZeroInterval = errors.New("interval can't be less or equals 0")
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -103,14 +105,16 @@ func Parse(expr string) (*Expr, error) {
 	result := &Expr{expression: expr}
 
 	for tn, ei := range info {
-		var data []uint8
 		var err error
+		var data []uint8
+		var isAny bool
 
 		token := strutil.ReadField(expr, tn, true, ' ')
 
 		switch {
 		case isAnyToken(token):
 			data = fillUintSlice(ei.min, ei.max, 1)
+			isAny = true
 		case isEnumToken(token):
 			data, err = parseEnumToken(token, ei)
 		case isPeriodToken(token):
@@ -122,7 +126,7 @@ func Parse(expr string) (*Expr, error) {
 		}
 
 		if err != nil {
-			return nil, fmt.Errorf("Can't parse token %q: %w", token, err)
+			return nil, fmt.Errorf("can't parse token %q: %w", token, err)
 		}
 
 		switch tn {
@@ -131,10 +135,12 @@ func Parse(expr string) (*Expr, error) {
 		case 1:
 			result.hours = data
 		case 2:
+			result.domExplicit = !isAny
 			result.doms = data
 		case 3:
 			result.months = data
 		case 4:
+			result.dowExplicit = !isAny
 			result.dows = data
 		}
 	}
@@ -167,7 +173,13 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 	}
 
 	if !slices.Contains(e.doms, uint8(t.Day())) {
-		return false
+		if e.domExplicit && e.dowExplicit {
+			if !slices.Contains(e.dows, uint8(t.Weekday())) {
+				return false
+			}
+		} else {
+			return false
+		}
 	}
 
 	if !slices.Contains(e.months, uint8(t.Month())) {
@@ -175,7 +187,11 @@ func (e *Expr) IsDue(args ...time.Time) bool {
 	}
 
 	if !slices.Contains(e.dows, uint8(t.Weekday())) {
-		return false
+		if e.domExplicit && e.dowExplicit {
+			return slices.Contains(e.doms, uint8(t.Day()))
+		} else {
+			return false
+		}
 	}
 
 	return true
@@ -238,7 +254,7 @@ func (e *Expr) Next(args ...time.Time) time.Time {
 		mStart = 0
 	}
 
-	return time.Unix(0, 0)
+	return time.Time{}
 }
 
 // Prev get time of prev matched moment
@@ -298,7 +314,7 @@ func (e *Expr) Prev(args ...time.Time) time.Time {
 		mStart = len(e.months) - 1
 	}
 
-	return time.Unix(0, 0)
+	return time.Time{}
 }
 
 // String return raw expression
@@ -351,13 +367,13 @@ func parseEnumToken(t string, ei exprInfo) ([]uint8, error) {
 			result = append(result, d...)
 
 		default:
-			t, err := parseToken(tt, ei.nt)
+			v, err := parseToken(tt, ei.nt)
 
 			if err != nil {
 				return nil, err
 			}
 
-			result = append(result, t)
+			result = append(result, v)
 		}
 	}
 

@@ -12,21 +12,13 @@ package process
 import (
 	"syscall"
 
-	"github.com/essentialkaos/ek/v13/mathutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const (
-	PRIO_CLASS_NONE        = 0
-	PRIO_CLASS_REAL_TIME   = 1
-	PRIO_CLASS_BEST_EFFORT = 2
-	PRIO_CLASS_IDLE        = 3
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-// GetCPUPriority returns process CPU scheduling priority (PR, NI, error)
+// GetCPUPriority returns the CPU scheduling priority of the given process.
+// It returns the PR (priority) and NI (nice) values as reported by the kernel.
 func GetCPUPriority(pid int) (int, int, error) {
 	pr, err := syscall.Getpriority(syscall.PRIO_PROCESS, pid)
 
@@ -39,12 +31,12 @@ func GetCPUPriority(pid int) (int, int, error) {
 	return 20 + ni, ni, nil
 }
 
-// SetCPUPriority sets process CPU scheduling priority
+// SetCPUPriority sets the CPU scheduling nice value for the given process
 func SetCPUPriority(pid, niceness int) error {
 	return syscall.Setpriority(syscall.PRIO_PROCESS, pid, niceness)
 }
 
-// GetIOPriority returns process IO scheduling priority (class, classdata, error)
+// GetIOPriority returns the I/O scheduling class and class-data for the given process
 func GetIOPriority(pid int) (int, int, error) {
 	v, _, errNo := syscall.Syscall(
 		syscall.SYS_IOPRIO_GET, uintptr(1), uintptr(pid), uintptr(0),
@@ -61,7 +53,8 @@ func GetIOPriority(pid int) (int, int, error) {
 	return class, classdata, nil
 }
 
-// SetIOPriority sets process IO scheduling priority
+// SetIOPriority sets the I/O scheduling class and priority for the given process.
+// class is clamped to [0, 3] and classdata to [0, 7].
 func SetIOPriority(pid, class, classdata int) error {
 	class = mathutil.Between(class, 0, 3)
 	classdata = mathutil.Between(classdata, 0, 7)

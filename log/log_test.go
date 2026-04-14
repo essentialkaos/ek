@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/fsutil"
 
 	. "github.com/essentialkaos/check"
 )
@@ -568,6 +568,7 @@ func (ls *LogSuite) TestBufIODaemon(c *C) {
 	c.Assert(fsutil.GetMode(logfile), Equals, os.FileMode(0644))
 
 	EnableBufIO(250 * time.Millisecond)
+	EnableBufIO(250 * time.Millisecond) // check flush daemon stop
 
 	Print(DEBUG, "Test debug %d", DEBUG)
 	Print(INFO, "Test info %d", INFO)
@@ -711,6 +712,25 @@ func (ls *LogSuite) TestStdLogger(c *C) {
 	c.Assert(len(dataSlice), Equals, 11)
 }
 
+func (ls *LogSuite) TestNilStdLogger(c *C) {
+	var std *StdLogger
+
+	exitFunc = func(code int) {}
+
+	c.Assert(std.Output(2, "1"), Equals, ErrNilLogger)
+
+	std.Fatal("2")
+	std.Fatalf("%s", "3")
+	std.Fatalln("4")
+	std.Print("5")
+	std.Printf("%s", "6")
+	std.Println("7")
+
+	c.Assert(func() { std.Panic("testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicf("%s", "testPanic") }, PanicMatches, "testPanic")
+	c.Assert(func() { std.Panicln("testPanic") }, PanicMatches, "testPanic\n")
+}
+
 func (ls *LogSuite) TestNilLogger(c *C) {
 	var l *NilLogger
 
@@ -748,71 +768,71 @@ func (ls *LogSuite) TestFieldEncoding(c *C) {
 
 	l := &Logger{mu: &sync.Mutex{}}
 	l.writeJSONField(F{"test", "abcd"})
-	c.Assert(l.buf.String(), Equals, "\"test\":\"abcd\"")
+	c.Assert(l.buf.String(), Equals, `"test":"abcd"`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", false})
-	c.Assert(l.buf.String(), Equals, "\"test\":false")
+	c.Assert(l.buf.String(), Equals, `"test":false`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", 123})
-	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	c.Assert(l.buf.String(), Equals, `"test":123`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int16(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int32(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", int64(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint(123)})
-	c.Assert(l.buf.String(), Equals, "\"test\":123")
+	c.Assert(l.buf.String(), Equals, `"test":123`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint8(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint16(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint32(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", uint64(33)})
-	c.Assert(l.buf.String(), Equals, "\"test\":33")
+	c.Assert(l.buf.String(), Equals, `"test":33`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", float32(1.23)})
-	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	c.Assert(l.buf.String(), Equals, `"test":1.23`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", float64(1.23)})
-	c.Assert(l.buf.String(), Equals, "\"test\":1.23")
+	c.Assert(l.buf.String(), Equals, `"test":1.23`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", time.Minute - (150 * time.Millisecond)})
-	c.Assert(l.buf.String(), Equals, "\"test\":59.85")
+	c.Assert(l.buf.String(), Equals, `"test":59.85`)
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", time.Now()})
@@ -820,8 +840,13 @@ func (ls *LogSuite) TestFieldEncoding(c *C) {
 	l.buf.Reset()
 
 	l.writeJSONField(F{"test", []string{"A"}})
-	c.Assert(l.buf.String(), Equals, "\"test\":\"[A]\"")
+	c.Assert(l.buf.String(), Equals, `"test":"[A]"`)
 	l.buf.Reset()
+
+	l = &Logger{mu: &sync.Mutex{}}
+	l.writeJSONFields([]any{123, F{"test1", false}, F{"test2", true}, "test"})
+	c.Assert(l.buf.Len(), Not(Equals), 0)
+	c.Assert(l.buf.String(), Equals, `"test1":false,"test2":true`)
 
 	l = &Logger{mu: &sync.Mutex{}, DiscardFields: true}
 	l.writeJSONFields([]any{F{"test1", false}, F{"test2", true}})
@@ -917,11 +942,11 @@ func (ls *LogSuite) TestPanicPathExtractor(c *C) {
 	stackTrace := `goroutine 43 [running]:
 runtime/debug.Stack()
 	/usr/lib/golang/src/runtime/debug/stack.go:26 +0x5e
-github.com/essentialkaos/ek/v13/log.(*Logger).PanicHandler(0xc000130880, {0x6dcb3d, 0xc})
+github.com/essentialkaos/ek/v14/log.(*Logger).PanicHandler(0xc000130880, {0x6dcb3d, 0xc})
 	/home/user/src/github.com/essentialkaos/ek/log/log.go:502 +0xca
 panic({0x684a00?, 0x73d2a0?})
 	/usr/lib/golang/src/runtime/panic.go:792 +0x132
-github.com/essentialkaos/ek/v13/log.(*LogSuite).TestPanicHandler.func4()
+github.com/essentialkaos/ek/v14/log.(*LogSuite).TestPanicHandler.func4()
 	/home/user/src/github.com/essentialkaos/ek/log/log_test.go:889 +0x54
 reflect.Value.call({0x680960?, 0xc000184ed0?, 0x0?}, {0x6da3fc, 0x4}, {0x0, 0x0, 0xc000135568?})
 	/usr/lib/golang/src/reflect/value.go:584 +0xca6

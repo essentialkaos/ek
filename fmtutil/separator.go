@@ -10,35 +10,37 @@ package fmtutil
 import (
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/terminal/tty"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/terminal/tty"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// SeparatorColorTag is fmtc color tag used for separator (light gray by default)
+// SeparatorColorTag is the fmtc color tag applied to separator dashes
 var SeparatorColorTag = "{s}"
 
-// SeparatorTitleColorTag is fmtc color tag used for separator title (light gray by default)
+// SeparatorTitleColorTag is the fmtc color tag applied to the separator title
 var SeparatorTitleColorTag = "{s}"
 
-// SeparatorFullscreen allow enabling full-screen separator
+// SeparatorFullscreen makes Separator span the full terminal width when true
 var SeparatorFullscreen = false
 
-// SeparatorSymbol used for separator generation
+// SeparatorSymbol is the character repeated to form the separator line
 var SeparatorSymbol = "-"
 
-// SeparatorSize contains size of separator
+// SeparatorSize is the fixed width of the separator when SeparatorFullscreen is false
 var SeparatorSize = 88
 
-// SeparatorTitleAlign aligning of separator title (l/left, c/center/, r/right)
-var SeparatorTitleAlign = "left"
+// SeparatorTitleAlign controls title placement
+var SeparatorTitleAlign = LEFT
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Separator renders separator to console
+// Separator prints a horizontal separator to stdout.
+// Pass tiny=true for a single line; tiny=false adds a blank line above and below.
+// An optional first element of args is rendered as a title inside the separator.
 func Separator(tiny bool, args ...string) {
 	var separator string
 	var size int
@@ -64,19 +66,21 @@ func Separator(tiny bool, args ...string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getAligned returns a full-width separator string of size with name positioned
+// according to SeparatorTitleAlign, including fmtc color tags
 func getAligned(size int, name string) string {
 	var separator string
 
 	lineSize := mathutil.Between((size-2)-strutil.LenVisual(name), 4, 999999)
 
-	switch strings.ToLower(SeparatorTitleAlign) {
-	case "c", "center":
+	switch SeparatorTitleAlign {
+	case CENTER:
 		lineSize /= 2
 		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize) + "{!} "
 		separator += strutil.B(size%((lineSize*2)+strutil.LenVisual(name)+2) == 1, " ", "")
 		separator += SeparatorTitleColorTag + name + "{!} "
 		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize) + "{!}"
-	case "r", "right":
+	case RIGHT:
 		separator = SeparatorColorTag + strings.Repeat(SeparatorSymbol, lineSize-2) + "{!} "
 		separator += SeparatorTitleColorTag + name + "{!} "
 		separator += SeparatorColorTag + strings.Repeat(SeparatorSymbol, 2) + "{!}"

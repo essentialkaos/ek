@@ -11,11 +11,16 @@ package fsutil
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"path"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+const _BUFFER_SIZE int = 32 * 1024
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -34,7 +39,8 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// CopyFile copies file using bufio with given permissions
+// CopyFile copies a regular file from src to dst, optionally overriding the
+// destination permissions; if dst is a directory, the source filename is used
 func CopyFile(from, to string, perms ...os.FileMode) error {
 	targetExist := IsExist(to)
 
@@ -47,24 +53,24 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 
 	switch {
 	case from == "":
-		return fmt.Errorf("Can't copy file: Source file can't be blank")
+		return fmt.Errorf("can't copy file: source file can't be blank")
 	case to == "":
-		return fmt.Errorf("Can't copy file: Target file can't be blank")
+		return fmt.Errorf("can't copy file: target file can't be blank")
 
 	case !IsExist(from):
-		return fmt.Errorf("Can't copy file: File %q does not exists", from)
+		return fmt.Errorf("can't copy file: file %q does not exists", from)
 	case !IsRegular(from):
-		return fmt.Errorf("Can't copy file: File %q is not a regular file", from)
+		return fmt.Errorf("can't copy file: file %q is not a regular file", from)
 	case !IsReadable(from):
-		return fmt.Errorf("Can't copy file: File %q is not readable", from)
+		return fmt.Errorf("can't copy file: file %q is not readable", from)
 
 	case !targetExist && !IsExist(dir):
-		return fmt.Errorf("Can't copy file: Directory %q does not exists", dir)
+		return fmt.Errorf("can't copy file: directory %q does not exists", dir)
 	case !targetExist && !IsWritable(dir):
-		return fmt.Errorf("Can't copy file: Directory %q is not writable", dir)
+		return fmt.Errorf("can't copy file: directory %q is not writable", dir)
 
 	case targetExist && !IsWritable(to):
-		return fmt.Errorf("Can't copy file: Target file %q is not writable", to)
+		return fmt.Errorf("can't copy file: target file %q is not writable", to)
 	}
 
 	var targetPerms os.FileMode
@@ -78,29 +84,29 @@ func CopyFile(from, to string, perms ...os.FileMode) error {
 	return copyFile(from, to, targetPerms)
 }
 
-// CopyAttr copies attributes (mode, ownership, timestamps) from one object
-// (file or directory) to another
+// CopyAttr copies the mode, ownership, and timestamps from src to dst
 func CopyAttr(from, to string) error {
 	switch {
 	case from == "":
-		return fmt.Errorf("Can't copy attributes: Source object can't be blank")
+		return fmt.Errorf("can't copy attributes: source object can't be blank")
 	case to == "":
-		return fmt.Errorf("Can't copy attributes: Target object can't be blank")
+		return fmt.Errorf("can't copy attributes: target object can't be blank")
 
 	case !IsExist(from):
-		return fmt.Errorf("Can't copy attributes: %q does not exists", from)
+		return fmt.Errorf("can't copy attributes: %q does not exists", from)
 	case !IsReadable(from):
-		return fmt.Errorf("Can't copy attributes: %q is not readable", from)
+		return fmt.Errorf("can't copy attributes: %q is not readable", from)
 	case !IsExist(to):
-		return fmt.Errorf("Can't copy attributes: %q does not exists", to)
+		return fmt.Errorf("can't copy attributes: %q does not exists", to)
 	case !IsWritable(to):
-		return fmt.Errorf("Can't copy attributes: %q is not writable", to)
+		return fmt.Errorf("can't copy attributes: %q is not writable", to)
 	}
 
 	return copyAttributes(from, to)
 }
 
-// MoveFile moves file
+// MoveFile moves a regular file from src to dst, optionally overriding the
+// destination permissions; if dst is a directory, the source filename is used
 func MoveFile(from, to string, perms ...os.FileMode) error {
 	targetExist := IsExist(to)
 
@@ -113,21 +119,21 @@ func MoveFile(from, to string, perms ...os.FileMode) error {
 
 	switch {
 	case from == "":
-		return fmt.Errorf("Can't move file: Source file can't be blank")
+		return fmt.Errorf("can't move file: source file can't be blank")
 	case to == "":
-		return fmt.Errorf("Can't move file: Target file can't be blank")
+		return fmt.Errorf("can't move file: target file can't be blank")
 
 	case !IsExist(from):
-		return fmt.Errorf("Can't move file: File %q does not exists", from)
+		return fmt.Errorf("can't move file: file %q does not exists", from)
 	case !IsRegular(from):
-		return fmt.Errorf("Can't move file: File %q is not a regular file", from)
+		return fmt.Errorf("can't move file: file %q is not a regular file", from)
 	case !IsReadable(from):
-		return fmt.Errorf("Can't move file: File %q is not readable", from)
+		return fmt.Errorf("can't move file: file %q is not readable", from)
 
 	case !targetExist && !IsExist(dir):
-		return fmt.Errorf("Can't move file: Directory %q does not exists", dir)
+		return fmt.Errorf("can't move file: directory %q does not exists", dir)
 	case !targetExist && !IsWritable(dir):
-		return fmt.Errorf("Can't move file: Directory %q is not writable", dir)
+		return fmt.Errorf("can't move file: directory %q is not writable", dir)
 	}
 
 	var targetPerms os.FileMode
@@ -141,29 +147,30 @@ func MoveFile(from, to string, perms ...os.FileMode) error {
 	return moveFile(from, to, targetPerms)
 }
 
-// CopyDir copies directory content recursively to target directory
+// CopyDir recursively copies the contents of src into dst.
+// If dst does not exist it is created with the same mode as src.
 func CopyDir(from, to string) error {
 	switch {
 	case from == "":
-		return fmt.Errorf("Can't copy directory: Source directory can't be blank")
+		return fmt.Errorf("can't copy directory: source directory can't be blank")
 	case to == "":
-		return fmt.Errorf("Can't copy directory: Target directory can't be blank")
+		return fmt.Errorf("can't copy directory: target directory can't be blank")
 
 	case !IsExist(from):
-		return fmt.Errorf("Can't copy directory: Directory %q does not exists", from)
+		return fmt.Errorf("can't copy directory: directory %q does not exists", from)
 	case !IsDir(from):
-		return fmt.Errorf("Can't copy directory: Target %q is not a directory", from)
+		return fmt.Errorf("can't copy directory: target %q is not a directory", from)
 	case !IsReadable(from):
-		return fmt.Errorf("Can't copy directory: Directory %q is not readable", from)
+		return fmt.Errorf("can't copy directory: directory %q is not readable", from)
 
 	case IsExist(to) && !IsDir(to):
-		return fmt.Errorf("Can't copy directory: Target %q is not a directory", to)
+		return fmt.Errorf("can't copy directory: target %q is not a directory", to)
 	case IsExist(to) && !IsWritable(to):
-		return fmt.Errorf("Can't copy directory: Directory %q is not writable", to)
+		return fmt.Errorf("can't copy directory: directory %q is not writable", to)
 	}
 
 	if !IsExist(to) {
-		err := os.Mkdir(to, GetMode(from))
+		err := mkDirFunc(to, GetMode(from))
 
 		if err != nil {
 			return err
@@ -173,7 +180,8 @@ func CopyDir(from, to string) error {
 	return copyDir(from, to)
 }
 
-// TouchFile creates empty file
+// TouchFile creates an empty file at path with the given permission bits.
+// If the file already exists its contents are not modified.
 func TouchFile(path string, perm os.FileMode) error {
 	fd, err := openFileFunc(path, os.O_CREATE, perm)
 
@@ -182,6 +190,41 @@ func TouchFile(path string, perm os.FileMode) error {
 	}
 
 	return fd.Close()
+}
+
+// CountLines returns the number of newline-delimited lines in the given file
+func CountLines(file string) (int, error) {
+	if file == "" {
+		return 0, ErrEmptyPath
+	}
+
+	fd, err := os.OpenFile(file, os.O_RDONLY, 0)
+
+	if err != nil {
+		return 0, err
+	}
+
+	defer fd.Close()
+
+	// Use 32k buffer
+	buf := make([]byte, _BUFFER_SIZE)
+	count, sep := 0, []byte{'\n'}
+
+	for {
+		c, err := fd.Read(buf)
+
+		if err != nil && err != io.EOF {
+			return 0, err
+		}
+
+		count += bytes.Count(buf[:c], sep)
+
+		if err == io.EOF {
+			break
+		}
+	}
+
+	return count, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -215,13 +258,13 @@ func copyFile(from, to string, perms os.FileMode) error {
 		return err
 	}
 
-	err = chmodFunc(to, perms)
+	err = w.Flush()
 
 	if err != nil {
 		return err
 	}
 
-	return w.Flush()
+	return chmodFunc(to, perms)
 }
 
 // copyAttributes copies attributes (mode, ownership, timestamps) from one object
@@ -232,22 +275,22 @@ func copyAttributes(from, to string) error {
 	fMode := modeFunc(from)
 
 	if fMode == 0 {
-		return fmt.Errorf("Error while reading source object mode")
+		return fmt.Errorf("error while reading source object mode")
 	}
 
 	tMode := modeFunc(to)
 
 	if tMode == 0 {
-		return fmt.Errorf("Error while reading target object mode")
+		return fmt.Errorf("error while reading target object mode")
 	}
 
-	fUid, fGid, err := ownerFunc(from)
+	fUID, fGID, err := ownerFunc(from)
 
 	if err != nil {
 		return err
 	}
 
-	tUid, tGid, err := ownerFunc(to)
+	tUID, tGID, err := ownerFunc(to)
 
 	if err != nil {
 		return err
@@ -273,8 +316,8 @@ func copyAttributes(from, to string) error {
 		}
 	}
 
-	if fUid != tUid || fGid != tGid {
-		err = chownFunc(to, fUid, fGid)
+	if fUID != tUID || fGID != tGID {
+		err = chownFunc(to, fUID, fGID)
 
 		if err != nil {
 			return err

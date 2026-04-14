@@ -21,5 +21,5 @@ func ExampleNewSecureString() {
 		panic(err)
 	}
 
-	fmt.Printf("Password: %s", string(ss.Data))
+	fmt.Printf("Password: %s", ss)
 }

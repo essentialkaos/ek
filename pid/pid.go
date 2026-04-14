@@ -12,32 +12,44 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/fsutil"
+	"github.com/essentialkaos/ek/v14/fsutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Dir is a path to directory with PID files
+var (
+	// ErrEmptyName is returned if pid file name is empty
+	ErrEmptyName = errors.New("PID file name can't be blank")
+
+	// ErrInvalidPID returns if PID read from file is invalid
+	ErrInvalidPID = errors.New("PID is invalid (PID ≤ 0)")
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Dir is the path to the directory where PID files are stored
 var Dir = "/var/run"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Create creates file with process PID file
+// Create writes the current process PID to a file named after the given service name.
+// The file is created in [Dir] and the ".pid" extension is appended if absent.
 func Create(name string) error {
+	if name == "" {
+		return ErrEmptyName
+	}
+
 	err := fsutil.ValidatePerms("DRW", Dir)
 
 	if err != nil {
 		return err
 	}
 
-	if name == "" {
-		return errors.New("PID file name can't be blank")
-	}
-
-	pidFile := Dir + "/" + normalizePIDFilename(name)
+	pidFile := getPIDFilePath(name)
 
 	if fsutil.IsExist(pidFile) {
 		os.Remove(pidFile)
@@ -50,54 +62,71 @@ func Create(name string) error {
 	)
 }
 
-// Remove removes file with process PID file
+// Remove deletes the PID file associated with the given service name from [Dir]
 func Remove(name string) error {
+	if name == "" {
+		return ErrEmptyName
+	}
+
 	err := fsutil.ValidatePerms("DRW", Dir)
 
 	if err != nil {
 		return err
 	}
 
-	pidFile := Dir + "/" + normalizePIDFilename(name)
+	pidFile := getPIDFilePath(name)
 
 	return os.Remove(pidFile)
 }
 
-// Get returns PID from PID file
-func Get(name string) int {
+// Get returns the PID stored in the named PID file inside [Dir]
+func Get(name string) (int, error) {
+	if name == "" {
+		return 0, ErrEmptyName
+	}
+
 	err := fsutil.ValidatePerms("DR", Dir)
 
 	if err != nil {
-		return -1
+		return 0, err
 	}
 
-	pidFile := Dir + "/" + normalizePIDFilename(name)
+	pidFile := getPIDFilePath(name)
 
 	return Read(pidFile)
 }
 
-// Read just reads PID from PID file
-func Read(pidFile string) int {
+// Read reads and parses a PID from the given absolute PID file path
+func Read(pidFile string) (int, error) {
 	data, err := os.ReadFile(pidFile)
 
 	if err != nil {
-		return -1
+		return 0, fmt.Errorf("can't read PID file: %w", err)
 	}
 
 	pid, err := strconv.Atoi(strings.TrimRight(string(data), "\n"))
 
 	if err != nil {
-		return -1
+		return 0, fmt.Errorf("can't parse PID: %w", err)
 	}
 
-	return pid
+	if pid <= 0 {
+		return 0, ErrInvalidPID
+	}
+
+	return pid, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// getPIDFilePath returns path to PID file
+func getPIDFilePath(name string) string {
+	return filepath.Join(Dir, normalizePIDFilename(name))
+}
+
 // normalizePIDFilename ensures that the PID file name ends with ".pid"
 func normalizePIDFilename(name string) string {
-	if !strings.Contains(name, ".pid") {
+	if !strings.HasSuffix(name, ".pid") {
 		return name + ".pid"
 	}
 
