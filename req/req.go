@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v14/hashutil"
+	"github.com/essentialkaos/ek/v14/strutil"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -377,12 +378,16 @@ func (e *Engine) Delete(r Request) (*Response, error) {
 	return e.doRequest(r, DELETE)
 }
 
-// PostFile sends multipart POST request with file data
-func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
+// SendFile sends multipart request with file data
+func (e *Engine) SendFile(r Request, file, fieldName string, extraFields map[string]string) (*Response, error) {
 	fd, err := os.Open(file)
 
 	if err != nil {
 		return nil, err
+	}
+
+	if !r.Headers.Has("Content-Type") {
+		r.Headers.Set("Content-Type", CONTENT_TYPE_FORM_DATA)
 	}
 
 	defer fd.Close()
@@ -417,7 +422,7 @@ func (e *Engine) PostFile(r Request, file, fieldName string, extraFields map[str
 	r.ContentType = contentType
 	r.Body = pr
 
-	return e.doRequest(r, POST)
+	return e.doRequest(r, strutil.Q(r.Method, POST))
 }
 
 // SetUserAgent sets user agent based on app name and version
@@ -514,9 +519,9 @@ func (r Request) Delete() (*Response, error) {
 	return Global.Delete(r)
 }
 
-// PostFile sends multipart POST request with file data
-func (r Request) PostFile(file, fieldName string, extraFields map[string]string) (*Response, error) {
-	return Global.PostFile(r, file, fieldName, extraFields)
+// SendFile sends multipart request with file data
+func (r Request) SendFile(file, fieldName string, extraFields map[string]string) (*Response, error) {
+	return Global.SendFile(r, file, fieldName, extraFields)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

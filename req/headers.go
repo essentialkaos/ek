@@ -43,6 +43,17 @@ func (h Headers) Get(name string) string {
 	return h[name]
 }
 
+// Has returns true if header is set
+func (h Headers) Has(name string) bool {
+	if h == nil || name == "" {
+		return false
+	}
+
+	_, ok := h[name]
+
+	return ok
+}
+
 // Delete deletes parameter with given name
 func (h Headers) Delete(name string) bool {
 	if h == nil || name == "" {
