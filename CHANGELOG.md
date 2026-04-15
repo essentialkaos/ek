@@ -4,6 +4,7 @@
 
 - **`[req]`** `PostFile` replaced by `SendFile` with support of different HTTP methods
 - **`[req]`** Added method `Header.Has`
+- **`[req]`** Code refactoring
 
 ### [14.0.0](https://kaos.sh/ek/14.0.0)
 

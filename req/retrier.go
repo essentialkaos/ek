@@ -171,12 +171,7 @@ func getRetryPause(rr Retry, resp *Response) time.Duration {
 	var pause time.Duration
 
 	if mathutil.IsNumber(retryAfter) {
-		pauseFloat, err := strconv.ParseFloat(retryAfter, 64)
-
-		if err != nil {
-			return 0
-		}
-
+		pauseFloat, _ := strconv.ParseFloat(retryAfter, 64)
 		pause = timeutil.ToSeconds(pauseFloat)
 	} else {
 		pauseUntil, err := time.Parse(time.RFC1123, retryAfter)

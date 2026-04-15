@@ -22,8 +22,9 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/essentialkaos/check"
 	"github.com/essentialkaos/ek/v14/hashutil"
+
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -1039,7 +1040,9 @@ func (s *ReqSuite) TestHeadersHelpers(c *C) {
 	c.Assert(h.SetIf(true, "X-Test-Header", "test2"), Equals, true)
 	c.Assert(h.Get("X-Test-Header"), Equals, "test2")
 	c.Assert(h.Has("X-Test-Header"), Equals, true)
+	c.Assert(h.Has("X-Test-Header2"), Equals, false)
 	c.Assert(h.Delete("X-Test-Header"), Equals, true)
+	c.Assert(h.Delete("X-Test-Header"), Equals, false)
 	c.Assert(h.Get("X-Test-Header"), Equals, "")
 	c.Assert(h.Set("X-Test-Header", "test"), Equals, true)
 	c.Assert(h.DeleteIf(true, "X-Test-Header"), Equals, true)

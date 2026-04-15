@@ -7,6 +7,10 @@ package req
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+import "strings"
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Headers is a map[string]string used for headers
 type Headers map[string]string
 
@@ -18,7 +22,7 @@ func (h Headers) Set(name, value string) bool {
 		return false
 	}
 
-	h[name] = value
+	h[strings.ToLower(name)] = value
 
 	return true
 }
@@ -29,7 +33,7 @@ func (h Headers) SetIf(cond bool, name, value string) bool {
 		return false
 	}
 
-	h[name] = value
+	h[strings.ToLower(name)] = value
 
 	return true
 }
@@ -40,7 +44,15 @@ func (h Headers) Get(name string) string {
 		return ""
 	}
 
-	return h[name]
+	name = strings.ToLower(name)
+
+	for hn, hv := range h {
+		if strings.ToLower(hn) == name {
+			return hv
+		}
+	}
+
+	return ""
 }
 
 // Has returns true if header is set
@@ -49,9 +61,15 @@ func (h Headers) Has(name string) bool {
 		return false
 	}
 
-	_, ok := h[name]
+	name = strings.ToLower(name)
 
-	return ok
+	for hn := range h {
+		if strings.ToLower(hn) == name {
+			return true
+		}
+	}
+
+	return false
 }
 
 // Delete deletes parameter with given name
@@ -60,9 +78,16 @@ func (h Headers) Delete(name string) bool {
 		return false
 	}
 
-	delete(h, name)
+	name = strings.ToLower(name)
 
-	return true
+	for hn := range h {
+		if strings.ToLower(hn) == name {
+			delete(h, strings.ToLower(hn))
+			return true
+		}
+	}
+
+	return false
 }
 
 // DeleteIf deletes parameter with given name if condition is true
@@ -71,11 +96,7 @@ func (h Headers) DeleteIf(cond bool, name string) bool {
 		return false
 	}
 
-	if h[name] != "" {
-		delete(h, name)
-	}
-
-	return true
+	return h.Delete(name)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
