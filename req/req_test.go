@@ -22,8 +22,9 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/essentialkaos/check"
 	"github.com/essentialkaos/ek/v14/hashutil"
+
+	. "github.com/essentialkaos/check"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -153,7 +154,7 @@ func (s *ReqSuite) TestMethodPost(c *C) {
 	c.Assert(postResp.StatusCode, Equals, 200)
 }
 
-func (s *ReqSuite) TestMethodPostFile(c *C) {
+func (s *ReqSuite) TestSendFile(c *C) {
 	tmpDir := c.MkDir()
 	tmpFile := tmpDir + "/testMultipart.bin"
 
@@ -161,24 +162,24 @@ func (s *ReqSuite) TestMethodPostFile(c *C) {
 	c.Assert(err, IsNil)
 
 	r := Request{URL: s.url + _URL_POST_MULTI, Method: POST}
-	postResp, err := r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+	resp, err := r.SendFile(tmpFile, "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, IsNil)
-	c.Assert(postResp.StatusCode, Equals, 200)
+	c.Assert(resp.StatusCode, Equals, 200)
 
-	_, err = r.PostFile(tmpDir+"/unknown", "file", map[string]string{"abc": "123"})
+	_, err = r.SendFile(tmpDir+"/unknown", "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 	c.Assert(err, ErrorMatches, `open .*/unknown: no such file or directory`)
 
 	useFakeFormGenerator = true
-	_, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+	_, err = r.SendFile(tmpFile, "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 	useFakeFormGenerator = false
 
 	ioCopyFunc = func(dst io.Writer, src io.Reader) (int64, error) { return 0, errors.New("") }
-	_, err = r.PostFile(tmpFile, "file", map[string]string{"abc": "123"})
+	_, err = r.SendFile(tmpFile, "file", map[string]string{"abc": "123"})
 
 	c.Assert(err, NotNil)
 }
@@ -1030,6 +1031,7 @@ func (s *ReqSuite) TestHeadersHelpers(c *C) {
 	c.Assert(h.SetIf(true, "", "test"), Equals, false)
 	c.Assert(h.SetIf(false, "X-Test-Header", "test"), Equals, false)
 	c.Assert(h.Get(""), Equals, "")
+	c.Assert(h.Has(""), Equals, false)
 	c.Assert(h.Delete(""), Equals, false)
 	c.Assert(h.DeleteIf(true, ""), Equals, false)
 	c.Assert(h.DeleteIf(false, "X-Test-Header"), Equals, false)
@@ -1037,7 +1039,10 @@ func (s *ReqSuite) TestHeadersHelpers(c *C) {
 	c.Assert(h.Set("X-Test-Header", "test"), Equals, true)
 	c.Assert(h.SetIf(true, "X-Test-Header", "test2"), Equals, true)
 	c.Assert(h.Get("X-Test-Header"), Equals, "test2")
+	c.Assert(h.Has("X-Test-Header"), Equals, true)
+	c.Assert(h.Has("X-Test-Header2"), Equals, false)
 	c.Assert(h.Delete("X-Test-Header"), Equals, true)
+	c.Assert(h.Delete("X-Test-Header"), Equals, false)
 	c.Assert(h.Get("X-Test-Header"), Equals, "")
 	c.Assert(h.Set("X-Test-Header", "test"), Equals, true)
 	c.Assert(h.DeleteIf(true, "X-Test-Header"), Equals, true)

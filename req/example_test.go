@@ -136,7 +136,7 @@ func ExampleRequest_Post() {
 	)
 }
 
-func ExampleRequest_PostFile() {
+func ExampleRequest_SendFile() {
 	extraFields := map[string]string{
 		"user": "john",
 		"desc": "My photo",
@@ -144,8 +144,9 @@ func ExampleRequest_PostFile() {
 
 	// send multipart request with image
 	resp, err := Request{
-		URL: "https://my.domain.com",
-	}.PostFile("/tmp/image.jpg", "file", extraFields)
+		Method: POST,
+		URL:    "https://my.domain.com",
+	}.SendFile("/tmp/image.jpg", "file", extraFields)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
