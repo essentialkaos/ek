@@ -30,7 +30,7 @@ var initOnce sync.Once
 func IsTTY() bool {
 	checkSystem()
 
-	if stdout.Mode()&os.ModeCharDevice == 0 && !isFakeTTY {
+	if stdout != nil && stdout.Mode()&os.ModeCharDevice == 0 && !isFakeTTY {
 		return false
 	}
 
@@ -67,7 +67,7 @@ func checkSystem() {
 	initOnce.Do(func() {
 		stat, err := os.Stdout.Stat()
 
-		if err != nil {
+		if err == nil {
 			stdout = stat
 		}
 

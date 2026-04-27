@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.1](https://kaos.sh/ek/14.1.1)
+
+- **`[terminal/tty]`** Fixed bug with checking if current TTY is stdout
+
 ### [14.1.0](https://kaos.sh/ek/14.1.0)
 
 - **`[req]`** `PostFile` replaced by `SendFile` with support of different HTTP methods
