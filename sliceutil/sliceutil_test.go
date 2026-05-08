@@ -9,6 +9,7 @@ package sliceutil
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	. "github.com/essentialkaos/check"
@@ -67,9 +68,18 @@ func (s *SliceSuite) TestExclude(c *C) {
 }
 
 func (s *SliceSuite) TestJoin(c *C) {
+	c.Assert(Join([]int{}, ";"), Equals, "")
 	c.Assert(Join([]int{1, 2, 3, 4, 5}, ";"), Equals, "1;2;3;4;5")
 	c.Assert(Join([]string{"test1", "test2", "test3"}, "--"), Equals, "test1--test2--test3")
 	c.Assert(Join([]any{"test", 34, 12.50}, ","), Equals, "test,34,12.5")
+}
+
+func (s *SliceSuite) TestJoinFunc(c *C) {
+	c.Assert(JoinFunc([]int{}, ";", func(i int) string { return "" }), Equals, "")
+	c.Assert(
+		JoinFunc([]int{1, 2, 3, 4, 5}, ";", func(i int) string { return fmt.Sprint(i) }),
+		Equals, "1;2;3;4;5",
+	)
 }
 
 func (s *SliceSuite) TestDiff(c *C) {

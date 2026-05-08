@@ -1,5 +1,11 @@
 ## Changelog
 
+### [14.1.2](https://kaos.sh/ek/14.1.2)
+
+- **`[sliceutil]`** Added method `JoinFunc`
+- **`[strutil]`** Method `JoinFunc` marked as deprecated
+- **`[sliceutil]`** Code refactoring
+
 ### [14.1.1](https://kaos.sh/ek/14.1.1)
 
 - **`[terminal/tty]`** Fixed bug with checking if current TTY is stdout

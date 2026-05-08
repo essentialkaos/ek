@@ -95,10 +95,34 @@ LOOP:
 // Join concatenates slice elements into a single string separated by sep.
 // Unlike [strings.Join], it supports slices of any type via fmt's %v verb.
 func Join[T any](slice []T, sep string) string {
+	if len(slice) == 0 {
+		return ""
+	}
+
 	var buf strings.Builder
 
 	for i, v := range slice {
 		fmt.Fprintf(&buf, "%v", v)
+
+		if i+1 != len(slice) {
+			buf.WriteString(sep)
+		}
+	}
+
+	return buf.String()
+}
+
+// JoinFunc concatenates elems into a single string separated by sep,
+// applying f to each element before joining.
+func JoinFunc[T any](slice []T, sep string, f func(v T) string) string {
+	if len(slice) == 0 {
+		return ""
+	}
+
+	var buf strings.Builder
+
+	for i, v := range slice {
+		buf.WriteString(f(v))
 
 		if i+1 != len(slice) {
 			buf.WriteString(sep)
