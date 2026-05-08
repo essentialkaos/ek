@@ -554,6 +554,8 @@ func Mask(s string, start, end int, maskingRune rune) string {
 
 // JoinFunc concatenates elems into a single string separated by sep,
 // applying f to each element before joining.
+//
+// Deprecated: Use [sliceutil.JoinFunc] instead
 func JoinFunc(elems []string, sep string, f func(s string) string) string {
 	if len(elems) == 0 {
 		return ""

@@ -9,6 +9,7 @@ package sliceutil
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,6 +49,17 @@ func ExampleJoin() {
 	// A:B:C:D
 	// 1,2,3,4,5
 	// John;183;98.123;false
+}
+
+func ExampleJoinFunc() {
+	s := []int{100, 200, 300, 400, 500}
+
+	fmt.Println(JoinFunc(s, ":", func(v int) string {
+		return strconv.FormatInt(int64(v), 30)
+	}))
+
+	// Output:
+	// 3a:6k:a0:da:gk
 }
 
 func ExampleDiff() {
