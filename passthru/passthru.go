@@ -25,8 +25,13 @@ import (
 type Reader struct {
 	Calculator *Calculator
 
-	UpdateN        func(n int)
-	Update         func(r *Reader)
+	// UpdateN called on read and gets amount of read bytes
+	UpdateN func(n int)
+
+	// UpdateN called on read and gets pointer to reader
+	Update func(r *Reader)
+
+	// UpdateInterval limits how often call UpdateN/Update functions
 	UpdateInterval time.Duration
 
 	r          io.Reader
@@ -40,8 +45,13 @@ type Reader struct {
 type Writer struct {
 	Calculator *Calculator
 
-	UpdateN        func(n int)
-	Update         func(w *Writer)
+	// UpdateN called on write and gets amount of written bytes
+	UpdateN func(n int)
+
+	// Update called on write and gets pointer to reader
+	Update func(w *Writer)
+
+	// UpdateInterval limits how often call UpdateN/Update functions
 	UpdateInterval time.Duration
 
 	w          io.Writer
@@ -106,20 +116,19 @@ func (r *Reader) Read(p []byte) (int, error) {
 
 	atomic.AddInt64(&r.current, int64(n))
 
-	if n > 0 && (r.Update != nil || r.UpdateN != nil) {
-		now := time.Now()
-
-		if r.UpdateInterval == 0 || (r.UpdateInterval > 0 && now.Sub(r.lastUpdate) > r.UpdateInterval) {
-			if r.UpdateN != nil {
-				r.UpdateN(n)
-			}
-
-			if r.Update != nil {
-				r.Update(r)
-			}
+	if n > 0 {
+		if r.UpdateN != nil {
+			r.UpdateN(n)
 		}
 
-		r.lastUpdate = now
+		if r.UpdateInterval != 0 && r.Update != nil {
+			now := time.Now()
+
+			if r.UpdateInterval > 0 && now.Sub(r.lastUpdate) > r.UpdateInterval {
+				r.Update(r)
+				r.lastUpdate = now
+			}
+		}
 	}
 
 	return n, err
@@ -194,20 +203,19 @@ func (w *Writer) Write(p []byte) (int, error) {
 
 	atomic.AddInt64(&w.current, int64(n))
 
-	if n > 0 && (w.Update != nil || w.UpdateN != nil) {
-		now := time.Now()
-
-		if w.UpdateInterval == 0 || (w.UpdateInterval > 0 && now.Sub(w.lastUpdate) > w.UpdateInterval) {
-			if w.UpdateN != nil {
-				w.UpdateN(n)
-			}
-
-			if w.Update != nil {
-				w.Update(w)
-			}
+	if n > 0 {
+		if w.UpdateN != nil {
+			w.UpdateN(n)
 		}
 
-		w.lastUpdate = now
+		if w.UpdateInterval != 0 && w.Update != nil {
+			now := time.Now()
+
+			if w.UpdateInterval > 0 && now.Sub(w.lastUpdate) > w.UpdateInterval {
+				w.Update(w)
+				w.lastUpdate = now
+			}
+		}
 	}
 
 	return n, err
