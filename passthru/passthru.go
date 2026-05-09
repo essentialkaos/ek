@@ -121,13 +121,18 @@ func (r *Reader) Read(p []byte) (int, error) {
 			r.UpdateN(n)
 		}
 
-		if r.UpdateInterval != 0 && r.Update != nil {
-			now := time.Now()
+		if r.Update != nil {
+			if r.UpdateInterval > 0 {
+				now := time.Now()
 
-			if r.UpdateInterval > 0 && now.Sub(r.lastUpdate) > r.UpdateInterval {
-				r.Update(r)
+				if now.Sub(r.lastUpdate) < r.UpdateInterval {
+					return n, err
+				}
+
 				r.lastUpdate = now
 			}
+
+			r.Update(r)
 		}
 	}
 
@@ -208,13 +213,18 @@ func (w *Writer) Write(p []byte) (int, error) {
 			w.UpdateN(n)
 		}
 
-		if w.UpdateInterval != 0 && w.Update != nil {
-			now := time.Now()
+		if w.Update != nil {
+			if w.UpdateInterval > 0 {
+				now := time.Now()
 
-			if w.UpdateInterval > 0 && now.Sub(w.lastUpdate) > w.UpdateInterval {
-				w.Update(w)
+				if now.Sub(w.lastUpdate) < w.UpdateInterval {
+					return n, err
+				}
+
 				w.lastUpdate = now
 			}
+
+			w.Update(w)
 		}
 	}
 
