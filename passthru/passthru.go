@@ -31,7 +31,7 @@ type Reader struct {
 	// UpdateN called on read and gets pointer to reader
 	Update func(r *Reader)
 
-	// UpdateInterval limits how often call UpdateN/Update functions
+	// UpdateInterval limits how often call Update function
 	UpdateInterval time.Duration
 
 	r          io.Reader
@@ -51,7 +51,7 @@ type Writer struct {
 	// Update called on write and gets pointer to reader
 	Update func(w *Writer)
 
-	// UpdateInterval limits how often call UpdateN/Update functions
+	// UpdateInterval limits how often call Update function
 	UpdateInterval time.Duration
 
 	w          io.Writer
