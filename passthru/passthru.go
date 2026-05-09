@@ -24,22 +24,30 @@ import (
 // of bytes read
 type Reader struct {
 	Calculator *Calculator
-	Update     func(n int)
 
-	r       io.Reader
-	current int64
-	total   int64
+	UpdateN        func(n int)
+	Update         func(r *Reader)
+	UpdateInterval time.Duration
+
+	r          io.Reader
+	current    int64
+	total      int64
+	lastUpdate time.Time
 }
 
 // Writer is a pass-through wrapper around io.Writer that tracks the number
 // of bytes written
 type Writer struct {
 	Calculator *Calculator
-	Update     func(n int)
 
-	w       io.Writer
-	current int64
-	total   int64
+	UpdateN        func(n int)
+	Update         func(w *Writer)
+	UpdateInterval time.Duration
+
+	w          io.Writer
+	current    int64
+	total      int64
+	lastUpdate time.Time
 }
 
 // Calculator computes exponentially weighted moving average speed and estimated
@@ -98,8 +106,20 @@ func (r *Reader) Read(p []byte) (int, error) {
 
 	atomic.AddInt64(&r.current, int64(n))
 
-	if r.Update != nil && n > 0 {
-		r.Update(n)
+	if n > 0 && (r.Update != nil || r.UpdateN != nil) {
+		now := time.Now()
+
+		if r.UpdateInterval == 0 || (r.UpdateInterval > 0 && now.Sub(r.lastUpdate) > r.UpdateInterval) {
+			if r.UpdateN != nil {
+				r.UpdateN(n)
+			}
+
+			if r.Update != nil {
+				r.Update(r)
+			}
+		}
+
+		r.lastUpdate = now
 	}
 
 	return n, err
@@ -174,8 +194,20 @@ func (w *Writer) Write(p []byte) (int, error) {
 
 	atomic.AddInt64(&w.current, int64(n))
 
-	if w.Update != nil && n > 0 {
-		w.Update(n)
+	if n > 0 && (w.Update != nil || w.UpdateN != nil) {
+		now := time.Now()
+
+		if w.UpdateInterval == 0 || (w.UpdateInterval > 0 && now.Sub(w.lastUpdate) > w.UpdateInterval) {
+			if w.UpdateN != nil {
+				w.UpdateN(n)
+			}
+
+			if w.Update != nil {
+				w.Update(w)
+			}
+		}
+
+		w.lastUpdate = now
 	}
 
 	return n, err

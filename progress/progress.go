@@ -358,7 +358,7 @@ func (b *Bar) Reader(r io.Reader) io.Reader {
 	}
 
 	pr := passthru.NewReader(r, b.total)
-	pr.Update = b.Add
+	pr.UpdateN = b.Add
 	b.reader = pr
 
 	return pr
@@ -372,7 +372,7 @@ func (b *Bar) Writer(w io.Writer) io.Writer {
 	}
 
 	pw := passthru.NewWriter(w, b.total)
-	pw.Update = b.Add
+	pw.UpdateN = b.Add
 	b.writer = pw
 
 	return pw
