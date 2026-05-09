@@ -87,7 +87,9 @@ func (s *PassthruSuite) TestReader(c *C) {
 
 	c.Assert(r, NotNil)
 
-	r.Update = func(_ int) {}
+	r.UpdateN = func(_ int) {}
+	r.Update = func(_ *Reader) {}
+	r.UpdateInterval = 1_000_000_000
 
 	n, err := r.Read([]byte{})
 	c.Assert(n, Equals, int(100))
@@ -122,7 +124,9 @@ func (s *PassthruSuite) TestWriter(c *C) {
 
 	c.Assert(w, NotNil)
 
-	w.Update = func(_ int) {}
+	w.UpdateN = func(_ int) {}
+	w.Update = func(_ *Writer) {}
+	w.UpdateInterval = 1_000_000_000
 
 	n, err := w.Write([]byte{})
 	c.Assert(n, Equals, int(100))

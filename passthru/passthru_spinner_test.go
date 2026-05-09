@@ -21,9 +21,7 @@ import (
 )
 
 type DLSpinner struct {
-	file       string
-	lastUpdate time.Time
-	reader     *passthru.Reader
+	file string
 }
 
 func Example() {
@@ -51,8 +49,10 @@ func Example() {
 	defer resp.Body.Close()
 
 	r := passthru.NewReader(resp.Body, resp.ContentLength)
-	s := &DLSpinner{file: filename, reader: r}
-	s.reader.Update = s.Update
+	s := &DLSpinner{file: filename}
+
+	r.Update = s.Update
+	r.UpdateInterval = 125 * time.Millisecond
 
 	_, err = io.Copy(fd, r)
 
@@ -69,18 +69,11 @@ func Example() {
 	}
 }
 
-func (s *DLSpinner) Update(_ int) {
-	now := time.Now()
+func (s *DLSpinner) Update(r *passthru.Reader) {
+	speed, _ := r.Speed()
 
-	if now.Sub(s.lastUpdate) < time.Second/10 {
-		return
-	}
-
-	speed, _ := s.reader.Speed()
 	spinner.Update(
 		"{s}[ %4.1f%% | %6s/s ]{!} Download file {c}%s{!}",
-		s.reader.Progress(), fmtutil.PrettySize(speed), s.file,
+		r.Progress(), fmtutil.PrettySize(speed), s.file,
 	)
-
-	s.lastUpdate = now
 }

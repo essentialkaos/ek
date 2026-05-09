@@ -24,22 +24,40 @@ import (
 // of bytes read
 type Reader struct {
 	Calculator *Calculator
-	Update     func(n int)
 
-	r       io.Reader
-	current int64
-	total   int64
+	// UpdateN called on read and gets amount of read bytes
+	UpdateN func(n int)
+
+	// UpdateN called on read and gets pointer to reader
+	Update func(r *Reader)
+
+	// UpdateInterval limits how often call Update function
+	UpdateInterval time.Duration
+
+	r          io.Reader
+	current    int64
+	total      int64
+	lastUpdate time.Time
 }
 
 // Writer is a pass-through wrapper around io.Writer that tracks the number
 // of bytes written
 type Writer struct {
 	Calculator *Calculator
-	Update     func(n int)
 
-	w       io.Writer
-	current int64
-	total   int64
+	// UpdateN called on write and gets amount of written bytes
+	UpdateN func(n int)
+
+	// Update called on write and gets pointer to reader
+	Update func(w *Writer)
+
+	// UpdateInterval limits how often call Update function
+	UpdateInterval time.Duration
+
+	w          io.Writer
+	current    int64
+	total      int64
+	lastUpdate time.Time
 }
 
 // Calculator computes exponentially weighted moving average speed and estimated
@@ -98,8 +116,24 @@ func (r *Reader) Read(p []byte) (int, error) {
 
 	atomic.AddInt64(&r.current, int64(n))
 
-	if r.Update != nil && n > 0 {
-		r.Update(n)
+	if n > 0 {
+		if r.UpdateN != nil {
+			r.UpdateN(n)
+		}
+
+		if r.Update != nil {
+			if r.UpdateInterval > 0 {
+				now := time.Now()
+
+				if now.Sub(r.lastUpdate) < r.UpdateInterval {
+					return n, err
+				}
+
+				r.lastUpdate = now
+			}
+
+			r.Update(r)
+		}
 	}
 
 	return n, err
@@ -174,8 +208,24 @@ func (w *Writer) Write(p []byte) (int, error) {
 
 	atomic.AddInt64(&w.current, int64(n))
 
-	if w.Update != nil && n > 0 {
-		w.Update(n)
+	if n > 0 {
+		if w.UpdateN != nil {
+			w.UpdateN(n)
+		}
+
+		if w.Update != nil {
+			if w.UpdateInterval > 0 {
+				now := time.Now()
+
+				if now.Sub(w.lastUpdate) < w.UpdateInterval {
+					return n, err
+				}
+
+				w.lastUpdate = now
+			}
+
+			w.Update(w)
+		}
 	}
 
 	return n, err

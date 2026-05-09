@@ -1,5 +1,14 @@
 ## Changelog
 
+### [14.1.3](https://kaos.sh/ek/14.1.3)
+
+- **`[passthru]`** Added field `Reader.UpdateInterval`
+- **`[passthru]`** Added field `Writer.UpdateInterval`
+- **`[passthru]`** Field `Reader.Update` now accepts function with reader pointer variable
+- **`[passthru]`** Field `Writer.Update` now accepts function with writer pointer variable
+- **`[passthru]`** Field `Reader.Update` renamed to `Reader.UpdateN`
+- **`[passthru]`** Field `Writer.Update` renamed to `Writer.UpdateN`
+
 ### [14.1.2](https://kaos.sh/ek/14.1.2)
 
 - **`[sliceutil]`** Added method `JoinFunc`
