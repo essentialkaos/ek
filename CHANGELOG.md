@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.4](https://kaos.sh/ek/14.1.4)
+
+- **`[usage]`** Fixed bug with rendering usage examples using default example description color tag
+
 ### [14.1.3](https://kaos.sh/ek/14.1.3)
 
 - **`[passthru]`** Added field `Reader.UpdateInterval`
