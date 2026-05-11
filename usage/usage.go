@@ -625,7 +625,7 @@ func (e *Example) Print() {
 		if e.info != nil {
 			descColor = strutil.B(
 				e.info.ExampleDescColorTag != "" && fmtc.IsTag(e.info.ExampleDescColorTag),
-				e.info.ExampleDescColorTag, "",
+				e.info.ExampleDescColorTag, descColor,
 			)
 		}
 
