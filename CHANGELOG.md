@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.5](https://kaos.sh/ek/14.1.5)
+
+- **`[terminal]`** Fixed bug with keeping newline symbol in read user input
+
 ### [14.1.4](https://kaos.sh/ek/14.1.4)
 
 - **`[usage]`** Fixed bug with rendering usage examples using default example description color tag
