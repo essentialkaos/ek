@@ -94,7 +94,7 @@ func guessEngine(mountsData string) string {
 		strings.Contains(mountsData, "none /etc/hostname 9p") &&
 		strings.Contains(mountsData, "none /etc/hosts 9p"):
 		return DOCKER_RUNSC
-	case strings.Contains(mountsData, "workdir=/var/lib/docker"):
+	case err == nil && strings.Contains(mountsData, "workdir=/var/lib/docker"):
 		return DOCKER
 	}
 

@@ -90,6 +90,8 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	c.Assert(GetEngine(), Equals, CONTAINERD)
 	c.Assert(IsK8s(), Equals, true)
 
+	dockerEnv = s.DataDir + "/.dockerenv"
+
 	isK8s = false
 	once = sync.Once{}
 
@@ -97,7 +99,6 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	c.Assert(GetEngine(), Equals, DOCKER)
 
 	once = sync.Once{}
-	dockerEnv = s.DataDir + "/.dockerenv"
 
 	mountsFile = s.DataDir + "/docker-runsc"
 	c.Assert(GetEngine(), Equals, DOCKER_RUNSC)
