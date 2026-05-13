@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.6](https://kaos.sh/ek/14.1.6)
+
+- **`[support/apps]`** Improved version extraction from apps that write version info into stderr with a non-zero exit code
+
 ### [14.1.5](https://kaos.sh/ek/14.1.5)
 
 - **`[terminal]`** Fixed bug with keeping newline symbol in read user input

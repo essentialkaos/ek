@@ -146,11 +146,7 @@ func LXC() support.App {
 // execVersionCmd execs command and returns output as a string
 func execVersionCmd(cmd ...string) string {
 	c := exec.Command(cmd[0], cmd[1:]...)
-	output, err := c.CombinedOutput()
-
-	if err != nil {
-		return ""
-	}
+	output, _ := c.CombinedOutput()
 
 	return string(output)
 }
