@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.7](https://kaos.sh/ek/14.1.7)
+
+- **`[system/container]`** Fixed bug with checking for Docker engine on host machine
+
 ### [14.1.6](https://kaos.sh/ek/14.1.6)
 
 - **`[support/apps]`** Improved version extraction from apps that write version info into stderr with a non-zero exit code
