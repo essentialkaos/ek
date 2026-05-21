@@ -137,3 +137,14 @@ func ExampleIsGlob() {
 	// file is glob → false
 	// *.file is glob → true
 }
+
+func ExampleSanitize() {
+	fmt.Println(Sanitize("test.txt"))
+	fmt.Println(Sanitize("test?file.txt"))
+	fmt.Println(Sanitize("мой:ファイル.txt"))
+
+	// Output:
+	// test.txt
+	// test_file.txt
+	// мой_ファイル.txt
+}

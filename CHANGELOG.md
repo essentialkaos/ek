@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.8](https://kaos.sh/ek/14.1.8)
+
+- **`[path]`** Added method `Sanitize`
+
 ### [14.1.7](https://kaos.sh/ek/14.1.7)
 
 - **`[system/container]`** Fixed bug with checking for Docker engine on host machine

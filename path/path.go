@@ -188,6 +188,34 @@ func IsGlob(pattern string) bool {
 	return false
 }
 
+// Sanitize remove all unsafe chars from given name
+func Sanitize(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	name = strings.Map(func(r rune) rune {
+		switch r {
+		case '/', '\\', ':', '*', '?', '"', '<', '>', '|', '\x00':
+			return '_'
+		}
+
+		if r < 0x20 {
+			return -1
+		}
+
+		return r
+	}, name)
+
+	name = strings.Trim(name, " .")
+
+	if len(name) > 255 {
+		return name[:255]
+	}
+
+	return name
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // dirNRight returns the path to the Nth directory from the right
