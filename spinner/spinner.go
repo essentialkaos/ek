@@ -16,9 +16,7 @@ import (
 	"time"
 
 	"github.com/essentialkaos/ek/v14/fmtc"
-	"github.com/essentialkaos/ek/v14/mathutil"
 	"github.com/essentialkaos/ek/v14/strutil"
-	"github.com/essentialkaos/ek/v14/terminal/tty"
 	"github.com/essentialkaos/ek/v14/timeutil"
 )
 
@@ -256,10 +254,4 @@ func formatDuration(d time.Duration) string {
 	}
 
 	return timeutil.Pretty(d).Short(true)
-}
-
-// getMaxDescSize returns the maximum character width available for the description text
-func getMaxDescSize() int {
-	w := tty.GetWidth()
-	return mathutil.B(w < 20, 9999, w-14)
 }

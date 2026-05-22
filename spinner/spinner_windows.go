@@ -1,4 +1,6 @@
-package ek
+//go:build windows
+
+package spinner
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
@@ -7,5 +9,6 @@ package ek
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// VERSION is current ek package version
-const VERSION = "14.1.9"
+func getMaxDescSize() int {
+	return 120
+}
