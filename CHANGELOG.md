@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.1.9](https://kaos.sh/ek/14.1.9)
+
+- **`[terminal]`** Fixed bug with reading data on Windows
+
 ### [14.1.8](https://kaos.sh/ek/14.1.8)
 
 - **`[path]`** Added method `Sanitize`

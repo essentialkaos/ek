@@ -66,7 +66,7 @@ func Read(title string) (string, error) {
 		return "", fmt.Errorf("can't read user input: %w", err)
 	}
 
-	return strings.TrimRight(input, "\n"), nil
+	return strings.TrimRight(input, "\n\r"), nil
 }
 
 // ReadAnswer prompts the user with a yes/no question and returns their answer
@@ -109,7 +109,7 @@ func ReadAnswer(title string, defaultAnswers ...string) (bool, error) {
 			return false, fmt.Errorf("can't read user input: %w", err)
 		}
 
-		answer = strings.TrimSpace(strings.TrimRight(answer, "\n"))
+		answer = strings.TrimSpace(strings.TrimRight(answer, "\n\r"))
 		answer = strutil.Q(answer, defaultAnswer)
 
 		switch strings.ToUpper(answer) {
