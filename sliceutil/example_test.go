@@ -39,7 +39,7 @@ func ExampleExclude() {
 func ExampleJoin() {
 	s1 := []string{"A", "B", "C", "D"}
 	s2 := []int{1, 2, 3, 4, 5}
-	s3 := []any{"John", 183, 98.123, false}
+	s3 := []any{"John", nil, 183, 98.123, "", false}
 
 	fmt.Println(Join(s1, ":"))
 	fmt.Println(Join(s2, ","))

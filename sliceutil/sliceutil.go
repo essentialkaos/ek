@@ -101,11 +101,15 @@ func Join[T any](slice []T, sep string) string {
 
 	var buf strings.Builder
 
-	for i, v := range slice {
-		fmt.Fprintf(&buf, "%v", v)
+	for _, v := range slice {
+		vv := fmt.Sprintf("%v", v)
 
-		if i+1 != len(slice) {
-			buf.WriteString(sep)
+		if vv != "" && vv != "<nil>" {
+			if buf.Len() != 0 {
+				buf.WriteString(sep)
+			}
+
+			buf.WriteString(vv)
 		}
 	}
 
@@ -121,11 +125,15 @@ func JoinFunc[T any](slice []T, sep string, f func(v T) string) string {
 
 	var buf strings.Builder
 
-	for i, v := range slice {
-		buf.WriteString(f(v))
+	for _, v := range slice {
+		vv := f(v)
 
-		if i+1 != len(slice) {
-			buf.WriteString(sep)
+		if vv != "" {
+			if buf.Len() != 0 {
+				buf.WriteString(sep)
+			}
+
+			buf.WriteString(vv)
 		}
 	}
 

@@ -1,5 +1,10 @@
 ## Changelog
 
+### [14.1.10](https://kaos.sh/ek/14.1.10)
+
+- **`[sliceutil]`** Ignore empty strings and nils in `Join`
+- **`[sliceutil]`** Ignore empty strings in `JoinFunc`
+
 ### [14.1.9](https://kaos.sh/ek/14.1.9)
 
 - **`[terminal]`** Fixed bug with reading data on Windows using `Read` and `ReadAnswer`
