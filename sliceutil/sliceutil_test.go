@@ -71,7 +71,7 @@ func (s *SliceSuite) TestJoin(c *C) {
 	c.Assert(Join([]int{}, ";"), Equals, "")
 	c.Assert(Join([]int{1, 2, 3, 4, 5}, ";"), Equals, "1;2;3;4;5")
 	c.Assert(Join([]string{"test1", "test2", "test3"}, "--"), Equals, "test1--test2--test3")
-	c.Assert(Join([]any{"test", 34, 12.50}, ","), Equals, "test,34,12.5")
+	c.Assert(Join([]any{"test", "", 34, nil, 12.50, nil}, ","), Equals, "test,34,12.5")
 }
 
 func (s *SliceSuite) TestJoinFunc(c *C) {
@@ -79,6 +79,10 @@ func (s *SliceSuite) TestJoinFunc(c *C) {
 	c.Assert(
 		JoinFunc([]int{1, 2, 3, 4, 5}, ";", func(i int) string { return fmt.Sprint(i) }),
 		Equals, "1;2;3;4;5",
+	)
+	c.Assert(
+		JoinFunc([]string{"", "", "1", "", "2", ""}, ", ", func(v string) string { return v }),
+		Equals, "1, 2",
 	)
 }
 
