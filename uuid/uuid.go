@@ -12,6 +12,7 @@ import (
 	"crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"time"
 )
 
@@ -41,6 +42,48 @@ type UUID [16]byte
 
 // randGenerator is function to generate random data
 var randGenerator = rand.Read
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Parse parses a UUID string in the standard hyphenated form
+// "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" or the bare 32-hex form
+// "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and returns the decoded UUID.
+// An error is returned if the string is malformed or contains invalid hex.
+func Parse(s string) (UUID, error) {
+	var uuid UUID
+
+	switch len(s) {
+	case 36:
+		if s[8] != '-' || s[13] != '-' || s[18] != '-' || s[23] != '-' {
+			return UUID{}, fmt.Errorf("invalid format: missing hyphens in %q", s)
+		}
+
+		_, err := hex.Decode(uuid[:], []byte(s[0:8]+s[9:13]+s[14:18]+s[19:23]+s[24:]))
+
+		if err != nil {
+			return UUID{}, fmt.Errorf("invalid hex in %q: %w", s, err)
+		}
+
+	case 32:
+		_, err := hex.Decode(uuid[:], []byte(s))
+
+		if err != nil {
+			return UUID{}, fmt.Errorf("invalid hex in %q: %w", s, err)
+		}
+
+	default:
+		return UUID{}, fmt.Errorf("invalid UUID length %d, expected 32 or 36", len(s))
+	}
+
+	return uuid, nil
+}
+
+// IsValid parses and validates the string representation of a UUID. It can be used
+// to validate UUIDs without using regular expressions.
+func IsValid(s string) bool {
+	_, err := Parse(s)
+	return err == nil
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
