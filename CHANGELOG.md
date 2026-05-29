@@ -1,5 +1,10 @@
 ## Changelog
 
+### [14.2.0](https://kaos.sh/ek/14.2.0)
+
+- **`[uuid]`** Added method `Parse`
+- **`[uuid]`** Added method `IsValid`
+
 ### [14.1.10](https://kaos.sh/ek/14.1.10)
 
 - **`[sliceutil]`** Ignore empty strings and nils in `Join`

@@ -53,6 +53,15 @@ func (s *UUIDSuite) TestErrors(c *C) {
 	randGenerator = rand.Read
 }
 
+func (s *UUIDSuite) TestParse(c *C) {
+	c.Assert(IsValid(`d825ba46-65ed-4153-8be7-34cf144264da`), Equals, true)
+	c.Assert(IsValid(`d825ba4665ed41538be734cf144264da`), Equals, true)
+	c.Assert(IsValid(`d825ba4665ed41538be734cf144264d`), Equals, false)
+	c.Assert(IsValid(`d825ba46!65ed-4153-8be7-34cf144264da`), Equals, false)
+	c.Assert(IsValid(`d825ba46-65ed-4153-8be7-34cf144264dy`), Equals, false)
+	c.Assert(IsValid(`d825ba4665ed41538be734cf144264dy`), Equals, false)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *UUIDSuite) BenchmarkUUID4(c *C) {
@@ -70,5 +79,11 @@ func (s *UUIDSuite) BenchmarkUUID5(c *C) {
 func (s *UUIDSuite) BenchmarkUUID7(c *C) {
 	for range c.N {
 		UUID7()
+	}
+}
+
+func (s *UUIDSuite) BenchmarkParse(c *C) {
+	for range c.N {
+		Parse(`d825ba46-65ed-4153-8be7-34cf144264da`)
 	}
 }
