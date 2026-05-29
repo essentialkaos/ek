@@ -1,5 +1,9 @@
 [files]
-extend-exclude = ["go.sum", "CHANGELOG.md"]
+extend-exclude = [
+  "go.sum",
+  "CHANGELOG.md",
+  "uuid/uuid_test.go",
+]
 
 [default.extend-identifiers]
 Childs = "Childs"
