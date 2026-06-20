@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.2.1](https://kaos.sh/ek/14.2.1)
+
+- **`[fmtc]`** Added `fmt.Stringer` support
+
 ### [14.2.0](https://kaos.sh/ek/14.2.0)
 
 - **`[uuid]`** Added method `Parse`
