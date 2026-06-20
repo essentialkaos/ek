@@ -604,8 +604,11 @@ func searchColors(text string, limit int, clean, close bool) string {
 // applyColors applies color tags to the slice of data
 func applyColors(a *[]any, limit int, clean bool) {
 	for i, x := range *a {
-		if s, ok := x.(string); ok {
+		switch s := x.(type) {
+		case string:
 			(*a)[i] = searchColors(s, limit, clean, true)
+		case fmt.Stringer:
+			(*a)[i] = searchColors(s.String(), limit, clean, true)
 		}
 	}
 }

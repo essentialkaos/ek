@@ -20,6 +20,10 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type TestStringer string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func Test(t *testing.T) { TestingT(t) }
 
 type FormatSuite struct{}
@@ -47,6 +51,7 @@ func (s *FormatSuite) TestColors(c *C) {
 	c.Assert(Sprint("{c-}W{!}"), Equals, "\x1b[96mW\x1b[0m")
 	c.Assert(Sprint("{s-}W{!}"), Equals, "\x1b[90mW\x1b[0m")
 	c.Assert(Sprint("{w-}W{!}"), Equals, "\x1b[97mW\x1b[0m")
+	c.Assert(Sprint(TestStringer("{r}W{!}")), Equals, "\x1b[31mW\x1b[0m")
 }
 
 func (s *FormatSuite) TestBackgrounds(c *C) {
@@ -401,6 +406,14 @@ func (s *FormatSuite) TestFuzzFixes(c *C) {
 	c.Assert(isValidTag("!--"), Equals, false)
 	c.Assert(tag2ANSI("-!", false), Equals, "")
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func (t TestStringer) String() string {
+	return string(t)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *FormatSuite) BenchmarkSimple(c *C) {
 	for range c.N {
