@@ -27,6 +27,8 @@ type Reader struct {
 	comma         string
 	hasHeader     bool
 	headerSkipped bool
+	headerToLower bool
+	headerToUpper bool
 	currentLine   int
 
 	s *bufio.Scanner
@@ -147,6 +149,36 @@ func (r *Reader) WithHeader(flag bool) *Reader {
 	}
 
 	r.hasHeader = flag
+
+	return r
+}
+
+// WithHeaderToLower configures the reader to convert all headers to lower case
+func (r *Reader) WithHeaderToLower(flag bool) *Reader {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	r.headerToLower = flag
+
+	if flag {
+		r.headerToUpper = false
+	}
+
+	return r
+}
+
+// WithHeaderToUpper configures the reader to convert all headers to upper case
+func (r *Reader) WithHeaderToUpper(flag bool) *Reader {
+	if r == nil || r.s == nil {
+		return nil
+	}
+
+	r.headerToUpper = flag
+
+	if flag {
+		r.headerToLower = false
+	}
 
 	return r
 }
@@ -376,28 +408,6 @@ func (r Row) ToBytes(comma rune) []byte {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ToLower converts all headers to lower case
-func (h Header) ToLower() {
-	if len(h) == 0 {
-		return
-	}
-
-	for i, v := range h {
-		h[i] = strings.ToLower(v)
-	}
-}
-
-// ToUpper converts all headers to upper case
-func (h Header) ToUpper() {
-	if len(h) == 0 {
-		return
-	}
-
-	for i, v := range h {
-		h[i] = strings.ToUpper(v)
-	}
-}
-
 // Map maps row data using headers names
 func (h Header) Map(m map[string]string, r Row) error {
 	switch {
@@ -435,6 +445,15 @@ func (r *Reader) readHeader() error {
 	r.currentLine++
 
 	r.Header = strings.Split(r.s.Text(), r.comma)
+
+	for i, h := range r.Header {
+		switch {
+		case r.headerToLower:
+			r.Header[i] = strings.ToLower(h)
+		case r.headerToUpper:
+			r.Header[i] = strings.ToUpper(h)
+		}
+	}
 
 	return nil
 }

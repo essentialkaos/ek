@@ -60,8 +60,11 @@ func (s *CSVSuite) TestRead(c *C) {
 	defer fd.Close()
 
 	line := 0
-	r := NewReader(fd, ',').WithHeader(true).WithBufferSize(1024)
 	m := map[string]string{}
+	r := NewReader(fd, ',').
+		WithHeader(true).
+		WithBufferSize(1024).
+		WithHeaderToUpper(true)
 
 	for {
 		rr, err := r.Read()
@@ -74,10 +77,6 @@ func (s *CSVSuite) TestRead(c *C) {
 		case 0:
 			c.Assert(rr, HasLen, 4)
 			c.Assert(rr, DeepEquals, Row{"1", "John", "Doe", "0.34"})
-			r.Header.ToLower()
-			c.Assert(r.Header, DeepEquals, Header{"id", "first name", "last name", "balance"})
-			r.Header.ToUpper()
-			c.Assert(r.Header, DeepEquals, Header{"ID", "FIRST NAME", "LAST NAME", "BALANCE"})
 			c.Assert(r.Header.Map(m, rr), IsNil)
 			c.Assert(m["ID"], Equals, "1")
 			c.Assert(m["FIRST NAME"], Equals, "John")
@@ -106,7 +105,9 @@ func (s *CSVSuite) TestReadTo(c *C) {
 	defer fd.Close()
 
 	line := 0
-	r := NewReader(fd, ',').WithHeader(true)
+	r := NewReader(fd, ',').
+		WithHeader(true).
+		WithHeaderToLower(true)
 
 	var rr Row
 
@@ -219,6 +220,8 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(err, DeepEquals, ErrNilReader)
 	c.Assert(r.ReadTo(b), DeepEquals, ErrNilReader)
 	c.Assert(r.WithHeader(false), IsNil)
+	c.Assert(r.WithHeaderToUpper(false), IsNil)
+	c.Assert(r.WithHeaderToLower(false), IsNil)
 	c.Assert(r.Line(), Equals, 0)
 	c.Assert(r.Error(), IsNil)
 	c.Assert(r.WithBufferSize(100), IsNil)
@@ -227,11 +230,6 @@ func (s *CSVSuite) TestNil(c *C) {
 	c.Assert(r, IsNil)
 
 	r.Seq(nil)
-
-	var h Header
-
-	h.ToLower()
-	h.ToUpper()
 }
 
 func (s *CSVSuite) TestRow(c *C) {

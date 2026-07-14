@@ -32,18 +32,18 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           path: ${{env.SRC_DIR}}
 
       - name: Use cache for dependencies data
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         id: cache-deps
         with:
           path: |
@@ -91,18 +91,18 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           path: ${{env.SRC_DIR}}
 
       - name: Use cache for dependencies data
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         id: cache-deps
         with:
           path: |
@@ -148,13 +148,13 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           path: ${{env.SRC_DIR}}
 
@@ -188,7 +188,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
 
       - name: Check spelling
         continue-on-error: true

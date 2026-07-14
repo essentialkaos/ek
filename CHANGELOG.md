@@ -1,5 +1,12 @@
 ## Changelog
 
+### [14.3.0](https://kaos.sh/ek/14.3.0)
+
+- **`[csv]`** Added method `Reader.WithHeaderToLower`
+- **`[csv]`** Added method `Reader.WithHeaderToUpper`
+- **`[csv]`** Removed method `Header.ToUpper`
+- **`[csv]`** Removed method `Header.ToLower`
+
 ### [14.2.1](https://kaos.sh/ek/14.2.1)
 
 - **`[fmtc]`** Added `fmt.Stringer` support

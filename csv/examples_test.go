@@ -555,8 +555,10 @@ func ExampleHeader_Map() {
 
 	defer fd.Close()
 
-	r := NewReader(fd, ';')
 	m := map[string]string{}
+	r := NewReader(fd, ';').
+		WithHeader(true).
+		WithHeaderToUpper(true)
 
 	for {
 		row, err := r.Read()
