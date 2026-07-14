@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6.4.0
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
@@ -43,7 +43,7 @@ jobs:
           path: ${{env.SRC_DIR}}
 
       - name: Use cache for dependencies data
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         id: cache-deps
         with:
           path: |
@@ -91,7 +91,7 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6.4.0
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
@@ -102,7 +102,7 @@ jobs:
           path: ${{env.SRC_DIR}}
 
       - name: Use cache for dependencies data
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         id: cache-deps
         with:
           path: |
@@ -148,7 +148,7 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v6.4.0
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: ${{ matrix.go }}
           cache: false
