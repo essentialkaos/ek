@@ -161,6 +161,10 @@ func (r *Reader) WithHeaderToLower(flag bool) *Reader {
 
 	r.headerToLower = flag
 
+	if flag {
+		r.headerToUpper = false
+	}
+
 	return r
 }
 
@@ -171,6 +175,10 @@ func (r *Reader) WithHeaderToUpper(flag bool) *Reader {
 	}
 
 	r.headerToUpper = flag
+
+	if flag {
+		r.headerToLower = false
+	}
 
 	return r
 }
