@@ -35,6 +35,7 @@
 * + lock
 * + log
 * + lscolors
+* + luhn
 * + mathutil
 L + netutil
 * + options

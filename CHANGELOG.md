@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.4.0](https://kaos.sh/ek/14.4.0)
+
+- **`[luhn]`** Added package to calculate and validate [Luhn checksum](https://en.wikipedia.org/wiki/Luhn_algorithm)
+
 ### [14.3.0](https://kaos.sh/ek/14.3.0)
 
 - **`[csv]`** Added method `Reader.WithHeaderToLower`

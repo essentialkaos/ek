@@ -55,6 +55,7 @@ Currently we support Linux and macOS (_except some packages_). All packages have
 - [`log`](https://kaos.sh/g/ek.v14/log) — Package with an improved logger
 - [`lock`](https://kaos.sh/g/ek.v14/lock) — Package provides methods for working with lock files
 - [`lscolors`](https://kaos.sh/g/ek.v14/lscolors) — Package provides methods for colorizing file names based on colors from dircolors
+- [`luhn`](https://kaos.sh/g/ek.v14/luhn) — Package luhn provides methods to calculate and validate [Luhn checksum](https://en.wikipedia.org/wiki/Luhn_algorithm)
 - [`mathutil`](https://kaos.sh/g/ek.v14/mathutil) — Package provides some additional math methods
 - [`netutil`](https://kaos.sh/g/ek.v14/netutil) — Package provides methods for working with network
 - [`options`](https://kaos.sh/g/ek.v14/options) — Package provides methods for working with command-line options
