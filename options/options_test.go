@@ -770,3 +770,10 @@ func (s *OptUtilSuite) TestNilArguments(c *C) {
 func (s *OptUtilSuite) TestOptionUpdate(c *C) {
 	c.Assert(updateOption(nil, "test", "test"), NotNil)
 }
+
+func (s *OptUtilSuite) TestValueConvertDefault(c *C) {
+	c.Assert(valueToInt(nil), Equals, 0)
+	c.Assert(valueToFloat(nil), Equals, 0.0)
+	c.Assert(valueToBool(nil), Equals, false)
+	c.Assert(valueToString(nil), Equals, "")
+}

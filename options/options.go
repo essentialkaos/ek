@@ -197,15 +197,9 @@ func (o *Options) GetS(name string) string {
 		return ""
 	case o.full[optName.Long].Value == nil:
 		return ""
-	case opt.Type == INT:
-		return strconv.Itoa(opt.Value.(int))
-	case opt.Type == FLOAT:
-		return strconv.FormatFloat(opt.Value.(float64), 'f', -1, 64)
-	case opt.Type == BOOL:
-		return strconv.FormatBool(opt.Value.(bool))
-	default:
-		return fmt.Sprintf("%s", opt.Value)
 	}
+
+	return valueToString(opt.Value)
 }
 
 // GetI returns the value of the named option as an integer.
@@ -224,26 +218,9 @@ func (o *Options) GetI(name string) int {
 
 	case o.full[optName.Long].Value == nil:
 		return 0
-
-	case opt.Type == STRING, opt.Type == MIXED:
-		result, err := strconv.Atoi(opt.Value.(string))
-		if err == nil {
-			return result
-		}
-		return 0
-
-	case opt.Type == FLOAT:
-		return int(opt.Value.(float64))
-
-	case opt.Type == BOOL:
-		if opt.Value.(bool) {
-			return 1
-		}
-		return 0
-
-	default:
-		return opt.Value.(int)
 	}
+
+	return valueToInt(opt.Value)
 }
 
 // GetB returns the value of the named option as a boolean.
@@ -262,19 +239,9 @@ func (o *Options) GetB(name string) bool {
 
 	case o.full[optName.Long].Value == nil:
 		return false
-
-	case opt.Type == STRING, opt.Type == MIXED:
-		return opt.Value.(string) != ""
-
-	case opt.Type == FLOAT:
-		return opt.Value.(float64) > 0
-
-	case opt.Type == INT:
-		return opt.Value.(int) > 0
-
-	default:
-		return opt.Value.(bool)
 	}
+
+	return valueToBool(opt.Value)
 }
 
 // GetF returns the value of the named option as a float64.
@@ -293,26 +260,9 @@ func (o *Options) GetF(name string) float64 {
 
 	case o.full[optName.Long].Value == nil:
 		return 0.0
-
-	case opt.Type == STRING, opt.Type == MIXED:
-		result, err := strconv.ParseFloat(opt.Value.(string), 64)
-		if err == nil {
-			return result
-		}
-		return 0.0
-
-	case opt.Type == INT:
-		return float64(opt.Value.(int))
-
-	case opt.Type == BOOL:
-		if opt.Value.(bool) {
-			return 1.0
-		}
-		return 0.0
-
-	default:
-		return opt.Value.(float64)
 	}
+
+	return valueToFloat(opt.Value)
 }
 
 // Split splits the value of a mergeable option into its individual components.
@@ -983,7 +933,7 @@ func updateOption(opt *Option, name, value string) error {
 // updateStringOption updates string option value
 func updateStringOption(opt *Option, value string) error {
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(string) + MergeSymbol + value
+		opt.Value = valueToString(opt.Value) + MergeSymbol + value
 	} else {
 		opt.Value = value
 		opt.set = true
@@ -1017,7 +967,7 @@ func updateFloatOption(name string, opt *Option, value string) error {
 	}
 
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(float64) + resultFloat
+		opt.Value = valueToFloat(opt.Value) + resultFloat
 	} else {
 		opt.Value = resultFloat
 		opt.set = true
@@ -1043,7 +993,7 @@ func updateIntOption(name string, opt *Option, value string) error {
 	}
 
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(int) + resultInt
+		opt.Value = valueToInt(opt.Value) + resultInt
 	} else {
 		opt.Value = resultInt
 		opt.set = true
@@ -1085,6 +1035,72 @@ func guessType(v any) uint8 {
 	}
 
 	return STRING
+}
+
+// valueToString converts supported value into string
+func valueToString(v any) string {
+	if v == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%v", v)
+}
+
+// valueToInt converts supported value into int
+func valueToInt(v any) int {
+	switch t := v.(type) {
+	case string:
+		i, _ := strconv.Atoi(t)
+		return i
+	case bool:
+		if t {
+			return 1
+		}
+		return 0
+	case float64:
+		return int(t)
+	case int:
+		return t
+	}
+
+	return 0
+}
+
+// valueToFloat converts supported value into float64
+func valueToFloat(v any) float64 {
+	switch t := v.(type) {
+	case string:
+		i, _ := strconv.ParseFloat(t, 64)
+		return i
+	case bool:
+		if t {
+			return 1.0
+		} else {
+			return 0.0
+		}
+	case int:
+		return float64(t)
+	case float64:
+		return t
+	}
+
+	return 0.0
+}
+
+// valueToBool converts supported value into bool
+func valueToBool(v any) bool {
+	switch t := v.(type) {
+	case string:
+		return t != ""
+	case int:
+		return t > 0
+	case float64:
+		return t > 0
+	case bool:
+		return t
+	}
+
+	return false
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
