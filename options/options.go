@@ -1039,6 +1039,10 @@ func guessType(v any) uint8 {
 
 // valueToString converts supported value into string
 func valueToString(v any) string {
+	if v == nil {
+		return ""
+	}
+
 	return fmt.Sprintf("%v", v)
 }
 
