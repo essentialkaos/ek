@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.4.2](https://kaos.sh/ek/14.4.2)
+
+- **`[support]`** Updated symbol of skipped check
+
 ### [14.4.1](https://kaos.sh/ek/14.4.1)
 
 - **`[options]`** Improved handling of default option value
