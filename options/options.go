@@ -199,7 +199,7 @@ func (o *Options) GetS(name string) string {
 		return ""
 	}
 
-	return fmt.Sprintf("%v", opt.Value)
+	return valueToString(opt.Value)
 }
 
 // GetI returns the value of the named option as an integer.
@@ -933,7 +933,7 @@ func updateOption(opt *Option, name, value string) error {
 // updateStringOption updates string option value
 func updateStringOption(opt *Option, value string) error {
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(string) + MergeSymbol + value
+		opt.Value = valueToString(opt.Value) + MergeSymbol + value
 	} else {
 		opt.Value = value
 		opt.set = true
@@ -967,7 +967,7 @@ func updateFloatOption(name string, opt *Option, value string) error {
 	}
 
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(float64) + resultFloat
+		opt.Value = valueToFloat(opt.Value) + resultFloat
 	} else {
 		opt.Value = resultFloat
 		opt.set = true
@@ -993,7 +993,7 @@ func updateIntOption(name string, opt *Option, value string) error {
 	}
 
 	if opt.set && opt.Mergeble {
-		opt.Value = opt.Value.(int) + resultInt
+		opt.Value = valueToInt(opt.Value) + resultInt
 	} else {
 		opt.Value = resultInt
 		opt.set = true
@@ -1037,6 +1037,11 @@ func guessType(v any) uint8 {
 	return STRING
 }
 
+// valueToString converts supported value into string
+func valueToString(v any) string {
+	return fmt.Sprintf("%v", v)
+}
+
 // valueToInt converts supported value into int
 func valueToInt(v any) int {
 	switch t := v.(type) {
@@ -1046,9 +1051,8 @@ func valueToInt(v any) int {
 	case bool:
 		if t {
 			return 1
-		} else {
-			return 0
 		}
+		return 0
 	case float64:
 		return int(t)
 	case int:
