@@ -760,7 +760,7 @@ func (i *Info) printChecksInfo() {
 		case CHECK_OK:
 			fmtc.Print("  {g}✔ {!}")
 		case CHECK_SKIP:
-			fmtc.Print("  {s-}✔ {!}")
+			fmtc.Print("  {s-}——{!}")
 		case CHECK_WARN:
 			fmtc.Print("  {y}✖ {!}")
 		case CHECK_ERROR:
