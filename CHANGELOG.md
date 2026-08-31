@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.4.3](https://kaos.sh/ek/14.4.3)
+
+- **`[req]`** Retrier now returns the last response if all attempts are failed
+
 ### [14.4.2](https://kaos.sh/ek/14.4.2)
 
 - **`[support]`** Updated symbol of skipped check

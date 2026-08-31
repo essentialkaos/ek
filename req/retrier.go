@@ -116,10 +116,11 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 		return nil, ErrNilEngine
 	}
 
-	var lastErr error
+	var resp *Response
+	var err, lastErr error
 
 	for range rr.Num {
-		resp, err := rt.e.doRequest(r, method)
+		resp, err = rt.e.doRequest(r, method)
 
 		if err != nil {
 			lastErr = err
@@ -149,7 +150,7 @@ func (rt *Retrier) doRequest(method string, r Request, rr Retry) (*Response, err
 		}
 	}
 
-	return nil, lastErr
+	return resp, lastErr
 }
 
 // getRetryPause returns pause between requests
