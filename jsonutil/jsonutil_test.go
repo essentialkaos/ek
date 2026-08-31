@@ -119,7 +119,7 @@ func (s *JSONSuite) TestEncoding(c *C) {
 		"linux":  `open /test.json: permission denied`,
 	})
 
-	err = Write(jsonFile, map[float64]int{3.14: 123})
+	err = Write(jsonFile, map[bool]int{false: 123})
 
 	c.Assert(err, NotNil)
 }
