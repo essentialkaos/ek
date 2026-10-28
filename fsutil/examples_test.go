@@ -538,3 +538,16 @@ func ExamplePop() {
 
 	// Current working directory set to initial working directory
 }
+
+func ExampleShred() {
+	fileToRemove := "sensitive.txt"
+
+	// Perform three random passes and a final zero-fill pass, then remove
+	err := Shred(fileToRemove, true)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("File %q removed!", fileToRemove)
+}
