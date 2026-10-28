@@ -135,7 +135,9 @@ func overwritePass(file *os.File, size int64, buffer []byte, zeroFill bool) erro
 		return errors.New("empty overwrite buffer")
 	}
 
-	if _, err := file.Seek(0, io.SeekStart); err != nil {
+	_, err := file.Seek(0, io.SeekStart)
+
+	if err != nil {
 		return fmt.Errorf("seek to beginning: %w", err)
 	}
 
@@ -153,7 +155,9 @@ func overwritePass(file *os.File, size int64, buffer []byte, zeroFill bool) erro
 		}
 
 		if !zeroFill {
-			if _, err := rand.Read(chunk); err != nil {
+			_, err := rand.Read(chunk)
+
+			if err != nil {
 				return fmt.Errorf("generate random data: %w", err)
 			}
 		}
@@ -171,7 +175,9 @@ func overwritePass(file *os.File, size int64, buffer []byte, zeroFill bool) erro
 		remaining -= int64(written)
 	}
 
-	if err := file.Sync(); err != nil {
+	err = file.Sync()
+
+	if err != nil {
 		return fmt.Errorf("sync file: %w", err)
 	}
 
