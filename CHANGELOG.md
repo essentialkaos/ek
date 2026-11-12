@@ -3,6 +3,7 @@
 ### [14.5.0](https://kaos.sh/ek/14.5.0)
 
 - **`[fsutil]`** Added method `Shred`
+- **`[system/container]`** Fixed bug with checking for engine on host machine
 
 ### [14.4.3](https://kaos.sh/ek/14.4.3)
 

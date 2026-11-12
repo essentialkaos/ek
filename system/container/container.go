@@ -79,6 +79,12 @@ func IsK8s() bool {
 func guessEngine(mountsData string) string {
 	_, err := os.Stat(dockerEnv)
 
+	// There is systemd on the system, this is not a container. If even it contains
+	// something, it's host, not a container.
+	if strings.Contains(mountsData, "systemd-1") {
+		return ""
+	}
+
 	isK8s = strings.Contains(mountsData, "kubernetes.io")
 
 	switch {
