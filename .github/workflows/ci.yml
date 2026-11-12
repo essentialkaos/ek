@@ -192,4 +192,4 @@ jobs:
 
       - name: Check spelling
         continue-on-error: true
-        uses: crate-ci/typos@master
+        uses: crate-ci/typos@main
