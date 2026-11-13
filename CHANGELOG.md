@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.5.1](https://kaos.sh/ek/14.5.1)
+
+- **`[luhn]`** Removed input validation for valid number from `Calculate` (`ICCID` _can have different length, so short number without checksum can pass validation_)
+
 ### [14.5.0](https://kaos.sh/ek/14.5.0)
 
 - **`[fsutil]`** Added method `Shred`

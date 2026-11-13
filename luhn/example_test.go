@@ -28,14 +28,10 @@ func ExampleIsValid() {
 }
 
 func ExampleCalculate() {
-	checksum, _ := Calculate("8970199240502489916")
-	fmt.Printf("%-19s → %s\n", "8970199240502489916", checksum)
-
-	checksum, _ = Calculate("897019924050248991")
+	checksum, _ := Calculate("897019924050248991")
 	fmt.Printf("%-19s → %s\n", "897019924050248991", checksum)
 
 	// Output:
-	// 8970199240502489916 → 6
 	// 897019924050248991  → 6
 }
 

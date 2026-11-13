@@ -65,10 +65,6 @@ func Calculate(v string) (string, error) {
 		return "", ErrInvalidData
 	}
 
-	if IsValid(v) {
-		return v[len(v)-1:], nil
-	}
-
 	var sum int
 
 	for i := len(v) - 1; i >= 0; i-- {

@@ -43,11 +43,7 @@ func (s *LuhnSuite) TestCalculate(c *C) {
 	_, err = Calculate("1")
 	c.Assert(err, Equals, ErrInvalidData)
 
-	crc, err := Calculate("8970199240502489916")
-	c.Assert(err, IsNil)
-	c.Assert(crc, Equals, "6")
-
-	crc, err = Calculate("897019924050248991")
+	crc, err := Calculate("897019924050248991")
 	c.Assert(err, IsNil)
 	c.Assert(crc, Equals, "6")
 }
