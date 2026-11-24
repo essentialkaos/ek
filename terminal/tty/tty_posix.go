@@ -13,11 +13,12 @@ package tty
 import (
 	"os"
 	"sync"
+
+	"golang.org/x/term"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var stdout os.FileInfo
 var isFakeTTY bool
 var isSystemd bool
 var isTMUX bool
@@ -29,12 +30,7 @@ var initOnce sync.Once
 // IsTTY returns true if the current output device is a TTY
 func IsTTY() bool {
 	checkSystem()
-
-	if stdout != nil && stdout.Mode()&os.ModeCharDevice == 0 && !isFakeTTY {
-		return false
-	}
-
-	return true
+	return isFakeTTY || term.IsTerminal(int(os.Stdout.Fd()))
 }
 
 // IsTMUX returns true if the process is running inside a tmux session
@@ -65,12 +61,6 @@ func IsSystemd() bool {
 // checkSystem checks system for tmux/faketty
 func checkSystem() {
 	initOnce.Do(func() {
-		stat, err := os.Stdout.Stat()
-
-		if err == nil {
-			stdout = stat
-		}
-
 		isTMUX = os.Getenv("TMUX") != ""
 		isFakeTTY = os.Getenv("FAKETTY") != ""
 		isSystemd = os.Getppid() == 1
