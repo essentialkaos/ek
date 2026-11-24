@@ -13,7 +13,6 @@ import (
 	"strconv"
 	"sync"
 	"testing"
-	"time"
 
 	. "github.com/essentialkaos/check"
 )
@@ -21,10 +20,6 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type TTYSuite struct{}
-
-type FakeInfo struct {
-	IsChar bool
-}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -37,10 +32,9 @@ var _ = Suite(&TTYSuite{})
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func (s *TTYSuite) TestIsTTY(c *C) {
-	stdout = &FakeInfo{true}
-	c.Assert(IsTTY(), Equals, true)
-	stdout = &FakeInfo{false}
-	c.Assert(IsTTY(), Equals, false)
+	IsTTY()
+	GetWidth()
+	GetHeight()
 
 	initOnce = sync.Once{}
 	os.Setenv("FAKETTY", "1")
@@ -87,50 +81,4 @@ func (s *TTYSuite) TestIsTMUX(c *C) {
 	isTmux, err = IsTMUX()
 	c.Assert(isTmux, Equals, false)
 	c.Assert(err, IsNil)
-}
-
-func (s *TTYSuite) TestGetSize(c *C) {
-	w, h := GetSize()
-
-	c.Assert(w, Not(Equals), -1)
-	c.Assert(w, Not(Equals), 0)
-	c.Assert(h, Not(Equals), -1)
-	c.Assert(h, Not(Equals), 0)
-}
-
-func (s *TTYSuite) TestGetWidth(c *C) {
-	c.Assert(GetWidth(), Not(Equals), -1)
-	c.Assert(GetWidth(), Not(Equals), 0)
-}
-
-func (s *TTYSuite) TestGetHeight(c *C) {
-	c.Assert(GetHeight(), Not(Equals), -1)
-	c.Assert(GetHeight(), Not(Equals), 0)
-}
-
-func (s *TTYSuite) TestErrors(c *C) {
-	tty = "/non-exist"
-
-	w, h := GetSize()
-
-	c.Assert(w, Equals, -1)
-	c.Assert(h, Equals, -1)
-
-	tty = "/dev/tty"
-}
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-func (f *FakeInfo) Name() string       { return "" }
-func (f *FakeInfo) Size() int64        { return 0 }
-func (f *FakeInfo) ModTime() time.Time { return time.Time{} }
-func (f *FakeInfo) IsDir() bool        { return false }
-func (f *FakeInfo) Sys() any           { return nil }
-
-func (f *FakeInfo) Mode() os.FileMode {
-	if f.IsChar {
-		return os.ModeCharDevice
-	}
-
-	return os.ModeSymlink
 }

@@ -1,5 +1,10 @@
 ## Changelog
 
+### [14.5.2](https://kaos.sh/ek/14.5.2)
+
+- **`[terminal/tty]`** Added Windows support
+- **`[terminal/tty]`** Improved macOS support
+
 ### [14.5.1](https://kaos.sh/ek/14.5.1)
 
 - **`[luhn]`** Removed input validation for valid number from `Calculate` (`ICCID` _can have different length, so short number without checksum can pass validation_)
