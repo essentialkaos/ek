@@ -5,6 +5,8 @@
 - **`[system/container]`** Added method `GetCPUQuota`
 - **`[system/container]`** Added method `GetMemLimit`
 - **`[system/container]`** Added method `GetCPUSet`
+- **`[support]`** Add CPU quota and memory limit to output
+- **`[system/container]`** Minor improvements
 
 ### [14.5.2](https://kaos.sh/ek/14.5.2)
 
