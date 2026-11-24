@@ -24,3 +24,33 @@ func ExampleIsContainer() {
 		fmt.Printf("It's containerized using %s engine\n", GetEngine())
 	}
 }
+
+func ExampleGetCPUQuota() {
+	quota, isMax, err := GetCPUQuota()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Quota: %g (max: %t)\n", quota, isMax)
+}
+
+func ExampleGetMemLimit() {
+	limit, isMax, err := GetMemLimit()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("Limit: %d (max: %t)\n", limit, isMax)
+}
+
+func ExampleGetCPUSet() {
+	cpuSet, err := GetCPUSet()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("CPU Set: %v\n", cpuSet)
+}

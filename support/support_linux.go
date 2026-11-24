@@ -34,6 +34,11 @@ func (i *Info) appendSystemInfo() {
 	}
 
 	i.System.ContainerEngine = container.GetEngine()
+
+	if i.System.ContainerEngine != "" {
+		i.System.ContainerCPUQuota, i.System.ContainerCPUQuotaUnlim, _ = container.GetCPUQuota()
+		i.System.ContainerMemLimit, i.System.ContainerMemLimitUnlim, _ = container.GetMemLimit()
+	}
 }
 
 // appendOSInfo appends OS info

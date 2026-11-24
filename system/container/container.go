@@ -28,7 +28,7 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // mountsFile is path to mounts file for init process
-var mountsFile = "/proc/1/mounts"
+var mountsFile = "/proc/self/mounts"
 
 // dockerEnv is path to env file inside a Docker container
 var dockerEnv = "/.dockerenv"
@@ -78,12 +78,6 @@ func IsK8s() bool {
 // guessEngine tries to guess container engine based on information from /proc/1/mounts
 func guessEngine(mountsData string) string {
 	_, err := os.Stat(dockerEnv)
-
-	// There is systemd on the system, this is not a container. If even it contains
-	// something, it's host, not a container.
-	if strings.Contains(mountsData, "systemd-1") {
-		return ""
-	}
 
 	isK8s = strings.Contains(mountsData, "kubernetes.io")
 

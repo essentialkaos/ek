@@ -156,11 +156,15 @@ type OSInfo struct {
 // SystemInfo contains basic host-level information such as hostname, arch, and kernel
 // version
 type SystemInfo struct {
-	Name            string `json:"name"`
-	ID              string `json:"id"`
-	Arch            string `json:"arch"`
-	Kernel          string `json:"kernel"`
-	ContainerEngine string `json:"container_engine,omitempty"`
+	Name                   string  `json:"name"`
+	ID                     string  `json:"id"`
+	Arch                   string  `json:"arch"`
+	Kernel                 string  `json:"kernel"`
+	ContainerEngine        string  `json:"container_engine,omitempty"`
+	ContainerCPUQuota      float64 `json:"container_cpu,omitzero"`
+	ContainerCPUQuotaUnlim bool    `json:"container_cpu_unlim"`
+	ContainerMemLimit      uint64  `json:"container_memory,omitzero"`
+	ContainerMemLimitUnlim bool    `json:"container_memory_unlim"`
 }
 
 // NetworkInfo contains basic network configuration including hostname and IP addresses
@@ -578,6 +582,26 @@ func (i *Info) printOSInfo() {
 			format(12, true, "Container", "Yes (containerd)")
 		case "yandex":
 			format(12, true, "Container", "Yes (Yandex Serverless)")
+		}
+
+		if i.System.ContainerCPUQuota > 0 || i.System.ContainerCPUQuotaUnlim {
+			format(
+				12, true, "CPU Quota", strutil.B(
+					i.System.ContainerCPUQuotaUnlim,
+					fmtc.Sprint("{s}max{!}"),
+					fmtutil.PrettySize(i.System.ContainerCPUQuota),
+				),
+			)
+		}
+
+		if i.System.ContainerMemLimit > 0 || i.System.ContainerMemLimitUnlim {
+			format(
+				12, true, "Memory Limit", strutil.B(
+					i.System.ContainerMemLimitUnlim,
+					fmtc.Sprint("{s}max{!}"),
+					fmtutil.PrettySize(i.System.ContainerMemLimit),
+				),
+			)
 		}
 	}
 }

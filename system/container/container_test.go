@@ -8,7 +8,9 @@ package container
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"math"
 	"os"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -61,12 +63,6 @@ none /etc/hostname 9p rw,trans=fd,rfdno=6,wfdno=6,aname=/,dfltuid=4294967294,dfl
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0
 tmpfs /run/secrets/kubernetes.io/serviceaccount tmpfs ro,relatime,size=2760104k 0 0`), 0644)
-
-	os.WriteFile(s.DataDir+"/host", []byte(`overlay / overlay rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/111/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/work,xino=off 0 0
-systemd-1 /proc/sys/fs/binfmt_misc autofs rw,relatime,fd=29,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=23748 0 0
-proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
-tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0
-tmpfs /run/secrets/kubernetes.io/serviceaccount tmpfs ro,relatime,size=2760104k 0 0`), 0644)
 }
 
 func (s *ContainerSuite) TestGetEngine(c *C) {
@@ -78,12 +74,6 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = s.DataDir + "/default"
 	c.Assert(GetEngine(), Equals, "")
 	c.Assert(IsContainer(), Equals, false)
-
-	once = sync.Once{}
-
-	mountsFile = s.DataDir + "/host"
-	c.Assert(GetEngine(), Equals, "")
-	c.Assert(IsK8s(), Equals, false)
 
 	once = sync.Once{}
 
@@ -125,4 +115,103 @@ func (s *ContainerSuite) TestGetEngine(c *C) {
 	mountsFile = s.DataDir + "/podman"
 	c.Assert(GetEngine(), Equals, PODMAN)
 	c.Assert(IsContainer(), Equals, true)
+}
+
+func (s *ContainerSuite) TestGetCPUQuota(c *C) {
+	cgroupDir = c.MkDir()
+
+	quota, unlimited, err := GetCPUQuota()
+	c.Assert(os.IsNotExist(err), Equals, true)
+	c.Assert(quota, Equals, 0.0)
+	c.Assert(unlimited, Equals, false)
+
+	c.Assert(os.WriteFile(cgroupDir+"/cpu.max", []byte("50000 100000\n"), 0644), IsNil)
+
+	quota, unlimited, err = GetCPUQuota()
+	c.Assert(err, IsNil)
+	c.Assert(quota, Equals, 0.5)
+	c.Assert(unlimited, Equals, false)
+
+	c.Assert(os.WriteFile(cgroupDir+"/cpu.max", []byte("max 100000\n"), 0644), IsNil)
+
+	quota, unlimited, err = GetCPUQuota()
+	c.Assert(err, IsNil)
+	c.Assert(quota, Equals, 0.0)
+	c.Assert(unlimited, Equals, true)
+
+	for _, value := range []string{"50000", "invalid 100000", "50000 0", "50000 invalid"} {
+		c.Assert(os.WriteFile(cgroupDir+"/cpu.max", []byte(value), 0644), IsNil)
+
+		quota, unlimited, err = GetCPUQuota()
+		c.Assert(err, NotNil, Commentf("cpu.max = %q", value))
+		c.Assert(quota, Equals, 0.0)
+		c.Assert(unlimited, Equals, false)
+	}
+}
+
+func (s *ContainerSuite) TestGetMemLimit(c *C) {
+	cgroupDir = c.MkDir()
+
+	limit, unlimited, err := GetMemLimit()
+	c.Assert(os.IsNotExist(err), Equals, true)
+	c.Assert(limit, Equals, uint64(0))
+	c.Assert(unlimited, Equals, false)
+
+	c.Assert(os.WriteFile(cgroupDir+"/memory.max", []byte("536870912\n"), 0644), IsNil)
+
+	limit, unlimited, err = GetMemLimit()
+	c.Assert(err, IsNil)
+	c.Assert(limit, Equals, uint64(536870912))
+	c.Assert(unlimited, Equals, false)
+
+	c.Assert(os.WriteFile(cgroupDir+"/memory.max", []byte("max\n"), 0644), IsNil)
+
+	limit, unlimited, err = GetMemLimit()
+	c.Assert(err, IsNil)
+	c.Assert(limit, Equals, uint64(0))
+	c.Assert(unlimited, Equals, true)
+
+	c.Assert(os.WriteFile(cgroupDir+"/memory.max", []byte("-1\n"), 0644), IsNil)
+
+	limit, unlimited, err = GetMemLimit()
+	c.Assert(err, NotNil)
+	c.Assert(limit, Equals, uint64(0))
+	c.Assert(unlimited, Equals, false)
+}
+
+func (s *ContainerSuite) TestGetCPUSet(c *C) {
+	cgroupDir = c.MkDir()
+
+	cpus, err := GetCPUSet()
+	c.Assert(os.IsNotExist(err), Equals, true)
+	c.Assert(cpus, IsNil)
+
+	c.Assert(os.WriteFile(cgroupDir+"/cpuset.cpus.effective", []byte("1-2,5\n"), 0644), IsNil)
+
+	cpus, err = GetCPUSet()
+	c.Assert(err, IsNil)
+	c.Assert(cpus, DeepEquals, []bool{false, true, true, false, false, true})
+
+	c.Assert(os.WriteFile(cgroupDir+"/cpuset.cpus.effective", []byte("\n"), 0644), IsNil)
+
+	cpus, err = GetCPUSet()
+	c.Assert(err, IsNil)
+	c.Assert(cpus, DeepEquals, []bool{})
+
+	for _, value := range []string{"3-1", "0,,2", "invalid"} {
+		c.Assert(os.WriteFile(cgroupDir+"/cpuset.cpus.effective", []byte(value), 0644), IsNil)
+
+		cpus, err = GetCPUSet()
+		c.Assert(err, NotNil, Commentf("cpuset.cpus.effective = %q", value))
+		c.Assert(cpus, IsNil)
+	}
+
+	id := strconv.Itoa(math.MaxInt)
+
+	c.Assert(os.WriteFile(cgroupDir+"/cpuset.cpus.effective", []byte(id+"\n"), 0644), IsNil)
+
+	cpus, err = GetCPUSet()
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "CPU ID too large for slice indexing: "+id)
+	c.Assert(cpus, IsNil)
 }
