@@ -989,7 +989,7 @@ func format(size int, printEmpty bool, records ...string) {
 			fmtc.Printf(fm, name)
 		} else if value != "" {
 			fm := fmt.Sprintf("  {*}%%-%ds{!}  %%s\n", size)
-			fmtc.Printf(fm, name)
+			fmtc.Printf(fm, name, value)
 		}
 	}
 }
