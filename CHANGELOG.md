@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.6.2](https://kaos.sh/ek/14.6.2)
+
+- **`[support]`** Fixed bug with system resources output
+
 ### [14.6.1](https://kaos.sh/ek/14.6.1)
 
 - **`[support]`** Fix output of container CPU quota
