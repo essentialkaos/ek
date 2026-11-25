@@ -1,5 +1,11 @@
 ## Changelog
 
+### [14.6.1](https://kaos.sh/ek/14.6.1)
+
+- **`[support]`** Fix output of CPU quota
+- **`[support]`** Improved output memory limit
+- **`[support]`** Minor code refactoring
+
 ### [14.6.0](https://kaos.sh/ek/14.6.0)
 
 - **`[system/container]`** Added method `GetCPUQuota`
