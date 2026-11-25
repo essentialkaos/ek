@@ -245,7 +245,7 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 		case strings.HasPrefix(text, "cpu cores"):
 			cores, err = strconv.Atoi(strings.Trim(strutil.ReadField(text, 1, false, ':'), " "))
 
-		case strings.HasPrefix(text, "flags"):
+		case text == "":
 			if len(info) < id+1 {
 				info = append(info, &CPUInfo{vendor, model, cores, siblings, cache, nil})
 			}
@@ -260,7 +260,7 @@ func parseCPUInfo(s *bufio.Scanner) ([]*CPUInfo, error) {
 		}
 	}
 
-	if vendor == "" && model == "" {
+	if model == "" {
 		return nil, errors.New("can't parse cpuinfo file")
 	}
 

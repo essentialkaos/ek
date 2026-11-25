@@ -1,5 +1,9 @@
 ## Changelog
 
+### [14.6.3](https://kaos.sh/ek/14.6.3)
+
+- **`[system]`** Improved CPU info parsing
+
 ### [14.6.2](https://kaos.sh/ek/14.6.2)
 
 - **`[support]`** Fixed bug with system resources output
