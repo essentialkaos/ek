@@ -27,6 +27,28 @@ type Numeric interface {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+const (
+	ANSIC        = "%a %b %e %H:%M:%S %Y"
+	UNIX_DATE    = "%a %b %e %H:%M:%S %Z %Y"
+	RUBY_DATE    = "%a %b %d %H:%M:%S %z %Y"
+	RFC822       = "%d %b %y %H:%M %Z"
+	RFC822Z      = "%d %b %y %H:%M %z"
+	RFC850       = "%A, %d-%b-%y %H:%M:%S %Z"
+	RFC1123      = "%a, %d %b %Y %H:%M:%S %Z"
+	RFC1123Z     = "%a, %d %b %Y %H:%M:%S %z"
+	RFC3339      = "%FT%TZ"
+	RFC3339_NANO = "%FT%T.%NZ"
+	KITCHEN      = "%l:%M%p"
+	STAMP        = "%b %e %T"
+	STAMP_MILLI  = "%b %e %T.%K"
+	STAMP_NANO   = "%b %e %T.%N"
+	DATE_TIME    = "%F %T"
+	DATE_ONLY    = "%F"
+	TIME_ONLY    = "%T"
+)
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Format formats [time.Time] value using given format string
 //
 // Interpreted sequences:

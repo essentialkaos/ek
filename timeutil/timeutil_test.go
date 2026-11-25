@@ -25,6 +25,28 @@ type TimeUtilSuite struct{}
 
 var _ = Suite(&TimeUtilSuite{})
 
+func (s *TimeUtilSuite) TestFormatLayouts(c *C) {
+	d := time.Date(2012, 4, 3, 15, 30, 45, 55, time.UTC)
+
+	c.Assert(Format(d, ANSIC), Equals, d.Format(time.ANSIC))
+	c.Assert(Format(d, UNIX_DATE), Equals, d.Format(time.UnixDate))
+	c.Assert(Format(d, RUBY_DATE), Equals, d.Format(time.RubyDate))
+	c.Assert(Format(d, RFC822), Equals, d.Format(time.RFC822))
+	c.Assert(Format(d, RFC822Z), Equals, d.Format(time.RFC822Z))
+	c.Assert(Format(d, RFC850), Equals, d.Format(time.RFC850))
+	c.Assert(Format(d, RFC1123), Equals, d.Format(time.RFC1123))
+	c.Assert(Format(d, RFC1123Z), Equals, d.Format(time.RFC1123Z))
+	c.Assert(Format(d, RFC3339), Equals, d.Format(time.RFC3339))
+	c.Assert(Format(d, RFC3339_NANO), Equals, d.Format(time.RFC3339Nano))
+	c.Assert(Format(d, KITCHEN), Equals, d.Format(time.Kitchen))
+	c.Assert(Format(d, STAMP), Equals, d.Format(time.Stamp))
+	c.Assert(Format(d, STAMP_MILLI), Equals, d.Format(time.StampMilli))
+	c.Assert(Format(d, STAMP_NANO), Equals, d.Format(time.StampNano))
+	c.Assert(Format(d, DATE_TIME), Equals, d.Format(time.DateTime))
+	c.Assert(Format(d, DATE_ONLY), Equals, d.Format(time.DateOnly))
+	c.Assert(Format(d, TIME_ONLY), Equals, d.Format(time.TimeOnly))
+}
+
 func (s *TimeUtilSuite) TestDuration(c *C) {
 	c.Assert(Pretty(time.Duration(59000000000)).String(), Equals, "59 seconds")
 	c.Assert(Pretty(2430).String(), Equals, "40 minutes and 30 seconds")
