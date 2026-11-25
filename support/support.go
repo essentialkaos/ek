@@ -571,25 +571,25 @@ func (i *Info) printOSInfo() {
 		fmtc.NewLine()
 		switch i.System.ContainerEngine {
 		case "docker":
-			format(12, true, "Container", "Yes (Docker)")
+			format(12, true, "Container", "Yes {s}(Docker){!}")
 		case "docker+runsc":
-			format(12, true, "Container", "Yes (Docker+gVisor)")
+			format(12, true, "Container", "Yes {s}(Docker+gVisor){!}")
 		case "podman":
-			format(12, true, "Container", "Yes (Podman)")
+			format(12, true, "Container", "Yes {s}(Podman){!}")
 		case "lxc":
-			format(12, true, "Container", "Yes (LXC)")
+			format(12, true, "Container", "Yes {s}(LXC){!}")
 		case "containerd":
-			format(12, true, "Container", "Yes (containerd)")
+			format(12, true, "Container", "Yes {s}(containerd){!}")
 		case "yandex":
-			format(12, true, "Container", "Yes (Yandex Serverless)")
+			format(12, true, "Container", "Yes {s}(Yandex Serverless){!}")
 		}
 
 		if i.System.ContainerCPUQuota > 0 || i.System.ContainerCPUQuotaUnlim {
 			format(
 				12, true, "CPU Quota", strutil.B(
 					i.System.ContainerCPUQuotaUnlim,
-					fmtc.Sprint("{s}max{!}"),
-					fmtutil.PrettySize(i.System.ContainerCPUQuota),
+					"{s}max{!}",
+					fmt.Sprintf("%g", i.System.ContainerCPUQuota),
 				),
 			)
 		}
@@ -598,8 +598,8 @@ func (i *Info) printOSInfo() {
 			format(
 				12, true, "Memory Limit", strutil.B(
 					i.System.ContainerMemLimitUnlim,
-					fmtc.Sprint("{s}max{!}"),
-					fmtutil.PrettySize(i.System.ContainerMemLimit),
+					"{s}max{!}",
+					fmtutil.PrettySize(i.System.ContainerMemLimit, " "),
 				),
 			)
 		}
@@ -739,7 +739,7 @@ func (i *Info) printServicesInfo() {
 			status += " {s-}(enabled){!}"
 		}
 
-		format(size, true, s.Name, fmtc.Sprint(status))
+		format(size, true, s.Name, status)
 	}
 }
 
@@ -763,7 +763,7 @@ func (i *Info) printAppsInfo() {
 		v = strings.ReplaceAll(v, "(", "{s}(")
 		v = strings.ReplaceAll(v, ")", "){!}")
 
-		format(size, true, a.Name, fmtc.Sprint(v))
+		format(size, true, a.Name, v)
 	}
 }
 
@@ -988,8 +988,8 @@ func format(size int, printEmpty bool, records ...string) {
 			fm := fmt.Sprintf("  {*}%%-%ds{!}  {s-}—{!}\n", size)
 			fmtc.Printf(fm, name)
 		} else if value != "" {
-			fm := fmt.Sprintf("  {*}%%-%ds{!}  %%s\n", size)
-			fmtc.Printf(fm, name, value)
+			fm := fmt.Sprintf("  {*}%%-%ds{!}  "+value+"\n", size)
+			fmtc.Printf(fm, name)
 		}
 	}
 }
