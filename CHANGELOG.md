@@ -1,5 +1,10 @@
 ## Changelog
 
+### [14.6.3](https://kaos.sh/ek/14.6.3)
+
+- **`[system]`** Improved CPU info parsing
+- **`[timeutil]`** Added constants with format sequences compatible with layouts from the std lib
+
 ### [14.6.2](https://kaos.sh/ek/14.6.2)
 
 - **`[support]`** Fixed bug with system resources output
